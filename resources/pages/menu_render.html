@@ -1,0 +1,82 @@
+<%: func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOption []map[string]string, user auth.User, buffer *bytes.Buffer) %>
+
+<%~ "menu.html" %>
+
+<%@ menuPart { %>
+<% for _, list := range menuList { %>
+<%+ "sidebar.html" %>
+<% } %>
+<% } %>
+
+<%@ iconpopover { %>
+    <%+ "icon.html" %>
+<% } %>
+
+<%@ menuEditpart { %>
+    <% for _, list := range menuEditList { %>
+        <li class="dd-item" data-id='<%= list.ID %>'>
+            <div class="dd-handle">
+                <i class="fa <%= list.Icon %>"></i>&nbsp;<strong><%= list.Name %></strong>&nbsp;&nbsp;&nbsp;<a
+                    href="<%= list.Url %>" class="dd-nodrag"><%= list.Url %></a>
+                <span class="pull-right dd-nodrag">
+                <a href="/menu/edit/show?id=<%= list.ID %>"><i class="fa fa-edit"></i></a>
+                <a href="javascript:void(0);" data-id="<%= list.ID %>" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+            </span>
+            </div>
+            <% if len(list.ChildrenList) > 0 { %>
+                <ol class="dd-list">
+                    <% for _, item := range list.ChildrenList { %>
+                        <li class="dd-item" data-id='<%= item.ID %>'>
+                            <div class="dd-handle">
+                                <i class="fa <%= item.Icon %>"></i>&nbsp;<strong><%= item.Name %></strong>&nbsp;&nbsp;&nbsp;<a
+                                    href="<%= item.Url %>" class="dd-nodrag"><%= item.Url %></a>
+                                <span class="pull-right dd-nodrag">
+                                    <a href="/menu/edit/show?id=<%= item.ID %>"><i class="fa fa-edit"></i></a>
+                                    <a href="javascript:void(0);" data-id="<%= item.ID %>" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                                </span>
+                            </div>
+                        </li>
+                    <% } %>
+                </ol>
+            <% } %>
+        </li>
+    <% } %>
+<% } %>
+
+<%@ optionPart { %>
+<% for _, option := range menuOption { %>
+    <option value='<%= option["id"] %>'><%= option["title"] %></option>
+<% } %>
+<% } %>
+
+<%@ adminPanel { %>
+<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+    <img src="../../dist/img/avatar04.png" class="user-image" alt="User Image">
+    <span class="hidden-xs"><%= user.Name %></span>
+</a>
+<ul class="dropdown-menu">
+    <!-- User image -->
+    <li class="user-header">
+        <img src="../../dist/img/avatar04.png" class="img-circle" alt="User Image">
+
+        <p>
+            <%= user.Name %> - <%= user.LevelName %>
+            <small><%= user.CreateAt %></small>
+        </p>
+    </li>
+    <li class="user-footer">
+        <div class="pull-left">
+            <a href="#" class="btn btn-default btn-flat">Setting</a>
+        </div>
+        <div class="pull-right">
+            <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+        </div>
+    </li>
+</ul>
+<% } %>
+
+<%@ adminName { %>
+<p><%= user.Name %></p>
+<% } %>
+
+<% } %>

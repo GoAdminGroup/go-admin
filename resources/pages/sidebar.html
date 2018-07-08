@@ -1,0 +1,22 @@
+<% if len(list.ChildrenList) == 0 { %>
+<li class='<%= list.Active %>'>
+    <a href='<%= list.Url %>'>
+        <i class="fa <%= list.Icon %>"></i><span><%= list.Name %></span>
+        <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
+    </a>
+</li>
+<% } else { %>
+<li class="treeview <%= list.Active %>">
+    <a href="#">
+        <i class="fa <%= list.Icon %>"></i> <span><%= list.Name %></span>
+        <span class="pull-right-container">
+                                  <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+    </a>
+    <ul class="treeview-menu">
+        <% for _, item := range list.ChildrenList { %>
+        <li><a href="<%= item.Url %>"><i class="fa <%= item.Icon %>"></i> <%= item.Name %></a></li>
+        <% } %>
+    </ul>
+</li>
+<% } %>

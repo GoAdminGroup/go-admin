@@ -1,0 +1,54 @@
+<%: func NewPanel(formData []models.FormStruct, url string, previous string, id string, menuList []menu.MenuItem, title string, description string, buffer *bytes.Buffer) %>
+
+<%~ "edit.html" %>
+
+<%@ header { %>
+<h1>
+    <%= title %>
+    <small><%= description %></small>
+</h1>
+<% } %>
+
+<%@ menuPart { %>
+<% for _, list := range menuList { %>
+<%+ "sidebar.html" %>
+<% } %>
+<% } %>
+
+<%@ url { %>
+<form action='<%= url %>' method="post" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+<% } %>
+
+<%@ content { %>
+<% for _, data := range formData { %>
+<div class="form-group ">
+    <% if data.FormType == "default" { %>
+        <label class="col-sm-2 control-label"><%= data.Head %></label>
+        <div class="col-sm-8">
+            <div class="box box-solid box-default no-margin">
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <%= data.Value %> 
+                </div>
+                <!-- /.box-body -->
+            </div>
+        </div>
+    <% } else if data.FormType == "text" { %>
+        <label for="json" class="col-sm-2 control-label"><%= data.Head %></label>
+        <div class="col-sm-8">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+                <input type="text" id="<%= data.Field %>" name="<%= data.Field %>" value='' class="form-control json" placeholder="Input json">
+            </div>
+        </div>
+    <% } %>
+</div>
+<% } %>
+<% } %>
+
+<%@ previous { %>
+<input type="hidden" name="_previous_" value='<%= previous %>' class="_previous_">
+<input type="hidden" name="id" value='<%= id %>' class="_previous_">
+<% } %>
+
+<% } %>

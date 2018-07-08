@@ -1,0 +1,111 @@
+<%: func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead []string, paginator map[string]interface{}, title string, description string, buffer *bytes.Buffer) %>
+
+<%~ "info_pjax.html" %>
+
+<%@ header { %>
+<h1>
+    <%= title %>
+    <small><%= description %></small>
+</h1>
+<% } %>
+
+<%@ menuPart { %>
+<% for _, list := range menuList { %>
+    <%+ "sidebar.html" %>
+<% } %>
+<% } %>
+
+<%@ newUrl { %>
+<a href='<%= paginator["new_url"].(string) %>' class="btn btn-sm btn-success">
+<% } %>
+
+<%@ thead { %>
+<th></th>
+<% for _, head := range thead { %>
+<th>
+    <%= head %>
+    <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a>
+</th>
+<% } %>
+<th>操作</th>
+<% } %>
+
+
+<%@ list { %>
+<% for _, info := range infoList { %>
+<tr>
+    <td>
+        <input type="checkbox" class="grid-row-checkbox" data-id="1" style="position: absolute; opacity: 0;">
+    </td>
+    <% for _, head := range thead { %>
+    <td><%= info[head] %></td>
+    <% } %>
+    <td>
+        <a href='<%= paginator["edit_url"].(string) %>&id=<%= info["id"] %>'>
+            <i class="fa fa-edit"></i>
+        </a>
+        <a href="javascript:void(0);" data-id='<%= info["id"] %>' class="grid-row-delete">
+            <i class="fa fa-trash"></i>
+        </a>
+    </td>
+</tr>
+<% } %>
+<% } %>
+
+<%@ footer { %>
+<div class="box-footer clearfix">
+    Showing <b><%= paginator["curPageStartIndex"].(string) %></b> to <b><%= paginator["curPageEndIndex"].(string) %></b> of <b><%= paginator["total"].(string) %></b> entries
+    <ul class="pagination pagination-sm no-margin pull-right">
+        <!-- Previous Page Link -->
+        <li class='page-item <%= paginator["previou_class"].(string) %>'>
+            <% if paginator["previou_class"].(string) != "disabled" { %>
+            <a class="page-link" href='<%= paginator["previou_url"].(string) %>' rel="next">«</a>
+            <% } else { %>
+            <span class="page-link">«</span>
+            <% } %>
+        </li>
+
+        <!-- Pagination Elements -->
+        <!-- "Three Dots" Separator -->
+
+        <!-- Array Of Links -->
+        <!--<li class="page-item active"><span class="page-link">1</span></li>
+        <li class="page-item"><a class="page-link"
+                                 href="/story/word?page=2">2</a>
+        </li>-->
+
+        <!-- Next Page Link -->
+        <li class='page-item <%= paginator["next_class"].(string) %>'>
+            <% if paginator["next_class"].(string) != "disabled" { %>
+            <a class="page-link" href='<%= paginator["next_url"].(string) %>' rel="next">»</a>
+            <% } else { %>
+            <span class="page-link">»</span>
+            <% } %>
+        </li>
+    </ul>
+
+    <label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
+
+        <small>Show</small>&nbsp;
+        <select class="input-sm grid-per-pager" name="per-page">
+            <option value='<%= paginator["url"].(string) %>&pageSize=10' <%= paginator["option"].(map[string]string)["10"] %>>
+            10
+            </option>
+            <option value='<%= paginator["url"].(string) %>&pageSize=20' <%= paginator["option"].(map[string]string)["20"] %>>
+            20
+            </option>
+            <option value='<%= paginator["url"].(string) %>&pageSize=30' <%= paginator["option"].(map[string]string)["30"] %>>
+            30
+            </option>
+            <option value='<%= paginator["url"].(string) %>&pageSize=50' <%= paginator["option"].(map[string]string)["50"] %>>
+            50
+            </option>
+            <option value='<%= paginator["url"].(string) %>&pageSize=100' <%= paginator["option"].(map[string]string)["100"] %>>
+            100
+            </option>s
+        </select>
+        &nbsp;<small>entries</small>
+    </label>
+</div>
+<% } %>
+
