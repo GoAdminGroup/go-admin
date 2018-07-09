@@ -38,7 +38,7 @@
         <input type="checkbox" class="grid-row-checkbox" data-id="1" style="position: absolute; opacity: 0;">
     </td>
     <% for _, head := range thead { %>
-    <td><%= info[head] %></td>
+    <td><%==s info[head] %></td>
     <% } %>
     <td>
         <a href='<%= paginator["edit_url"].(string) %>&id=<%= info["id"] %>'>

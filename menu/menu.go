@@ -40,6 +40,10 @@ func SetGlobalMenu() {
 	(*GlobalMenu).MaxOrder = menus[len(menus) - 1]["parent_id"].(int64)
 }
 
+func (menu *Menu) SexMaxOrder(order int64) {
+	menu.MaxOrder = order
+}
+
 func RecursiveMenu(menus []map[string]interface{}, parentId int64) []MenuItem {
 
 	branch := make([]MenuItem, 0)

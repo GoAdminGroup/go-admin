@@ -9,8 +9,11 @@ import (
 	"goAdmin/connections/mysql"
 )
 
-func ShowMenu(ctx *fasthttp.RequestCtx, path string, user auth.User)  {
+func ShowMenu(ctx *fasthttp.RequestCtx)  {
 	defer handle(ctx)
+
+	path := string(ctx.Path())
+	user := ctx.UserValue("cur_user").(auth.User)
 
 	menu.GlobalMenu.SetActiveClass(path)
 
@@ -29,10 +32,15 @@ func ShowMenu(ctx *fasthttp.RequestCtx, path string, user auth.User)  {
 // 显示编辑菜单
 func ShowEditMenu(ctx *fasthttp.RequestCtx)  {
 	id := string(ctx.QueryArgs().Peek("id")[:])
+	user := ctx.UserValue("cur_user").(auth.User)
 
 	buffer := new(bytes.Buffer)
 
-	template.MenuEditPanelPjax(menu.GetMenuItemById(id), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
+		template.MenuEditPanelPjax(menu.GetMenuItemById(id), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+	} else {
+		template.MenuPanel((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuList, (*menu.GlobalMenu).GlobalMenuOption, user, buffer)
+	}
 
 	ctx.Response.AppendBody(buffer.Bytes())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
@@ -80,7 +88,6 @@ func EditMenu(ctx *fasthttp.RequestCtx) {
 
 
 // 新建菜单
-
 func NewMenu(ctx *fasthttp.RequestCtx)  {
 	defer handle(ctx)
 
@@ -96,6 +103,7 @@ func NewMenu(ctx *fasthttp.RequestCtx)  {
 
 	mysql.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parent_id, icon, uri, (*menu.GlobalMenu).MaxOrder + 1)
 
+	(*menu.GlobalMenu).SexMaxOrder((*menu.GlobalMenu).MaxOrder + 1)
 	menu.SetGlobalMenu()
 
 	template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)

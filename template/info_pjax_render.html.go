@@ -171,7 +171,7 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
 		for _, head := range thead {
 			buffer.WriteString(`
     <td>`)
-			hero.EscapeHTML(info[head], buffer)
+			buffer.WriteString(info[head])
 			buffer.WriteString(`</td>
     `)
 		}

@@ -301,7 +301,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
                                         <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank"
                                                class="export-selected">Selected rows</a></li>
                                     </ul>
-                                </div>&nbsp;&nbsp;
+                                </div>
 
                                 <div class="btn-group pull-right" style="margin-right: 10px">
                                     `)

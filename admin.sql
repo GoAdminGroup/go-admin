@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: godmin
-# Generation Time: 2018-07-08 01:44:40 +0000
+# Generation Time: 2018-07-09 01:25:46 +0000
 # ************************************************************
 
 
@@ -32,7 +32,7 @@ CREATE TABLE `goadmin_menu` (
   `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `uri` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -48,7 +48,7 @@ VALUES
 	(5,2,5,'权限管理','fa-ban','/auth/permissions',NULL,NULL),
 	(6,2,6,'菜单管理','fa-bars','/menu',NULL,NULL),
 	(7,2,7,'操作日志','fa-history','/auth/logs',NULL,NULL),
-	(12,0,1,'用户表','fa-tasks','/user/info',NULL,NULL);
+	(12,0,1,'用户表','fa-tasks','/info/user',NULL,NULL);
 
 /*!40000 ALTER TABLE `goadmin_menu` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -10,9 +10,12 @@ import (
 )
 
 // 显示表单
-func ShowForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func ShowForm(ctx *fasthttp.RequestCtx) {
 
 	defer handle(ctx)
+
+	user := ctx.UserValue("cur_user").(auth.User)
+	prefix := ctx.UserValue("prefix").(string)
 
 	buffer := new(bytes.Buffer)
 
@@ -28,8 +31,8 @@ func ShowForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.Us
 	}
 
 	formData, title, description := transform.TransfromFormData(id, prefix)
-	url := "/" + prefix + "/edit?id=" + id
-	previous := "/" + prefix + "/info?page=" + page + "&pageSize=" + pageSize
+	url := "/edit/" + prefix + "?id=" + id
+	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
 		template.EditPanelPjax(formData, url, previous, id, title, description, buffer)
@@ -42,9 +45,11 @@ func ShowForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.Us
 }
 
 // 编辑数据
-func EditForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func EditForm(ctx *fasthttp.RequestCtx) {
 
 	defer handle(ctx)
+
+	prefix := ctx.UserValue("prefix").(string)
 
 	previous := string(ctx.FormValue("_previous_")[:])
 

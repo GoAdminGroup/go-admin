@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/mgutz/ansi"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/reuseport"
-	"goAdmin/auth"
 	"goAdmin/config"
 	"io/ioutil"
 	"log"
@@ -13,10 +11,8 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strconv"
 	"sync/atomic"
 	"time"
-	"goAdmin/controllers"
 )
 
 type GracefulListener struct {
@@ -126,6 +122,20 @@ func GetFileSuffix(path string) string {
 	return string(rs[1 : length-0])
 }
 
+func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
+	path := string(ctx.Path())
+		data, err := Asset("resources" + path)
+	if err != nil {
+		fmt.Println(err)
+		ctx.Response.SetStatusCode(500)
+		ctx.WriteString("error")
+	} else {
+		ctx.Response.Header.Set("Content-Type", "text/"+GetFileSuffix(path)+"; charset=utf-8")
+		ctx.Response.SetStatusCode(200)
+		ctx.Write(data)
+	}
+}
+
 func InitServer(addr string) {
 	// create a fast listener ;)
 	ln, err := reuseport.Listen("tcp4", addr)
@@ -149,66 +159,15 @@ func InitServer(addr string) {
 		fsHandler = fs.NewRequestHandler()
 	}
 
+	router := InitRouter()
+	if !config.EnvConfig["PORTABLE"].(bool) {
+		router.NotFound = fsHandler
+	} else {
+		router.NotFound = fsHandlerPortable
+	}
+
 	go func() {
-		fasthttp.Serve(graceful, func(ctx *fasthttp.RequestCtx) {
-
-			// TODO: 区分静态，动态
-
-			path := string(ctx.Path())
-
-			if _, ok := GlobalRouter[path]; ok {
-				if user, ok := auth.Filter(ctx); ok {
-					GlobalRouter[path].Handler(ctx, path, GlobalRouter[path].Prefix, user)
-				} else {
-					ctx.Response.Header.Add("Location", "/login")
-					ctx.Response.SetStatusCode(302)
-				}
-			} else if path == "/login" {
-				controller.ShowLogin(ctx)
-			} else if path == "/signup" {
-				controller.Auth(ctx)
-			} else if path == "/logout" {
-				controller.Logout(ctx)
-			} else if path == "/install" {
-				controller.ShowInstall(ctx)
-			} else if path == "/menu" {
-				if user, ok := auth.Filter(ctx); ok {
-					controller.ShowMenu(ctx, path, user)
-				} else {
-					ctx.Response.Header.Add("Location", "/login")
-					ctx.Response.SetStatusCode(302)
-				}
-			} else if path == "/menu/new" {
-				controller.NewMenu(ctx)
-			} else if path == "/menu/delete" {
-				controller.DeleteMenu(ctx)
-			} else if path == "/menu/edit" {
-				controller.EditMenu(ctx)
-			} else if path == "/menu/edit/show" {
-				controller.ShowEditMenu(ctx)
-			} else if path == "/menu/order" {
-
-			} else {
-				if !config.EnvConfig["PORTABLE"].(bool) {
-					fsHandler(ctx)
-				} else {
-					data, err := Asset("resources" + path)
-					if err != nil {
-						fmt.Println(err)
-						ctx.Response.SetStatusCode(500)
-						ctx.WriteString("error")
-					} else {
-						ctx.Response.Header.Set("Content-Type", "text/"+GetFileSuffix(path)+"; charset=utf-8")
-						ctx.Response.SetStatusCode(200)
-						ctx.Write(data)
-					}
-				}
-			}
-			log.Println("[GoAdmin]",
-				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode())+" ", "white:blue"),
-				ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-				path)
-		})
+		fasthttp.Serve(graceful, router.Handler)
 	}()
 
 	pid := fmt.Sprintf("%d", os.Getpid())

@@ -15,8 +15,8 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 		paginator["previou_url"] = path + "?page=" + strconv.Itoa(pageInt-1) + "&pageSize=" + pageSize
 	}
 
-	paginator["new_url"] = "/" + prefix + "/info/new?page=" + page + "&pageSize=" + pageSize
-	paginator["edit_url"] = "/" + prefix + "/info/edit?page=" + page + "&pageSize=" + pageSize
+	paginator["new_url"] = "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize
+	paginator["edit_url"] = "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
 	paginator["pageSize"] = pageSize
 	paginator["next_class"] = ""
 	paginator["next_url"] = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize

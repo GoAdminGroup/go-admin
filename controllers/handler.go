@@ -9,14 +9,19 @@ import (
 	"goAdmin/template"
 	"goAdmin/transform"
 	"runtime/debug"
+	"github.com/mgutz/ansi"
+	"strconv"
+	"log"
 )
 
-type EndPointFun func(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User)
-
 // 显示列表
-func ShowInfo(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func ShowInfo(ctx *fasthttp.RequestCtx) {
 
 	defer handle(ctx)
+
+	user := ctx.UserValue("cur_user").(auth.User)
+	prefix := ctx.UserValue("prefix").(string)
+	path := string(ctx.Path())
 
 	page := string(ctx.QueryArgs().Peek("page")[:])
 	if page == "" {
@@ -43,9 +48,11 @@ func ShowInfo(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.Us
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 }
 
-func DeleteData(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func DeleteData(ctx *fasthttp.RequestCtx) {
 
 	defer handle(ctx)
+
+	prefix := ctx.UserValue("prefix").(string)
 
 	id := string(ctx.FormValue("id")[:])
 
@@ -60,6 +67,12 @@ func DeleteData(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.
 
 // 全局错误处理
 func handle(ctx *fasthttp.RequestCtx) {
+
+	log.Println("[GoAdmin]",
+		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode())+" ", "white:blue"),
+		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+		string(ctx.Path()))
+
 	if err := recover(); err != nil {
 		fmt.Println(err)
 		fmt.Println(string(debug.Stack()[:]))

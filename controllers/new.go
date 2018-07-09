@@ -4,7 +4,6 @@ import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/menu"
 	"bytes"
-	"goAdmin/auth"
 	"goAdmin/transform"
 	"goAdmin/template"
 	"goAdmin/config"
@@ -12,8 +11,10 @@ import (
 
 
 // 显示新建表单
-func ShowNewForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func ShowNewForm(ctx *fasthttp.RequestCtx) {
 	defer handle(ctx)
+
+	prefix := ctx.UserValue("prefix").(string)
 
 	buffer := new(bytes.Buffer)
 
@@ -28,8 +29,8 @@ func ShowNewForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth
 		pageSize = "10"
 	}
 
-	url := "/" + prefix + "/new?id=" + id
-	previous := "/" + prefix + "/info?page=" + page + "&pageSize=" + pageSize
+	url := "/new/" + prefix + "?id=" + id
+	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
 		template.NewPanelPjax(config.GlobalTableList[prefix].Form.FormList, url, previous, id, config.GlobalTableList[prefix].Form.Title, config.GlobalTableList[prefix].Form.Description, buffer)
@@ -42,9 +43,11 @@ func ShowNewForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth
 }
 
 // 新建数据
-func NewForm(ctx *fasthttp.RequestCtx, path string, prefix string, user auth.User) {
+func NewForm(ctx *fasthttp.RequestCtx) {
 
 	defer handle(ctx)
+
+	prefix := ctx.UserValue("prefix").(string)
 
 	previous := string(ctx.FormValue("_previous_")[:])
 
