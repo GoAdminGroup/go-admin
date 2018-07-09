@@ -3,4 +3,3 @@ build/*
 vendor/**
 !vendor/vendor.json
 pid
-assets.go
