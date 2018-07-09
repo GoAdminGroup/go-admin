@@ -169,6 +169,8 @@ visit [http://localhost:4003/login](http://localhost:4003/login) by browser
 
 login with username:<strong>admin</strong>, password:<strong>admin</strong>
 
+![](https://ws1.sinaimg.cn/large/006tKfTcly1ft3wwounwjj31kw0w17wl.jpg)
+
 ## make command
 
 - build
