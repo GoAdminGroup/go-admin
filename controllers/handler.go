@@ -12,6 +12,7 @@ import (
 	"github.com/mgutz/ansi"
 	"strconv"
 	"log"
+	"github.com/go-sql-driver/mysql"
 )
 
 // 显示列表
@@ -76,7 +77,27 @@ func handle(ctx *fasthttp.RequestCtx) {
 	if err := recover(); err != nil {
 		fmt.Println(err)
 		fmt.Println(string(debug.Stack()[:]))
-		ctx.Error(`{"code":500, "msg":"系统错误"}`, fasthttp.StatusInternalServerError)
-		return
+
+		var (
+			errMsg string
+			mysqlError *mysql.MySQLError
+			ok bool
+		)
+		if errMsg, ok = err.(string); ok {
+			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+			ctx.SetContentType("application/json")
+			ctx.WriteString(`{"code":500, "msg":"`+ errMsg + `"}`)
+			return
+		} else if mysqlError, ok = err.(*mysql.MySQLError); ok {
+			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+			ctx.SetContentType("application/json")
+			ctx.WriteString(`{"code":500, "msg":"`+ mysqlError.Error() + `"}`)
+			return
+		} else {
+			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+			ctx.SetContentType("application/json")
+			ctx.WriteString(`{"code":500, "msg":"系统错误"}`)
+			return
+		}
 	}
 }
