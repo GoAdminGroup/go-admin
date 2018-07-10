@@ -193,10 +193,12 @@ login with username:<strong>admin</strong>, password:<strong>admin</strong>
 
 - [x] add [go-bindata](https://github.com/go-bindata/go-bindata) support
 - [X] add more components
+- [X] menu structure
 - [ ] rcba auth
+- [ ] custom pages
 - [ ] combine assets
 - [ ] auto install engine
-- [ ] menu structure
+- [ ] demo site
 - [ ] performance analysis
 
 ## contribution
