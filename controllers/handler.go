@@ -18,7 +18,7 @@ import (
 // 显示列表
 func ShowInfo(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	user := ctx.UserValue("cur_user").(auth.User)
 	prefix := ctx.UserValue("prefix").(string)
@@ -51,7 +51,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 
 func DeleteData(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	prefix := ctx.UserValue("prefix").(string)
 
@@ -65,9 +65,8 @@ func DeleteData(ctx *fasthttp.RequestCtx) {
 	return
 }
 
-
 // 全局错误处理
-func handle(ctx *fasthttp.RequestCtx) {
+func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 
 	log.Println("[GoAdmin]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode())+" ", "white:blue"),

@@ -10,7 +10,7 @@ import (
 )
 
 func ShowMenu(ctx *fasthttp.RequestCtx)  {
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	path := string(ctx.Path())
 	user := ctx.UserValue("cur_user").(auth.User)
@@ -62,7 +62,7 @@ func DeleteMenu(ctx *fasthttp.RequestCtx)  {
 
 // 编辑菜单
 func EditMenu(ctx *fasthttp.RequestCtx) {
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	buffer := new(bytes.Buffer)
 
@@ -89,7 +89,7 @@ func EditMenu(ctx *fasthttp.RequestCtx) {
 
 // 新建菜单
 func NewMenu(ctx *fasthttp.RequestCtx)  {
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	buffer := new(bytes.Buffer)
 

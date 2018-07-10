@@ -12,7 +12,7 @@ import (
 
 // 显示新建表单
 func ShowNewForm(ctx *fasthttp.RequestCtx) {
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	prefix := ctx.UserValue("prefix").(string)
 
@@ -45,7 +45,7 @@ func ShowNewForm(ctx *fasthttp.RequestCtx) {
 // 新建数据
 func NewForm(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	prefix := ctx.UserValue("prefix").(string)
 

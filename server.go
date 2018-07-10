@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"sync/atomic"
 	"time"
+	"goAdmin/controllers"
 )
 
 type GracefulListener struct {
@@ -124,7 +125,7 @@ func GetFileSuffix(path string) string {
 
 func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
 	path := string(ctx.Path())
-		data, err := Asset("resources" + path)
+	data, err := Asset("resources" + path)
 	if err != nil {
 		fmt.Println(err)
 		ctx.Response.SetStatusCode(500)
@@ -134,6 +135,33 @@ func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
 		ctx.Response.SetStatusCode(200)
 		ctx.Write(data)
 	}
+}
+
+var fsHandler fasthttp.RequestHandler
+
+func NotFoundHandler(ctx *fasthttp.RequestCtx)  {
+
+	defer controller.GlobalDeferHandler(ctx)
+
+	if !PathExist(string(ctx.Path())) {
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+		ctx.SetContentType("application/json")
+		ctx.WriteString(`{"code":404, "msg":"route not found"}`)
+	} else {
+		if !config.EnvConfig["PORTABLE"].(bool) {
+			fsHandler(ctx)
+		} else {
+			fsHandlerPortable(ctx)
+		}
+	}
+}
+
+func PathExist(_path string) bool {
+	_, err := os.Stat(_path)
+	if err != nil && os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 func InitServer(addr string) {
@@ -147,7 +175,6 @@ func InitServer(addr string) {
 	duration := 30 * time.Second
 	graceful := newGracefulListener(ln, duration)
 
-	var fsHandler fasthttp.RequestHandler
 	if !config.EnvConfig["PORTABLE"].(bool) {
 		fs := &fasthttp.FS{
 			Root:               "./resources",
@@ -160,11 +187,7 @@ func InitServer(addr string) {
 	}
 
 	router := InitRouter()
-	if !config.EnvConfig["PORTABLE"].(bool) {
-		router.NotFound = fsHandler
-	} else {
-		router.NotFound = fsHandlerPortable
-	}
+	router.NotFound = NotFoundHandler
 
 	go func() {
 		fasthttp.Serve(graceful, router.Handler)

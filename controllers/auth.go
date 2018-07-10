@@ -31,7 +31,7 @@ func Logout(ctx *fasthttp.RequestCtx) {
 
 func ShowLogin(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	buffer := new(bytes.Buffer)
 	template.GetLoginPage(buffer)

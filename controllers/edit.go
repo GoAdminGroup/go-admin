@@ -12,7 +12,7 @@ import (
 // 显示表单
 func ShowForm(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	user := ctx.UserValue("cur_user").(auth.User)
 	prefix := ctx.UserValue("prefix").(string)
@@ -47,7 +47,7 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 // 编辑数据
 func EditForm(ctx *fasthttp.RequestCtx) {
 
-	defer handle(ctx)
+	defer GlobalDeferHandler(ctx)
 
 	prefix := ctx.UserValue("prefix").(string)
 
