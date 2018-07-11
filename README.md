@@ -31,7 +31,7 @@ as a admin platform. the following principle is important as i see.
 only from source now.
 
 ```
-cd $GOPATH
+cd $GOPATH/src
 git clone https://github.com/chenhg5/go-admin
 ```
 
