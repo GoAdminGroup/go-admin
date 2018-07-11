@@ -143,7 +143,7 @@ func NotFoundHandler(ctx *fasthttp.RequestCtx)  {
 
 	defer controller.GlobalDeferHandler(ctx)
 
-	if !PathExist(string(ctx.Path())) {
+	if !PathExist("./resources" + string(ctx.Path())) {
 		ctx.SetStatusCode(fasthttp.StatusNotFound)
 		ctx.SetContentType("application/json")
 		ctx.WriteString(`{"code":404, "msg":"route not found"}`)

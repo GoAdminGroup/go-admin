@@ -1,12 +1,11 @@
 package auth
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
 	"strconv"
 	"time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {
@@ -16,8 +15,7 @@ func Check(password []byte, username string) (user User, ok bool) {
 	if len(admin) < 1 {
 		ok = false
 	} else {
-		hashpwd := EncodePassword(password)
-		if hashpwd == admin[0]["password"].(string) {
+		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
 			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
 			user.Level = "super"
@@ -31,11 +29,21 @@ func Check(password []byte, username string) (user User, ok bool) {
 	return
 }
 
+func ComparePassword(comPwd []byte, pwdHash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(pwdHash), comPwd)
+	if err != nil {
+		return false
+	} else {
+		return true
+	}
+}
+
 func EncodePassword(pwd []byte) string {
-	hash := sha256.New()
-	hash.Write(pwd)
-	md := hash.Sum(nil)
-	return hex.EncodeToString(md)
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
+	if err != nil {
+		return ""
+	}
+	return string(hash[:])
 }
 
 func SetCookie(ctx *fasthttp.RequestCtx, user User) bool {

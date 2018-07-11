@@ -113,6 +113,10 @@
 			"revisionTime": "2016-11-14T21:01:44Z"
 		},
 		{
+			"path": "golang.org/x/crypto/bcrypt",
+			"revision": ""
+		},
+		{
 			"path": "golang.org/x/sys/unix",
 			"revision": ""
 		},
