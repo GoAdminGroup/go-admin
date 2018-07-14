@@ -182,6 +182,7 @@ login with username:<strong>admin</strong>, password:<strong>admin</strong>
 - cross : cross compile
 - pages : compile html into go file
 - assets : compile assets into go file
+- fmt
 
 ## powerd by
 
