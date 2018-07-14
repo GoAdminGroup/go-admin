@@ -17,5 +17,5 @@ var EnvConfig = map[string]interface{}{
 	"REDIS_PASSWORD": "",
 	"REDIS_DB":       1,
 
-	"PORTABLE": false,
+	"PORTABLE": true,
 }

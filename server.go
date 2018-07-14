@@ -120,7 +120,7 @@ func GetFileSuffix(path string) string {
 	suffix := filepath.Ext(path)
 	rs := []rune(suffix)
 	length := len(rs)
-	return string(rs[1 : length-0])
+	return string(rs[1: length-0])
 }
 
 func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
@@ -128,8 +128,9 @@ func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
 	data, err := Asset("resources" + path)
 	if err != nil {
 		fmt.Println(err)
-		ctx.Response.SetStatusCode(500)
-		ctx.WriteString("error")
+		ctx.SetStatusCode(fasthttp.StatusNotFound)
+		ctx.SetContentType("application/json")
+		ctx.WriteString(`{"code":404, "msg":"route not found"}`)
 	} else {
 		ctx.Response.Header.Set("Content-Type", "text/"+GetFileSuffix(path)+"; charset=utf-8")
 		ctx.Response.SetStatusCode(200)
@@ -139,20 +140,20 @@ func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
 
 var fsHandler fasthttp.RequestHandler
 
-func NotFoundHandler(ctx *fasthttp.RequestCtx)  {
+func NotFoundHandler(ctx *fasthttp.RequestCtx) {
 
 	defer controller.GlobalDeferHandler(ctx)
 
-	if !PathExist("./resources" + string(ctx.Path())) {
-		ctx.SetStatusCode(fasthttp.StatusNotFound)
-		ctx.SetContentType("application/json")
-		ctx.WriteString(`{"code":404, "msg":"route not found"}`)
-	} else {
-		if !config.EnvConfig["PORTABLE"].(bool) {
-			fsHandler(ctx)
+	if !config.EnvConfig["PORTABLE"].(bool) {
+		if !PathExist("./resources" + string(ctx.Path())) {
+			ctx.SetStatusCode(fasthttp.StatusNotFound)
+			ctx.SetContentType("application/json")
+			ctx.WriteString(`{"code":404, "msg":"route not found"}`)
 		} else {
-			fsHandlerPortable(ctx)
+			fsHandler(ctx)
 		}
+	} else {
+		fsHandlerPortable(ctx)
 	}
 }
 

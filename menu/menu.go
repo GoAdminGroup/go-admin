@@ -33,7 +33,7 @@ func SetGlobalMenu() {
 		})
 	}
 
-	menulist := RecursiveMenu(menus, 0)
+	menulist := ConstructMenuTree(menus, 0)
 
 	(*GlobalMenu).GlobalMenuOption = menuOption
 	(*GlobalMenu).GlobalMenuList = menulist
@@ -44,14 +44,14 @@ func (menu *Menu) SexMaxOrder(order int64) {
 	menu.MaxOrder = order
 }
 
-func RecursiveMenu(menus []map[string]interface{}, parentId int64) []MenuItem {
+func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuItem {
 
 	branch := make([]MenuItem, 0)
 
 	for j := 0; j < len(menus); j++ {
 		if parentId == menus[j]["parent_id"].(int64) {
 
-			childList := RecursiveMenu(menus, menus[j]["id"].(int64))
+			childList := ConstructMenuTree(menus, menus[j]["id"].(int64))
 
 			child := MenuItem{
 				menus[j]["title"].(string),
