@@ -3,9 +3,9 @@ package auth
 import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"time"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {

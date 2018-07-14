@@ -47,6 +47,7 @@ func Uuid(length int64) string {
 	}
 	return uuid
 }
+
 func Random(strings []string) ([]string, error) {
 	for i := len(strings) - 1; i > 0; i-- {
 		num := fastrand.Intn(i + 1)

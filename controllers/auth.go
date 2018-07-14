@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/valyala/fasthttp"
 	"bytes"
+	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/template"
 )

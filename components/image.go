@@ -1,8 +1,8 @@
 package components
 
 type ImgAttribute struct {
-	Name string
-	Witdh string
+	Name   string
+	Witdh  string
 	Height string
 }
 

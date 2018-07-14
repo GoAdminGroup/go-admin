@@ -5,7 +5,7 @@ type Component interface {
 }
 
 type Attribute struct {
-	Name string
+	Name    string
 	Content string
 }
 

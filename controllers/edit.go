@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"github.com/valyala/fasthttp"
-	"goAdmin/menu"
 	"bytes"
+	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
-	"goAdmin/transform"
+	"goAdmin/menu"
 	"goAdmin/template"
+	"goAdmin/transform"
 )
 
 // 显示表单

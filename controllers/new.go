@@ -1,14 +1,13 @@
 package controller
 
 import (
-	"github.com/valyala/fasthttp"
-	"goAdmin/menu"
 	"bytes"
-	"goAdmin/transform"
-	"goAdmin/template"
+	"github.com/valyala/fasthttp"
 	"goAdmin/config"
+	"goAdmin/menu"
+	"goAdmin/template"
+	"goAdmin/transform"
 )
-
 
 // 显示新建表单
 func ShowNewForm(ctx *fasthttp.RequestCtx) {

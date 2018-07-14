@@ -37,7 +37,7 @@ func SetGlobalMenu() {
 
 	(*GlobalMenu).GlobalMenuOption = menuOption
 	(*GlobalMenu).GlobalMenuList = menulist
-	(*GlobalMenu).MaxOrder = menus[len(menus) - 1]["parent_id"].(int64)
+	(*GlobalMenu).MaxOrder = menus[len(menus)-1]["parent_id"].(int64)
 }
 
 func (menu *Menu) SexMaxOrder(order int64) {
