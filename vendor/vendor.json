@@ -27,6 +27,48 @@
 			"revisionTime": "2018-07-12T12:57:03Z"
 		},
 		{
+			"checksumSHA1": "nVXciulY6rLU5aGPqX/uMMSaFAQ=",
+			"path": "github.com/go-redis/redis/internal",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "GQZsUVg/+6UpQAYpc4luMvMutSI=",
+			"path": "github.com/go-redis/redis/internal/consistenthash",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "GE9tg94JwCzMbBwn3Q2LaFs5Rx0=",
+			"path": "github.com/go-redis/redis/internal/hashtag",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "MAwurWthIlVoynFQu1LRY0IrftQ=",
+			"path": "github.com/go-redis/redis/internal/pool",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "2DZs/18lBWzZk2rxWLVtPUzNXhs=",
+			"path": "github.com/go-redis/redis/internal/proto",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "sjbjSJrTdvyDwNjrWjTNeXgUhaU=",
+			"path": "github.com/go-redis/redis/internal/singleflight",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
+			"checksumSHA1": "SvyqZrzHTVxCIBoawql2ucvfWLE=",
+			"path": "github.com/go-redis/redis/internal/util",
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
+		},
+		{
 			"checksumSHA1": "W+IoIME5mgWjwU+dOlh3DZEZEN4=",
 			"path": "github.com/go-sql-driver/mysql",
 			"revision": "749ddf1598b47e3cd909414bda735fe790ef3d30",
