@@ -3,10 +3,6 @@
 	"ignore": "test",
 	"package": [
 		{
-			"path": "-vvv",
-			"revision": ""
-		},
-		{
 			"checksumSHA1": "EDr3Ou14mAd1g2X1AL1NAh8t6zw=",
 			"path": "github.com/NebulousLabs/fastrand",
 			"revision": "3cf7173006a0b7d2371fa1a220da7f9d48c7827c",
