@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "EDr3Ou14mAd1g2X1AL1NAh8t6zw=",
+			"path": "github.com/NebulousLabs/fastrand",
+			"revision": "3cf7173006a0b7d2371fa1a220da7f9d48c7827c",
+			"revisionTime": "2018-02-08T21:04:44Z"
+		},
+		{
 			"checksumSHA1": "TWP7iCok6v14DRpFE7kmgKpztac=",
 			"path": "github.com/buaazp/fasthttprouter",
 			"revision": "28db72dff5a1512dab256b4b7f85c5aa8c36cf73",
@@ -114,6 +120,10 @@
 		},
 		{
 			"path": "golang.org/x/crypto/bcrypt",
+			"revision": ""
+		},
+		{
+			"path": "golang.org/x/crypto/blake2b",
 			"revision": ""
 		},
 		{
