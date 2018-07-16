@@ -3,7 +3,7 @@ package auth
 import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/golang/crypto/bcrypt"
 	"strconv"
 	"time"
 )

@@ -21,14 +21,22 @@
 			"revisionTime": "2016-09-05T20:13:09Z"
 		},
 		{
+			"checksumSHA1": "gUzp4ZzbcBdDFfErv+LJuj6zDl8=",
 			"path": "github.com/go-redis/redis",
-			"revision": ""
+			"revision": "ab1a52f0c9e9ebd920caba4492af5af4242705e0",
+			"revisionTime": "2018-07-12T12:57:03Z"
 		},
 		{
 			"checksumSHA1": "W+IoIME5mgWjwU+dOlh3DZEZEN4=",
 			"path": "github.com/go-sql-driver/mysql",
 			"revision": "749ddf1598b47e3cd909414bda735fe790ef3d30",
 			"revisionTime": "2018-06-18T11:59:01Z"
+		},
+		{
+			"checksumSHA1": "QdLDffDTptE6fjfrIevrmCgnnug=",
+			"path": "github.com/golang/crypto/bcrypt",
+			"revision": "a49355c7e3f8fe157a85be2f77e6e269a0f89602",
+			"revisionTime": "2018-06-20T09:14:27Z"
 		},
 		{
 			"checksumSHA1": "rmCbOBewXcbEdHRerzoanS+kI2U=",
@@ -123,22 +131,6 @@
 			"path": "github.com/valyala/tcplisten",
 			"revision": "ceec8f93295a060cdb565ec25e4ccf17941dbd55",
 			"revisionTime": "2016-11-14T21:01:44Z"
-		},
-		{
-			"path": "golang.org/x/crypto/bcrypt",
-			"revision": ""
-		},
-		{
-			"path": "golang.org/x/crypto/blake2b",
-			"revision": ""
-		},
-		{
-			"path": "golang.org/x/sys/unix",
-			"revision": ""
-		},
-		{
-			"path": "google.golang.org/appengine/cloudsql",
-			"revision": ""
 		}
 	],
 	"rootPath": "goAdmin"
