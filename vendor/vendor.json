@@ -77,6 +77,12 @@
 			"revisionTime": "2017-02-06T15:57:36Z"
 		},
 		{
+			"checksumSHA1": "S1hwXXk0F7KHj9xRH0vkRwFgzTM=",
+			"path": "github.com/shiyanhui/hero",
+			"revision": "f4b770cdc44f6f47a7a1db3431cea6338220c9cb",
+			"revisionTime": "2018-04-05T01:48:29Z"
+		},
+		{
 			"checksumSHA1": "LTOa3BADhwvT0wFCknPueQALm8I=",
 			"path": "github.com/valyala/bytebufferpool",
 			"revision": "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7",
