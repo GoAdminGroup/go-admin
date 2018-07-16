@@ -33,6 +33,7 @@ only from source now.
 ```
 cd $GOPATH/src
 git clone https://github.com/chenhg5/go-admin
+mv go-admin goAdmin
 ```
 
 ## usage 
