@@ -4,33 +4,31 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/chenhg5/go-admin)](https://goreportcard.com/report/github.com/chenhg5/go-admin)
 
-[中文文档](./README_CN.md)
+遗失的Golang语言编写的Web管理平台构建框架 
 
-the missing golang admin builder tool. 
+对于一个管理平台来说，有几个东西是重要的：
 
-as a admin platform. the following principle is important as i see.
-
-- security and easy to use
-- independent of business platform
+- 安全性和易于使用
+- 独立性，独立于业务系统
 
 ![](https://ws3.sinaimg.cn/large/006tNc79ly1ft048byoafj31kw0w847v.jpg)
 
-## feature
+## 特征
 
-- beautiful admin interface builder powerd by adminlte
-- configurable which help manage your database data easily
-- powerful auth manage system
-- writed by go
-- portable
-- easy to deploy
+- 使用adminlte构建的漂亮的管理界面
+- 可配置的，易于管理数据库数据
+- 完善的认证系统
+- 使用Go编写
+- 可移植的
+- 部署简单
 
-## requirements
+## 环境要求
 
 - [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
 
-## install
+## 安装
 
-only from source now.
+目前只能从源码安装，如下：
 
 ```
 cd $GOPATH/src
@@ -38,15 +36,17 @@ git clone https://github.com/chenhg5/go-admin
 mv go-admin goAdmin
 ```
 
-## usage 
+## 使用 
 
-### Step 1 : create a table config file 
+### 第一步：创建一个数据表的配置文件，参数为要管理的表名 
 
 ```
 ./goman create --table=user
 ```
 
-### Step 2 : table config
+windows用户请使用 goman.exe
+
+### 第二步：配置表格显示编辑信息
 
 models/user.go
 
@@ -113,7 +113,7 @@ func GetUserTable() (userTable GlobalTable) {
 
 ```
 
-### Step 3 : route & database config
+### 第三步：路由信息配置
 
 - config/router.go
 
@@ -153,41 +153,41 @@ var EnvConfig = map[string]interface{}{
 }
 ```
 
-### Step 4 : import sql
+### 第四步：导入sql文件都数据库中
 
 import admin.sql into database
 
-### Step 5 : load dependency
+### 第五步：加载依赖
 
 ```
 make deps
 ```
 
-### Step 6 : Runit & Enjoy ☕
+### 第六步：运行 ☕
 
 ```
 make
 ```
-visit [http://localhost:4003/login](http://localhost:4003/login) by browser
+访问 [http://localhost:4003/login](http://localhost:4003/login)
 
-login with username:<strong>admin</strong>, password:<strong>admin</strong>
+使用账户名：admin， 密码：admin访问
 
 ![](https://ws1.sinaimg.cn/large/006tKfTcly1ft3wwounwjj31kw0w17wl.jpg)
 
-## make command
+## make 命令
 
 - build
 - test
 - clean
 - run
 - restart
-- deps : install dependency
-- cross : cross compile
-- pages : compile html into go file
-- assets : compile assets into go file
+- deps : 安装依赖
+- cross : 跨平台编译
+- pages : 将html文件编译为go文件
+- assets : 将静态文件编译为go文件
 - fmt
 
-## powerd by
+## 技术支持
 
 - [fasthttp](https://github.com/valyala/fasthttp)
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
@@ -195,24 +195,22 @@ login with username:<strong>admin</strong>, password:<strong>admin</strong>
 
 ## todo
 
-- [x] add [go-bindata](https://github.com/go-bindata/go-bindata) support
-- [X] add more components
-- [X] menu structure
-- [ ] rcba auth
-- [ ] custom pages
-- [ ] combine assets
-- [ ] auto install engine
-- [ ] demo site
-- [ ] performance analysis
+- [x] 增加 [go-bindata](https://github.com/go-bindata/go-bindata) 支持
+- [X] 增加更多表格表单组件
+- [X] 菜单结构
+- [ ] rcba认证
+- [ ] 自定义页面
+- [ ] 合并优化静态资源
+- [ ] 自动安装引擎
+- [ ] demo网站的搭建
+- [ ] 性能分析
 
-## contribution
+## 贡献
 
-very welcome to pr
+非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 
-<strong>here to join into the develop team</strong>
+QQ群: 756664859
 
-QQ Group Num: 756664859
-
-## special thanks
+## 十分感谢
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)

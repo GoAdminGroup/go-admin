@@ -27,7 +27,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 		pageSize = []byte("10")
 	}
 
-	thead, infoList, paginator, title, description := transform.TransfromData(string(page[:]), string(pageSize[:]), path, prefix)
+	thead, infoList, paginator, title, description := transform.TransfromData(string(page), string(pageSize), path, prefix)
 
 	menu.GlobalMenu.SetActiveClass(path)
 
