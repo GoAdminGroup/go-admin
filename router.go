@@ -11,7 +11,7 @@ func InitRouter() *fasthttprouter.Router {
 
 	router := fasthttprouter.New()
 	router.GET("/login", controller.ShowLogin)
-	router.POST("/signup", controller.Auth)
+	router.POST("/signin", controller.Auth)
 	router.GET("/install", controller.ShowInstall)
 
 	router.POST("/logout", AuthMiddleware(controller.Logout))

@@ -58,7 +58,7 @@ func GetLoginPage(buffer *bytes.Buffer) {
 
 
             <!-- Start Sign In Form -->
-            <form action="/signup" method="post" id="sign-up-form" class="fh5co-form animate-box"
+            <form action="/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
                   data-animate-effect="fadeIn">
                 <h2>GoAdmin</h2>
                 <div class="form-group">
@@ -137,7 +137,7 @@ func GetLoginPage(buffer *bytes.Buffer) {
         $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: '/signup',
+            url: '/signin',
             async: 'true',
             data: {
                 'username': $("#username").val(),
