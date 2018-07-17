@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"github.com/golang/crypto/bcrypt"
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
-	"github.com/golang/crypto/bcrypt"
 	"strconv"
 	"time"
 )
