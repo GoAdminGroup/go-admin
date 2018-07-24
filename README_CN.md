@@ -115,16 +115,16 @@ func GetUserTable() (userTable GlobalTable) {
 
 ### 第三步：路由信息配置
 
-- config/router.go
+- models/global.go
 
 ```
-package config
+package models
 
-import "goAdmin/models"
-
-var GlobalTableList = map[string]models.GlobalTable{
-	"user" : models.GetUserTable(),
+// map下标是路由前缀，对应的值是GlobalTable类型，为表单与表格的数据抽象表示
+var GlobalTableList = map[string]GlobalTable{
+	"user": GetUserTable(),
 }
+
 ```
 
 - config/config.go
@@ -150,6 +150,8 @@ var EnvConfig = map[string]interface{}{
 	"REDIS_DB":       1,
 	
 	"PORTABLE": false,  // 是否跨平台可移植
+	
+	"AUTH_DOMAIN": "localhost",
 }
 ```
 
