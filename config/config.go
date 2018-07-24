@@ -18,4 +18,6 @@ var EnvConfig = map[string]interface{}{
 	"REDIS_DB":       1,
 
 	"PORTABLE": false,
+
+	"AUTH_DOMAIN": "localhost",
 }

@@ -6,6 +6,7 @@ import (
 	"goAdmin/connections/mysql"
 	"strconv"
 	"time"
+	"goAdmin/config"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {
@@ -53,7 +54,7 @@ func SetCookie(ctx *fasthttp.RequestCtx, user User) bool {
 	var c fasthttp.Cookie
 	c.SetKey("go_admin_session")
 	c.SetValue(sessionKey)
-	c.SetDomain("localhost")
+	c.SetDomain(config.EnvConfig["AUTH_DOMAIN"].(string))
 	c.SetExpire(time.Now().Add(time.Hour * 48))
 	ctx.Response.Header.SetCookie(&c)
 
@@ -64,7 +65,7 @@ func DelCookie(ctx *fasthttp.RequestCtx) bool {
 	var c fasthttp.Cookie
 	c.SetKey("go_admin_session")
 	c.SetValue("")
-	c.SetDomain("localhost")
+	c.SetDomain(config.EnvConfig["AUTH_DOMAIN"].(string))
 	c.SetExpire(time.Now())
 	ctx.Response.Header.SetCookie(&c)
 
