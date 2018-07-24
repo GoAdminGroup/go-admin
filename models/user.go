@@ -1,6 +1,8 @@
 package models
 
-import "goAdmin/components"
+import (
+	"goAdmin/components"
+)
 
 func GetUserTable() (userTable GlobalTable) {
 

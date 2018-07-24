@@ -6,7 +6,7 @@ import (
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/template"
-	"goAdmin/transform"
+	"goAdmin/models"
 )
 
 // 显示列表
@@ -27,7 +27,12 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 		pageSize = []byte("10")
 	}
 
-	thead, infoList, paginator, title, description := transform.TransfromData(string(page), string(pageSize), path, prefix)
+	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+		"page" : string(page),
+		"path" : string(path),
+		"prefix" : prefix,
+		"pageSize" : string(pageSize),
+	})
 
 	menu.GlobalMenu.SetActiveClass(path)
 

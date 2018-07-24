@@ -3,10 +3,9 @@ package controller
 import (
 	"bytes"
 	"github.com/valyala/fasthttp"
-	"goAdmin/config"
 	"goAdmin/menu"
 	"goAdmin/template"
-	"goAdmin/transform"
+	"goAdmin/models"
 )
 
 // 显示新建表单
@@ -32,9 +31,9 @@ func ShowNewForm(ctx *fasthttp.RequestCtx) {
 	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
-		template.NewPanelPjax(config.GlobalTableList[prefix].Form.FormList, url, previous, id, config.GlobalTableList[prefix].Form.Title, config.GlobalTableList[prefix].Form.Description, buffer)
+		template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url, previous, id, models.GlobalTableList[prefix].Form.Title, models.GlobalTableList[prefix].Form.Description, buffer)
 	} else {
-		template.NewPanel(config.GlobalTableList[prefix].Form.FormList, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, config.GlobalTableList[prefix].Form.Title, config.GlobalTableList[prefix].Form.Description, buffer)
+		template.NewPanel(models.GlobalTableList[prefix].Form.FormList, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, models.GlobalTableList[prefix].Form.Title, models.GlobalTableList[prefix].Form.Description, buffer)
 	}
 
 	ctx.Response.AppendBody(buffer.Bytes())
@@ -52,7 +51,7 @@ func NewForm(ctx *fasthttp.RequestCtx) {
 
 	form, _ := ctx.MultipartForm()
 
-	transform.InsertDataFromDatabase(prefix, (*form).Value)
+	models.GlobalTableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
 
 	// TODO: 增加反馈
 

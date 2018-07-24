@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/valyala/fasthttp"
-	"goAdmin/transform"
+	"goAdmin/models"
 )
 
 func DeleteData(ctx *fasthttp.RequestCtx) {
@@ -13,7 +13,7 @@ func DeleteData(ctx *fasthttp.RequestCtx) {
 
 	id := string(ctx.FormValue("id")[:])
 
-	transform.DeleteDataFromDatabase(prefix, id)
+	models.GlobalTableList[prefix].DeleteDataFromDatabase(prefix, id)
 
 	// TODO: 增加反馈
 

@@ -6,7 +6,7 @@ import (
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/template"
-	"goAdmin/transform"
+	"goAdmin/models"
 )
 
 // 显示表单
@@ -30,7 +30,8 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 		pageSize = "10"
 	}
 
-	formData, title, description := transform.TransfromFormData(id, prefix)
+	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
+
 	url := "/edit/" + prefix + "?id=" + id
 	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
@@ -55,7 +56,7 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 
 	form, _ := ctx.MultipartForm()
 
-	transform.UpdateDataFromDatabase(prefix, (*form).Value)
+	models.GlobalTableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
 
 	// TODO: 增加反馈
 
