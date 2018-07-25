@@ -29,6 +29,8 @@ func InitRouter() *fasthttprouter.Router {
 	router.POST("/delete/:prefix", AuthMiddleware(controller.DeleteData))
 	router.POST("/new/:prefix", AuthMiddleware(controller.NewForm))
 
+	router.POST("/install/database/check", controller.CheckDatabase)
+
 	return router
 }
 

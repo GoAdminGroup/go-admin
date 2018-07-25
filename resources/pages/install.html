@@ -27,30 +27,33 @@
                                 <form method="post" action="#">
                                     <div class="field" style="width: calc(73% - 0.75rem);">
                                         <label for="demo-name">地址</label>
-                                        <input type="text" name="demo-name" id="host" value="" placeholder="127.0.0.1">
+                                        <input type="text" name="demo-name" id="db-host" value=""
+                                               placeholder="127.0.0.1">
                                     </div>
                                     <div class="field quarter">
                                         <label for="demo-email">端口</label>
-                                        <input type="email" name="demo-email" id="port" value=""
+                                        <input type="email" name="demo-email" id="db-port" value=""
                                                placeholder="3306">
                                     </div>
                                     <div class="field">
                                         <label for="demo-name">账号</label>
-                                        <input type="text" name="demo-name" id="username" value="" placeholder="root">
+                                        <input type="text" name="demo-name" id="db-username" value=""
+                                               placeholder="root">
                                     </div>
                                     <div class="field">
                                         <label for="demo-email">密码</label>
-                                        <input type="password" name="demo-email" id="password" value=""
+                                        <input type="password" name="demo-email" id="db-password" value=""
                                                placeholder="root">
                                     </div>
                                     <div class="field">
                                         <label for="demo-email">数据库名</label>
-                                        <input type="text" name="demo-email" id="database" value=""
+                                        <input type="text" name="demo-email" id="db-database" value=""
                                                placeholder="database">
                                     </div>
                                     <div class="field" style="margin-top: 20px;">
                                         <ul class="actions">
-                                            <li><input type="submit" value="连接测试" class="special color2"></li>
+                                            <li><input id="test-con-btn" type="submit" value="连接测试"
+                                                       class="special color2"></li>
                                             <li><input class="input-next" type="reset" value="下一步"></li>
                                         </ul>
                                     </div>
@@ -77,14 +80,14 @@
                         </div>
                         <div class="inner columns aligned" style="padding: 2.5rem 3.5rem 2rem 3.5rem;">
                             <div class="span-2-5">
-                                <!-- <h3 class="major">Form</h3> -->
-                                <form method="post" action="#">
+                                <form method="post" action="#" id="table-div">
                                     <div class="field quarter">
                                         <input type="checkbox" id="demo-copy" name="demo-copy" class="color2">
                                         <label for="demo-copy">users</label>
                                     </div>
                                     <div class="field quarter">
-                                        <input type="checkbox" id="demo-human" name="demo-human" class="color2" checked="">
+                                        <input type="checkbox" id="demo-human" name="demo-human" class="color2"
+                                               checked="">
                                         <label for="demo-human">ninepic</label>
                                     </div>
                                     <div class="field quarter">
@@ -92,7 +95,8 @@
                                         <label for="demo-copy1">users</label>
                                     </div>
                                     <div class="field quarter">
-                                        <input type="checkbox" id="demo-human1" name="demo-human1" class="color2" checked="">
+                                        <input type="checkbox" id="demo-human1" name="demo-human1" class="color2"
+                                               checked="">
                                         <label for="demo-human1">ninepic</label>
                                     </div>
                                     <div class="field quarter">
@@ -100,7 +104,8 @@
                                         <label for="demo-copy2">users</label>
                                     </div>
                                     <div class="field quarter">
-                                        <input type="checkbox" id="demo-human2" name="demo-human2" class="color2" checked="">
+                                        <input type="checkbox" id="demo-human2" name="demo-human2" class="color2"
+                                               checked="">
                                         <label for="demo-human2">ninepic</label>
                                     </div>
                                     <div class="field quarter">
@@ -108,7 +113,8 @@
                                         <label for="demo-copy3">users</label>
                                     </div>
                                     <div class="field quarter">
-                                        <input type="checkbox" id="demo-human3" name="demo-human3" class="color2" checked="">
+                                        <input type="checkbox" id="demo-human3" name="demo-human3" class="color2"
+                                               checked="">
                                         <label for="demo-human3">ninepic</label>
                                     </div>
                                     <div class="field" style="margin-top: 20px;">
@@ -137,7 +143,8 @@
                             <h2 class="major">设置字段</h2>
                             <p>User表</p>
                         </div>
-                        <div class="inner columns aligned" style="padding: 2.5rem 3.5rem 2rem 3.5rem;overflow-y: scroll;">
+                        <div class="inner columns aligned"
+                             style="padding: 2.5rem 3.5rem 2rem 3.5rem;overflow-y: scroll;">
                             <div class="span-2-5">
                                 <form method="post" action="#">
                                     <div class="field" style="width: calc(38% - 0.5rem);">
@@ -287,7 +294,7 @@
                                     <div class="field third">
                                         <label for="demo-category">编辑表单类型</label>
                                         <div class="select-wrapper">
-                                            <select name="demo-category" >
+                                            <select name="demo-category">
                                                 <option value="">-</option>
                                                 <option value="1">显示</option>
                                                 <option value="1">Text</option>
@@ -327,7 +334,7 @@
                                     <div class="field third">
                                         <label for="demo-category">编辑表单类型</label>
                                         <div class="select-wrapper">
-                                            <select name="demo-category" >
+                                            <select name="demo-category">
                                                 <option value="">-</option>
                                                 <option value="1">显示</option>
                                                 <option value="1">Text</option>
@@ -367,7 +374,7 @@
                                     <div class="field third">
                                         <label for="demo-category">编辑表单类型</label>
                                         <div class="select-wrapper">
-                                            <select name="demo-category" >
+                                            <select name="demo-category">
                                                 <option value="">-</option>
                                                 <option value="1">显示</option>
                                                 <option value="1">Text</option>
@@ -420,7 +427,8 @@
                                     </div>
                                     <div class="field">
                                         <label for="demo-email">确认密码</label>
-                                        <input type="password" name="demo-password_comfirm" id="password_comfirm" value=""
+                                        <input type="password" name="demo-password_comfirm" id="password_comfirm"
+                                               value=""
                                                placeholder="root">
                                     </div>
                                     <div class="field" style="margin-top: 20px;">
@@ -452,8 +460,8 @@
     var myFullpage = new fullpage('#fullpage', {
         anchors: ['first'],
         lazyLoad: true,
-        scrollBar:true,
-        autoScrolling:false
+        scrollBar: true,
+        autoScrolling: false
     });
 
     myFullpage.destroy();
@@ -464,6 +472,52 @@
     $(".input-prev").click(function (e) {
         myFullpage.moveSlideLeft()
     });
+
+    /** 处理逻辑 **/
+
+    // 测试连接
+    $('#test-con-btn').on('click', function (e) {
+        e.preventDefault();
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: '/install/database/check',
+            async: 'true',
+            data: {
+                'h': $("#db-host").val(),
+                'po': $("#db-port").val(),
+                'u': $("#db-username").val(),
+                'pa': $("#db-password").val(),
+                'db': $("#db-database").val()
+            },
+            success: function (data) {
+                console.log(data)
+                if (data.code === 0) {
+
+                    // html = "";
+                    //
+                    // for (i = 0; i < data.data.list.length; i++) {
+                    //     html += '<div class="field"><input type="checkbox" id="' +
+                    //             data.data.list[i] +
+                    //             '" name="table-' + i + '" class="color2"><label for="table-' + i + '">' +
+                    //             data.data.list[i]
+                    //             + '</label></div>';
+                    // }
+                    //
+                    // $("#table-div").html(html);
+
+                    alert(data.msg);
+
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error: function (data) {
+                alert("ok");
+            }
+        });
+    });
+
 </script>
 <style>
     .fp-controlArrow {
