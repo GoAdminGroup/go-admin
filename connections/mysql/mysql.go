@@ -115,7 +115,7 @@ func BeginTransactions() *sqlTx {
 }
 
 func (SqlTx *sqlTx) Exec(query string, args ...interface{}) (sql.Result, error) {
-	rs, err := SqlDB.Exec(query, args...)
+	rs, err := SqlTx.Tx.Exec(query, args...)
 	if err != nil {
 		return nil, err
 	}
