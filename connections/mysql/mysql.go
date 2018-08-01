@@ -7,14 +7,13 @@ import (
 	"goAdmin/config"
 )
 
-type sqlTx struct {
+type SqlTxStruct struct {
 	Tx *sql.Tx
 }
 
 var (
 	sqlDBmap map[string]*sql.DB
-	SqlDB    *sql.DB
-	SqlTx    sqlTx
+	SqlDB *sql.DB
 )
 
 // 只会执行一次在执行程序启动的时候
@@ -39,6 +38,62 @@ func InitDB(username string, password string, port string, ip string, databaseNa
 		SqlDB.SetMaxOpenConns(config.EnvConfig["DATABASE_MAX_OPEN_CON"].(int)) // 最大打开连接 = mysql最大连接数
 	}
 }
+
+func QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+
+	rs, err := sqlDBmap[con].Query(query, args...)
+
+	if err != nil {
+		if rs != nil {
+			rs.Close()
+		}
+		panic(err)
+	}
+
+	col, colErr := rs.Columns()
+
+	if colErr != nil {
+		if rs != nil {
+			rs.Close()
+		}
+		panic(colErr)
+	}
+
+	typeVal, err := rs.ColumnTypes()
+	if err != nil {
+		if rs != nil {
+			rs.Close()
+		}
+		panic(err)
+	}
+
+	results := make([]map[string]interface{}, 0)
+
+	for rs.Next() {
+		var colVar = make([]interface{}, len(col))
+		for i := 0; i < len(col); i++ {
+			SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
+		}
+		result := make(map[string]interface{})
+		if scanErr := rs.Scan(colVar...); scanErr != nil {
+			rs.Close()
+			panic(scanErr)
+		}
+		for j := 0; j < len(col); j++ {
+			SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
+		}
+		results = append(results, result)
+	}
+	if err := rs.Err(); err != nil {
+		if rs != nil {
+			rs.Close()
+		}
+		panic(err)
+	}
+	rs.Close()
+	return results, rs
+}
+
 
 func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 
@@ -104,17 +159,42 @@ func Exec(query string, args ...interface{}) sql.Result {
 	return rs
 }
 
-func BeginTransactions() *sqlTx {
+func BeginTransactionsByLevel() *SqlTxStruct {
+
+	//LevelDefault IsolationLevel = iota
+	//LevelReadUncommitted
+	//LevelReadCommitted
+	//LevelWriteCommitted
+	//LevelRepeatableRead
+	//LevelSnapshot
+	//LevelSerializable
+	//LevelLinearizable
+
+	SqlTx := new(SqlTxStruct)
+
+	tx, err := SqlDB.BeginTx(context.Background(),
+		&sql.TxOptions{Isolation: sql.LevelReadUncommitted})
+	if err != nil {
+		panic(err)
+	}
+	(*SqlTx).Tx = tx
+	return SqlTx
+}
+
+func BeginTransactions() *SqlTxStruct {
 	tx, err := SqlDB.BeginTx(context.Background(),
 		&sql.TxOptions{Isolation: sql.LevelDefault})
 	if err != nil {
 		panic(err)
 	}
-	SqlTx.Tx = tx
-	return &SqlTx
+
+	SqlTx := new(SqlTxStruct)
+
+	(*SqlTx).Tx = tx
+	return SqlTx
 }
 
-func (SqlTx *sqlTx) Exec(query string, args ...interface{}) (sql.Result, error) {
+func (SqlTx *SqlTxStruct) Exec(query string, args ...interface{}) (sql.Result, error) {
 	rs, err := SqlTx.Tx.Exec(query, args...)
 	if err != nil {
 		return nil, err
@@ -122,7 +202,7 @@ func (SqlTx *sqlTx) Exec(query string, args ...interface{}) (sql.Result, error) 
 	return rs, nil
 }
 
-func (SqlTx *sqlTx) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
+func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	rs, err := SqlTx.Tx.Query(query, args...)
 
 	if err != nil {
@@ -145,7 +225,7 @@ func (SqlTx *sqlTx) Query(query string, args ...interface{}) ([]map[string]inter
 	results := make([]map[string]interface{}, 0)
 
 	for rs.Next() {
-		var colVar = make([]interface{}, len(col))
+		var colVar= make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {
 			SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
 		}
@@ -166,7 +246,31 @@ func (SqlTx *sqlTx) Query(query string, args ...interface{}) ([]map[string]inter
 	return results, nil
 }
 
-func SetColVarType(colVar *[]interface{}, i int, typeName string) {
+type TxFn func(*SqlTxStruct) (error, map[string]interface{})
+
+func WithTransaction(fn TxFn) (err error, res map[string]interface{}) {
+
+	SqlTx := BeginTransactions()
+
+	defer func() {
+		if p := recover(); p != nil {
+			// a panic occurred, rollback and repanic
+			SqlTx.Tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			// something went wrong, rollback
+			SqlTx.Tx.Rollback()
+		} else {
+			// all good, commit
+			err = SqlTx.Tx.Commit()
+		}
+	}()
+
+	err, res = fn(SqlTx)
+	return
+}
+
+func SetColVarType(colVar *[]interface{}, i int, typeName string)  {
 	switch typeName {
 	case "INT":
 		var s sql.NullInt64
@@ -228,7 +332,7 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	}
 }
 
-func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
+func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string)  {
 	switch typeName {
 	case "INT":
 		temp := *(colVar.(*sql.NullInt64))
