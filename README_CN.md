@@ -61,19 +61,19 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "姓名",
 			Field:    "name",
 			TypeName: "varchar",
-			ExcuFun: func(value string) string {
-				return value
-			},
+			ExcuFun: func(model RowModel) string {
+                return model.Value
+            },
 		},
 		{
 			Head:     "性别",
 			Field:    "sex",
 			TypeName: "tinyint",
-			ExcuFun: func(value string) string {
-				if value == "1" {
+			ExcuFun: func(model RowModel) string {
+				if model。Value == "1" {
 					return "男"
 				}
-				if value == "2" {
+				if model。Value == "2" {
 					return "女"
 				}
 				return "未知"
@@ -110,7 +110,6 @@ func GetUserTable() (userTable GlobalTable) {
 
 	return
 }
-
 ```
 
 ### 第三步：路由信息配置

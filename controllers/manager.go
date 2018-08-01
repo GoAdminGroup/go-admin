@@ -1,6 +1,8 @@
 package controller
 
-import "github.com/valyala/fasthttp"
+import (
+	"github.com/valyala/fasthttp"
+)
 
 func NewManager(ctx *fasthttp.RequestCtx)  {
 	

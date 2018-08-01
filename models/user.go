@@ -11,35 +11,35 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			ExcuFun: func(value string) string {
-				return value
+			ExcuFun: func(model RowModel) string {
+				return model.Value
 			},
 		},
 		{
 			Head:     "头像",
 			Field:    "avatar",
 			TypeName: "varchar",
-			ExcuFun: func(value string) string {
-				return components.Image.GetContent(value)
+			ExcuFun: func(model RowModel) string {
+				return components.Image.GetContent(model.Value)
 			},
 		},
 		{
 			Head:     "姓名",
 			Field:    "name",
 			TypeName: "varchar",
-			ExcuFun: func(value string) string {
-				return value
+			ExcuFun: func(model RowModel) string {
+				return model.Value
 			},
 		},
 		{
 			Head:     "性别",
 			Field:    "sex",
 			TypeName: "tinyint",
-			ExcuFun: func(value string) string {
-				if value == "1" {
+			ExcuFun: func(model RowModel) string {
+				if model.Value == "1" {
 					return "男"
 				}
-				if value == "2" {
+				if model.Value == "2" {
 					return "女"
 				}
 				return "未知"
@@ -49,16 +49,16 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "省份",
 			Field:    "province",
 			TypeName: "varchar",
-			ExcuFun: func(value string) string {
-				return value
+			ExcuFun: func(model RowModel) string {
+				return model.Value
 			},
 		},
 		{
 			Head:     "城市",
 			Field:    "city",
 			TypeName: "varchar",
-			ExcuFun: func(value string) string {
-				return value
+			ExcuFun: func(model RowModel) string {
+				return model.Value
 			},
 		},
 	}

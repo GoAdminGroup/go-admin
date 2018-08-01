@@ -17,8 +17,13 @@ type FormStruct struct {
 	Value    string
 }
 
+type RowModel struct {
+	ID    int64
+	Value string
+}
+
 // 数据过滤函数
-type FieldValueFun func(value string) string
+type FieldValueFun func(value RowModel) string
 
 // 展示列
 type FieldStruct struct {
@@ -96,7 +101,10 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		tempModelData := make(map[string]string, 0)
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
-			tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]))
+			tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
+				res[i]["id"].(int64),
+				GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
+			})
 		}
 
 		tempModelData["id"] = GetStringFromType("int", res[i]["id"])
