@@ -207,7 +207,16 @@ func GetPermissionTable() (userTable GlobalTable) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: "select",
+			Options: []map[string]string{
+				{"value": "GET", "field": "GET"},
+				{"value": "PUT", "field": "PUT"},
+				{"value": "POST", "field": "POST"},
+				{"value": "DELETE", "field": "DELETE"},
+				{"value": "PATCH", "field": "PATCH"},
+				{"value": "OPTIONS", "field": "OPTIONS"},
+				{"value": "HEAD", "field": "HEAD"},
+			},
 		}, {
 			Head:     "路径",
 			Field:    "http_path",

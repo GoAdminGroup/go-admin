@@ -115,6 +115,47 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
             <textarea name="http_path" class="form-control" rows="5" placeholder="Input text"></textarea>
         </div>
     `)
+			} else if data.FormType == "select" {
+				buffer.WriteString(`
+        <label for="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" class="col-sm-2 control-label">`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
+        <div class="col-sm-8">
+            <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+                `)
+				for _, v := range data.Options {
+					buffer.WriteString(`
+                    <option value='`)
+					hero.EscapeHTML(v["value"], buffer)
+					buffer.WriteString(`'>`)
+					hero.EscapeHTML(v["field"], buffer)
+					buffer.WriteString(`</option>
+                `)
+				}
+				buffer.WriteString(`
+            </select>
+            <input type="hidden" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`[]">
+            <span class="help-block">
+                    <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+                </span>
+        </div>
+        <script>
+            $(".`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`").select2({
+                allowClear: true,
+                placeholder: "`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`"
+            });
+        </script>
+    `)
 			}
 		}
 		buffer.WriteString(`

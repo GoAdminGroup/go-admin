@@ -31,5 +31,24 @@
         <div class="col-sm-8">
             <textarea name="http_path" class="form-control" rows="5" placeholder="Input text"></textarea>
         </div>
+    <% } else if data.FormType == "select" { %>
+        <label for="<%= data.Field %>" class="col-sm-2 control-label"><%= data.Head %></label>
+        <div class="col-sm-8">
+            <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="<%= data.Field %>[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+                <% for _, v := range data.Options { %>
+                    <option value='<%= v["value"] %>'><%= v["field"] %></option>
+                <% } %>
+            </select>
+            <input type="hidden" name="<%= data.Field %>[]">
+            <span class="help-block">
+                    <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+                </span>
+        </div>
+        <script>
+            $(".<%= data.Field %>").select2({
+                allowClear: true,
+                placeholder: "<%= data.Head %>"
+            });
+        </script>
     <% } %>
 <% } %>

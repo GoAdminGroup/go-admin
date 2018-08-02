@@ -35,6 +35,7 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <link rel="stylesheet" href="../../assets/iCheck/polaris/polaris.css">
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
+    <link rel="stylesheet" href="../../assets/select2/select2.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -308,7 +309,9 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 `)
 		} else if data.FormType == "text" {
 			buffer.WriteString(`
-    <label for="json" class="col-sm-2 control-label">`)
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2 control-label">`)
 			hero.EscapeHTML(data.Head, buffer)
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
@@ -320,13 +323,17 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`" value='`)
 			hero.EscapeHTML(data.Value, buffer)
-			buffer.WriteString(`' class="form-control json" placeholder="Input json">
+			buffer.WriteString(`' class="form-control json" placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`">
         </div>
     </div>
 `)
 		} else if data.FormType == "password" {
 			buffer.WriteString(`
-    <label for="password" class="col-sm-2 control-label">`)
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2 control-label">`)
 			hero.EscapeHTML(data.Head, buffer)
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
@@ -338,20 +345,69 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`" value="`)
 			hero.EscapeHTML(data.Value, buffer)
-			buffer.WriteString(`" class="form-control password" placeholder="Input Password">
+			buffer.WriteString(`" class="form-control password" placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`">
         </div>
     </div>
 `)
 		} else if data.FormType == "textarea" {
 			buffer.WriteString(`
-    <label for="http_path" class="col-sm-2 control-label">`)
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2 control-label">`)
 			hero.EscapeHTML(data.Head, buffer)
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
-        <textarea name="http_path" class="form-control" rows="5" placeholder="Input text">`)
+        <textarea name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="form-control" rows="5" placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`">`)
 			hero.EscapeHTML(data.Value, buffer)
 			buffer.WriteString(`</textarea>
     </div>
+`)
+		} else if data.FormType == "select" {
+			buffer.WriteString(`
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2 control-label">`)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`</label>
+    <div class="col-sm-8">
+        <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+            `)
+			for _, v := range data.Options {
+				buffer.WriteString(`
+                <option value='`)
+				hero.EscapeHTML(v["value"], buffer)
+				buffer.WriteString(`'>`)
+				hero.EscapeHTML(v["field"], buffer)
+				buffer.WriteString(`</option>
+            `)
+			}
+			buffer.WriteString(`
+        </select>
+        <input type="hidden" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`[]">
+        <span class="help-block">
+            <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+        </span>
+    </div>
+    <script>
+        $(".`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`").select2({
+            allowClear: true,
+            placeholder: "`)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`"
+        });
+    </script>
 `)
 		}
 		buffer.WriteString(`

@@ -35,6 +35,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
     <link rel="stylesheet" href="../../assets/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="../../assets/select2/select2.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins

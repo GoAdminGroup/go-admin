@@ -15,6 +15,7 @@ type FormStruct struct {
 	Editable bool
 	FormType string
 	Value    string
+	Options  []map[string]string
 }
 
 type RowModel struct {
