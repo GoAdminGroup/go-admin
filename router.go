@@ -36,30 +36,6 @@ func InitRouter() *fasthttprouter.Router {
 	router.GET("/install", controller.ShowInstall)
 	router.POST("/install/database/check", controller.CheckDatabase)
 
-	// 管理员管理
-	router.GET("/manager/list", controller.ShowManager)
-	router.POST("/manager/new", controller.NewManager)
-	router.POST("/manager/delete", controller.DeleteManager)
-	router.POST("/manager/edit", controller.EditManager)
-
-	// 管理权限管理
-	router.GET("/manager/rules/list", controller.ShowManagerRules)
-	router.POST("/manager/rules/new", controller.NewManagerRules)
-	router.POST("/manager/rules/delete", controller.DeleteManagerRules)
-	router.POST("/manager/rules/edit", controller.EditManagerRules)
-
-	// 管理角色管理
-	router.GET("/manager/roles/list", controller.ShowManagerRoles)
-	router.POST("/manager/roles/new", controller.NewManagerRoles)
-	router.POST("/manager/roles/delete", controller.DeleteManagerRoles)
-	router.POST("/manager/roles/edit", controller.EditManagerRoles)
-
-	// 操作日志管理
-	router.GET("/operation/log/list", controller.ShowOperationLog)
-	router.POST("/operation/log/new", controller.NewOperationLog)
-	router.POST("/operation/log/delete", controller.DeleteOperationLog)
-	router.POST("/operation/log/edit", controller.EditOperationLog)
-
 	return router
 }
 
