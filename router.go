@@ -42,13 +42,28 @@ func InitRouter() *fasthttprouter.Router {
 func AuthMiddleware(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return fasthttp.RequestHandler(func(ctx *fasthttp.RequestCtx) {
 
-		if user, ok := auth.Filter(ctx); ok {
+		var (
+			authOk   bool
+			filterOk bool
+			user     auth.User
+		)
+
+		if user, authOk, filterOk = auth.Filter(ctx); authOk && filterOk {
 			ctx.SetUserValue("cur_user", user)
 			h(ctx)
 			return
 		}
 
-		ctx.Response.Header.Add("Location", "/login")
-		ctx.Response.SetStatusCode(302)
+		if !authOk {
+			ctx.Response.Header.Add("Location", "/login")
+			ctx.Response.SetStatusCode(302)
+			return
+		}
+
+		if !filterOk {
+			ctx.Response.SetStatusCode(403)
+			ctx.WriteString(`{"code":403, "msg":"权限不够"}`)
+			return
+		}
 	})
 }
