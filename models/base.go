@@ -81,8 +81,10 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	thead := make([]string, 0)
 	fields := ""
 
+	columnsModel, _ := mysql.Query("show columns in " + tableModel.Info.Table)
+
 	for i := 0; i < len(tableModel.Info.FieldList); i++ {
-		if tableModel.Info.FieldList[i].Field != "id" {
+		if tableModel.Info.FieldList[i].Field != "id" && CheckInTable(columnsModel, tableModel.Info.FieldList[i].Field) {
 			fields += tableModel.Info.FieldList[i].Field + ","
 		}
 		thead = append(thead, tableModel.Info.FieldList[i].Head)
@@ -101,10 +103,18 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		tempModelData := make(map[string]string, 0)
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
-			tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
-				res[i]["id"].(int64),
-				GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
-			})
+
+			if CheckInTable(columnsModel, tableModel.Info.FieldList[j].Field) {
+				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
+					res[i]["id"].(int64),
+					GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
+				})
+			} else {
+				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
+					res[i]["id"].(int64),
+					"",
+				})
+			}
 		}
 
 		tempModelData["id"] = GetStringFromType("int", res[i]["id"])
@@ -183,6 +193,16 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 // 删数据
 func (tableModel GlobalTable) DeleteDataFromDatabase(prefix string, id string) {
 	mysql.Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+}
+
+// 检查字段是否在数据表中
+func CheckInTable(colums []map[string]interface{}, find string) bool {
+	for i := 0; i < len(colums); i++ {
+		if colums[i]["Field"].(string) == find {
+			return true
+		}
+	}
+	return false
 }
 
 func GetStringFromType(typeName string, value interface{}) string {

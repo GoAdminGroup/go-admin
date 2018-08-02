@@ -1,9 +1,5 @@
 package models
 
-import (
-	"goAdmin/components"
-)
-
 func GetUserTable() (userTable GlobalTable) {
 
 	userTable.Info.FieldList = []FieldStruct{
@@ -13,14 +9,6 @@ func GetUserTable() (userTable GlobalTable) {
 			TypeName: "int",
 			ExcuFun: func(model RowModel) string {
 				return model.Value
-			},
-		},
-		{
-			Head:     "头像",
-			Field:    "avatar",
-			TypeName: "varchar",
-			ExcuFun: func(model RowModel) string {
-				return components.Image.GetContent(model.Value)
 			},
 		},
 		{
