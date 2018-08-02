@@ -8,7 +8,10 @@
 </p>
 <p align="center">
   <a href="https://goreportcard.com/report/github.com/chenhg5/go-admin"><img alt="Go Report Card" src="https://camo.githubusercontent.com/59eed852617e19c272a4a4764fd09c669957fe75/68747470733a2f2f676f7265706f7274636172642e636f6d2f62616467652f6769746875622e636f6d2f6368656e6867352f676f2d61646d696e"></a>
-</p> 
+</p>
+<p align="center">
+    由<a href="https://github.com/z-song/laravel-admin" target="_blank">laravel-admin</a>启发
+</p>
 
 ## 前言
 
