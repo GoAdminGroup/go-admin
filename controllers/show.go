@@ -5,8 +5,8 @@ import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/menu"
-	"goAdmin/template"
 	"goAdmin/models"
+	"goAdmin/template"
 )
 
 // 显示列表
@@ -28,10 +28,10 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 	}
 
 	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
-		"page" : string(page),
-		"path" : string(path),
-		"prefix" : prefix,
-		"pageSize" : string(pageSize),
+		"page":     string(page),
+		"path":     string(path),
+		"prefix":   prefix,
+		"pageSize": string(pageSize),
 	})
 
 	menu.GlobalMenu.SetActiveClass(path)

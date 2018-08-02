@@ -2,11 +2,11 @@ package controller
 
 import (
 	"bytes"
-	"github.com/valyala/fasthttp"
-	"goAdmin/template"
 	"database/sql"
 	"fmt"
+	"github.com/valyala/fasthttp"
 	db "goAdmin/connections/mysql"
+	"goAdmin/template"
 )
 
 func ShowInstall(ctx *fasthttp.RequestCtx) {
@@ -46,7 +46,7 @@ func CheckDatabase(ctx *fasthttp.RequestCtx) {
 		list := "["
 
 		for i := 0; i < len(tables); i++ {
-			if i != len(tables) - 1 {
+			if i != len(tables)-1 {
 				list += `"` + tables[i]["Tables_in_godmin"].(string) + `",`
 			} else {
 				list += `"` + tables[i]["Tables_in_godmin"].(string) + `"`

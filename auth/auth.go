@@ -3,10 +3,10 @@ package auth
 import (
 	"github.com/golang/crypto/bcrypt"
 	"github.com/valyala/fasthttp"
+	"goAdmin/config"
 	"goAdmin/connections/mysql"
 	"strconv"
 	"time"
-	"goAdmin/config"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {

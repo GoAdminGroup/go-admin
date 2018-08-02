@@ -13,7 +13,7 @@ type SqlTxStruct struct {
 
 var (
 	sqlDBmap map[string]*sql.DB
-	SqlDB *sql.DB
+	SqlDB    *sql.DB
 )
 
 // 只会执行一次在执行程序启动的时候
@@ -93,7 +93,6 @@ func QueryWithConnection(con string, query string, args ...interface{}) ([]map[s
 	rs.Close()
 	return results, rs
 }
-
 
 func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 
@@ -225,7 +224,7 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 	results := make([]map[string]interface{}, 0)
 
 	for rs.Next() {
-		var colVar= make([]interface{}, len(col))
+		var colVar = make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {
 			SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
 		}
@@ -270,7 +269,7 @@ func WithTransaction(fn TxFn) (err error, res map[string]interface{}) {
 	return
 }
 
-func SetColVarType(colVar *[]interface{}, i int, typeName string)  {
+func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch typeName {
 	case "INT":
 		var s sql.NullInt64
@@ -332,7 +331,7 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string)  {
 	}
 }
 
-func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string)  {
+func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch typeName {
 	case "INT":
 		temp := *(colVar.(*sql.NullInt64))

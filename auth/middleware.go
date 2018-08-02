@@ -3,8 +3,8 @@ package auth
 import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 type User struct {
@@ -51,12 +51,12 @@ func GetCurUserById(id string) (user User, ok bool) {
 
 	permissionModel := GetPermissions(roleModel[0]["id"])
 	var permissions []Permission
-	for i := 0; i < len(permissionModel) ; i++ {
+	for i := 0; i < len(permissionModel); i++ {
 
 		var methodArr []string
 
 		if permissionModel[i]["http_method"].(string) != "" {
-			methodArr = strings.Split(permissionModel[i]["http_method"].(string),",")
+			methodArr = strings.Split(permissionModel[i]["http_method"].(string), ",")
 		} else {
 			methodArr = []string{""}
 		}
@@ -91,7 +91,7 @@ func CheckPermissions(user User, ctx *fasthttp.RequestCtx) bool {
 				return true
 			}
 
-			for i := 0; i < len(v.Path) ; i++ {
+			for i := 0; i < len(v.Path); i++ {
 				if v.Path[i] == path {
 					return true
 				}
@@ -107,7 +107,7 @@ func CheckPermissions(user User, ctx *fasthttp.RequestCtx) bool {
 }
 
 func InMethodArr(arr []string, str string) bool {
-	for i := 0; i < len(arr) ; i++ {
+	for i := 0; i < len(arr); i++ {
 		if arr[i] == str {
 			return true
 		}

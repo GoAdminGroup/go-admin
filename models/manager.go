@@ -83,14 +83,14 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-		},{
+		}, {
 			Head:     "密码",
 			Field:    "password",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
 			FormType: "password",
-		},{
+		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
@@ -215,7 +215,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "textarea",
-		},{
+		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
@@ -310,7 +310,7 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-		},{
+		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
@@ -450,7 +450,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-		},{
+		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
