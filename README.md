@@ -62,6 +62,7 @@ see the [wiki](https://github.com/chenhg5/go-admin/wiki)
 - pages : compile html into go file
 - assets : compile assets into go file
 - fmt
+- doc
 
 ## powerd by
 

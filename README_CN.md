@@ -53,7 +53,8 @@
 - cross : 跨平台编译
 - pages : 将html文件编译为go文件
 - assets : 将静态文件编译为go文件
-- fmt
+- fmt : 格式化项目文件
+- doc : 查看项目文档
 
 ## 技术支持
 
