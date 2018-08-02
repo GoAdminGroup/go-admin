@@ -31,7 +31,7 @@ as a admin platform. the following principle is important as i see.
 - security and easy to use
 - independent of business platform
 
-![](https://ws3.sinaimg.cn/large/006tNc79ly1ft048byoafj31kw0w847v.jpg)
+![](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
 
 ## feature
 

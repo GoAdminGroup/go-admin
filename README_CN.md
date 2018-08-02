@@ -23,7 +23,7 @@
 - 安全性和易于使用
 - 独立性，独立于业务系统
 
-![](https://ws3.sinaimg.cn/large/006tNc79ly1ft048byoafj31kw0w847v.jpg)
+![](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
 
 ## 特征
 
