@@ -70,10 +70,10 @@ func GetUserTable() (userTable GlobalTable) {
 			Field:    "sex",
 			TypeName: "tinyint",
 			ExcuFun: func(model RowModel) string {
-				if model。Value == "1" {
+				if model.Value == "1" {
 					return "男"
 				}
-				if model。Value == "2" {
+				if model.Value == "2" {
 					return "女"
 				}
 				return "未知"
