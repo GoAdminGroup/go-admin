@@ -22,26 +22,7 @@
 <%@ content { %>
 <% for _, data := range formData { %>
 <div class="form-group ">
-    <% if data.FormType == "default" { %>
-        <label class="col-sm-2 control-label"><%= data.Head %></label>
-        <div class="col-sm-8">
-            <div class="box box-solid box-default no-margin">
-                <!-- /.box-header -->
-                <div class="box-body">
-                    <%= data.Value %> 
-                </div>
-                <!-- /.box-body -->
-            </div>
-        </div>
-    <% } else if data.FormType == "text" { %>
-        <label for="json" class="col-sm-2 control-label"><%= data.Head %></label>
-        <div class="col-sm-8">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                <input type="text" id="<%= data.Field %>" name="<%= data.Field %>" value='' class="form-control json" placeholder="Input json">
-            </div>
-        </div>
-    <% } %>
+    <%+ "form_new.html" %>
 </div>
 <% } %>
 <% } %>

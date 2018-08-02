@@ -248,39 +248,66 @@ func NewPanel(formData []models.FormStruct, url string, previous string, id stri
 		buffer.WriteString(`
 <div class="form-group ">
     `)
-		if data.FormType == "default" {
-			buffer.WriteString(`
+		if data.Field != "created_at" && data.Field != "updated_at" && data.Field != "id" {
+			if data.FormType == "default" {
+				buffer.WriteString(`
         <label class="col-sm-2 control-label">`)
-			hero.EscapeHTML(data.Head, buffer)
-			buffer.WriteString(`</label>
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
         <div class="col-sm-8">
             <div class="box box-solid box-default no-margin">
                 <!-- /.box-header -->
                 <div class="box-body">
                     `)
-			hero.EscapeHTML(data.Value, buffer)
-			buffer.WriteString(` 
+				hero.EscapeHTML(data.Value, buffer)
+				buffer.WriteString(` 
                 </div>
                 <!-- /.box-body -->
             </div>
         </div>
     `)
-		} else if data.FormType == "text" {
-			buffer.WriteString(`
+			} else if data.FormType == "text" {
+				buffer.WriteString(`
         <label for="json" class="col-sm-2 control-label">`)
-			hero.EscapeHTML(data.Head, buffer)
-			buffer.WriteString(`</label>
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
                 <input type="text" id="`)
-			hero.EscapeHTML(data.Field, buffer)
-			buffer.WriteString(`" name="`)
-			hero.EscapeHTML(data.Field, buffer)
-			buffer.WriteString(`" value='' class="form-control json" placeholder="Input json">
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" value='' class="form-control json" placeholder="Input json">
             </div>
         </div>
     `)
+			} else if data.FormType == "password" {
+				buffer.WriteString(`
+        <label for="password" class="col-sm-2 control-label">`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
+        <div class="col-sm-8">
+            <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
+                <input type="password" id="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" value="" class="form-control password" placeholder="Input Password">
+            </div>
+        </div>
+    `)
+			} else if data.FormType == "textarea" {
+				buffer.WriteString(`
+        <label for="http_path" class="col-sm-2 control-label">`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
+        <div class="col-sm-8">
+            <textarea name="http_path" class="form-control" rows="5" placeholder="Input text"></textarea>
+        </div>
+    `)
+			}
 		}
 		buffer.WriteString(`
 </div>

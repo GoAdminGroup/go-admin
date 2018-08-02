@@ -70,26 +70,12 @@ func GetManagerTable() (userTable GlobalTable) {
 			Editable: false,
 			FormType: "default",
 		}, {
-			Head:     "更新时间",
-			Field:    "updated_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
-			Head:     "创建时间",
-			Field:    "created_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
 			Head:     "用户名",
 			Field:    "username",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: "text",
 		}, {
 			Head:     "昵称",
 			Field:    "name",
@@ -97,6 +83,27 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+		},{
+			Head:     "密码",
+			Field:    "password",
+			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: "password",
+		},{
+			Head:     "更新时间",
+			Field:    "updated_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
+		}, {
+			Head:     "创建时间",
+			Field:    "created_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
 		},
 	}
 
@@ -181,26 +188,12 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Editable: false,
 			FormType: "default",
 		}, {
-			Head:     "更新时间",
-			Field:    "updated_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
-			Head:     "创建时间",
-			Field:    "created_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: "text",
 		}, {
 			Head:     "标志",
 			Field:    "slug",
@@ -221,7 +214,21 @@ func GetPermissionTable() (userTable GlobalTable) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: "textarea",
+		},{
+			Head:     "更新时间",
+			Field:    "updated_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
+		}, {
+			Head:     "创建时间",
+			Field:    "created_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
 		},
 	}
 
@@ -290,26 +297,12 @@ func GetRolesTable() (userTable GlobalTable) {
 			Editable: false,
 			FormType: "default",
 		}, {
-			Head:     "更新时间",
-			Field:    "updated_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
-			Head:     "创建时间",
-			Field:    "created_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: "text",
 		}, {
 			Head:     "标志",
 			Field:    "slug",
@@ -317,6 +310,20 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+		},{
+			Head:     "更新时间",
+			Field:    "updated_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
+		}, {
+			Head:     "创建时间",
+			Field:    "created_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
 		},
 	}
 
@@ -409,26 +416,12 @@ func GetOpTable() (userTable GlobalTable) {
 			Editable: false,
 			FormType: "default",
 		}, {
-			Head:     "更新时间",
-			Field:    "updated_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
-			Head:     "创建时间",
-			Field:    "created_at",
-			TypeName: "timestamp",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-		}, {
 			Head:     "用户ID",
 			Field:    "user_id",
 			TypeName: "int",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: "text",
 		}, {
 			Head:     "路径",
 			Field:    "path",
@@ -457,6 +450,20 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+		},{
+			Head:     "更新时间",
+			Field:    "updated_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
+		}, {
+			Head:     "创建时间",
+			Field:    "created_at",
+			TypeName: "timestamp",
+			Default:  "",
+			Editable: true,
+			FormType: "default",
 		},
 	}
 
