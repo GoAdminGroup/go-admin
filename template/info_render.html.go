@@ -346,7 +346,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
     `)
 		hero.EscapeHTML(head, buffer)
 		buffer.WriteString(`
-    <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a>
+    <!-- <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a> -->
 </th>
 `)
 	}

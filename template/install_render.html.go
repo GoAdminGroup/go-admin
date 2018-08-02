@@ -502,17 +502,17 @@ func GetInstallPage(buffer *bytes.Buffer) {
                 console.log(data)
                 if (data.code === 0) {
 
-                    html = "";
-
-                    for (i = 0; i < data.data.list.length; i++) {
-                        html += '<div class="field"><input type="checkbox" id="' +
-                                data.data.list[i] +
-                                '" name="table-' + i + '" class="color2"><label for="table-' + i + '">' +
-                                data.data.list[i]
-                                + '</label></div>';
-                    }
-
-                    $("#table-div").html(html);
+                    // html = "";
+                    //
+                    // for (i = 0; i < data.data.list.length; i++) {
+                    //     html += '<div class="field"><input type="checkbox" id="' +
+                    //             data.data.list[i] +
+                    //             '" name="table-' + i + '" class="color2"><label for="table-' + i + '">' +
+                    //             data.data.list[i]
+                    //             + '</label></div>';
+                    // }
+                    //
+                    // $("#table-div").html(html);
 
                     alert(data.msg);
 

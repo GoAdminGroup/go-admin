@@ -39,7 +39,6 @@ func InitRouter() *fasthttprouter.Router {
 	return router
 }
 
-
 func AuthMiddleware(h fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return fasthttp.RequestHandler(func(ctx *fasthttp.RequestCtx) {
 
