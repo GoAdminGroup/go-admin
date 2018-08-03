@@ -5,14 +5,16 @@ type BoxAttribute struct {
 	Title string
 	Value string
 	Url   string
+	Color string
 }
 
 func GetBox() *BoxAttribute {
 	return &BoxAttribute{
 		"box",
-		"2",
-		"2",
-		"2",
+		"标题",
+		"值",
+		"/",
+		"aqua",
 	}
 }
 
@@ -32,7 +34,7 @@ func (compo *BoxAttribute) SetUrl(value string) *BoxAttribute {
 }
 
 func (compo *BoxAttribute) GetContent() string {
-		return `<div class="small-box bg-aqua">
+		return `<div class="small-box bg-` + (*compo).Color + `">
 <div class="inner">
 <h3>` + (*compo).Value + `</h3>
 
