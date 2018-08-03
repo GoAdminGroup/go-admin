@@ -2,11 +2,9 @@
     <label class="col-sm-2 control-label"><%= data.Head %></label>
     <div class="col-sm-8">
         <div class="box box-solid box-default no-margin">
-            <!-- /.box-header -->
             <div class="box-body">
                 <%= data.Value %> 
             </div>
-            <!-- /.box-body -->
         </div>
     </div>
 <% } else if data.FormType == "text" { %>
@@ -33,9 +31,9 @@
 <% } else if data.FormType == "select" { %>
     <label for="<%= data.Field %>" class="col-sm-2 control-label"><%= data.Head %></label>
     <div class="col-sm-8">
-        <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="<%= data.Field %>[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+        <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="<%= data.Field %>[]" multiple="" data-placeholder="Input <%= data.Head %>" tabindex="-1" aria-hidden="true">
             <% for _, v := range data.Options { %>
-                <option value='<%= v["value"] %>'><%= v["field"] %></option>
+                <option value='<%= v["value"] %>' <%= v["selected"] %>><%= v["field"] %></option>
             <% } %>
         </select>
         <input type="hidden" name="<%= data.Field %>[]">
@@ -45,8 +43,29 @@
     </div>
     <script>
         $(".<%= data.Field %>").select2({
-            allowClear: true,
-            placeholder: "<%= data.Head %>"
+            allowClear: true
+        });
+    </script>
+<% } else if data.FormType == "file" { %>
+    <label for="<%= data.Field %>" class="col-sm-2  control-label"><%= data.Head %></label>
+    <div class="col-sm-8">
+        <input type="file" class="<%= data.Field %>" name="<%= data.Field %>" data-initial-preview="" data-initial-caption="<%= data.Value %>">
+    </div>
+    <script>
+        $("input.<%= data.Field %>").fileinput({
+            "overwriteInitial":true,
+            "initialPreviewAsData":true,
+            "browseLabel":"Browse",
+            "showRemove":false,
+            "showUpload":false,
+            "deleteExtraData":{
+                "avatar":"_file_del_",
+                "_file_del_":"",
+                "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+                "_method":"PUT"
+            },
+            "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+            "allowedFileTypes":["image"]
         });
     </script>
 <% } %>

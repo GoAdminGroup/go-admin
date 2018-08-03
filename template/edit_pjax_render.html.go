@@ -64,13 +64,11 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
         <div class="box box-solid box-default no-margin">
-            <!-- /.box-header -->
             <div class="box-body">
                 `)
 			hero.EscapeHTML(data.Value, buffer)
 			buffer.WriteString(` 
             </div>
-            <!-- /.box-body -->
         </div>
     </div>
 `)
@@ -145,13 +143,17 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
     <div class="col-sm-8">
         <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
 			hero.EscapeHTML(data.Field, buffer)
-			buffer.WriteString(`[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+			buffer.WriteString(`[]" multiple="" data-placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`" tabindex="-1" aria-hidden="true">
             `)
 			for _, v := range data.Options {
 				buffer.WriteString(`
                 <option value='`)
 				hero.EscapeHTML(v["value"], buffer)
-				buffer.WriteString(`'>`)
+				buffer.WriteString(`' `)
+				hero.EscapeHTML(v["selected"], buffer)
+				buffer.WriteString(`>`)
 				hero.EscapeHTML(v["field"], buffer)
 				buffer.WriteString(`</option>
             `)
@@ -169,10 +171,43 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
         $(".`)
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`").select2({
-            allowClear: true,
-            placeholder: "`)
+            allowClear: true
+        });
+    </script>
+`)
+		} else if data.FormType == "file" {
+			buffer.WriteString(`
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2  control-label">`)
 			hero.EscapeHTML(data.Head, buffer)
-			buffer.WriteString(`"
+			buffer.WriteString(`</label>
+    <div class="col-sm-8">
+        <input type="file" class="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" data-initial-preview="" data-initial-caption="`)
+			hero.EscapeHTML(data.Value, buffer)
+			buffer.WriteString(`">
+    </div>
+    <script>
+        $("input.`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`").fileinput({
+            "overwriteInitial":true,
+            "initialPreviewAsData":true,
+            "browseLabel":"Browse",
+            "showRemove":false,
+            "showUpload":false,
+            "deleteExtraData":{
+                "avatar":"_file_del_",
+                "_file_del_":"",
+                "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+                "_method":"PUT"
+            },
+            "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+            "allowedFileTypes":["image"]
         });
     </script>
 `)

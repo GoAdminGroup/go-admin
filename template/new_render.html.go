@@ -35,6 +35,7 @@ func NewPanel(formData []models.FormStruct, url string, previous string, id stri
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
     <link rel="stylesheet" href="../../assets/select2/select2.min.css">
+    <link rel="stylesheet" href="../../assets/fileinput/fileinput.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -463,6 +464,7 @@ func NewPanel(formData []models.FormStruct, url string, previous string, id stri
 <!-- AdminLTE for demo purposes -->
 <script src="../../assets/dist/js/demo.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
+<script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>
 <script src="../../assets/nprogress/nprogress.js"></script>
 <script src="../../assets/toastr/build/toastr.min.js"></script>

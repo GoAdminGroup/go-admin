@@ -36,6 +36,7 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
     <link rel="stylesheet" href="../../assets/select2/select2.min.css">
+    <link rel="stylesheet" href="../../assets/fileinput/fileinput.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -297,13 +298,11 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
         <div class="box box-solid box-default no-margin">
-            <!-- /.box-header -->
             <div class="box-body">
                 `)
 			hero.EscapeHTML(data.Value, buffer)
 			buffer.WriteString(` 
             </div>
-            <!-- /.box-body -->
         </div>
     </div>
 `)
@@ -378,13 +377,17 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <div class="col-sm-8">
         <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
 			hero.EscapeHTML(data.Field, buffer)
-			buffer.WriteString(`[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+			buffer.WriteString(`[]" multiple="" data-placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`" tabindex="-1" aria-hidden="true">
             `)
 			for _, v := range data.Options {
 				buffer.WriteString(`
                 <option value='`)
 				hero.EscapeHTML(v["value"], buffer)
-				buffer.WriteString(`'>`)
+				buffer.WriteString(`' `)
+				hero.EscapeHTML(v["selected"], buffer)
+				buffer.WriteString(`>`)
 				hero.EscapeHTML(v["field"], buffer)
 				buffer.WriteString(`</option>
             `)
@@ -402,10 +405,43 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
         $(".`)
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`").select2({
-            allowClear: true,
-            placeholder: "`)
+            allowClear: true
+        });
+    </script>
+`)
+		} else if data.FormType == "file" {
+			buffer.WriteString(`
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2  control-label">`)
 			hero.EscapeHTML(data.Head, buffer)
-			buffer.WriteString(`"
+			buffer.WriteString(`</label>
+    <div class="col-sm-8">
+        <input type="file" class="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" data-initial-preview="" data-initial-caption="`)
+			hero.EscapeHTML(data.Value, buffer)
+			buffer.WriteString(`">
+    </div>
+    <script>
+        $("input.`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`").fileinput({
+            "overwriteInitial":true,
+            "initialPreviewAsData":true,
+            "browseLabel":"Browse",
+            "showRemove":false,
+            "showUpload":false,
+            "deleteExtraData":{
+                "avatar":"_file_del_",
+                "_file_del_":"",
+                "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+                "_method":"PUT"
+            },
+            "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+            "allowedFileTypes":["image"]
         });
     </script>
 `)
@@ -522,6 +558,7 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 <!-- AdminLTE for demo purposes -->
 <script src="../../assets/dist/js/demo.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
+<script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>
 <script src="../../assets/nprogress/nprogress.js"></script>
 <script src="../../assets/toastr/build/toastr.min.js"></script>

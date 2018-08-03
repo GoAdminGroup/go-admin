@@ -1,6 +1,9 @@
 package models
 
-import "goAdmin/connections/mysql"
+import (
+	"goAdmin/connections/mysql"
+	"goAdmin/components"
+)
 
 func GetManagerTable() (userTable GlobalTable) {
 
@@ -30,13 +33,13 @@ func GetManagerTable() (userTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "标签",
-			Field:    "label",
+			Head:     "角色",
+			Field:    "roles",
 			TypeName: "varchar",
 			ExcuFun: func(model RowModel) string {
 				labelModel, _ := mysql.Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
-				return labelModel[0]["name"].(string)
+				return components.Label.GetContent(labelModel[0]["name"].(string))
 			},
 		},
 		{
@@ -83,6 +86,13 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+		}, {
+			Head:     "头像",
+			Field:    "avatar",
+			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: "file",
 		}, {
 			Head:     "密码",
 			Field:    "password",
