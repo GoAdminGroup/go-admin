@@ -6,7 +6,9 @@
 * 模型表格
 
   * [基本使用](zh-cn/table-usage.md)
+  * [表格组件](zh-cn/table-components.md)
 
 * 模型表单
 
   * [基本使用](zh-cn/form-usage.md)
+  * [表单组件](zh-cn/form-components.md)
