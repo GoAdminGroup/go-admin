@@ -55,6 +55,15 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 
 	prefix := ctx.UserValue("prefix").(string)
 
+	// 管理员管理编辑
+	if prefix == "manager" {
+
+	}
+	// 管理员角色管理编辑
+	if prefix == "roles" {
+
+	}
+
 	previous := string(ctx.FormValue("_previous_")[:])
 
 	form, _ := ctx.MultipartForm()

@@ -9,6 +9,7 @@ import (
 	"goAdmin/template"
 )
 
+// 显示菜单
 func ShowMenu(ctx *fasthttp.RequestCtx) {
 	defer GlobalDeferHandler(ctx)
 
@@ -46,6 +47,7 @@ func ShowEditMenu(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 }
 
+// 删除菜单
 func DeleteMenu(ctx *fasthttp.RequestCtx) {
 	id := string(ctx.QueryArgs().Peek("id")[:])
 
