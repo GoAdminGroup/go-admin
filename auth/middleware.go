@@ -13,6 +13,7 @@ type User struct {
 	Name        string
 	LevelName   string
 	CreateAt    string
+	Avatar      string
 	Permissions []Permission
 }
 
@@ -48,6 +49,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 	user.LevelName = roleModel[0]["name"].(string)
 	user.Name = admin[0]["name"].(string)
 	user.CreateAt = admin[0]["created_at"].(string)
+	user.Avatar = admin[0]["avatar"].(string)
 
 	permissionModel := GetPermissions(roleModel[0]["id"])
 	var permissions []Permission

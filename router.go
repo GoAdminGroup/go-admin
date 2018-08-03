@@ -11,6 +11,9 @@ func InitRouter() *fasthttprouter.Router {
 
 	router := fasthttprouter.New()
 
+	// 仪表盘
+	router.GET("/", AuthMiddleware(controller.ShowDashboard))
+
 	// 授权认证
 	router.GET("/login", controller.ShowLogin)
 	router.POST("/signin", controller.Auth)

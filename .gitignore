@@ -3,3 +3,4 @@ build/*
 vendor/**
 !vendor/vendor.json
 pid
+resources/uploads

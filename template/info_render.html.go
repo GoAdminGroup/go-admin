@@ -83,7 +83,9 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
                         `)
 	buffer.WriteString(`
 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <img src="../../assets/dist/img/avatar04.png" class="user-image" alt="User Image">
+    <img src="http://localhost:4003`)
+	hero.EscapeHTML(user.Avatar, buffer)
+	buffer.WriteString(`" class="user-image" alt="User Image">
     <span class="hidden-xs">`)
 	hero.EscapeHTML(user.Name, buffer)
 	buffer.WriteString(`</span>
@@ -91,8 +93,9 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 <ul class="dropdown-menu">
     <!-- User image -->
     <li class="user-header">
-        <img src="../../assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
-
+        <img src="http://localhost:4003`)
+	hero.EscapeHTML(user.Avatar, buffer)
+	buffer.WriteString(`" class="img-circle" alt="User Image">
         <p>
             `)
 	hero.EscapeHTML(user.Name, buffer)

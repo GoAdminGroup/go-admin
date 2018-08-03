@@ -4,6 +4,7 @@ import (
 	"goAdmin/connections/mysql"
 	"strconv"
 	"strings"
+	"goAdmin/modules"
 )
 
 // 表单列
@@ -150,7 +151,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 		if tableModel.Form.FormList[i].FormType == "select" {
 			valueArr := strings.Split(tableModel.Form.FormList[i].Value, ",")
 			for _, v := range tableModel.Form.FormList[i].Options {
-				if InArray(valueArr, v["value"]) {
+				if modules.InArray(valueArr, v["value"]) {
 					v["selected"] = "selected"
 				}
 			}
@@ -169,7 +170,7 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_token" {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
-				valueList = append(valueList, strings.Join(RemoveBlackFromArray(v), ","))
+				valueList = append(valueList, strings.Join(modules.RemoveBlackFromArray(v), ","))
 			} else {
 				valueList = append(valueList, v[0])
 			}
@@ -216,25 +217,6 @@ func CheckInTable(colums []map[string]interface{}, find string) bool {
 		}
 	}
 	return false
-}
-
-func InArray(arr []string, str string) bool {
-	for _, v := range arr {
-		if v == str {
-			return true
-		}
-	}
-	return false
-}
-
-func RemoveBlackFromArray(s []string) []string {
-	var r []string
-	for _, str := range s {
-		if str != "" {
-			r = append(r, str)
-		}
-	}
-	return r
 }
 
 func GetStringFromType(typeName string, value interface{}) string {

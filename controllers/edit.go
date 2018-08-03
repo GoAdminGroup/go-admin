@@ -7,6 +7,9 @@ import (
 	"goAdmin/menu"
 	"goAdmin/models"
 	"goAdmin/template"
+	"fmt"
+	"path"
+	"goAdmin/modules"
 )
 
 // 显示表单
@@ -55,6 +58,30 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 	previous := string(ctx.FormValue("_previous_")[:])
 
 	form, _ := ctx.MultipartForm()
+
+	var (
+		suffix   string
+		filename string
+	)
+	if len((*form).File) > 0 {
+
+		for k, _ := range (*form).File {
+			data, err := ctx.MultipartForm()
+			if err != nil {
+				ctx.SetStatusCode(500)
+				fmt.Println("get upload file error:", err)
+				return
+			}
+			fileObj := data.File[k][0]
+
+			suffix = path.Ext(fileObj.Filename)
+			filename = modules.Uuid(50) + suffix
+			if fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/" + filename) != nil {
+				fmt.Println("save upload file error:", err)
+			}
+			(*form).Value[k] = []string{"/uploads/" + filename}
+		}
+	}
 
 	models.GlobalTableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
 

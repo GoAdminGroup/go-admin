@@ -18,11 +18,15 @@ func Check(password []byte, username string) (user User, ok bool) {
 	} else {
 		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
+
+			roleModel, _ := mysql.Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
+
 			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
-			user.Level = "super"
-			user.LevelName = "超级管理员"
+			user.Level = roleModel[0]["slug"].(string)
+			user.LevelName = roleModel[0]["name"].(string)
 			user.Name = admin[0]["name"].(string)
 			user.CreateAt = admin[0]["created_at"].(string)
+			user.Avatar = admin[0]["avatar"].(string)
 		} else {
 			ok = false
 		}
