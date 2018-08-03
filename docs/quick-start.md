@@ -79,6 +79,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+                return model.Value
+            },
 		}, {
 			Head:     "性别",
 			Field:    "sex",
@@ -86,6 +89,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+                return model.Value
+            },
 		},
 	}
 

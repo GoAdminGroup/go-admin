@@ -63,6 +63,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "头像",
 			Field:    "avatar",
@@ -70,6 +73,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "姓名",
 			Field:    "name",
@@ -77,6 +83,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "性别",
 			Field:    "sex",
@@ -84,6 +93,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "省份",
 			Field:    "province",
@@ -91,6 +103,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "城市",
 			Field:    "city",
@@ -98,6 +113,9 @@ func GetUserTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		},
 	}
 

@@ -72,6 +72,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "用户名",
 			Field:    "username",
@@ -79,6 +82,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "昵称",
 			Field:    "name",
@@ -86,6 +92,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "头像",
 			Field:    "avatar",
@@ -93,6 +102,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "file",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "密码",
 			Field:    "password",
@@ -100,6 +112,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "password",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
@@ -107,6 +122,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "创建时间",
 			Field:    "created_at",
@@ -114,6 +132,9 @@ func GetManagerTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		},
 	}
 
@@ -197,6 +218,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "名字",
 			Field:    "name",
@@ -204,6 +228,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "标志",
 			Field:    "slug",
@@ -211,6 +238,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "方法",
 			Field:    "http_method",
@@ -227,6 +257,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 				{"value": "OPTIONS", "field": "OPTIONS"},
 				{"value": "HEAD", "field": "HEAD"},
 			},
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "路径",
 			Field:    "http_path",
@@ -234,6 +267,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "textarea",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
@@ -241,6 +277,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "创建时间",
 			Field:    "created_at",
@@ -248,6 +287,9 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		},
 	}
 
@@ -315,6 +357,9 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "名字",
 			Field:    "name",
@@ -322,6 +367,9 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "标志",
 			Field:    "slug",
@@ -329,6 +377,9 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
@@ -336,6 +387,9 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "创建时间",
 			Field:    "created_at",
@@ -343,6 +397,9 @@ func GetRolesTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		},
 	}
 
@@ -434,6 +491,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "用户ID",
 			Field:    "user_id",
@@ -441,6 +501,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "路径",
 			Field:    "path",
@@ -448,6 +511,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "方法",
 			Field:    "method",
@@ -455,6 +521,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "ip",
 			Field:    "ip",
@@ -462,6 +531,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "内容",
 			Field:    "input",
@@ -469,6 +541,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "更新时间",
 			Field:    "updated_at",
@@ -476,6 +551,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		}, {
 			Head:     "创建时间",
 			Field:    "created_at",
@@ -483,6 +561,9 @@ func GetOpTable() (userTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
+			ExcuFun: func(model RowModel) string {
+				return model.Value
+			},
 		},
 	}
 

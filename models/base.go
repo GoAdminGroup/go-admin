@@ -17,6 +17,7 @@ type FormStruct struct {
 	FormType string
 	Value    string
 	Options  []map[string]string
+	ExcuFun  FieldValueFun
 }
 
 type RowModel struct {
@@ -145,9 +146,13 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 	fields = fields[0 : len(fields)-1]
 
 	res, _ := mysql.Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
+	Idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		tableModel.Form.FormList[i].Value = GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field])
+		tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(RowModel{
+			Idint64,
+			GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+		})
 		if tableModel.Form.FormList[i].FormType == "select" {
 			valueArr := strings.Split(tableModel.Form.FormList[i].Value, ",")
 			for _, v := range tableModel.Form.FormList[i].Options {
