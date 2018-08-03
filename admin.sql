@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: godmin
-# Generation Time: 2018-08-02 06:42:05 +0000
+# Generation Time: 2018-08-03 07:28:45 +0000
 # ************************************************************
 
 
@@ -48,7 +48,8 @@ VALUES
 	(5,2,5,'权限管理','fa-ban','/info/permission',NULL,NULL),
 	(6,2,6,'菜单管理','fa-bars','/menu',NULL,NULL),
 	(7,2,7,'操作日志','fa-history','/info/op',NULL,NULL),
-	(12,0,1,'用户表','fa-tasks','/info/user',NULL,NULL);
+	(12,0,2,'用户表','fa-tasks','/info/user',NULL,NULL),
+	(13,0,1,'仪表盘','fa-bars','/','2018-08-03 15:24:42',NULL);
 
 /*!40000 ALTER TABLE `goadmin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -204,7 +205,7 @@ LOCK TABLES `goadmin_permissions` WRITE;
 INSERT INTO `goadmin_permissions` (`id`, `name`, `slug`, `http_method`, `http_path`, `created_at`, `updated_at`)
 VALUES
 	(1,'All permission','*','','*',NULL,NULL),
-	(2,'Dashboard','dashboard','GET','/',NULL,NULL),
+	(2,'Dashboard','dashboard','GET,PUT,POST,DELETE','/',NULL,NULL),
 	(3,'Login','auth.login','','/auth/login\r\n/auth/logout',NULL,NULL),
 	(4,'User setting','auth.setting','GET,PUT','/auth/setting',NULL,NULL),
 	(5,'Auth management','auth.management','','/auth/roles\r\n/auth/permissions\r\n/auth/menu\r\n/auth/logs',NULL,NULL);
@@ -350,7 +351,7 @@ LOCK TABLES `goadmin_users` WRITE;
 
 INSERT INTO `goadmin_users` (`id`, `username`, `password`, `name`, `avatar`, `remember_token`, `created_at`, `updated_at`)
 VALUES
-	(1,'admin','$2a$10$YDoHIAPcGpa3/Pm0f5Q/HeAlhOaRUgL.eyF8Ne/Mc1dp9esEQEV5e','admin','../../assets/dist/img/avatar04.png','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
+	(1,'admin','$2a$10$YDoHIAPcGpa3/Pm0f5Q/HeAlhOaRUgL.eyF8Ne/Mc1dp9esEQEV5e','admin','/assets/dist/img/avatar04.png','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
 
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;
 UNLOCK TABLES;

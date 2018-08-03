@@ -47,8 +47,3 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 	ctx.Response.AppendBody(buffer.Bytes())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 }
-
-// 显示仪表盘
-func ShowDashboard(ctx *fasthttp.RequestCtx)  {
-	
-}
