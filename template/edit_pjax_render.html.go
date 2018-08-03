@@ -141,7 +141,9 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
 			hero.EscapeHTML(data.Head, buffer)
 			buffer.WriteString(`</label>
     <div class="col-sm-8">
-        <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
+        <select class="form-control `)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(` select2-hidden-accessible" style="width: 100%;" name="`)
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`[]" multiple="" data-placeholder="Input `)
 			hero.EscapeHTML(data.Head, buffer)
@@ -163,9 +165,9 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
         <input type="hidden" name="`)
 			hero.EscapeHTML(data.Field, buffer)
 			buffer.WriteString(`[]">
-        <span class="help-block">
+        <!--<span class="help-block">
             <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
-        </span>
+        </span>-->
     </div>
     <script>
         $(".`)

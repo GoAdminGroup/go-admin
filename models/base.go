@@ -26,7 +26,7 @@ type RowModel struct {
 }
 
 // 数据过滤函数
-type FieldValueFun func(value RowModel) string
+type FieldValueFun func(value RowModel) interface{}
 
 // 展示列
 type FieldStruct struct {
@@ -106,17 +106,16 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		tempModelData := make(map[string]string, 0)
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
-
 			if CheckInTable(columnsModel, tableModel.Info.FieldList[j].Field) {
 				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
 					res[i]["id"].(int64),
 					GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
-				})
+				}).(string)
 			} else {
 				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(RowModel{
 					res[i]["id"].(int64),
 					"",
-				})
+				}).(string)
 			}
 		}
 
@@ -139,26 +138,53 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 
 	fields := ""
 
+	columnsModel, _ := mysql.Query("show columns in " + tableModel.Form.Table)
+
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		fields += tableModel.Form.FormList[i].Field + ","
+		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
+			fields += tableModel.Form.FormList[i].Field + ","
+		}
 	}
 
 	fields = fields[0 : len(fields)-1]
 
 	res, _ := mysql.Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
-	Idint64, _ := strconv.ParseInt(id, 10, 64)
+	idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(RowModel{
-			Idint64,
-			GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
-		})
-		if tableModel.Form.FormList[i].FormType == "select" {
-			valueArr := strings.Split(tableModel.Form.FormList[i].Value, ",")
-			for _, v := range tableModel.Form.FormList[i].Options {
-				if modules.InArray(valueArr, v["value"]) {
-					v["selected"] = "selected"
+		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
+			if tableModel.Form.FormList[i].FormType == "select" {
+				valueArr := tableModel.Form.FormList[i].ExcuFun(RowModel{
+					idint64,
+					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+				}).([]string)
+				for _, v := range tableModel.Form.FormList[i].Options {
+					if modules.InArray(valueArr, v["value"]) {
+						v["selected"] = "selected"
+					}
 				}
+			} else {
+				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(RowModel{
+					idint64,
+					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+				}).(string)
+			}
+		} else {
+			if tableModel.Form.FormList[i].FormType == "select" {
+				valueArr := tableModel.Form.FormList[i].ExcuFun(RowModel{
+					idint64,
+					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+				}).([]string)
+				for _, v := range tableModel.Form.FormList[i].Options {
+					if modules.InArray(valueArr, v["value"]) {
+						v["selected"] = "selected"
+					}
+				}
+			} else {
+				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(RowModel{
+					idint64,
+					tableModel.Form.FormList[i].Field,
+				}).(string)
 			}
 		}
 	}

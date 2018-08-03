@@ -16,6 +16,15 @@ var (
 	SqlDB    *sql.DB
 )
 
+func init() {
+	// 初始化数据库
+	InitDB(config.EnvConfig["DATABASE_USER"].(string),
+		config.EnvConfig["DATABASE_PWD"].(string),
+		config.EnvConfig["DATABASE_PORT"].(string),
+		config.EnvConfig["DATABASE_IP"].(string),
+		config.EnvConfig["DATABASE_NAME"].(string))
+}
+
 // 只会执行一次在执行程序启动的时候
 func InitDB(username string, password string, port string, ip string, databaseName string) {
 
