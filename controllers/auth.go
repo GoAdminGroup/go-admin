@@ -16,7 +16,7 @@ func Auth(ctx *fasthttp.RequestCtx) {
 
 		auth.SetCookie(ctx, user)
 
-		ctx.WriteString(`{"code":200, "msg":"登录成功", "url":"/info/user"}`)
+		ctx.WriteString(`{"code":200, "msg":"登录成功", "url":"/"}`)
 		return
 	}
 	ctx.WriteString(`{"code":400, "msg":"登录失败"`)
