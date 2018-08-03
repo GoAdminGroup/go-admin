@@ -4,20 +4,33 @@ type ImgAttribute struct {
 	Name   string
 	Witdh  string
 	Height string
+	Src    string
 }
 
-var Image = &ImgAttribute{
-	"image",
-	"50",
-	"50",
+func GetImage() *ImgAttribute {
+	return &ImgAttribute{
+		"image",
+		"50",
+		"50",
+		"",
+	}
 }
 
-func (compo *ImgAttribute) GetContent(value interface{}) string {
-	if valueStr, ok := value.(string); ok {
-		return `<img src="` + valueStr + `" width="50" height="50">`
-	}
-	if valueMap, ok := value.(map[string]string); ok {
-		return `<img src="` + valueMap["url"] + `" width="` + valueMap["width"] + `" height="` + valueMap["height"] + `">`
-	}
-	return ""
+func (compo *ImgAttribute) SetWidth(value string) *ImgAttribute {
+	(*compo).Witdh = value
+	return compo
+}
+
+func (compo *ImgAttribute) SetHeight(value string) *ImgAttribute {
+	(*compo).Height = value
+	return compo
+}
+
+func (compo *ImgAttribute) SetSrc(value string) *ImgAttribute {
+	(*compo).Src = value
+	return compo
+}
+
+func (compo *ImgAttribute) GetContent() string {
+	return `<img src="` + (*compo).Src + `" width="` + (*compo).Witdh + `" height="` + (*compo).Height + `">`
 }
