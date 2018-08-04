@@ -15,6 +15,12 @@
 			"revisionTime": "2018-02-11T07:41:05Z"
 		},
 		{
+			"checksumSHA1": "CSPbwbyzqA6sfORicn4HFtIhF/c=",
+			"path": "github.com/davecgh/go-spew/spew",
+			"revision": "8991bc29aa16c548c550c7ff78260e27b9ab7c73",
+			"revisionTime": "2018-02-21T22:46:20Z"
+		},
+		{
 			"checksumSHA1": "31d1HRaNEiWa9GxI2Tn9aDKiNng=",
 			"path": "github.com/fasthttp-contrib/sessions",
 			"revision": "74f6ac73d5d55340e76e33ea748babb647875ad5",
@@ -127,10 +133,22 @@
 			"revisionTime": "2017-02-06T15:57:36Z"
 		},
 		{
+			"checksumSHA1": "LuFv4/jlrmFNnDb/5SCSEPAM9vU=",
+			"path": "github.com/pmezard/go-difflib/difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"revisionTime": "2016-01-10T10:55:54Z"
+		},
+		{
 			"checksumSHA1": "S1hwXXk0F7KHj9xRH0vkRwFgzTM=",
 			"path": "github.com/shiyanhui/hero",
 			"revision": "f4b770cdc44f6f47a7a1db3431cea6338220c9cb",
 			"revisionTime": "2018-04-05T01:48:29Z"
+		},
+		{
+			"checksumSHA1": "c6pbpF7eowwO59phRTpF8cQ80Z0=",
+			"path": "github.com/stretchr/testify/assert",
+			"revision": "f35b8ab0b5a2cef36673838d662e249dd9c94686",
+			"revisionTime": "2018-05-06T18:05:49Z"
 		},
 		{
 			"checksumSHA1": "LTOa3BADhwvT0wFCknPueQALm8I=",
