@@ -222,9 +222,7 @@ type TestServer struct {
 }
 
 func GetTestServer() (*TestServer, error) {
-
 	ln := fasthttputil.NewInmemoryListener()
-	defer ln.Close()
 
 	router := InitRouter()
 	go fasthttp.Serve(ln, router.Handler)
@@ -239,7 +237,7 @@ func GetTestServer() (*TestServer, error) {
 	}, nil
 }
 
-func (serv *TestServer)SendRequest(req *http.Request) (resp fasthttp.Response, err error) {
+func (serv *TestServer) SendRequest(req *http.Request) (resp fasthttp.Response, err error) {
 	req.Host = "127.0.0.1"
 
 	if _, err = (*serv.Conn).Write([]byte(FormatRequest(req))); err != nil {
