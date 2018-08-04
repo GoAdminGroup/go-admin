@@ -1,8 +1,13 @@
 language: go
 go:
   - "1.10"
+services:
+  - mysql
 before_script:
   - git clone --depth=50 --branch=master https://github.com/chenhg5/go-admin.git /home/travis/gopath/src/goAdmin
-  - cd /home/travis/gopath/src/goAdmin && make deps
+  - cd /home/travis/gopath/src/goAdmin
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS godmin;'
+  - mysql -u root --default-character-set=utf8mb4 godmin < admin.sql
+  - make deps
 script:
   - make test
