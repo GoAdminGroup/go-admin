@@ -34,7 +34,7 @@ func (compo *BoxAttribute) SetUrl(value string) *BoxAttribute {
 }
 
 func (compo *BoxAttribute) GetContent() string {
-		return `<div class="small-box bg-` + (*compo).Color + `">
+	return `<div class="small-box bg-` + (*compo).Color + `">
 <div class="inner">
 <h3>` + (*compo).Value + `</h3>
 

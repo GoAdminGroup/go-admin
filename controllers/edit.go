@@ -2,14 +2,14 @@ package controller
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/models"
-	"goAdmin/template"
-	"fmt"
-	"path"
 	"goAdmin/modules"
+	"goAdmin/template"
+	"path"
 )
 
 // 显示表单
@@ -85,7 +85,7 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 
 			suffix = path.Ext(fileObj.Filename)
 			filename = modules.Uuid(50) + suffix
-			if fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/" + filename) != nil {
+			if fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/"+filename) != nil {
 				fmt.Println("save upload file error:", err)
 			}
 			(*form).Value[k] = []string{"/uploads/" + filename}

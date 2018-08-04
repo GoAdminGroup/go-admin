@@ -1,7 +1,7 @@
 package components
 
 type RowAttribute struct {
-	Name  string
+	Name string
 }
 
 var Row = &RowAttribute{

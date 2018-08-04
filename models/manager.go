@@ -1,8 +1,8 @@
 package models
 
 import (
-	"goAdmin/connections/mysql"
 	"goAdmin/components"
+	"goAdmin/connections/mysql"
 	"strings"
 )
 

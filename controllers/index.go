@@ -1,16 +1,16 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
-	"goAdmin/menu"
-	"bytes"
-	"goAdmin/template"
 	"goAdmin/components"
+	"goAdmin/menu"
+	"goAdmin/template"
 )
 
 // 显示仪表盘
-func ShowDashboard(ctx *fasthttp.RequestCtx)  {
+func ShowDashboard(ctx *fasthttp.RequestCtx) {
 	defer GlobalDeferHandler(ctx)
 
 	user := ctx.UserValue("cur_user").(auth.User)
