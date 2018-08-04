@@ -11,9 +11,9 @@ addons:
 before_script:
   - git clone --depth=50 --branch=master https://github.com/chenhg5/go-admin.git /home/travis/gopath/src/goAdmin
   - cd /home/travis/gopath/src/goAdmin
-  - mysql -e "use mysql; update user set authentication_string=PASSWORD('root') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
   - mysql -e 'CREATE DATABASE IF NOT EXISTS godmin;'
   - mysql -u root --default-character-set=utf8mb4 godmin < admin.sql
+  - mysql -e "use mysql; update user set authentication_string=PASSWORD('root') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
   - make deps
 script:
   - make test
