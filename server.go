@@ -245,7 +245,7 @@ func (serv *TestServer)SendRequest(req *http.Request) (resp fasthttp.Response, e
 	if _, err = (*serv.Conn).Write([]byte(FormatRequest(req))); err != nil {
 		return resp, err
 	}
-	br := bufio.NewReader(serv.Conn)
+	br := bufio.NewReader(*serv.Conn)
 	if err = resp.Read(br); err != nil {
 		return resp, err
 	}
