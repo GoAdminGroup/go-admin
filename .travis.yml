@@ -1,8 +1,13 @@
 language: go
 go:
   - "1.10"
-services:
-  - mysql
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    packages:
+      - mysql-server
+      - mysql-client
 before_script:
   - git clone --depth=50 --branch=master https://github.com/chenhg5/go-admin.git /home/travis/gopath/src/goAdmin
   - cd /home/travis/gopath/src/goAdmin
