@@ -2,7 +2,7 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD)test
+GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=go-admin
 BINARY_UNIX=$(BINARY_NAME)_unix

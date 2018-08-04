@@ -1,0 +1,8 @@
+language: go
+go:
+  - "1.10"
+before_script:
+  - git clone --depth=50 --branch=master https://github.com/chenhg5/gp-admin.git /home/travis/gopath/src/goAdmin
+  - cd /home/travis/gopath/src/goAdmin && make deps
+script:
+  - make test
