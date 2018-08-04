@@ -8,10 +8,10 @@ import (
 
 func TestIndexApi(t *testing.T) {
 
-	serv, _ := GetTestServer()
+	serv := GetTestServer()
 
 	req, _ := http.NewRequest("GET", "/", nil)
-	resp, _ := serv.SendRequest(req)
+	resp := serv.SendRequest(req)
 
 	assert.Equal(t, 302, resp.StatusCode())
 }

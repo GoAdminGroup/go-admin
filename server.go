@@ -221,7 +221,7 @@ type TestServer struct {
 	Conn *net.Conn
 }
 
-func GetTestServer() (*TestServer, error) {
+func GetTestServer() *TestServer {
 	ln := fasthttputil.NewInmemoryListener()
 
 	router := InitRouter()
@@ -229,25 +229,26 @@ func GetTestServer() (*TestServer, error) {
 
 	c, err := ln.Dial()
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
 	return &TestServer{
 		&c,
-	}, nil
+	}
 }
 
-func (serv *TestServer) SendRequest(req *http.Request) (resp fasthttp.Response, err error) {
+func (serv *TestServer) SendRequest(req *http.Request) (resp fasthttp.Response) {
 	req.Host = "127.0.0.1"
 
+	var err error
 	if _, err = (*serv.Conn).Write([]byte(FormatRequest(req))); err != nil {
-		return resp, err
+		panic(err)
 	}
 	br := bufio.NewReader(*serv.Conn)
 	if err = resp.Read(br); err != nil {
-		return resp, err
+		panic(err)
 	}
-	return resp, nil
+	return resp
 }
 
 func FormatRequest(r *http.Request) string {
