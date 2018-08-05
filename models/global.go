@@ -2,7 +2,9 @@ package models
 
 type GetTableDataFunc func() GlobalTable
 
+// map下标是路由前缀，对应的值是GlobalTable类型，为表单与表格的数据抽象表示
 var TableFuncConfig = map[string]GetTableDataFunc{
+
 	// 管理员管理部分
 	"manager":    GetManagerTable,    // 管理员管理
 	"permission": GetPermissionTable, // 权限管理
@@ -21,7 +23,6 @@ func InitGlobalTableList() map[string]GlobalTable {
 	return table
 }
 
-// map下标是路由前缀，对应的值是GlobalTable类型，为表单与表格的数据抽象表示
 var GlobalTableList = InitGlobalTableList()
 
 func RefreshGlobalTableList() {
