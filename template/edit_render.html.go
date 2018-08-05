@@ -82,42 +82,41 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                     <li class="dropdown user user-menu">
                         `)
 	buffer.WriteString(`
-<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-    <img src="http://localhost:4003`)
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <img src="http://localhost:4003`)
 	hero.EscapeHTML(user.Avatar, buffer)
 	buffer.WriteString(`" class="user-image" alt="User Image">
-    <span class="hidden-xs">`)
+            <span class="hidden-xs">`)
 	hero.EscapeHTML(user.Name, buffer)
 	buffer.WriteString(`</span>
-</a>
-<ul class="dropdown-menu">
-    <!-- User image -->
-    <li class="user-header">
-        <img src="http://localhost:4003`)
+        </a>
+        <ul class="dropdown-menu">
+            <!-- User image -->
+            <li class="user-header">
+                <img src="http://localhost:4003`)
 	hero.EscapeHTML(user.Avatar, buffer)
 	buffer.WriteString(`" class="img-circle" alt="User Image">
-
-        <p>
-            `)
+                <p>
+                    `)
 	hero.EscapeHTML(user.Name, buffer)
 	buffer.WriteString(` - `)
 	hero.EscapeHTML(user.LevelName, buffer)
 	buffer.WriteString(`
-            <small>`)
+                    <small>`)
 	hero.EscapeHTML(user.CreateAt, buffer)
 	buffer.WriteString(`</small>
-        </p>
-    </li>
-    <li class="user-footer">
-        <div class="pull-left">
-            <a href="#" class="btn btn-default btn-flat">Setting</a>
-        </div>
-        <div class="pull-right">
-            <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
-        </div>
-    </li>
-</ul>
-`)
+                </p>
+            </li>
+            <li class="user-footer">
+                <div class="pull-left">
+                    <a href="#" class="btn btn-default btn-flat">Setting</a>
+                </div>
+                <div class="pull-right">
+                    <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+                </div>
+            </li>
+        </ul>
+    `)
 
 	buffer.WriteString(`
                     </li>
@@ -137,10 +136,10 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                 <div class="pull-left info">
                     `)
 	buffer.WriteString(`
-<p>`)
+        <p>`)
 	hero.EscapeHTML(user.Name, buffer)
 	buffer.WriteString(`</p>
-`)
+    `)
 
 	buffer.WriteString(`
                     <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
@@ -250,15 +249,15 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
         <section class="content-header">
             `)
 	buffer.WriteString(`
-<h1>
-    `)
+        <h1>
+            `)
 	hero.EscapeHTML(title, buffer)
 	buffer.WriteString(`
-    <small>`)
+            <small>`)
 	hero.EscapeHTML(description, buffer)
 	buffer.WriteString(`</small>
-</h1>
-`)
+        </h1>
+    `)
 
 	buffer.WriteString(`
             <!-- breadcrumb start -->
@@ -283,10 +282,10 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                         <!-- form start -->
                         `)
 	buffer.WriteString(`
-<form action='`)
+        <form action='`)
 	hero.EscapeHTML(url, buffer)
 	buffer.WriteString(`' method="post" accept-charset="UTF-8" class="form-horizontal" pjax-container>
-`)
+    `)
 
 	buffer.WriteString(`
                         <div class="box-body">
@@ -294,8 +293,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                                 `)
 	for _, data := range formData {
 		buffer.WriteString(`
-<div class="form-group ">
-    `)
+        <div class="form-group ">
+            `)
 		if data.FormType == "default" {
 			buffer.WriteString(`
     <label class="col-sm-2 control-label">`)
@@ -493,8 +492,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 `)
 		}
 		buffer.WriteString(`
-</div>
-`)
+        </div>
+        `)
 	}
 
 	buffer.WriteString(`
@@ -549,13 +548,13 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                         <input type="hidden" name="_method" value="PUT" class="_method">
                         `)
 	buffer.WriteString(`
-<input type="hidden" name="_previous_" value='`)
+        <input type="hidden" name="_previous_" value='`)
 	hero.EscapeHTML(previous, buffer)
 	buffer.WriteString(`' class="_previous_">
-<input type="hidden" name="id" value='`)
+        <input type="hidden" name="id" value='`)
 	hero.EscapeHTML(id, buffer)
 	buffer.WriteString(`' class="_previous_">
-`)
+    `)
 
 	buffer.WriteString(`
                         <!-- /.box-footer -->

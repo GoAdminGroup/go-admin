@@ -705,7 +705,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
     $(function () {
         $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
             if (this.checked) {
-                $(this).closest('tr').css('background-color', '#ffffd5');
+                $(this).closest('tr').css('background-color', "#ffffd5");
             } else {
                 $(this).closest('tr').css('background-color', '');
             }
