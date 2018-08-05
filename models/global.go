@@ -1,22 +1,31 @@
 package models
 
-// map下标是路由前缀，对应的值是GlobalTable类型，为表单与表格的数据抽象表示
-var GlobalTableList = map[string]GlobalTable{
+type GetTableDataFunc func() GlobalTable
+
+var TableFuncConfig = map[string]GetTableDataFunc{
 	// 管理员管理部分
-	"manager":    GetManagerTable(),    // 管理员管理
-	"permission": GetPermissionTable(), // 权限管理
-	"roles":      GetRolesTable(),      // 角色管理
-	"op":         GetOpTable(),         // 操作日志管理
+	"manager":    GetManagerTable,    // 管理员管理
+	"permission": GetPermissionTable, // 权限管理
+	"roles":      GetRolesTable,      // 角色管理
+	"op":         GetOpTable,         // 操作日志管理
 
 	// 自定义管理部分
-	"user": GetUserTable(),
+	"user": GetUserTable,
 }
 
-func RefreshGlobalTableList() {
-	GlobalTableList["manager"] = GetManagerTable()
-	GlobalTableList["permission"] = GetPermissionTable()
-	GlobalTableList["roles"] = GetRolesTable()
-	GlobalTableList["op"] = GetOpTable()
+func InitGlobalTableList() map[string]GlobalTable {
+	table := make(map[string]GlobalTable, len(TableFuncConfig))
+	for k, v := range TableFuncConfig {
+		table[k] = v()
+	}
+	return table
+}
 
-	GlobalTableList["user"] = GetUserTable()
+// map下标是路由前缀，对应的值是GlobalTable类型，为表单与表格的数据抽象表示
+var GlobalTableList = InitGlobalTableList()
+
+func RefreshGlobalTableList() {
+	for k, v := range TableFuncConfig {
+		GlobalTableList[k] = v()
+	}
 }

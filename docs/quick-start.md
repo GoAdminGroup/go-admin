@@ -110,11 +110,18 @@ func GetUserTable() (userTable GlobalTable) {
 ```go
 package models
 
-// The map subscript is the route prefix, and the corresponding value is the GlobalTable type, which is an abstract representation of the data of the form and the table.
-var GlobalTableList = map[string]GlobalTable{
-	"user": GetUserTable(),
-}
+type GetTableDataFunc func() GlobalTable
 
+var TableFuncConfig = map[string]GetTableDataFunc{
+	// 管理员管理部分
+	"manager":    GetManagerTable,    // 管理员管理
+	"permission": GetPermissionTable, // 权限管理
+	"roles":      GetRolesTable,      // 角色管理
+	"op":         GetOpTable,         // 操作日志管理
+
+	// 自定义管理部分
+	"user": GetUserTable,
+}
 ```
 
 ### Runit
