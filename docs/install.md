@@ -6,14 +6,6 @@
 git clone https://github.com/chenhg5/go-admin $GOPATH/src/goAdmin
 ```
 
-After downloading, go to the project directory.
-
-### Install dependence
-
-```bash
-make deps
-```
-
 ### Configuring database connection information
 
 - config/config.go

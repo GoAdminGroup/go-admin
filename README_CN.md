@@ -70,7 +70,7 @@
 - [x] 增加 [go-bindata](https://github.com/go-bindata/go-bindata) 支持
 - [X] 增加更多表格表单组件
 - [X] 菜单结构
-- [ ] rcba认证
+- [ ] rbac认证
 - [ ] 自定义页面
 - [ ] 合并优化静态资源
 - [ ] 自动安装引擎

@@ -78,7 +78,7 @@ see the [wiki](https://github.com/chenhg5/go-admin/wiki)
 - [x] add [go-bindata](https://github.com/go-bindata/go-bindata) support
 - [X] add more components
 - [X] menu structure
-- [ ] rcba auth
+- [ ] rbac auth
 - [ ] custom pages
 - [ ] combine assets
 - [ ] auto install engine
