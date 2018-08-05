@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: godmin
-# Generation Time: 2018-08-03 07:28:45 +0000
+# Generation Time: 2018-08-05 03:57:45 +0000
 # ************************************************************
 
 
@@ -33,7 +33,7 @@ CREATE TABLE `goadmin_menu` (
   `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `uri` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -49,7 +49,7 @@ VALUES
 	(6,2,6,'菜单管理','fa-bars','/menu',NULL,NULL),
 	(7,2,7,'操作日志','fa-history','/info/op',NULL,NULL),
 	(12,0,2,'用户表','fa-tasks','/info/user',NULL,NULL),
-	(13,0,1,'仪表盘','fa-bars','/','2018-08-03 15:24:42',NULL);
+	(13,0,1,'仪表盘','fa-tasks','/','2018-08-03 15:24:42',NULL);
 
 /*!40000 ALTER TABLE `goadmin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -67,8 +67,8 @@ CREATE TABLE `goadmin_operation_log` (
   `method` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ip` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `input` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `admin_operation_log_user_id_index` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -193,8 +193,8 @@ CREATE TABLE `goadmin_permissions` (
   `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `http_method` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `http_path` text COLLATE utf8mb4_unicode_ci,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `admin_permissions_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -222,8 +222,8 @@ DROP TABLE IF EXISTS `goadmin_role_menu`;
 CREATE TABLE `goadmin_role_menu` (
   `role_id` int(11) NOT NULL,
   `menu_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   KEY `admin_role_menu_role_id_menu_id_index` (`role_id`,`menu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -247,9 +247,9 @@ DROP TABLE IF EXISTS `goadmin_role_permissions`;
 CREATE TABLE `goadmin_role_permissions` (
   `role_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  KEY `admin_role_permissions_role_id_permission_id_index` (`role_id`,`permission_id`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `admin_role_permissions` (`role_id`,`permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `goadmin_role_permissions` WRITE;
@@ -271,9 +271,9 @@ DROP TABLE IF EXISTS `goadmin_role_users`;
 CREATE TABLE `goadmin_role_users` (
   `role_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  KEY `admin_role_users_role_id_user_id_index` (`role_id`,`user_id`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `admin_user_roles` (`role_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `goadmin_role_users` WRITE;
@@ -296,8 +296,8 @@ CREATE TABLE `goadmin_roles` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `slug` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `admin_roles_name_unique` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -321,11 +321,21 @@ DROP TABLE IF EXISTS `goadmin_user_permissions`;
 CREATE TABLE `goadmin_user_permissions` (
   `user_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  KEY `admin_user_permissions_user_id_permission_id_index` (`user_id`,`permission_id`)
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `admin_user_permissions` (`user_id`,`permission_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+LOCK TABLES `goadmin_user_permissions` WRITE;
+/*!40000 ALTER TABLE `goadmin_user_permissions` DISABLE KEYS */;
+
+INSERT INTO `goadmin_user_permissions` (`user_id`, `permission_id`, `created_at`, `updated_at`)
+VALUES
+	(1,2,NULL,NULL),
+	(1,3,NULL,NULL);
+
+/*!40000 ALTER TABLE `goadmin_user_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table goadmin_users
@@ -340,8 +350,8 @@ CREATE TABLE `goadmin_users` (
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `admin_users_username_unique` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -351,7 +361,7 @@ LOCK TABLES `goadmin_users` WRITE;
 
 INSERT INTO `goadmin_users` (`id`, `username`, `password`, `name`, `avatar`, `remember_token`, `created_at`, `updated_at`)
 VALUES
-	(1,'admin','$2a$10$YDoHIAPcGpa3/Pm0f5Q/HeAlhOaRUgL.eyF8Ne/Mc1dp9esEQEV5e','admin','/assets/dist/img/avatar04.png','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
+	(1,'admin','$2a$10$YDoHIAPcGpa3/Pm0f5Q/HeAlhOaRUgL.eyF8Ne/Mc1dp9esEQEV5e','admin','/uploads/R5JLbqE6kmAl4qFMQdSgPMjaBfQfj9KFsQ64WvbboKF5X5jmT6','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
 
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;
 UNLOCK TABLES;

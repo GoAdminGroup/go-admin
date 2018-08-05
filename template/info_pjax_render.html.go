@@ -341,6 +341,51 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
             }
         });
     });
+
+    $('.grid-row-delete').unbind('click').click(function () {
+
+        var id = $(this).data('id');
+
+        swal({
+                    title: "你确定要删除吗",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定",
+                    closeOnConfirm: false,
+                    cancelButtonText: "取消"
+                },
+                function () {
+                `)
+	buffer.WriteString(`
+    $.ajax({
+    method: 'post',
+    url: '`)
+	hero.EscapeHTML(paginator["delete_url"].(string), buffer)
+	buffer.WriteString(`',
+    data: {
+    id: id
+    },
+    success: function (data) {
+    $.pjax.reload('#pjax-container');
+
+    if (typeof data === 'object') {
+    if (data.status) {
+    swal(data.message, '', 'success');
+    } else {
+    swal(data.message, '', 'error');
+    }
+    }
+    },
+    error: function (data) {
+    swal("删除失败", '', 'error');
+    }
+    });
+`)
+
+	buffer.WriteString(`
+                });
+    });
 </script>
 `)
 

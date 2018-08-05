@@ -213,6 +213,45 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
         });
     </script>
 `)
+		} else if data.FormType == "selectbox" {
+			buffer.WriteString(`
+    <label for="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" class="col-sm-2  control-label">`)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`</label>
+    <div class="col-sm-8">
+        <select class="form-control `)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`" style="width: 100%;" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`[]" multiple="multiple" data-placeholder="Input `)
+			hero.EscapeHTML(data.Head, buffer)
+			buffer.WriteString(`"  >
+            `)
+			for _, v := range data.Options {
+				buffer.WriteString(`
+                <option value='`)
+				hero.EscapeHTML(v["value"], buffer)
+				buffer.WriteString(`' `)
+				hero.EscapeHTML(v["selected"], buffer)
+				buffer.WriteString(`>`)
+				hero.EscapeHTML(v["field"], buffer)
+				buffer.WriteString(`</option>
+            `)
+			}
+			buffer.WriteString(`
+        </select>
+        <input type="hidden" name="`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`[]" />
+    </div>
+    <script>
+        $(".`)
+			hero.EscapeHTML(data.Field, buffer)
+			buffer.WriteString(`").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
+    </script>
+`)
 		}
 		buffer.WriteString(`
 </div>
@@ -258,7 +297,6 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
         </div>
     </div>
 </section>
-
 <script data-exec-on-popstate>
     $(function () {
         $('.form-history-back').on('click', function (event) {

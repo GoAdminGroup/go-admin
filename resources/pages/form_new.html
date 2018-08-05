@@ -11,19 +11,19 @@
             </div>
         </div>
     <% } else if data.FormType == "text" { %>
-        <label for="json" class="col-sm-2 control-label"><%= data.Head %></label>
+        <label for="<%= data.Field %>" class="col-sm-2 control-label"><%= data.Head %></label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-                <input type="text" id="<%= data.Field %>" name="<%= data.Field %>" value='' class="form-control json" placeholder="Input json">
+                <input type="text" id="<%= data.Field %>" name="<%= data.Field %>" value='' class="form-control <%= data.Field %>" placeholder="Input <%= data.Head %>">
             </div>
         </div>
     <% } else if data.FormType == "password" { %>
-        <label for="password" class="col-sm-2 control-label"><%= data.Head %></label>
+        <label for="<%= data.Field %>" class="col-sm-2 control-label"><%= data.Head %></label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
-                <input type="password" id="<%= data.Field %>" name="<%= data.Field %>" value="" class="form-control password" placeholder="Input Password">
+                <input type="password" id="<%= data.Field %>" name="<%= data.Field %>" value="" class="form-control <%= data.Field %>" placeholder="Input <%= data.Head %>">
             </div>
         </div>
     <% } else if data.FormType == "textarea" { %>
@@ -34,7 +34,7 @@
     <% } else if data.FormType == "select" { %>
         <label for="<%= data.Field %>" class="col-sm-2 control-label"><%= data.Head %></label>
         <div class="col-sm-8">
-            <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="<%= data.Field %>[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
+            <select class="form-control <%= data.Field %> select2-hidden-accessible" style="width: 100%;" name="<%= data.Field %>[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
                 <% for _, v := range data.Options { %>
                     <option value='<%= v["value"] %>'><%= v["field"] %></option>
                 <% } %>
@@ -49,6 +49,50 @@
                 allowClear: true,
                 placeholder: "<%= data.Head %>"
             });
+        </script>
+    <% } else if data.FormType == "file" { %>
+        <label for="<%= data.Field %>" class="col-sm-2  control-label"><%= data.Head %></label>
+        <div class="col-sm-8">
+            <input type="file" class="<%= data.Field %>" name="<%= data.Field %>" data-initial-preview="" data-initial-caption="">
+        </div>
+        <script>
+            $("input.<%= data.Field %>").fileinput({
+                "overwriteInitial":true,
+                "initialPreviewAsData":true,
+                "browseLabel":"Browse",
+                "showRemove":false,
+                "showUpload":false,
+                "deleteExtraData":{
+                    "avatar":"_file_del_",
+                    "_file_del_":"",
+                    "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+                    "_method":"PUT"
+                },
+                "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+                "allowedFileTypes":["image"]
+            });
+        </script>
+    <% } else if data.FormType == "selectbox" { %>
+        <label for="<%= data.Field %>" class="col-sm-2  control-label"><%= data.Head %></label>
+        <div class="col-sm-8">
+            <select class="form-control <%= data.Field %>" style="width: 100%;" name="<%= data.Field %>[]" multiple="multiple" data-placeholder="Input <%= data.Head %>"  >
+                <option value="1" selected>All permission</option>
+                <option value="2" >Dashboard</option>
+                <option value="3" >Login</option>
+                <option value="4" >User setting</option>
+                <option value="5" >Auth management</option>
+                <option value="6" >Admin Config</option>
+                <option value="7" >Scheduling</option>
+                <option value="8" >Logs</option>
+                <option value="9" >Api tester</option>
+                <option value="10" >Media manager</option>
+                <option value="11" >Admin helpers</option>
+                <option value="12" >Exceptions reporter</option>
+            </select>
+            <input type="hidden" name="<%= data.Field %>[]" />
+        </div>
+        <script>
+            $(".<%= data.Field %>").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
         </script>
     <% } %>
 <% } %>

@@ -2,14 +2,12 @@ package controller
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/models"
-	"goAdmin/modules"
 	"goAdmin/template"
-	"path"
+	"goAdmin/modules/file"
 )
 
 // 显示表单
@@ -55,47 +53,30 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 
 	prefix := ctx.UserValue("prefix").(string)
 
-	// 管理员管理编辑
-	if prefix == "manager" {
-
-	}
-	// 管理员角色管理编辑
-	if prefix == "roles" {
-
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.SetStatusCode(500)
+		return
 	}
 
-	previous := string(ctx.FormValue("_previous_")[:])
-
-	form, _ := ctx.MultipartForm()
-
-	var (
-		suffix   string
-		filename string
-	)
+	// 处理上传文件，目前仅仅支持传本地
 	if len((*form).File) > 0 {
-
-		for k, _ := range (*form).File {
-			data, err := ctx.MultipartForm()
-			if err != nil {
-				ctx.SetStatusCode(500)
-				fmt.Println("get upload file error:", err)
-				return
-			}
-			fileObj := data.File[k][0]
-
-			suffix = path.Ext(fileObj.Filename)
-			filename = modules.Uuid(50) + suffix
-			if fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/"+filename) != nil {
-				fmt.Println("save upload file error:", err)
-			}
-			(*form).Value[k] = []string{"/uploads/" + filename}
-		}
+		file.GetFileEngine("local").Upload(form)
 	}
 
-	models.GlobalTableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
+	if prefix == "manager" { // 管理员管理编辑
+		EditManager((*form).Value)
+	} else if prefix == "roles" { // 管理员角色管理编辑
+		EditRole((*form).Value)
+	} else {
+		models.GlobalTableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
+	}
+
+	models.RefreshGlobalTableList()
 
 	// TODO: 增加反馈
 
+	previous := string(ctx.FormValue("_previous_")[:])
 	ctx.Response.SetStatusCode(302)
 	ctx.Response.Header.Add("Location", previous)
 }

@@ -42,6 +42,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -550,6 +551,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 <script src="../../assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="../../assets/jquery-pjax/jquery.pjax.js"></script>
 <script src="../../assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script>
     $('.grid-per-pager').on("change", function (e) {
         console.log("changing...")
@@ -651,37 +653,44 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
         var id = $(this).data('id');
 
         swal({
-                    title: "你确定要删除吗",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "确定",
-                    closeOnConfirm: false,
-                    cancelButtonText: "取消"
-                },
-                function () {
-                    $.ajax({
-                        method: 'post',
-                        url: '/user/delete',
-                        data: {
-                            id: id
-                        },
-                        success: function (data) {
-                            $.pjax.reload('#pjax-container');
+            title: "你确定要删除吗",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            closeOnConfirm: false,
+            cancelButtonText: "取消"
+        },
+        function () {
+            `)
+	buffer.WriteString(`
+    $.ajax({
+    method: 'post',
+    url: '`)
+	hero.EscapeHTML(paginator["delete_url"].(string), buffer)
+	buffer.WriteString(`',
+    data: {
+    id: id
+    },
+    success: function (data) {
+    $.pjax.reload('#pjax-container');
 
-                            if (typeof data === 'object') {
-                                if (data.status) {
-                                    swal(data.message, '', 'success');
-                                } else {
-                                    swal(data.message, '', 'error');
-                                }
-                            }
-                        },
-                        error: function (data) {
-                            swal("删除失败", '', 'error');
-                        }
-                    });
-                });
+    if (typeof data === 'object') {
+    if (data.status) {
+    swal(data.message, '', 'success');
+    } else {
+    swal(data.message, '', 'error');
+    }
+    }
+    },
+    error: function (data) {
+    swal("删除失败", '', 'error');
+    }
+    });
+`)
+
+	buffer.WriteString(`
+        });
     });
 
     $('.grid-select-all').on('ifChanged', function (event) {

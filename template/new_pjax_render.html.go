@@ -76,7 +76,9 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
     `)
 			} else if data.FormType == "text" {
 				buffer.WriteString(`
-        <label for="json" class="col-sm-2 control-label">`)
+        <label for="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" class="col-sm-2 control-label">`)
 				hero.EscapeHTML(data.Head, buffer)
 				buffer.WriteString(`</label>
         <div class="col-sm-8">
@@ -86,13 +88,19 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
 				hero.EscapeHTML(data.Field, buffer)
 				buffer.WriteString(`" name="`)
 				hero.EscapeHTML(data.Field, buffer)
-				buffer.WriteString(`" value='' class="form-control json" placeholder="Input json">
+				buffer.WriteString(`" value='' class="form-control `)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" placeholder="Input `)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`">
             </div>
         </div>
     `)
 			} else if data.FormType == "password" {
 				buffer.WriteString(`
-        <label for="password" class="col-sm-2 control-label">`)
+        <label for="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" class="col-sm-2 control-label">`)
 				hero.EscapeHTML(data.Head, buffer)
 				buffer.WriteString(`</label>
         <div class="col-sm-8">
@@ -102,7 +110,11 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
 				hero.EscapeHTML(data.Field, buffer)
 				buffer.WriteString(`" name="`)
 				hero.EscapeHTML(data.Field, buffer)
-				buffer.WriteString(`" value="" class="form-control password" placeholder="Input Password">
+				buffer.WriteString(`" value="" class="form-control `)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" placeholder="Input `)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`">
             </div>
         </div>
     `)
@@ -123,7 +135,9 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
 				hero.EscapeHTML(data.Head, buffer)
 				buffer.WriteString(`</label>
         <div class="col-sm-8">
-            <select class="form-control http_method select2-hidden-accessible" style="width: 100%;" name="`)
+            <select class="form-control `)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(` select2-hidden-accessible" style="width: 100%;" name="`)
 				hero.EscapeHTML(data.Field, buffer)
 				buffer.WriteString(`[]" multiple="" data-placeholder="Input HTTP method" tabindex="-1" aria-hidden="true">
                 `)
@@ -154,6 +168,78 @@ func NewPanelPjax(formData []models.FormStruct, url string, previous string, id 
 				hero.EscapeHTML(data.Head, buffer)
 				buffer.WriteString(`"
             });
+        </script>
+    `)
+			} else if data.FormType == "file" {
+				buffer.WriteString(`
+        <label for="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" class="col-sm-2  control-label">`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
+        <div class="col-sm-8">
+            <input type="file" class="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" data-initial-preview="" data-initial-caption="">
+        </div>
+        <script>
+            $("input.`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`").fileinput({
+                "overwriteInitial":true,
+                "initialPreviewAsData":true,
+                "browseLabel":"Browse",
+                "showRemove":false,
+                "showUpload":false,
+                "deleteExtraData":{
+                    "avatar":"_file_del_",
+                    "_file_del_":"",
+                    "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+                    "_method":"PUT"
+                },
+                "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+                "allowedFileTypes":["image"]
+            });
+        </script>
+    `)
+			} else if data.FormType == "selectbox" {
+				buffer.WriteString(`
+        <label for="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" class="col-sm-2  control-label">`)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`</label>
+        <div class="col-sm-8">
+            <select class="form-control `)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`" style="width: 100%;" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`[]" multiple="multiple" data-placeholder="Input `)
+				hero.EscapeHTML(data.Head, buffer)
+				buffer.WriteString(`"  >
+                <option value="1" selected>All permission</option>
+                <option value="2" >Dashboard</option>
+                <option value="3" >Login</option>
+                <option value="4" >User setting</option>
+                <option value="5" >Auth management</option>
+                <option value="6" >Admin Config</option>
+                <option value="7" >Scheduling</option>
+                <option value="8" >Logs</option>
+                <option value="9" >Api tester</option>
+                <option value="10" >Media manager</option>
+                <option value="11" >Admin helpers</option>
+                <option value="12" >Exceptions reporter</option>
+            </select>
+            <input type="hidden" name="`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`[]" />
+        </div>
+        <script>
+            $(".`)
+				hero.EscapeHTML(data.Field, buffer)
+				buffer.WriteString(`").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
         </script>
     `)
 			}

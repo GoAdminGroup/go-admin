@@ -42,6 +42,7 @@ func BaseContent(content string, menuList []menu.MenuItem, title string, descrip
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -282,6 +283,7 @@ func BaseContent(content string, menuList []menu.MenuItem, title string, descrip
 <script src="../../assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="../../assets/jquery-pjax/jquery.pjax.js"></script>
 <script src="../../assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script>
     $('.grid-per-pager').on("change", function (e) {
         console.log("changing...")

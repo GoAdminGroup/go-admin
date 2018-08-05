@@ -4,6 +4,7 @@ import (
 	"goAdmin/components"
 	"goAdmin/connections/mysql"
 	"strings"
+	"strconv"
 )
 
 func GetManagerTable() (userTable GlobalTable) {
@@ -66,18 +67,18 @@ func GetManagerTable() (userTable GlobalTable) {
 	userTable.Info.Description = "管理员管理"
 
 	var roles, permissions []map[string]string
-	rolesModel, _ := mysql.Query("select `name`, `slug` from goadmin_roles where id > ?", 0)
+	rolesModel, _ := mysql.Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),
-			"value": v["slug"].(string),
+			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := mysql.Query("select `name`, `slug` from goadmin_permissions where id > ?", 0)
+	permissionsModel, _ := mysql.Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
-			"value": v["slug"].(string),
+			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
 
@@ -134,33 +135,33 @@ func GetManagerTable() (userTable GlobalTable) {
 			},
 		}, {
 			Head:     "角色",
-			Field:    "roles",
+			Field:    "role_id",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
 			FormType: "select",
 			Options:  roles,
 			ExcuFun: func(model RowModel) interface{} {
-				roleModel, _ := mysql.Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", model.ID)
+				roleModel, _ := mysql.Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
-					roles = append(roles, v["slug"].(string))
+					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
 				}
 				return roles
 			},
 		}, {
 			Head:     "权限",
-			Field:    "permissions",
+			Field:    "permission_id",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
 			FormType: "select",
 			Options:  permissions,
 			ExcuFun: func(model RowModel) interface{} {
-				permissionModel, _ := mysql.Query("select r.id, r.name, r.slug from goadmin_user_permissions as u left join goadmin_permissions as r on u.permission_id = r.id where user_id = ?", model.ID)
+				permissionModel, _ := mysql.Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
 				var permissions []string
 				for _, v := range permissionModel {
-					permissions = append(permissions, v["slug"].(string))
+					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
 				}
 				return permissions
 			},
@@ -351,6 +352,15 @@ func GetPermissionTable() (userTable GlobalTable) {
 
 func GetRolesTable() (userTable GlobalTable) {
 
+	var permissions []map[string]string
+	permissionsModel, _ := mysql.Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
+	for _, v := range permissionsModel {
+		permissions = append(permissions, map[string]string{
+			"field": v["slug"].(string),
+			"value": strconv.FormatInt(v["id"].(int64), 10),
+		})
+	}
+
 	userTable.Info.FieldList = []FieldStruct{
 		{
 			Head:     "ID",
@@ -428,6 +438,22 @@ func GetRolesTable() (userTable GlobalTable) {
 			FormType: "text",
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
+			},
+		}, {
+			Head:     "权限",
+			Field:    "permission_id",
+			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: "selectbox",
+			Options:  permissions,
+			ExcuFun: func(model RowModel) interface{} {
+				perModel, _ := mysql.Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
+				var permissions []string
+				for _, v := range perModel {
+					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+				}
+				return permissions
 			},
 		}, {
 			Head:     "更新时间",

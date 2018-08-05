@@ -6,6 +6,7 @@ import (
 	"goAdmin/menu"
 	"goAdmin/models"
 	"goAdmin/template"
+	"goAdmin/modules/file"
 )
 
 // 显示新建表单
@@ -47,24 +48,30 @@ func NewForm(ctx *fasthttp.RequestCtx) {
 
 	prefix := ctx.UserValue("prefix").(string)
 
-	// 管理员管理新建
-	if prefix == "manager" {
-
+	form, err := ctx.MultipartForm()
+	if err != nil {
+		ctx.SetStatusCode(500)
+		return
 	}
 
-	// 管理员角色管理新建
-	if prefix == "roles" {
-
+	// 处理上传文件，目前仅仅支持传本地
+	if len((*form).File) > 0 {
+		file.GetFileEngine("local").Upload(form)
 	}
 
-	previous := string(ctx.FormValue("_previous_")[:])
+	if prefix == "manager" { // 管理员管理新建
+		NewManager((*form).Value)
+	} else if prefix == "roles" { // 管理员角色管理新建
+		NewRole((*form).Value)
+	} else {
+		models.GlobalTableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
+	}
 
-	form, _ := ctx.MultipartForm()
-
-	models.GlobalTableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
+	models.RefreshGlobalTableList()
 
 	// TODO: 增加反馈
 
+	previous := string(ctx.FormValue("_previous_")[:])
 	ctx.Response.SetStatusCode(302)
 	ctx.Response.Header.Add("Location", previous)
 }

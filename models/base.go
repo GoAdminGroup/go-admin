@@ -153,7 +153,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
 		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
-			if tableModel.Form.FormList[i].FormType == "select" {
+			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(RowModel{
 					idint64,
 					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
@@ -170,7 +170,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 				}).(string)
 			}
 		} else {
-			if tableModel.Form.FormList[i].FormType == "select" {
+			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(RowModel{
 					idint64,
 					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),

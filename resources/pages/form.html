@@ -68,4 +68,17 @@
             "allowedFileTypes":["image"]
         });
     </script>
+<% } else if data.FormType == "selectbox" { %>
+    <label for="<%= data.Field %>" class="col-sm-2  control-label"><%= data.Head %></label>
+    <div class="col-sm-8">
+        <select class="form-control <%= data.Field %>" style="width: 100%;" name="<%= data.Field %>[]" multiple="multiple" data-placeholder="Input <%= data.Head %>"  >
+            <% for _, v := range data.Options { %>
+                <option value='<%= v["value"] %>' <%= v["selected"] %>><%= v["field"] %></option>
+            <% } %>
+        </select>
+        <input type="hidden" name="<%= data.Field %>[]" />
+    </div>
+    <script>
+        $(".<%= data.Field %>").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
+    </script>
 <% } %>

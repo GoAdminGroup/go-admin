@@ -158,4 +158,23 @@
             }
         });
     });
+
+    $('.grid-row-delete').unbind('click').click(function () {
+
+        var id = $(this).data('id');
+
+        swal({
+                    title: "你确定要删除吗",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定",
+                    closeOnConfirm: false,
+                    cancelButtonText: "取消"
+                },
+                function () {
+                <%@ deletePart { %>
+                    <% } %>
+                });
+    });
 </script>

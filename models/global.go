@@ -11,3 +11,12 @@ var GlobalTableList = map[string]GlobalTable{
 	// 自定义管理部分
 	"user": GetUserTable(),
 }
+
+func RefreshGlobalTableList() {
+	GlobalTableList["manager"] = GetManagerTable()
+	GlobalTableList["permission"] = GetPermissionTable()
+	GlobalTableList["roles"] = GetRolesTable()
+	GlobalTableList["op"] = GetOpTable()
+
+	GlobalTableList["user"] = GetUserTable()
+}
