@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"bufio"
 	"strings"
+	"runtime"
 )
 
 type GracefulListener struct {
@@ -124,7 +125,7 @@ func GetFileSuffix(path string) string {
 	suffix := filepath.Ext(path)
 	rs := []rune(suffix)
 	length := len(rs)
-	return string(rs[1: length-0])
+	return string(rs[1 : length-0])
 }
 
 func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
@@ -171,7 +172,17 @@ func PathExist(_path string) bool {
 
 func InitServer(addr string) {
 	// create a fast listener ;)
-	ln, err := reuseport.Listen("tcp4", addr)
+	var (
+		ln  net.Listener
+		err error
+	)
+
+	if runtime.GOOS == "windows" {
+		ln, err = net.Listen("tcp4", addr)
+	} else {
+		ln, err = reuseport.Listen("tcp4", addr)
+	}
+
 	if err != nil {
 		log.Fatalf("error in reuseport listener: %s", err)
 	}
@@ -215,7 +226,6 @@ func InitServer(addr string) {
 		log.Fatalf("error with graceful close: %s", err)
 	}
 }
-
 
 type TestServer struct {
 	Conn *net.Conn
