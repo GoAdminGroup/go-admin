@@ -6,8 +6,8 @@ import (
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/models"
-	"goAdmin/template"
 	"goAdmin/modules/file"
+	"goAdmin/template"
 )
 
 // 显示表单

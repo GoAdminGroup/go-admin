@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"goAdmin/connections/mysql"
 	"goAdmin/auth"
+	"goAdmin/connections/mysql"
 )
 
 func NewManager(dataList map[string][]string) {

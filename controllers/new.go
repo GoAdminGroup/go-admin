@@ -5,8 +5,8 @@ import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/menu"
 	"goAdmin/models"
-	"goAdmin/template"
 	"goAdmin/modules/file"
+	"goAdmin/template"
 )
 
 // 显示新建表单

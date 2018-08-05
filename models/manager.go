@@ -3,8 +3,8 @@ package models
 import (
 	"goAdmin/components"
 	"goAdmin/connections/mysql"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func GetManagerTable() (userTable GlobalTable) {
