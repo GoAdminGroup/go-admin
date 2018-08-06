@@ -12,3 +12,8 @@
 
   * [基本使用](zh-cn/form-usage.md)
   * [表单组件](zh-cn/form-components.md)
+  
+* 自定义页面
+  
+  * [基本使用](zh-cn/page-usage.md)
+  * [表单组件](zh-cn/page-components.md) 
