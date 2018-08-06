@@ -16,4 +16,4 @@
 * 自定义页面
   
   * [基本使用](zh-cn/page-usage.md)
-  * [表单组件](zh-cn/page-components.md) 
+  * [页面组件](zh-cn/page-components.md) 
