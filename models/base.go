@@ -225,10 +225,10 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 
 	fields := ""
 	queStr := ""
-	valueList := make([]interface{}, 0)
+	var valueList []interface{}
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_token" {
-			fields += k + " = ?,"
+			fields += k + ","
 			queStr += "?,"
 			valueList = append(valueList, v[0])
 		}
@@ -236,8 +236,8 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 
 	fields = fields[0 : len(fields)-1]
 	queStr = queStr[0 : len(queStr)-1]
-	valueList = append(valueList, dataList["id"][0])
 
+	// TODO: 过滤
 	mysql.Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
 }
 

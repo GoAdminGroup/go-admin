@@ -82,7 +82,7 @@ func GetUserTable() (userTable GlobalTable) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: "text",
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
