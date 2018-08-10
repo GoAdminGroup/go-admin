@@ -8,6 +8,7 @@ import (
 	"goAdmin/models"
 	"goAdmin/modules/file"
 	"goAdmin/template"
+	"strings"
 )
 
 // 显示表单
@@ -76,7 +77,36 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 
 	// TODO: 增加反馈
 
-	previous := string(ctx.FormValue("_previous_")[:])
-	ctx.Response.SetStatusCode(302)
-	ctx.Response.Header.Add("Location", previous)
+	previous := string(ctx.FormValue("_previous_"))
+	prevUrlArr := strings.Split(previous, "?")
+	paramArr := strings.Split(prevUrlArr[1], "&")
+	page := "1"
+	pageSize := "10"
+
+	for i := 0; i < len(paramArr); i++ {
+		if strings.Index(paramArr[i], "pageSize") >= 0 {
+			pageSize = strings.Split(paramArr[i], "=")[1]
+		} else {
+			if strings.Index(paramArr[i], "page") >= 0 {
+				page = strings.Split(paramArr[i], "=")[1]
+			}
+		}
+	}
+
+	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+		"page":     page,
+		"path":     prevUrlArr[0],
+		"prefix":   prefix,
+		"pageSize": pageSize,
+	})
+
+	menu.GlobalMenu.SetActiveClass(previous)
+
+	buffer := new(bytes.Buffer)
+
+	template.InfoListPjax(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, buffer)
+
+	ctx.Response.AppendBody(buffer.Bytes())
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Add("X-PJAX-URL", previous)
 }
