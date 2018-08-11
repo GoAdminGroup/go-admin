@@ -2,6 +2,10 @@
 
 <%~ "info.html" %>
 
+<%@ headPart { %>
+<%+ "head.html" %>
+<% } %>
+
 <%@ header { %>
 <h1>
     <%= title %>
@@ -57,29 +61,6 @@
 </th>
 <% } %>
 <th>操作</th>
-<% } %>
-
-<%@ deletePart { %>
-    $.ajax({
-        method: 'post',
-        url: '<%= paginator["delete_url"].(string) %>',
-        data: {
-            id: id
-        },
-        success: function (data) {
-            $.pjax.reload('#pjax-container');
-
-            data = JSON.parse(data)
-            if (data.code == 200) {
-                swal(data.msg, '', 'success');
-            } else {
-                swal(data.msg, '', 'error');
-            }
-        },
-        error: function (data) {
-            swal("删除失败", '', 'error');
-        }
-    });
 <% } %>
 
 <%@ list { %>
@@ -160,3 +141,29 @@
 </div>
 <% } %>
 
+<%@ jsPart { %>
+<%+ "js.html" %>
+<% } %>
+
+<%@ deletePart { %>
+$.ajax({
+method: 'post',
+url: '<%= paginator["delete_url"].(string) %>',
+data: {
+id: id
+},
+success: function (data) {
+$.pjax.reload('#pjax-container');
+
+data = JSON.parse(data)
+if (data.code == 200) {
+swal(data.msg, '', 'success');
+} else {
+swal(data.msg, '', 'error');
+}
+},
+error: function (data) {
+swal("删除失败", '', 'error');
+}
+});
+<% } %>

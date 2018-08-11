@@ -15,7 +15,8 @@ import (
 func EditPanel(formData []models.FormStruct, url string, previous string, id string, menuList []menu.MenuItem, title string, description string, user auth.User, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
-<head>
+`)
+	buffer.WriteString(`<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>GoAdmin</title>
@@ -41,12 +42,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="../../assets/dist/css/skins/skin-black.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <!-- <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css"> -->
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="../../assets/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="../../assets/respond/1.4.2/respond.min.js"></script>
@@ -54,13 +49,15 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 
     <!-- Google Font -->
     <link rel="stylesheet" href="../../assets/googleapis/font.css">
-</head>
+</head>`)
+
+	buffer.WriteString(`
 <body class="hold-transition skin-black sidebar-mini">
 <div class="wrapper">
 
     <header class="main-header">
         <!-- Logo -->
-        <a href="../../index2.html" class="logo">
+        <a href="/" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini"><b>G</b>A</span>
             <!-- logo for regular state and mobile devices -->
@@ -148,7 +145,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                     <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                 </div>
             </div>
-            <!-- search form -->
             <form action="#" method="get" class="sidebar-form">
                 <div class="input-group">
                     <input type="text" name="q" class="form-control" placeholder="Search...">
@@ -158,35 +154,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
               </span>
                 </div>
             </form>
-            <!-- /.search form -->
-            <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MAIN NAVIGATION</li>
-                <!--<li class="treeview">
-                  <a href="#">
-                    <i class="fa fa-edit"></i> <span>Forms</span>
-                    <span class="pull-right-container">
-                          <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                  </a>
-                  <ul class="treeview-menu">
-                    <li><a href="../forms/general.html"><i class="fa fa-circle-o"></i> General Elements</a></li>
-                    <li><a href="../forms/advanced.html"><i class="fa fa-circle-o"></i> Advanced Elements</a></li>
-                    <li><a href="../forms/editors.html"><i class="fa fa-circle-o"></i> Editors</a></li>
-                  </ul>
-                </li>
-                <li class="treeview active">
-                  <a href="#">
-                    <i class="fa fa-table"></i> <span>Tables</span>
-                    <span class="pull-right-container">
-                          <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                  </a>
-                  <ul class="treeview-menu">
-                    <li><a href="simple.html"><i class="fa fa-circle-o"></i> Simple tables</a></li>
-                    <li class="active"><a href="data.html"><i class="fa fa-circle-o"></i> Data tables</a></li>
-                  </ul>
-                </li>-->
                 `)
 	for _, list := range menuList {
 		if len(list.ChildrenList) == 0 {
@@ -263,8 +232,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     `)
 
 	buffer.WriteString(`
-            <!-- breadcrumb start -->
-            <!-- breadcrumb end -->
         </section>
         <section class="content">
             <div class="row">
@@ -281,8 +248,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                                 </div>
                             </div>
                         </div>
-                        <!-- /.box-header -->
-                        <!-- form start -->
                         `)
 	buffer.WriteString(`
         <form action='`)
@@ -500,33 +465,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 	}
 
 	buffer.WriteString(`
-
-                                <!-- <div class="form-group ">
-                                    <label class="col-sm-2 control-label">ID</label>
-                                    <div class="col-sm-8">
-                                        <div class="box box-solid box-default no-margin">
-                                            <div class="box-body">
-                                                1 
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group  ">
-                                    <label for="json" class="col-sm-2 control-label">json</label>
-                                    <div class="col-sm-8">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-
-                                            <input type="text" id="json" name="json" value='123' class="form-control json" placeholder="Input json">
-                                        </div>
-                                    </div>
-                                </div>
-                -->
-
                             </div>
-
                         </div>
-                        <!-- /.box-body -->
                         <div class="box-footer">
                             <input type="hidden" name="_token" value="7TEJrUaKsAIZ0qbc03G1nmeDOfmHyhCbMHqHlnkg">
                             <div class="col-md-2">
@@ -569,7 +509,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 
         </section>
         <script data-exec-on-popstate>
-
             $(function () {
                 $('.form-history-back').on('click', function (event) {
                     event.preventDefault();
@@ -578,7 +517,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
             });
         </script>
     </div>
-    <!-- /.content-wrapper -->
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
             <b>Version</b> 2.4.0
@@ -587,21 +525,14 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
         reserved.
     </footer>
 </div>
-<!-- ./wrapper -->
 
-<!-- jQuery 3 -->
-<!-- <script src="../../assets/jquery/dist/jquery.min.js"></script> -->
-<script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
-<!-- Bootstrap 3.3.7 -->
+`)
+	buffer.WriteString(`<script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
 <script src="../../assets/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
 <script src="../../assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
 <script src="../../assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
 <script src="../../assets/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
 <script src="../../assets/dist/js/adminlte.min.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
 <script src="../../assets/fileinput/fileinput.min.js"></script>
@@ -610,101 +541,11 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 <script src="../../assets/toastr/build/toastr.min.js"></script>
 <script src="../../assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="../../assets/jquery-pjax/jquery.pjax.js"></script>
-<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script>
-    $('.grid-per-pager').on("change", function (e) {
-        console.log("changing...")
-        $.pjax({url: this.value, container: '#pjax-container'});
-    });
-    $('.grid-refresh').on('click', function () {
-        $.pjax.reload('#pjax-container');
-        toastr.success('Refresh succeeded !');
-    });
-    $.fn.editable.defaults.params = function (params) {
-        params._token = LA.token;
-        params._editable = 1;
-        params._method = 'PUT';
-        return params;
-    };
+<script src="../../assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>`)
 
-    $.fn.editable.defaults.error = function (data) {
-        var msg = '';
-        if (data.responseJSON.errors) {
-            $.each(data.responseJSON.errors, function (k, v) {
-                msg += v + "\n";
-            });
-        }
-        return msg
-    };
-
-    toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        showMethod: 'slideDown',
-        timeOut: 4000
-    };
-
-    $.pjax.defaults.timeout = 5000;
-    $.pjax.defaults.maxCacheLength = 0;
-    $(document).pjax('a:not(a[target="_blank"])', {
-        container: '#pjax-container'
-    });
-
-    NProgress.configure({parent: '#pjax-container'});
-
-    $(document).on('pjax:timeout', function (event) {
-        event.preventDefault();
-    })
-
-    $(document).on('submit', 'form[pjax-container]', function (event) {
-        $.pjax.submit(event, '#pjax-container')
-    });
-
-    $(document).on("pjax:popstate", function () {
-
-        $(document).one("pjax:end", function (event) {
-            $(event.target).find("script[data-exec-on-popstate]").each(function () {
-                $.globalEval(this.text || this.textContent || this.innerHTML || '');
-            });
-        });
-    });
-
-    $(document).on('pjax:send', function (xhr) {
-        if (xhr.relatedTarget && xhr.relatedTarget.tagName && xhr.relatedTarget.tagName.toLowerCase() === 'form') {
-            $submit_btn = $('form[pjax-container] :submit');
-            if ($submit_btn) {
-                $submit_btn.button('loading')
-            }
-        }
-        NProgress.start();
-    });
-
-    $(document).on('pjax:complete', function (xhr) {
-        if (xhr.relatedTarget && xhr.relatedTarget.tagName && xhr.relatedTarget.tagName.toLowerCase() === 'form') {
-            $submit_btn = $('form[pjax-container] :submit');
-            if ($submit_btn) {
-                $submit_btn.button('reset')
-            }
-        }
-        NProgress.done();
-    });
-
-    $(function () {
-        $('.sidebar-menu li:not(.treeview) > a').on('click', function () {
-            var $parent = $(this).parent().addClass('active');
-            $parent.siblings('.treeview.active').find('> a').trigger('click');
-            $parent.siblings().removeClass('active').find('li').removeClass('active');
-        });
-
-        $('[data-toggle="popover"]').popover();
-    });
-
-    // (function ($) {
-    //     $.fn.admin = LA;
-    //     $.admin = LA;
-    //
-    // })(jQuery);
-</script>
+	buffer.WriteString(`
+<script src="../../assets/dist/js/edit.js"></script>
 </body>
 </html>
 `)

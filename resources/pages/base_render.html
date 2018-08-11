@@ -2,6 +2,10 @@
 
 <%~ "base.html" %>
 
+<%@ headPart { %>
+<%+ "head.html" %>
+<% } %>
+
 <%@ header { %>
 <h1>
     <%= title %>
@@ -46,4 +50,8 @@
 
 <%@ contentPart { %>
     <%==s content %>
+<% } %>
+
+<%@ jsPart { %>
+<%+ "js.html" %>
 <% } %>

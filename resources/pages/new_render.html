@@ -2,6 +2,10 @@
 
 <%~ "edit.html" %>
 
+<%@ headPart { %>
+<%+ "head.html" %>
+<% } %>
+
 <%@ header { %>
 <h1>
     <%= title %>
@@ -30,6 +34,10 @@
 <%@ previous { %>
 <input type="hidden" name="_previous_" value='<%= previous %>' class="_previous_">
 <input type="hidden" name="id" value='<%= id %>' class="_previous_">
+<% } %>
+
+<%@ jsPart { %>
+<%+ "js.html" %>
 <% } %>
 
 <% } %>
