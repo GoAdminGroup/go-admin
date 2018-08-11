@@ -18,7 +18,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 	prefix := ctx.UserValue("prefix").(string)
 	path := string(ctx.Path())
 
-	page := ctx.QueryArgs().Peek("page")[:]
+	page := ctx.QueryArgs().Peek("page")
 	if len(page) == 0 {
 		page = []byte("1")
 	}
@@ -38,7 +38,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 
 	buffer := new(bytes.Buffer)
 
-	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
+	if string(ctx.Request.Header.Peek("X-PJAX")) == "true" {
 		template.InfoListPjax(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, buffer)
 	} else {
 		template.InfoList(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, user, buffer)

@@ -40,9 +40,10 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../assets/dist/css/skins/skin-black.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css">
+    <!-- <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css"> -->
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -54,7 +55,7 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <!-- Google Font -->
     <link rel="stylesheet" href="../../assets/googleapis/font.css">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-black sidebar-mini">
 <div class="wrapper">
 
     <header class="main-header">
@@ -602,8 +603,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 <script src="../../assets/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="../../assets/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../assets/dist/js/demo.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
 <script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>

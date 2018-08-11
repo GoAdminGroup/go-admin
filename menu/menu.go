@@ -83,11 +83,25 @@ func GetMenuItemById(id string) MenuItem {
 }
 
 func (menu *Menu) SetActiveClass(path string) {
+
+	for i := 0; i < len((*menu).GlobalMenuList); i++ {
+		(*menu).GlobalMenuList[i].Active = ""
+	}
+
+Loop:
 	for i := 0; i < len((*menu).GlobalMenuList); i++ {
 		if (*menu).GlobalMenuList[i].Url == path {
 			(*menu).GlobalMenuList[i].Active = "active"
+			break Loop
 		} else {
-			(*menu).GlobalMenuList[i].Active = ""
+			for j := 0; j < len((*menu).GlobalMenuList[i].ChildrenList); j++ {
+				if (*menu).GlobalMenuList[i].ChildrenList[j].Url == path {
+					(*menu).GlobalMenuList[i].Active = "active"
+					break Loop
+				} else {
+					(*menu).GlobalMenuList[i].Active = ""
+				}
+			}
 		}
 	}
 }

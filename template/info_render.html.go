@@ -39,9 +39,10 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
     <link rel="stylesheet" href="../../assets/fileinput/fileinput.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../assets/dist/css/skins/skin-black.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css">
+    <!-- <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css"> -->
     <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -543,8 +544,6 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 <script src="../../assets/fastclick/lib/fastclick.js"></script>
 <!-- AdminLTE App -->
 <script src="../../assets/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../assets/dist/js/demo.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
 <script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>

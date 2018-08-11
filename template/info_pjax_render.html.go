@@ -349,6 +349,16 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
         });
     });
 
+    $(function () {
+        $('.sidebar-menu li:not(.treeview) > a').on('click', function () {
+            var $parent = $(this).parent().addClass('active');
+            $parent.siblings('.treeview.active').find('> a').trigger('click');
+            $parent.siblings().removeClass('active').find('li').removeClass('active');
+        });
+
+        $('[data-toggle="popover"]').popover();
+    });
+
     $('.grid-row-delete').unbind('click').click(function () {
 
         var id = $(this).data('id');
