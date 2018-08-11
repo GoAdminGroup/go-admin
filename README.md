@@ -79,7 +79,7 @@ see the [wiki](https://github.com/chenhg5/go-admin/wiki)
 - [X] add more components
 - [X] menu structure
 - [X] rbac auth
-- [ ] custom pages
+- [X] custom pages
 - [ ] combine assets
 - [ ] auto install engine
 - [ ] demo site
