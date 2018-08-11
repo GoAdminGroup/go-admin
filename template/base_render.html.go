@@ -110,7 +110,9 @@ func BaseContent(content string, menuList []menu.MenuItem, title string, descrip
     </li>
     <li class="user-footer">
         <div class="pull-left">
-            <a href="#" class="btn btn-default btn-flat">Setting</a>
+            <a href="/info/manager/edit?id=`)
+	hero.EscapeHTML(user.ID, buffer)
+	buffer.WriteString(`" class="btn btn-default btn-flat">Setting</a>
         </div>
         <div class="pull-right">
             <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
