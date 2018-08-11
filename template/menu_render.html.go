@@ -14,7 +14,8 @@ import (
 func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOption []map[string]string, user auth.User, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
-<head>
+`)
+	buffer.WriteString(`<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>GoAdmin</title>
@@ -33,31 +34,30 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
     <link rel="stylesheet" href="../../assets/iCheck/futurico/futurico.css">
     <link rel="stylesheet" href="../../assets/iCheck/polaris/polaris.css">
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="../../assets/select2/select2.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
-    <link rel="stylesheet" href="../../assets/nestable/nestable.css">
+    <link rel="stylesheet" href="../../assets/select2/select2.min.css">
     <link rel="stylesheet" href="../../assets/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="../../assets/fileinput/fileinput.min.css">
+    <link rel="stylesheet" href="../../assets/nestable/nestable.css">
+    <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
     <link rel="stylesheet" href="../../assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../assets/dist/css/skins/_all-skins.min.css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <link rel="stylesheet" href="../../assets/dist/css/skins/skin-black.css">
     <!--[if lt IE 9]>
     <script src="../../assets/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="../../assets/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <!-- jQuery 3 -->
-    <!-- <script src="../../assets/jquery/dist/jquery.min.js"></script> -->
-    <script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
 
     <!-- Google Font -->
-    <link rel="stylesheet"
-          href="../../assets/googleapis/font.css">
-</head>
+    <link rel="stylesheet" href="../../assets/googleapis/font.css">
+
+    <script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="../../assets/nestable/jquery.nestable.js"></script>
+    <script src="../../assets/dist/js/adminlte.min.js"></script>
+</head>`)
+
+	buffer.WriteString(`
 <!-- skin-black skin-green-light skin-green skin-red skin-yellow skin-purple skin-purple-light -->
 <body class="hold-transition skin-black sidebar-mini">
 <div class="wrapper">
@@ -73,11 +73,8 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
             </a>
 
             <div class="navbar-custom-menu">
@@ -352,11 +349,11 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
                                         <div class="col-sm-8">
                                             <!-- <input type="hidden" name="parent_id"> -->
                                             <select
-                                                class="form-control parent_id select2-hidden-accessible" style="width: 100%;"
-                                                name="parent_id" tabindex="-1" aria-hidden="true">
-                                            <option value=""></option>
-                                            <option value="0" selected="">Root</option>
-                                            `)
+                                                    class="form-control parent_id select2-hidden-accessible" style="width: 100%;"
+                                                    name="parent_id" tabindex="-1" aria-hidden="true">
+                                                <option value=""></option>
+                                                <option value="0" selected="">Root</option>
+                                                `)
 	for _, option := range menuOption {
 		buffer.WriteString(`
     <option value='`)
@@ -368,7 +365,7 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
 	}
 
 	buffer.WriteString(`
-                                        </select>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -2785,181 +2782,25 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
 </div>
 <!-- ./wrapper -->
 
-<!-- Bootstrap 3.3.7 -->
-<script src="../../assets/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- DataTables -->
+`)
+	buffer.WriteString(`<script src="../../assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../../assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<!-- SlimScroll -->
 <script src="../../assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<!-- FastClick -->
 <script src="../../assets/fastclick/lib/fastclick.js"></script>
-<!-- AdminLTE App -->
-<script src="../../assets/dist/js/adminlte.min.js"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="../../assets/dist/js/demo.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
+<script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>
-<script src="../../assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <script src="../../assets/nprogress/nprogress.js"></script>
-<script src="../../assets/nestable/jquery.nestable.js"></script>
 <script src="../../assets/toastr/build/toastr.min.js"></script>
 <script src="../../assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="../../assets/jquery-pjax/jquery.pjax.js"></script>
 <script src="../../assets/sweetalert/dist/sweetalert.min.js"></script>
-<script>
-    $('.grid-per-pager').on("change", function (e) {
-        console.log("changing...")
-        $.pjax({url: this.value, container: '#pjax-container'});
-    });
-    $('.grid-refresh').on('click', function () {
-        $.pjax.reload('#pjax-container');
-        toastr.success('Refresh succeeded !');
-    });
-    // edit result notify
-    // toastr.success('Refresh succeeded !');
-    $.fn.editable.defaults.params = function (params) {
-        params._token = LA.token;
-        params._editable = 1;
-        params._method = 'PUT';
-        return params;
-    };
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="../../assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>`)
 
-    $.fn.editable.defaults.error = function (data) {
-        var msg = '';
-        if (data.responseJSON.errors) {
-            $.each(data.responseJSON.errors, function (k, v) {
-                msg += v + "\n";
-            });
-        }
-        return msg
-    };
-
-    toastr.options = {
-        closeButton: true,
-        progressBar: true,
-        showMethod: 'slideDown',
-        timeOut: 4000
-    };
-
-    $.pjax.defaults.timeout = 5000;
-    $.pjax.defaults.maxCacheLength = 0;
-    $(document).pjax('a:not(a[target="_blank"])', {
-        container: '#pjax-container'
-    });
-
-    NProgress.configure({parent: '#pjax-container'});
-
-    $(document).on('pjax:timeout', function (event) {
-        event.preventDefault();
-    })
-
-    $(document).on('submit', 'form[pjax-container]', function (event) {
-        $.pjax.submit(event, '#pjax-container')
-    });
-
-    $(document).on("pjax:popstate", function () {
-
-        $(document).one("pjax:end", function (event) {
-            $(event.target).find("script[data-exec-on-popstate]").each(function () {
-                $.globalEval(this.text || this.textContent || this.innerHTML || '');
-            });
-        });
-    });
-
-    $(document).on('pjax:send', function (xhr) {
-        if (xhr.relatedTarget && xhr.relatedTarget.tagName && xhr.relatedTarget.tagName.toLowerCase() === 'form') {
-            $submit_btn = $('form[pjax-container] :submit');
-            if ($submit_btn) {
-                $submit_btn.button('loading')
-            }
-        }
-        NProgress.start();
-    });
-
-    $(document).on('pjax:complete', function (xhr) {
-        if (xhr.relatedTarget && xhr.relatedTarget.tagName && xhr.relatedTarget.tagName.toLowerCase() === 'form') {
-            $submit_btn = $('form[pjax-container] :submit');
-            if ($submit_btn) {
-                $submit_btn.button('reset')
-            }
-        }
-        NProgress.done();
-    });
-
-    $(function () {
-        $('.sidebar-menu li:not(.treeview) > a').on('click', function () {
-            var $parent = $(this).parent().addClass('active');
-            $parent.siblings('.treeview.active').find('> a').trigger('click');
-            $parent.siblings().removeClass('active').find('li').removeClass('active');
-        });
-
-        $('[data-toggle="popover"]').popover();
-    });
-
-    // (function ($) {
-    //     $.fn.admin = LA;
-    //     $.admin = LA;
-    //
-    // })(jQuery);
-
-    $('.grid-row-delete').unbind('click').click(function () {
-
-        var id = $(this).data('id');
-
-        swal({
-                    title: "你确定要删除吗",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "确定",
-                    closeOnConfirm: false,
-                    cancelButtonText: "取消"
-                },
-                function () {
-                    $.ajax({
-                        method: 'post',
-                        url: '/user/delete',
-                        data: {
-                            id: id
-                        },
-                        success: function (data) {
-                            $.pjax.reload('#pjax-container');
-
-                            if (typeof data === 'object') {
-                                if (data.status) {
-                                    swal(data.message, '', 'success');
-                                } else {
-                                    swal(data.message, '', 'error');
-                                }
-                            }
-                        },
-                        error: function (data) {
-                            swal("删除失败", '', 'error');
-                        }
-                    });
-                });
-    });
-
-    $('.grid-select-all').on('ifChanged', function (event) {
-        if (this.checked) {
-            $('.grid-row-checkbox').iCheck('check');
-        } else {
-            $('.grid-row-checkbox').iCheck('uncheck');
-        }
-    });
-    $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
-
-    $(function () {
-        $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-            if (this.checked) {
-                $(this).closest('tr').css('background-color', '#ffffd5');
-            } else {
-                $(this).closest('tr').css('background-color', '');
-            }
-        });
-    });
-</script>
+	buffer.WriteString(`
+<script src="../../assets/dist/js/menu.js"></script>
 </body>
 </html>
 `)

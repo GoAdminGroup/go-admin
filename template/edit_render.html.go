@@ -37,8 +37,11 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
     <link rel="stylesheet" href="../../assets/toastr/build/toastr.min.css">
     <link rel="stylesheet" href="../../assets/nprogress/nprogress.css">
     <link rel="stylesheet" href="../../assets/select2/select2.min.css">
+    <link rel="stylesheet" href="../../assets/sweetalert/dist/sweetalert.css">
     <link rel="stylesheet" href="../../assets/fileinput/fileinput.min.css">
+    <link rel="stylesheet" href="../../assets/nestable/nestable.css">
     <link rel="stylesheet" href="../../assets/duallistbox/bootstrap-duallistbox.min.css">
+    <link rel="stylesheet" href="../../assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="../../assets/dist/css/AdminLTE.min.css">
     <link rel="stylesheet" href="../../assets/dist/css/skins/skin-black.css">
@@ -49,6 +52,10 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 
     <!-- Google Font -->
     <link rel="stylesheet" href="../../assets/googleapis/font.css">
+
+    <script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="../../assets/nestable/jquery.nestable.js"></script>
+    <script src="../../assets/dist/js/adminlte.min.js"></script>
 </head>`)
 
 	buffer.WriteString(`
@@ -66,11 +73,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
                 <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
             </a>
 
             <div class="navbar-custom-menu">
@@ -527,13 +531,11 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 </div>
 
 `)
-	buffer.WriteString(`<script src="../../assets/jQuery/jQuery-2.1.4.min.js"></script>
-<script src="../../assets/bootstrap/dist/js/bootstrap.min.js"></script>
+	buffer.WriteString(`<script src="../../assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="../../assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="../../assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <script src="../../assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 <script src="../../assets/fastclick/lib/fastclick.js"></script>
-<script src="../../assets/dist/js/adminlte.min.js"></script>
 <script src="../../assets/select2/select2.full.min.js"></script>
 <script src="../../assets/fileinput/fileinput.min.js"></script>
 <script src="../../assets/iCheck/icheck.min.js"></script>
@@ -542,7 +544,8 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 <script src="../../assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="../../assets/jquery-pjax/jquery.pjax.js"></script>
 <script src="../../assets/sweetalert/dist/sweetalert.min.js"></script>
-<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>`)
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="../../assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>`)
 
 	buffer.WriteString(`
 <script src="../../assets/dist/js/edit.js"></script>

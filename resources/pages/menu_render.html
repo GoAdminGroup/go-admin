@@ -2,6 +2,10 @@
 
 <%~ "menu.html" %>
 
+<%@ headPart { %>
+<%+ "head.html" %>
+<% } %>
+
 <%@ menuPart { %>
 <% for _, list := range menuList { %>
 <%+ "sidebar.html" %>
@@ -77,6 +81,10 @@
 
 <%@ adminName { %>
 <p><%= user.Name %></p>
+<% } %>
+
+<%@ jsPart { %>
+<%+ "js.html" %>
 <% } %>
 
 <% } %>
