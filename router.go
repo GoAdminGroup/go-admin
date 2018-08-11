@@ -26,6 +26,7 @@ func InitRouter() *fasthttprouter.Router {
 	router.GET("/menu/new", AuthMiddleware(controller.ShowMenu))
 	router.POST("/menu/edit", AuthMiddleware(controller.EditMenu))
 	router.GET("/menu/edit/show", AuthMiddleware(controller.ShowEditMenu))
+	router.POST("/menu/order", AuthMiddleware(controller.MenuOrder))
 
 	// 增删改查管理
 	router.GET("/info/:prefix", AuthMiddleware(controller.ShowInfo))
