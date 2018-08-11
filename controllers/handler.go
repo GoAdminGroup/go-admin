@@ -22,6 +22,8 @@ func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		string(ctx.Path()))
 
+	RecordOperationLog(ctx)
+
 	if err := recover(); err != nil {
 		fmt.Println(err)
 		fmt.Println(string(debug.Stack()[:]))
