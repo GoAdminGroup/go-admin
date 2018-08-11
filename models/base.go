@@ -79,6 +79,11 @@ type Page struct {
 	Description string
 }
 
+type ErrStruct struct {
+	Class   string
+	Message string
+}
+
 // 查数据
 func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]string, []map[string]string, map[string]interface{}, string, string) {
 

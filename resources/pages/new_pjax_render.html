@@ -1,4 +1,4 @@
-<%: func NewPanelPjax(formData []models.FormStruct, url string, previous string, id string, title string, description string, buffer *bytes.Buffer) %>
+<%: func NewPanelPjax(formData []models.FormStruct, url string, previous string, id string, title string, description string, errData models.ErrStruct, buffer *bytes.Buffer) %>
 
 <%~ "new_pjax.html" %>
 
@@ -11,6 +11,17 @@
 
 <%@ url { %>
 <form action='<%= url %>' method="post" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+<% } %>
+
+<%@ errMsg { %>
+<div class="alert alert-warning alert-dismissable <%= errData.Class %>">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4>
+        <i class="icon fa fa-warning"></i>
+        <i style="border-bottom: 1px dotted #fff;cursor: pointer;" title="报错啦" ondblclick="var f=this.innerHTML;this.innerHTML=this.title;this.title=f;">报错啦</i>
+    </h4>
+    <p><%= errData.Message %></p>
+</div>
 <% } %>
 
 <%@ content { %>

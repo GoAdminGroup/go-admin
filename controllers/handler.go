@@ -8,6 +8,10 @@ import (
 	"log"
 	"runtime/debug"
 	"strconv"
+	"bytes"
+	"goAdmin/models"
+	"goAdmin/template"
+	"regexp"
 )
 
 // 全局错误处理
@@ -27,21 +31,63 @@ func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 			mysqlError *mysql.MySQLError
 			ok         bool
 		)
-		if errMsg, ok = err.(string); ok {
-			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-			ctx.SetContentType("application/json")
-			ctx.WriteString(`{"code":500, "msg":"` + errMsg + `"}`)
-			return
-		} else if mysqlError, ok = err.(*mysql.MySQLError); ok {
-			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-			ctx.SetContentType("application/json")
-			ctx.WriteString(`{"code":500, "msg":"` + mysqlError.Error() + `"}`)
-			return
-		} else {
-			ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-			ctx.SetContentType("application/json")
-			ctx.WriteString(`{"code":500, "msg":"系统错误"}`)
+		if errMsg, ok = err.(string); !ok {
+			if mysqlError, ok = err.(*mysql.MySQLError); ok {
+				errMsg = mysqlError.Error()
+			} else {
+				errMsg = "系统错误"
+			}
+		}
+
+		if ok, _ = regexp.Match("/edit(.*)", ctx.Path()); ok {
+			prefix := ctx.UserValue("prefix").(string)
+
+			buffer := new(bytes.Buffer)
+
+			form, _ := ctx.MultipartForm()
+
+			id := (*form).Value["id"][0]
+
+			previous := string(ctx.FormValue("_previous_"))
+
+			formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
+
+			url := "/edit/" + prefix + "?id=" + id
+
+			template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"", errMsg}, buffer)
+
+			ctx.Response.AppendBody(buffer.Bytes())
+			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/edit?id=" + id)
 			return
 		}
+
+		if ok, _ = regexp.Match("/new(.*)", ctx.Path()); ok {
+			prefix := ctx.UserValue("prefix").(string)
+
+			buffer := new(bytes.Buffer)
+
+			form, _ := ctx.MultipartForm()
+
+			id := (*form).Value["id"][0]
+
+			previous := string(ctx.FormValue("_previous_"))
+
+			url := "/edit/" + prefix + "?id=" + id
+
+			template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url,
+				previous, id, models.GlobalTableList[prefix].Form.Title,
+				models.GlobalTableList[prefix].Form.Description, models.ErrStruct{"hidden", errMsg}, buffer)
+
+			ctx.Response.AppendBody(buffer.Bytes())
+			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/new")
+			return
+		}
+
+		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		ctx.SetContentType("application/json")
+		ctx.WriteString(`{"code":500, "msg":"` + errMsg + `"}`)
+		return
 	}
 }

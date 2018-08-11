@@ -38,7 +38,7 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
-		template.EditPanelPjax(formData, url, previous, id, title, description, buffer)
+		template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"hidden", ""}, buffer)
 	} else {
 		template.EditPanel(formData, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, title, description, user, buffer)
 	}

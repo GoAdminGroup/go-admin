@@ -33,7 +33,7 @@ func ShowNewForm(ctx *fasthttp.RequestCtx) {
 	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
-		template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url, previous, id, models.GlobalTableList[prefix].Form.Title, models.GlobalTableList[prefix].Form.Description, buffer)
+		template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url, previous, id, models.GlobalTableList[prefix].Form.Title, models.GlobalTableList[prefix].Form.Description, models.ErrStruct{"hidden", ""}, buffer)
 	} else {
 		template.NewPanel(models.GlobalTableList[prefix].Form.FormList, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, models.GlobalTableList[prefix].Form.Title, models.GlobalTableList[prefix].Form.Description, buffer)
 	}
