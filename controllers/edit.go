@@ -101,6 +101,7 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 	})
 
 	menu.GlobalMenu.SetActiveClass(previous)
+	paginator["success"] = true
 
 	buffer := new(bytes.Buffer)
 

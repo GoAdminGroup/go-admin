@@ -34,6 +34,7 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 		"100": "",
 	}
 	paginator["option"].(map[string]string)[pageSize] = "selected=''"
+	paginator["success"] = false
 
 	return paginator
 }

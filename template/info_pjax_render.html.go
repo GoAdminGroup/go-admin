@@ -302,6 +302,13 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
     </label>
 </div>
 `)
+	if paginator["success"].(bool) {
+		buffer.WriteString(`
+<script>
+    toastr.success('操作成功了!');
+</script>
+`)
+	}
 
 	buffer.WriteString(`
                 <!-- /.box-footer -->
