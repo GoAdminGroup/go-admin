@@ -70,8 +70,6 @@ func NewForm(ctx *fasthttp.RequestCtx) {
 
 	models.RefreshGlobalTableList()
 
-	// TODO: 增加反馈
-
 	previous := string(ctx.FormValue("_previous_"))
 	prevUrlArr := strings.Split(previous, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
