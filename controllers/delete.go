@@ -17,6 +17,6 @@ func DeleteData(ctx *fasthttp.RequestCtx) {
 
 	// TODO: 增加反馈
 
-	ctx.WriteString(`{"code":200, "msg":"删除成功"`)
+	ctx.WriteString(`{"code":200, "msg":"删除成功"}`)
 	return
 }

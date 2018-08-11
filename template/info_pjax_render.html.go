@@ -366,27 +366,26 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
                 `)
 	buffer.WriteString(`
     $.ajax({
-    method: 'post',
-    url: '`)
+        method: 'post',
+        url: '`)
 	hero.EscapeHTML(paginator["delete_url"].(string), buffer)
 	buffer.WriteString(`',
-    data: {
-    id: id
-    },
-    success: function (data) {
-    $.pjax.reload('#pjax-container');
+        data: {
+            id: id
+        },
+        success: function (data) {
+            $.pjax.reload('#pjax-container');
 
-    if (typeof data === 'object') {
-    if (data.status) {
-    swal(data.message, '', 'success');
-    } else {
-    swal(data.message, '', 'error');
-    }
-    }
-    },
-    error: function (data) {
-    swal("删除失败", '', 'error');
-    }
+            data = JSON.parse(data)
+            if (data.code == 200) {
+                swal(data.msg, '', 'success');
+            } else {
+                swal(data.msg, '', 'error');
+            }
+        },
+        error: function (data) {
+            swal("删除失败", '', 'error');
+        }
     });
 `)
 
