@@ -11,7 +11,7 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, user auth.User, buffer *bytes.Buffer) {
+func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, user auth.User, lang map[string]string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
 `)
@@ -142,10 +142,12 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []ma
 <p>`)
 	hero.EscapeHTML(user.Name, buffer)
 	buffer.WriteString(`</p>
+<a href="#"><i class="fa fa-circle text-success"></i> `)
+	hero.EscapeHTML(lang["Online"], buffer)
+	buffer.WriteString(`</a>
 `)
 
 	buffer.WriteString(`
-                    <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                 </div>
             </div>
             <!-- search form -->

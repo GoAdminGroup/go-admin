@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/connections/mysql"
-	"encoding/json"
 )
 
 func RecordOperationLog(ctx *fasthttp.RequestCtx) {

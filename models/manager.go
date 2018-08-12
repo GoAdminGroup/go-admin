@@ -14,7 +14,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			Sortable:  true,
+			Sortable: true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -23,7 +23,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "用户名",
 			Field:    "username",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -32,7 +32,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "昵称",
 			Field:    "name",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -41,7 +41,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "角色",
 			Field:    "roles",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				labelModel, _ := mysql.Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
@@ -52,7 +52,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -61,7 +61,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -208,7 +208,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			Sortable:  true,
+			Sortable: true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -217,7 +217,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -226,7 +226,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "标志",
 			Field:    "slug",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -235,7 +235,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "方法",
 			Field:    "http_method",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -244,7 +244,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "路径",
 			Field:    "http_path",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -253,7 +253,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -262,7 +262,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -379,7 +379,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			Sortable:  true,
+			Sortable: true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -388,7 +388,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -397,7 +397,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Head:     "标志",
 			Field:    "slug",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -406,7 +406,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -415,7 +415,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -510,7 +510,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			Sortable:  true,
+			Sortable: true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -519,7 +519,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "用户ID",
 			Field:    "user_id",
 			TypeName: "int",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -528,7 +528,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "路径",
 			Field:    "path",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -537,7 +537,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "方法",
 			Field:    "method",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -546,7 +546,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "ip",
 			Field:    "ip",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -555,7 +555,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "内容",
 			Field:    "input",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -564,7 +564,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -573,7 +573,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},

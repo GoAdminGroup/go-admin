@@ -1,4 +1,4 @@
-<%: func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, user auth.User, buffer *bytes.Buffer) %>
+<%: func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, user auth.User, lang map[string]string, buffer *bytes.Buffer) %>
 
 <%~ "info.html" %>
 
@@ -46,6 +46,7 @@
 
 <%@ adminName { %>
 <p><%= user.Name %></p>
+<a href="#"><i class="fa fa-circle text-success"></i> <%= lang["Online"] %></a>
 <% } %>
 
 <%@ newUrl { %>

@@ -2,12 +2,12 @@ package controller
 
 import (
 	"bytes"
+	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"goAdmin/auth"
 	"goAdmin/connections/mysql"
 	"goAdmin/menu"
 	"goAdmin/template"
-	"encoding/json"
 )
 
 // 显示菜单
@@ -117,14 +117,14 @@ func NewMenu(ctx *fasthttp.RequestCtx) {
 }
 
 // 修改菜单顺序
-func MenuOrder(ctx *fasthttp.RequestCtx)  {
+func MenuOrder(ctx *fasthttp.RequestCtx) {
 	defer GlobalDeferHandler(ctx)
 
 	var data []map[string]interface{}
 	json.Unmarshal(ctx.FormValue("_order"), &data)
 
 	count := 1
-	for _,v := range data {
+	for _, v := range data {
 		if child, ok := v["children"]; ok {
 			mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
 			for _, v2 := range child.([]interface{}) {

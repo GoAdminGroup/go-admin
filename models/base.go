@@ -123,8 +123,8 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		queryParam["sortField"] = "id"
 	}
 
-	res, _ := mysql.Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by "+ queryParam["sortField"] + " " +
-		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
+	res, _ := mysql.Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by "+queryParam["sortField"]+" "+
+		queryParam["sortType"]+" LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]string, 0)
 

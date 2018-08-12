@@ -5,9 +5,9 @@ import (
 	"github.com/valyala/fasthttp"
 	"goAdmin/config"
 	"goAdmin/connections/mysql"
+	"goAdmin/modules"
 	"strconv"
 	"time"
-	"goAdmin/modules"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {

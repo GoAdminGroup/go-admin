@@ -21,9 +21,9 @@ func ShowDashboard(ctx *fasthttp.RequestCtx) {
 		row := components.Row.GetContent(col1 + col2 + col3 + col4)
 
 		return models.Page{
-			Content:row,
-			Title:"仪表盘",
-			Description:"仪表盘",
+			Content:     row,
+			Title:       "仪表盘",
+			Description: "仪表盘",
 		}
 	})
 }

@@ -2,8 +2,8 @@ package controller
 
 import (
 	"github.com/valyala/fasthttp"
-	"goAdmin/models"
 	"goAdmin/auth"
+	"goAdmin/models"
 )
 
 func DeleteData(ctx *fasthttp.RequestCtx) {

@@ -1,18 +1,18 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/mgutz/ansi"
 	"github.com/valyala/fasthttp"
-	"log"
-	"runtime/debug"
-	"strconv"
-	"bytes"
+	"goAdmin/auth"
 	"goAdmin/models"
 	"goAdmin/template"
+	"log"
 	"regexp"
-	"goAdmin/auth"
+	"runtime/debug"
+	"strconv"
 )
 
 // 全局错误处理
@@ -63,7 +63,7 @@ func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 
 			ctx.Response.AppendBody(buffer.Bytes())
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/edit?id=" + id)
+			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/edit?id="+id)
 			return
 		}
 

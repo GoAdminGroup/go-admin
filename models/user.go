@@ -7,7 +7,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
-			Sortable:  true,
+			Sortable: true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -16,7 +16,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "姓名",
 			Field:    "name",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -25,7 +25,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "性别",
 			Field:    "sex",
 			TypeName: "tinyint",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				if model.Value == "1" {
 					return "男"
@@ -40,7 +40,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "省份",
 			Field:    "province",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -49,7 +49,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "城市",
 			Field:    "city",
 			TypeName: "varchar",
-			Sortable:  false,
+			Sortable: false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},

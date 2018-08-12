@@ -1,11 +1,11 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/valyala/fasthttp"
-	"goAdmin/models"
 	"goAdmin/auth"
 	"goAdmin/menu"
-	"bytes"
+	"goAdmin/models"
 	"goAdmin/template"
 )
 

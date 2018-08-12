@@ -3,12 +3,12 @@ package controller
 import (
 	"bytes"
 	"github.com/valyala/fasthttp"
+	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/models"
 	"goAdmin/modules/file"
 	"goAdmin/template"
 	"strings"
-	"goAdmin/auth"
 )
 
 // 显示新建表单

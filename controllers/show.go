@@ -6,6 +6,7 @@ import (
 	"goAdmin/auth"
 	"goAdmin/menu"
 	"goAdmin/models"
+	"goAdmin/modules/language"
 	"goAdmin/template"
 )
 
@@ -52,7 +53,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 	if string(ctx.Request.Header.Peek("X-PJAX")) == "true" {
 		template.InfoListPjax(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, buffer)
 	} else {
-		template.InfoList(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, user, buffer)
+		template.InfoList(infoList, (*menu.GlobalMenu).GlobalMenuList, thead, paginator, title, description, user, language.Lang, buffer)
 	}
 
 	ctx.Response.AppendBody(buffer.Bytes())

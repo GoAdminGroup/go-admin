@@ -20,4 +20,6 @@ var EnvConfig = map[string]interface{}{
 	"PORTABLE": false,
 
 	"AUTH_DOMAIN": "localhost",
+
+	"LANGUAGE": "cn",
 }

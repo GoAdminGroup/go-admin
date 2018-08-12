@@ -1,11 +1,11 @@
 package auth
 
 import (
+	"encoding/json"
 	"github.com/fasthttp-contrib/sessions"
 	"github.com/valyala/fasthttp"
-	"goAdmin/modules"
 	"goAdmin/connections/mysql"
-	"encoding/json"
+	"goAdmin/modules"
 	"time"
 )
 
@@ -48,7 +48,7 @@ func (helper *SessionHelper) PutIntoSession(value string) string {
 	return sessionKey
 }
 
-type MysqlDriver struct {}
+type MysqlDriver struct{}
 
 func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 	sesModel, _ := mysql.Query("select * from goadmin_session where sid = ?", sid)
