@@ -6,6 +6,7 @@ import (
 	"goAdmin/modules"
 	"goAdmin/connections/mysql"
 	"encoding/json"
+	"time"
 )
 
 type SessionHelper struct {
@@ -13,6 +14,10 @@ type SessionHelper struct {
 }
 
 func InitSessionHelper(ctx *fasthttp.RequestCtx) *SessionHelper {
+
+	sessions.UpdateConfig(sessions.Config{
+		Expires: time.Hour * 10,
+	})
 
 	var driver MysqlDriver
 	sessions.UseDatabase(&driver)
