@@ -224,8 +224,8 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
     <div class="content-wrapper" id="pjax-container">
         <section class="content-header">
             <h1>
-                Menu
-                <small>List</small>
+                菜单管理
+                <small>菜单管理</small>
             </h1>
         </section>
         <section class="content">

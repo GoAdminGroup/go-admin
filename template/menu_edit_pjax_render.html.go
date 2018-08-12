@@ -13,8 +13,8 @@ import (
 func MenuEditPanelPjax(menuItem menu.MenuItem, menuOption []map[string]string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<section class="content-header">
     <h1>
-    Menu
-    <small>Edit</small>
+    菜单管理
+    <small>菜单管理</small>
 </h1>
 
     <!-- breadcrumb start -->
