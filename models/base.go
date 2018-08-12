@@ -119,9 +119,12 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	if queryParam["sortType"] != "desc" && queryParam["sortType"] != "asc" {
 		queryParam["sortType"] = "desc"
 	}
+	if !CheckInTable(columnsModel, queryParam["sortField"]) {
+		queryParam["sortField"] = "id"
+	}
 
-	res, _ := mysql.Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by ? "+
-		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["sortField"], queryParam["pageSize"], (pageInt-1)*10)
+	res, _ := mysql.Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by "+ queryParam["sortField"] + " " +
+		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]string, 0)
 
