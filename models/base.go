@@ -108,16 +108,20 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 			sortable = "1"
 		}
 		thead = append(thead, map[string]string{
-			"head": tableModel.Info.FieldList[i].Head,
+			"head":     tableModel.Info.FieldList[i].Head,
 			"sortable": sortable,
-			"field": tableModel.Info.FieldList[i].Field,
+			"field":    tableModel.Info.FieldList[i].Field,
 		})
 	}
 
 	fields += "id"
 
-	res, _ := mysql.Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by " + queryParam["sortField"] + " " +
-		queryParam["sortType"] + " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
+	if queryParam["sortType"] != "desc" && queryParam["sortType"] != "asc" {
+		queryParam["sortType"] = "desc"
+	}
+
+	res, _ := mysql.Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by ? "+
+		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["sortField"], queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]string, 0)
 
@@ -218,8 +222,9 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 
 	fields := ""
 	valueList := make([]interface{}, 0)
+	columnsModel, _ := mysql.Query("show columns in " + tableModel.Form.Table)
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
 				valueList = append(valueList, strings.Join(modules.RemoveBlackFromArray(v), ","))
@@ -241,8 +246,9 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 	fields := ""
 	queStr := ""
 	var valueList []interface{}
+	columnsModel, _ := mysql.Query("show columns in " + tableModel.Form.Table)
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
 			fields += k + ","
 			queStr += "?,"
 			valueList = append(valueList, v[0])
