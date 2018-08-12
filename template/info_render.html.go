@@ -433,14 +433,32 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 	buffer.WriteString(`
         </li>
 
-        <!-- Pagination Elements -->
-        <!-- "Three Dots" Separator -->
-
         <!-- Array Of Links -->
-        <!--<li class="page-item active"><span class="page-link">1</span></li>
-        <li class="page-item"><a class="page-link"
-                                 href="?page=2">2</a>
-        </li>-->
+        `)
+	for _, page := range paginator["pages"].([]map[string]string) {
+		if page["isSplit"] == "0" {
+			if page["active"] == "active" {
+				buffer.WriteString(`
+                    <li class="page-item active"><span class="page-link">`)
+				hero.EscapeHTML(page["page"], buffer)
+				buffer.WriteString(`</span></li>
+                `)
+			} else {
+				buffer.WriteString(`
+                    <li class="page-item"><a class="page-link" href='`)
+				hero.EscapeHTML(page["url"], buffer)
+				buffer.WriteString(`'>`)
+				hero.EscapeHTML(page["page"], buffer)
+				buffer.WriteString(`</a></li>
+                `)
+			}
+		} else {
+			buffer.WriteString(`
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            `)
+		}
+	}
+	buffer.WriteString(`
 
         <!-- Next Page Link -->
         <li class='page-item `)

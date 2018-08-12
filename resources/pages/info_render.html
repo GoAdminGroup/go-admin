@@ -97,14 +97,18 @@
             <% } %>
         </li>
 
-        <!-- Pagination Elements -->
-        <!-- "Three Dots" Separator -->
-
         <!-- Array Of Links -->
-        <!--<li class="page-item active"><span class="page-link">1</span></li>
-        <li class="page-item"><a class="page-link"
-                                 href="?page=2">2</a>
-        </li>-->
+        <% for _, page := range paginator["pages"].([]map[string]string) { %>
+            <% if page["isSplit"] == "0" { %>
+                <% if page["active"] == "active" { %>
+                    <li class="page-item active"><span class="page-link"><%= page["page"] %></span></li>
+                <% } else { %>
+                    <li class="page-item"><a class="page-link" href='<%= page["url"] %>'><%= page["page"] %></a></li>
+                <% } %>
+            <% } else { %>
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            <% } %>
+        <% } %>
 
         <!-- Next Page Link -->
         <li class='page-item <%= paginator["next_class"].(string) %>'>

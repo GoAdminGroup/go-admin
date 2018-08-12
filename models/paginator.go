@@ -36,5 +36,146 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 	paginator["option"].(map[string]string)[pageSize] = "selected=''"
 	paginator["success"] = false
 
+	paginator["pages"] = []map[string]string{}
+	totalPage := size / pageSizeInt + 1
+	if totalPage < 10 {
+		var pagesArr []map[string]string
+		for i := 1; i < totalPage + 1; i++ {
+			if i == pageInt {
+				pagesArr = append(pagesArr, map[string]string{
+					"page": strconv.Itoa(i),
+					"active": "active",
+					"isSplit": "0",
+					"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+				})
+			} else {
+				pagesArr = append(pagesArr, map[string]string{
+					"page": strconv.Itoa(i),
+					"active": "",
+					"isSplit": "0",
+					"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+				})
+			}
+		}
+		paginator["pages"] = pagesArr
+	} else {
+		var pagesArr []map[string]string
+		if pageInt < 5 {
+			for i := 1; i < totalPage + 1; i++ {
+
+				if i == pageInt {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "active",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				} else {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				}
+
+				if i == 6 {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": "",
+						"active": "",
+						"isSplit": "1",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+					i = totalPage - 1
+				}
+			}
+		} else if pageInt < totalPage - 4 {
+			for i := 1; i < totalPage + 1; i++ {
+
+				if i == pageInt {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "active",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				} else {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				}
+
+				if i == 2 {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": "",
+						"active": "",
+						"isSplit": "1",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+					if pageInt < 7 {
+						i = 5
+					} else {
+						i = pageInt - 2
+					}
+				}
+
+				if pageInt < 7 {
+					if i == pageInt + 5 {
+						pagesArr = append(pagesArr, map[string]string{
+							"page": "",
+							"active": "",
+							"isSplit": "1",
+							"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+						})
+						i = totalPage - 1
+					}
+				} else {
+					if i == pageInt + 3 {
+						pagesArr = append(pagesArr, map[string]string{
+							"page": "",
+							"active": "",
+							"isSplit": "1",
+							"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+						})
+						i = totalPage - 1
+					}
+				}
+			}
+		} else {
+			for i := 1; i < totalPage + 1; i++ {
+
+				if i == pageInt {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "active",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				} else {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": strconv.Itoa(i),
+						"active": "",
+						"isSplit": "0",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+				}
+
+				if i == 2 {
+					pagesArr = append(pagesArr, map[string]string{
+						"page": "",
+						"active": "",
+						"isSplit": "1",
+						"url": path + "?page=" + strconv.Itoa(i) + "&pageSize="  + pageSize,
+					})
+					i = totalPage - 4
+				}
+			}
+		}
+		paginator["pages"] = pagesArr
+	}
+
 	return paginator
 }
