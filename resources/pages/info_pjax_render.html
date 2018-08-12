@@ -1,4 +1,4 @@
-<%: func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead []string, paginator map[string]interface{}, title string, description string, buffer *bytes.Buffer) %>
+<%: func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, buffer *bytes.Buffer) %>
 
 <%~ "info_pjax.html" %>
 
@@ -23,8 +23,10 @@
 <th></th>
 <% for _, head := range thead { %>
 <th>
-    <%= head %>
-    <!-- <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a> -->
+    <%= head["head"] %>
+    <% if head["sortable"] == "1" { %>
+        <a class="fa fa-fw fa-sort" href='<%= paginator["url"].(string) %>&sort=<%= head["field"] %>&sort_type=desc'></a>
+    <% } %>
 </th>
 <% } %>
 <th>操作</th>
@@ -38,7 +40,7 @@
         <input type="checkbox" class="grid-row-checkbox" data-id='<%= info["id"] %>' style="position: absolute; opacity: 0;">
     </td>
     <% for _, head := range thead { %>
-    <td><%==s info[head] %></td>
+    <td><%==s info[head["head"]] %></td>
     <% } %>
     <td>
         <a href='<%= paginator["edit_url"].(string) %>&id=<%= info["id"] %>'>
@@ -116,5 +118,31 @@
     toastr.success('操作成功了!');
 </script>
 <% } %>
-<% } %>
+<script>
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURI(r[2]);
+        }
+        return null;
+    }
+    $(function () {
+        sortType = getQueryString('sort_type');
+        if (sortType != null) {
+            if (sortType === "asc") {
+                $('.fa.fa-fw').removeClass("fa-sort-amount-desc");
+                $('.fa.fa-fw').addClass("fa-sort-amount-asc");
+                href = $('.fa.fa-fw').attr("href");
+                $('.fa.fa-fw').attr("href", href.replace("asc", "desc"));
+            } else {
+                $('.fa.fa-fw').removeClass("fa-sort-amount-asc");
+                $('.fa.fa-fw').addClass("fa-sort-amount-desc");
+                href = $('.fa.fa-fw').attr("href");
+                $('.fa.fa-fw').attr("href", href.replace("desc", "asc"));
+            }
+        }
+    });
+</script>
 
+<% } %>

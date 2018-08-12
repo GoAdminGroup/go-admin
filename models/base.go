@@ -34,6 +34,7 @@ type FieldStruct struct {
 	Field    string
 	TypeName string
 	Head     string
+	Sortable bool
 }
 
 func (field *FieldStruct) SetHead(head string) *FieldStruct {
@@ -85,29 +86,38 @@ type ErrStruct struct {
 }
 
 // 查数据
-func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]string, []map[string]string, map[string]interface{}, string, string) {
+func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]string, map[string]interface{}, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])
 
 	title := tableModel.Info.Title
 	description := tableModel.Info.Description
 
-	thead := make([]string, 0)
+	thead := make([]map[string]string, 0)
 	fields := ""
 
 	columnsModel, _ := mysql.Query("show columns in " + tableModel.Info.Table)
 
+	var sortable string
 	for i := 0; i < len(tableModel.Info.FieldList); i++ {
 		if tableModel.Info.FieldList[i].Field != "id" && CheckInTable(columnsModel, tableModel.Info.FieldList[i].Field) {
 			fields += tableModel.Info.FieldList[i].Field + ","
 		}
-		thead = append(thead, tableModel.Info.FieldList[i].Head)
+		sortable = "0"
+		if tableModel.Info.FieldList[i].Sortable {
+			sortable = "1"
+		}
+		thead = append(thead, map[string]string{
+			"head": tableModel.Info.FieldList[i].Head,
+			"sortable": sortable,
+			"field": tableModel.Info.FieldList[i].Field,
+		})
 	}
 
 	fields += "id"
 
-	res, _ := mysql.Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by created_at desc LIMIT ? OFFSET ?",
-		queryParam["pageSize"], (pageInt-1)*10)
+	res, _ := mysql.Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by " + queryParam["sortField"] + " " +
+		queryParam["sortType"] + " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]string, 0)
 

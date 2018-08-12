@@ -11,7 +11,7 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []string, paginator map[string]interface{}, title string, description string, user auth.User, buffer *bytes.Buffer) {
+func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, user auth.User, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
 `)
@@ -351,9 +351,17 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 		buffer.WriteString(`
 <th>
     `)
-		hero.EscapeHTML(head, buffer)
+		hero.EscapeHTML(head["head"], buffer)
+		if head["sortable"] == "1" {
+			buffer.WriteString(`
+        <a class="fa fa-fw fa-sort" href='`)
+			hero.EscapeHTML(paginator["url"].(string), buffer)
+			buffer.WriteString(`&sort=`)
+			hero.EscapeHTML(head["field"], buffer)
+			buffer.WriteString(`&sort_type=desc'></a>
+    `)
+		}
 		buffer.WriteString(`
-    <!-- <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a> -->
 </th>
 `)
 	}
@@ -376,7 +384,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 		for _, head := range thead {
 			buffer.WriteString(`
     <td>`)
-			buffer.WriteString(info[head])
+			buffer.WriteString(info[head["head"]])
 			buffer.WriteString(`</td>
     `)
 		}

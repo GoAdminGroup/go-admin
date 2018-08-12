@@ -27,11 +27,22 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 		pageSize = []byte("10")
 	}
 
+	sortField := ctx.QueryArgs().Peek("sort")
+	if len(sortField) == 0 {
+		sortField = []byte("id")
+	}
+	sortType := ctx.QueryArgs().Peek("sort_type")
+	if len(sortType) == 0 {
+		sortType = []byte("desc")
+	}
+
 	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
-		"page":     string(page),
-		"path":     string(path),
-		"prefix":   prefix,
-		"pageSize": string(pageSize),
+		"page":      string(page),
+		"path":      string(path),
+		"sortField": string(sortField),
+		"sortType":  string(sortType),
+		"prefix":    prefix,
+		"pageSize":  string(pageSize),
 	})
 
 	menu.GlobalMenu.SetActiveClass(path)

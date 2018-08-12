@@ -8,10 +8,11 @@ type FieldStruct struct {
 	Field    string
 	TypeName string
 	Head     string
+	Sortable bool
 }
 ```
 
-其中```Field```代表字段名，```TypeName```代表字段类型名，```Head```代表表头名。
+其中```Field```代表字段名，```TypeName```代表字段类型名，```Head```代表表头名, ```Sortable```代表是否排序,。
 ```ExcuFun```代表字段值过滤函数，定义如下：
 
 ```go
@@ -34,6 +35,7 @@ userTable.Info.FieldList = []FieldStruct{
         Head:     "姓名",
         Field:    "name",
         TypeName: "varchar",
+        Sortable: false,
         ExcuFun: func(model RowModel) string {
             return model.Value
         },
@@ -42,6 +44,7 @@ userTable.Info.FieldList = []FieldStruct{
         Head:     "性别",
         Field:    "sex",
         TypeName: "tinyint",
+        Sortable: false,
         ExcuFun: func(model RowModel) string {
             if model.Value == "1" {
                 return "男"

@@ -7,13 +7,14 @@ import (
 	"strings"
 )
 
-func GetManagerTable() (userTable GlobalTable) {
+func GetManagerTable() (ManagerTable GlobalTable) {
 
-	userTable.Info.FieldList = []FieldStruct{
+	ManagerTable.Info.FieldList = []FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
+			Sortable:  true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -22,6 +23,7 @@ func GetManagerTable() (userTable GlobalTable) {
 			Head:     "用户名",
 			Field:    "username",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -30,6 +32,7 @@ func GetManagerTable() (userTable GlobalTable) {
 			Head:     "昵称",
 			Field:    "name",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -38,6 +41,7 @@ func GetManagerTable() (userTable GlobalTable) {
 			Head:     "角色",
 			Field:    "roles",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				labelModel, _ := mysql.Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
@@ -48,6 +52,7 @@ func GetManagerTable() (userTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -56,15 +61,16 @@ func GetManagerTable() (userTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
 		},
 	}
 
-	userTable.Info.Table = "goadmin_users"
-	userTable.Info.Title = "管理员管理"
-	userTable.Info.Description = "管理员管理"
+	ManagerTable.Info.Table = "goadmin_users"
+	ManagerTable.Info.Title = "管理员管理"
+	ManagerTable.Info.Description = "管理员管理"
 
 	var roles, permissions []map[string]string
 	rolesModel, _ := mysql.Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
@@ -82,7 +88,7 @@ func GetManagerTable() (userTable GlobalTable) {
 		})
 	}
 
-	userTable.Form.FormList = []FormStruct{
+	ManagerTable.Form.FormList = []FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -188,20 +194,21 @@ func GetManagerTable() (userTable GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "goadmin_users"
-	userTable.Form.Title = "管理员管理"
-	userTable.Form.Description = "管理员管理"
+	ManagerTable.Form.Table = "goadmin_users"
+	ManagerTable.Form.Title = "管理员管理"
+	ManagerTable.Form.Description = "管理员管理"
 
 	return
 }
 
-func GetPermissionTable() (userTable GlobalTable) {
+func GetPermissionTable() (PermissionTable GlobalTable) {
 
-	userTable.Info.FieldList = []FieldStruct{
+	PermissionTable.Info.FieldList = []FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
+			Sortable:  true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -210,6 +217,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -218,6 +226,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "标志",
 			Field:    "slug",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -226,6 +235,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "方法",
 			Field:    "http_method",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -234,6 +244,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "路径",
 			Field:    "http_path",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -242,6 +253,7 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -250,23 +262,24 @@ func GetPermissionTable() (userTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
 		},
 	}
 
-	userTable.Info.Table = "goadmin_permissions"
-	userTable.Info.Title = "权限管理"
-	userTable.Info.Description = "权限管理"
+	PermissionTable.Info.Table = "goadmin_permissions"
+	PermissionTable.Info.Title = "权限管理"
+	PermissionTable.Info.Description = "权限管理"
 
-	userTable.Form.FormList = []FormStruct{
+	PermissionTable.Form.FormList = []FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Default:  "",
-			Editable: false,
+			Editable: true,
 			FormType: "default",
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
@@ -343,14 +356,14 @@ func GetPermissionTable() (userTable GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "goadmin_permissions"
-	userTable.Form.Title = "权限管理"
-	userTable.Form.Description = "权限管理"
+	PermissionTable.Form.Table = "goadmin_permissions"
+	PermissionTable.Form.Title = "权限管理"
+	PermissionTable.Form.Description = "权限管理"
 
 	return
 }
 
-func GetRolesTable() (userTable GlobalTable) {
+func GetRolesTable() (RolesTable GlobalTable) {
 
 	var permissions []map[string]string
 	permissionsModel, _ := mysql.Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
@@ -361,11 +374,12 @@ func GetRolesTable() (userTable GlobalTable) {
 		})
 	}
 
-	userTable.Info.FieldList = []FieldStruct{
+	RolesTable.Info.FieldList = []FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
+			Sortable:  true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -374,6 +388,7 @@ func GetRolesTable() (userTable GlobalTable) {
 			Head:     "名字",
 			Field:    "name",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -382,6 +397,7 @@ func GetRolesTable() (userTable GlobalTable) {
 			Head:     "标志",
 			Field:    "slug",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -390,6 +406,7 @@ func GetRolesTable() (userTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -398,17 +415,18 @@ func GetRolesTable() (userTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
 		},
 	}
 
-	userTable.Info.Table = "goadmin_roles"
-	userTable.Info.Title = "角色管理"
-	userTable.Info.Description = "角色管理"
+	RolesTable.Info.Table = "goadmin_roles"
+	RolesTable.Info.Title = "角色管理"
+	RolesTable.Info.Description = "角色管理"
 
-	userTable.Form.FormList = []FormStruct{
+	RolesTable.Form.FormList = []FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -478,20 +496,21 @@ func GetRolesTable() (userTable GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "goadmin_roles"
-	userTable.Form.Title = "角色管理"
-	userTable.Form.Description = "角色管理"
+	RolesTable.Form.Table = "goadmin_roles"
+	RolesTable.Form.Title = "角色管理"
+	RolesTable.Form.Description = "角色管理"
 
 	return
 }
 
-func GetOpTable() (userTable GlobalTable) {
+func GetOpTable() (OpTable GlobalTable) {
 
-	userTable.Info.FieldList = []FieldStruct{
+	OpTable.Info.FieldList = []FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
+			Sortable:  true,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -500,6 +519,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "用户ID",
 			Field:    "user_id",
 			TypeName: "int",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -508,6 +528,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "路径",
 			Field:    "path",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -516,6 +537,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "方法",
 			Field:    "method",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -524,6 +546,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "ip",
 			Field:    "ip",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -532,6 +555,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "内容",
 			Field:    "input",
 			TypeName: "varchar",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -540,6 +564,7 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "创建时间",
 			Field:    "created_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
@@ -548,17 +573,18 @@ func GetOpTable() (userTable GlobalTable) {
 			Head:     "更新时间",
 			Field:    "updated_at",
 			TypeName: "timestamp",
+			Sortable:  false,
 			ExcuFun: func(model RowModel) interface{} {
 				return model.Value
 			},
 		},
 	}
 
-	userTable.Info.Table = "goadmin_operation_log"
-	userTable.Info.Title = "操作日志"
-	userTable.Info.Description = "操作日志"
+	OpTable.Info.Table = "goadmin_operation_log"
+	OpTable.Info.Title = "操作日志"
+	OpTable.Info.Description = "操作日志"
 
-	userTable.Form.FormList = []FormStruct{
+	OpTable.Form.FormList = []FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -642,9 +668,9 @@ func GetOpTable() (userTable GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "goadmin_operation_log"
-	userTable.Form.Title = "操作日志"
-	userTable.Form.Description = "操作日志"
+	OpTable.Form.Table = "goadmin_operation_log"
+	OpTable.Form.Title = "操作日志"
+	OpTable.Form.Description = "操作日志"
 
 	return
 }

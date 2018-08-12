@@ -46,6 +46,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "姓名",
 			Field:    "name",
 			TypeName: "varchar",
+			Sortable: false,
 			ExcuFun: func(model RowModel) string {
                 return model.Value
             },
@@ -54,6 +55,7 @@ func GetUserTable() (userTable GlobalTable) {
 			Head:     "性别",
 			Field:    "sex",
 			TypeName: "tinyint",
+			Sortable: false,
 			ExcuFun: func(model RowModel) string {
 				if model.Value == "1" {
 					return "男"

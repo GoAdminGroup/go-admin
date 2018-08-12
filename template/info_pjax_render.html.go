@@ -10,7 +10,7 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead []string, paginator map[string]interface{}, title string, description string, buffer *bytes.Buffer) {
+func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead []map[string]string, paginator map[string]interface{}, title string, description string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!-- Content Header (Page header) -->
 <section class="content-header">
     `)
@@ -148,9 +148,17 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
 		buffer.WriteString(`
 <th>
     `)
-		hero.EscapeHTML(head, buffer)
+		hero.EscapeHTML(head["head"], buffer)
+		if head["sortable"] == "1" {
+			buffer.WriteString(`
+        <a class="fa fa-fw fa-sort" href='`)
+			hero.EscapeHTML(paginator["url"].(string), buffer)
+			buffer.WriteString(`&sort=`)
+			hero.EscapeHTML(head["field"], buffer)
+			buffer.WriteString(`&sort_type=desc'></a>
+    `)
+		}
 		buffer.WriteString(`
-    <!-- <a class="fa fa-fw fa-sort" href="/admin/story/word?_sort%5Bcolumn%5D=id&amp;_sort%5Btype%5D=desc"></a> -->
 </th>
 `)
 	}
@@ -173,7 +181,7 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
 		for _, head := range thead {
 			buffer.WriteString(`
     <td>`)
-			buffer.WriteString(info[head])
+			buffer.WriteString(info[head["head"]])
 			buffer.WriteString(`</td>
     `)
 		}
@@ -329,6 +337,35 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
 </script>
 `)
 	}
+	buffer.WriteString(`
+<script>
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) {
+            return decodeURI(r[2]);
+        }
+        return null;
+    }
+    $(function () {
+        sortType = getQueryString('sort_type');
+        if (sortType != null) {
+            if (sortType === "asc") {
+                $('.fa.fa-fw').removeClass("fa-sort-amount-desc");
+                $('.fa.fa-fw').addClass("fa-sort-amount-asc");
+                href = $('.fa.fa-fw').attr("href");
+                $('.fa.fa-fw').attr("href", href.replace("asc", "desc"));
+            } else {
+                $('.fa.fa-fw').removeClass("fa-sort-amount-asc");
+                $('.fa.fa-fw').addClass("fa-sort-amount-desc");
+                href = $('.fa.fa-fw').attr("href");
+                $('.fa.fa-fw').attr("href", href.replace("desc", "asc"));
+            }
+        }
+    });
+</script>
+
+`)
 
 	buffer.WriteString(`
                 <!-- /.box-footer -->

@@ -94,7 +94,7 @@ var selectedRows = function () {
     });
 
     return selected;
-}
+};
 
 $('.grid-row-delete').unbind('click').click(function () {
 
@@ -181,4 +181,30 @@ $('.grid-batch-0').on('click', function() {
                 }
             });
         });
+});
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return decodeURI(r[2]);
+    }
+    return null;
+}
+
+$(function () {
+    sortType = getQueryString('sort_type');
+    if (sortType != null) {
+        if (sortType === "asc") {
+            $('.fa.fa-fw').removeClass("fa-sort-amount-desc");
+            $('.fa.fa-fw').addClass("fa-sort-amount-asc");
+            href = $('.fa.fa-fw').attr("href");
+            $('.fa.fa-fw').attr("href", href.replace("asc", "desc"));
+        } else {
+            $('.fa.fa-fw').removeClass("fa-sort-amount-asc");
+            $('.fa.fa-fw').addClass("fa-sort-amount-desc");
+            href = $('.fa.fa-fw').attr("href");
+            $('.fa.fa-fw').attr("href", href.replace("desc", "asc"));
+        }
+    }
 });
