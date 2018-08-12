@@ -16,7 +16,7 @@ func RecordOperationLog(ctx *fasthttp.RequestCtx) {
 			input = []byte("[]")
 		}
 
-		mysql.Exec("insert into goadmin_operation_log (user_id, path, method, ip, input) values (?, ?, ?, ?, ?)",user.ID, ctx.Path(),
-			ctx.Method(), ctx.LocalIP(), string(input))
+		mysql.Exec("insert into goadmin_operation_log (user_id, path, method, ip, input) values (?, ?, ?, ?, ?)", user.ID, ctx.Path(),
+			ctx.Method(), ctx.LocalIP().String(), string(input))
 	}
 }
