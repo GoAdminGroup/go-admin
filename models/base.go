@@ -219,7 +219,7 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 	fields := ""
 	valueList := make([]interface{}, 0)
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_token" {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
 				valueList = append(valueList, strings.Join(modules.RemoveBlackFromArray(v), ","))
@@ -242,7 +242,7 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 	queStr := ""
 	var valueList []interface{}
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_token" {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" {
 			fields += k + ","
 			queStr += "?,"
 			valueList = append(valueList, v[0])

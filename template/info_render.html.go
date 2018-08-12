@@ -531,6 +531,9 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []ma
         &nbsp;<small>entries</small>
     </label>
 </div>
+<input id="_TOKEN" type="hidden" value='`)
+	hero.EscapeHTML(paginator["token"].(string), buffer)
+	buffer.WriteString(`'>
 `)
 
 	buffer.WriteString(`

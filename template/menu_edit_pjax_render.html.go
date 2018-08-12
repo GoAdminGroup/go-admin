@@ -2389,9 +2389,7 @@ func MenuEditPanelPjax(menuItem menu.MenuItem, menuOption []map[string]string, b
         </div>
         <!-- /.box-body -->
         <div class="box-footer">
-
-            <input type="hidden" name="_token" value="HTKbIVHeishMOGhxuJU3yH3bGHJLtqcop1NfYbwD"><div class="col-md-2">
-
+            <div class="col-md-2">
         </div>
             <div class="col-md-8">
 

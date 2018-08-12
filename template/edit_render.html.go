@@ -12,7 +12,7 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func EditPanel(formData []models.FormStruct, url string, previous string, id string, menuList []menu.MenuItem, title string, description string, user auth.User, buffer *bytes.Buffer) {
+func EditPanel(formData []models.FormStruct, url string, previous string, id string, menuList []menu.MenuItem, title string, description string, user auth.User, token string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<!DOCTYPE html>
 <html>
 `)
@@ -472,7 +472,6 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
                             </div>
                         </div>
                         <div class="box-footer">
-                            <input type="hidden" name="_token" value="7TEJrUaKsAIZ0qbc03G1nmeDOfmHyhCbMHqHlnkg">
                             <div class="col-md-2">
                             </div>
                             <div class="col-md-8">
@@ -500,6 +499,9 @@ func EditPanel(formData []models.FormStruct, url string, previous string, id str
 	buffer.WriteString(`' class="_previous_">
         <input type="hidden" name="id" value='`)
 	hero.EscapeHTML(id, buffer)
+	buffer.WriteString(`' class="_previous_">
+        <input type="hidden" name="_t" value='`)
+	hero.EscapeHTML(token, buffer)
 	buffer.WriteString(`' class="_previous_">
     `)
 

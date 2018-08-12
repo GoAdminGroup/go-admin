@@ -7,6 +7,7 @@ import (
 	"goAdmin/connections/mysql"
 	"strconv"
 	"time"
+	"goAdmin/modules"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {
@@ -74,4 +75,28 @@ func DelCookie(ctx *fasthttp.RequestCtx) bool {
 	ctx.Response.Header.SetCookie(&c)
 
 	return true
+}
+
+type CSRFToken []string
+
+var TokenHelper = new(CSRFToken)
+
+func (token *CSRFToken) AddToken() string {
+	tokenStr := modules.Uuid(35)
+	if len(*token) == 1 && (*token)[0] == "" {
+		(*token)[0] = tokenStr
+	} else {
+		*token = append(*token, tokenStr)
+	}
+	return tokenStr
+}
+
+func (token *CSRFToken) CheckToken(tocheck string) bool {
+	for i := 0; i < len(*token); i++ {
+		if (*token)[i] == tocheck {
+			*token = append((*token)[0:i], (*token)[i:len((*token))]...)
+			return true
+		}
+	}
+	return false
 }

@@ -2673,12 +2673,9 @@ func MenuPanel(menuEditList []menu.MenuItem, menuList []menu.MenuItem, menuOptio
                                                 type="hidden" name="roles[]">
                                         </div>
                                     </div>
-                                    <input type="hidden" name="_token" value="v59IvAL6MYo5xSxiiGlJWUVIHVGnyYfHOVhtSFGZ"
-                                           class="_token">
                                 </div>
                                 <!-- /.box-body -->
                                 <div class="box-footer">
-                                    <input type="hidden" name="_token" value="v59IvAL6MYo5xSxiiGlJWUVIHVGnyYfHOVhtSFGZ">
                                     <div class="col-md-2"></div>
                                     <div class="col-md-8">
                                         <div class="btn-group pull-left">

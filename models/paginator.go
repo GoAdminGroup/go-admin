@@ -1,6 +1,9 @@
 package models
 
-import "strconv"
+import (
+	"strconv"
+	"goAdmin/auth"
+)
 
 func GetPaginator(path string, pageInt int, page string, pageSize string, size int, prefix string) map[string]interface{} {
 	paginator := make(map[string]interface{}, 0)
@@ -35,6 +38,7 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 	}
 	paginator["option"].(map[string]string)[pageSize] = "selected=''"
 	paginator["success"] = false
+	paginator["token"] = auth.TokenHelper.AddToken()
 
 	paginator["pages"] = []map[string]string{}
 	totalPage := size / pageSizeInt + 1

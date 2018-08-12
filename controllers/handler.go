@@ -12,6 +12,7 @@ import (
 	"goAdmin/models"
 	"goAdmin/template"
 	"regexp"
+	"goAdmin/auth"
 )
 
 // 全局错误处理
@@ -56,7 +57,9 @@ func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 
 			url := "/edit/" + prefix + "?id=" + id
 
-			template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"", errMsg}, buffer)
+			token := auth.TokenHelper.AddToken()
+
+			template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"", errMsg}, token, buffer)
 
 			ctx.Response.AppendBody(buffer.Bytes())
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
@@ -77,9 +80,11 @@ func GlobalDeferHandler(ctx *fasthttp.RequestCtx) {
 
 			url := "/edit/" + prefix + "?id=" + id
 
+			token := auth.TokenHelper.AddToken()
+
 			template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url,
 				previous, id, models.GlobalTableList[prefix].Form.Title,
-				models.GlobalTableList[prefix].Form.Description, models.ErrStruct{"hidden", errMsg}, buffer)
+				models.GlobalTableList[prefix].Form.Description, models.ErrStruct{"hidden", errMsg}, token, buffer)
 
 			ctx.Response.AppendBody(buffer.Bytes())
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")

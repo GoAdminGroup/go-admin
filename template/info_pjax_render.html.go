@@ -329,6 +329,9 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
         &nbsp;<small>entries</small>
     </label>
 </div>
+<input id="_TOKEN" type="hidden" value='`)
+	hero.EscapeHTML(paginator["token"].(string), buffer)
+	buffer.WriteString(`'>
 `)
 	if paginator["success"].(bool) {
 		buffer.WriteString(`
@@ -494,13 +497,15 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
                         method: 'post',
                         url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
                         data: {
-                            id:id
+                            id:id,
+                            _t: $('#_TOKEN').val()
                         },
                         success: function (data) {
                             $.pjax.reload('#pjax-container');
 
                             data = JSON.parse(data);
                             if (data.code === 200) {
+                                $('#_TOKEN').val(data.data);
                                 swal(data.msg, '', 'success');
                             } else {
                                 swal(data.msg, '', 'error');
@@ -547,13 +552,15 @@ func InfoListPjax(infoList []map[string]string, menuList []menu.MenuItem, thead 
                         method: 'post',
                         url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
                         data: {
-                            id:id
+                            id:id,
+                            _t: $('#_TOKEN').val()
                         },
                         success: function (data) {
                             $.pjax.reload('#pjax-container');
 
                             data = JSON.parse(data);
                             if (data.code === 200) {
+                                $('#_TOKEN').val(data.data);
                                 swal(data.msg, '', 'success');
                             } else {
                                 swal(data.msg, '', 'error');

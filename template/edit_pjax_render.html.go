@@ -10,7 +10,7 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func EditPanelPjax(formData []models.FormStruct, url string, previous string, id string, title string, description string, errData models.ErrStruct, buffer *bytes.Buffer) {
+func EditPanelPjax(formData []models.FormStruct, url string, previous string, id string, title string, description string, errData models.ErrStruct, token string, buffer *bytes.Buffer) {
 	buffer.WriteString(`<section class="content-header">
     `)
 	buffer.WriteString(`
@@ -280,7 +280,7 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
-                        <input type="hidden" name="_token" value="7TEJrUaKsAIZ0qbc03G1nmeDOfmHyhCbMHqHlnkg"><div class="col-md-2">
+                        <div class="col-md-2">
                     </div>
                         <div class="col-md-8">
 
@@ -304,6 +304,9 @@ func EditPanelPjax(formData []models.FormStruct, url string, previous string, id
 	buffer.WriteString(`' class="_previous_">
 <input type="hidden" name="id" value='`)
 	hero.EscapeHTML(id, buffer)
+	buffer.WriteString(`' class="_previous_">
+<input type="hidden" name="_t" value='`)
+	hero.EscapeHTML(token, buffer)
 	buffer.WriteString(`' class="_previous_">
 `)
 

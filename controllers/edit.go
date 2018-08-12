@@ -37,10 +37,12 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 	url := "/edit/" + prefix + "?id=" + id
 	previous := "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize
 
+	token := auth.TokenHelper.AddToken()
+
 	if string(ctx.Request.Header.Peek("X-PJAX")[:]) == "true" {
-		template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"hidden", ""}, buffer)
+		template.EditPanelPjax(formData, url, previous, id, title, description, models.ErrStruct{"hidden", ""}, token, buffer)
 	} else {
-		template.EditPanel(formData, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, title, description, user, buffer)
+		template.EditPanel(formData, url, previous, id, (*menu.GlobalMenu).GlobalMenuList, title, description, user, token, buffer)
 	}
 
 	ctx.Response.AppendBody(buffer.Bytes())
@@ -51,6 +53,14 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 func EditForm(ctx *fasthttp.RequestCtx) {
 
 	defer GlobalDeferHandler(ctx)
+
+	token := string(ctx.FormValue("_t"))
+
+	if !auth.TokenHelper.CheckToken(token) {
+		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		ctx.WriteString(`{"code":400, "msg":"编辑失败"}`)
+		return
+	}
 
 	prefix := ctx.UserValue("prefix").(string)
 
@@ -80,6 +90,8 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 	paramArr := strings.Split(prevUrlArr[1], "&")
 	page := "1"
 	pageSize := "10"
+	sort := "id"
+	sort_type := "desc"
 
 	for i := 0; i < len(paramArr); i++ {
 		if strings.Index(paramArr[i], "pageSize") >= 0 {
@@ -87,15 +99,21 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 		} else {
 			if strings.Index(paramArr[i], "page") >= 0 {
 				page = strings.Split(paramArr[i], "=")[1]
+			} else if strings.Index(paramArr[i], "sort") >= 0 {
+				sort = strings.Split(paramArr[i], "=")[1]
+			} else {
+				sort_type = strings.Split(paramArr[i], "=")[1]
 			}
 		}
 	}
 
 	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
-		"page":     page,
-		"path":     prevUrlArr[0],
-		"prefix":   prefix,
-		"pageSize": pageSize,
+		"page":      page,
+		"path":      prevUrlArr[0],
+		"sortField": sort,
+		"sortType":  sort_type,
+		"prefix":    prefix,
+		"pageSize":  pageSize,
 	})
 
 	menu.GlobalMenu.SetActiveClass(previous)

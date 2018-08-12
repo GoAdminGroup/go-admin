@@ -114,13 +114,15 @@ $('.grid-row-delete').unbind('click').click(function () {
                 method: 'post',
                 url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
                 data: {
-                    id:id
+                    id:id,
+                    _t: $('#_TOKEN').val()
                 },
                 success: function (data) {
                     $.pjax.reload('#pjax-container');
 
                     data = JSON.parse(data);
                     if (data.code === 200) {
+                        $('#_TOKEN').val(data.data);
                         swal(data.msg, '', 'success');
                     } else {
                         swal(data.msg, '', 'error');
@@ -167,13 +169,15 @@ $('.grid-batch-0').on('click', function() {
                 method: 'post',
                 url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
                 data: {
-                    id:id
+                    id: id,
+                    _t: $('#_TOKEN').val()
                 },
                 success: function (data) {
                     $.pjax.reload('#pjax-container');
 
                     data = JSON.parse(data);
                     if (data.code === 200) {
+                        $('#_TOKEN').val(data.data);
                         swal(data.msg, '', 'success');
                     } else {
                         swal(data.msg, '', 'error');
