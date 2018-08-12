@@ -87,6 +87,7 @@ func EditMenu(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.AppendBody(buffer.Bytes())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
 }
 
 // 新建菜单
@@ -112,6 +113,7 @@ func NewMenu(ctx *fasthttp.RequestCtx) {
 
 	ctx.Response.AppendBody(buffer.Bytes())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
 }
 
 // 修改菜单顺序
