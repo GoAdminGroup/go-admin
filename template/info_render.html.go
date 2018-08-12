@@ -368,7 +368,9 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []st
 		buffer.WriteString(`
 <tr>
     <td>
-        <input type="checkbox" class="grid-row-checkbox" data-id="1" style="position: absolute; opacity: 0;">
+        <input type="checkbox" class="grid-row-checkbox" data-id='`)
+		hero.EscapeHTML(info["id"], buffer)
+		buffer.WriteString(`' style="position: absolute; opacity: 0;">
     </td>
     `)
 		for _, head := range thead {

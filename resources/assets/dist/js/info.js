@@ -87,11 +87,14 @@ $(function () {
     $('[data-toggle="popover"]').popover();
 });
 
-// (function ($) {
-//     $.fn.admin = LA;
-//     $.admin = LA;
-//
-// })(jQuery);
+var selectedRows = function () {
+    var selected = [];
+    $('.grid-row-checkbox:checked').each(function(){
+        selected.push($(this).data('id'));
+    });
+
+    return selected;
+}
 
 $('.grid-row-delete').unbind('click').click(function () {
 
@@ -106,9 +109,24 @@ $('.grid-row-delete').unbind('click').click(function () {
             closeOnConfirm: false,
             cancelButtonText: "取消"
         },
-        function () {
-        <%@ deletePart { %>
-            <% } %>
+        function(){
+            $.ajax({
+                method: 'post',
+                url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
+                data: {
+                    id:id
+                },
+                success: function (data) {
+                    $.pjax.reload('#pjax-container');
+
+                    data = JSON.parse(data);
+                    if (data.code === 200) {
+                        swal(data.msg, '', 'success');
+                    } else {
+                        swal(data.msg, '', 'error');
+                    }
+                }
+            });
         });
 });
 
@@ -129,4 +147,38 @@ $(function () {
             $(this).closest('tr').css('background-color', '');
         }
     });
+});
+
+$('.grid-batch-0').on('click', function() {
+
+    var id = selectedRows().join();
+
+    swal({
+            title: "你确定要删除吗",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "确定",
+            closeOnConfirm: false,
+            cancelButtonText: "取消"
+        },
+        function(){
+            $.ajax({
+                method: 'post',
+                url: '/delete/' + window.location.href.split("?")[0].split("/")[4],
+                data: {
+                    id:id
+                },
+                success: function (data) {
+                    $.pjax.reload('#pjax-container');
+
+                    data = JSON.parse(data);
+                    if (data.code === 200) {
+                        swal(data.msg, '', 'success');
+                    } else {
+                        swal(data.msg, '', 'error');
+                    }
+                }
+            });
+        });
 });

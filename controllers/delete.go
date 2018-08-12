@@ -11,7 +11,7 @@ func DeleteData(ctx *fasthttp.RequestCtx) {
 
 	prefix := ctx.UserValue("prefix").(string)
 
-	id := string(ctx.FormValue("id")[:])
+	id := string(ctx.FormValue("id"))
 
 	models.GlobalTableList[prefix].DeleteDataFromDatabase(prefix, id)
 

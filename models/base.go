@@ -248,7 +248,10 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 
 // 删数据
 func (tableModel GlobalTable) DeleteDataFromDatabase(prefix string, id string) {
-	mysql.Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+	idArr := strings.Split(id, ",")
+	for _, id := range idArr {
+		mysql.Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+	}
 }
 
 // 检查字段是否在数据表中

@@ -67,7 +67,7 @@
 <% for _, info := range infoList { %>
 <tr>
     <td>
-        <input type="checkbox" class="grid-row-checkbox" data-id="1" style="position: absolute; opacity: 0;">
+        <input type="checkbox" class="grid-row-checkbox" data-id='<%= info["id"] %>' style="position: absolute; opacity: 0;">
     </td>
     <% for _, head := range thead { %>
     <td><%==s info[head] %></td>
@@ -145,25 +145,4 @@
 <%+ "js.html" %>
 <% } %>
 
-<%@ deletePart { %>
-$.ajax({
-method: 'post',
-url: '<%= paginator["delete_url"].(string) %>',
-data: {
-id: id
-},
-success: function (data) {
-$.pjax.reload('#pjax-container');
-
-data = JSON.parse(data)
-if (data.code == 200) {
-swal(data.msg, '', 'success');
-} else {
-swal(data.msg, '', 'error');
-}
-},
-error: function (data) {
-swal("删除失败", '', 'error');
-}
-});
 <% } %>
