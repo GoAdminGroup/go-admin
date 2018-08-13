@@ -10,7 +10,7 @@ import (
 func Auth(ctx *fasthttp.RequestCtx) {
 
 	password := ctx.FormValue("password")
-	username := string(ctx.FormValue("username")[:])
+	username := string(ctx.FormValue("username"))
 
 	if user, ok := auth.Check(password, username); ok {
 

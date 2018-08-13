@@ -5,47 +5,24 @@ import (
 	"github.com/fasthttp-contrib/sessions"
 	"github.com/valyala/fasthttp"
 	"goAdmin/connections/mysql"
-	"goAdmin/modules"
 	"time"
 )
 
-type SessionHelper struct {
-	Sess sessions.Session
-}
+var (
+	Session sessions.Session
+	driver MysqlDriver
+)
 
-func InitSessionHelper(ctx *fasthttp.RequestCtx) *SessionHelper {
+func InitSession(ctx *fasthttp.RequestCtx) sessions.Session {
 
 	sessions.UpdateConfig(sessions.Config{
 		Expires: time.Hour * 10,
+		Cookie: "go_admin_session",
 	})
 
-	var driver MysqlDriver
 	sessions.UseDatabase(&driver)
 
-	session := sessions.StartFasthttp(ctx)
-
-	return &SessionHelper{
-		session,
-	}
-}
-
-func (helper *SessionHelper) GetUserIdFromSession(cookieSec string) (id string) {
-	var ok bool
-	if id, ok = helper.Sess.Get(cookieSec).(string); ok {
-		return
-	} else {
-		return ""
-	}
-}
-
-func GenerateSessionId() string {
-	return modules.Uuid(60)
-}
-
-func (helper *SessionHelper) PutIntoSession(value string) string {
-	sessionKey := GenerateSessionId()
-	helper.Sess.Set(sessionKey, value)
-	return sessionKey
+	return sessions.StartFasthttp(ctx)
 }
 
 type MysqlDriver struct{}

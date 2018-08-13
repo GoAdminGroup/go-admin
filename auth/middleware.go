@@ -23,9 +23,16 @@ type Permission struct {
 }
 
 func Filter(ctx *fasthttp.RequestCtx) (User, bool, bool) {
-	cookieSec := string(ctx.Request.Header.Cookie("go_admin_session")[:])
-	id := InitSessionHelper(ctx).GetUserIdFromSession(cookieSec)
-	user, ok := GetCurUserById(id)
+	var (
+		id   string
+		ok   bool
+		user User
+	)
+	if id, ok = InitSession(ctx).Get("user_id").(string); !ok {
+		return user, false, false
+	}
+
+	user, ok = GetCurUserById(id)
 
 	if !ok {
 		return user, false, false

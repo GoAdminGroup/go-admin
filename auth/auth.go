@@ -3,11 +3,9 @@ package auth
 import (
 	"github.com/golang/crypto/bcrypt"
 	"github.com/valyala/fasthttp"
-	"goAdmin/config"
 	"goAdmin/connections/mysql"
 	"goAdmin/modules"
 	"strconv"
-	"time"
 )
 
 func Check(password []byte, username string) (user User, ok bool) {
@@ -53,27 +51,12 @@ func EncodePassword(pwd []byte) string {
 }
 
 func SetCookie(ctx *fasthttp.RequestCtx, user User) bool {
-
-	sessionKey := InitSessionHelper(ctx).PutIntoSession(user.ID)
-
-	var c fasthttp.Cookie
-	c.SetKey("go_admin_session")
-	c.SetValue(sessionKey)
-	c.SetDomain(config.EnvConfig["AUTH_DOMAIN"].(string))
-	c.SetExpire(time.Now().Add(time.Hour * 48))
-	ctx.Response.Header.SetCookie(&c)
-
+	InitSession(ctx).Set("user_id", user.ID)
 	return true
 }
 
 func DelCookie(ctx *fasthttp.RequestCtx) bool {
-	var c fasthttp.Cookie
-	c.SetKey("go_admin_session")
-	c.SetValue("")
-	c.SetDomain(config.EnvConfig["AUTH_DOMAIN"].(string))
-	c.SetExpire(time.Now())
-	ctx.Response.Header.SetCookie(&c)
-
+	InitSession(ctx).Clear()
 	return true
 }
 
@@ -94,7 +77,7 @@ func (token *CSRFToken) AddToken() string {
 func (token *CSRFToken) CheckToken(tocheck string) bool {
 	for i := 0; i < len(*token); i++ {
 		if (*token)[i] == tocheck {
-			*token = append((*token)[0:i], (*token)[i:len((*token))]...)
+			*token = append((*token)[0:i], (*token)[i:len(*token)]...)
 			return true
 		}
 	}

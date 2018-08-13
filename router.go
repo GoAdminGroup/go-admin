@@ -17,7 +17,7 @@ func InitRouter() *fasthttprouter.Router {
 	// 授权认证
 	router.GET("/login", controller.ShowLogin)
 	router.POST("/signin", controller.Auth)
-	router.POST("/logout", AuthMiddleware(controller.Logout))
+	router.GET("/logout", AuthMiddleware(controller.Logout))
 
 	// 菜单管理
 	router.GET("/menu", AuthMiddleware(controller.ShowMenu))
