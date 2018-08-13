@@ -358,9 +358,7 @@ func InfoList(infoList []map[string]string, menuList []menu.MenuItem, thead []ma
 			buffer.WriteString(`
         <a class="fa fa-fw fa-sort" href='`)
 			hero.EscapeHTML(paginator["url"].(string), buffer)
-			buffer.WriteString(`&sort=`)
-			hero.EscapeHTML(head["field"], buffer)
-			buffer.WriteString(`&sort_type=desc'></a>
+			buffer.WriteString(`'></a>
     `)
 		}
 		buffer.WriteString(`

@@ -155,7 +155,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	total, _ := mysql.Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
 	size := int(total[0]["count(*)"].(int64))
 
-	paginator := GetPaginator(queryParam["path"], pageInt, queryParam["page"], queryParam["pageSize"], size, queryParam["prefix"])
+	paginator := GetPaginator(queryParam["path"], pageInt, queryParam["page"], queryParam["pageSize"], queryParam["sortField"], queryParam["sortType"], size, queryParam["prefix"])
 
 	return thead, infoList, paginator, title, description
 

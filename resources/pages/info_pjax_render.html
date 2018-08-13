@@ -25,7 +25,7 @@
 <th>
     <%= head["head"] %>
     <% if head["sortable"] == "1" { %>
-        <a class="fa fa-fw fa-sort" href='<%= paginator["url"].(string) %>&sort=<%= head["field"] %>&sort_type=desc'></a>
+        <a class="fa fa-fw fa-sort" href='<%= paginator["url"].(string) %>'></a>
     <% } %>
 </th>
 <% } %>

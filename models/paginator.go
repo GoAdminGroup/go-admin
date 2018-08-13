@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func GetPaginator(path string, pageInt int, page string, pageSize string, size int, prefix string) map[string]interface{} {
+func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int, prefix string) map[string]interface{} {
 	paginator := make(map[string]interface{}, 0)
 
 	pageSizeInt, _ := strconv.Atoi(pageSize)
@@ -15,16 +15,16 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 		paginator["previou_url"] = path
 	} else {
 		paginator["previou_class"] = ""
-		paginator["previou_url"] = path + "?page=" + strconv.Itoa(pageInt-1) + "&pageSize=" + pageSize
+		paginator["previou_url"] = path + "?page=" + strconv.Itoa(pageInt-1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 	}
 
 	paginator["delete_url"] = "/delete/" + prefix
-	paginator["new_url"] = "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize
-	paginator["edit_url"] = "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
+	paginator["new_url"] = "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+	paginator["edit_url"] = "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 	paginator["pageSize"] = pageSize
 	paginator["next_class"] = ""
-	paginator["next_url"] = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize
-	paginator["url"] = path + "?page=" + page
+	paginator["next_url"] = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+	paginator["url"] = path + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 	paginator["curPageEndIndex"] = strconv.Itoa((pageInt) * pageSizeInt)
 	paginator["curPageStartIndex"] = strconv.Itoa((pageInt - 1) * pageSizeInt)
 	paginator["total"] = strconv.Itoa(size)
@@ -50,14 +50,14 @@ func GetPaginator(path string, pageInt int, page string, pageSize string, size i
 					"page":    strconv.Itoa(i),
 					"active":  "active",
 					"isSplit": "0",
-					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType,
 				})
 			} else {
 				pagesArr = append(pagesArr, map[string]string{
 					"page":    strconv.Itoa(i),
 					"active":  "",
 					"isSplit": "0",
-					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType,
 				})
 			}
 		}

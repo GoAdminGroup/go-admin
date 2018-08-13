@@ -374,7 +374,7 @@ DROP TABLE IF EXISTS `goadmin_session`;
 
 CREATE TABLE `goadmin_session` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `sid` varchar(50) DEFAULT NULL,
+  `sid` varchar(100) DEFAULT NULL,
   `values` varchar(3000) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
