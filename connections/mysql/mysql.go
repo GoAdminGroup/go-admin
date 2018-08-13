@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"goAdmin/config"
+	"errors"
 )
 
 type SqlTxStruct struct {
@@ -207,6 +208,11 @@ func (SqlTx *SqlTxStruct) Exec(query string, args ...interface{}) (sql.Result, e
 	if err != nil {
 		return nil, err
 	}
+
+	if rows, execError := rs.RowsAffected(); execError != nil || rows == 0 {
+		return nil, errors.New("exec fail")
+	}
+
 	return rs, nil
 }
 
