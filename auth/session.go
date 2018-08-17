@@ -10,14 +10,14 @@ import (
 
 var (
 	Session sessions.Session
-	driver MysqlDriver
+	driver  MysqlDriver
 )
 
 func InitSession(ctx *fasthttp.RequestCtx) sessions.Session {
 
 	sessions.UpdateConfig(sessions.Config{
 		Expires: time.Hour * 10,
-		Cookie: "go_admin_session",
+		Cookie:  "go_admin_session",
 	})
 
 	sessions.UseDatabase(&driver)
