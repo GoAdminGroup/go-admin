@@ -17,7 +17,7 @@ func GetLocalFileUploader() *LocalFileUploader {
 
 func (local *LocalFileUploader) Upload(form *multipart.Form) (*multipart.Form, error) {
 	return Upload(func(fileObj *multipart.FileHeader, filename string) (string, error) {
-		if err := fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/"+filename); err != nil {
+		if err := fasthttp.SaveMultipartFile(fileObj, (*local).BasePath+filename); err != nil {
 			return "", err
 		}
 		return "/uploads/" + filename, nil
