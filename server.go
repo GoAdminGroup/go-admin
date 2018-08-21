@@ -13,12 +13,14 @@ import (
 	"path/filepath"
 	"sync/atomic"
 	"time"
-	"goAdmin/controllers"
 	"github.com/valyala/fasthttp/fasthttputil"
 	"net/http"
 	"bufio"
 	"strings"
 	"runtime"
+	"github.com/buaazp/fasthttprouter"
+	"goAdmin/plugins/admin/controllers"
+	"goAdmin/plugins"
 )
 
 type GracefulListener struct {
@@ -130,17 +132,17 @@ func GetFileSuffix(path string) string {
 
 func fsHandlerPortable(ctx *fasthttp.RequestCtx) {
 	path := string(ctx.Path())
-	data, err := Asset("resources" + path)
-	if err != nil {
-		fmt.Println(err)
-		ctx.SetStatusCode(fasthttp.StatusNotFound)
-		ctx.SetContentType("application/json")
-		ctx.WriteString(`{"code":404, "msg":"route not found"}`)
-	} else {
+	//data, err := []byte(""), nil // Asset("resources" + path)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	ctx.SetStatusCode(fasthttp.StatusNotFound)
+	//	ctx.SetContentType("application/json")
+	//	ctx.WriteString(`{"code":404, "msg":"route not found"}`)
+	//} else {
 		ctx.Response.Header.Set("Content-Type", "text/"+GetFileSuffix(path)+"; charset=utf-8")
 		ctx.Response.SetStatusCode(200)
-		ctx.Write(data)
-	}
+		ctx.Write([]byte(""))
+	//}
 }
 
 var fsHandler fasthttp.RequestHandler
@@ -150,7 +152,7 @@ func NotFoundHandler(ctx *fasthttp.RequestCtx) {
 	defer controller.GlobalDeferHandler(ctx)
 
 	if !config.EnvConfig["PORTABLE"].(bool) {
-		if !PathExist("./resources" + string(ctx.Path())) {
+		if !PathExist("./resources/adminlte/" + string(ctx.Path())) {
 			ctx.SetStatusCode(fasthttp.StatusNotFound)
 			ctx.SetContentType("application/json")
 			ctx.WriteString(`{"code":404, "msg":"route not found"}`)
@@ -193,7 +195,7 @@ func InitServer(addr string) {
 
 	if !config.EnvConfig["PORTABLE"].(bool) {
 		fs := &fasthttp.FS{
-			Root:               "./resources",
+			Root:               "./resources/adminlte",
 			IndexNames:         []string{"index.html"},
 			GenerateIndexPages: true,
 			Compress:           false,
@@ -202,7 +204,8 @@ func InitServer(addr string) {
 		fsHandler = fs.NewRequestHandler()
 	}
 
-	router := InitRouter()
+	router := fasthttprouter.New()
+	router = plugins.RegisterService(router)
 	router.NotFound = NotFoundHandler
 
 	go func() {
@@ -234,7 +237,8 @@ type TestServer struct {
 func GetTestServer() *TestServer {
 	ln := fasthttputil.NewInmemoryListener()
 
-	router := InitRouter()
+	router := fasthttprouter.New()
+	router = plugins.RegisterService(router)
 	go fasthttp.Serve(ln, router.Handler)
 
 	c, err := ln.Dial()

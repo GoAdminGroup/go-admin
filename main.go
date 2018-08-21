@@ -2,17 +2,10 @@ package main
 
 import (
 	"goAdmin/config"
-	"goAdmin/connections/redis"
-	"runtime"
-	"goAdmin/menu"
+	"goAdmin/components/menu"
 )
 
 func main() {
-
-	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	// 初始化redis
-	redis.InitRedis()
 
 	menu.InitMenu()
 

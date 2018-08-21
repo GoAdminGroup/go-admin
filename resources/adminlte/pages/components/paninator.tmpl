@@ -1,0 +1,46 @@
+{{define "paninator"}}
+Showing <b>0</b> to <b>10</b> of <b>1</b> entries
+<ul class="pagination pagination-sm no-margin pull-right">
+    <!-- Previous Page Link -->
+    <li class="page-item disabled">
+
+        <span class="page-link">«</span>
+
+    </li>
+
+    <!-- Array Of Links -->
+
+    <li class="page-item active"><span class="page-link">1</span></li>
+
+
+    <!-- Next Page Link -->
+    <li class="page-item ">
+
+        <a class="page-link" href="/info/manager?page=2&amp;pageSize=10&amp;sort=id&amp;sort_type=desc" rel="next">»</a>
+
+    </li>
+</ul>
+
+<label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
+
+    <small>Show</small>&nbsp;
+    <select class="input-sm grid-per-pager" name="per-page">
+        <option value="/info/manager?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc&amp;pageSize=10" selected="''">
+            10
+        </option>
+        <option value="/info/manager?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc&amp;pageSize=20">
+            20
+        </option>
+        <option value="/info/manager?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc&amp;pageSize=30">
+            30
+        </option>
+        <option value="/info/manager?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc&amp;pageSize=50">
+            50
+        </option>
+        <option value="/info/manager?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc&amp;pageSize=100">
+            100
+        </option>s
+    </select>
+    &nbsp;<small>entries</small>
+</label>
+{{end}}

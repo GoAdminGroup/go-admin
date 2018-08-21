@@ -22,4 +22,6 @@ var EnvConfig = map[string]interface{}{
 	"AUTH_DOMAIN": "localhost",
 
 	"LANGUAGE": "cn",
+
+	"THEME": "adminlte",
 }

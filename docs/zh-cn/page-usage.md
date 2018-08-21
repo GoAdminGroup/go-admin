@@ -37,7 +37,7 @@ func InitRouter() *fasthttprouter.Router {
 func ShowDashboard(ctx *fasthttp.RequestCtx) {
 	defer GlobalDeferHandler(ctx)
 
-	SetPageContent(ctx, func() models.Page {
+	SetPageContent(ctx, func() components.Page {
 		box := components.GetBox().SetUrl("/").SetTitle("用户总数").SetValue("1000").GetContent()
 
 		col1 := components.Col.GetContent(box)
@@ -47,7 +47,7 @@ func ShowDashboard(ctx *fasthttp.RequestCtx) {
 
 		row := components.Row.GetContent(col1 + col2 + col3 + col4)
 
-		return models.Page{
+		return components.Page{
 			Content:row,
 			Title:"仪表盘",
 			Description:"仪表盘",
@@ -56,7 +56,7 @@ func ShowDashboard(ctx *fasthttp.RequestCtx) {
 }
 ```
 
-在 ```func() models.Page {}``` 这个匿名回调函数中去实现自己自定义数据和页面内容，最终返回一个页面类型即可。
+在 ```func() components.Page {}``` 这个匿名回调函数中去实现自己自定义数据和页面内容，最终返回一个页面类型即可。
 
 接着需要启动菜单，登入系统，访问：[](http://localhost:4003/menu)，添加一个菜单就可以了。
 
