@@ -40,16 +40,23 @@ func EditManager(dataList map[string][]string) {
 	// 插入管理员角色表
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
 		if dataList["role_id[]"][i] != "" {
-			mysql.Exec("insert into goadmin_role_users (role_id, user_id) values (?, ?)",
-				dataList["role_id[]"][i], dataList["id"][0])
+			checkRole, _ := mysql.Query("select * from goadmin_role_users where role_id = ? and user_id = ?", dataList["role_id[]"][i], dataList["id"][0])
+			if len(checkRole) < 1 {
+				mysql.Exec("insert into goadmin_role_users (role_id, user_id) values (?, ?)",
+					dataList["role_id[]"][i], dataList["id"][0])
+			}
 		}
 	}
 
 	// 更新管理员权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		if dataList["permission_id[]"][i] != "" {
-			mysql.Exec("insert into goadmin_user_permissions (permission_id, user_id) values (?, ?)",
+			checkPermission, _ := mysql.Query("select * from goadmin_user_permissions where permission_id = ? and user_id = ?",
 				dataList["permission_id[]"][i], dataList["id"][0])
+			if len(checkPermission) < 1 {
+				mysql.Exec("insert into goadmin_user_permissions (permission_id, user_id) values (?, ?)",
+					dataList["permission_id[]"][i], dataList["id"][0])
+			}
 		}
 	}
 }
@@ -78,8 +85,12 @@ func EditRole(dataList map[string][]string) {
 	// 更新管理员角色权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		if dataList["permission_id[]"][i] != "" {
-			mysql.Exec("insert into goadmin_role_permissions (permission_id, role_id) values (?, ?)",
+			checkPermission, _ := mysql.Query("select * from goadmin_role_permissions where permission_id = ? and role_id = ?",
 				dataList["permission_id[]"][i], dataList["id"][0])
+			if len(checkPermission) < 1 {
+				mysql.Exec("insert into goadmin_role_permissions (permission_id, role_id) values (?, ?)",
+					dataList["permission_id[]"][i], dataList["id"][0])
+			}
 		}
 	}
 }

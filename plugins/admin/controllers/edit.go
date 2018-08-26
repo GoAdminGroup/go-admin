@@ -21,14 +21,34 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 
 	user := ctx.UserValue("user").(auth.User)
 
-	prefix := "user"
+	prefix := ctx.UserValue("prefix").(string)
 
-	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, "2")
+	id := string(ctx.QueryArgs().Peek("id")[:])
+
+	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
 	tmpl := adminlte.GetTemplate(string(ctx.Request.Header.Peek("X-PJAX")) == "true")
 
 	path := string(ctx.Path())
 	menu.GlobalMenu.SetActiveClass(path)
+
+	page := ctx.QueryArgs().Peek("page")
+	if len(page) == 0 {
+		page = []byte("1")
+	}
+	pageSize := ctx.QueryArgs().Peek("pageSize")
+	if len(pageSize) == 0 {
+		pageSize = []byte("10")
+	}
+
+	sortField := ctx.QueryArgs().Peek("sort")
+	if len(sortField) == 0 {
+		sortField = []byte("id")
+	}
+	sortType := ctx.QueryArgs().Peek("sort_type")
+	if len(sortType) == 0 {
+		sortType = []byte("desc")
+	}
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -39,7 +59,12 @@ func ShowForm(ctx *fasthttp.RequestCtx) {
 			"0.0.1",
 		},
 		Panel: components.Panel{
-			Content:     app.GetComponents().Form().SetContent(formData).GetContent(),
+			Content:     app.GetComponents().Form().
+				SetContent(formData).
+				SetUrl("/edit/" + prefix).
+				SetToken(auth.TokenHelper.AddToken()).
+				SetInfoUrl("/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
+				GetContent(),
 			Description: description,
 			Title:       title,
 		},
@@ -136,7 +161,7 @@ func EditForm(ctx *fasthttp.RequestCtx) {
 			"0.0.1",
 		},
 		Panel: components.Panel{
-			Content:     app.GetComponents().Table().SetInfoList(infoList).SetThead(thead).SetUrl(editUrl).GetContent(),
+			Content:     app.GetComponents().DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).GetContent(),
 			Description: description,
 			Title:       title,
 		},

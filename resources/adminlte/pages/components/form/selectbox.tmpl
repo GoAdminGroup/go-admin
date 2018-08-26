@@ -3,7 +3,7 @@
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
         {{range  $key, $v := .Options }}
-            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{.Field}}</option>
+            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
     </select>
     <input type="hidden" name="{{.Field}}[]" />

@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"fmt"
 	tmp "goAdmin/template"
+	"strings"
 )
 
 type AdminlteStruct struct {
@@ -26,12 +27,17 @@ func ComposeHtml(compo interface{}, templateName... string) template.HTML {
 	for _, v := range templateName {
 		text += tmp.Adminlte["components/" + v]
 	}
+
 	tmpla, err := template.New("comp").Parse(text)
 	if err != nil {
 		fmt.Println("ComposeHtml Error:", err)
 	}
 	buffer := new(bytes.Buffer)
-	err = tmpla.ExecuteTemplate(buffer, templateName[0], compo)
+
+	defineName := strings.Replace(templateName[0], "table/", "", -1)
+	defineName = strings.Replace(defineName, "form/", "", -1)
+
+	err = tmpla.ExecuteTemplate(buffer, defineName, compo)
 	if err != nil {
 		fmt.Println("ComposeHtml Error:", err)
 	}

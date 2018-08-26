@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"goAdmin/components"
+	"html/template"
 )
 
 type ErrStruct struct {
@@ -20,7 +21,7 @@ type GlobalTable struct {
 }
 
 // 查数据
-func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]string, map[string]interface{}, string, string) {
+func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, map[string]interface{}, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])
 
@@ -60,28 +61,28 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	res, _ := mysql.Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by " + queryParam["sortField"] + " "+
 		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
-	infoList := make([]map[string]string, 0)
+	infoList := make([]map[string]template.HTML, 0)
 
 	for i := 0; i < len(res); i++ {
 
 		// TODO: 加入对象池
-		tempModelData := make(map[string]string, 0)
+		tempModelData := make(map[string]template.HTML, 0)
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
 			if CheckInTable(columnsModel, tableModel.Info.FieldList[j].Field) {
-				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
-					res[i]["id"].(int64),
-					GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
-				}).(string)
+				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
+					ID:    res[i]["id"].(int64),
+					Value: GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
+				}).(string))
 			} else {
-				tempModelData[tableModel.Info.FieldList[j].Head] = tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
-					res[i]["id"].(int64),
-					"",
-				}).(string)
+				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
+					ID:    res[i]["id"].(int64),
+					Value: "",
+				}).(string))
 			}
 		}
 
-		tempModelData["id"] = GetStringFromType("int", res[i]["id"])
+		tempModelData["id"] = template.HTML(GetStringFromType("int", res[i]["id"]))
 
 		infoList = append(infoList, tempModelData)
 	}
@@ -117,8 +118,8 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
 			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(components.RowModel{
-					idint64,
-					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					ID:    idint64,
+					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).([]string)
 				for _, v := range tableModel.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -127,15 +128,15 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 				}
 			} else {
 				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(components.RowModel{
-					idint64,
-					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					ID:    idint64,
+					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).(string)
 			}
 		} else {
 			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(components.RowModel{
-					idint64,
-					GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					ID:    idint64,
+					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).([]string)
 				for _, v := range tableModel.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -144,8 +145,8 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 				}
 			} else {
 				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(components.RowModel{
-					idint64,
-					tableModel.Form.FormList[i].Field,
+					ID:    idint64,
+					Value: tableModel.Form.FormList[i].Field,
 				}).(string)
 			}
 		}

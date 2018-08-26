@@ -1,21 +1,24 @@
 {{define "form"}}
+<script src="../../assets/select2/select2.full.min.js"></script>
+<script src="../../assets/fileinput/fileinput.min.js"></script>
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">Edit</h3>
         <div class="box-tools">
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href="" class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
             </div>
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
             </div>
         </div>
     </div>
-    <form action='<%= url %>' method="post" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
         <div class="box-body">
             <div class="fields-group">
                 {{range $key, $data := .Content}}
-                <div class="form-group ">
+                <div class="form-group">
                     {{if eq $data.FormType "default"}}
                         {{ template "form_default" $data }}
                     {{else if eq $data.FormType "text"}}
@@ -55,10 +58,13 @@
 
         </div>
 
-        <input type="hidden" name="_method" value="PUT" class="_method">
-        <input type="hidden" name="_previous_" value='<%= previous %>' class="_previous_">
-        <input type="hidden" name="id" value='<%= id %>' class="_previous_">
-        <input type="hidden" name="_t" value='<%= token %>' class="_previous_">
+        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+        {{range $key, $data := .Content}}
+            {{if eq $data.Field "id"}}
+                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
+            {{end}}
+        {{end}}
+        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
     </form>
 </div>
 {{end}}

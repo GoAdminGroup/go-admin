@@ -1,5 +1,5 @@
 {{define "form_file"}}
-<label for="<%= data.Field %>" class="col-sm-2  control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
 </div>

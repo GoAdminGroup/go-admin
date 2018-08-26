@@ -140,7 +140,7 @@ func NewForm(ctx *fasthttp.RequestCtx) {
 			"0.0.1",
 		},
 		Panel: components.Panel{
-			Content:     adminlte.Adminlte.Components.Table().SetInfoList(infoList).SetThead(thead).SetUrl(editUrl).GetContent(),
+			Content:     adminlte.Adminlte.Components.DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).GetContent(),
 			Description: description,
 			Title:       title,
 		},

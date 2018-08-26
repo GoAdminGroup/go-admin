@@ -5,35 +5,51 @@ import (
 )
 
 type BoxAttribute struct {
-	Name  string
-	Title string
-	Value string
-	Url   string
-	Color string
+	Name       string
+	Header     template.HTML
+	Body       template.HTML
+	Footer     template.HTML
+	Title      template.HTML
+	HeadBorder string
 }
 
 func (AdminlteComponents) Box() *BoxAttribute {
 	return &BoxAttribute{
 		"box",
-		"标题",
-		"值",
-		"/",
-		"aqua",
+		template.HTML(""),
+		template.HTML(""),
+		template.HTML(""),
+		"",
+		"",
 	}
 }
 
-func (compo *BoxAttribute) SetTitle(value string) *BoxAttribute {
+func (compo *BoxAttribute) SetHeader(value template.HTML) *BoxAttribute {
+	(*compo).Header = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetBody(value template.HTML) *BoxAttribute {
+	(*compo).Body = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetFooter(value template.HTML) *BoxAttribute {
+	(*compo).Footer = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetTitle(value template.HTML) *BoxAttribute {
 	(*compo).Title = value
 	return compo
 }
 
-func (compo *BoxAttribute) SetValue(value string) *BoxAttribute {
-	(*compo).Value = value
-	return compo
-}
-
-func (compo *BoxAttribute) SetUrl(value string) *BoxAttribute {
-	(*compo).Url = value
+func (compo *BoxAttribute) WithHeadBorder(has bool) *BoxAttribute {
+	if has {
+		(*compo).HeadBorder = "with-border"
+	} else {
+		(*compo).HeadBorder = ""
+	}
 	return compo
 }
 

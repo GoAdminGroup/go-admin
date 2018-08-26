@@ -11,7 +11,7 @@ type LocalFileUploader struct {
 
 func GetLocalFileUploader() *LocalFileUploader {
 	return &LocalFileUploader{
-		"./resource/uploads",
+		"./storage/uploads",
 	}
 }
 

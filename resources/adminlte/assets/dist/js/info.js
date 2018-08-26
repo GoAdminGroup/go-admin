@@ -198,17 +198,17 @@ function getQueryString(name) {
 
 $(function () {
     sortType = getQueryString('sort_type');
-    if (sortType != null) {
+    if (sortType != null && $('a.fa.fa-fw').length > 0) {
         if (sortType === "asc") {
-            $('.fa.fa-fw').removeClass("fa-sort-amount-desc");
-            $('.fa.fa-fw').addClass("fa-sort-amount-asc");
-            href = $('.fa.fa-fw').attr("href");
-            $('.fa.fa-fw').attr("href", href.replace("asc", "desc"));
+            $('a.fa.fa-fw').removeClass("fa-sort-amount-desc");
+            $('a.fa.fa-fw').addClass("fa-sort-amount-asc");
+            href = $('a.fa.fa-fw').attr("href");
+            $('a.fa.fa-fw').attr("href", href.replace("asc", "desc"));
         } else {
-            $('.fa.fa-fw').removeClass("fa-sort-amount-asc");
-            $('.fa.fa-fw').addClass("fa-sort-amount-desc");
-            href = $('.fa.fa-fw').attr("href");
-            $('.fa.fa-fw').attr("href", href.replace("desc", "asc"));
+            $('a.fa.fa-fw').removeClass("fa-sort-amount-asc");
+            $('a.fa.fa-fw').addClass("fa-sort-amount-desc");
+            href = $('a.fa.fa-fw').attr("href");
+            $('a.fa.fa-fw').attr("href", href.replace("desc", "asc"));
         }
     }
 });

@@ -46,7 +46,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			ExcuFun: func(model components.RowModel) interface{} {
 				labelModel, _ := mysql.Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
-				return app.GetApp().Theme.Components.Label().SetContent(labelModel[0]["name"].(string)).GetContent()
+				return string(app.GetComponents().Label().SetContent(labelModel[0]["name"].(string)).GetContent())
 			},
 		},
 		{

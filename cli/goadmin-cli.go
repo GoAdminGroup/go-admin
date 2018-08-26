@@ -70,6 +70,26 @@ var Adminlte = map[string]string{`
 		}
 	}
 
+	files, _ = ioutil.ReadDir("./resources/adminlte/pages/components/table/")
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+		b, err := ioutil.ReadFile("./resources/adminlte/pages/components/table/" + f.Name())
+		if err != nil {
+			fmt.Print(err)
+		}
+		str := string(b)
+		fmt.Println(str)
+
+		suffix := path.Ext(f.Name())
+		fmt.Println("f.Name()", f.Name(),"suffix",suffix)
+		onlyName := strings.TrimSuffix(f.Name(), suffix)
+
+		if suffix == ".tmpl" {
+			content += `"components/table/` + onlyName + `":` + "`" + str + "`,"
+		}
+	}
+
 	files, _ = ioutil.ReadDir("./resources/login/")
 
 	for _, f := range files {

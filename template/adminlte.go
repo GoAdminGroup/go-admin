@@ -6,13 +6,13 @@ var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="http://localhost:4003{{.User.Avatar}}" class="user-image" alt="User Image">
+                <img src="./{{.User.Avatar}}" class="user-image" alt="User Image">
                 <span class="hidden-xs">{{.User.Name}}</span>
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                    <img src="http://localhost:4003{{.User.Avatar}}" class="img-circle" alt="User Image">
+                    <img src="./{{.User.Avatar}}" class="img-circle" alt="User Image">
                     <p>
                         {{.User.Name}} -{{.User.Level}}
                         <small>{{.User.CreateAt}}</small>
@@ -20,7 +20,7 @@ var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="/info/manager/edit?id=<%= user.ID %>" class="btn btn-default btn-flat">Setting</a>
+                        <a href="/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">Setting</a>
                     </div>
                     <div class="pull-right">
                         <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
@@ -218,39 +218,40 @@ var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <!-- /.sidebar -->
 </aside>
 {{end}}`,"components/box":`{{define "box"}}
-<div class="small-box bg-{{.Color}}">
-    <div class="inner">
-        <h3>{{.Value}}</h3>
-        <p>{{.Title}}</p>
+<div class="box">
+    <div class="box-header {{.HeadBorder}}">
+        {{.Header}}
     </div>
-    <div class="icon">
-        <i class="fa fa-users"></i>
+    <div class="box-body table-responsive no-padding">
+        {{.Body}}
     </div>
-    <a href="{{.Url}}" class="small-box-footer">
-        More&nbsp;
-        <i class="fa fa-arrow-circle-right"></i>
-    </a>
+    <div class="box-footer clearfix">
+        {{.Footer}}
+    </div>
 </div>
 {{end}}`,"components/col":`{{define "col"}}
 <div class="col-{{.Type}}-{{.Width}}">{{.Content}}</div>
 {{end}}`,"components/form":`{{define "form"}}
+<script src="../../assets/select2/select2.full.min.js"></script>
+<script src="../../assets/fileinput/fileinput.min.js"></script>
+<script src="../../assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">Edit</h3>
         <div class="box-tools">
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href="" class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
             </div>
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
             </div>
         </div>
     </div>
-    <form action='<%= url %>' method="post" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
         <div class="box-body">
             <div class="fields-group">
                 {{range $key, $data := .Content}}
-                <div class="form-group ">
+                <div class="form-group">
                     {{if eq $data.FormType "default"}}
                         {{ template "form_default" $data }}
                     {{else if eq $data.FormType "text"}}
@@ -290,36 +291,48 @@ var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
 
         </div>
 
-        <input type="hidden" name="_method" value="PUT" class="_method">
-        <input type="hidden" name="_previous_" value='<%= previous %>' class="_previous_">
-        <input type="hidden" name="id" value='<%= id %>' class="_previous_">
-        <input type="hidden" name="_t" value='<%= token %>' class="_previous_">
+        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+        {{range $key, $data := .Content}}
+            {{if eq $data.Field "id"}}
+                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
+            {{end}}
+        {{end}}
+        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
     </form>
 </div>
 {{end}}`,"components/image":`{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`,"components/lable":`{{define "label"}}
+{{end}}`,"components/infobox":`{{define "infobox"}}
+<div class="small-box bg-{{.Color}}">
+    <div class="inner">
+        <h3>{{.Value}}</h3>
+        <p>{{.Title}}</p>
+    </div>
+    <div class="icon">
+        <i class="fa fa-users"></i>
+    </div>
+    <a href="{{.Url}}" class="small-box-footer">
+        More&nbsp;
+        <i class="fa fa-arrow-circle-right"></i>
+    </a>
+</div>
+{{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
 {{end}}`,"components/paninator":`{{define "paninator"}}
 Showing <b>0</b> to <b>10</b> of <b>1</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
     <li class="page-item disabled">
-
         <span class="page-link">«</span>
-
     </li>
 
     <!-- Array Of Links -->
-
     <li class="page-item active"><span class="page-link">1</span></li>
 
 
     <!-- Next Page Link -->
     <li class="page-item ">
-
         <a class="page-link" href="/info/manager?page=2&amp;pageSize=10&amp;sort=id&amp;sort_type=desc" rel="next">»</a>
-
     </li>
 </ul>
 
@@ -348,129 +361,48 @@ Showing <b>0</b> to <b>10</b> of <b>1</b> entries
 {{end}}`,"components/row":`{{define "row"}}
 <div class="row">{{.Content}}</div>
 {{end}}`,"components/table":`{{define "table"}}
-<div class="box">
-    <div class="box-header">
-        <h3 class="box-title"></h3>
-        <div class="pull-right">
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i class="fa fa-filter"></i>&nbsp;&nbsp;Filter</a>
-                <a href="/story/word" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;Reset</a>
-            </div>
-            <div class="modal fade" id="filter-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                                <span class="sr-only">Close</span>
-                            </button>
-                            <h4 class="modal-title" id="myModalLabel">Filter</h4>
-                        </div>
-                        <form action="/story/word" method="get" pjax-container="">
-                            <div class="modal-body">
-                                <div class="form">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <label>ID</label>
-                                            <div class="input-group">
-                                                <div class="input-group-addon">
-                                                    <i class="fa fa-pencil"></i>
-                                                </div>
-                                                <input type="text" class="form-control id" placeholder="ID" name="id" value="">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary submit">Submit</button>
-                                <button type="reset" class="btn btn-warning pull-left">Reset
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
-                <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
-                    <span class="caret"></span>
-                    <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="/admin/story/word?_export_=all" target="_blank">All</a></li>
-                    <li><a href="/admin/story/word?_export_=page%3A1" target="_blank">Current
-                        page</a></li>
-                    <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank" class="export-selected">Selected rows</a></li>
-                </ul>
-            </div>
-
-            <div class="btn-group pull-right" style="margin-right: 10px">
-
-                <a href="/info/manager/new?page=1&amp;pageSize=10&amp;sort=id&amp;sort_type=desc" class="btn btn-sm btn-success">
-
-                    <i class="fa fa-save"></i>&nbsp;&nbsp;New
-                </a>
-            </div>
-        </div>
-        <span>
-            <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
-            <div class="btn-group">
-                <a class="btn btn-sm btn-default">Action</a>
-                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-                <span class="caret"></span>
-                <span class="sr-only">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#" class="grid-batch-0">Delete</a></li>
-                </ul>
-            </div>
-            <a class="btn btn-sm btn-primary grid-refresh">
-                <i class="fa fa-refresh"></i> Refresh
-            </a>
-        </span>
-    </div>
-    <div class="box-body table-responsive no-padding">
-        <table class="table table-hover">
-            <tbody>
-            <tr>
+    <table class="table table-hover">
+        <tbody>
+        <tr>
+            {{if eq .Type "data-table"}}
                 <th></th>
-                {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" href=""></a>
-                        {{end}}
-                    </th>
-                {{end}}
+            {{end}}
+            {{range $key, $head := .Thead}}
+                <th>
+                    {{index $head "head"}}
+                    {{if eq (index $head "sortable") "1"}}
+                        <a class="fa fa-fw fa-sort" href=""></a>
+                    {{end}}
+                </th>
+            {{end}}
+            {{if eq .Type "data-table"}}
                 <th>操作</th>
-            </tr>
+            {{end}}
+        </tr>
 
-            {{$Thead := .Thead}}
-            {{range $key1, $info := .InfoList}}
-                <tr>
+        {{$Thead := .Thead}}
+        {{$Type := .Type}}
+        {{$EditUrl := .EditUrl}}
+        {{range $key1, $info := .InfoList}}
+            <tr>
+                {{if eq $Type "data-table"}}
                     <td>
                         <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
                     </td>
-                    {{range $key2, $head2 := $Thead}}
-                        <td>{{index $info (index $head2 "head")}}</td>
-                    {{end}}
+                {{end}}
+                {{range $key2, $head2 := $Thead}}
+                    <td>{{index $info (index $head2 "head")}}</td>
+                {{end}}
+                {{if eq $Type "data-table"}}
                     <td>
-                        <a href='{{.EditUrl}}'><i class="fa fa-edit"></i></a>
+                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
                         <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
                     </td>
-                </tr>
-            {{end}}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="box-footer clearfix">
-        {{ template "paninator" . }}
-    </div>
-    <input id="_TOKEN" type="hidden" value="8RbkQsRAsPsVSkqP6H1OSzVSu0btXH1qmmC">
-</div>
+                {{end}}
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
 {{end}}`,"components/form/default":`{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
@@ -481,7 +413,7 @@ Showing <b>0</b> to <b>10</b> of <b>1</b> entries
     </div>
 </div>
 {{end}}`,"components/form/file":`{{define "form_file"}}
-<label for="<%= data.Field %>" class="col-sm-2  control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
 </div>
@@ -514,8 +446,8 @@ Showing <b>0</b> to <b>10</b> of <b>1</b> entries
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="Input {{.Head}}" tabindex="-1" aria-hidden="true">
-        {{range  $key, $v := .Options }}
-        <option value='{{index $v "value"}}' {{index $v "selected"}}>{{.Field}}</option>
+        {{range $key, $v := .Options }}
+            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
     </select>
     <input type="hidden" name="{{.Field}}[]">
@@ -533,7 +465,7 @@ Showing <b>0</b> to <b>10</b> of <b>1</b> entries
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
         {{range  $key, $v := .Options }}
-            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{.Field}}</option>
+            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
     </select>
     <input type="hidden" name="{{.Field}}[]" />
@@ -554,6 +486,86 @@ Showing <b>0</b> to <b>10</b> of <b>1</b> entries
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="Input {{.Head}}">{{.Value}}</textarea>
 </div>
+{{end}}`,"components/table/box-header":`{{define "box-header"}}
+<div class="pull-right">
+    <div class="btn-group pull-right" style="margin-right: 10px">
+        <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i class="fa fa-filter"></i>&nbsp;&nbsp;Filter</a>
+        <a href="/story/word" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;Reset</a>
+    </div>
+    <div class="modal fade" id="filter-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Filter</h4>
+                </div>
+                <form action="/story/word" method="get" pjax-container="">
+                    <div class="modal-body">
+                        <div class="form">
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label>ID</label>
+                                    <div class="input-group">
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-pencil"></i>
+                                        </div>
+                                        <input type="text" class="form-control id" placeholder="ID" name="id" value="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary submit">Submit</button>
+                        <button type="reset" class="btn btn-warning pull-left">Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="btn-group pull-right" style="margin-right: 10px">
+        <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
+        <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="/admin/story/word?_export_=all" target="_blank">All</a></li>
+            <li><a href="/admin/story/word?_export_=page%3A1" target="_blank">Current
+                page</a></li>
+            <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank" class="export-selected">Selected rows</a></li>
+        </ul>
+    </div>
+
+    <div class="btn-group pull-right" style="margin-right: 10px">
+
+        <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
+
+            <i class="fa fa-save"></i>&nbsp;&nbsp;New
+        </a>
+    </div>
+</div>
+<span>
+    <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
+    <div class="btn-group">
+        <a class="btn btn-sm btn-default">Action</a>
+        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="#" class="grid-batch-0">Delete</a></li>
+        </ul>
+    </div>
+    <a class="btn btn-sm btn-primary grid-refresh">
+        <i class="fa fa-refresh"></i> Refresh
+    </a>
+</span>
 {{end}}`,"login/theme1":`{{define "login_theme1"}}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->

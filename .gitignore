@@ -2,3 +2,4 @@
 build/*
 pid
 resources/uploads
+storage

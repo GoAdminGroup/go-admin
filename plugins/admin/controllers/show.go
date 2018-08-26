@@ -18,7 +18,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 	user := ctx.UserValue("user").(auth.User)
 
 	path := string(ctx.Path())
-	prefix := "user"
+	prefix := ctx.UserValue("prefix").(string)
 
 	page := ctx.QueryArgs().Peek("page")
 	if len(page) == 0 {
@@ -52,10 +52,22 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 		//newUrl  string
 	)
 	editUrl = "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	newUrl := "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
 
 	tmpl := adminlte.GetTemplate(string(ctx.Request.Header.Peek("X-PJAX")) == "true")
 
 	menu.GlobalMenu.SetActiveClass(path)
+
+	dataTable := app.GetComponents().DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
+	table := dataTable.GetContent()
+	paninator := app.GetComponents().Paninator().GetContent()
+
+	box := app.GetComponents().Box().
+		SetBody(table).
+		SetHeader(dataTable.GetDataTableHeader()).
+		WithHeadBorder(false).
+		SetFooter(paninator).
+		GetContent()
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 	tmpl.ExecuteTemplate(ctx.Response.BodyWriter(), "layout", components.Page{
@@ -65,7 +77,7 @@ func ShowInfo(ctx *fasthttp.RequestCtx) {
 			"0.0.1",
 		},
 		Panel: components.Panel{
-			Content:     app.GetComponents().Table().SetInfoList(infoList).SetThead(thead).SetUrl(editUrl).GetContent(),
+			Content:     box,
 			Description: description,
 			Title:       title,
 		},

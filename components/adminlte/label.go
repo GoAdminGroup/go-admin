@@ -1,6 +1,8 @@
 package adminlte
 
-import "html/template"
+import (
+	"html/template"
+)
 
 type LabelAttribute struct {
 	Name    string

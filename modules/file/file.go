@@ -32,7 +32,7 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 
 		suffix = path.Ext(fileObj.Filename)
 		filename = modules.Uuid(50) + suffix
-		if err := fasthttp.SaveMultipartFile(fileObj, "./resources/uploads/"+filename); err != nil {
+		if err := fasthttp.SaveMultipartFile(fileObj, "./storage/uploads/"+filename); err != nil {
 			fmt.Println("save upload file error:", err)
 		}
 

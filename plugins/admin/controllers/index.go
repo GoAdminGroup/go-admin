@@ -12,7 +12,7 @@ func ShowDashboard(ctx *fasthttp.RequestCtx) {
 	defer GlobalDeferHandler(ctx)
 
 	SetPageContent(ctx, func() components.Panel {
-		box := app.GetApp().Theme.Components.Box().SetUrl("/").SetTitle("用户总数").SetValue("1000").GetContent()
+		box := app.GetApp().Theme.Components.InfoBox().SetUrl("/").SetTitle("用户总数").SetValue("1000").GetContent()
 
 		col1 := app.GetApp().Theme.Components.Col().SetContent(string(box)).GetContent()
 		col2 := app.GetApp().Theme.Components.Col().SetContent(string(box)).GetContent()

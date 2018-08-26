@@ -1,15 +1,13 @@
 {{define "box"}}
-<div class="small-box bg-{{.Color}}">
-    <div class="inner">
-        <h3>{{.Value}}</h3>
-        <p>{{.Title}}</p>
+<div class="box">
+    <div class="box-header {{.HeadBorder}}">
+        {{.Header}}
     </div>
-    <div class="icon">
-        <i class="fa fa-users"></i>
+    <div class="box-body table-responsive no-padding">
+        {{.Body}}
     </div>
-    <a href="{{.Url}}" class="small-box-footer">
-        More&nbsp;
-        <i class="fa fa-arrow-circle-right"></i>
-    </a>
+    <div class="box-footer clearfix">
+        {{.Footer}}
+    </div>
 </div>
 {{end}}
