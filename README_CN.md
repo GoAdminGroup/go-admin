@@ -41,7 +41,55 @@
 
 ## 使用
 
-见 [wiki](https://github.com/chenhg5/go-admin/wiki)
+详见 [wiki](https://github.com/chenhg5/go-admin/wiki)
+
+### 安装
+
+```go get -v -u github.com/chenhg5/go-admin```
+
+### Gin 例子
+
+```go
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	ginFw "github.com/chenhg5/go-admin/framework/gin"
+	"github.com/chenhg5/go-admin"
+	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/examples/datamodel"
+)
+
+func main() {
+	r := gin.Default()
+
+	ad := goAdmin.Default()
+
+	// goAdmin 全局配置
+	cfg := config.Config{
+		DATABASE_IP:           "127.0.0.1",
+		DATABASE_PORT:         "3306",
+		DATABASE_USER:         "root",
+		DATABASE_PWD:          "root",
+		DATABASE_NAME:         "godmin",
+		DATABASE_MAX_IDLE_CON: "50",
+		DATABASE_MAX_OPEN_CON: "150",
+
+		AUTH_DOMAIN:  "localhost",
+		LANGUAGE:     "cn",         
+		ADMIN_PREFIX: "admin_goal", 
+	}
+
+	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+
+	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
+
+	r.Run(":9033")
+}
+```
+
+其他例子: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 
 ## 技术支持
 
