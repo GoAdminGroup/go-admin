@@ -1,14 +1,20 @@
 package config
 
+type Database struct {
+	IP           string
+	PORT         string
+	USER         string
+	PWD          string
+	NAME         string
+	MAX_IDLE_CON int
+	MAX_OPEN_CON int
+	DRIVER       string
+
+	FILE string
+}
+
 type Config struct {
-	DATABASE_IP           string
-	DATABASE_PORT         string
-	DATABASE_USER         string
-	DATABASE_PWD          string
-	DATABASE_NAME         string
-	DATABASE_MAX_IDLE_CON string
-	DATABASE_MAX_OPEN_CON string
-	DATABASE_DRIVER       string
+	DATABASE Database
 
 	AUTH_DOMAIN  string
 	LANGUAGE     string
@@ -17,6 +23,6 @@ type Config struct {
 
 var GlobalCfg Config
 
-func SetGlobalCfg(cfg Config)  {
+func SetGlobalCfg(cfg Config) {
 	GlobalCfg = cfg
 }
