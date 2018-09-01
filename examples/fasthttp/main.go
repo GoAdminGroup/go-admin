@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	ginFw "github.com/chenhg5/go-admin/framework/gin"
+	"github.com/buaazp/fasthttprouter"
+	"github.com/valyala/fasthttp"
+	fastFw "github.com/chenhg5/go-admin/framework/fasthttp"
 	"github.com/chenhg5/go-admin"
-	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 )
 
 func main() {
-	r := gin.Default()
+	router := fasthttprouter.New()
 
 	ad := goAdmin.Default()
 
@@ -34,10 +34,12 @@ func main() {
 
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
-	// 后台插件例子
-	examplePlugin := example.NewExample()
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
+	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
 
-	r.Run(":9033")
+	var waitChan chan int
+	go func() {
+		fasthttp.ListenAndServe(":8897", router.Handler)
+	}()
+	<-waitChan
 }

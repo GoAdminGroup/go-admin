@@ -78,7 +78,7 @@ func main() {
 
 		AUTH_DOMAIN:  "localhost",
 		LANGUAGE:     "cn",         
-		ADMIN_PREFIX: "admin_goal", 
+		ADMIN_PREFIX: "admin", 
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)

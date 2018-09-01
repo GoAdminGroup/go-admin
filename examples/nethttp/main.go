@@ -27,7 +27,7 @@ func main() {
 		},
 		AUTH_DOMAIN:  "localhost",
 		LANGUAGE:     "cn",         // 语言
-		ADMIN_PREFIX: "admin_goal", // 前缀
+		ADMIN_PREFIX: "admin", // 前缀
 	}
 
 	ad.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(nethttp.Http), mux)

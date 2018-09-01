@@ -5,7 +5,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"strconv"
 	"github.com/chenhg5/go-admin/context"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -13,12 +12,9 @@ func Check(password string, username string) (user User, ok bool) {
 
 	admin, _ := connections.GetConnection().Query("select * from goadmin_users where username = ?", username)
 
-	fmt.Println(EncodePassword([]byte("admin")))
-
 	if len(admin) < 1 {
 		ok = false
 	} else {
-		fmt.Println("pwd", admin[0]["password"].(string))
 		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
 
