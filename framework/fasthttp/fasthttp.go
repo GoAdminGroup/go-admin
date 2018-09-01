@@ -60,7 +60,7 @@ func GetResponse(c *fasthttp.RequestCtx, plug plugins.Plugin) {
 
 	plug.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))(ctx)
 	for key, head := range ctx.Response.Header {
-		c.Response.Header.Add(key, head[0])
+		c.Response.Header.Set(key, head[0])
 	}
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(ctx.Response.Body)
