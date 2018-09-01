@@ -28,7 +28,7 @@ func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 			engine.Handle(strings.ToUpper(req.Method), req.URL, func(c *gin.Context) {
 				GetResponse(c, plugCopy)
 			})
-		}
+		} 
 	}
 
 	return nil
