@@ -6,10 +6,8 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/modules/connections"
-	"strconv"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
-	conncfg "github.com/chenhg5/go-admin/modules/connections/config"
 )
 
 type Admin struct {
@@ -19,19 +17,9 @@ type Admin struct {
 }
 
 func (admin *Admin) InitPlugin(cfg config.Config) {
-	idleCon, _ := strconv.Atoi(cfg.DATABASE_MAX_IDLE_CON)
-	openCon, _ := strconv.Atoi(cfg.DATABASE_MAX_OPEN_CON)
 
-	connections.GetConnection().InitDB(map[string]conncfg.Config{
-		"default": {
-			DatabaseName: cfg.DATABASE_NAME,
-			Ip:           cfg.DATABASE_IP,
-			Port:         cfg.DATABASE_PORT,
-			Username:     cfg.DATABASE_USER,
-			Password:     cfg.DATABASE_PWD,
-			IdleCon:      idleCon,
-			OpenCon:      openCon,
-		},
+	connections.GetConnection().InitDB(map[string]config.Database{
+		"default": cfg.DATABASE,
 	})
 
 	AdminApp.config = cfg

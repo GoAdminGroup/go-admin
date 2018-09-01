@@ -17,15 +17,16 @@ func main() {
 
 	// goAdmin 全局配置
 	cfg := config.Config{
-		DATABASE_IP:           "127.0.0.1",
-		DATABASE_PORT:         "3306",
-		DATABASE_USER:         "root",
-		DATABASE_PWD:          "root",
-		DATABASE_NAME:         "godmin",
-		DATABASE_MAX_IDLE_CON: "50",
-		DATABASE_MAX_OPEN_CON: "150",
-		DATABASE_DRIVER:       "mysql",
-
+		DATABASE: config.Database{
+			IP:           "127.0.0.1",
+			PORT:         "3306",
+			USER:         "root",
+			PWD:          "root",
+			NAME:         "godmin",
+			MAX_IDLE_CON: 50,
+			MAX_OPEN_CON: 150,
+			DRIVER:       "mysql",
+		},
 		AUTH_DOMAIN:  "localhost",
 		LANGUAGE:     "cn",         // 语言
 		ADMIN_PREFIX: "admin_goal", // 前缀
@@ -40,5 +41,3 @@ func main() {
 
 	r.Run(":9033")
 }
-
-
