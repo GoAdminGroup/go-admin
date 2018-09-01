@@ -31,51 +31,21 @@
 ## 特征
 
 - 使用adminlte构建的漂亮的管理界面
-- 可配置的，易于管理数据库数据
+- 大量插件供使用
 - 完善的认证系统
-- 使用Go编写
-- 可移植的
-- 部署简单
+- 支持多个web框架：gin, beego, echo...
 
 ## 环境要求
 
 - [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
 
-## 安装
+## 使用
 
 见 [wiki](https://github.com/chenhg5/go-admin/wiki)
 
-## make 命令
-
-- build
-- test
-- clean
-- run
-- restart
-- deps : 安装依赖
-- cross : 跨平台编译
-- pages : 将html文件编译为go文件
-- assets : 将静态文件编译为go文件
-- fmt : 格式化项目文件
-- doc : 查看项目文档
-
 ## 技术支持
 
-- [fasthttp](https://github.com/valyala/fasthttp)
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
-- [hero](https://github.com/shiyanhui/hero)
-
-## todo
-
-- [x] 增加 [go-bindata](https://github.com/go-bindata/go-bindata) 支持
-- [X] 增加更多表格表单组件
-- [X] 菜单结构
-- [X] rbac认证
-- [X] 自定义页面
-- [ ] 合并优化静态资源
-- [ ] 自动安装引擎
-- [ ] demo网站的搭建
-- [ ] 性能分析
 
 ## 贡献
 

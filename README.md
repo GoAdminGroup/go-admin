@@ -39,51 +39,21 @@ as a admin platform. the following principle is important as i see.
 ## feature
 
 - beautiful admin interface builder powerd by adminlte
-- configurable which help manage your database data easily
+- many plugins to use
 - powerful auth manage system
-- writed by go
-- portable
-- easy to deploy
+- support Most of the go web framework
 
 ## requirements
 
 - [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
 
-## install
+## usage
 
 see the [wiki](https://github.com/chenhg5/go-admin/wiki)
 
-## make command
-
-- build
-- test
-- clean
-- run
-- restart
-- deps : install dependency
-- cross : cross compile
-- pages : compile html into go file
-- assets : compile assets into go file
-- fmt
-- doc
-
 ## powerd by
 
-- [fasthttp](https://github.com/valyala/fasthttp)
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
-- [hero](https://github.com/shiyanhui/hero)
-
-## todo
-
-- [x] add [go-bindata](https://github.com/go-bindata/go-bindata) support
-- [X] add more components
-- [X] menu structure
-- [X] rbac auth
-- [X] custom pages
-- [ ] combine assets
-- [ ] auto install engine
-- [ ] demo site
-- [ ] performance analysis
 
 ## contribution
 

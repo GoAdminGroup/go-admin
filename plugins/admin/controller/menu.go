@@ -1,0 +1,170 @@
+package controller
+
+import (
+	"bytes"
+	"encoding/json"
+	"github.com/valyala/fasthttp"
+	"goAdmin/modules/connections/mysql"
+	"goAdmin/template/adminlte/components"
+	"goAdmin/modules/auth"
+	"goAdmin/plugins/admin/models"
+	"goAdmin/context"
+	"net/http"
+	"goAdmin/modules/menu"
+)
+
+// 显示菜单
+func ShowMenu(ctx *context.Context) {
+	defer GlobalDeferHandler(ctx)
+
+	path := string(ctx.Path())
+	user := ctx.UserValue["user"].(auth.User)
+
+	menu.GlobalMenu.SetActiveClass(path)
+
+	tree := components.Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).GetContent()
+	header := components.Tree().GetTreeHeader()
+	box := components.Box().SetHeader(header).SetBody(tree).GetContent()
+	col1 := components.Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
+	newForm := components.Form().SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
+		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
+	col2 := components.Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
+	row := components.Row().SetContent(col1 + col2).GetContent()
+
+	tmpl := components.GetTemplate(string(ctx.Request.Header.Get("X-PJAX")) == "true")
+
+	menu.GlobalMenu.SetActiveClass(path)
+
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+
+	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+		User: user,
+		Menu: *menu.GlobalMenu,
+		System: components.SystemInfo{
+			"0.0.1",
+		},
+		Panel: components.Panel{
+			Content:     row,
+			Description: "菜单管理",
+			Title:       "菜单管理",
+		},
+		AssertRootUrl: AssertRootUrl,
+	})
+
+	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
+}
+
+// 显示编辑菜单
+func ShowEditMenu(ctx *context.Context) {
+	//id := string(ctx.QueryArgs().Peek("id")[:])
+	//user := ctx.UserValue["user"].(auth.User)
+
+	buffer := new(bytes.Buffer)
+
+	if string(ctx.Request.Header.Get("X-PJAX")[:]) == "true" {
+		//template.MenuEditPanelPjax(components.GetMenuItemById(id), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+	} else {
+		//template.MenuPanel((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuList, (*menu.GlobalMenu).GlobalMenuOption, user, buffer)
+	}
+
+	ctx.WriteString(buffer.String())
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+}
+
+// 删除菜单
+func DeleteMenu(ctx *context.Context) {
+	id := ctx.Request.URL.Query().Get("id")
+
+	buffer := new(bytes.Buffer)
+
+	mysql.Exec("delete from goadmin_menu where id = ?", id)
+
+	menu.SetGlobalMenu()
+	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+
+	ctx.WriteString(buffer.String())
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+}
+
+// 编辑菜单
+func EditMenu(ctx *context.Context) {
+	defer GlobalDeferHandler(ctx)
+
+	buffer := new(bytes.Buffer)
+
+	id := string(ctx.Request.FormValue("id")[:])
+	title := string(ctx.Request.FormValue("title")[:])
+	parentId := string(ctx.Request.FormValue("parent_id")[:])
+	if parentId == "" {
+		parentId = "0"
+	}
+	icon := string(ctx.Request.FormValue("icon")[:])
+	uri := string(ctx.Request.FormValue("uri")[:])
+
+	mysql.Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
+		title, parentId, icon, uri, id)
+
+	menu.SetGlobalMenu()
+
+	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+
+	ctx.WriteString(buffer.String())
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
+}
+
+// 新建菜单
+func NewMenu(ctx *context.Context) {
+	defer GlobalDeferHandler(ctx)
+
+	buffer := new(bytes.Buffer)
+
+	title := string(ctx.Request.FormValue("title")[:])
+	parentId := string(ctx.Request.FormValue("parent_id")[:])
+	if parentId == "" {
+		parentId = "0"
+	}
+	icon := string(ctx.Request.FormValue("icon")[:])
+	uri := string(ctx.Request.FormValue("uri")[:])
+
+	mysql.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parentId, icon, uri, (*menu.GlobalMenu).MaxOrder+1)
+
+	(*menu.GlobalMenu).SexMaxOrder((*menu.GlobalMenu).MaxOrder + 1)
+	menu.SetGlobalMenu()
+
+	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+
+	ctx.WriteString(buffer.String())
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
+}
+
+// 修改菜单顺序
+func MenuOrder(ctx *context.Context) {
+	defer GlobalDeferHandler(ctx)
+
+	var data []map[string]interface{}
+	json.Unmarshal([]byte(ctx.Request.FormValue("_order")), &data)
+
+	count := 1
+	for _, v := range data {
+		if child, ok := v["children"]; ok {
+			mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			for _, v2 := range child.([]interface{}) {
+				mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
+				count++
+			}
+		} else {
+			mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			count++
+		}
+	}
+	menu.SetGlobalMenu()
+
+	ctx.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetContentType("application/json")
+	ctx.WriteString(`{"code":200, "msg":"ok"}`)
+	return
+}

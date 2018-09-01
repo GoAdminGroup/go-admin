@@ -1,0 +1,279 @@
+{{define "login_theme1"}}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>GoAdmin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Free HTML5 Template by FreeHTML5.co"/>
+    <meta name="keywords" content="free html5, free template, free bootstrap, html5, css3, mobile first, responsive"/>
+
+    <!-- Facebook and Twitter integration -->
+    <meta property="og:title" content=""/>
+    <meta property="og:image" content=""/>
+    <meta property="og:url" content=""/>
+    <meta property="og:site_name" content=""/>
+    <meta property="og:description" content=""/>
+    <meta name="twitter:title" content=""/>
+    <meta name="twitter:image" content=""/>
+    <meta name="twitter:url" content=""/>
+    <meta name="twitter:card" content=""/>
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <link rel="shortcut icon" href="http://yanshi.sucaihuo.com/modals/26/2674/demo/favicon.ico">
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/animate.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/style.css">
+
+    <!-- Modernizr JS -->
+    <script src="{{.AssertRootUrl}}/assets/login/js/modernizr-2.6.2.min.js"></script>
+    <!-- FOR IE9 below -->
+    <!--[if lt IE 9]>
+    <script src="{{.AssertRootUrl}}/assets/login/js/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+
+<div class="container">
+    <div class="copyrights">Collect from <a href="https://github.com/chenhg5/go-admin" title="GoAdmin">Go Admin</a>
+    </div>
+    <div class="row" style="margin-top: 80px;">
+        <div class="col-md-4 col-md-offset-4">
+
+
+            <!-- Start Sign In Form -->
+            <form action="{{.AssertRootUrl}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
+                  data-animate-effect="fadeIn">
+                <h2>GoAdmin</h2>
+                <div class="form-group">
+                    <label for="username" class="sr-only">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="用户名" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="密码" autocomplete="off">
+                </div>
+                <input type="hidden" class="form-control" value="12313" autocomplete="off">
+                <!--<div class="form-group">
+                    <label for="remember"><input type="checkbox" id="remember"> Remember Me</label>
+                </div>-->
+                <!--<div class="form-group">
+                    <p>Not registered? <a href="sign-up.html">Sign Up</a> | <a href="forgot.html">Forgot Password?</a>
+                    </p>
+                </div>-->
+                <div class="form-group">
+                    <button class="btn btn-primary">登录</button>
+                </div>
+            </form>
+            <!-- END Sign In Form -->
+
+        </div>
+    </div>
+    <div class="row" style="padding-top: 60px; clear: both;">
+        <div class="col-md-12 text-center">
+            <p>
+                <small>&copy; All Rights Reserved. GoAdmin</small>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="particles-js">
+    <canvas class="particles-js-canvas-el" width="1606" height="1862" style="width: 100%; height: 100%;"></canvas>
+</div>
+
+<!-- jQuery -->
+<script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- <script src="{{.AssertRootUrl}}/assets/login/js/jquery.min.js"></script> -->
+<!-- Bootstrap -->
+<script src="{{.AssertRootUrl}}/assets/login/js/bootstrap.min.js"></script>
+<!-- Placeholder -->
+<script src="{{.AssertRootUrl}}/assets/login/js/jquery.placeholder.min.js"></script>
+<!-- Waypoints -->
+<script src="{{.AssertRootUrl}}/assets/login/js/jquery.waypoints.min.js"></script>
+<!-- Main JS -->
+<script src="{{.AssertRootUrl}}/assets/login/js/main.js"></script>
+<script src="{{.AssertRootUrl}}/assets/particles/particles.js"></script>
+
+<style type="text/css">
+    #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        /*background: url(https://qcdn.vwvvwv.com/image/bg/m_bg.png);*/
+        background-size: cover;
+        top: 0;
+        left: 0;
+        z-index: -1;
+    }
+    body {
+        color: #ffffff !important;
+        background-color: #212121 !important
+    }
+</style>
+
+<script>
+    $("#sign-up-form").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            dataType: 'json',
+            type: 'POST',
+            url: '{{.AssertRootUrl}}/signin',
+            async: 'true',
+            data: {
+                'username': $("#username").val(),
+                'password': $("#password").val()
+            },
+            success: function (data) {
+                location.href = data.url
+            },
+            error: function (data) {
+                alert("登录失败");
+            }
+        });
+    });
+</script>
+
+<script>
+    /* -----------------------------------------------
+    /* How to use? : Check the GitHub README
+    /* ----------------------------------------------- */
+    /* To load a config file (particles.json) you need to host this demo (MAMP/WAMP/local)... */
+    /*
+    particlesJS.load('particles-js', 'particles.json', function() {
+      console.log('particles.js loaded - callback');
+    });
+    */
+    /* Otherwise just put the config content (json): */
+    particlesJS('particles-js',
+            {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        },
+                        "image": {
+                            "src": "img/github.svg",
+                            "width": 100,
+                            "height": 100
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 5,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 6,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true,
+                "config_demo": {
+                    "hide_card": false,
+                    "background_color": "#b61924",
+                    "background_image": "",
+                    "background_position": "50% 50%",
+                    "background_repeat": "no-repeat",
+                    "background_size": "cover"
+                }
+            }
+    );
+</script>
+
+</body>
+</html>
+{{end}}

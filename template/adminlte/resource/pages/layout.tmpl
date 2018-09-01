@@ -1,0 +1,30 @@
+{{define "layout"}}
+
+<!DOCTYPE html>
+<html>
+
+{{ template "head" . }}
+
+<body class="hold-transition skin-black sidebar-mini">
+<div class="wrapper">
+
+    {{ template "header" . }}
+
+    {{ template "sidebar" . }}
+
+    <div class="content-wrapper" id="pjax-container">
+
+    {{ template "content" . }}
+
+    </div>
+
+    {{ template "footer" . }}
+
+</div>
+
+{{ template "js" . }}
+
+</body>
+</html>
+
+{{end}}

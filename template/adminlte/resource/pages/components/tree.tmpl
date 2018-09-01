@@ -1,0 +1,95 @@
+{{define "tree"}}
+<div class="dd" id="tree-5b405b7481760">
+    <ol class="dd-list">
+        {{range $key, $list := .Tree}}
+        <li class="dd-item" data-id='{{$list.ID}}'>
+            <div class="dd-handle">
+                <i class="fa {{$list.Icon}}"></i>&nbsp;<strong>{{$list.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                    href="{{$list.Url}}" class="dd-nodrag">{{$list.Url}}</a>
+                <span class="pull-right dd-nodrag">
+                <a href="/menu/edit/show?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
+                <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+            </span>
+            </div>
+            {{if gt (len $list.ChildrenList) 0}}
+            <ol class="dd-list">
+                {{range $key, $item := $list.ChildrenList}}
+                    <li class="dd-item" data-id='{{$item.ID}}'>
+                        <div class="dd-handle">
+                            <i class="fa {{$item.Icon}}"></i>&nbsp;<strong>{{$item.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                href="{{$item.Url}}" class="dd-nodrag">{{$item.Url}}</a>
+                            <span class="pull-right dd-nodrag">
+                                <a href="/info/menu/edit?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
+                                <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                            </span>
+                        </div>
+                    </li>
+                {{end}}
+            </ol>
+            {{end}}
+        </li>
+        {{end}}
+    </ol>
+</div>
+<script data-exec-on-popstate="">
+    $(function () {
+        $('#tree-5b405b7481760').nestable([]);
+        $('.tree_branch_delete').click(function () {
+            var id = $(this).data('id');
+            swal({
+                        title: "Are you sure to delete this item ?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Confirm",
+                        closeOnConfirm: false,
+                        cancelButtonText: "Cancel"
+                    },
+                    function () {
+                        $.ajax({
+                            method: 'post',
+                            url: '/menu/delete?id=' + id,
+                            data: {},
+                            success: function (data) {
+                                $.pjax.reload('#pjax-container');
+                                if (typeof data === 'object') {
+                                    if (data.status) {
+                                        swal(data.message, '', 'success');
+                                    } else {
+                                        swal(data.message, '', 'error');
+                                    }
+                                }
+                            }
+                        });
+                    });
+        });
+        $('.tree-5b405b7481760-save').click(function () {
+            var serialize = $('#tree-5b405b7481760').nestable('serialize');
+            $.post('/menu/order', {
+                        _order: JSON.stringify(serialize)
+                    },
+                    function (data) {
+                        $.pjax.reload('#pjax-container');
+                        toastr.success('Save succeeded !');
+                    });
+        });
+        $('.tree-5b405b7481760-refresh').click(function () {
+            $.pjax.reload('#pjax-container');
+            toastr.success('Refresh succeeded !');
+        });
+        $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
+            var target = $(e.target),
+                    action = target.data('action');
+            if (action === 'expand') {
+                $('.dd').nestable('expandAll');
+            }
+            if (action === 'collapse') {
+                $('.dd').nestable('collapseAll');
+            }
+        });
+        $(".parent_id").select2({"allowClear": true, "placeholder": "Parent"});
+        $('.icon').iconpicker({placement: 'bottomLeft'});
+        $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
+    });
+</script>
+{{end}}

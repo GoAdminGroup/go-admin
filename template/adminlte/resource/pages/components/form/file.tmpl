@@ -1,0 +1,23 @@
+{{define "form_file"}}
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
+</div>
+<script>
+    $("input.{{.Field}}").fileinput({
+        "overwriteInitial":true,
+        "initialPreviewAsData":true,
+        "browseLabel":"Browse",
+        "showRemove":false,
+        "showUpload":false,
+        "deleteExtraData":{
+            "avatar":"_file_del_",
+            "_file_del_":"",
+            "_token":"NVXb8lY1QT6oi7DMPFLwU9IlHiSON3C6isKIF1kD",
+            "_method":"PUT"
+        },
+        "deleteUrl":"http:\/\/laravel-admin.org\/demo\/auth\/1",
+        "allowedFileTypes":["image"]
+    });
+</script>
+{{end}}
