@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/auth"
 	tmp "html/template"
 	"fmt"
-	"goAdmin/context"
-	"goAdmin/template/adminlte"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/template/adminlte"
 	"bytes"
 	"net/http"
 )

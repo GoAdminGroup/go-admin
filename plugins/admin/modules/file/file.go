@@ -3,7 +3,7 @@ package file
 import (
 	"mime/multipart"
 	"path"
-	"goAdmin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/valyala/fasthttp"
 	"fmt"
 )

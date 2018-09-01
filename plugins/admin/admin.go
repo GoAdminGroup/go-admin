@@ -1,14 +1,15 @@
 package admin
 
 import (
-	"goAdmin/context"
-	"goAdmin/modules/config"
-	"goAdmin/plugins/admin/modules/language"
-	"goAdmin/plugins/admin/models"
-	"goAdmin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/language"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"strconv"
-	"goAdmin/modules/menu"
-	"goAdmin/plugins"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins"
+	conncfg "github.com/chenhg5/go-admin/modules/connections/config"
 )
 
 type Admin struct {
@@ -21,8 +22,17 @@ func (admin *Admin) InitPlugin(cfg config.Config) {
 	idleCon, _ := strconv.Atoi(cfg.DATABASE_MAX_IDLE_CON)
 	openCon, _ := strconv.Atoi(cfg.DATABASE_MAX_OPEN_CON)
 
-	mysql.InitDB(cfg.DATABASE_USER, cfg.DATABASE_PWD, cfg.DATABASE_PORT,
-		cfg.DATABASE_IP, cfg.DATABASE_NAME, idleCon, openCon)
+	connections.GetConnection().InitDB(map[string]conncfg.Config{
+		"default": {
+			DatabaseName: cfg.DATABASE_NAME,
+			Ip:           cfg.DATABASE_IP,
+			Port:         cfg.DATABASE_PORT,
+			Username:     cfg.DATABASE_USER,
+			Password:     cfg.DATABASE_PWD,
+			IdleCon:      idleCon,
+			OpenCon:      openCon,
+		},
+	})
 
 	AdminApp.config = cfg
 	AdminApp.app = InitRouter("/" + cfg.ADMIN_PREFIX)

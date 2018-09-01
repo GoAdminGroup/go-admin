@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"html/template"
 	"fmt"
-	"goAdmin/template/adminlte"
+	"github.com/chenhg5/go-admin/template/adminlte"
 	"strings"
 )
 

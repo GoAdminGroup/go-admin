@@ -2,11 +2,11 @@ package auth
 
 import (
 	"encoding/json"
-	"goAdmin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"time"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"net/http"
-	"goAdmin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 var (
@@ -98,7 +98,7 @@ func InitSession(ctx *context.Context) *Session {
 type MysqlDriver struct{}
 
 func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
-	sesModel, _ := mysql.Query("select * from goadmin_session where sid = ?", sid)
+	sesModel, _ := connections.GetConnection().Query("select * from goadmin_session where sid = ?", sid)
 	if len(sesModel) < 1 {
 		return map[string]interface{}{}
 	} else {
@@ -111,11 +111,11 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
 	if sid != "" && len(values) != 0 {
 		valuesByte, _ := json.Marshal(values)
-		sesModel, _ := mysql.Query("select * from goadmin_session where sid = ?", sid)
+		sesModel, _ := connections.GetConnection().Query("select * from goadmin_session where sid = ?", sid)
 		if len(sesModel) < 1 {
-			mysql.Exec("insert into goadmin_session (`values`, sid) values (?, ?)", string(valuesByte), sid)
+			connections.GetConnection().Exec("insert into goadmin_session (`values`, sid) values (?, ?)", string(valuesByte), sid)
 		} else {
-			mysql.Exec("update goadmin_session set `values` = ? where sid = ?", string(valuesByte), sid)
+			connections.GetConnection().Exec("update goadmin_session set `values` = ? where sid = ?", string(valuesByte), sid)
 		}
 	}
 }

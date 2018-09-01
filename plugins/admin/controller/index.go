@@ -2,9 +2,9 @@ package controller
 
 import (
 	"html/template"
-	"goAdmin/template/adminlte/components"
-	"goAdmin/context"
-	"goAdmin/modules/page"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/page"
 )
 
 var AssertRootUrl = ""

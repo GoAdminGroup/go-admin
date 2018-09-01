@@ -1,8 +1,8 @@
 package example
 
 import (
-	"goAdmin/context"
-	"goAdmin/modules/auth"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
 )
 
 func InitRouter(prefix string) *context.App {

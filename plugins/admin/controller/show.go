@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
-	"goAdmin/plugins/admin/models"
-	"goAdmin/template/adminlte/components"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/context"
 	"bytes"
 	"net/http"
-	"goAdmin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"strings"
 	"path"
 )

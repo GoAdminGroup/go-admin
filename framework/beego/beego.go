@@ -2,10 +2,10 @@ package beego
 
 import (
 	"errors"
-	"goAdmin/plugins"
+	"github.com/chenhg5/go-admin/plugins"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	gctx "goAdmin/context"
+	gctx "github.com/chenhg5/go-admin/context"
 	"fmt"
 	"strings"
 	"bytes"

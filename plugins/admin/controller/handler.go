@@ -6,15 +6,15 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/mgutz/ansi"
 	"github.com/valyala/fasthttp"
-	"goAdmin/modules/auth"
-	"goAdmin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"log"
 	"regexp"
 	"runtime/debug"
 	"strconv"
-	"goAdmin/template/adminlte/components"
-	"goAdmin/context"
-	"goAdmin/modules/menu"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 // 全局错误处理

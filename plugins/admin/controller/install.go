@@ -4,8 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
-	"goAdmin/context"
-	db "goAdmin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/context"
 )
 
 func ShowInstall(ctx *context.Context) {
@@ -39,8 +38,10 @@ func CheckDatabase(ctx *context.Context) {
 
 	if err == nil && err2 == nil {
 
-		db.InitDB(username, password, port, ip, databaseName, 100, 100)
-		tables, _ := db.Query("show tables")
+		//db.InitDB(username, password, port, ip, databaseName, 100, 100)
+		//tables, _ := db.Query("show tables")
+
+		tables := []map[string]interface{}{}
 
 		list := "["
 

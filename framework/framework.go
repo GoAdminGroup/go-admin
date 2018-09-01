@@ -1,7 +1,7 @@
 package framework
 
 import (
-	"goAdmin/plugins"
+	"github.com/chenhg5/go-admin/plugins"
 )
 
 type WebFrameWork interface {

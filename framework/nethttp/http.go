@@ -2,10 +2,10 @@ package nethttp
 
 import (
 	"net/http"
-	"goAdmin/plugins"
+	"github.com/chenhg5/go-admin/plugins"
 	"errors"
 	"strings"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"bytes"
 )
 

@@ -1,8 +1,8 @@
 package datamodel
 
 import (
-	"goAdmin/template/adminlte/components"
-	"goAdmin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
 func GetUserTable() (userTable models.GlobalTable) {

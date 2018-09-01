@@ -1,17 +1,17 @@
 package auth
 
 import (
-	"goAdmin/modules/connections/mysql"
-	"goAdmin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"strconv"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func Check(password string, username string) (user User, ok bool) {
 
-	admin, _ := mysql.Query("select * from goadmin_users where username = ?", username)
+	admin, _ := connections.GetConnection().Query("select * from goadmin_users where username = ?", username)
 
 	fmt.Println(EncodePassword([]byte("admin")))
 
@@ -22,7 +22,7 @@ func Check(password string, username string) (user User, ok bool) {
 		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
 
-			roleModel, _ := mysql.Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
+			roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
 
 			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
 			user.Level = roleModel[0]["slug"].(string)

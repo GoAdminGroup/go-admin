@@ -2,7 +2,7 @@ package models
 
 import (
 	"strconv"
-	"goAdmin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"html/template"
 )
 

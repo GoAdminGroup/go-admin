@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/valyala/fasthttp"
-	"goAdmin/modules/connections/mysql"
-	"goAdmin/template/adminlte/components"
-	"goAdmin/modules/auth"
-	"goAdmin/plugins/admin/models"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/context"
 	"net/http"
-	"goAdmin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 // 显示菜单
@@ -79,7 +79,7 @@ func DeleteMenu(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
 
-	mysql.Exec("delete from goadmin_menu where id = ?", id)
+	connections.GetConnection().Exec("delete from goadmin_menu where id = ?", id)
 
 	menu.SetGlobalMenu()
 	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
@@ -103,7 +103,7 @@ func EditMenu(ctx *context.Context) {
 	icon := string(ctx.Request.FormValue("icon")[:])
 	uri := string(ctx.Request.FormValue("uri")[:])
 
-	mysql.Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
+	connections.GetConnection().Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
 		title, parentId, icon, uri, id)
 
 	menu.SetGlobalMenu()
@@ -129,7 +129,7 @@ func NewMenu(ctx *context.Context) {
 	icon := string(ctx.Request.FormValue("icon")[:])
 	uri := string(ctx.Request.FormValue("uri")[:])
 
-	mysql.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parentId, icon, uri, (*menu.GlobalMenu).MaxOrder+1)
+	connections.GetConnection().Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parentId, icon, uri, (*menu.GlobalMenu).MaxOrder+1)
 
 	(*menu.GlobalMenu).SexMaxOrder((*menu.GlobalMenu).MaxOrder + 1)
 	menu.SetGlobalMenu()
@@ -151,13 +151,13 @@ func MenuOrder(ctx *context.Context) {
 	count := 1
 	for _, v := range data {
 		if child, ok := v["children"]; ok {
-			mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			connections.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
 			for _, v2 := range child.([]interface{}) {
-				mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
+				connections.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
 				count++
 			}
 		} else {
-			mysql.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			connections.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
 			count++
 		}
 	}

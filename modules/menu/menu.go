@@ -1,7 +1,7 @@
 package menu
 
 import (
-	"goAdmin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"strconv"
 	"sync"
 )
@@ -27,7 +27,7 @@ func InitMenu() {
 }
 
 func SetGlobalMenu() {
-	menus, _ := mysql.Query("select * from goadmin_menu where id > 0 order by `order` asc")
+	menus, _ := connections.GetConnection().Query("select * from goadmin_menu where id > 0 order by `order` asc")
 
 	menuOption := make([]map[string]string, 0)
 
@@ -75,7 +75,7 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 }
 
 func GetMenuItemById(id string) MenuItem {
-	menu, _ := mysql.Query("select * from goadmin_menu where id = ?", id)
+	menu, _ := connections.GetConnection().Query("select * from goadmin_menu where id = ?", id)
 
 	return MenuItem{
 		menu[0]["title"].(string),

@@ -1,9 +1,9 @@
 package example
 
 import (
-	"goAdmin/context"
-	"goAdmin/modules/page"
-	"goAdmin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/page"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"html/template"
 )
 

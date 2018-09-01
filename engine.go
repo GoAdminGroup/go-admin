@@ -1,9 +1,9 @@
 package goAdmin
 
 import (
-	"goAdmin/plugins"
-	"goAdmin/framework"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/framework"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 type Engine struct {
@@ -31,5 +31,6 @@ func (eng *Engine) AddPlugins(plugs ... plugins.Plugin) *Engine {
 
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 	eng.Config = cfg
+	config.SetGlobalCfg(cfg)
 	return eng
 }

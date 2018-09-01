@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
-	"goAdmin/modules/connections/mysql"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/gin-gonic/gin/json"
 )
 
@@ -15,7 +15,7 @@ func RecordOperationLog(ctx *context.Context) {
 			input, _ = json.Marshal((*form).Value)
 		}
 
-		mysql.Exec("insert into goadmin_operation_log (user_id, path, method, ip, input) values (?, ?, ?, ?, ?)", user.ID, ctx.Path(),
+		connections.GetConnection().Exec("insert into goadmin_operation_log (user_id, path, method, ip, input) values (?, ?, ?, ?, ?)", user.ID, ctx.Path(),
 			ctx.Method(), ctx.LocalIP(), string(input))
 	}
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	ginFw "github.com/chenhg5/go-admin/framework/gin"
-	"github.com/chenhg5/go-admin"
+	"goAdmin"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/example"
@@ -24,6 +24,7 @@ func main() {
 		DATABASE_NAME:         "godmin",
 		DATABASE_MAX_IDLE_CON: "50",
 		DATABASE_MAX_OPEN_CON: "150",
+		DATABASE_DRIVER:       "mysql",
 
 		AUTH_DOMAIN:  "localhost",
 		LANGUAGE:     "cn",         // 语言

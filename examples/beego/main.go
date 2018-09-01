@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/astaxie/beego"
-	beegoFw "goAdmin/framework/beego"
+	beegoFw "github.com/chenhg5/go-admin/framework/beego"
 	"goAdmin"
-	"goAdmin/plugins/admin"
-	"goAdmin/examples/datamodel"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 func main() {

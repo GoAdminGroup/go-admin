@@ -8,8 +8,15 @@ type Config struct {
 	DATABASE_NAME         string
 	DATABASE_MAX_IDLE_CON string
 	DATABASE_MAX_OPEN_CON string
+	DATABASE_DRIVER       string
 
 	AUTH_DOMAIN  string
 	LANGUAGE     string
 	ADMIN_PREFIX string
+}
+
+var GlobalCfg Config
+
+func SetGlobalCfg(cfg Config)  {
+	GlobalCfg = cfg
 }

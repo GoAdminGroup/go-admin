@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"goAdmin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"regexp"
 	"strings"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"fmt"
 )
 
@@ -69,14 +69,14 @@ func Filter(ctx *context.Context) (User, bool, bool) {
 }
 
 func GetCurUserById(id string) (user User, ok bool) {
-	admin, _ := mysql.Query("select * from goadmin_users where id = ?", id)
+	admin, _ := connections.GetConnection().Query("select * from goadmin_users where id = ?", id)
 
 	if len(admin) < 1 {
 		ok = false
 		return
 	}
 
-	roleModel, _ := mysql.Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
+	roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
 
 	user.ID = id
 	user.Level = roleModel[0]["slug"].(string)
@@ -110,7 +110,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 }
 
 func GetPermissions(role_id interface{}) []map[string]interface{} {
-	permissions, _ := mysql.Query("select p.http_method, p.http_path from goadmin_role_permissions as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
+	permissions, _ := connections.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
 	return permissions
 }
 
