@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	ginFw "goAdmin/framework/gin"
-	"goAdmin"
-	"goAdmin/plugins/admin"
-	"goAdmin/examples/datamodel"
-	"goAdmin/modules/config"
-	"goAdmin/plugins/example"
+	ginFw "github.com/chenhg5/go-admin/framework/gin"
+	"github.com/chenhg5/go-admin"
+	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/examples/datamodel"
 )
 
 func main() {
