@@ -18,7 +18,8 @@ func Check(password string, username string) (user User, ok bool) {
 		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
 
-			roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
+			roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users " +
+				"as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
 
 			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
 			user.Level = roleModel[0]["slug"].(string)
@@ -26,6 +27,10 @@ func Check(password string, username string) (user User, ok bool) {
 			user.Name = admin[0]["name"].(string)
 			user.CreateAt = admin[0]["created_at"].(string)
 			user.Avatar = admin[0]["avatar"].(string)
+
+			newPwd := EncodePassword([]byte(password))
+			connections.GetConnection().Exec("update goadmin_users set password = ? where id = ?", newPwd, user.ID)
+
 		} else {
 			ok = false
 		}
