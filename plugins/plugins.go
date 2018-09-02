@@ -17,7 +17,7 @@ func GetHandler(url, method string, handleList *map[context.Path]context.Handler
 	for path, handler := range *handleList {
 		if path.Method == method {
 			if path.RegUrl == "" {
-				if path.URL == url {
+				if path.URL == url || path.URL + "/" == url || path.URL == url + "/" {
 					return handler
 				}
 			} else {
