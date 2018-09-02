@@ -90,7 +90,7 @@ var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
 
     <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
     <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
 </head>
 {{end}}`,"header":`{{define "header"}}
 <header class="main-header">
