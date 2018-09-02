@@ -20,7 +20,7 @@ type Template interface {
 	Paninator() types.PaninatorAttribute
 	GetTmplList() map[string]string
 	GetAssetList() []string
-	GetAsset() ([]byte, error)
+	GetAsset(string) ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
 }
 
