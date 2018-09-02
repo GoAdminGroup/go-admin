@@ -72,7 +72,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -91,7 +91,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
+	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
 
 	r.Run(":9033")
 }

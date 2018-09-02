@@ -13,7 +13,7 @@ import (
 func main() {
 	router := fasthttprouter.New()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -35,7 +35,7 @@ func main() {
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
+	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
 
 	var waitChan chan int
 	go func() {

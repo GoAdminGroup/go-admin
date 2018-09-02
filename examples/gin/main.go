@@ -13,7 +13,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -37,7 +37,7 @@ func main() {
 	// 后台插件例子
 	examplePlugin := example.NewExample()
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
+	engine.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
 
 	r.Run(":9033")
 }

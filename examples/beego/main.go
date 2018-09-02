@@ -12,7 +12,7 @@ import (
 func main() {
 	app := beego.NewApp()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
 	cfg := config.Config{
 		DATABASE: config.Database{
@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin", // 前缀
 	}
 
-	ad.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(beegoFw.Beego), app)
+	engine.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(beegoFw.Beego), app)
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

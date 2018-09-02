@@ -11,7 +11,7 @@ type Engine struct {
 	Config      config.Config
 }
 
-func Default() *Engine {
+func DefaultEngine() *Engine {
 	return new(Engine)
 }
 

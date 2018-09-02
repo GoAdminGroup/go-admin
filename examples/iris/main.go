@@ -12,7 +12,7 @@ import (
 func main() {
 	app := iris.Default()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -34,7 +34,7 @@ func main() {
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
+	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
 
 	app.Run(iris.Addr(":8099"))
 }
