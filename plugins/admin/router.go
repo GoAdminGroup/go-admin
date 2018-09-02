@@ -43,7 +43,7 @@ func InitRouter(prefix string) *context.App {
 	app.GET(prefix + "/install", controller.ShowInstall)
 	app.POST(prefix + "/install/database/check", controller.CheckDatabase)
 
-	for _, path := range template.Get("adminlte").GetAsset() {
+	for _, path := range template.Get("adminlte").GetAssetList() {
 		app.GET(prefix + "/assets" + path, controller.Assert)
 	}
 
