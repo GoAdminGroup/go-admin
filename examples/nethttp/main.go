@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"github.com/chenhg5/go-admin/framework/nethttp"
+	"github.com/chenhg5/go-admin/converter/nethttp"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"

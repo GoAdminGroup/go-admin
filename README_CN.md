@@ -54,7 +54,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	ginFw "github.com/chenhg5/go-admin/framework/gin"
+	ginFw "github.com/chenhg5/go-admin/converter/gin"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"

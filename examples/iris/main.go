@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/kataras/iris"
 	"github.com/chenhg5/go-admin/modules/config"
-	irisFw "github.com/chenhg5/go-admin/framework/iris"
+	irisFw "github.com/chenhg5/go-admin/converter/iris"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"

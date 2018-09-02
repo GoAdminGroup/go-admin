@@ -13,9 +13,9 @@ type Menu struct {
 }
 
 var GlobalMenu = &Menu{
-	[]MenuItem{},
-	[]map[string]string{},
-	0,
+	GlobalMenuList:   []MenuItem{},
+	GlobalMenuOption: []map[string]string{},
+	MaxOrder:         0,
 }
 
 var InitMenuOnce sync.Once
@@ -59,12 +59,12 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 			childList := ConstructMenuTree(menus, menus[j]["id"].(int64))
 
 			child := MenuItem{
-				menus[j]["title"].(string),
-				strconv.FormatInt(menus[j]["id"].(int64), 10),
-				menus[j]["uri"].(string),
-				menus[j]["icon"].(string),
-				"",
-				childList,
+				Name:         menus[j]["title"].(string),
+				ID:           strconv.FormatInt(menus[j]["id"].(int64), 10),
+				Url:          menus[j]["uri"].(string),
+				Icon:         menus[j]["icon"].(string),
+				Active:       "",
+				ChildrenList: childList,
 			}
 
 			branch = append(branch, child)
@@ -78,12 +78,12 @@ func GetMenuItemById(id string) MenuItem {
 	menu, _ := connections.GetConnection().Query("select * from goadmin_menu where id = ?", id)
 
 	return MenuItem{
-		menu[0]["title"].(string),
-		strconv.FormatInt(menu[0]["id"].(int64), 10),
-		menu[0]["uri"].(string),
-		menu[0]["icon"].(string),
-		"",
-		[]MenuItem{},
+		Name:         menu[0]["title"].(string),
+		ID:           strconv.FormatInt(menu[0]["id"].(int64), 10),
+		Url:          menu[0]["uri"].(string),
+		Icon:         menu[0]["icon"].(string),
+		Active:       "",
+		ChildrenList: []MenuItem{},
 	}
 }
 
