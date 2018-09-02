@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"github.com/chenhg5/go-admin/adapter/nethttp"
+	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin",
 	}
 
-	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(nethttp.Http), mux)
+	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Http), mux)
 
 	http.ListenAndServe(":9002", mux)
 }
