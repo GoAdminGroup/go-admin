@@ -93,7 +93,7 @@ func ShowInfo(ctx *context.Context) {
 
 func Assert(ctx *context.Context) {
 	filepath := "../../../template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, Config.ADMIN_PREFIX, "", 1)
-	data, err := Asset(filepath)
+	data, err := template.Get("adminlte").GetAsset(filepath)
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
 

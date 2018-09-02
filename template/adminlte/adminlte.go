@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"fmt"
+	"github.com/chenhg5/go-admin/template/adminlte/resource"
 )
 
 type Theme struct {
@@ -48,7 +49,11 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 	return
 }
 
-func (*Theme) GetAsset() []string {
+func (*Theme) GetAsset(path string) ([]byte, error) {
+	return resource.Asset(path)
+}
+
+func (*Theme) GetAssetList() []string {
 	return asserts
 }
 

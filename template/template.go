@@ -19,7 +19,8 @@ type Template interface {
 	Tree() types.TreeAttribute
 	Paninator() types.PaninatorAttribute
 	GetTmplList() map[string]string
-	GetAsset() []string
+	GetAssetList() []string
+	GetAsset() ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
 }
 
