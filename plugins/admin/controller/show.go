@@ -109,6 +109,7 @@ func Assert(ctx *context.Context) {
 	}
 
 	if err != nil {
+		fmt.Println("asset err", err)
 		ctx.Write(http.StatusNotFound, map[string]string{}, "")
 	} else {
 		ctx.Write(http.StatusOK, map[string]string{
