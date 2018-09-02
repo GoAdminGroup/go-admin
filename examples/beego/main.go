@@ -3,16 +3,16 @@ package main
 import (
 	"github.com/astaxie/beego"
 	beegoFw "github.com/chenhg5/go-admin/framework/beego"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	app := beego.NewApp()
 
-	engine := goAdmin.DefaultEngine()
+	eng := engine.Default()
 
 	cfg := config.Config{
 		DATABASE: config.Database{
@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin", // 前缀
 	}
 
-	engine.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(beegoFw.Beego), app)
+	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(beegoFw.Beego), app)
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

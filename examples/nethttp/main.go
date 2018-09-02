@@ -3,16 +3,16 @@ package main
 import (
 	"net/http"
 	"github.com/chenhg5/go-admin/framework/nethttp"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	mux := http.NewServeMux()
 
-	ad := goAdmin.Default()
+	eng := engine.Default()
 
 	cfg := config.Config{
 		DATABASE: config.Database{
@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin", // 前缀
 	}
 
-	ad.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(nethttp.Http), mux)
+	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(nethttp.Http), mux)
 
 	http.ListenAndServe(":9002", mux)
 }

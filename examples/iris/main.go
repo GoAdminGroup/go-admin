@@ -2,17 +2,17 @@ package main
 
 import (
 	"github.com/kataras/iris"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	irisFw "github.com/chenhg5/go-admin/framework/iris"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	app := iris.Default()
 
-	engine := goAdmin.DefaultEngine()
+	eng := engine.Default()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -34,7 +34,7 @@ func main() {
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
 
 	app.Run(iris.Addr(":8099"))
 }

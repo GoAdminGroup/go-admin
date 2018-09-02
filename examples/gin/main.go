@@ -3,17 +3,17 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	ginFw "github.com/chenhg5/go-admin/framework/gin"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	r := gin.Default()
 
-	engine := goAdmin.DefaultEngine()
+	eng := engine.Default()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -37,7 +37,7 @@ func main() {
 	// 后台插件例子
 	examplePlugin := example.NewExample()
 
-	engine.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
 
 	r.Run(":9033")
 }

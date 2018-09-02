@@ -2,17 +2,17 @@ package main
 
 import (
 	"github.com/labstack/echo"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	echoFw "github.com/chenhg5/go-admin/framework/echo"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	e := echo.New()
 
-	engine := goAdmin.DefaultEngine()
+	eng := engine.Default()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -34,7 +34,7 @@ func main() {
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(echoFw.Echo), e)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(echoFw.Echo), e)
 
 
 	// Start server

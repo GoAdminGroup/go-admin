@@ -4,16 +4,16 @@ import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 	fastFw "github.com/chenhg5/go-admin/framework/fasthttp"
-	"github.com/chenhg5/go-admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 func main() {
 	router := fasthttprouter.New()
 
-	engine := goAdmin.DefaultEngine()
+	eng := engine.Default()
 
 	// goAdmin 全局配置
 	cfg := config.Config{
@@ -35,7 +35,7 @@ func main() {
 	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
 
 	var waitChan chan int
 	go func() {
