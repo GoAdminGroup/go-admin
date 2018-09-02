@@ -18,7 +18,7 @@ func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 		ok     bool
 	)
 	if engine, ok = router.(*http.ServeMux); !ok {
-		return errors.New("错误的参数")
+		return errors.New("wrong parameter")
 	}
 
 	var reqs map[string][]context.Path

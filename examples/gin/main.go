@@ -35,7 +35,9 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(adapter.Gin), r)
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(adapter.Gin), r); err != nil {
+		panic(err)
+	}
 
 	r.Run(":9033")
 }

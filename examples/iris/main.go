@@ -32,7 +32,9 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Iris), app)
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Iris), app); err != nil {
+		panic(err)
+	}
 
 	app.Run(iris.Addr(":8099"))
 }

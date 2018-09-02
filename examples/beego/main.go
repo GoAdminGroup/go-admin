@@ -30,7 +30,9 @@ func main() {
 		ADMIN_PREFIX: "admin",
 	}
 
-	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Beego), app)
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Beego), app); err != nil {
+		panic(err)
+	}
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

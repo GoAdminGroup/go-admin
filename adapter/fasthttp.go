@@ -22,7 +22,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 		ok     bool
 	)
 	if engine, ok = router.(*fasthttprouter.Router); !ok {
-		return errors.New("错误的参数")
+		return errors.New("wrong parameter")
 	}
 
 	for _, plug := range plugin {
@@ -30,42 +30,37 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			engine.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
-				GetFasthttpResponse(c, plugCopy)
+				httpreq := Convertor(c)
+				ctx := context.NewContext(httpreq)
+
+				var params map[string]string
+				c.VisitUserValues(func(i []byte, i2 interface{}) {
+					if value, ok := i2.(string); ok {
+						params[string(i)] = value
+					}
+				})
+
+				for key, value := range params {
+					if httpreq.URL.RawQuery == "" {
+						httpreq.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+					} else {
+						httpreq.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+					}
+				}
+
+				plugCopy.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))(ctx)
+				for key, head := range ctx.Response.Header {
+					c.Response.Header.Set(key, head[0])
+				}
+				buf := new(bytes.Buffer)
+				buf.ReadFrom(ctx.Response.Body)
+				c.Response.SetStatusCode(ctx.Response.StatusCode)
+				c.WriteString(buf.String())
 			})
 		}
 	}
 
 	return nil
-}
-
-func GetFasthttpResponse(c *fasthttp.RequestCtx, plug plugins.Plugin) {
-
-	httpreq := Convertor(c)
-	ctx := context.NewContext(httpreq)
-
-	var params map[string]string
-	c.VisitUserValues(func(i []byte, i2 interface{}) {
-		if value, ok := i2.(string); ok {
-			params[string(i)] = value
-		}
-	})
-
-	for key, value := range params {
-		if httpreq.URL.RawQuery == "" {
-			httpreq.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
-		} else {
-			httpreq.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
-		}
-	}
-
-	plug.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))(ctx)
-	for key, head := range ctx.Response.Header {
-		c.Response.Header.Set(key, head[0])
-	}
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(ctx.Response.Body)
-	c.Response.SetStatusCode(ctx.Response.StatusCode)
-	c.WriteString(buf.String())
 }
 
 func Convertor(ctx *fasthttp.RequestCtx) *http.Request {

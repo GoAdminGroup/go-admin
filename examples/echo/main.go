@@ -32,7 +32,9 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Echo), e)
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Echo), e); err != nil {
+		panic(err)
+	}
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))
