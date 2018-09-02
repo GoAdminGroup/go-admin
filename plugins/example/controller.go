@@ -8,10 +8,8 @@ import (
 	template2 "github.com/chenhg5/go-admin/template"
 )
 
-var AssertRootUrl = ""
-
 func TestHandler(ctx *context.Context) {
-	page.SetPageContent(AssertRootUrl, ctx, func() types.Panel {
+	page.SetPageContent(Config.THEME, Config.ADMIN_PREFIX, ctx, func() types.Panel {
 		box := template2.Get(Config.THEME).InfoBox().SetUrl("/").SetTitle("例子数据").SetValue("1000").GetContent()
 
 		col1 := template2.Get(Config.THEME).Col().SetContent(box).GetContent()

@@ -9,7 +9,7 @@ import (
 )
 
 func ShowDashboard(ctx *context.Context) {
-	page.SetPageContent(Config.ADMIN_PREFIX, ctx, func() types.Panel {
+	page.SetPageContent(Config.THEME, Config.ADMIN_PREFIX, ctx, func() types.Panel {
 		box := template2.Get(Config.THEME).InfoBox().SetUrl("/").SetTitle("用户总数").SetValue("1000").GetContent()
 
 		col1 := template2.Get(Config.THEME).Col().SetContent(box).GetContent()

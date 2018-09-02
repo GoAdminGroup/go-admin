@@ -26,8 +26,8 @@ func main() {
 			DRIVER:       "mysql",
 		},
 		AUTH_DOMAIN:  "localhost",
-		LANGUAGE:     "cn",         // 语言
-		ADMIN_PREFIX: "admin", // 前缀
+		LANGUAGE:     "cn",
+		ADMIN_PREFIX: "admin",
 	}
 
 	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(nethttp.Http), mux)

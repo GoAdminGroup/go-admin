@@ -11,12 +11,12 @@ import (
 )
 
 // 设置页面内容
-func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() types.Panel) {
+func SetPageContent(theme string, AssertRootUrl string, ctx *context.Context, c func() types.Panel) {
 	user := ctx.UserValue["user"].(auth.User)
 
 	panel := c()
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(theme).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 

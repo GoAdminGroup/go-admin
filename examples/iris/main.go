@@ -14,7 +14,6 @@ func main() {
 
 	eng := engine.Default()
 
-	// goAdmin 全局配置
 	cfg := config.Config{
 		DATABASE: config.Database{
 			IP:           "127.0.0.1",
@@ -27,11 +26,10 @@ func main() {
 			DRIVER:       "mysql",
 		},
 		AUTH_DOMAIN:  "localhost",
-		LANGUAGE:     "cn",         // 语言
-		ADMIN_PREFIX: "admin", // 前缀
+		LANGUAGE:     "cn",
+		ADMIN_PREFIX: "admin",
 	}
 
-	// 增删改查管理后台插件
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
 	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
