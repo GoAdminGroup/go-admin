@@ -75,7 +75,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 					"0.0.1",
 				},
 				Panel: components.Panel{
-					Content:     components.Form().SetContent(formData).GetContent(),
+					Content:     components.Form().SetPrefix(AssertRootUrl).SetContent(formData).GetContent(),
 					Description: description,
 					Title:       title,
 				},

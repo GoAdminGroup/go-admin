@@ -26,7 +26,7 @@ func ShowMenu(ctx *context.Context) {
 	header := components.Tree().GetTreeHeader()
 	box := components.Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := components.Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
-	newForm := components.Form().SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
+	newForm := components.Form().SetPrefix(AssertRootUrl).SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
 		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
 	col2 := components.Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
 	row := components.Row().SetContent(col1 + col2).GetContent()

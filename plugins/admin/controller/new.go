@@ -55,6 +55,7 @@ func ShowNewForm(ctx *context.Context) {
 		},
 		Panel: components.Panel{
 			Content:     components.Form().
+				SetPrefix(AssertRootUrl).
 				SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
 				SetUrl(AssertRootUrl + "/new/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
