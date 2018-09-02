@@ -30,5 +30,5 @@ func GetHandler(url, method string, handleList *map[context.Path]context.Handler
 		}
 	}
 
-	return nil
+	panic("handler not found")
 }

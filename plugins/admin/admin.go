@@ -23,8 +23,8 @@ func (admin *Admin) InitPlugin(cfg config.Config) {
 		"default": cfg.DATABASE,
 	})
 
-	AdminApp.config = cfg
-	AdminApp.app = InitRouter("/" + cfg.ADMIN_PREFIX)
+	App.config = cfg
+	App.app = InitRouter("/" + cfg.ADMIN_PREFIX)
 
 	models.SetTableFuncConfig(map[string]models.GetTableDataFunc{
 		// 管理员管理部分
@@ -46,11 +46,11 @@ func (admin *Admin) InitPlugin(cfg config.Config) {
 	menu.InitMenu()
 }
 
-var AdminApp = new(Admin)
+var App = new(Admin)
 
 func NewAdmin(tableCfg map[string]models.GetTableDataFunc) *Admin {
-	AdminApp.tableCfg = tableCfg
-	return AdminApp
+	App.tableCfg = tableCfg
+	return App
 }
 
 func (admin *Admin) GetRequest() []context.Path {
