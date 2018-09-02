@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/kataras/iris"
 	"github.com/chenhg5/go-admin/modules/config"
-	irisFw "github.com/chenhg5/go-admin/adapter/iris"
+	adapter "github.com/chenhg5/go-admin/adapter/iris"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
@@ -32,7 +32,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(irisFw.Iris), app)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Iris), app)
 
 	app.Run(iris.Addr(":8099"))
 }

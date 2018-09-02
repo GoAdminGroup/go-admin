@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	ginFw "github.com/chenhg5/go-admin/adapter/gin"
+	adapter "github.com/chenhg5/go-admin/adapter/gin"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/example"
@@ -35,7 +35,7 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(ginFw.Gin), r)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(new(adapter.Gin), r)
 
 	r.Run(":9033")
 }

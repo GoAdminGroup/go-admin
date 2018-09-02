@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/labstack/echo"
 	"github.com/chenhg5/go-admin/modules/config"
-	echoFw "github.com/chenhg5/go-admin/adapter/echo"
+	adapter "github.com/chenhg5/go-admin/adapter/echo"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
@@ -32,7 +32,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(echoFw.Echo), e)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Echo), e)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

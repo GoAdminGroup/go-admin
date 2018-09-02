@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	fastFw "github.com/chenhg5/go-admin/adapter/fasthttp"
+	adapter "github.com/chenhg5/go-admin/adapter/fasthttp"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
@@ -33,7 +33,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(fastFw.Fasthttp), router)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Fasthttp), router)
 
 	var waitChan chan int
 	go func() {

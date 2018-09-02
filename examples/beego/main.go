@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
-	beegoFw "github.com/chenhg5/go-admin/adapter/beego"
+	adapter "github.com/chenhg5/go-admin/adapter/beego"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin",
 	}
 
-	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(beegoFw.Beego), app)
+	eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Beego), app)
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087
