@@ -12,15 +12,6 @@ type TableAttribute struct {
 	Type     string
 }
 
-func (*AdminlteStruct) Table() types.TableAttribute {
-	return &TableAttribute{
-		Name:     "table",
-		Thead:    []map[string]string{},
-		InfoList: []map[string]template.HTML{},
-		Type:     "normal",
-	}
-}
-
 func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
 	(*compo).Thead = value
 	return compo
@@ -44,14 +35,6 @@ type DataTableAttribute struct {
 	TableAttribute
 	EditUrl string
 	NewUrl  string
-}
-
-func (adminlte *AdminlteStruct) DataTable() types.DataTableAttribute {
-	return &DataTableAttribute{
-		TableAttribute: *(adminlte.Table().SetType("data-table").(*TableAttribute)),
-		EditUrl:        "",
-		NewUrl:         "",
-	}
 }
 
 func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {

@@ -11,14 +11,6 @@ type LabelAttribute struct {
 	Content string
 }
 
-func (*AdminlteStruct) Label() types.LabelAttribute {
-	return &LabelAttribute{
-		"label",
-		"success",
-		"",
-	}
-}
-
 func (compo *LabelAttribute) SetContent(value string) types.LabelAttribute {
 	(*compo).Content = value
 	return compo

@@ -1,13 +1,13 @@
 package page
 
 import (
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/context"
 	"bytes"
 	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template"
 )
 
 // 设置页面内容
@@ -16,7 +16,7 @@ func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() types.P
 
 	panel := c()
 
-	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 

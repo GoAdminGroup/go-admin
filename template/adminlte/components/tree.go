@@ -16,13 +16,6 @@ func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
 	return compo
 }
 
-func (*AdminlteStruct) Tree() types.TreeAttribute {
-	return &TreeAttribute{
-		"tree",
-		[]menu.MenuItem{},
-	}
-}
-
 func (compo *TreeAttribute) GetContent() template.HTML {
 	return ComposeHtml(*compo, "tree")
 }

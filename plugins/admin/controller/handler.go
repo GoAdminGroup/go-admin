@@ -12,7 +12,6 @@ import (
 	"regexp"
 	"runtime/debug"
 	"strconv"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/types"
@@ -61,7 +60,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			//token := auth.TokenHelper.AddToken()
 
-			tmpl, tmplName := components.GetTemplate(true)
+			tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
 
 			if err != nil {
 				fmt.Println(err)

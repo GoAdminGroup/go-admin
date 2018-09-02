@@ -16,17 +16,6 @@ type FormAttribute struct {
 	Prefix    string
 }
 
-func (*AdminlteStruct) Form() types.FormAttribute {
-	return &FormAttribute{
-		Name:    "form",
-		Content: []types.FormStruct{},
-		Url:     "/",
-		Method:  "post",
-		InfoUrl: "",
-		Title:   "edit",
-	}
-}
-
 func (compo *FormAttribute) SetContent(value []types.FormStruct) types.FormAttribute {
 	(*compo).Content = value
 	return compo

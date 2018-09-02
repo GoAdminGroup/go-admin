@@ -7,7 +7,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
 	"strings"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/context"
 	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -23,7 +22,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	prefix := ctx.Request.URL.Query().Get("prefix")
 
-	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	path := string(ctx.Path())
 	menu.GlobalMenu.SetActiveClass(path)
@@ -140,7 +139,7 @@ func NewForm(ctx *context.Context) {
 
 	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize)
 
-	tmpl, tmplName := components.GetTemplate(true)
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
 
 	user := ctx.UserValue["user"].(auth.User)
 

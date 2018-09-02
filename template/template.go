@@ -1,8 +1,9 @@
 package template
 
 import (
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/adminlte"
+	"html/template"
 )
 
 type Template interface {
@@ -17,12 +18,15 @@ type Template interface {
 	DataTable() types.DataTableAttribute
 	Tree() types.TreeAttribute
 	Paninator() types.PaninatorAttribute
+	GetTmplList() map[string]string
+	GetAsset() []string
+	GetTemplate(bool) (*template.Template, string)
 }
 
 func Get(theme string) Template {
 	switch theme {
 	case "adminlte":
-		return components.GetAdminlte()
+		return adminlte.GetAdminlte()
 	default:
 		panic("wrong theme name!")
 	}

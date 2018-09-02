@@ -1,6 +1,6 @@
-package adminlte
+package tmpl
 
-var Adminlte = map[string]string{"admin_panel":`{{define "admin_panel"}}
+var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <!-- User Account: style can be found in dropdown.less -->

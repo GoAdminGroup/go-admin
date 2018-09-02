@@ -12,15 +12,6 @@ type ImgAttribute struct {
 	Src    string
 }
 
-func (*AdminlteStruct) Image() types.ImgAttribute {
-	return &ImgAttribute{
-		"image",
-		"50",
-		"50",
-		"",
-	}
-}
-
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
 	(*compo).Witdh = value
 	return compo

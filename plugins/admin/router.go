@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/controller"
+	"github.com/chenhg5/go-admin/template"
 )
 
 func InitRouter(prefix string) *context.App {
@@ -42,7 +43,7 @@ func InitRouter(prefix string) *context.App {
 	app.GET(prefix + "/install", controller.ShowInstall)
 	app.POST(prefix + "/install/database/check", controller.CheckDatabase)
 
-	for _, path := range asserts {
+	for _, path := range template.Get("adminlte").GetAsset() {
 		app.GET(prefix + "/assets" + path, controller.Assert)
 	}
 

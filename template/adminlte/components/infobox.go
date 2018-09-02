@@ -13,16 +13,6 @@ type InfoBoxAttribute struct {
 	Color string
 }
 
-func (*AdminlteStruct) InfoBox() types.InfoBoxAttribute {
-	return &InfoBoxAttribute{
-		"infobox",
-		"标题",
-		"值",
-		"/",
-		"aqua",
-	}
-}
-
 func (compo *InfoBoxAttribute) SetTitle(value string) types.InfoBoxAttribute {
 	(*compo).Title = value
 	return compo

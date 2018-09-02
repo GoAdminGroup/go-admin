@@ -14,17 +14,6 @@ type BoxAttribute struct {
 	HeadBorder string
 }
 
-func (*AdminlteStruct) Box() types.BoxAttribute {
-	return &BoxAttribute{
-		"box",
-		template.HTML(""),
-		template.HTML(""),
-		template.HTML(""),
-		"",
-		"",
-	}
-}
-
 func (compo *BoxAttribute) SetHeader(value template.HTML) types.BoxAttribute {
 	(*compo).Header = value
 	return compo

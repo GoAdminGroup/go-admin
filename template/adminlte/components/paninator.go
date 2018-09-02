@@ -19,12 +19,6 @@ type PaninatorAttribute struct {
 	Url               string
 }
 
-func (*AdminlteStruct) Paninator() types.PaninatorAttribute {
-	return &PaninatorAttribute{
-		Name:    "paninator",
-	}
-}
-
 func (compo *PaninatorAttribute) SetCurPageStartIndex(value string) types.PaninatorAttribute {
 	(*compo).CurPageStartIndex = value
 	return compo

@@ -12,15 +12,6 @@ type ColAttribute struct {
 	Type    string
 }
 
-func (*AdminlteStruct) Col() types.ColAttribute {
-	return &ColAttribute{
-		"col",
-		"2",
-		"",
-		"md",
-	}
-}
-
 func (compo *ColAttribute) SetWidth(value string) types.ColAttribute {
 	(*compo).Width = value
 	return compo

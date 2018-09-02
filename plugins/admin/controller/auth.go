@@ -5,9 +5,9 @@ import (
 	tmp "html/template"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/template/adminlte"
 	"bytes"
 	"net/http"
+	"github.com/chenhg5/go-admin/template"
 )
 
 func Auth(ctx *context.Context) {
@@ -40,7 +40,7 @@ func ShowLogin(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	tmpl, err := tmp.New("login").Parse(adminlte.Adminlte["login/theme1"])
+	tmpl, err := tmp.New("login").Parse(template.Get("adminlte").GetTmplList()["login/theme1"])
 	if err != nil {
 		fmt.Println(err)
 	}

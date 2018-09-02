@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/modules/connections"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/context"
@@ -33,7 +32,7 @@ func ShowMenu(ctx *context.Context) {
 	col2 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(path)
 

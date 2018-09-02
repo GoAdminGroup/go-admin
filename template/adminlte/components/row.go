@@ -10,13 +10,6 @@ type RowAttribute struct {
 	Content template.HTML
 }
 
-func (*AdminlteStruct) Row() types.RowAttribute {
-	return &RowAttribute{
-		"row",
-		"",
-	}
-}
-
 func (compo *RowAttribute) SetContent(value template.HTML) types.RowAttribute {
 	(*compo).Content = value
 	return compo
