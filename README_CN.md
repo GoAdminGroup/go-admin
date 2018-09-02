@@ -64,17 +64,20 @@ import (
 func main() {
 	r := gin.Default()
 
-	ad := goAdmin.Default()
+	engine := goAdmin.DefaultEngine()
 
-	// goAdmin 全局配置
+	// global config
 	cfg := config.Config{
-		DATABASE_IP:           "127.0.0.1",
-		DATABASE_PORT:         "3306",
-		DATABASE_USER:         "root",
-		DATABASE_PWD:          "root",
-		DATABASE_NAME:         "godmin",
-		DATABASE_MAX_IDLE_CON: "50",
-		DATABASE_MAX_OPEN_CON: "150",
+		DATABASE: config.Database{
+        			IP:           "127.0.0.1",
+        			PORT:         "3306",
+        			USER:         "root",
+        			PWD:          "root",
+        			NAME:         "godmin",
+        			MAX_IDLE_CON: 50,
+        			MAX_OPEN_CON: 150,
+        			DRIVER:       "mysql",
+        		},
 
 		AUTH_DOMAIN:  "localhost",
 		LANGUAGE:     "cn",         
@@ -83,7 +86,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	ad.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
+	engine.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
 
 	r.Run(":9033")
 }
