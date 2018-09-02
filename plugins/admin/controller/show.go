@@ -73,7 +73,7 @@ func ShowInfo(ctx *context.Context) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{
