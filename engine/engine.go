@@ -2,7 +2,7 @@ package engine
 
 import (
 	"github.com/chenhg5/go-admin/plugins"
-	"github.com/chenhg5/go-admin/converter"
+	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/modules/config"
 )
 
@@ -15,7 +15,7 @@ func Default() *Engine {
 	return new(Engine)
 }
 
-func (eng *Engine) Use(fw converter.WebFrameWork, router interface{}) error {
+func (eng *Engine) Use(fw adapter.WebFrameWork, router interface{}) error {
 	return fw.Use(router, eng.PluginsList)
 }
 

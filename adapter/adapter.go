@@ -1,4 +1,4 @@
-package converter
+package adapter
 
 import (
 	"github.com/chenhg5/go-admin/plugins"

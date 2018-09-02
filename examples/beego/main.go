@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/astaxie/beego"
-	beegoFw "github.com/chenhg5/go-admin/converter/beego"
+	beegoFw "github.com/chenhg5/go-admin/adapter/beego"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"

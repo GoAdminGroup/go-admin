@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	fastFw "github.com/chenhg5/go-admin/converter/fasthttp"
+	fastFw "github.com/chenhg5/go-admin/adapter/fasthttp"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
