@@ -12,7 +12,11 @@ func InitRouter(prefix string) *context.App {
 	controller.AssertRootUrl = prefix
 
 	// 仪表盘
-	app.GET(prefix + "/", auth.AuthMiddleware(controller.ShowDashboard))
+	if prefix != "" {
+		app.GET(prefix, auth.AuthMiddleware(controller.ShowDashboard))
+	} else {
+		app.GET("/", auth.AuthMiddleware(controller.ShowDashboard))
+	}
 
 	// 授权认证
 	app.GET(prefix + "/login", controller.ShowLogin)
