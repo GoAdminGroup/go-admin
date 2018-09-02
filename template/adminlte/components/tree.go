@@ -3,6 +3,7 @@ package components
 import (
 	"html/template"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type TreeAttribute struct {
@@ -10,16 +11,16 @@ type TreeAttribute struct {
 	Tree   []menu.MenuItem
 }
 
-func Tree() *TreeAttribute {
+func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
+	(*compo).Tree = value
+	return compo
+}
+
+func (*AdminlteStruct) Tree() types.TreeAttribute {
 	return &TreeAttribute{
 		"tree",
 		[]menu.MenuItem{},
 	}
-}
-
-func (compo *TreeAttribute) SetTree(value []menu.MenuItem) *TreeAttribute {
-	(*compo).Tree = value
-	return compo
 }
 
 func (compo *TreeAttribute) GetContent() template.HTML {

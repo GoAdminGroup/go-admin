@@ -2,6 +2,7 @@ package components
 
 import (
 	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type LabelAttribute struct {
@@ -10,7 +11,7 @@ type LabelAttribute struct {
 	Content string
 }
 
-func Label() *LabelAttribute {
+func (*AdminlteStruct) Label() types.LabelAttribute {
 	return &LabelAttribute{
 		"label",
 		"success",
@@ -18,7 +19,7 @@ func Label() *LabelAttribute {
 	}
 }
 
-func (compo *LabelAttribute) SetContent(value string) *LabelAttribute {
+func (compo *LabelAttribute) SetContent(value string) types.LabelAttribute {
 	(*compo).Content = value
 	return compo
 }

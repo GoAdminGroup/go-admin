@@ -21,7 +21,7 @@ func Auth(ctx *context.Context) {
 
 		ctx.Write(http.StatusOK, map[string]string{
 			"Content-Type": "application/json",
-		}, `{"code":200, "msg":"登录成功", "url":"` + AssertRootUrl + `"}`)
+		}, `{"code":200, "msg":"登录成功", "url":"` + Config.ADMIN_PREFIX + `"}`)
 		return
 	}
 	ctx.Write(http.StatusBadRequest, map[string]string{
@@ -47,7 +47,7 @@ func ShowLogin(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	fmt.Println(tmpl.ExecuteTemplate(buf, "login_theme1", struct {
 		AssertRootUrl string
-	}{AssertRootUrl}))
+	}{Config.ADMIN_PREFIX}))
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")

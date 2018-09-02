@@ -1,4 +1,4 @@
-package components
+package types
 
 import (
 	"github.com/chenhg5/go-admin/modules/auth"

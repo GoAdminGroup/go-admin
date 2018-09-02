@@ -2,6 +2,7 @@ package components
 
 import (
 	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type TableAttribute struct {
@@ -11,7 +12,7 @@ type TableAttribute struct {
 	Type     string
 }
 
-func Table() *TableAttribute {
+func (*AdminlteStruct) Table() types.TableAttribute {
 	return &TableAttribute{
 		Name:     "table",
 		Thead:    []map[string]string{},
@@ -20,17 +21,17 @@ func Table() *TableAttribute {
 	}
 }
 
-func (compo *TableAttribute) SetThead(value []map[string]string) *TableAttribute {
+func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
 	(*compo).Thead = value
 	return compo
 }
 
-func (compo *TableAttribute) SetInfoList(value []map[string]template.HTML) *TableAttribute {
+func (compo *TableAttribute) SetInfoList(value []map[string]template.HTML) types.TableAttribute {
 	(*compo).InfoList = value
 	return compo
 }
 
-func (compo *TableAttribute) SetType(value string) *TableAttribute {
+func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 	(*compo).Type = value
 	return compo
 }
@@ -45,9 +46,9 @@ type DataTableAttribute struct {
 	NewUrl  string
 }
 
-func DataTable() *DataTableAttribute {
+func (adminlte *AdminlteStruct) DataTable() types.DataTableAttribute {
 	return &DataTableAttribute{
-		TableAttribute: *Table().SetType("data-table"),
+		TableAttribute: *(adminlte.Table().SetType("data-table").(*TableAttribute)),
 		EditUrl:        "",
 		NewUrl:         "",
 	}
@@ -57,22 +58,22 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 	return ComposeHtml(*compo, "table/box-header")
 }
 
-func (compo *DataTableAttribute) SetThead(value []map[string]string) *DataTableAttribute {
+func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
 	(*compo).Thead = value
 	return compo
 }
 
-func (compo *DataTableAttribute) SetInfoList(value []map[string]template.HTML) *DataTableAttribute {
+func (compo *DataTableAttribute) SetInfoList(value []map[string]template.HTML) types.DataTableAttribute {
 	(*compo).InfoList = value
 	return compo
 }
 
-func (compo *DataTableAttribute) SetEditUrl(value string) *DataTableAttribute {
+func (compo *DataTableAttribute) SetEditUrl(value string) types.DataTableAttribute {
 	(*compo).EditUrl = value
 	return compo
 }
 
-func (compo *DataTableAttribute) SetNewUrl(value string) *DataTableAttribute {
+func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribute {
 	(*compo).NewUrl = value
 	return compo
 }

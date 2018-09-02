@@ -15,6 +15,8 @@ import (
 	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template"
 )
 
 // 全局错误处理
@@ -68,18 +70,18 @@ func GlobalDeferHandler(ctx *context.Context) {
 			user := ctx.UserValue["user"].(auth.User)
 
 			buf := new(bytes.Buffer)
-			tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 				User: user,
 				Menu: *menu.GlobalMenu,
-				System: components.SystemInfo{
+				System: types.SystemInfo{
 					"0.0.1",
 				},
-				Panel: components.Panel{
-					Content:     components.Form().SetPrefix(AssertRootUrl).SetContent(formData).GetContent(),
+				Panel: types.Panel{
+					Content:     template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetContent(formData).GetContent(),
 					Description: description,
 					Title:       title,
 				},
-				AssertRootUrl: AssertRootUrl,
+				AssertRootUrl: Config.ADMIN_PREFIX,
 			})
 
 			ctx.WriteString(buf.String())

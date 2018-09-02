@@ -13,8 +13,15 @@ type Example struct {
 
 var ExamplePlug = new(Example)
 
+var Config config.Config
+
 func (example *Example) InitPlugin(cfg config.Config) {
 	ExamplePlug.app = InitRouter("/" + cfg.ADMIN_PREFIX)
+
+	if cfg.THEME == "" {
+		cfg.THEME = "adminlte"
+	}
+	Config = cfg
 
 	menu.InitMenu()
 }

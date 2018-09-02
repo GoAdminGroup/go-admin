@@ -2,6 +2,7 @@ package components
 
 import (
 	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type InfoBoxAttribute struct {
@@ -12,7 +13,7 @@ type InfoBoxAttribute struct {
 	Color string
 }
 
-func InfoBox() *InfoBoxAttribute {
+func (*AdminlteStruct) InfoBox() types.InfoBoxAttribute {
 	return &InfoBoxAttribute{
 		"infobox",
 		"标题",
@@ -22,17 +23,17 @@ func InfoBox() *InfoBoxAttribute {
 	}
 }
 
-func (compo *InfoBoxAttribute) SetTitle(value string) *InfoBoxAttribute {
+func (compo *InfoBoxAttribute) SetTitle(value string) types.InfoBoxAttribute {
 	(*compo).Title = value
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetValue(value string) *InfoBoxAttribute {
+func (compo *InfoBoxAttribute) SetValue(value string) types.InfoBoxAttribute {
 	(*compo).Value = value
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetUrl(value string) *InfoBoxAttribute {
+func (compo *InfoBoxAttribute) SetUrl(value string) types.InfoBoxAttribute {
 	(*compo).Url = value
 	return compo
 }

@@ -9,8 +9,6 @@ import (
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 
-	controller.AssertRootUrl = prefix
-
 	// 仪表盘
 	if prefix != "" {
 		app.GET(prefix, auth.AuthMiddleware(controller.ShowDashboard))

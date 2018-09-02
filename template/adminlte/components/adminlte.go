@@ -22,6 +22,10 @@ var Adminlte = AdminlteStruct{
 	Components: AdminlteComponents{},
 }
 
+func GetAdminlte() *AdminlteStruct {
+	return &Adminlte
+}
+
 func ComposeHtml(compo interface{}, templateName... string) template.HTML {
 	var text = ""
 	for _, v := range templateName {

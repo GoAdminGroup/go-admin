@@ -5,8 +5,8 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type ErrStruct struct {
@@ -16,12 +16,12 @@ type ErrStruct struct {
 
 // 一个管理数据模块的抽象表示
 type GlobalTable struct {
-	Info components.InfoPanel
-	Form components.FormPanel
+	Info types.InfoPanel
+	Form types.FormPanel
 }
 
 // 查数据
-func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, *components.PaninatorAttribute, string, string) {
+func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaninatorAttribute, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])
 
@@ -70,12 +70,12 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
 			if CheckInTable(columnsModel, tableModel.Info.FieldList[j].Field) {
-				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
+				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    res[i]["id"].(int64),
 					Value: GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
 				}).(string))
 			} else {
-				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(components.RowModel{
+				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    res[i]["id"].(int64),
 					Value: "",
 				}).(string))
@@ -97,7 +97,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 }
 
 // 查单个数据
-func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string) ([]components.FormStruct, string, string) {
+func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string) ([]types.FormStruct, string, string) {
 
 	fields := ""
 
@@ -117,7 +117,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
 		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
 			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
-				valueArr := tableModel.Form.FormList[i].ExcuFun(components.RowModel{
+				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).([]string)
@@ -127,14 +127,14 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 					}
 				}
 			} else {
-				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(components.RowModel{
+				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).(string)
 			}
 		} else {
 			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
-				valueArr := tableModel.Form.FormList[i].ExcuFun(components.RowModel{
+				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
 				}).([]string)
@@ -144,7 +144,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 					}
 				}
 			} else {
-				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(components.RowModel{
+				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: tableModel.Form.FormList[i].Field,
 				}).(string)
@@ -208,8 +208,8 @@ func (tableModel GlobalTable) DeleteDataFromDatabase(prefix string, id string) {
 	}
 }
 
-func GetNewFormList(old []components.FormStruct) []components.FormStruct {
-	var newForm []components.FormStruct
+func GetNewFormList(old []types.FormStruct) []types.FormStruct {
+	var newForm []types.FormStruct
 	for _, v := range old {
 		if v.Field != "id" && v.Field != "created_at" && v.Field != "updated_at" {
 			newForm = append(newForm, v)

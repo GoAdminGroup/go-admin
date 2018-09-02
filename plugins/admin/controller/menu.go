@@ -11,6 +11,8 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // 显示菜单
@@ -22,14 +24,14 @@ func ShowMenu(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(path)
 
-	tree := components.Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).GetContent()
-	header := components.Tree().GetTreeHeader()
-	box := components.Box().SetHeader(header).SetBody(tree).GetContent()
-	col1 := components.Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
-	newForm := components.Form().SetPrefix(AssertRootUrl).SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
+	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).GetContent()
+	header := template.Get(Config.THEME).Tree().GetTreeHeader()
+	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
+	col1 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
+	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
 		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
-	col2 := components.Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
-	row := components.Row().SetContent(col1 + col2).GetContent()
+	col2 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
+	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
 	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -39,18 +41,18 @@ func ShowMenu(ctx *context.Context) {
 
 	buf := new(bytes.Buffer)
 
-	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
-		System: components.SystemInfo{
+		System: types.SystemInfo{
 			"0.0.1",
 		},
-		Panel: components.Panel{
+		Panel: types.Panel{
 			Content:     row,
 			Description: "菜单管理",
 			Title:       "菜单管理",
 		},
-		AssertRootUrl: AssertRootUrl,
+		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
 
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())

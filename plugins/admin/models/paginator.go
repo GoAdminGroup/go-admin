@@ -4,11 +4,13 @@ import (
 	"strconv"
 	"github.com/chenhg5/go-admin/template/adminlte/components"
 	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
+	template2 "github.com/chenhg5/go-admin/template"
 )
 
-func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) *components.PaninatorAttribute {
+func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaninatorAttribute {
 
-	paginator := components.Paninator()
+	paginator := template2.Get("adminlte").Paninator().(*components.PaninatorAttribute)
 
 	pageSizeInt, _ := strconv.Atoi(pageSize)
 

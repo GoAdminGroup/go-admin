@@ -1,6 +1,9 @@
 package components
 
-import "html/template"
+import (
+	"html/template"
+	"github.com/chenhg5/go-admin/template/types"
+)
 
 type PaninatorAttribute struct {
 	Name              string
@@ -16,58 +19,58 @@ type PaninatorAttribute struct {
 	Url               string
 }
 
-func Paninator() *PaninatorAttribute {
+func (*AdminlteStruct) Paninator() types.PaninatorAttribute {
 	return &PaninatorAttribute{
 		Name:    "paninator",
 	}
 }
 
-func (compo *PaninatorAttribute) SetCurPageStartIndex(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetCurPageStartIndex(value string) types.PaninatorAttribute {
 	(*compo).CurPageStartIndex = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetCurPageEndIndex(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetCurPageEndIndex(value string) types.PaninatorAttribute {
 	(*compo).CurPageEndIndex = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetTotal(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetTotal(value string) types.PaninatorAttribute {
 	(*compo).Total = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetPreviousClass(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetPreviousClass(value string) types.PaninatorAttribute {
 	(*compo).PreviousClass = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetPreviousUrl(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetPreviousUrl(value string) types.PaninatorAttribute {
 	(*compo).PreviousUrl = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetPages(value []map[string]string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetPages(value []map[string]string) types.PaninatorAttribute {
 	(*compo).Pages = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetNextClass(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetNextClass(value string) types.PaninatorAttribute {
 	(*compo).NextClass = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetNextUrl(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetNextUrl(value string) types.PaninatorAttribute {
 	(*compo).NextUrl = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetOption(value map[string]template.HTML) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetOption(value map[string]template.HTML) types.PaninatorAttribute {
 	(*compo).Option = value
 	return compo
 }
 
-func (compo *PaninatorAttribute) SetUrl(value string) *PaninatorAttribute {
+func (compo *PaninatorAttribute) SetUrl(value string) types.PaninatorAttribute {
 	(*compo).Url = value
 	return compo
 }

@@ -1,19 +1,19 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
 func GetUserTable() (userTable models.GlobalTable) {
 
-	userTable.Info.FieldList = []components.FieldStruct{
+	userTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -22,7 +22,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -31,7 +31,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Field:    "sex",
 			TypeName: "tinyint",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				if model.Value == "1" {
 					return "男"
 				}
@@ -46,7 +46,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Field:    "province",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -55,7 +55,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Field:    "city",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -65,7 +65,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 	userTable.Info.Title = "用户表"
 	userTable.Info.Description = "用户表"
 
-	userTable.Form.FormList = []components.FormStruct{
+	userTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -73,7 +73,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -83,7 +83,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -93,7 +93,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -103,7 +103,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -113,7 +113,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -123,7 +123,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},

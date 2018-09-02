@@ -11,6 +11,8 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // 显示表单
@@ -52,24 +54,24 @@ func ShowForm(ctx *context.Context) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
-		System: components.SystemInfo{
+		System: types.SystemInfo{
 			"0.0.1",
 		},
-		Panel: components.Panel{
-			Content:     components.Form().
+		Panel: types.Panel{
+			Content:     template.Get(Config.THEME).Form().
 				SetContent(formData).
-				SetPrefix(AssertRootUrl).
-				SetUrl(AssertRootUrl + "/edit/" + prefix).
+				SetPrefix(Config.ADMIN_PREFIX).
+				SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(AssertRootUrl + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
+				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
 				GetContent(),
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: AssertRootUrl,
+		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
 }
@@ -143,23 +145,23 @@ func EditForm(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(previous)
 
-	editUrl := AssertRootUrl + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize)
+	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize)
 
 	tmpl, tmplName := components.GetTemplate(true)
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
-		System: components.SystemInfo{
+		System: types.SystemInfo{
 			"0.0.1",
 		},
-		Panel: components.Panel{
-			Content:     components.DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).GetContent(),
+		Panel: types.Panel{
+			Content:     template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).GetContent(),
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: AssertRootUrl,
+		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
 
 	ctx.WriteString(buf.String())

@@ -19,6 +19,7 @@ type Config struct {
 	AUTH_DOMAIN  string
 	LANGUAGE     string
 	ADMIN_PREFIX string
+	THEME        string
 }
 
 var GlobalCfg Config

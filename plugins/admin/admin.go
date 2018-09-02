@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/connections"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/plugins/admin/controller"
 )
 
 type Admin struct {
@@ -35,6 +36,12 @@ func (admin *Admin) InitPlugin(cfg config.Config) {
 	})
 	models.SetTableFuncConfig(admin.tableCfg)
 	models.InitGlobalTableList()
+
+	cfg.ADMIN_PREFIX = "/" + cfg.ADMIN_PREFIX
+	if cfg.THEME == "" {
+		cfg.THEME = "adminlte"
+	}
+	controller.SetConfig(cfg)
 
 	menu.InitMenu()
 }

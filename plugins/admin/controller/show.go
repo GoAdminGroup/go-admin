@@ -11,6 +11,8 @@ import (
 	"strings"
 	"path"
 	"fmt"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // 显示列表
@@ -53,17 +55,17 @@ func ShowInfo(ctx *context.Context) {
 		editUrl string
 		//newUrl  string
 	)
-	editUrl = AssertRootUrl + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
-	newUrl := AssertRootUrl + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	editUrl = Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
 
 	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
-	dataTable := components.DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
+	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
 	table := dataTable.GetContent()
 
-	box := components.Box().
+	box := template.Get(Config.THEME).Box().
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
@@ -73,25 +75,25 @@ func ShowInfo(ctx *context.Context) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
-		System: components.SystemInfo{
+		System: types.SystemInfo{
 			"0.0.1",
 		},
-		Panel: components.Panel{
+		Panel: types.Panel{
 			Content:     box,
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: AssertRootUrl,
+		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
 }
 
 
 func Assert(ctx *context.Context) {
-	filepath := "../../../template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, AssertRootUrl, "", 1)
+	filepath := "../../../template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, Config.ADMIN_PREFIX, "", 1)
 	data, err := Asset(filepath)
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)

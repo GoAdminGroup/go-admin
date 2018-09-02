@@ -7,10 +7,11 @@ import (
 	"bytes"
 	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // 设置页面内容
-func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() components.Panel) {
+func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() types.Panel) {
 	user := ctx.UserValue["user"].(auth.User)
 
 	panel := c()
@@ -20,10 +21,10 @@ func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() compone
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
-		System: components.SystemInfo{
+		System: types.SystemInfo{
 			"0.0.1",
 		},
 		Panel:         panel,

@@ -4,18 +4,19 @@ import (
 	"github.com/chenhg5/go-admin/modules/connections"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template"
 )
 
 func GetManagerTable() (ManagerTable GlobalTable) {
 
-	ManagerTable.Info.FieldList = []components.FieldStruct{
+	ManagerTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -24,7 +25,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Field:    "username",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -33,7 +34,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -42,10 +43,10 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Field:    "roles",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				labelModel, _ := connections.GetConnection().Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
-				return string(components.Label().SetContent(labelModel[0]["name"].(string)).GetContent())
+				return string(template.Get("adminlte").Label().SetContent(labelModel[0]["name"].(string)).GetContent())
 			},
 		},
 		{
@@ -53,7 +54,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -62,7 +63,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -88,7 +89,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 		})
 	}
 
-	ManagerTable.Form.FormList = []components.FormStruct{
+	ManagerTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -96,7 +97,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -106,7 +107,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -116,7 +117,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -126,7 +127,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "file",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -136,7 +137,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "password",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -147,7 +148,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Editable: true,
 			FormType: "select",
 			Options:  roles,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				roleModel, _ := connections.GetConnection().Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
@@ -163,7 +164,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Editable: true,
 			FormType: "select",
 			Options:  permissions,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				permissionModel, _ := connections.GetConnection().Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
 				var permissions []string
 				for _, v := range permissionModel {
@@ -178,7 +179,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -188,7 +189,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -203,13 +204,13 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 
 func GetPermissionTable() (PermissionTable GlobalTable) {
 
-	PermissionTable.Info.FieldList = []components.FieldStruct{
+	PermissionTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -218,7 +219,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -227,7 +228,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "slug",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -236,7 +237,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "http_method",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -245,7 +246,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "http_path",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -254,7 +255,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -263,7 +264,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -273,7 +274,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	PermissionTable.Info.Title = "权限管理"
 	PermissionTable.Info.Description = "权限管理"
 
-	PermissionTable.Form.FormList = []components.FormStruct{
+	PermissionTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -281,7 +282,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -291,7 +292,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -301,7 +302,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -320,7 +321,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				{"value": "OPTIONS", "field": "OPTIONS"},
 				{"value": "HEAD", "field": "HEAD"},
 			},
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return strings.Split(model.Value, ",")
 			},
 		}, {
@@ -330,7 +331,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "textarea",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -340,7 +341,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -350,7 +351,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -374,13 +375,13 @@ func GetRolesTable() (RolesTable GlobalTable) {
 		})
 	}
 
-	RolesTable.Info.FieldList = []components.FieldStruct{
+	RolesTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -389,7 +390,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -398,7 +399,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Field:    "slug",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -407,7 +408,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -416,7 +417,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -426,7 +427,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 	RolesTable.Info.Title = "角色管理"
 	RolesTable.Info.Description = "角色管理"
 
-	RolesTable.Form.FormList = []components.FormStruct{
+	RolesTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -434,7 +435,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -444,7 +445,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -454,7 +455,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -465,7 +466,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Editable: true,
 			FormType: "selectbox",
 			Options:  permissions,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				perModel, _ := connections.GetConnection().Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
 				var permissions []string
 				for _, v := range perModel {
@@ -480,7 +481,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -490,7 +491,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -505,13 +506,13 @@ func GetRolesTable() (RolesTable GlobalTable) {
 
 func GetOpTable() (OpTable GlobalTable) {
 
-	OpTable.Info.FieldList = []components.FieldStruct{
+	OpTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -520,7 +521,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "user_id",
 			TypeName: "int",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -529,7 +530,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "path",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -538,7 +539,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "method",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -547,7 +548,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "ip",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -556,7 +557,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "input",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -565,7 +566,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -574,7 +575,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -584,7 +585,7 @@ func GetOpTable() (OpTable GlobalTable) {
 	OpTable.Info.Title = "操作日志"
 	OpTable.Info.Description = "操作日志"
 
-	OpTable.Form.FormList = []components.FormStruct{
+	OpTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -592,7 +593,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -602,7 +603,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -612,7 +613,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -622,7 +623,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -632,7 +633,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -642,7 +643,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -652,7 +653,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -662,7 +663,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -677,13 +678,13 @@ func GetOpTable() (OpTable GlobalTable) {
 
 func GetMenuTable() (MenuTable GlobalTable) {
 
-	MenuTable.Info.FieldList = []components.FieldStruct{
+	MenuTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -692,7 +693,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "parent_id",
 			TypeName: "int",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -701,7 +702,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "title",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -710,7 +711,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "icon",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -719,7 +720,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "uri",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -728,7 +729,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "roles",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -737,7 +738,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -746,7 +747,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -772,7 +773,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 		})
 	}
 
-	MenuTable.Form.FormList = []components.FormStruct{
+	MenuTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -780,7 +781,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: false,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -791,7 +792,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Editable: true,
 			FormType: "select",
 			Options:  parents,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				menuModel, _ := connections.GetConnection().Query("select parent_id from goadmin_menu where id = ?", model.ID)
 				var menuItem []string
 				menuItem = append(menuItem, strconv.FormatInt(menuModel[0]["parent_id"].(int64), 10))
@@ -804,7 +805,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -814,7 +815,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "iconpicker",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -824,7 +825,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "text",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -835,7 +836,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Editable: true,
 			FormType: "select",
 			Options:  roles,
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				roleModel, _ := connections.GetConnection().Query("select role_id from goadmin_role_menu where menu_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
@@ -850,7 +851,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -860,7 +861,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			Default:  "",
 			Editable: true,
 			FormType: "default",
-			ExcuFun: func(model components.RowModel) interface{} {
+			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
