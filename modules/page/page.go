@@ -15,12 +15,12 @@ func SetPageContent(AssertRootUrl string, ctx *context.Context, c func() compone
 
 	panel := c()
 
-	tmpl := components.GetTemplate(string(ctx.Request.Header.Get("X-PJAX")) == "true")
+	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{

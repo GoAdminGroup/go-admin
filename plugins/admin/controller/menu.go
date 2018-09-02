@@ -31,7 +31,7 @@ func ShowMenu(ctx *context.Context) {
 	col2 := components.Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
 	row := components.Row().SetContent(col1 + col2).GetContent()
 
-	tmpl := components.GetTemplate(string(ctx.Request.Header.Get("X-PJAX")) == "true")
+	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(path)
 
@@ -39,7 +39,7 @@ func ShowMenu(ctx *context.Context) {
 
 	buf := new(bytes.Buffer)
 
-	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{

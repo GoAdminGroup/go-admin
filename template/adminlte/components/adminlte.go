@@ -44,20 +44,19 @@ func ComposeHtml(compo interface{}, templateName... string) template.HTML {
 	return template.HTML(buffer.String())
 }
 
-func GetTemplate(isPjax bool) *template.Template {
+func GetTemplate(isPjax bool) (tmpl *template.Template, name string) {
 	var (
-		tmpl *template.Template
 		err error
 	)
 
 	if !isPjax {
-
+		name = "layout"
 		tmpl, err = template.New("layout").Parse(adminlte.Adminlte["layout"] +
 			adminlte.Adminlte["head"] + adminlte.Adminlte["header"] + adminlte.Adminlte["sidebar"] +
 			adminlte.Adminlte["footer"] + adminlte.Adminlte["js"] + adminlte.Adminlte["menu"] +
 			adminlte.Adminlte["admin_panel"] + adminlte.Adminlte["content"])
-
 	} else {
+		name = "content"
 		tmpl, err = template.New("content").Parse(adminlte.Adminlte["admin_panel"] + adminlte.Adminlte["content"])
 	}
 
@@ -65,5 +64,5 @@ func GetTemplate(isPjax bool) *template.Template {
 		fmt.Println(err)
 	}
 
-	return tmpl
+	return
 }

@@ -59,7 +59,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			//token := auth.TokenHelper.AddToken()
 
-			tmpl := components.GetTemplate(true)
+			tmpl, tmplName := components.GetTemplate(true)
 
 			if err != nil {
 				fmt.Println(err)
@@ -68,7 +68,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			user := ctx.UserValue["user"].(auth.User)
 
 			buf := new(bytes.Buffer)
-			tmpl.ExecuteTemplate(buf, "layout", components.Page{
+			tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 				User: user,
 				Menu: *menu.GlobalMenu,
 				System: components.SystemInfo{

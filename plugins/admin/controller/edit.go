@@ -26,7 +26,7 @@ func ShowForm(ctx *context.Context) {
 
 	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-	tmpl := components.GetTemplate(string(ctx.Request.Header.Get("X-PJAX")) == "true")
+	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	path := string(ctx.Path())
 	menu.GlobalMenu.SetActiveClass(path)
@@ -52,7 +52,7 @@ func ShowForm(ctx *context.Context) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{
@@ -145,10 +145,10 @@ func EditForm(ctx *context.Context) {
 
 	editUrl := AssertRootUrl + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize)
 
-	tmpl := components.GetTemplate(true)
+	tmpl, tmplName := components.GetTemplate(true)
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+	tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{

@@ -10,6 +10,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"strings"
 	"path"
+	"fmt"
 )
 
 // 显示列表
@@ -55,7 +56,9 @@ func ShowInfo(ctx *context.Context) {
 	editUrl = AssertRootUrl + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
 	newUrl := AssertRootUrl + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
 
-	tmpl := components.GetTemplate(string(ctx.Request.Header.Get("X-PJAX")) == "true")
+	fmt.Println("X-Pjax", ctx.Request.Header.Get("X-PJAX"))
+
+	tmpl, tmplName := components.GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
@@ -72,7 +75,7 @@ func ShowInfo(ctx *context.Context) {
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "layout", components.Page{
+	err := tmpl.ExecuteTemplate(buf, tmplName, components.Page{
 		User: user,
 		Menu: *menu.GlobalMenu,
 		System: components.SystemInfo{
@@ -85,6 +88,9 @@ func ShowInfo(ctx *context.Context) {
 		},
 		AssertRootUrl: AssertRootUrl,
 	})
+	if ctx.Request.Header.Get("X-PJAX") == "true" {
+		fmt.Println("content", buf.String(), "err", err)
+	}
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
 }
 
