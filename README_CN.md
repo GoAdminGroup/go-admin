@@ -54,7 +54,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	ginFw "github.com/chenhg5/go-admin/adapter/gin"
+	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -86,7 +86,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(ginFw.Gin), r)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Gin), r)
 
 	r.Run(":9033")
 }
