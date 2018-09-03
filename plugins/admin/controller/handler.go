@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/mgutz/ansi"
-	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"log"
@@ -16,6 +15,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
+	"net/http"
 )
 
 // 全局错误处理
@@ -114,7 +114,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
+		ctx.SetStatusCode(http.StatusInternalServerError)
 		ctx.SetContentType("application/json")
 		ctx.WriteString(`{"code":500, "msg":"` + errMsg + `"}`)
 		return

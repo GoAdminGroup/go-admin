@@ -36,4 +36,5 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 
 func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada
+	return eng
 }

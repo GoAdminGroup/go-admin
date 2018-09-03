@@ -2,7 +2,6 @@ package controller
 
 import (
 	"bytes"
-	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
@@ -78,7 +77,7 @@ func NewForm(ctx *context.Context) {
 	token := string(ctx.Request.FormValue("_t"))
 
 	if !auth.TokenHelper.CheckToken(token) {
-		ctx.SetStatusCode(fasthttp.StatusBadRequest)
+		ctx.SetStatusCode(http.StatusBadRequest)
 		ctx.WriteString(`{"code":400, "msg":"新增失败"}`)
 		return
 	}

@@ -3,15 +3,14 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/modules/connections"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/context"
-	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"net/http"
 )
 
 // 显示菜单
@@ -164,7 +163,7 @@ func MenuOrder(ctx *context.Context) {
 	}
 	menu.SetGlobalMenu()
 
-	ctx.SetStatusCode(fasthttp.StatusOK)
+	ctx.SetStatusCode(http.StatusOK)
 	ctx.SetContentType("application/json")
 	ctx.WriteString(`{"code":200, "msg":"ok"}`)
 	return
