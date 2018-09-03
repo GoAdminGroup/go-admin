@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"html/template"
+	"goAdmin/template/login"
 )
 
 type Template interface {
@@ -29,6 +30,21 @@ func Get(theme string) Template {
 	case "adminlte":
 		return adminlte.GetAdminlte()
 	default:
-		panic("wrong theme name!")
+		panic("wrong theme name")
+	}
+}
+
+type Component interface {
+	GetTemplate() (*template.Template, string)
+	GetAssetList() []string
+	GetAsset(string) ([]byte, error)
+}
+
+func GetComp(name string) Component {
+	switch name {
+	case "login":
+		return login.GetLoginComponent()
+	default:
+		panic("wrong component name")
 	}
 }
