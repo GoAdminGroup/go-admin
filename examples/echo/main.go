@@ -32,7 +32,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Echo), e); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Echo)).Use(e); err != nil {
 		panic(err)
 	}
 

@@ -30,7 +30,7 @@ func main() {
 		ADMIN_PREFIX: "admin",
 	}
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Http), mux); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).AddAdapter(new(adapter.Http)).Use(mux); err != nil {
 		panic(err)
 	}
 

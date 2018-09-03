@@ -30,7 +30,9 @@ func main() {
 		ADMIN_PREFIX: "admin",
 	}
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).Use(new(adapter.Beego), app); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).
+		AddAdapter(new(adapter.Beego)).
+		Use(app); err != nil {
 		panic(err)
 	}
 

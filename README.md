@@ -94,7 +94,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Gin), r)
+	eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Gin)).Use(r)
 
 	r.Run(":9033")
 }

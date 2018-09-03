@@ -34,7 +34,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
-	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(new(adapter.Fasthttp), router))
+	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Fasthttp)).Use(router))
 
 	var waitChan chan int
 	go func() {
