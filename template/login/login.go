@@ -13,7 +13,7 @@ func GetLoginComponent() *Login {
 }
 
 func (*Login) GetTemplate() (*template.Template, string) {
-	tmpler, err := template.New("content").Parse(List["login_theme1"])
+	tmpler, err := template.New("content").Parse(List["login/theme1"])
 
 	if err != nil {
 		fmt.Println(err)
