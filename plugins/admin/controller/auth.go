@@ -2,7 +2,6 @@ package controller
 
 import (
 	"github.com/chenhg5/go-admin/modules/auth"
-	tmp "html/template"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"bytes"
@@ -40,12 +39,9 @@ func ShowLogin(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	tmpl, err := tmp.New("login").Parse(template.Get("adminlte").GetTmplList()["login/theme1"])
-	if err != nil {
-		fmt.Println(err)
-	}
+	tmpl, name := template.GetComp("login").GetTemplate()
 	buf := new(bytes.Buffer)
-	fmt.Println(tmpl.ExecuteTemplate(buf, "login_theme1", struct {
+	fmt.Println(tmpl.ExecuteTemplate(buf, name, struct {
 		AssertRootUrl string
 	}{Config.ADMIN_PREFIX}))
 	ctx.Write(http.StatusOK, map[string]string{}, buf.String())

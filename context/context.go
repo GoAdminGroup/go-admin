@@ -5,6 +5,8 @@ import (
 	"strings"
 	"io/ioutil"
 	"regexp"
+	"encoding/json"
+	"bytes"
 )
 
 type Path struct {
@@ -132,6 +134,13 @@ func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 		ctx.Response.Header.Add(key, head)
 	}
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
+}
+
+func (ctx *Context) Json(code int, Body map[string]interface{})  {
+	ctx.Response.StatusCode = code
+	ctx.Response.Header.Add("Content-Type", "application/json")
+	BodyStr, _ := json.Marshal(Body)
+	ctx.Response.Body = ioutil.NopCloser(bytes.NewReader(BodyStr))
 }
 
 func (ctx *Context) WriteString(Body string) {
