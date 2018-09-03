@@ -23,7 +23,7 @@ type Permission struct {
 	Path   []string
 }
 
-func AuthMiddleware(h context.Handler) context.Handler {
+func AuthMiddleware(h context.Handler, prefix string) context.Handler {
 	return func(ctx *context.Context) {
 		var (
 			authOk   bool
@@ -38,7 +38,7 @@ func AuthMiddleware(h context.Handler) context.Handler {
 
 		if !authOk {
 			ctx.Write(302, map[string]string{
-				"Location": "/login",
+				"Location": prefix + "/login",
 			}, ``)
 		}
 
@@ -46,7 +46,7 @@ func AuthMiddleware(h context.Handler) context.Handler {
 			fmt.Println("filterOk Path: ", ctx.Path(), "method:", ctx.Method())
 			//ctx.Write(403, map[string]string{}, `{"code":403, "msg":"权限不够"}`)
 			ctx.Write(302, map[string]string{
-				"Location": "/login",
+				"Location": prefix + "/login",
 			}, ``)
 		}
 	}
