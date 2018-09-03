@@ -22,7 +22,7 @@ func (eng *Engine) Use(router interface{}) error {
 func (eng *Engine) AddPlugins(plugs ... plugins.Plugin) *Engine {
 
 	for _, plug := range plugs {
-		plug.InitPlugin(config.Get())
+		plug.InitPlugin()
 	}
 
 	eng.PluginsList = append(eng.PluginsList, plugs...)
@@ -34,6 +34,6 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 	return eng
 }
 
-func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) {
+func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada
 }
