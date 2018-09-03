@@ -4,7 +4,6 @@ import (
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/context"
 	"bytes"
-	"net/http"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
@@ -30,6 +29,6 @@ func SetPageContent(theme string, AssertRootUrl string, ctx *context.Context, c 
 		Panel:         panel,
 		AssertRootUrl: AssertRootUrl,
 	})
-	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
+	ctx.WriteString(buf.String())
 
 }

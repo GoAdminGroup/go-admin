@@ -67,7 +67,7 @@ func ShowNewForm(ctx *context.Context) {
 		},
 		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
-	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
+	ctx.WriteString(buf.String())
 }
 
 // 新建数据

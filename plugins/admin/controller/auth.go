@@ -18,14 +18,17 @@ func Auth(ctx *context.Context) {
 
 		auth.SetCookie(ctx, user)
 
-		ctx.Write(http.StatusOK, map[string]string{
-			"Content-Type": "application/json",
-		}, `{"code":200, "msg":"登录成功", "url":"` + Config.ADMIN_PREFIX + `"}`)
+		ctx.Json(http.StatusOK, map[string]interface{}{
+			"code": 200,
+			"msg": "登录成功",
+			"url": Config.ADMIN_PREFIX,
+		})
 		return
 	}
-	ctx.Write(http.StatusBadRequest, map[string]string{
-		"Content-Type": "application/json",
-	}, `{"code":400, "msg":"登录失败"}`)
+	ctx.Json(http.StatusBadRequest, map[string]interface{}{
+		"code": 400,
+		"msg": "登录失败",
+	})
 	return
 }
 
@@ -44,7 +47,7 @@ func ShowLogin(ctx *context.Context) {
 	fmt.Println(tmpl.ExecuteTemplate(buf, name, struct {
 		AssertRootUrl string
 	}{Config.ADMIN_PREFIX}))
-	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
+	ctx.WriteString(buf.String())
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 }

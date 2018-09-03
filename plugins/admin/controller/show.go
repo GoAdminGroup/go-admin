@@ -87,9 +87,8 @@ func ShowInfo(ctx *context.Context) {
 		},
 		AssertRootUrl: Config.ADMIN_PREFIX,
 	})
-	ctx.Write(http.StatusOK, map[string]string{}, buf.String())
+	ctx.WriteString(buf.String())
 }
-
 
 func Assert(ctx *context.Context) {
 	filepath := "../../../template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, Config.ADMIN_PREFIX, "", 1)
