@@ -44,7 +44,10 @@ func AuthMiddleware(h context.Handler) context.Handler {
 
 		if !filterOk {
 			fmt.Println("filterOk Path: ", ctx.Path(), "method:", ctx.Method())
-			ctx.Write(403, map[string]string{}, `{"code":403, "msg":"权限不够"}`)
+			//ctx.Write(403, map[string]string{}, `{"code":403, "msg":"权限不够"}`)
+			ctx.Write(302, map[string]string{
+				"Location": "/login",
+			}, ``)
 		}
 	}
 }
