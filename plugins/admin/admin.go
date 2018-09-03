@@ -13,17 +13,16 @@ import (
 
 type Admin struct {
 	app      *context.App
-	config   config.Config
 	tableCfg map[string]models.GetTableDataFunc
 }
 
-func (admin *Admin) InitPlugin(cfg config.Config) {
+func (admin *Admin) InitPlugin() {
 
+	cfg := config.Get()
 	connections.GetConnection().InitDB(map[string]config.Database{
 		"default": cfg.DATABASE,
 	})
 
-	App.config = cfg
 	App.app = InitRouter("/" + cfg.ADMIN_PREFIX)
 
 	models.SetTableFuncConfig(map[string]models.GetTableDataFunc{
@@ -62,5 +61,5 @@ func (admin *Admin) GetHandler(url, method string) context.Handler {
 }
 
 func (admin *Admin) GetLocales() map[string]string {
-	return language.Locales[admin.config.LANGUAGE]
+	return language.Locales[config.Get().LANGUAGE]
 }

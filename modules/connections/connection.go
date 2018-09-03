@@ -22,5 +22,5 @@ func GetConnectionByDriver(driver string) Connection {
 }
 
 func GetConnection() Connection {
-	return GetConnectionByDriver(config.GlobalCfg.DATABASE.DRIVER)
+	return GetConnectionByDriver(config.Get().DATABASE.DRIVER)
 }

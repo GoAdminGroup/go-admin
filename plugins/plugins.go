@@ -2,7 +2,6 @@ package plugins
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/config"
 	"strings"
 	"regexp"
 )
@@ -10,7 +9,7 @@ import (
 type Plugin interface {
 	GetRequest() []context.Path
 	GetHandler(url, method string) context.Handler
-	InitPlugin(config config.Config)
+	InitPlugin()
 }
 
 func GetHandler(url, method string, handleList *map[context.Path]context.Handler) context.Handler {
