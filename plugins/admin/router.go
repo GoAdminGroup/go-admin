@@ -20,7 +20,7 @@ func InitRouter(prefix string) *context.App {
 	// 授权认证
 	app.GET(prefix + "/login", controller.ShowLogin)
 	app.POST(prefix + "/signin", controller.Auth)
-	app.GET(prefix + "/logout",  auth.AuthMiddleware(controller.Logout))
+	app.GET(prefix + "/logout",  auth.AuthMiddleware(controller.Logout, prefix))
 
 	// 菜单管理
 	app.GET(prefix + "/menu",  auth.AuthMiddleware(controller.ShowMenu, prefix))
