@@ -1,5 +1,7 @@
 package config
 
+import "sync"
+
 type Database struct {
 	IP           string
 	PORT         string
@@ -22,8 +24,17 @@ type Config struct {
 	THEME        string
 }
 
-var GlobalCfg Config
+var (
+	globalCfg Config
+	mutex     sync.Mutex
+)
 
-func SetGlobalCfg(cfg Config) {
-	GlobalCfg = cfg
+func Set(cfg Config) {
+	mutex.Lock()
+	globalCfg = cfg
+	mutex.Unlock()
+}
+
+func Get() Config {
+	return globalCfg
 }

@@ -8,21 +8,20 @@ import (
 
 type Engine struct {
 	PluginsList []plugins.Plugin
-	Config      config.Config
 }
 
 func Default() *Engine {
 	return new(Engine)
 }
 
-func (eng *Engine) Use(fw adapter.WebFrameWork, router interface{}) error {
-	return fw.Use(router, eng.PluginsList)
+func (eng *Engine) Use(ada adapter.WebFrameWork, router interface{}) error {
+	return ada.Use(router, eng.PluginsList)
 }
 
 func (eng *Engine) AddPlugins(plugs ... plugins.Plugin) *Engine {
 
 	for _, plug := range plugs {
-		plug.InitPlugin(eng.Config)
+		plug.InitPlugin(config.Get())
 	}
 
 	eng.PluginsList = append(eng.PluginsList, plugs...)
@@ -30,7 +29,6 @@ func (eng *Engine) AddPlugins(plugs ... plugins.Plugin) *Engine {
 }
 
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	eng.Config = cfg
-	config.SetGlobalCfg(cfg)
+	config.Set(cfg)
 	return eng
 }
