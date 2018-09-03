@@ -47,5 +47,9 @@ func InitRouter(prefix string) *context.App {
 		app.GET(prefix + "/assets" + path, controller.Assert)
 	}
 
+	for _, path := range template.GetComp("login").GetAssetList() {
+		app.GET(prefix + "/assets" + path, controller.Assert)
+	}
+
 	return app
 }
