@@ -4,7 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"html/template"
-	"goAdmin/template/login"
+	"github.com/chenhg5/go-admin/template/login"
 )
 
 type Template interface {
