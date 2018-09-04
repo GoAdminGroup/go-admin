@@ -16,8 +16,9 @@ type ErrStruct struct {
 
 // 一个管理数据模块的抽象表示
 type GlobalTable struct {
-	Info types.InfoPanel
-	Form types.FormPanel
+	Info             types.InfoPanel
+	Form             types.FormPanel
+	ConnectionDriver string
 }
 
 // 查数据

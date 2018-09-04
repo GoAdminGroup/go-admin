@@ -199,6 +199,8 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	ManagerTable.Form.Title = "管理员管理"
 	ManagerTable.Form.Description = "管理员管理"
 
+	ManagerTable.ConnectionDriver = "mysql"
+
 	return
 }
 
@@ -361,6 +363,8 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	PermissionTable.Form.Title = "权限管理"
 	PermissionTable.Form.Description = "权限管理"
 
+	PermissionTable.ConnectionDriver = "mysql"
+
 	return
 }
 
@@ -500,6 +504,8 @@ func GetRolesTable() (RolesTable GlobalTable) {
 	RolesTable.Form.Table = "goadmin_roles"
 	RolesTable.Form.Title = "角色管理"
 	RolesTable.Form.Description = "角色管理"
+
+	RolesTable.ConnectionDriver = "mysql"
 
 	return
 }
@@ -672,6 +678,8 @@ func GetOpTable() (OpTable GlobalTable) {
 	OpTable.Form.Table = "goadmin_operation_log"
 	OpTable.Form.Title = "操作日志"
 	OpTable.Form.Description = "操作日志"
+
+	OpTable.ConnectionDriver = "mysql"
 
 	return
 }
@@ -870,6 +878,8 @@ func GetMenuTable() (MenuTable GlobalTable) {
 	MenuTable.Form.Table = "goadmin_menu"
 	MenuTable.Form.Title = "菜单"
 	MenuTable.Form.Description = "菜单"
+
+	MenuTable.ConnectionDriver = "mysql"
 
 	return
 }

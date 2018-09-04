@@ -133,5 +133,7 @@ func GetUserTable() (userTable models.GlobalTable) {
 	userTable.Form.Title = "用户表"
 	userTable.Form.Description = "用户表"
 
+	userTable.ConnectionDriver = "mysql"
+
 	return
 }
