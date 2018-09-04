@@ -13,6 +13,10 @@ type Sqlite struct {
 	Once     sync.Once
 }
 
+func GetSqliteDB() *Sqlite {
+	return &DB
+}
+
 func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	return performer.Query(db.SqlDBmap["default"], query, args...)
 }
@@ -42,6 +46,6 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 	})
 }
 
-var DB = &Sqlite{
+var DB = Sqlite{
 	SqlDBmap: map[string]*sql.DB{},
 }

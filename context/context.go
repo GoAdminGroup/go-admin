@@ -59,7 +59,9 @@ func NewContext(req *http.Request) *Context {
 	}
 }
 
-// App is the key struct of the package.
+// App is the key struct of the package. App as a member of plugin
+// entity contains the request and the corresponding handler. Prefix
+// is the url prefix and MiddlewareList is for control flow.
 type App struct {
 	Requests       []Path
 	HandlerList    map[Path]Handler
@@ -67,6 +69,7 @@ type App struct {
 	Prefix         string
 }
 
+// NewApp return an empty app.
 func NewApp() *App {
 	return &App{
 		Requests:       make([]Path, 0),
@@ -80,15 +83,7 @@ type Handler func(ctx *Context)
 
 type Middleware func(handler Handler) Handler
 
-func (app *App) FindRequestByUrl(url string) Path {
-	for _, req := range app.Requests {
-		if req.URL == url {
-			return req
-		}
-	}
-	return Path{}
-}
-
+// AppendReqAndResp stores the request info and handle into app.
 func (app *App) AppendReqAndResp(url, method string, handler Handler) {
 
 	if url == "/" {
@@ -185,6 +180,7 @@ func (ctx *Context) SetContentType(contentType string) {
 	ctx.Response.Header.Add("Content-Type", contentType)
 }
 
+// LocalIP return the request client ip.
 func (ctx *Context) LocalIP() string {
 	return "127.0.0.1"
 }
