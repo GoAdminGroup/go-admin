@@ -73,7 +73,10 @@ func (ses *Session) UseDatabase(driver PersistenceDriver) {
 func (ses *Session) StartCtx(ctx *context.Context) *Session {
 	if cookie, err := ctx.Request.Cookie(ses.Cookie); err == nil && cookie.Value != "" {
 		ses.Sid = cookie.Value
-		ses.Values = ses.Driver.Load(cookie.Value)
+		valueFromDriver := ses.Driver.Load(cookie.Value)
+		if len(valueFromDriver) > 0 {
+			ses.Values = valueFromDriver
+		}
 	} else {
 		ses.Sid = modules.Uuid(15)
 	}
@@ -90,7 +93,7 @@ func InitSession(ctx *context.Context) *Session {
 	})
 
 	sessions.UseDatabase(&driver)
-	sessions.Values = map[string]interface{}{}
+	sessions.Values = make(map[string]interface{}, 0)
 
 	return sessions.StartCtx(ctx)
 }

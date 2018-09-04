@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/connections/mysql"
 	"github.com/chenhg5/go-admin/modules/config"
-	"goAdmin/modules/connections/mssql"
-	"goAdmin/modules/connections/sqlite"
+	"github.com/chenhg5/go-admin/modules/connections/mssql"
+	"github.com/chenhg5/go-admin/modules/connections/sqlite"
 )
 
 type Connection interface {

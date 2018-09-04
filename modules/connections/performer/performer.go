@@ -3,6 +3,8 @@ package performer
 import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/connections/converter"
+	"regexp"
+	"strings"
 )
 
 func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
@@ -33,12 +35,18 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 		panic(err)
 	}
 
+	// TODO: 正则表达式为了适配 sqlite
+	// sqlite 返回的是 int(10) 这样的字符串，需要过滤
+	// 这里判断 driver 减少正则的性能损耗
 	results := make([]map[string]interface{}, 0)
 
+	r, _ := regexp.Compile("\\((.*)\\)")
 	for rs.Next() {
 		var colVar = make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {
-			converter.SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
+			//fmt.Println("typeVal[i].DatabaseTypeName()", typeVal[i].DatabaseTypeName())
+			typeName := strings.ToUpper(r.ReplaceAllString(typeVal[i].DatabaseTypeName(), ""))
+			converter.SetColVarType(&colVar, i, typeName)
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
@@ -46,7 +54,8 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 			panic(scanErr)
 		}
 		for j := 0; j < len(col); j++ {
-			converter.SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
+			typeName := strings.ToUpper(r.ReplaceAllString(typeVal[j].DatabaseTypeName(), ""))
+			converter.SetResultValue(&result, col[j], colVar[j], typeName)
 		}
 		results = append(results, result)
 	}

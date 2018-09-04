@@ -21,6 +21,26 @@ type GlobalTable struct {
 	ConnectionDriver string
 }
 
+type Columns []string
+
+func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
+	columns := make(Columns, len(columnsModel))
+	switch driver {
+	case "mysql":
+		for key, model := range columnsModel {
+			columns[key] = model["Field"].(string)
+		}
+		return columns
+	case "sqlite":
+		for key, model := range columnsModel {
+			columns[key] = string((*(model["name"].(*interface{}))).([]uint8))
+		}
+		return columns
+	default:
+		panic("wrong driver")
+	}
+}
+
 // 查数据
 func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaninatorAttribute, string, string) {
 
@@ -32,11 +52,17 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Info.Table)
+	showColumns := "show columns in " + tableModel.Info.Table
+	if tableModel.ConnectionDriver == "sqlite" {
+		showColumns = "PRAGMA table_info(" + tableModel.Info.Table + ");"
+	}
+
+	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query(showColumns)
+	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 
 	var sortable string
 	for i := 0; i < len(tableModel.Info.FieldList); i++ {
-		if tableModel.Info.FieldList[i].Field != "id" && CheckInTable(columnsModel, tableModel.Info.FieldList[i].Field) {
+		if tableModel.Info.FieldList[i].Field != "id" && CheckInTable(columns, tableModel.Info.FieldList[i].Field) {
 			fields += tableModel.Info.FieldList[i].Field + ","
 		}
 		sortable = "0"
@@ -55,7 +81,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	if queryParam["sortType"] != "desc" && queryParam["sortType"] != "asc" {
 		queryParam["sortType"] = "desc"
 	}
-	if !CheckInTable(columnsModel, queryParam["sortField"]) {
+	if !CheckInTable(columns, queryParam["sortField"]) {
 		queryParam["sortField"] = "id"
 	}
 
@@ -70,7 +96,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		tempModelData := make(map[string]template.HTML, 0)
 
 		for j := 0; j < len(tableModel.Info.FieldList); j++ {
-			if CheckInTable(columnsModel, tableModel.Info.FieldList[j].Field) {
+			if CheckInTable(columns, tableModel.Info.FieldList[j].Field) {
 				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    res[i]["id"].(int64),
 					Value: GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
@@ -89,7 +115,12 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	}
 
 	total, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
-	size := int(total[0]["count(*)"].(int64))
+	var size int
+	if tableModel.ConnectionDriver == "sqlite" {
+		size = int((*(total[0]["count(*)"].(*interface{}))).(int64))
+	} else {
+		size = int(total[0]["count(*)"].(int64))
+	}
 
 	paginator := GetPaginator(queryParam["path"], pageInt, queryParam["page"], queryParam["pageSize"], queryParam["sortField"], queryParam["sortType"], size)
 
@@ -103,9 +134,10 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 	fields := ""
 
 	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
+		if CheckInTable(columns, tableModel.Form.FormList[i].Field) {
 			fields += tableModel.Form.FormList[i].Field + ","
 		}
 	}
@@ -116,7 +148,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
+		if CheckInTable(columns, tableModel.Form.FormList[i].Field) {
 			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
@@ -162,8 +194,9 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 	fields := ""
 	valueList := make([]interface{}, 0)
 	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
 				valueList = append(valueList, strings.Join(modules.RemoveBlackFromArray(v), ","))
@@ -186,8 +219,9 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 	queStr := ""
 	var valueList []interface{}
 	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			fields += k + ","
 			queStr += "?,"
 			valueList = append(valueList, v[0])
@@ -220,9 +254,9 @@ func GetNewFormList(old []types.FormStruct) []types.FormStruct {
 }
 
 // 检查字段是否在数据表中
-func CheckInTable(colums []map[string]interface{}, find string) bool {
+func CheckInTable(colums []string, find string) bool {
 	for i := 0; i < len(colums); i++ {
-		if colums[i]["Field"].(string) == find {
+		if colums[i] == find {
 			return true
 		}
 	}

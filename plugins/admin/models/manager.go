@@ -6,6 +6,7 @@ import (
 	"strings"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 func GetManagerTable() (ManagerTable GlobalTable) {
@@ -44,7 +45,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
-				labelModel, _ := connections.GetConnection().Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
+				labelModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
 				return string(template.Get("adminlte").Label().SetContent(labelModel[0]["name"].(string)).GetContent())
 			},
@@ -74,14 +75,14 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	ManagerTable.Info.Description = "管理员管理"
 
 	var roles, permissions []map[string]string
-	rolesModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
+	rolesModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
+	permissionsModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -149,7 +150,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			FormType: "select",
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
-				roleModel, _ := connections.GetConnection().Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
+				roleModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
 					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
@@ -165,7 +166,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			FormType: "select",
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
-				permissionModel, _ := connections.GetConnection().Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
+				permissionModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
 				var permissions []string
 				for _, v := range permissionModel {
 					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
@@ -199,7 +200,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	ManagerTable.Form.Title = "管理员管理"
 	ManagerTable.Form.Description = "管理员管理"
 
-	ManagerTable.ConnectionDriver = "mysql"
+	ManagerTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
@@ -363,7 +364,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	PermissionTable.Form.Title = "权限管理"
 	PermissionTable.Form.Description = "权限管理"
 
-	PermissionTable.ConnectionDriver = "mysql"
+	PermissionTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
@@ -371,7 +372,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 func GetRolesTable() (RolesTable GlobalTable) {
 
 	var permissions []map[string]string
-	permissionsModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
+	permissionsModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -471,7 +472,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			FormType: "selectbox",
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
-				perModel, _ := connections.GetConnection().Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
+				perModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
 				var permissions []string
 				for _, v := range perModel {
 					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
@@ -505,7 +506,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 	RolesTable.Form.Title = "角色管理"
 	RolesTable.Form.Description = "角色管理"
 
-	RolesTable.ConnectionDriver = "mysql"
+	RolesTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
@@ -679,7 +680,7 @@ func GetOpTable() (OpTable GlobalTable) {
 	OpTable.Form.Title = "操作日志"
 	OpTable.Form.Description = "操作日志"
 
-	OpTable.ConnectionDriver = "mysql"
+	OpTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
@@ -766,14 +767,14 @@ func GetMenuTable() (MenuTable GlobalTable) {
 	MenuTable.Info.Description = "菜单"
 
 	var roles, parents []map[string]string
-	rolesModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
+	rolesModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	parentsModel, _ := connections.GetConnection().Query("select `id`, `title` from goadmin_menu where id > ?", 0)
+	parentsModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select `id`, `title` from goadmin_menu where id > ?", 0)
 	for _, v := range parentsModel {
 		parents = append(parents, map[string]string{
 			"field": v["title"].(string),
@@ -801,7 +802,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			FormType: "select",
 			Options:  parents,
 			ExcuFun: func(model types.RowModel) interface{} {
-				menuModel, _ := connections.GetConnection().Query("select parent_id from goadmin_menu where id = ?", model.ID)
+				menuModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select parent_id from goadmin_menu where id = ?", model.ID)
 				var menuItem []string
 				menuItem = append(menuItem, strconv.FormatInt(menuModel[0]["parent_id"].(int64), 10))
 				return menuItem
@@ -845,7 +846,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			FormType: "select",
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
-				roleModel, _ := connections.GetConnection().Query("select role_id from goadmin_role_menu where menu_id = ?", model.ID)
+				roleModel, _ := connections.GetConnectionByDriver(config.Get().DATABASE[0].DRIVER).Query("select role_id from goadmin_role_menu where menu_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
 					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
@@ -879,7 +880,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 	MenuTable.Form.Title = "菜单"
 	MenuTable.Form.Description = "菜单"
 
-	MenuTable.ConnectionDriver = "mysql"
+	MenuTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
