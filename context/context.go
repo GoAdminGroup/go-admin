@@ -1,3 +1,7 @@
+// Copyright 2018 ChenHonggui.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package context
 
 import (
@@ -9,22 +13,25 @@ import (
 	"bytes"
 )
 
-type Path struct {
-	URL    string
-	Method string
-	RegUrl string
-}
-
-type Response struct {
-	StatusCode int
-	Body       string
-	Header     map[string]string
-}
-
+// Context is the simplify version of web framework context.
+// But it is important which will be used in plugins to custom
+// the request and response. And adapter will help to transform
+// the Context to the web framework`s context. It has three attributes.
+// Request and response are belongs to net/http package. UserValue
+// is the custom key-value store of context.
 type Context struct {
 	Request   *http.Request
 	Response  *http.Response
 	UserValue map[string]interface{}
+}
+
+// Path is used in the matching of request and response. URL stores the
+// raw register url. RegUrl contains the wildcard which on behalf of
+// the route params.
+type Path struct {
+	URL    string
+	Method string
+	RegUrl string
 }
 
 func (ctx *Context) SetUserValue(key string, value interface{}) {

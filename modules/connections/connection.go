@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/connections/mysql"
 	"github.com/chenhg5/go-admin/modules/config"
+	"goAdmin/modules/connections/mssql"
 )
 
 type Connection interface {
@@ -16,6 +17,8 @@ func GetConnectionByDriver(driver string) Connection {
 	switch driver {
 	case "mysql":
 		return mysql.GetMysqlDB()
+	case "mssql":
+		return mssql.GetMssqlDB()
 	default:
 		panic("driver not found!")
 	}
