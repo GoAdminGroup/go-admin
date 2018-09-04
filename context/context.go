@@ -46,6 +46,8 @@ func (ctx *Context) Method() string {
 	return ctx.Request.Method
 }
 
+// NewContext used in adapter which return a Context with request
+// and slice of UserValue and a default Response
 func NewContext(req *http.Request) *Context {
 
 	return &Context{
@@ -57,6 +59,7 @@ func NewContext(req *http.Request) *Context {
 	}
 }
 
+// App is the key struct of the package.
 type App struct {
 	Requests       []Path
 	HandlerList    map[Path]Handler
@@ -66,9 +69,9 @@ type App struct {
 
 func NewApp() *App {
 	return &App{
-		Requests:    make([]Path, 0),
-		HandlerList: make(map[Path]Handler, 0),
-		Prefix: "",
+		Requests:       make([]Path, 0),
+		HandlerList:    make(map[Path]Handler, 0),
+		Prefix:         "",
 		MiddlewareList: make([]Middleware, 0),
 	}
 }

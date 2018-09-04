@@ -16,7 +16,7 @@ type Database struct {
 }
 
 type Config struct {
-	DATABASE Database
+	DATABASE []Database
 
 	AUTH_DOMAIN  string
 	LANGUAGE     string

@@ -19,9 +19,12 @@ type Admin struct {
 func (admin *Admin) InitPlugin() {
 
 	cfg := config.Get()
-	connections.GetConnection().InitDB(map[string]config.Database{
-		"default": cfg.DATABASE,
-	})
+
+	for _, databaseCfg := range cfg.DATABASE {
+		connections.GetConnectionByDriver(databaseCfg.DRIVER).InitDB(map[string]config.Database{
+			"default": databaseCfg,
+		})
+	}
 
 	App.app = InitRouter("/" + cfg.ADMIN_PREFIX)
 
