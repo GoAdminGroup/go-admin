@@ -36,7 +36,6 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 	}
 
 	// TODO: 正则表达式为了适配 sqlite
-	// sqlite 返回的是 int(10) 这样的字符串，需要过滤
 	// 这里判断 driver 减少正则的性能损耗
 	results := make([]map[string]interface{}, 0)
 
@@ -44,7 +43,6 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 	for rs.Next() {
 		var colVar = make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {
-			//fmt.Println("typeVal[i].DatabaseTypeName()", typeVal[i].DatabaseTypeName())
 			typeName := strings.ToUpper(r.ReplaceAllString(typeVal[i].DatabaseTypeName(), ""))
 			converter.SetColVarType(&colVar, i, typeName)
 		}
