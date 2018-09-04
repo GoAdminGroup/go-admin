@@ -44,15 +44,17 @@ func NewContext(req *http.Request) *Context {
 	return &Context{
 		Request:   req,
 		UserValue: make(map[string]interface{}, 0),
-		Response:  &http.Response{
+		Response: &http.Response{
 			Header: make(http.Header, 0),
 		},
 	}
 }
 
 type App struct {
-	Requests    []Path
-	HandlerList map[Path]Handler
+	Requests       []Path
+	HandlerList    map[Path]Handler
+	MiddlewareList []Middleware
+	Prefix         string
 }
 
 func NewApp() *App {
@@ -64,6 +66,8 @@ func NewApp() *App {
 
 type Handler func(ctx *Context)
 
+type Middleware func(handler Handler) Handler
+
 func (app *App) FindRequestByUrl(url string) Path {
 	for _, req := range app.Requests {
 		if req.URL == url {
@@ -74,6 +78,12 @@ func (app *App) FindRequestByUrl(url string) Path {
 }
 
 func (app *App) AppendReqAndResp(url, method string, handler Handler) {
+
+	url = app.Prefix + url
+
+	for _, middleware := range app.MiddlewareList {
+		handler = middleware(handler)
+	}
 
 	regUrl := ""
 
@@ -124,8 +134,9 @@ func (app *App) HEAD(url string, handler Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
-func (app *App) Group(prefix string, middleware Handler) {
-
+func (app *App) Group(prefix string, middleware ...Middleware) {
+	app.MiddlewareList = middleware
+	app.Prefix = prefix
 }
 
 func (ctx *Context) Write(code int, Header map[string]string, Body string) {
@@ -136,7 +147,7 @@ func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
 
-func (ctx *Context) Json(code int, Body map[string]interface{})  {
+func (ctx *Context) Json(code int, Body map[string]interface{}) {
 	ctx.Response.StatusCode = code
 	ctx.Response.Header.Add("Content-Type", "application/json")
 	BodyStr, _ := json.Marshal(Body)
@@ -148,11 +159,11 @@ func (ctx *Context) WriteString(Body string) {
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
 
-func (ctx *Context) SetStatusCode(code int)  {
+func (ctx *Context) SetStatusCode(code int) {
 	ctx.Response.StatusCode = code
 }
 
-func (ctx *Context) SetContentType(contentType string)  {
+func (ctx *Context) SetContentType(contentType string) {
 	ctx.Response.Header.Add("Content-Type", contentType)
 }
 
@@ -160,7 +171,7 @@ func (ctx *Context) LocalIP() string {
 	return "127.0.0.1"
 }
 
-func (ctx *Context) SetCookie(cookie *http.Cookie)  {
+func (ctx *Context) SetCookie(cookie *http.Cookie) {
 	if v := cookie.String(); v != "" {
 		ctx.Response.Header.Add("Set-Cookie", v)
 	}

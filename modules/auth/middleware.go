@@ -33,7 +33,7 @@ func SetPrefix(prefix string) *Invoker {
 	}
 }
 
-func(invoker *Invoker) Middleware(h context.Handler, prefix string) context.Handler {
+func(invoker *Invoker) Middleware(h context.Handler) context.Handler {
 	return func(ctx *context.Context) {
 		var (
 			authOk   bool
