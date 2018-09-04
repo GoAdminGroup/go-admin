@@ -61,6 +61,8 @@ func NewApp() *App {
 	return &App{
 		Requests:    make([]Path, 0),
 		HandlerList: make(map[Path]Handler, 0),
+		Prefix: "",
+		MiddlewareList: make([]Middleware, 0),
 	}
 }
 
@@ -141,7 +143,7 @@ func (app *App) HEAD(url string, handler Handler) {
 }
 
 func (app *App) Group(prefix string, middleware ...Middleware) {
-	app.MiddlewareList = middleware
+	app.MiddlewareList = append(app.MiddlewareList, middleware...)
 	app.Prefix += prefix
 }
 
