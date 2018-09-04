@@ -26,34 +26,34 @@ func InitRouter(prefix string) *context.App {
 		app.GET(prefix + "/assets" + path, controller.Assert)
 	}
 
+	// 仪表盘
+	if prefix != "" {
+		app.GET(prefix, auth.SetPrefix(prefix).Middleware(controller.ShowDashboard))
+	} else {
+		app.GET("/", auth.SetPrefix(prefix).Middleware(controller.ShowDashboard))
+	}
+
 	app.Group(prefix, auth.SetPrefix(prefix).Middleware)
 	{
-		// 仪表盘
-		if prefix != "" {
-			app.GET(prefix, controller.ShowDashboard)
-		} else {
-			app.GET("/", controller.ShowDashboard)
-		}
-
 		// 授权认证
-		app.GET(prefix + "/logout",  controller.Logout)
+		app.GET("/logout",  controller.Logout)
 
 		// 菜单管理
-		app.GET(prefix + "/menu",  controller.ShowMenu)
-		app.POST(prefix + "/menu/delete",  controller.DeleteMenu)
-		app.POST(prefix + "/menu/new",  controller.NewMenu)
-		app.GET(prefix + "/menu/new",  controller.ShowMenu)
-		app.POST(prefix + "/menu/edit",  controller.EditMenu)
-		app.GET(prefix + "/menu/edit/show",  controller.ShowEditMenu)
-		app.POST(prefix + "/menu/order",  controller.MenuOrder)
+		app.GET("/menu",  controller.ShowMenu)
+		app.POST("/menu/delete",  controller.DeleteMenu)
+		app.POST("/menu/new",  controller.NewMenu)
+		app.GET("/menu/new",  controller.ShowMenu)
+		app.POST("/menu/edit",  controller.EditMenu)
+		app.GET("/menu/edit/show",  controller.ShowEditMenu)
+		app.POST("/menu/order",  controller.MenuOrder)
 
 		// 增删改查管理
-		app.GET(prefix + "/info/:prefix",  controller.ShowInfo)
-		app.GET(prefix + "/info/:prefix/edit",  controller.ShowForm)
-		app.GET(prefix + "/info/:prefix/new",  controller.ShowNewForm)
-		app.POST(prefix + "/edit/:prefix",  controller.EditForm)
-		app.POST(prefix + "/delete/:prefix",  controller.DeleteData)
-		app.POST(prefix + "/new/:prefix",  controller.NewForm)
+		app.GET("/info/:prefix",  controller.ShowInfo)
+		app.GET("/info/:prefix/edit",  controller.ShowForm)
+		app.GET("/info/:prefix/new",  controller.ShowNewForm)
+		app.POST("/edit/:prefix",  controller.EditForm)
+		app.POST("/delete/:prefix",  controller.DeleteData)
+		app.POST("/new/:prefix",  controller.NewForm)
 	}
 
 	return app
