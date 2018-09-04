@@ -32,7 +32,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	columnsModel, _ := connections.GetConnection().Query("show columns in " + tableModel.Info.Table)
+	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Info.Table)
 
 	var sortable string
 	for i := 0; i < len(tableModel.Info.FieldList); i++ {
@@ -59,7 +59,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		queryParam["sortField"] = "id"
 	}
 
-	res, _ := connections.GetConnection().Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by " + queryParam["sortField"] + " "+
+	res, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select " + fields + " from " + tableModel.Info.Table + " where id > 0 order by " + queryParam["sortField"] + " "+
 		queryParam["sortType"]+ " LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]template.HTML, 0)
@@ -88,7 +88,7 @@ func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) 
 		infoList = append(infoList, tempModelData)
 	}
 
-	total, _ := connections.GetConnection().Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
+	total, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
 	size := int(total[0]["count(*)"].(int64))
 
 	paginator := GetPaginator(queryParam["path"], pageInt, queryParam["page"], queryParam["pageSize"], queryParam["sortField"], queryParam["sortType"], size)
@@ -102,7 +102,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 
 	fields := ""
 
-	columnsModel, _ := connections.GetConnection().Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
 		if CheckInTable(columnsModel, tableModel.Form.FormList[i].Field) {
@@ -112,7 +112,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 
 	fields = fields[0 : len(fields)-1]
 
-	res, _ := connections.GetConnection().Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
+	res, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
@@ -161,7 +161,7 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 
 	fields := ""
 	valueList := make([]interface{}, 0)
-	columnsModel, _ := connections.GetConnection().Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
@@ -176,7 +176,7 @@ func (tableModel GlobalTable) UpdateDataFromDatabase(prefix string, dataList map
 	fields = fields[0 : len(fields)-1]
 	valueList = append(valueList, dataList["id"][0])
 
-	connections.GetConnection().Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
+	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
 }
 
 // 增数据
@@ -185,7 +185,7 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 	fields := ""
 	queStr := ""
 	var valueList []interface{}
-	columnsModel, _ := connections.GetConnection().Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columnsModel, k) {
 			fields += k + ","
@@ -198,14 +198,14 @@ func (tableModel GlobalTable) InsertDataFromDatabase(prefix string, dataList map
 	queStr = queStr[0 : len(queStr)-1]
 
 	// TODO: 过滤
-	connections.GetConnection().Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
+	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
 }
 
 // 删数据
 func (tableModel GlobalTable) DeleteDataFromDatabase(prefix string, id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		connections.GetConnection().Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+		connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
 	}
 }
 
