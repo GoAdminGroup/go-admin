@@ -23,7 +23,17 @@ type Permission struct {
 	Path   []string
 }
 
-func Middleware(h context.Handler, prefix string) context.Handler {
+type Invoker struct {
+	prefix string
+}
+
+func SetPrefix(prefix string) *Invoker {
+	return &Invoker{
+		prefix: prefix,
+	}
+}
+
+func(invoker *Invoker) Middleware(h context.Handler, prefix string) context.Handler {
 	return func(ctx *context.Context) {
 		var (
 			authOk   bool
@@ -38,7 +48,7 @@ func Middleware(h context.Handler, prefix string) context.Handler {
 
 		if !authOk {
 			ctx.Write(302, map[string]string{
-				"Location": prefix + "/login",
+				"Location": invoker.prefix + "/login",
 			}, ``)
 		}
 
@@ -46,7 +56,7 @@ func Middleware(h context.Handler, prefix string) context.Handler {
 			fmt.Println("filterOk Path: ", ctx.Path(), "method:", ctx.Method())
 			//ctx.Write(403, map[string]string{}, `{"code":403, "msg":"权限不够"}`)
 			ctx.Write(302, map[string]string{
-				"Location": prefix + "/login",
+				"Location": invoker.prefix + "/login",
 			}, ``)
 		}
 	}

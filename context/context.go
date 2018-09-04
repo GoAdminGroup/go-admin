@@ -124,8 +124,8 @@ func (app *App) HEAD(url string, handler Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
-func (app *App) FILE(url string, handler Handler) {
-	app.AppendReqAndResp(url, "head", handler)
+func (app *App) Group(prefix string, middleware Handler) {
+
 }
 
 func (ctx *Context) Write(code int, Header map[string]string, Body string) {
