@@ -3,7 +3,6 @@ package sqlite
 import (
 	"database/sql"
 	"sync"
-	"os"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
 	"github.com/chenhg5/go-admin/modules/config"
 	_ "github.com/mattn/go-sqlite3"
@@ -34,8 +33,6 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 		)
 
 		for conn, cfg := range cfgList {
-			os.Remove(cfg.FILE)
-
 			sqlDB, err = sql.Open("sqlite3", cfg.FILE)
 
 			if err != nil {
