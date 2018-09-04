@@ -79,7 +79,13 @@ func (app *App) FindRequestByUrl(url string) Path {
 
 func (app *App) AppendReqAndResp(url, method string, handler Handler) {
 
-	url = app.Prefix + url
+	if url == "/" {
+		if app.Prefix != "" {
+			url = app.Prefix
+		}
+	} else {
+		url = app.Prefix + url
+	}
 
 	for _, middleware := range app.MiddlewareList {
 		handler = middleware(handler)
@@ -136,7 +142,7 @@ func (app *App) HEAD(url string, handler Handler) {
 
 func (app *App) Group(prefix string, middleware ...Middleware) {
 	app.MiddlewareList = middleware
-	app.Prefix = prefix
+	app.Prefix += prefix
 }
 
 func (ctx *Context) Write(code int, Header map[string]string, Body string) {
