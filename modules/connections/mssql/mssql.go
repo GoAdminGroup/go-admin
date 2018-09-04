@@ -40,15 +40,10 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 
 		for conn, cfg := range cfglist {
 
-			query := url.Values{}
-			query.Add("app name", conn)
-
 			u := &url.URL{
 				Scheme:   "sqlserver",
 				User:     url.UserPassword(cfg.USER, cfg.PWD),
 				Host:     fmt.Sprintf("%s:%s", cfg.IP, cfg.PORT),
-				// Path:  instance, // if connecting to an instance instead of a port
-				RawQuery: query.Encode(),
 			}
 
 			SqlDB, err = sql.Open("sqlserver", u.String())
