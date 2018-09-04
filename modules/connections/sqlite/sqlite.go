@@ -6,6 +6,7 @@ import (
 	"os"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
 	"github.com/chenhg5/go-admin/modules/config"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Sqlite struct {
