@@ -2,6 +2,7 @@ package connections
 
 import (
 	"errors"
+	"strconv"
 )
 
 type Where struct {
@@ -22,6 +23,11 @@ type Sql struct {
 	wheres    []Where
 	leftjoins []Join
 	args      []interface{}
+	order     string
+	offset    string
+	limit     string
+	whereRaw  string
+	updateRaw string
 }
 
 type H map[string]interface{}
@@ -47,12 +53,38 @@ func (sql *Sql) Select(fields ...string) *Sql {
 	return sql
 }
 
+func (sql *Sql) OrderBy(filed string, order string) *Sql {
+	sql.order = filed + " " + order
+	return sql
+}
+
+func (sql *Sql) Skip(offset int) *Sql {
+	sql.offset = strconv.Itoa(offset)
+	return sql
+}
+
+func (sql *Sql) Take(take int) *Sql {
+	sql.limit = strconv.Itoa(take)
+	return sql
+}
+
 func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 	sql.wheres = append(sql.wheres, Where{
 		field:     field,
 		operation: operation,
 	})
 	sql.args = append(sql.args, arg)
+	return sql
+}
+
+func (sql *Sql) WhereRaw(raw string) *Sql {
+	sql.whereRaw = raw
+	return sql
+}
+
+func (sql *Sql) UpdateRaw(raw string, args ...interface{}) *Sql {
+	sql.updateRaw = raw
+	sql.args = append(sql.args, args...)
 	return sql
 }
 
@@ -68,7 +100,8 @@ func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB s
 
 func (sql *Sql) First() (map[string]interface{}, error) {
 
-	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetJoins(sql.leftjoins) + GetWheres(sql.wheres)
+	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
+		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 	if len(res) < 1 {
@@ -79,14 +112,15 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 
 func (sql *Sql) All() ([]map[string]interface{}, error) {
 
-	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetJoins(sql.leftjoins) + GetWheres(sql.wheres)
+	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
+		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 
 	return res, nil
 }
 
-func (sql *Sql) Update(values H) error {
+func (sql *Sql) Update(values H) (int64, error) {
 
 	fields := ""
 
@@ -96,19 +130,25 @@ func (sql *Sql) Update(values H) error {
 		args = append(args, value)
 	}
 
-	var statement = "update " + sql.table + " set " + fields[:len(fields)-2] + GetWheres(sql.wheres)
+	if sql.updateRaw == "" {
+		fields = fields[:len(fields)-2]
+	} else {
+		fields += sql.updateRaw
+	}
+
+	var statement = "update " + sql.table + " set " + fields + sql.getWheres()
 	sql.args = append(args, sql.args...)
 
 	res := GetConnection().Exec(statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
-		return errors.New("no affect row")
+		return 0, errors.New("no affect row")
 	}
 
-	return nil
+	return res.LastInsertId()
 }
 
-func (sql *Sql) Insert(values H) error {
+func (sql *Sql) Insert(values H) (int64, error) {
 
 	fields := "("
 	quesMark := "("
@@ -126,41 +166,70 @@ func (sql *Sql) Insert(values H) error {
 	res := GetConnection().Exec(statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
-		return errors.New("no affect row")
+		return 0, errors.New("no affect row")
 	}
 
-	return nil
+	return res.LastInsertId()
 }
 
-func GetJoins(list []Join) string {
-	if len(list) == 0 {
+func (sql *Sql) getLimit() string {
+	if sql.limit == "" {
+		return ""
+	}
+	return " limit " + sql.limit + " "
+}
+
+func (sql *Sql) getOffset() string {
+	if sql.offset == "" {
+		return ""
+	}
+	return "offset " + sql.offset + " "
+}
+
+func (sql *Sql) getOrderBy() string {
+	if sql.order == "" {
+		return ""
+	}
+	return "order by " + sql.order + " "
+}
+
+func (sql *Sql) getJoins() string {
+	if len(sql.leftjoins) == 0 {
 		return ""
 	}
 	joins := " left join "
-	for _, join := range list {
+	for _, join := range sql.leftjoins {
 		joins += join.table + " on " + join.fieldA + " " + join.operation + " " + join.fieldB + " "
 	}
 	return joins
 }
 
-func GetFields(list []string) string {
-	if len(list) == 0 {
+func (sql *Sql) getFields() string {
+	if len(sql.fields) == 0 {
 		return "*"
 	}
 	fields := ""
-	for _, field := range list {
+	for _, field := range sql.fields {
 		fields += "`" + field + "`,"
 	}
 	return fields[:len(fields)-1]
 }
 
-func GetWheres(list []Where) string {
-	if len(list) == 0 {
+func (sql *Sql) getWheres() string {
+	if len(sql.wheres) == 0 {
+		if sql.whereRaw != "" {
+			return " where " + sql.whereRaw
+		}
 		return ""
 	}
 	wheres := " where "
-	for _, where := range list {
+	for _, where := range sql.wheres {
 		wheres += where.field + " " + where.operation + " ? and "
 	}
-	return wheres[:len(wheres)-5]
+
+	if sql.whereRaw != "" {
+		return wheres + sql.whereRaw
+	} else {
+		return wheres[:len(wheres)-5]
+	}
 }
