@@ -2,7 +2,6 @@ package connections
 
 import (
 	"errors"
-	"fmt"
 )
 
 type Where struct {
@@ -81,8 +80,6 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 func (sql *Sql) All() ([]map[string]interface{}, error) {
 
 	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetJoins(sql.leftjoins) + GetWheres(sql.wheres)
-
-	fmt.Println("statement", statement, "args", sql.args, "length", len(sql.args))
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 
