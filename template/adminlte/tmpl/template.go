@@ -504,7 +504,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                     function () {
                         $.ajax({
                             method: 'post',
-                            url: '/menu/delete?id=' + id,
+                            url: {{.DeleteUrl}}'?id=' + id,
                             data: {},
                             success: function (data) {
                                 $.pjax.reload('#pjax-container');
@@ -521,7 +521,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         });
         $('.tree-5b405b7481760-save').click(function () {
             var serialize = $('#tree-5b405b7481760').nestable('serialize');
-            $.post('/menu/order', {
+            $.post('{{.OrderUrl}}', {
                         _order: JSON.stringify(serialize)
                     },
                     function (data) {

@@ -7,9 +7,10 @@ import (
 )
 
 type TreeAttribute struct {
-	Name    string
-	Tree    []menu.MenuItem
-	EditUrl string
+	Name      string
+	Tree      []menu.MenuItem
+	EditUrl   string
+	DeleteUrl string
 }
 
 func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
@@ -19,6 +20,11 @@ func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
 
 func (compo *TreeAttribute) SetEditUrl(value string) types.TreeAttribute {
 	(*compo).EditUrl = value
+	return compo
+}
+
+func (compo *TreeAttribute) SetDeleteUrl(value string) types.TreeAttribute {
+	(*compo).DeleteUrl = value
 	return compo
 }
 

@@ -23,8 +23,11 @@ func ShowMenu(ctx *context.Context) {
 	menu.GlobalMenu.SetActiveClass(path)
 
 	editUrl := Config.ADMIN_PREFIX + "/menu/edit/show"
+	deleteUrl := Config.ADMIN_PREFIX + "/menu/delete"
+	orderUrl := Config.ADMIN_PREFIX + "/menu/delete"
 
-	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).SetEditUrl(editUrl).GetContent()
+	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).
+		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
 	header := template.Get(Config.THEME).Tree().GetTreeHeader()
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
@@ -135,7 +138,7 @@ func EditMenu(ctx *context.Context) {
 
 	ctx.WriteString(buffer.String())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
 }
 
 // 新建菜单
@@ -161,7 +164,7 @@ func NewMenu(ctx *context.Context) {
 
 	ctx.WriteString(buffer.String())
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
 }
 
 // 修改菜单顺序
