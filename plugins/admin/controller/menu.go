@@ -28,7 +28,7 @@ func ShowMenu(ctx *context.Context) {
 	header := template.Get(Config.THEME).Tree().GetTreeHeader()
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(box).GetContent()
-	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl("/menu/new").SetInfoUrl("/menu").SetTitle("New").
+	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl(Config.ADMIN_PREFIX + "/menu/new").SetInfoUrl(Config.ADMIN_PREFIX + "/menu").SetTitle("New").
 		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
 	col2 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(newForm).GetContent()
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
