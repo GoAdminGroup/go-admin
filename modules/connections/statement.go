@@ -10,21 +10,30 @@ type Where struct {
 	field     string
 }
 
+type Join struct {
+	table     string
+	fieldA    string
+	operation string
+	fieldB    string
+}
+
 type Sql struct {
-	fields []string
-	table  string
-	wheres []Where
-	args   []interface{}
+	fields    []string
+	table     string
+	wheres    []Where
+	leftjoins []Join
+	args      []interface{}
 }
 
 type H map[string]interface{}
 
 func newSql() *Sql {
 	return &Sql{
-		fields: make([]string, 0),
-		table:  "",
-		args:   make([]interface{}, 0),
-		wheres: make([]Where, 0),
+		fields:    make([]string, 0),
+		table:     "",
+		args:      make([]interface{}, 0),
+		wheres:    make([]Where, 0),
+		leftjoins: make([]Join, 0),
 	}
 }
 
@@ -48,9 +57,19 @@ func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 	return sql
 }
 
+func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB string) *Sql {
+	sql.leftjoins = append(sql.leftjoins, Join{
+		fieldA:    fieldA,
+		fieldB:    fieldB,
+		table:     table,
+		operation: operation,
+	})
+	return sql
+}
+
 func (sql *Sql) First() (map[string]interface{}, error) {
 
-	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetWheres(sql.wheres)
+	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetJoins(sql.leftjoins) + GetWheres(sql.wheres)
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 	if len(res) < 1 {
@@ -61,7 +80,7 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 
 func (sql *Sql) All() ([]map[string]interface{}, error) {
 
-	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetWheres(sql.wheres)
+	var statement = "select " + GetFields(sql.fields) + " from " + sql.table + GetJoins(sql.leftjoins) + GetWheres(sql.wheres)
 
 	fmt.Println("statement", statement, "args", sql.args, "length", len(sql.args))
 
@@ -114,6 +133,17 @@ func (sql *Sql) Insert(values H) error {
 	}
 
 	return nil
+}
+
+func GetJoins(list []Join) string {
+	if len(list) == 0 {
+		return ""
+	}
+	joins := " left join "
+	for _, join := range list {
+		joins += join.table + " on " + join.fieldA + " " + join.operation + " " + join.fieldB + " "
+	}
+	return joins
 }
 
 func GetFields(list []string) string {
