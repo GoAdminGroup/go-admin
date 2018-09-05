@@ -1,5 +1,6 @@
 {{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
+    {{$EditUrl := .EditUrl}}
     <ol class="dd-list">
         {{range $key, $list := .Tree}}
         <li class="dd-item" data-id='{{$list.ID}}'>
@@ -7,7 +8,7 @@
                 <i class="fa {{$list.Icon}}"></i>&nbsp;<strong>{{$list.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
                     href="{{$list.Url}}" class="dd-nodrag">{{$list.Url}}</a>
                 <span class="pull-right dd-nodrag">
-                <a href="{{.EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
+                <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
                 <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
             </span>
             </div>
@@ -19,7 +20,7 @@
                             <i class="fa {{$item.Icon}}"></i>&nbsp;<strong>{{$item.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
                                 href="{{$item.Url}}" class="dd-nodrag">{{$item.Url}}</a>
                             <span class="pull-right dd-nodrag">
-                                <a href="{{.EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
+                                <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
                                 <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
                             </span>
                         </div>
