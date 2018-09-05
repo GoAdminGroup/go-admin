@@ -123,7 +123,7 @@ func NewForm(ctx *context.Context) {
 		}
 	}
 
-	thead, infoList, _, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paninator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      prevUrlArr[0],
 		"sortField": sort,
@@ -136,9 +136,20 @@ func NewForm(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
 
-	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize)
+	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
+	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
+
+	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
+	table := dataTable.GetContent()
+
+	box := template.Get(Config.THEME).Box().
+		SetBody(table).
+		SetHeader(dataTable.GetDataTableHeader()).
+		WithHeadBorder(false).
+		SetFooter(paninator.GetContent()).
+		GetContent()
 
 	user := ctx.UserValue["user"].(auth.User)
 
@@ -149,7 +160,7 @@ func NewForm(ctx *context.Context) {
 			"0.0.1",
 		},
 		Panel: types.Panel{
-			Content:     template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).GetContent(),
+			Content:     box,
 			Description: description,
 			Title:       title,
 		},

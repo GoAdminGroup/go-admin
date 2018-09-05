@@ -17,10 +17,10 @@ func main() {
 
 	cfg := config.Config{
 		DATABASE: []config.Database{
-			{
-				FILE:   "./../datamodel/admin.db",
-				DRIVER: "sqlite",
-			},
+			//{
+			//	FILE:   "./../datamodel/admin.db",
+			//	DRIVER: "sqlite",
+			//},
 			{
 				IP:           "127.0.0.1",
 				PORT:         "3306",

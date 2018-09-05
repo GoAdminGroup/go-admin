@@ -8,9 +8,9 @@ import (
 )
 
 func main()  {
-	content := `package adminlte
+	content := `package tmpl
 
-var Adminlte = map[string]string{`
+var List = map[string]string{`
 	files, _ := ioutil.ReadDir("./template/adminlte/resource/pages/")
 	for _, f := range files {
 		fmt.Println(f.Name())
@@ -89,28 +89,28 @@ var Adminlte = map[string]string{`
 			content += `"components/table/` + onlyName + `":` + "`" + str + "`,"
 		}
 	}
-
-	files, _ = ioutil.ReadDir("./template/login/")
-
-	for _, f := range files {
-		fmt.Println(f.Name())
-		b, err := ioutil.ReadFile("./template/login/" + f.Name())
-		if err != nil {
-			fmt.Print(err)
-		}
-		str := string(b)
-		fmt.Println(str)
-
-		suffix := path.Ext(f.Name())
-		fmt.Println("f.Name()", f.Name(),"suffix",suffix)
-		onlyName := strings.TrimSuffix(f.Name(), suffix)
-
-		if suffix == ".tmpl" {
-			content += `"login/` + onlyName + `":` + "`" + str + "`,"
-		}
-	}
+	//
+	//files, _ = ioutil.ReadDir("./template/login/")
+	//
+	//for _, f := range files {
+	//	fmt.Println(f.Name())
+	//	b, err := ioutil.ReadFile("./template/login/" + f.Name())
+	//	if err != nil {
+	//		fmt.Print(err)
+	//	}
+	//	str := string(b)
+	//	fmt.Println(str)
+	//
+	//	suffix := path.Ext(f.Name())
+	//	fmt.Println("f.Name()", f.Name(),"suffix",suffix)
+	//	onlyName := strings.TrimSuffix(f.Name(), suffix)
+	//
+	//	if suffix == ".tmpl" {
+	//		content += `"login/` + onlyName + `":` + "`" + str + "`,"
+	//	}
+	//}
 
 	content += `}`
 
-	ioutil.WriteFile("./template/adminlte/template.go", []byte(content), 0644)
+	ioutil.WriteFile("./template/adminlte/template/template.go", []byte(content), 0644)
 }
