@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/mssql"
 	"github.com/chenhg5/go-admin/modules/connections/sqlite"
+	"github.com/chenhg5/go-admin/modules/connections/postgresql"
 )
 
 type Connection interface {
@@ -22,6 +23,8 @@ func GetConnectionByDriver(driver string) Connection {
 		return mssql.GetMssqlDB()
 	case "sqlite":
 		return sqlite.GetSqliteDB()
+	case "postgresql":
+		return postgresql.GetPostgresqlDB()
 	default:
 		panic("driver not found!")
 	}

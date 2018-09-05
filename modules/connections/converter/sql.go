@@ -1,6 +1,8 @@
 package converter
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch typeName {
@@ -204,7 +206,19 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 			(*result)[index] = nil
 		}
 	default:
-		(*result)[index] = colVar
+		var ok bool
+
+		if colVar, ok = (*(colVar.(*interface{}))).(int64); ok {
+			(*result)[index] = colVar
+		} else if colVar, ok = (*(colVar.(*interface{}))).(string); ok {
+			(*result)[index] = colVar
+		} else if colVar, ok = (*(colVar.(*interface{}))).(float64); ok {
+			(*result)[index] = colVar
+		} else if colVar, ok = (*(colVar.(*interface{}))).([]uint8); ok {
+			(*result)[index] = colVar
+		} else {
+			(*result)[index] = colVar
+		}
 	}
 }
 
