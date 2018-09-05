@@ -22,7 +22,9 @@ func ShowMenu(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(path)
 
-	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).GetContent()
+	editUrl := Config.ADMIN_PREFIX + "/menu/edit/show"
+
+	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).SetEditUrl(editUrl).GlobalMenuList).GetContent()
 	header := template.Get(Config.THEME).Tree().GetTreeHeader()
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := template.Get(Config.THEME).Col().SetType("md").SetWidth("6").SetContent(box).GetContent()

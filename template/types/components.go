@@ -74,6 +74,7 @@ type DataTableAttribute interface {
 
 type TreeAttribute interface {
 	SetTree(value []menu.MenuItem) TreeAttribute
+	SetEditUrl(value string) TreeAttribute
 	GetContent() template.HTML
 	GetTreeHeader() template.HTML
 }
