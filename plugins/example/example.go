@@ -19,10 +19,10 @@ func (example *Example) InitPlugin() {
 	cfg := config.Get()
 	ExamplePlug.app = InitRouter("/" + cfg.ADMIN_PREFIX)
 
-	if cfg.THEME == "" {
-		cfg.THEME = "adminlte"
-	}
 	Config = cfg
+	if Config.THEME == "" {
+		Config.THEME = "adminlte"
+	}
 
 	menu.InitMenu()
 }
