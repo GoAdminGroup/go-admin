@@ -112,5 +112,5 @@ var List = map[string]string{`
 
 	content += `}`
 
-	ioutil.WriteFile("./template/adminlte/template/template.go", []byte(content), 0644)
+	ioutil.WriteFile("./template/adminlte/tmpl/template.go", []byte(content), 0644)
 }

@@ -31,7 +31,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </ul>
 </div>
 {{end}}`,"content":`{{define "content"}}
-<link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
 <section class="content-header">
     <h1>
         {{.Panel.Title}}
@@ -446,6 +445,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 {{end}}`,"components/tree":`{{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
+    {{$EditUrl := .EditUrl}}
     <ol class="dd-list">
         {{range $key, $list := .Tree}}
         <li class="dd-item" data-id='{{$list.ID}}'>
@@ -453,7 +453,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 <i class="fa {{$list.Icon}}"></i>&nbsp;<strong>{{$list.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
                     href="{{$list.Url}}" class="dd-nodrag">{{$list.Url}}</a>
                 <span class="pull-right dd-nodrag">
-                <a href="/menu/edit/show?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
+                <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
                 <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
             </span>
             </div>
@@ -465,7 +465,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                             <i class="fa {{$item.Icon}}"></i>&nbsp;<strong>{{$item.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
                                 href="{{$item.Url}}" class="dd-nodrag">{{$item.Url}}</a>
                             <span class="pull-right dd-nodrag">
-                                <a href="/info/menu/edit?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
+                                <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
                                 <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
                             </span>
                         </div>
