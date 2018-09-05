@@ -31,7 +31,16 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </ul>
 </div>
 {{end}}`,"content":`{{define "content"}}
-<script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
+<script>
+    $('.grid-per-pager').on("change", function (e) {
+        console.log("changing...");
+        $.pjax({url: this.value, container: '#pjax-container'});
+    });
+    $('.grid-refresh').on('click', function () {
+        $.pjax.reload('#pjax-container');
+        toastr.success('Refresh succeeded !');
+    });
+</script>
 <section class="content-header">
     <h1>
         {{.Panel.Title}}
