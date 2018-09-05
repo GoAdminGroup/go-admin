@@ -24,7 +24,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 	log.Println("[GoAdmin]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-		string(ctx.Path()))
+		ctx.Path())
 
 	RecordOperationLog(ctx)
 

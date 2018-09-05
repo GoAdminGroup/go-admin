@@ -17,7 +17,7 @@ import (
 func ShowMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	path := string(ctx.Path())
+	path := ctx.Path()
 	user := ctx.UserValue["user"].(auth.User)
 
 	menu.GlobalMenu.SetActiveClass(path)
@@ -58,19 +58,40 @@ func ShowMenu(ctx *context.Context) {
 
 // 显示编辑菜单
 func ShowEditMenu(ctx *context.Context) {
-	//id := string(ctx.QueryArgs().Peek("id")[:])
-	//user := ctx.UserValue["user"].(auth.User)
+	id := ctx.Request.URL.Query().Get("id")
+	prefix := "menu"
 
-	buffer := new(bytes.Buffer)
+	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-	if string(ctx.Request.Header.Get("X-PJAX")[:]) == "true" {
-		//template.MenuEditPanelPjax(components.GetMenuItemById(id), (*menu.GlobalMenu).GlobalMenuOption, buffer)
-	} else {
-		//template.MenuPanel((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuList, (*menu.GlobalMenu).GlobalMenuOption, user, buffer)
-	}
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
-	ctx.WriteString(buffer.String())
+	path := ctx.Path()
+	menu.GlobalMenu.SetActiveClass(path)
+
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	user := ctx.UserValue["user"].(auth.User)
+
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: *menu.GlobalMenu,
+		System: types.SystemInfo{
+			"0.0.1",
+		},
+		Panel: types.Panel{
+			Content:     template.Get(Config.THEME).Form().
+				SetContent(formData).
+				SetPrefix(Config.ADMIN_PREFIX).
+				SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
+				SetToken(auth.TokenHelper.AddToken()).
+				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix).
+				GetContent(),
+			Description: description,
+			Title:       title,
+		},
+		AssertRootUrl: Config.ADMIN_PREFIX,
+	})
+	ctx.WriteString(buf.String())
 }
 
 // 删除菜单

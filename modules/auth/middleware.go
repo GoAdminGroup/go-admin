@@ -129,7 +129,7 @@ func GetPermissions(role_id interface{}) []map[string]interface{} {
 
 func CheckPermissions(user User, ctx *context.Context) bool {
 
-	path := string(ctx.Path())
+	path := ctx.Path()
 	method := string(ctx.Method())
 
 	for _, v := range user.Permissions {

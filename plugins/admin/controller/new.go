@@ -23,7 +23,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
-	path := string(ctx.Path())
+	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
 	page := ctx.Request.URL.Query().Get("page")
