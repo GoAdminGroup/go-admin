@@ -122,20 +122,20 @@ func TestHandler(ctx *context.Context) {
 
 		table := template2.Get(Config.THEME).Table().SetType("table").SetInfoList([]map[string]template.HTML{
 			{
-				"Order ID":   template.HTML("OR9842"),
-				"Item":       template.HTML("Call of Duty IV"),
-				"Status":     template.HTML("shipped"),
-				"Popularity": template.HTML("90%"),
+				"Order ID":   "OR9842",
+				"Item":       "Call of Duty IV",
+				"Status":     "shipped",
+				"Popularity": "90%",
 			}, {
-				"Order ID":   template.HTML("OR9842"),
-				"Item":       template.HTML("Call of Duty IV"),
-				"Status":     template.HTML("shipped"),
-				"Popularity": template.HTML("90%"),
+				"Order ID":   "OR9842",
+				"Item":       "Call of Duty IV",
+				"Status":     "shipped",
+				"Popularity": "90%",
 			}, {
-				"Order ID":   template.HTML("OR9842"),
-				"Item":       template.HTML("Call of Duty IV"),
-				"Status":     template.HTML("shipped"),
-				"Popularity": template.HTML("90%"),
+				"Order ID":   "OR9842",
+				"Item":       "Call of Duty IV",
+				"Status":     "shipped",
+				"Popularity": "90%",
 			},
 		}).SetThead([]map[string]string{
 			{
