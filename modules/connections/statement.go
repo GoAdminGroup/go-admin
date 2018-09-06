@@ -206,7 +206,7 @@ func (sql *Sql) getOrderBy() string {
 	if sql.order == "" {
 		return ""
 	}
-	return "order by " + sql.order + " "
+	return " order by " + sql.order + " "
 }
 
 func (sql *Sql) getJoins() string {
