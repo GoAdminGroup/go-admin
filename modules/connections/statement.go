@@ -224,7 +224,7 @@ func (sql *Sql) getFields() string {
 	if len(sql.fields) == 0 {
 		return "*"
 	}
-	if sql.fields[0] == "count(*)" {
+	if sql.fields[0] == "count(*)" { 
 		return "count(*)"
 	}
 	fields := ""
