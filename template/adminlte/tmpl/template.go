@@ -229,7 +229,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <!-- /.sidebar -->
 </aside>
 {{end}}`,"components/box":`{{define "box"}}
-<div class="box">
+<div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
         {{.Header}}
     </div>
@@ -476,23 +476,35 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 {{end}}`,"components/table":`{{define "table"}}
     <table class="table table-hover">
-        <tbody>
-        <tr>
-            {{if eq .Type "data-table"}}
-                <th></th>
-            {{end}}
-            {{range $key, $head := .Thead}}
-                <th>
+        {{if eq .Type "table"}}
+            <thead>
+                <tr>
+                {{range $key, $head := .Thead}}
+                    <th>
                     {{index $head "head"}}
                     {{if eq (index $head "sortable") "1"}}
                         <a class="fa fa-fw fa-sort" href=""></a>
                     {{end}}
-                </th>
-            {{end}}
-            {{if eq .Type "data-table"}}
+                    </th>
+                {{end}}
+                </tr>
+            </thead>
+        {{end}}
+        <tbody>
+        {{if eq .Type "data-table"}}
+            <tr>
+                <th></th>
+                {{range $key, $head := .Thead}}
+                    <th>
+                        {{index $head "head"}}
+                        {{if eq (index $head "sortable") "1"}}
+                            <a class="fa fa-fw fa-sort" href=""></a>
+                        {{end}}
+                    </th>
+                {{end}}
                 <th>操作</th>
-            {{end}}
-        </tr>
+            </tr>
+        {{end}}
 
         {{$Thead := .Thead}}
         {{$Type := .Type}}

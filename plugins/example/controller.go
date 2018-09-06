@@ -116,8 +116,58 @@ func TestHandler(ctx *context.Context) {
 
 		row3 := template2.Get(Config.THEME).Row().SetContent(col1 + col2 + col3 + col4).GetContent()
 
+		/**************************
+		 * Pie Chart
+		/**************************/
+
+		table := template2.Get(Config.THEME).Table().SetType("table").SetInfoList([]map[string]template.HTML{
+			{
+				"Order ID":   template.HTML("OR9842"),
+				"Item":       template.HTML("Call of Duty IV"),
+				"Status":     template.HTML("shipped"),
+				"Popularity": template.HTML("90%"),
+			}, {
+				"Order ID":   template.HTML("OR9842"),
+				"Item":       template.HTML("Call of Duty IV"),
+				"Status":     template.HTML("shipped"),
+				"Popularity": template.HTML("90%"),
+			}, {
+				"Order ID":   template.HTML("OR9842"),
+				"Item":       template.HTML("Call of Duty IV"),
+				"Status":     template.HTML("shipped"),
+				"Popularity": template.HTML("90%"),
+			},
+		}).SetThead([]map[string]string{
+			{
+				"head":     "Order ID",
+				"sortable": "0",
+			}, {
+				"head":     "Item",
+				"sortable": "0",
+			}, {
+				"head":     "Status",
+				"sortable": "0",
+			}, {
+				"head":     "Popularity",
+				"sortable": "0",
+			},
+		}).GetContent()
+
+		boxWarning := template2.Get(Config.THEME).Box().SetTheme("warning").WithHeadBorder(true).SetHeader("Latest Orders").
+			SetBody(table).
+			GetContent()
+
+		boxDanger := template2.Get(Config.THEME).Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
+			SetBody("123").
+			GetContent()
+
+		col5 := template2.Get(Config.THEME).Col().SetSize(map[string]string{"md":"8"}).SetContent(boxWarning).GetContent()
+		col6 := template2.Get(Config.THEME).Col().SetSize(map[string]string{"md":"4"}).SetContent(boxDanger).GetContent()
+
+		row4 := template2.Get(Config.THEME).Row().SetContent(col5 + col6).GetContent()
+
 		return types.Panel{
-			Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3),
+			Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3) + template.HTML(row4),
 			Title:       "Dashboard",
 			Description: "this is a example",
 		}

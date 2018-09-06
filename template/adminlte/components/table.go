@@ -10,6 +10,7 @@ type TableAttribute struct {
 	Thead    []map[string]string
 	InfoList []map[string]template.HTML
 	Type     string
+	EditUrl  string
 }
 
 func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {

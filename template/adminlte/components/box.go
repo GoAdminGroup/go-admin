@@ -11,7 +11,13 @@ type BoxAttribute struct {
 	Body       template.HTML
 	Footer     template.HTML
 	Title      template.HTML
+	Theme      string
 	HeadBorder string
+}
+
+func (compo *BoxAttribute) SetTheme(value string) types.BoxAttribute {
+	(*compo).Theme = value
+	return compo
 }
 
 func (compo *BoxAttribute) SetHeader(value template.HTML) types.BoxAttribute {
