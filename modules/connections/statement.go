@@ -2,7 +2,9 @@ package connections
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
+	"strings"
 )
 
 type Where struct {
@@ -77,6 +79,21 @@ func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 	return sql
 }
 
+func (sql *Sql) Find(arg interface{}) (map[string]interface{}, error) {
+	return sql.Where("id", "=", arg).First()
+}
+
+func (sql *Sql) Count() (int64, error) {
+	var (
+		res map[string]interface{}
+		err error
+	)
+	if res, err = sql.Select("count(*)").First(); err != nil {
+		return 0, err
+	}
+	return res["count(*)"].(int64), nil
+}
+
 func (sql *Sql) WhereRaw(raw string) *Sql {
 	sql.whereRaw = raw
 	return sql
@@ -103,6 +120,8 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
+	fmt.Println("statement", statement)
+
 	res, _ := GetConnection().Query(statement, sql.args...)
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -114,6 +133,8 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 
 	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
+
+	fmt.Println("statement", statement, "args", sql.args, "length", len(sql.args))
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 
@@ -138,6 +159,8 @@ func (sql *Sql) Update(values H) (int64, error) {
 
 	var statement = "update " + sql.table + " set " + fields + sql.getWheres()
 	sql.args = append(args, sql.args...)
+
+	fmt.Println("statement", statement, "args", sql.args)
 
 	res := GetConnection().Exec(statement, sql.args...)
 
@@ -209,8 +232,19 @@ func (sql *Sql) getFields() string {
 		return "*"
 	}
 	fields := ""
-	for _, field := range sql.fields {
-		fields += "`" + field + "`,"
+	if len(sql.leftjoins) == 0 {
+		for _, field := range sql.fields {
+			fields += "`" + field + "`,"
+		}
+	} else {
+		for _, field := range sql.fields {
+			arr := strings.Split(field, ".")
+			if len(arr) > 1 {
+				fields += arr[0] + ".`" + arr[1] + "`,"
+			} else {
+				fields += "`" + field + "`,"
+			}
+		}
 	}
 	return fields[:len(fields)-1]
 }
