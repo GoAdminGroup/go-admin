@@ -2,7 +2,6 @@ package connections
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -120,8 +119,6 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
-	fmt.Println("statement", statement)
-
 	res, _ := GetConnection().Query(statement, sql.args...)
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -133,8 +130,6 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 
 	var statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
-
-	fmt.Println("statement", statement, "args", sql.args, "length", len(sql.args))
 
 	res, _ := GetConnection().Query(statement, sql.args...)
 
@@ -159,8 +154,6 @@ func (sql *Sql) Update(values H) (int64, error) {
 
 	var statement = "update " + sql.table + " set " + fields + sql.getWheres()
 	sql.args = append(args, sql.args...)
-
-	fmt.Println("statement", statement, "args", sql.args)
 
 	res := GetConnection().Exec(statement, sql.args...)
 
