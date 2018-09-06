@@ -2,7 +2,7 @@ package components
 
 import (
 	"html/template"
-	"goAdmin/template/types"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type ColAttribute struct {

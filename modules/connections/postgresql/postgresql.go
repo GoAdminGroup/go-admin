@@ -3,8 +3,8 @@ package postgresql
 import (
 	"database/sql"
 	"sync"
-	"goAdmin/modules/connections/performer"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"github.com/chenhg5/go-admin/modules/config"
 	_ "github.com/lib/pq"
 	"net/url"
 	"fmt"

@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"fmt"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"bytes"
 	"net/http"
-	"goAdmin/template"
+	"github.com/chenhg5/go-admin/template"
 )
 
 func Auth(ctx *context.Context) {

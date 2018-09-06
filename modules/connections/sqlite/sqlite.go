@@ -3,8 +3,8 @@ package sqlite
 import (
 	"database/sql"
 	"sync"
-	"goAdmin/modules/connections/performer"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"github.com/chenhg5/go-admin/modules/config"
 	_ "github.com/mattn/go-sqlite3"
 )
 

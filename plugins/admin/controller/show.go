@@ -1,17 +1,17 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
-	"goAdmin/plugins/admin/models"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/context"
 	"bytes"
 	"net/http"
-	"goAdmin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"strings"
 	"path"
 	"fmt"
-	"goAdmin/template"
-	"goAdmin/template/types"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // 显示列表

@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	"goAdmin/adapter"
-	"goAdmin/modules/config"
-	"goAdmin/plugins/admin"
-	"goAdmin/examples/datamodel"
-	"goAdmin/engine"
+	"github.com/chenhg5/go-admin/adapter"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/engine"
 	"github.com/prometheus/common/log"
 )
 

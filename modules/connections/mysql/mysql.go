@@ -6,9 +6,9 @@ import (
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
 	"sync"
-	"goAdmin/modules/connections/converter"
-	"goAdmin/modules/connections/performer"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/converter"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 type SqlTxStruct struct {

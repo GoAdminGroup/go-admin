@@ -1,11 +1,11 @@
 package example
 
 import (
-	"goAdmin/context"
-	"goAdmin/modules/page"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/page"
 	"html/template"
-	"goAdmin/template/types"
-	template2 "goAdmin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	template2 "github.com/chenhg5/go-admin/template"
 )
 
 func TestHandler(ctx *context.Context) {
