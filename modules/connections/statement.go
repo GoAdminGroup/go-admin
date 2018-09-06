@@ -224,6 +224,9 @@ func (sql *Sql) getFields() string {
 	if len(sql.fields) == 0 {
 		return "*"
 	}
+	if sql.fields[0] == "count(*)" {
+		return "count(*)"
+	}
 	fields := ""
 	if len(sql.leftjoins) == 0 {
 		for _, field := range sql.fields {
