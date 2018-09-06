@@ -10,7 +10,7 @@ import (
 
 func TestHandler(ctx *context.Context) {
 	page.SetPageContent(Config.THEME, "/" + Config.ADMIN_PREFIX, ctx, func() types.Panel {
-		box := template2.Get(Config.THEME).InfoBox().SetUrl("/").SetTitle("例子数据").SetValue("1000").GetContent()
+		box := template2.Get(Config.THEME).SmallBox().SetUrl("/").SetTitle("例子数据").SetValue("1000").GetContent()
 
 		col1 := template2.Get(Config.THEME).Col().SetContent(box).GetContent()
 		col2 := template2.Get(Config.THEME).Col().SetContent(box).GetContent()

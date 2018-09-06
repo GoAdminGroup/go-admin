@@ -39,10 +39,10 @@ type ImgAttribute interface {
 	GetContent() template.HTML
 }
 
-type InfoBoxAttribute interface {
-	SetTitle(value string) InfoBoxAttribute
-	SetValue(value string) InfoBoxAttribute
-	SetUrl(value string) InfoBoxAttribute
+type SmallBoxAttribute interface {
+	SetTitle(value string) SmallBoxAttribute
+	SetValue(value string) SmallBoxAttribute
+	SetUrl(value string) SmallBoxAttribute
 	GetContent() template.HTML
 }
 

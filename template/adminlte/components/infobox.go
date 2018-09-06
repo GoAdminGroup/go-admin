@@ -5,7 +5,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 )
 
-type InfoBoxAttribute struct {
+type SmallBoxAttribute struct {
 	Name  string
 	Title string
 	Value string
@@ -13,21 +13,21 @@ type InfoBoxAttribute struct {
 	Color string
 }
 
-func (compo *InfoBoxAttribute) SetTitle(value string) types.InfoBoxAttribute {
+func (compo *SmallBoxAttribute) SetTitle(value string) types.SmallBoxAttribute {
 	(*compo).Title = value
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetValue(value string) types.InfoBoxAttribute {
+func (compo *SmallBoxAttribute) SetValue(value string) types.SmallBoxAttribute {
 	(*compo).Value = value
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetUrl(value string) types.InfoBoxAttribute {
+func (compo *SmallBoxAttribute) SetUrl(value string) types.SmallBoxAttribute {
 	(*compo).Url = value
 	return compo
 }
 
-func (compo *InfoBoxAttribute) GetContent() template.HTML {
+func (compo *SmallBoxAttribute) GetContent() template.HTML {
 	return ComposeHtml(*compo, "infobox")
 }

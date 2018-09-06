@@ -97,7 +97,7 @@ func (*Theme) Image() types.ImgAttribute {
 	}
 }
 
-func (*Theme) InfoBox() types.InfoBoxAttribute {
+func (*Theme) SmallBox() types.InfoBoxAttribute {
 	return &components.InfoBoxAttribute{
 		Name:  "infobox",
 		Title: "标题",

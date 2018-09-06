@@ -12,7 +12,7 @@ type Template interface {
 	Box() types.BoxAttribute
 	Col() types.ColAttribute
 	Image() types.ImgAttribute
-	InfoBox() types.InfoBoxAttribute
+	SmallBox() types.InfoBoxAttribute
 	Label() types.LabelAttribute
 	Row() types.RowAttribute
 	Table() types.TableAttribute
