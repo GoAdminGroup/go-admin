@@ -3,9 +3,9 @@ package adapter
 import (
 	"github.com/gin-gonic/gin"
 	"errors"
-	"github.com/chenhg5/go-admin/plugins"
+	"goAdmin/plugins"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"bytes"
 )
 

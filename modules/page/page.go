@@ -1,12 +1,12 @@
 package page
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/modules/auth"
+	"goAdmin/context"
 	"bytes"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template"
+	"goAdmin/modules/menu"
+	"goAdmin/template/types"
+	"goAdmin/template"
 )
 
 // 设置页面内容

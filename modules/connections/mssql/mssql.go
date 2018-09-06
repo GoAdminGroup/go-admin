@@ -3,10 +3,10 @@ package mssql
 import (
 	"database/sql"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/config"
+	"goAdmin/modules/config"
 	"net/url"
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"goAdmin/modules/connections/performer"
 	_ "github.com/denisenkom/go-mssqldb"
 )
 

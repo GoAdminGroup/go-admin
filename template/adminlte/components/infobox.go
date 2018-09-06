@@ -2,32 +2,43 @@ package components
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"goAdmin/template/types"
 )
 
-type SmallBoxAttribute struct {
-	Name  string
-	Title string
-	Value string
-	Url   string
-	Color string
+type InfoBoxAttribute struct {
+	Name    string
+	Icon    string
+	Text    string
+	Number  template.HTML
+	Content string
+	Color   string
 }
 
-func (compo *SmallBoxAttribute) SetTitle(value string) types.SmallBoxAttribute {
-	(*compo).Title = value
+func (compo *InfoBoxAttribute) SetIcon(value string) types.InfoBoxAttribute {
+	(*compo).Icon = value
 	return compo
 }
 
-func (compo *SmallBoxAttribute) SetValue(value string) types.SmallBoxAttribute {
-	(*compo).Value = value
+func (compo *InfoBoxAttribute) SetText(value string) types.InfoBoxAttribute {
+	(*compo).Text = value
 	return compo
 }
 
-func (compo *SmallBoxAttribute) SetUrl(value string) types.SmallBoxAttribute {
-	(*compo).Url = value
+func (compo *InfoBoxAttribute) SetNumber(value template.HTML) types.InfoBoxAttribute {
+	(*compo).Number = value
 	return compo
 }
 
-func (compo *SmallBoxAttribute) GetContent() template.HTML {
+func (compo *InfoBoxAttribute) SetContent(value string) types.InfoBoxAttribute {
+	(*compo).Content = value
+	return compo
+}
+
+func (compo *InfoBoxAttribute) SetColor(value string) types.InfoBoxAttribute {
+	(*compo).Color = value
+	return compo
+}
+
+func (compo *InfoBoxAttribute) GetContent() template.HTML {
 	return ComposeHtml(*compo, "infobox")
 }

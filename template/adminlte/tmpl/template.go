@@ -6,7 +6,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
+                <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
                 <span class="hidden-xs">{{.User.Name}}</span>
             </a>
             <ul class="dropdown-menu">
@@ -20,10 +20,10 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">Setting</a>
+                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">Setting</a>
                     </div>
                     <div class="pull-right">
-                        <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
+                        <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">Sign out</a>
                     </div>
                 </li>
             </ul>
@@ -233,7 +233,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <div class="box-header {{.HeadBorder}}">
         {{.Header}}
     </div>
-    <div class="box-body table-responsive no-padding">
+    <div class="box-body">
         {{.Body}}
     </div>
     <div class="box-footer clearfix">
@@ -241,7 +241,13 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </div>
 </div>
 {{end}}`,"components/col":`{{define "col"}}
-<div class="col-{{.Type}}-{{.Width}}">{{.Content}}</div>
+<div class="{{.Size}}">{{.Content}}</div>
+{{end}}`,"components/description":`{{define "description"}}
+<div class="description-block border-{{.Border}}">
+    <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{.Percent}}%</span>
+    <h5 class="description-header">{{.Number}}</h5>
+    <span class="description-text">{{.Title}}</span>
+</div>
 {{end}}`,"components/form":`{{define "form"}}
 <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
 <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
@@ -316,21 +322,75 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 {{end}}`,"components/image":`{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
 {{end}}`,"components/infobox":`{{define "infobox"}}
-<div class="small-box bg-{{.Color}}">
-    <div class="inner">
-        <h3>{{.Value}}</h3>
-        <p>{{.Title}}</p>
+<div class="info-box">
+    <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
+    <div class="info-box-content">
+        <span class="info-box-text">{{.Text}}</span>
+        <span class="info-box-number">{{.Number}}</span>
+        {{.Content}}
     </div>
-    <div class="icon">
-        <i class="fa fa-users"></i>
-    </div>
-    <a href="{{.Url}}" class="small-box-footer">
-        More&nbsp;
-        <i class="fa fa-arrow-circle-right"></i>
-    </a>
 </div>
 {{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
+<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+
+<div class="chart">
+    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
+</div>
+<script>
+    // Get context with jQuery - using jQuery's .get() method.
+    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
+    // This will get the first returned node in the jQuery collection.
+    let salesChart       = new Chart(salesChartCanvas);
+
+    let salesChartData = JSON.parse({{.Data}});
+
+    let salesChartOptions = {
+        // Boolean - If we should show the scale at all
+        showScale               : true,
+        // Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines      : false,
+        // String - Colour of the grid lines
+        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        // Number - Width of the grid lines
+        scaleGridLineWidth      : 1,
+        // Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        // Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines  : true,
+        // Boolean - Whether the line is curved between points
+        bezierCurve             : true,
+        // Number - Tension of the bezier curve between points
+        bezierCurveTension      : 0.3,
+        // Boolean - Whether to show a dot for each point
+        pointDot                : false,
+        // Number - Radius of each point dot in pixels
+        pointDotRadius          : 4,
+        // Number - Pixel width of point dot stroke
+        pointDotStrokeWidth     : 1,
+        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius : 20,
+        // Boolean - Whether to show a stroke for datasets
+        datasetStroke           : true,
+        // Number - Pixel width of dataset stroke
+        datasetStrokeWidth      : 2,
+        // Boolean - Whether to fill the dataset with a color
+        datasetFill             : true,
+        // String - A legend template
+        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio     : true,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive              : true
+    };
+
+    // Create the line chart
+    salesChart.Line(salesChartData, salesChartOptions);
+</script>
 {{end}}`,"components/paninator":`{{define "paninator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
@@ -389,8 +449,31 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </select>
     <small>entries</small>
 </label>
+{{end}}`,"components/progress-group":`{{define "progress-group"}}
+<div class="progress-group">
+    <span class="progress-text">{{.Title}}</span>
+    <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
+
+    <div class="progress sm">
+        <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+    </div>
+</div>
 {{end}}`,"components/row":`{{define "row"}}
 <div class="row">{{.Content}}</div>
+{{end}}`,"components/smallbox":`{{define "smallbox"}}
+<div class="small-box bg-{{.Color}}">
+    <div class="inner">
+        <h3>{{.Value}}</h3>
+        <p>{{.Title}}</p>
+    </div>
+    <div class="icon">
+        <i class="fa fa-users"></i>
+    </div>
+    <a href="{{.Url}}" class="small-box-footer">
+        More&nbsp;
+        <i class="fa fa-arrow-circle-right"></i>
+    </a>
+</div>
 {{end}}`,"components/table":`{{define "table"}}
     <table class="table table-hover">
         <tbody>

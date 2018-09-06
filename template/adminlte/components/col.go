@@ -2,28 +2,26 @@ package components
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"goAdmin/template/types"
 )
 
 type ColAttribute struct {
 	Name    string
-	Width   string
 	Content template.HTML
-	Type    string
+	Size    string
 }
 
-func (compo *ColAttribute) SetWidth(value string) types.ColAttribute {
-	(*compo).Width = value
-	return compo
-}
 
 func (compo *ColAttribute) SetContent(value template.HTML) types.ColAttribute {
 	(*compo).Content = value
 	return compo
 }
 
-func (compo *ColAttribute) SetType(value string) types.ColAttribute {
-	(*compo).Type = value
+func (compo *ColAttribute) SetSize(value map[string]string) types.ColAttribute {
+	(*compo).Size = ""
+	for key, size := range value {
+		(*compo).Size += "col-" + key + "-" + size + " "
+	}
 	return compo
 }
 

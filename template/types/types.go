@@ -1,9 +1,9 @@
 package types
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
+	"goAdmin/modules/auth"
 	"html/template"
-	"github.com/chenhg5/go-admin/modules/menu"
+	"goAdmin/modules/menu"
 )
 
 type Component interface {

@@ -303,4 +303,5 @@ var asserts = []string{
 	"/sweetalert/dist/sweetalert.min.js",
 	"/toastr/build/toastr.min.css",
 	"/toastr/build/toastr.min.js",
+	"/chartjs/chart.js",
 }

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/connections"
+	"goAdmin/modules/auth"
+	"goAdmin/modules/connections"
 )
 
 func NewManager(dataList map[string][]string) {

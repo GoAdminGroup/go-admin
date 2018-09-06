@@ -2,12 +2,12 @@ package adminlte
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"goAdmin/template/types"
+	"goAdmin/template/adminlte/components"
+	"goAdmin/modules/menu"
+	"goAdmin/template/adminlte/tmpl"
 	"fmt"
-	"github.com/chenhg5/go-admin/template/adminlte/resource"
+	"goAdmin/template/adminlte/resource"
 )
 
 type Theme struct {
@@ -71,9 +71,8 @@ func (*Theme) Box() types.BoxAttribute {
 func (*Theme) Col() types.ColAttribute {
 	return &components.ColAttribute{
 		Name:    "col",
-		Width:   "2",
+		Size:    "col-md-2",
 		Content: "",
-		Type:    "md",
 	}
 }
 
@@ -97,13 +96,41 @@ func (*Theme) Image() types.ImgAttribute {
 	}
 }
 
-func (*Theme) SmallBox() types.InfoBoxAttribute {
-	return &components.InfoBoxAttribute{
-		Name:  "infobox",
+func (*Theme) SmallBox() types.SmallBoxAttribute {
+	return &components.SmallBoxAttribute{
+		Name:  "smallbox",
 		Title: "标题",
 		Value: "值",
 		Url:   "/",
 		Color: "aqua",
+	}
+}
+
+func (*Theme) InfoBox() types.InfoBoxAttribute {
+	return &components.InfoBoxAttribute{
+		Name:   "infobox",
+		Text:   "标题",
+		Icon:   "ion-ios-cart-outline",
+		Number: "90",
+		Color:  "red",
+	}
+}
+
+func (*Theme) LineChart() types.LineChartAttribute {
+	return &components.LineChartAttribute{
+		Name: "line-chart",
+	}
+}
+
+func (*Theme) ProgressGroup() types.ProgressGroupAttribute {
+	return &components.ProgressGroupAttribute{
+		Name: "progress-group",
+	}
+}
+
+func (*Theme) Description() types.DescriptionAttribute {
+	return &components.DescriptionAttribute{
+		Name: "description",
 	}
 }
 

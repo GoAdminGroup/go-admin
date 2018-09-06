@@ -2,10 +2,10 @@ package models
 
 import (
 	"strconv"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"goAdmin/template/adminlte/components"
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
-	template2 "github.com/chenhg5/go-admin/template"
+	"goAdmin/template/types"
+	template2 "goAdmin/template"
 )
 
 func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaninatorAttribute {

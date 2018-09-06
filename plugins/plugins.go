@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"strings"
 	"regexp"
 )

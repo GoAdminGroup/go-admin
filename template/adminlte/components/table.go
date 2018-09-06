@@ -2,7 +2,7 @@ package components
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"goAdmin/template/types"
 )
 
 type TableAttribute struct {

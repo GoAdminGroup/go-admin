@@ -2,11 +2,11 @@ package main
 
 import (
 	"net/http"
-	"github.com/chenhg5/go-admin/adapter"
-	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/examples/datamodel"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/engine"
+	"goAdmin/adapter"
+	"goAdmin/plugins/admin"
+	"goAdmin/examples/datamodel"
+	"goAdmin/modules/config"
+	"goAdmin/engine"
 )
 
 func main() {

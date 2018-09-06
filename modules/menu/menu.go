@@ -1,7 +1,7 @@
 package menu
 
 import (
-	"github.com/chenhg5/go-admin/modules/connections"
+	"goAdmin/modules/connections"
 	"strconv"
 	"sync"
 )

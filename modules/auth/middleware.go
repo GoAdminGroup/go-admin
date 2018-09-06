@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"github.com/chenhg5/go-admin/modules/connections"
+	"goAdmin/modules/connections"
 	"regexp"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"fmt"
 )
 

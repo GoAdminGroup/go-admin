@@ -2,7 +2,7 @@ package types
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/modules/menu"
+	"goAdmin/modules/menu"
 )
 
 type FormAttribute interface {
@@ -26,9 +26,8 @@ type BoxAttribute interface {
 }
 
 type ColAttribute interface {
-	SetWidth(value string) ColAttribute
+	SetSize(value map[string]string) ColAttribute
 	SetContent(value template.HTML) ColAttribute
-	SetType(value string) ColAttribute
 	GetContent() template.HTML
 }
 
@@ -94,3 +93,44 @@ type PaninatorAttribute interface {
 	SetUrl(value string) PaninatorAttribute
 	GetContent() template.HTML
 }
+
+type InfoBoxAttribute interface {
+	SetIcon(value string) InfoBoxAttribute
+	SetText(value string) InfoBoxAttribute
+	SetNumber(value template.HTML) InfoBoxAttribute
+	SetContent(value string) InfoBoxAttribute
+	SetColor(value string) InfoBoxAttribute
+	GetContent() template.HTML
+}
+
+type ProgressGroupAttribute interface {
+	SetTitle(value string) ProgressGroupAttribute
+	SetColor(value string) ProgressGroupAttribute
+	SetPercent(value int) ProgressGroupAttribute
+	SetDenominator(value int) ProgressGroupAttribute
+	SetMolecular(value int) ProgressGroupAttribute
+	GetContent() template.HTML
+}
+
+type ProgressAttribute interface{}
+
+type DescriptionAttribute interface {
+	SetNumber(value string) DescriptionAttribute
+	SetTitle(value string) DescriptionAttribute
+	SetArrow(value string) DescriptionAttribute
+	SetPercent(value string) DescriptionAttribute
+	SetBorder(value string) DescriptionAttribute
+	SetColor(value string) DescriptionAttribute
+	GetContent() template.HTML
+}
+
+type LineChartAttribute interface {
+	SetTitle(value string) LineChartAttribute
+	SetPrefix(value string) LineChartAttribute
+	SetID(value string) LineChartAttribute
+	SetData(value string) LineChartAttribute
+	SetHeight(value int) LineChartAttribute
+	GetContent() template.HTML
+}
+
+type ProductListAttribute interface{}

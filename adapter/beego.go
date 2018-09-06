@@ -2,10 +2,10 @@ package adapter
 
 import (
 	"errors"
-	"github.com/chenhg5/go-admin/plugins"
+	"goAdmin/plugins"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	gctx "github.com/chenhg5/go-admin/context"
+	gctx "goAdmin/context"
 	"strings"
 	"bytes"
 )
