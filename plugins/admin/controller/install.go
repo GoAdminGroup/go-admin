@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 )
 
 func ShowInstall(ctx *context.Context) {

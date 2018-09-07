@@ -2,7 +2,7 @@ package types
 
 import (
 	"html/template"
-	"goAdmin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type FormAttribute interface {

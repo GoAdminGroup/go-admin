@@ -1,7 +1,7 @@
 package components
 
 import (
-	"goAdmin/template/types"
+	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 )
 

@@ -2,8 +2,8 @@ package components
 
 import (
 	"html/template"
-	"goAdmin/modules/menu"
-	"goAdmin/template/types"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type TreeAttribute struct {

@@ -1,12 +1,12 @@
 package models
 
 import (
-	"goAdmin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"strconv"
 	"strings"
-	"goAdmin/template/types"
-	"goAdmin/template"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 func GetManagerTable() (ManagerTable GlobalTable) {

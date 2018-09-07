@@ -1,12 +1,12 @@
 package models
 
 import (
-	"goAdmin/modules/connections"
-	"goAdmin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"strconv"
 	"strings"
 	"html/template"
-	"goAdmin/template/types"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 type ErrStruct struct {

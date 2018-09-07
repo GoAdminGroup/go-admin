@@ -2,10 +2,10 @@ package controller
 
 import (
 	"html/template"
-	"goAdmin/context"
-	"goAdmin/modules/page"
-	"goAdmin/template/types"
-	template2 "goAdmin/template"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/page"
+	"github.com/chenhg5/go-admin/template/types"
+	template2 "github.com/chenhg5/go-admin/template"
 )
 
 func ShowDashboard(ctx *context.Context) {

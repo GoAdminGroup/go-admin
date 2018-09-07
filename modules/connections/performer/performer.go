@@ -2,7 +2,7 @@ package performer
 
 import (
 	"database/sql"
-	"goAdmin/modules/connections/converter"
+	"github.com/chenhg5/go-admin/modules/connections/converter"
 	"regexp"
 	"strings"
 )

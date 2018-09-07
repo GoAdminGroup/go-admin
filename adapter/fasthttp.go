@@ -2,9 +2,9 @@ package adapter
 
 import (
 	"errors"
-	"goAdmin/plugins"
+	"github.com/chenhg5/go-admin/plugins"
 	"strings"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"bytes"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"

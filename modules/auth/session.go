@@ -2,11 +2,11 @@ package auth
 
 import (
 	"encoding/json"
-	"goAdmin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"time"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/context"
 	"net/http"
-	"goAdmin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 var (

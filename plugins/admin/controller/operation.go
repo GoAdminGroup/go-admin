@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"goAdmin/modules/auth"
-	"goAdmin/modules/connections"
-	"goAdmin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/gin-gonic/gin/json"
 )
 

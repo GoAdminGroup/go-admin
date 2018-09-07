@@ -2,12 +2,12 @@ package adminlte
 
 import (
 	"html/template"
-	"goAdmin/template/types"
-	"goAdmin/template/adminlte/components"
-	"goAdmin/modules/menu"
-	"goAdmin/template/adminlte/tmpl"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"fmt"
-	"goAdmin/template/adminlte/resource"
+	"github.com/chenhg5/go-admin/template/adminlte/resource"
 )
 
 type Theme struct {
