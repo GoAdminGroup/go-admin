@@ -2,7 +2,7 @@ package types
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/modules/menu"
+	"goAdmin/modules/menu"
 )
 
 type FormAttribute interface {
@@ -115,6 +115,19 @@ type ProgressGroupAttribute interface {
 
 type ProgressAttribute interface{}
 
+type PieChartAttribute interface {
+	SetID(value string) PieChartAttribute
+	SetData(value string) PieChartAttribute
+	SetPrefix(value string) PieChartAttribute
+	SetHeight(value int) PieChartAttribute
+	GetContent() template.HTML
+}
+
+type ChartLegendAttribute interface {
+	SetData(value []map[string]string) ChartLegendAttribute
+	GetContent() template.HTML
+}
+
 type DescriptionAttribute interface {
 	SetNumber(value string) DescriptionAttribute
 	SetTitle(value string) DescriptionAttribute
@@ -125,13 +138,16 @@ type DescriptionAttribute interface {
 	GetContent() template.HTML
 }
 
-type LineChartAttribute interface {
-	SetTitle(value string) LineChartAttribute
-	SetPrefix(value string) LineChartAttribute
-	SetID(value string) LineChartAttribute
-	SetData(value string) LineChartAttribute
-	SetHeight(value int) LineChartAttribute
+type AreaChartAttribute interface {
+	SetTitle(value string) AreaChartAttribute
+	SetPrefix(value string) AreaChartAttribute
+	SetID(value string) AreaChartAttribute
+	SetData(value string) AreaChartAttribute
+	SetHeight(value int) AreaChartAttribute
 	GetContent() template.HTML
 }
 
-type ProductListAttribute interface{}
+type ProductListAttribute interface {
+	SetData(value []map[string]string) ProductListAttribute
+	GetContent() template.HTML
+}

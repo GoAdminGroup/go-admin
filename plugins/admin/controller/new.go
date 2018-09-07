@@ -2,15 +2,15 @@ package controller
 
 import (
 	"bytes"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
+	"goAdmin/modules/auth"
+	"goAdmin/plugins/admin/models"
+	"goAdmin/plugins/admin/modules/file"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"net/http"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template"
+	"goAdmin/modules/menu"
+	"goAdmin/template/types"
+	"goAdmin/template"
 )
 
 // 显示新建表单

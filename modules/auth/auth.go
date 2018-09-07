@@ -1,10 +1,10 @@
 package auth
 
 import (
-	"github.com/chenhg5/go-admin/modules/connections"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
+	"goAdmin/modules/connections"
+	"goAdmin/plugins/admin/modules"
 	"strconv"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"golang.org/x/crypto/bcrypt"
 )
 

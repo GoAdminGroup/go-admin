@@ -2,12 +2,12 @@ package adminlte
 
 import (
 	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"goAdmin/template/types"
+	"goAdmin/template/adminlte/components"
+	"goAdmin/modules/menu"
+	"goAdmin/template/adminlte/tmpl"
 	"fmt"
-	"github.com/chenhg5/go-admin/template/adminlte/resource"
+	"goAdmin/template/adminlte/resource"
 )
 
 type Theme struct {
@@ -116,9 +116,9 @@ func (*Theme) InfoBox() types.InfoBoxAttribute {
 	}
 }
 
-func (*Theme) LineChart() types.LineChartAttribute {
-	return &components.LineChartAttribute{
-		Name: "line-chart",
+func (*Theme) AreaChart() types.AreaChartAttribute {
+	return &components.AreaChartAttribute{
+		Name: "area-chart",
 	}
 }
 
@@ -131,6 +131,24 @@ func (*Theme) ProgressGroup() types.ProgressGroupAttribute {
 func (*Theme) Description() types.DescriptionAttribute {
 	return &components.DescriptionAttribute{
 		Name: "description",
+	}
+}
+
+func (*Theme) PieChart() types.PieChartAttribute {
+	return &components.PieChartAttribute{
+		Name: "pie-chart",
+	}
+}
+
+func (*Theme) ChartLegend() types.ChartLegendAttribute {
+	return &components.ChartLegendAttribute{
+		Name: "chart-legend",
+	}
+}
+
+func (*Theme) ProductList() types.ProductListAttribute {
+	return &components.ProductListAttribute{
+		Name: "productlist",
 	}
 }
 

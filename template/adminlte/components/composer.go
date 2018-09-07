@@ -5,7 +5,7 @@ import (
 	"html/template"
 	"fmt"
 	"strings"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"goAdmin/template/adminlte/tmpl"
 )
 
 func ComposeHtml(compo interface{}, templateName... string) template.HTML {

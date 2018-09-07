@@ -2,14 +2,14 @@ package controller
 
 import (
 	"bytes"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
+	"goAdmin/modules/auth"
+	"goAdmin/plugins/admin/models"
+	"goAdmin/plugins/admin/modules/file"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"goAdmin/context"
+	"goAdmin/modules/menu"
+	"goAdmin/template"
+	"goAdmin/template/types"
 	"net/http"
 )
 

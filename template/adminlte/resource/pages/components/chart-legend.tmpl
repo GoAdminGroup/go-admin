@@ -1,0 +1,7 @@
+{{define "chart-legend"}}
+<ul class="chart-legend clearfix">
+    {{range $key, $data := .Data}}
+        <li><i class="fa fa-circle-o text-{{index $data "color"}}"></i>{{index $data "label"}}</li>
+    {{end}}
+</ul>
+{{end}}

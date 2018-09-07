@@ -1,10 +1,10 @@
 package template
 
 import (
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/adminlte"
+	"goAdmin/template/types"
+	"goAdmin/template/adminlte"
 	"html/template"
-	"github.com/chenhg5/go-admin/template/login"
+	"goAdmin/template/login"
 )
 
 type Template interface {
@@ -20,9 +20,12 @@ type Template interface {
 	Tree() types.TreeAttribute
 	InfoBox() types.InfoBoxAttribute
 	Paninator() types.PaninatorAttribute
-	LineChart() types.LineChartAttribute
+	AreaChart() types.AreaChartAttribute
 	ProgressGroup() types.ProgressGroupAttribute
+	ProductList() types.ProductListAttribute
 	Description() types.DescriptionAttribute
+	PieChart() types.PieChartAttribute
+	ChartLegend() types.ChartLegendAttribute
 	GetTmplList() map[string]string
 	GetAssetList() []string
 	GetAsset(string) ([]byte, error)

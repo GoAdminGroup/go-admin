@@ -228,6 +228,65 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </section>
     <!-- /.sidebar -->
 </aside>
+{{end}}`,"components/area-chart":`{{define "area-chart"}}
+<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+
+<div class="chart">
+    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
+</div>
+<script>
+    // Get context with jQuery - using jQuery's .get() method.
+    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
+    // This will get the first returned node in the jQuery collection.
+    let salesChart       = new Chart(salesChartCanvas);
+
+    let salesChartData = JSON.parse({{.Data}});
+
+    let salesChartOptions = {
+        // Boolean - If we should show the scale at all
+        showScale               : true,
+        // Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines      : false,
+        // String - Colour of the grid lines
+        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        // Number - Width of the grid lines
+        scaleGridLineWidth      : 1,
+        // Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        // Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines  : true,
+        // Boolean - Whether the line is curved between points
+        bezierCurve             : true,
+        // Number - Tension of the bezier curve between points
+        bezierCurveTension      : 0.3,
+        // Boolean - Whether to show a dot for each point
+        pointDot                : false,
+        // Number - Radius of each point dot in pixels
+        pointDotRadius          : 4,
+        // Number - Pixel width of point dot stroke
+        pointDotStrokeWidth     : 1,
+        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius : 20,
+        // Boolean - Whether to show a stroke for datasets
+        datasetStroke           : true,
+        // Number - Pixel width of dataset stroke
+        datasetStrokeWidth      : 2,
+        // Boolean - Whether to fill the dataset with a color
+        datasetFill             : true,
+        // String - A legend template
+        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio     : true,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive              : true
+    };
+
+    // Create the line chart
+    salesChart.Line(salesChartData, salesChartOptions);
+</script>
 {{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
@@ -240,6 +299,12 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{.Footer}}
     </div>
 </div>
+{{end}}`,"components/chart-legend":`{{define "chart-legend"}}
+<ul class="chart-legend clearfix">
+    {{range $key, $data := .Data}}
+        <li><i class="fa fa-circle-o text-{{index $data "color"}}"></i>{{index $data "label"}}</li>
+    {{end}}
+</ul>
 {{end}}`,"components/col":`{{define "col"}}
 <div class="{{.Size}}">{{.Content}}</div>
 {{end}}`,"components/description":`{{define "description"}}
@@ -332,65 +397,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 </div>
 {{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`,"components/line-chart":`{{define "line-chart"}}
-<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
-<p class="text-center">
-    <strong>{{.Title}}</strong>
-</p>
-
-<div class="chart">
-    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
-</div>
-<script>
-    // Get context with jQuery - using jQuery's .get() method.
-    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
-    // This will get the first returned node in the jQuery collection.
-    let salesChart       = new Chart(salesChartCanvas);
-
-    let salesChartData = JSON.parse({{.Data}});
-
-    let salesChartOptions = {
-        // Boolean - If we should show the scale at all
-        showScale               : true,
-        // Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines      : false,
-        // String - Colour of the grid lines
-        scaleGridLineColor      : 'rgba(0,0,0,.05)',
-        // Number - Width of the grid lines
-        scaleGridLineWidth      : 1,
-        // Boolean - Whether to show horizontal lines (except X axis)
-        scaleShowHorizontalLines: true,
-        // Boolean - Whether to show vertical lines (except Y axis)
-        scaleShowVerticalLines  : true,
-        // Boolean - Whether the line is curved between points
-        bezierCurve             : true,
-        // Number - Tension of the bezier curve between points
-        bezierCurveTension      : 0.3,
-        // Boolean - Whether to show a dot for each point
-        pointDot                : false,
-        // Number - Radius of each point dot in pixels
-        pointDotRadius          : 4,
-        // Number - Pixel width of point dot stroke
-        pointDotStrokeWidth     : 1,
-        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-        pointHitDetectionRadius : 20,
-        // Boolean - Whether to show a stroke for datasets
-        datasetStroke           : true,
-        // Number - Pixel width of dataset stroke
-        datasetStrokeWidth      : 2,
-        // Boolean - Whether to fill the dataset with a color
-        datasetFill             : true,
-        // String - A legend template
-        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
-        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-        maintainAspectRatio     : true,
-        // Boolean - whether to make the chart responsive to window resizing
-        responsive              : true
-    };
-
-    // Create the line chart
-    salesChart.Line(salesChartData, salesChartOptions);
-</script>
 {{end}}`,"components/paninator":`{{define "paninator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
@@ -449,6 +455,65 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </select>
     <small>entries</small>
 </label>
+{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
+<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+<div class="chart-responsive">
+    <canvas id="{{.ID}}" height="{{.Height}}"></canvas>
+</div>
+<script>
+    let pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+    let pieChart       = new Chart(pieChartCanvas);
+    let PieData        = JSON.parse({{.Data}});
+    let pieOptions     = {
+        // Boolean - Whether we should show a stroke on each segment
+        segmentShowStroke    : true,
+        // String - The colour of each segment stroke
+        segmentStrokeColor   : '#fff',
+        // Number - The width of each segment stroke
+        segmentStrokeWidth   : 1,
+        // Number - The percentage of the chart that we cut out of the middle
+        percentageInnerCutout: 50, // This is 0 for Pie charts
+        // Number - Amount of animation steps
+        animationSteps       : 100,
+        // String - Animation easing effect
+        animationEasing      : 'easeOutBounce',
+        // Boolean - Whether we animate the rotation of the Doughnut
+        animateRotate        : true,
+        // Boolean - Whether we animate scaling the Doughnut from the centre
+        animateScale         : false,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive           : true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio  : false,
+        // String - A legend template
+        legendTemplate       : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++){%><li><span style=\'background-color:<%=segments[i].fillColor%>\'></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>',
+        // String - A tooltip template
+        tooltipTemplate      : '<%=value %> <%=label%> users'
+    };
+    // Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    pieChart.Doughnut(PieData, pieOptions);
+</script>
+{{end}}`,"components/productlist":`{{define "productlist"}}
+<ul class="products-list product-list-in-box">
+    {{range $key, $data := .Data}}
+    <li class="item">
+        <div class="product-img">
+            <img src="{{index $data "img"}}" alt="Product Image">
+        </div>
+        <div class="product-info">
+            <a href="javascript:void(0)" class="product-title">{{index $data "title"}}
+                {{if eq (index $data "has_tabel") "true"}}
+                    <span class="label label-{{index $data "labeltype"}} pull-right">{{index $data "label"}}</span>
+                {{end}}
+            </a>
+            <span class="product-description">
+                {{index $data "description"}}
+            </span>
+        </div>
+    </li>
+    {{end}}
+</ul>
 {{end}}`,"components/progress-group":`{{define "progress-group"}}
 <div class="progress-group">
     <span class="progress-text">{{.Title}}</span>

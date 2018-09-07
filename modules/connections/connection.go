@@ -2,11 +2,11 @@ package connections
 
 import (
 	"database/sql"
-	"github.com/chenhg5/go-admin/modules/connections/mysql"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/connections/mssql"
-	"github.com/chenhg5/go-admin/modules/connections/sqlite"
-	"github.com/chenhg5/go-admin/modules/connections/postgresql"
+	"goAdmin/modules/connections/mysql"
+	"goAdmin/modules/config"
+	"goAdmin/modules/connections/mssql"
+	"goAdmin/modules/connections/sqlite"
+	"goAdmin/modules/connections/postgresql"
 )
 
 type Connection interface {

@@ -2,10 +2,10 @@ package adapter
 
 import (
 	"net/http"
-	"github.com/chenhg5/go-admin/plugins"
+	"goAdmin/plugins"
 	"errors"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
+	"goAdmin/context"
 	"bytes"
 )
 
