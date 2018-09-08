@@ -717,7 +717,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
         </tbody>
     </table>
-    {{if eq .Type "data-table"}}
+    {{if eq $Type "data-table"}}
     <script>
         $('.grid-row-delete').unbind('click').click(function () {
 
