@@ -164,6 +164,18 @@ func (*Theme) ProductList() types.ProductListAttribute {
 	}
 }
 
+func (*Theme) Tabs() types.TabsAttribute {
+	return &components.TabsAttribute{
+		Name: "tabs",
+	}
+}
+
+func (*Theme) Alert() types.AlertAttribute {
+	return &components.AlertAttribute{
+		Name: "alert",
+	}
+}
+
 func (*Theme) Label() types.LabelAttribute {
 	return &components.LabelAttribute{
 		Name:    "label",

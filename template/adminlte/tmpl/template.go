@@ -12,7 +12,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
             <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                    <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
                     <p>
                         {{.User.Name}} -{{.User.Level}}
                         <small>{{.User.CreateAt}}</small>
@@ -234,6 +234,12 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </section>
     <!-- /.sidebar -->
 </aside>
+{{end}}`,"components/alert":`{{define "alert"}}
+<div class="alert alert-{{.Theme}} alert-dismissible">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4>{{.Title}}</h4>
+    {{.Content}}
+</div>
 {{end}}`,"components/area-chart":`{{define "area-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
@@ -711,6 +717,31 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
         </tbody>
     </table>
+{{end}}`,"components/tabs":`{{define "tabs"}}
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <li class="active"><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{else}}
+                <li><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{end}}
+        {{end}}
+    </ul>
+    <div class="tab-content">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <div class="tab-pane active" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{else}}
+                <div class="tab-pane" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{end}}
+        {{end}}
+    </div>
+</div>
 {{end}}`,"components/tree-header":`{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">

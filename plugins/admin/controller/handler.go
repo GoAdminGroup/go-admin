@@ -16,6 +16,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
 	"net/http"
+	template2 "html/template"
 )
 
 // 全局错误处理
@@ -45,28 +46,43 @@ func GlobalDeferHandler(ctx *context.Context) {
 			}
 		}
 
+		alert := template.Get(Config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-info"></i> Error!`)).
+			SetTheme("warning").SetContent(template2.HTML(errMsg)).GetContent()
+
 		if ok, _ = regexp.Match("/edit(.*)", []byte(ctx.Path())); ok {
+
+			user := ctx.UserValue["user"].(auth.User)
+
 			prefix := ctx.Request.URL.Query().Get("prefix")
 
-			form := ctx.Request.MultipartForm
-
-			id := (*form).Value["id"][0]
-
-			//previous := string(ctx.Request.FormValue("_previous_"))
+			id := ctx.Request.URL.Query().Get("id")
 
 			formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-			//url := "/edit/" + prefix + "?id=" + id
+			tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
-			//token := auth.TokenHelper.AddToken()
+			path := ctx.Path()
+			menu.GlobalMenu.SetActiveClass(path)
 
-			tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
-
-			if err != nil {
-				fmt.Println(err)
+			page := ctx.Request.URL.Query().Get("page")
+			if page == "" {
+				page = "1"
+			}
+			pageSize := ctx.Request.URL.Query().Get("pageSize")
+			if pageSize == "" {
+				pageSize = "10"
 			}
 
-			user := ctx.UserValue["user"].(auth.User)
+			sortField := ctx.Request.URL.Query().Get("sort")
+			if sortField == "" {
+				sortField = "id"
+			}
+			sortType := ctx.Request.URL.Query().Get("sort_type")
+			if sortType == "" {
+				sortType = "desc"
+			}
+
+			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
@@ -76,41 +92,72 @@ func GlobalDeferHandler(ctx *context.Context) {
 					"0.0.1",
 				},
 				Panel: types.Panel{
-					Content:     template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetContent(formData).GetContent(),
+					Content: alert + template.Get(Config.THEME).Form().
+						SetContent(formData).
+						SetPrefix(Config.ADMIN_PREFIX).
+						SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
+						SetToken(auth.TokenHelper.AddToken()).
+						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+						GetContent(),
 					Description: description,
 					Title:       title,
 				},
 				AssertRootUrl: Config.ADMIN_PREFIX,
 			})
-
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/edit?id="+id)
-			return
 		}
 
 		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
-			//prefix := ctx.Request.URL.Query().Get("prefix")
+			prefix := ctx.Request.URL.Query().Get("prefix")
 
-			buffer := new(bytes.Buffer)
+			user := ctx.UserValue["user"].(auth.User)
 
-			//form, _ := ctx.MultipartForm()
+			tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
-			//id := (*form).Value["id"][0]
+			path := ctx.Path()
+			menu.GlobalMenu.SetActiveClass(path)
 
-			//previous := string(ctx.Request.FormValue("_previous_"))
-			//
-			//url := "/edit/" + prefix + "?id=" + id
-			//
-			//token := auth.TokenHelper.AddToken()
+			page := ctx.Request.URL.Query().Get("page")
+			if page == "" {
+				page = "1"
+			}
+			pageSize := ctx.Request.URL.Query().Get("pageSize")
+			if pageSize == "" {
+				pageSize = "10"
+			}
 
-			//template.NewPanelPjax(models.GlobalTableList[prefix].Form.FormList, url,
-			//	previous, id, models.GlobalTableList[prefix].Form.Title,
-			//	models.GlobalTableList[prefix].Form.Description, models.ErrStruct{"hidden", errMsg}, token, buffer)
+			sortField := ctx.Request.URL.Query().Get("sort")
+			if sortField == "" {
+				sortField = "id"
+			}
+			sortType := ctx.Request.URL.Query().Get("sort_type")
+			if sortType == "" {
+				sortType = "desc"
+			}
 
-			ctx.WriteString(buffer.String())
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-			ctx.Response.Header.Add("X-PJAX-URL", "/info/user/new")
+
+			buf := new(bytes.Buffer)
+			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+				User: user,
+				Menu: *menu.GlobalMenu,
+				System: types.SystemInfo{
+					"0.0.1",
+				},
+				Panel: types.Panel{
+					Content: alert + template.Get(Config.THEME).Form().
+						SetPrefix(Config.ADMIN_PREFIX).
+						SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
+						SetUrl(Config.ADMIN_PREFIX + "/new/" + prefix).
+						SetToken(auth.TokenHelper.AddToken()).
+						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+						GetContent(),
+					Description: models.GlobalTableList[prefix].Form.Description,
+					Title:       models.GlobalTableList[prefix].Form.Title,
+				},
+				AssertRootUrl: Config.ADMIN_PREFIX,
+			})
+			ctx.WriteString(buf.String())
 			return
 		}
 

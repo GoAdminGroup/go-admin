@@ -166,3 +166,15 @@ type ProductListAttribute interface {
 	SetData(value []map[string]string) ProductListAttribute
 	GetContent() template.HTML
 }
+
+type TabsAttribute interface {
+	SetData(value []map[string]template.HTML) TabsAttribute
+	GetContent() template.HTML
+}
+
+type AlertAttribute interface {
+	SetTheme(value string) AlertAttribute
+	SetTitle(value template.HTML) AlertAttribute
+	SetContent(value template.HTML) AlertAttribute
+	GetContent() template.HTML
+}

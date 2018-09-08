@@ -59,7 +59,7 @@ func ShowNewForm(ctx *context.Context) {
 				SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
 				SetUrl(Config.ADMIN_PREFIX + "/new/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
+				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
 				GetContent(),
 			Description: models.GlobalTableList[prefix].Form.Description,
 			Title:       models.GlobalTableList[prefix].Form.Title,
@@ -101,7 +101,8 @@ func NewForm(ctx *context.Context) {
 
 	models.RefreshGlobalTableList()
 
-	previous := string(ctx.Request.FormValue("_previous_"))
+	previous := ctx.Request.FormValue("_previous_")
+
 	prevUrlArr := strings.Split(previous, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
 	page := "1"

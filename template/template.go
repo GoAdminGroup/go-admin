@@ -26,8 +26,10 @@ type Template interface {
 	BarChart() types.BarChartAttribute
 	ProductList() types.ProductListAttribute
 	Description() types.DescriptionAttribute
+	Alert() types.AlertAttribute
 	PieChart() types.PieChartAttribute
 	ChartLegend() types.ChartLegendAttribute
+	Tabs() types.TabsAttribute
 	GetTmplList() map[string]string
 	GetAssetList() []string
 	GetAsset(string) ([]byte, error)
