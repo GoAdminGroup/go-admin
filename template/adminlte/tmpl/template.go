@@ -3280,10 +3280,10 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             </div>
         </div>
     </div>
-    -->
+
 
     <div class="btn-group pull-right" style="margin-right: 10px">
-        <!--<a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>-->
+        <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
         <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
             <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
@@ -3295,6 +3295,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank" class="export-selected">Selected rows</a></li>
         </ul>
     </div>
+    -->
 
     <div class="btn-group pull-right" style="margin-right: 10px">
 
