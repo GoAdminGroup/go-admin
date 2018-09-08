@@ -145,10 +145,11 @@ func EditForm(ctx *context.Context) {
 
 	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
 	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
+	deleteUrl := Config.ADMIN_PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
 
-	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
+	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
 	table := dataTable.GetContent()
 
 	box := template.Get(Config.THEME).Box().

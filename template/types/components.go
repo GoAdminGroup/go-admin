@@ -68,6 +68,7 @@ type DataTableAttribute interface {
 	SetThead(value []map[string]string) DataTableAttribute
 	SetInfoList(value []map[string]template.HTML) DataTableAttribute
 	SetEditUrl(value string) DataTableAttribute
+	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
 	GetContent() template.HTML
 }

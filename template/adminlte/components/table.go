@@ -6,11 +6,12 @@ import (
 )
 
 type TableAttribute struct {
-	Name     string
-	Thead    []map[string]string
-	InfoList []map[string]template.HTML
-	Type     string
-	EditUrl  string
+	Name      string
+	Thead     []map[string]string
+	InfoList  []map[string]template.HTML
+	Type      string
+	EditUrl   string
+	DeleteUrl string
 }
 
 func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
@@ -34,8 +35,9 @@ func (compo *TableAttribute) GetContent() template.HTML {
 
 type DataTableAttribute struct {
 	TableAttribute
-	EditUrl string
-	NewUrl  string
+	EditUrl   string
+	NewUrl    string
+	DeleteUrl string
 }
 
 func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
@@ -54,6 +56,11 @@ func (compo *DataTableAttribute) SetInfoList(value []map[string]template.HTML) t
 
 func (compo *DataTableAttribute) SetEditUrl(value string) types.DataTableAttribute {
 	(*compo).EditUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetDeleteUrl(value string) types.DataTableAttribute {
+	(*compo).DeleteUrl = value
 	return compo
 }
 

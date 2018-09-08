@@ -56,12 +56,13 @@ func ShowInfo(ctx *context.Context) {
 	)
 	editUrl = Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
 	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	deleteUrl := Config.ADMIN_PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
-	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl)
+	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
 	table := dataTable.GetContent()
 
 	box := template.Get(Config.THEME).Box().
