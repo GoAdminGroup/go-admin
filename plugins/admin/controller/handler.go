@@ -84,6 +84,8 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
+			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 				User: user,
@@ -97,7 +99,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 						SetPrefix(Config.ADMIN_PREFIX).
 						SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: description,
 					Title:       title,
@@ -105,6 +107,8 @@ func GlobalDeferHandler(ctx *context.Context) {
 				AssertRootUrl: Config.ADMIN_PREFIX,
 			})
 			ctx.WriteString(buf.String())
+			ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/info/" + prefix + "/new" + queryParam)
+			return
 		}
 
 		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
@@ -137,6 +141,8 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
+			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 				User: user,
@@ -150,7 +156,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 						SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
 						SetUrl(Config.ADMIN_PREFIX + "/new/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: models.GlobalTableList[prefix].Form.Description,
 					Title:       models.GlobalTableList[prefix].Form.Title,
@@ -158,6 +164,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 				AssertRootUrl: Config.ADMIN_PREFIX,
 			})
 			ctx.WriteString(buf.String())
+			ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/info/" + prefix + "/new" + queryParam)
 			return
 		}
 
