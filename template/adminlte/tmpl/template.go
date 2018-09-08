@@ -176,7 +176,11 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 {{range $key, $list := .Menu.GlobalMenuList }}
     {{if eq (len $list.ChildrenList) 0}}
         <li class='{{$list.Active}}'>
-            <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+            {{if eq $list.Url "/"}}
+                <a href='{{$AssertRootUrl}}'>
+            {{else}}
+                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+            {{end}}
                 <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
                 <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
             </a>
