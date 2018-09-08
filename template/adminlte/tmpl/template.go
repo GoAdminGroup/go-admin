@@ -717,6 +717,45 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
         </tbody>
     </table>
+    {{if eq .Type "data-table"}}
+    <script>
+        $('.grid-row-delete').unbind('click').click(function () {
+
+            let id = $(this).data('id');
+
+            swal({
+                title: "你确定要删除吗",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                closeOnConfirm: false,
+                cancelButtonText: "取消"
+            },
+            function(){
+                $.ajax({
+                    method: 'post',
+                    url: {{.DeleteUrl}},
+                    data: {
+                        id:id
+                        // _t: $('#_TOKEN').val()
+                    },
+                    success: function (data) {
+                        $.pjax.reload('#pjax-container');
+
+                        data = JSON.parse(data);
+                        if (data.code === 200) {
+                            // $('#_TOKEN').val(data.data);
+                            swal(data.msg, '', 'success');
+                        } else {
+                            swal(data.msg, '', 'error');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    {{end}}
 {{end}}`,"components/tabs":`{{define "tabs"}}
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
