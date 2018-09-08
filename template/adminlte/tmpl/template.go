@@ -754,6 +754,70 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 });
             });
         });
+
+        var selectedRows = function () {
+            var selected = [];
+            $('.grid-row-checkbox:checked').each(function(){
+                selected.push($(this).data('id'));
+            });
+
+            return selected;
+        };
+
+        $('.grid-select-all').on('ifChanged', function (event) {
+            if (this.checked) {
+                $('.grid-row-checkbox').iCheck('check');
+            } else {
+                $('.grid-row-checkbox').iCheck('uncheck');
+            }
+        });
+        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+
+        $(function () {
+            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                if (this.checked) {
+                    $(this).closest('tr').css('background-color', "#ffffd5");
+                } else {
+                    $(this).closest('tr').css('background-color', '');
+                }
+            });
+        });
+
+        $('.grid-batch-0').on('click', function() {
+
+            let id = selectedRows().join();
+
+            swal({
+                title: "你确定要删除吗",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                closeOnConfirm: false,
+                cancelButtonText: "取消"
+            },
+            function(){
+                $.ajax({
+                    method: 'post',
+                    url: {{.DeleteUrl}},
+                    data: {
+                        id: id
+                        // _t: $('#_TOKEN').val()
+                    },
+                    success: function (data) {
+                        $.pjax.reload('#pjax-container');
+
+                        data = JSON.parse(data);
+                        if (data.code === 200) {
+                            $('#_TOKEN').val(data.data);
+                            swal(data.msg, '', 'success');
+                        } else {
+                            swal(data.msg, '', 'error');
+                        }
+                    }
+                });
+            });
+        });
     </script>
     {{end}}
 {{end}}`,"components/tabs":`{{define "tabs"}}
