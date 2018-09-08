@@ -3240,6 +3240,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 {{end}}`,"components/table/box-header":`{{define "box-header"}}
 <div class="pull-right">
+    <!--
     <div class="btn-group pull-right" style="margin-right: 10px">
         <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i class="fa fa-filter"></i>&nbsp;&nbsp;Filter</a>
         <a href="/story/word" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;Reset</a>
@@ -3279,9 +3280,10 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             </div>
         </div>
     </div>
+    -->
 
     <div class="btn-group pull-right" style="margin-right: 10px">
-        <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
+        <!--<a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>-->
         <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
             <span class="caret"></span>
             <span class="sr-only">Toggle Dropdown</span>
