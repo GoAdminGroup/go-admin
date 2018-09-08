@@ -41,6 +41,8 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         toastr.success('Refresh succeeded !');
     });
 </script>
+<script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
+<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <section class="content-header">
     <h1>
         {{.Panel.Title}}
@@ -101,6 +103,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
     <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
     <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 </head>
 {{end}}`,"header":`{{define "header"}}
 <header class="main-header">
@@ -136,7 +139,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.AssertRootUrl}}/assets/jquery-pjax/jquery.pjax.js"></script>
 <script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
 {{end}}`,"layout":`{{define "layout"}}
 
@@ -229,11 +231,11 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <!-- /.sidebar -->
 </aside>
 {{end}}`,"components/area-chart":`{{define "area-chart"}}
-<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+{{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
 </p>
-
+{{end}}
 <div class="chart">
     <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
 </div>
@@ -287,6 +289,53 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     // Create the line chart
     salesChart.Line(salesChartData, salesChartOptions);
 </script>
+{{end}}`,"components/bar-chart":`{{define "bar-chart"}}
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
+<div class="chart">
+    <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
+</div>
+<script>
+    let barChartCanvas                   = $('#{{.ID}}').get(0).getContext('2d');
+    let barChart                         = new Chart(barChartCanvas);
+    let barChartData                     = JSON.parse({{.Data}});
+    barChartData.datasets[1].fillColor   = '#00a65a';
+    barChartData.datasets[1].strokeColor = '#00a65a';
+    barChartData.datasets[1].pointColor  = '#00a65a';
+    let barChartOptions                  = {
+        //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+        scaleBeginAtZero        : true,
+        //Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines      : true,
+        //String - Colour of the grid lines
+        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        //Number - Width of the grid lines
+        scaleGridLineWidth      : 1,
+        //Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        //Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines  : true,
+        //Boolean - If there is a stroke on each bar
+        barShowStroke           : true,
+        //Number - Pixel width of the bar stroke
+        barStrokeWidth          : 2,
+        //Number - Spacing between each of the X value sets
+        barValueSpacing         : 5,
+        //Number - Spacing between data sets within X values
+        barDatasetSpacing       : 1,
+        //String - A legend template
+        legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+        //Boolean - whether to make the chart responsive
+        responsive              : true,
+        maintainAspectRatio     : true
+    };
+
+    barChartOptions.datasetFill = false;
+    barChart.Bar(barChartData, barChartOptions)
+</script>
 {{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
@@ -295,9 +344,11 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <div class="box-body">
         {{.Body}}
     </div>
+    {{if ne .Footer ""}}
     <div class="box-footer clearfix">
         {{.Footer}}
     </div>
+    {{end}}
 </div>
 {{end}}`,"components/chart-legend":`{{define "chart-legend"}}
 <ul class="chart-legend clearfix">
@@ -346,6 +397,8 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
                         {{ template "form_selectbox" $data }}
                     {{else if eq $data.FormType "select"}}
                         {{ template "form_select" $data }}
+                    {{else if eq $data.FormType "select_single"}}
+                        {{ template "form_select_single" $data }}
                     {{else if eq $data.FormType "textarea"}}
                         {{ template "form_textarea" $data }}
                     {{else if eq $data.FormType "iconpicker"}}
@@ -397,6 +450,62 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 </div>
 {{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
+<div class="chart">
+    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
+</div>
+<script>
+    let lineChartCanvas          = $('#{{.ID}}').get(0).getContext('2d');
+    let lineChart                = new Chart(lineChartCanvas);
+    let lineChartData = JSON.parse({{.Data}});
+
+    let lineChartOptions = {
+        // Boolean - If we should show the scale at all
+        showScale               : true,
+        // Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines      : false,
+        // String - Colour of the grid lines
+        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        // Number - Width of the grid lines
+        scaleGridLineWidth      : 1,
+        // Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        // Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines  : true,
+        // Boolean - Whether the line is curved between points
+        bezierCurve             : true,
+        // Number - Tension of the bezier curve between points
+        bezierCurveTension      : 0.3,
+        // Boolean - Whether to show a dot for each point
+        pointDot                : false,
+        // Number - Radius of each point dot in pixels
+        pointDotRadius          : 4,
+        // Number - Pixel width of point dot stroke
+        pointDotStrokeWidth     : 1,
+        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius : 20,
+        // Boolean - Whether to show a stroke for datasets
+        datasetStroke           : true,
+        // Number - Pixel width of dataset stroke
+        datasetStrokeWidth      : 2,
+        // Boolean - Whether to fill the dataset with a color
+        datasetFill             : true,
+        // String - A legend template
+        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio     : true,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive              : true
+    };
+
+    lineChartOptions.datasetFill = false;
+    lineChart.Line(lineChartData, lineChartOptions)
+</script>
 {{end}}`,"components/paninator":`{{define "paninator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
@@ -456,12 +565,16 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <small>entries</small>
 </label>
 {{end}}`,"components/pie-chart":`{{define "pie-chart"}}
-<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
 <div class="chart-responsive">
-    <canvas id="{{.ID}}" height="{{.Height}}"></canvas>
+    <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
 </div>
 <script>
-    let pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
     let pieChart       = new Chart(pieChartCanvas);
     let PieData        = JSON.parse({{.Data}});
     let pieOptions     = {
@@ -651,7 +764,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     $(function () {
         $('#tree-5b405b7481760').nestable([]);
         $('.tree_branch_delete').click(function () {
-            var id = $(this).data('id');
+            let id = $(this).data('id');
             swal({
                         title: "Are you sure to delete this item ?",
                         type: "warning",
@@ -668,19 +781,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                             data: {},
                             success: function (data) {
                                 $.pjax.reload('#pjax-container');
-                                if (typeof data === 'object') {
-                                    if (data.status) {
-                                        swal(data.message, '', 'success');
-                                    } else {
-                                        swal(data.message, '', 'error');
-                                    }
+                                if (data.code === 200) {
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
                                 }
                             }
                         });
                     });
         });
         $('.tree-5b405b7481760-save').click(function () {
-            var serialize = $('#tree-5b405b7481760').nestable('serialize');
+            let serialize = $('#tree-5b405b7481760').nestable('serialize');
             $.post({{.OrderUrl}}, {
                         _order: JSON.stringify(serialize)
                     },
@@ -694,7 +805,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             toastr.success('Refresh succeeded !');
         });
         $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
-            var target = $(e.target),
+            let target = $(e.target),
                     action = target.data('action');
             if (action === 'expand') {
                 $('.dd').nestable('expandAll');
@@ -740,7 +851,6 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
-<script src="../../assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
@@ -3001,7 +3111,6 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
     </select>
-    <input type="hidden" name="{{.Field}}[]">
     <!--<span class="help-block">
         <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
     </span>-->
@@ -3023,6 +3132,24 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 <script>
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
+</script>
+{{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="Input {{.Head}}" tabindex="-1" aria-hidden="true">
+    {{range $key, $v := .Options }}
+        <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
+    {{end}}
+    </select>
+    <!--<span class="help-block">
+        <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+    </span>-->
+</div>
+<script>
+    $(".{{.Field}}").select2({
+        allowClear: true,
+        maximumSelectionLength: 1
+    });
 </script>
 {{end}}`,"components/form/text":`{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>

@@ -10,7 +10,7 @@ type PieChartAttribute struct {
 	ID     string
 	Height int
 	Data   string
-	Prefix string
+	Title  string
 }
 
 func (compo *PieChartAttribute) SetID(value string) types.PieChartAttribute {
@@ -18,13 +18,13 @@ func (compo *PieChartAttribute) SetID(value string) types.PieChartAttribute {
 	return compo
 }
 
-func (compo *PieChartAttribute) SetData(value string) types.PieChartAttribute {
-	(*compo).Data = value
+func (compo *PieChartAttribute) SetTitle(value string) types.PieChartAttribute {
+	(*compo).Title = value
 	return compo
 }
 
-func (compo *PieChartAttribute) SetPrefix(value string) types.PieChartAttribute {
-	(*compo).Prefix = value
+func (compo *PieChartAttribute) SetData(value string) types.PieChartAttribute {
+	(*compo).Data = value
 	return compo
 }
 

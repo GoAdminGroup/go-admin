@@ -11,62 +11,20 @@ import (
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
+	template2 "html/template"
 )
 
 // 显示菜单
 func ShowMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
-
-	path := ctx.Path()
-	user := ctx.UserValue["user"].(auth.User)
-
-	menu.GlobalMenu.SetActiveClass(path)
-
-	editUrl := Config.ADMIN_PREFIX + "/menu/edit/show"
-	deleteUrl := Config.ADMIN_PREFIX + "/menu/delete"
-	orderUrl := Config.ADMIN_PREFIX + "/menu/delete"
-
-	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).
-		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
-	header := template.Get(Config.THEME).Tree().GetTreeHeader()
-	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
-	col1 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
-	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl(Config.ADMIN_PREFIX + "/menu/new").SetInfoUrl(Config.ADMIN_PREFIX + "/menu").SetTitle("New").
-		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
-	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
-	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
-
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
-
-	menu.GlobalMenu.SetActiveClass(path)
-
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: *menu.GlobalMenu,
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content:     row,
-			Description: "菜单管理",
-			Title:       "菜单管理",
-		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
-	})
-
-	ctx.WriteString(buf.String())
+	GetMenuInfoPanel(ctx)
+	return
 }
 
 // 显示编辑菜单
 func ShowEditMenu(ctx *context.Context) {
 	id := ctx.Request.URL.Query().Get("id")
-	prefix := "menu"
-
-	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
+	formData, title, description := models.GlobalTableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -75,6 +33,10 @@ func ShowEditMenu(ctx *context.Context) {
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 	user := ctx.UserValue["user"].(auth.User)
+
+	js := `<script>
+$('.icon').iconpicker({placement: 'bottomLeft'});
+</script>`
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
@@ -87,10 +49,10 @@ func ShowEditMenu(ctx *context.Context) {
 			Content:     template.Get(Config.THEME).Form().
 				SetContent(formData).
 				SetPrefix(Config.ADMIN_PREFIX).
-				SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
+				SetUrl(Config.ADMIN_PREFIX + "/menu/edit").
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix).
-				GetContent(),
+				SetInfoUrl(Config.ADMIN_PREFIX + "/menu").
+				GetContent() + template2.HTML(js),
 			Description: description,
 			Title:       title,
 		},
@@ -111,14 +73,15 @@ func DeleteMenu(ctx *context.Context) {
 	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
 
 	ctx.WriteString(buffer.String())
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+
+	ctx.SetStatusCode(http.StatusOK)
+	ctx.SetContentType("application/json")
+	ctx.WriteString(`{"code":200, "msg":"ok"}`)
 }
 
 // 编辑菜单
 func EditMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
-
-	buffer := new(bytes.Buffer)
 
 	id := string(ctx.Request.FormValue("id")[:])
 	title := string(ctx.Request.FormValue("title")[:])
@@ -134,9 +97,7 @@ func EditMenu(ctx *context.Context) {
 
 	menu.SetGlobalMenu()
 
-	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
-
-	ctx.WriteString(buffer.String())
+	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
 }
@@ -144,8 +105,6 @@ func EditMenu(ctx *context.Context) {
 // 新建菜单
 func NewMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
-
-	buffer := new(bytes.Buffer)
 
 	title := string(ctx.Request.FormValue("title")[:])
 	parentId := string(ctx.Request.FormValue("parent_id")[:])
@@ -160,9 +119,7 @@ func NewMenu(ctx *context.Context) {
 	(*menu.GlobalMenu).SexMaxOrder((*menu.GlobalMenu).MaxOrder + 1)
 	menu.SetGlobalMenu()
 
-	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
-
-	ctx.WriteString(buffer.String())
+	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
 }
@@ -193,4 +150,52 @@ func MenuOrder(ctx *context.Context) {
 	ctx.SetContentType("application/json")
 	ctx.WriteString(`{"code":200, "msg":"ok"}`)
 	return
+}
+
+func GetMenuInfoPanel(ctx *context.Context) {
+	path := ctx.Path()
+	user := ctx.UserValue["user"].(auth.User)
+
+	menu.GlobalMenu.SetActiveClass(path)
+
+	editUrl := Config.ADMIN_PREFIX + "/menu/edit/show"
+	deleteUrl := Config.ADMIN_PREFIX + "/menu/delete"
+	orderUrl := Config.ADMIN_PREFIX + "/menu/order"
+
+	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).
+		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
+	header := template.Get(Config.THEME).Tree().GetTreeHeader()
+	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
+	col1 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
+
+	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl(Config.ADMIN_PREFIX + "/menu/new").
+		SetInfoUrl(Config.ADMIN_PREFIX + "/menu").SetTitle("New").
+		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
+	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
+
+	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
+
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+
+	menu.GlobalMenu.SetActiveClass(path)
+
+	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: *menu.GlobalMenu,
+		System: types.SystemInfo{
+			"0.0.1",
+		},
+		Panel: types.Panel{
+			Content:     row,
+			Description: "Menus Manage",
+			Title:       "Menus Manage",
+		},
+		AssertRootUrl: Config.ADMIN_PREFIX,
+	})
+
+	ctx.WriteString(buf.String())
 }

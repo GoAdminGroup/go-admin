@@ -5,9 +5,9 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func GetUserTable() (userTable models.GlobalTable) {
+func GetPostsTable() (postsTable models.GlobalTable) {
 
-	userTable.Info.FieldList = []types.FieldStruct{
+	postsTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -18,8 +18,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "Name",
-			Field:    "name",
+			Head:     "Title",
+			Field:    "title",
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
@@ -27,23 +27,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: "tinyint",
-			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
-				if model.Value == "1" {
-					return "man"
-				}
-				if model.Value == "2" {
-					return "women"
-				}
-				return "unknown"
-			},
-		},
-		{
-			Head:     "Phone",
-			Field:    "phone",
+			Head:     "Description",
+			Field:    "description",
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
@@ -51,8 +36,17 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "City",
-			Field:    "city",
+			Head:     "Content",
+			Field:    "content",
+			TypeName: "varchar",
+			Sortable: false,
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
+		{
+			Head:     "Date",
+			Field:    "date",
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
@@ -61,11 +55,11 @@ func GetUserTable() (userTable models.GlobalTable) {
 		},
 	}
 
-	userTable.Info.Table = "users"
-	userTable.Info.Title = "Users"
-	userTable.Info.Description = "Users"
+	postsTable.Info.Table = "posts"
+	postsTable.Info.Title = "Posts"
+	postsTable.Info.Description = "Posts"
 
-	userTable.Form.FormList = []types.FormStruct{
+	postsTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -77,8 +71,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "Ip",
-			Field:    "ip",
+			Head:     "Title",
+			Field:    "title",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
@@ -97,18 +91,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: "tinyint",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-			ExcuFun: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Phone",
-			Field:    "phone",
+			Head:     "Description",
+			Field:    "description",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
@@ -117,8 +101,18 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "City",
-			Field:    "city",
+			Head:     "Content",
+			Field:    "content",
+			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: "text",
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     "Date",
+			Field:    "date",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
@@ -129,11 +123,11 @@ func GetUserTable() (userTable models.GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "users"
-	userTable.Form.Title = "Users"
-	userTable.Form.Description = "Users"
+	postsTable.Form.Table = "posts"
+	postsTable.Form.Title = "Posts"
+	postsTable.Form.Description = "Posts"
 
-	userTable.ConnectionDriver = "mysql"
+	postsTable.ConnectionDriver = "mysql"
 
 	return
 }

@@ -5,9 +5,9 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func GetUserTable() (userTable models.GlobalTable) {
+func GetAuthorsTable() (authorsTable models.GlobalTable) {
 
-	userTable.Info.FieldList = []types.FieldStruct{
+	authorsTable.Info.FieldList = []types.FieldStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -18,8 +18,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "Name",
-			Field:    "name",
+			Head:     "First Name",
+			Field:    "first_name",
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
@@ -27,23 +27,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: "tinyint",
-			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
-				if model.Value == "1" {
-					return "man"
-				}
-				if model.Value == "2" {
-					return "women"
-				}
-				return "unknown"
-			},
-		},
-		{
-			Head:     "Phone",
-			Field:    "phone",
+			Head:     "Last Name",
+			Field:    "last_name",
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
@@ -51,9 +36,27 @@ func GetUserTable() (userTable models.GlobalTable) {
 			},
 		},
 		{
-			Head:     "City",
-			Field:    "city",
+			Head:     "Email",
+			Field:    "email",
 			TypeName: "varchar",
+			Sortable: false,
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
+		{
+			Head:     "Birthdate",
+			Field:    "birthdate",
+			TypeName: "date",
+			Sortable: false,
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
+		{
+			Head:     "Added",
+			Field:    "added",
+			TypeName: "timestamp",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
@@ -61,11 +64,11 @@ func GetUserTable() (userTable models.GlobalTable) {
 		},
 	}
 
-	userTable.Info.Table = "users"
-	userTable.Info.Title = "Users"
-	userTable.Info.Description = "Users"
+	authorsTable.Info.Table = "authors"
+	authorsTable.Info.Title = "Authors"
+	authorsTable.Info.Description = "Authors"
 
-	userTable.Form.FormList = []types.FormStruct{
+	authorsTable.Form.FormList = []types.FormStruct{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -77,8 +80,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "Ip",
-			Field:    "ip",
+			Head:     "First Name",
+			Field:    "first_name",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
@@ -97,18 +100,8 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: "tinyint",
-			Default:  "",
-			Editable: true,
-			FormType: "text",
-			ExcuFun: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Phone",
-			Field:    "phone",
+			Head:     "Description",
+			Field:    "description",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
@@ -117,9 +110,29 @@ func GetUserTable() (userTable models.GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "City",
-			Field:    "city",
+			Head:     "Email",
+			Field:    "email",
 			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: "text",
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     "Birthdate",
+			Field:    "birthdate",
+			TypeName: "date",
+			Default:  "",
+			Editable: true,
+			FormType: "text",
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     "Added",
+			Field:    "added",
+			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
 			FormType: "text",
@@ -129,11 +142,11 @@ func GetUserTable() (userTable models.GlobalTable) {
 		},
 	}
 
-	userTable.Form.Table = "users"
-	userTable.Form.Title = "Users"
-	userTable.Form.Description = "Users"
+	authorsTable.Form.Table = "authors"
+	authorsTable.Form.Title = "Authors"
+	authorsTable.Form.Description = "Authors"
 
-	userTable.ConnectionDriver = "mysql"
+	authorsTable.ConnectionDriver = "mysql"
 
 	return
 }

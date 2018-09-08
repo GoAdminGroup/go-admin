@@ -8,7 +8,6 @@ import (
 type AreaChartAttribute struct {
 	Name   string
 	Title  string
-	Prefix string
 	Data   string
 	ID     string
 	Height int
@@ -26,11 +25,6 @@ func (compo *AreaChartAttribute) SetTitle(value string) types.AreaChartAttribute
 
 func (compo *AreaChartAttribute) SetHeight(value int) types.AreaChartAttribute {
 	(*compo).Height = value
-	return compo
-}
-
-func (compo *AreaChartAttribute) SetPrefix(value string) types.AreaChartAttribute {
-	(*compo).Prefix = value
 	return compo
 }
 

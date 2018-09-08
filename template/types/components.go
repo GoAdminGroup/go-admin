@@ -115,10 +115,26 @@ type ProgressGroupAttribute interface {
 
 type ProgressAttribute interface{}
 
+type LineChartAttribute interface {
+	SetID(value string) LineChartAttribute
+	SetTitle(value string) LineChartAttribute
+	SetHeight(value int) LineChartAttribute
+	SetData(value string) LineChartAttribute
+	GetContent() template.HTML
+}
+
+type BarChartAttribute interface {
+	SetID(value string) BarChartAttribute
+	SetTitle(value string) BarChartAttribute
+	SetWidth(value int) BarChartAttribute
+	SetData(value string) BarChartAttribute
+	GetContent() template.HTML
+}
+
 type PieChartAttribute interface {
 	SetID(value string) PieChartAttribute
 	SetData(value string) PieChartAttribute
-	SetPrefix(value string) PieChartAttribute
+	SetTitle(value string) PieChartAttribute
 	SetHeight(value int) PieChartAttribute
 	GetContent() template.HTML
 }
@@ -140,7 +156,6 @@ type DescriptionAttribute interface {
 
 type AreaChartAttribute interface {
 	SetTitle(value string) AreaChartAttribute
-	SetPrefix(value string) AreaChartAttribute
 	SetID(value string) AreaChartAttribute
 	SetData(value string) AreaChartAttribute
 	SetHeight(value int) AreaChartAttribute

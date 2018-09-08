@@ -31,6 +31,8 @@
                         {{ template "form_selectbox" $data }}
                     {{else if eq $data.FormType "select"}}
                         {{ template "form_select" $data }}
+                    {{else if eq $data.FormType "select_single"}}
+                        {{ template "form_select_single" $data }}
                     {{else if eq $data.FormType "textarea"}}
                         {{ template "form_textarea" $data }}
                     {{else if eq $data.FormType "iconpicker"}}

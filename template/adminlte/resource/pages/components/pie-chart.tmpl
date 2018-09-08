@@ -1,10 +1,14 @@
 {{define "pie-chart"}}
-<script src="{{.Prefix}}/assets/chartjs/chart.js"></script>
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
 <div class="chart-responsive">
-    <canvas id="{{.ID}}" height="{{.Height}}"></canvas>
+    <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
 </div>
 <script>
-    let pieChartCanvas = $('#pieChart').get(0).getContext('2d');
+    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
     let pieChart       = new Chart(pieChartCanvas);
     let PieData        = JSON.parse({{.Data}});
     let pieOptions     = {

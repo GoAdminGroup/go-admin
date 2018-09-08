@@ -36,7 +36,7 @@
     $(function () {
         $('#tree-5b405b7481760').nestable([]);
         $('.tree_branch_delete').click(function () {
-            var id = $(this).data('id');
+            let id = $(this).data('id');
             swal({
                         title: "Are you sure to delete this item ?",
                         type: "warning",
@@ -53,19 +53,17 @@
                             data: {},
                             success: function (data) {
                                 $.pjax.reload('#pjax-container');
-                                if (typeof data === 'object') {
-                                    if (data.status) {
-                                        swal(data.message, '', 'success');
-                                    } else {
-                                        swal(data.message, '', 'error');
-                                    }
+                                if (data.code === 200) {
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
                                 }
                             }
                         });
                     });
         });
         $('.tree-5b405b7481760-save').click(function () {
-            var serialize = $('#tree-5b405b7481760').nestable('serialize');
+            let serialize = $('#tree-5b405b7481760').nestable('serialize');
             $.post({{.OrderUrl}}, {
                         _order: JSON.stringify(serialize)
                     },
@@ -79,7 +77,7 @@
             toastr.success('Refresh succeeded !');
         });
         $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
-            var target = $(e.target),
+            let target = $(e.target),
                     action = target.data('action');
             if (action === 'expand') {
                 $('.dd').nestable('expandAll');

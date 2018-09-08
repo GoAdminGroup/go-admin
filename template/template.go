@@ -22,6 +22,8 @@ type Template interface {
 	Paninator() types.PaninatorAttribute
 	AreaChart() types.AreaChartAttribute
 	ProgressGroup() types.ProgressGroupAttribute
+	LineChart() types.LineChartAttribute
+	BarChart() types.BarChartAttribute
 	ProductList() types.ProductListAttribute
 	Description() types.DescriptionAttribute
 	PieChart() types.PieChartAttribute

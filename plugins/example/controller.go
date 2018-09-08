@@ -14,7 +14,6 @@ func TestHandler(ctx *context.Context) {
 		components := template2.Get(Config.THEME)
 		colComp := components.Col()
 
-
 		/**************************
 		 * Info Box
 		/**************************/
@@ -57,7 +56,7 @@ func TestHandler(ctx *context.Context) {
 		chartdata := `{"datasets":[{"data":[65,59,80,81,56,55,40],"fillColor":"rgb(210, 214, 222)","label":"Electronics","pointColor":"rgb(210, 214, 222)","pointHighlightFill":"#fff","pointHighlightStroke":"rgb(220,220,220)","pointStrokeColor":"#c1c7d1","strokeColor":"rgb(210, 214, 222)"},{"data":[28,48,40,19,86,27,90],"fillColor":"rgba(60,141,188,0.9)","label":"Digital Goods","pointColor":"#3b8bba","pointHighlightFill":"#fff","pointHighlightStroke":"rgba(60,141,188,1)","pointStrokeColor":"rgba(60,141,188,1)","strokeColor":"rgba(60,141,188,0.8)"}],"labels":["January","February","March","April","May","June","July"]}`
 
 		lineChart := components.AreaChart().SetID("salechart").
-			SetPrefix("/" + Config.ADMIN_PREFIX).SetData(chartdata).
+			SetData(chartdata).
 			SetHeight(180).
 			SetTitle("Sales: 1 Jan, 2014 - 30 Jul, 2014").GetContent()
 
@@ -158,7 +157,7 @@ func TestHandler(ctx *context.Context) {
 		}).GetContent()
 
 		pieData := `[{"value":700,"color":"#f56954","highlight":"#f56954","label":"Chrome"},{"value":500,"color":"#00a65a","highlight":"#00a65a","label":"IE"},{"value":400,"color":"#f39c12","highlight":"#f39c12","label":"FireFox"},{"value":600,"color":"#00c0ef","highlight":"#00c0ef","label":"Safari"},{"value":300,"color":"#3c8dbc","highlight":"#3c8dbc","label":"Opera"},{"value":100,"color":"#d2d6de","highlight":"#d2d6de","label":"Navigator"}]`
-		pie := components.PieChart().SetHeight(170).SetData(pieData).SetPrefix("/" + Config.ADMIN_PREFIX).SetID("pieChart").GetContent()
+		pie := components.PieChart().SetHeight(170).SetData(pieData).SetID("pieChart").GetContent()
 		legend := components.ChartLegend().SetData([]map[string]string{
 			{
 				"label": " Chrome",

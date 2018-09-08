@@ -1,27 +1,11 @@
 $('.grid-per-pager').on("change", function (e) {
-    console.log("changing...")
+    console.log('changing...');
     $.pjax({url: this.value, container: '#pjax-container'});
 });
 $('.grid-refresh').on('click', function () {
     $.pjax.reload('#pjax-container');
     toastr.success('Refresh succeeded !');
 });
-$.fn.editable.defaults.params = function (params) {
-    params._token = LA.token;
-    params._editable = 1;
-    params._method = 'PUT';
-    return params;
-};
-
-$.fn.editable.defaults.error = function (data) {
-    var msg = '';
-    if (data.responseJSON.errors) {
-        $.each(data.responseJSON.errors, function (k, v) {
-            msg += v + "\n";
-        });
-    }
-    return msg
-};
 
 toastr.options = {
     closeButton: true,

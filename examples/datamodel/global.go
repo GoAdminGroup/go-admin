@@ -7,4 +7,7 @@ var TableFuncConfig = map[string]models.GetTableDataFunc{
 
 	// 自定义管理部分
 	"user": GetUserTable,
+
+	"posts": GetPostsTable,
+	"authors": GetAuthorsTable,
 }

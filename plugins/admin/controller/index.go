@@ -57,8 +57,8 @@ func ShowDashboard(ctx *context.Context) {
 
 		chartdata := `{"datasets":[{"data":[65,59,80,81,56,55,40],"fillColor":"rgb(210, 214, 222)","label":"Electronics","pointColor":"rgb(210, 214, 222)","pointHighlightFill":"#fff","pointHighlightStroke":"rgb(220,220,220)","pointStrokeColor":"#c1c7d1","strokeColor":"rgb(210, 214, 222)"},{"data":[28,48,40,19,86,27,90],"fillColor":"rgba(60,141,188,0.9)","label":"Digital Goods","pointColor":"#3b8bba","pointHighlightFill":"#fff","pointHighlightStroke":"rgba(60,141,188,1)","pointStrokeColor":"rgba(60,141,188,1)","strokeColor":"rgba(60,141,188,0.8)"}],"labels":["January","February","March","April","May","June","July"]}`
 
-		lineChart := components.AreaChart().SetID("salechart").
-			SetPrefix(Config.ADMIN_PREFIX).SetData(chartdata).
+		AreaChart := components.AreaChart().SetID("salechart").
+			SetData(chartdata).
 			SetHeight(180).
 			SetTitle("Sales: 1 Jan, 2014 - 30 Jul, 2014").GetContent()
 
@@ -72,7 +72,7 @@ func ShowDashboard(ctx *context.Context) {
 		progressGroup3 := components.ProgressGroup().SetTitle("Send Inquiries").
 			SetColor("yellow").SetDenominator(500).SetMolecular(250).SetPercent(50).GetContent()
 
-		boxInternalCol1 := colComp.SetContent(lineChart).SetSize(map[string]string{"md": "8"}).GetContent()
+		boxInternalCol1 := colComp.SetContent(AreaChart).SetSize(map[string]string{"md": "8"}).GetContent()
 		boxInternalCol2 := colComp.
 			SetContent(template.HTML(title) + progressGroup + progressGroup1 + progressGroup2 + progressGroup3).
 			SetSize(map[string]string{"md": "4"}).
@@ -159,7 +159,7 @@ func ShowDashboard(ctx *context.Context) {
 		}).GetContent()
 
 		pieData := `[{"value":700,"color":"#f56954","highlight":"#f56954","label":"Chrome"},{"value":500,"color":"#00a65a","highlight":"#00a65a","label":"IE"},{"value":400,"color":"#f39c12","highlight":"#f39c12","label":"FireFox"},{"value":600,"color":"#00c0ef","highlight":"#00c0ef","label":"Safari"},{"value":300,"color":"#3c8dbc","highlight":"#3c8dbc","label":"Opera"},{"value":100,"color":"#d2d6de","highlight":"#d2d6de","label":"Navigator"}]`
-		pie := components.PieChart().SetHeight(170).SetData(pieData).SetPrefix(Config.ADMIN_PREFIX).SetID("pieChart").GetContent()
+		pie := components.PieChart().SetHeight(170).SetData(pieData).SetID("pieChart").GetContent()
 		legend := components.ChartLegend().SetData([]map[string]string{
 			{
 				"label": " Chrome",
@@ -186,6 +186,29 @@ func ShowDashboard(ctx *context.Context) {
 			SetBody(table).
 			SetFooter(`<div class="clearfix"><a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left">Place New Order</a><a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right">View All Orders</a> </div>`).
 			GetContent()
+
+		lineChart := components.LineChart().SetID("linechart").
+			SetData(chartdata).
+			SetHeight(200).
+			SetTitle("Sales: 1 Jan, 2014 - 30 Jul, 2014").GetContent()
+
+		boxLineChart := components.Box().WithHeadBorder(true).SetHeader("Monthly Recap Report").
+			SetBody(lineChart).
+			GetContent()
+
+		barChart := components.BarChart().SetID("barchart").
+			SetData(chartdata).
+			SetWidth(180).
+			SetTitle("Sales: 1 Jan, 2014 - 30 Jul, 2014").GetContent()
+
+		boxBarChart := components.Box().WithHeadBorder(true).SetHeader("Monthly Recap Report").
+			SetBody(barChart).
+			GetContent()
+
+		chartCol := components.Col().SetSize(map[string]string{"md": "6"})
+
+		chartRow := components.Row().SetContent(chartCol.SetContent(boxBarChart).GetContent() +
+			chartCol.SetContent(boxLineChart).GetContent()).GetContent()
 
 		boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
 			SetBody(components.Row().
@@ -238,7 +261,7 @@ func ShowDashboard(ctx *context.Context) {
 			SetFooter(`<a href="javascript:void(0)" class="uppercase">View All Products</a>`).
 			GetContent()
 
-		col5 := colComp.SetSize(map[string]string{"md":"8"}).SetContent(boxInfo).GetContent()
+		col5 := colComp.SetSize(map[string]string{"md":"8"}).SetContent(boxInfo + chartRow).GetContent()
 		col6 := colComp.SetSize(map[string]string{"md":"4"}).SetContent(boxDanger + boxWarning).GetContent()
 
 		row4 := components.Row().SetContent(col5 + col6).GetContent()

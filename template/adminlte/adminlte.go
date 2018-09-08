@@ -140,6 +140,18 @@ func (*Theme) PieChart() types.PieChartAttribute {
 	}
 }
 
+func (*Theme) LineChart() types.LineChartAttribute {
+	return &components.LineChartAttribute{
+		Name: "line-chart",
+	}
+}
+
+func (*Theme) BarChart() types.BarChartAttribute {
+	return &components.BarChartAttribute{
+		Name: "bar-chart",
+	}
+}
+
 func (*Theme) ChartLegend() types.ChartLegendAttribute {
 	return &components.ChartLegendAttribute{
 		Name: "chart-legend",

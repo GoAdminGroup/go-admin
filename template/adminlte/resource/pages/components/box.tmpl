@@ -6,8 +6,10 @@
     <div class="box-body">
         {{.Body}}
     </div>
+    {{if ne .Footer ""}}
     <div class="box-footer clearfix">
         {{.Footer}}
     </div>
+    {{end}}
 </div>
 {{end}}

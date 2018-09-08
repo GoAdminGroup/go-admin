@@ -1,4 +1,4 @@
-{{define "area-chart"}}
+{{define "line-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -8,14 +8,11 @@
     <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
 </div>
 <script>
-    // Get context with jQuery - using jQuery's .get() method.
-    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
-    // This will get the first returned node in the jQuery collection.
-    let salesChart       = new Chart(salesChartCanvas);
+    let lineChartCanvas          = $('#{{.ID}}').get(0).getContext('2d');
+    let lineChart                = new Chart(lineChartCanvas);
+    let lineChartData = JSON.parse({{.Data}});
 
-    let salesChartData = JSON.parse({{.Data}});
-
-    let salesChartOptions = {
+    let lineChartOptions = {
         // Boolean - If we should show the scale at all
         showScale               : true,
         // Boolean - Whether grid lines are shown across the chart
@@ -54,7 +51,7 @@
         responsive              : true
     };
 
-    // Create the line chart
-    salesChart.Line(salesChartData, salesChartOptions);
+    lineChartOptions.datasetFill = false;
+    lineChart.Line(lineChartData, lineChartOptions)
 </script>
 {{end}}
