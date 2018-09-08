@@ -79,7 +79,7 @@ func EditForm(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	token := string(ctx.Request.FormValue("_t"))
+	token := ctx.Request.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
 		ctx.SetStatusCode(http.StatusBadRequest)
@@ -110,7 +110,7 @@ func EditForm(ctx *context.Context) {
 
 	models.RefreshGlobalTableList()
 
-	previous := string(ctx.Request.FormValue("_previous_"))
+	previous := ctx.Request.FormValue("_previous_")
 	prevUrlArr := strings.Split(previous, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
 	page := "1"

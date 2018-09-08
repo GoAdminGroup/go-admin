@@ -74,7 +74,7 @@ func NewForm(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	token := string(ctx.Request.FormValue("_t"))
+	token := ctx.Request.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
 		ctx.SetStatusCode(http.StatusBadRequest)

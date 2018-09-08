@@ -83,14 +83,14 @@ func DeleteMenu(ctx *context.Context) {
 func EditMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	id := string(ctx.Request.FormValue("id")[:])
-	title := string(ctx.Request.FormValue("title")[:])
-	parentId := string(ctx.Request.FormValue("parent_id")[:])
+	id := ctx.Request.FormValue("id")[:]
+	title := ctx.Request.FormValue("title")[:]
+	parentId := ctx.Request.FormValue("parent_id")[:]
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := string(ctx.Request.FormValue("icon")[:])
-	uri := string(ctx.Request.FormValue("uri")[:])
+	icon := ctx.Request.FormValue("icon")[:]
+	uri := ctx.Request.FormValue("uri")[:]
 
 	connections.GetConnection().Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
 		title, parentId, icon, uri, id)
@@ -106,13 +106,13 @@ func EditMenu(ctx *context.Context) {
 func NewMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	title := string(ctx.Request.FormValue("title")[:])
-	parentId := string(ctx.Request.FormValue("parent_id")[:])
+	title := ctx.Request.FormValue("title")[:]
+	parentId := ctx.Request.FormValue("parent_id")[:]
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := string(ctx.Request.FormValue("icon")[:])
-	uri := string(ctx.Request.FormValue("uri")[:])
+	icon := ctx.Request.FormValue("icon")[:]
+	uri := ctx.Request.FormValue("uri")[:]
 
 	connections.GetConnection().Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parentId, icon, uri, (*menu.GlobalMenu).MaxOrder+1)
 
