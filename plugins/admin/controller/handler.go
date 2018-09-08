@@ -46,7 +46,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			}
 		}
 
-		alert := template.Get(Config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-info"></i> Error!`)).
+		alert := template.Get(Config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template2.HTML(errMsg)).GetContent()
 
 		if ok, _ = regexp.Match("/edit(.*)", []byte(ctx.Path())); ok {
