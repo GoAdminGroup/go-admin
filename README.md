@@ -77,7 +77,7 @@ func main() {
 	// global config
 	cfg := config.Config{
 		DATABASE: []config.Database{
-			{
+            {
                 HOST:         "127.0.0.1",
                 PORT:         "3306",
                 USER:         "root",
@@ -87,9 +87,14 @@ func main() {
                 MAX_OPEN_CON: 150,
                 DRIVER:       "mysql",
             },
-		},
-		DOMAIN:  "localhost",         
-		PREFIX: "admin", 
+        },
+        DOMAIN: "localhost",
+        PREFIX: "admin",
+        STORE: config.Store{
+            PATH:   "./uploads",
+            PREFIX: "uploads",
+        },
+        LANGUAGE: "en",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)

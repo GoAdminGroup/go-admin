@@ -80,8 +80,13 @@ func main() {
                 DRIVER:       "mysql",
             },
         },
-		DOMAIN:  "localhost",         
-		PREFIX: "admin", 
+        DOMAIN: "localhost",
+        PREFIX: "admin",
+        STORE: config.Store{
+            PATH:   "./uploads",
+            PREFIX: "uploads",
+        },
+        LANGUAGE: "cn", 
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
