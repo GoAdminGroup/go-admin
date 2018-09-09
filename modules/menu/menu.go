@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/connections"
 	"strconv"
 	"sync"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 type Menu struct {
@@ -31,10 +32,18 @@ func SetGlobalMenu() {
 
 	menuOption := make([]map[string]string, 0)
 
+	var title string
 	for i := 0; i < len(menus); i++ {
+
+		if menus[i]["type"].(int64) == 1 {
+			title = language.Get(menus[i]["title"].(string))
+		} else {
+			title = menus[i]["title"].(string)
+		}
+
 		menuOption = append(menuOption, map[string]string{
 			"id":    strconv.FormatInt(menus[i]["id"].(int64), 10),
-			"title": menus[i]["title"].(string),
+			"title": title,
 		})
 	}
 
@@ -53,13 +62,20 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 
 	branch := make([]MenuItem, 0)
 
+	var title string
 	for j := 0; j < len(menus); j++ {
 		if parentId == menus[j]["parent_id"].(int64) {
 
 			childList := ConstructMenuTree(menus, menus[j]["id"].(int64))
 
+			if menus[j]["type"].(int64) == 1 {
+				title = language.Get(menus[j]["title"].(string))
+			} else {
+				title = menus[j]["title"].(string)
+			}
+
 			child := MenuItem{
-				Name:         menus[j]["title"].(string),
+				Name:         title,
 				ID:           strconv.FormatInt(menus[j]["id"].(int64), 10),
 				Url:          menus[j]["uri"].(string),
 				Icon:         menus[j]["icon"].(string),

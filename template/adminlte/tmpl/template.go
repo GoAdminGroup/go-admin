@@ -28,10 +28,10 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">Setting</a>
+                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
                     </div>
                     <div class="pull-right">
-                        <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">Sign out</a>
+                        <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
                     </div>
                 </li>
             </ul>
@@ -226,7 +226,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
             </div>
             <div class="pull-left info">
                 admin
-                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
             </div>
         </div>
         <!-- search form -->
@@ -361,7 +361,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 {{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
-        {{langHtml .Header}}
+        {{.Header}}
     </div>
     <div class="box-body">
         {{.Body}}
@@ -681,7 +681,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{lang (index $head "head")}}
+                    {{index $head "head"}}
                     {{if eq (index $head "sortable") "1"}}
                         <a class="fa fa-fw fa-sort" href=""></a>
                     {{end}}
@@ -696,13 +696,13 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 <th></th>
                 {{range $key, $head := .Thead}}
                     <th>
-                        {{lang (index $head "head")}}
+                        {{index $head "head"}}
                         {{if eq (index $head "sortable") "1"}}
                             <a class="fa fa-fw fa-sort" href=""></a>
                         {{end}}
                     </th>
                 {{end}}
-                <th>操作</th>
+                <th>{{lang "operation"}}</th>
             </tr>
         {{end}}
 
@@ -736,13 +736,13 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             let id = $(this).data('id');
 
             swal({
-                title: "你确定要删除吗",
+                title: {{lang "are you sure to delete"}},
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定",
+                confirmButtonText: {{lang "yes"}},
                 closeOnConfirm: false,
-                cancelButtonText: "取消"
+                cancelButtonText: {{lang "cancel"}},
             },
             function(){
                 $.ajax({
@@ -800,13 +800,13 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             let id = selectedRows().join();
 
             swal({
-                title: "你确定要删除吗",
+                title: {{lang "are you sure to delete"}},
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定",
+                confirmButtonText: {{lang "yes"}},
                 closeOnConfirm: false,
-                cancelButtonText: "取消"
+                cancelButtonText: {{lang "cancel"}},
             },
             function(){
                 $.ajax({
@@ -860,19 +860,19 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 {{end}}`,"components/tree-header":`{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
-        <i class="fa fa-plus-square-o"></i>&nbsp;Expand
+        <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
     </a>
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="collapse">
-        <i class="fa fa-minus-square-o"></i>&nbsp;Collapse
+        <i class="fa fa-minus-square-o"></i>&nbsp;{{lang "collapse"}}
     </a>
 </div>
 
 <div class="btn-group">
-    <a class="btn btn-info btn-sm  tree-5b405b7481760-save"><i class="fa fa-save"></i>&nbsp;Save</a>
+    <a class="btn btn-info btn-sm  tree-5b405b7481760-save"><i class="fa fa-save"></i>&nbsp;{{lang "save"}}</a>
 </div>
 
 <div class="btn-group">
-    <a class="btn btn-warning btn-sm tree-5b405b7481760-refresh"><i class="fa fa-refresh"></i>&nbsp;Refresh</a>
+    <a class="btn btn-warning btn-sm tree-5b405b7481760-refresh"><i class="fa fa-refresh"></i>&nbsp;{{lang "refresh"}}</a>
 </div>
 <div class="btn-group">
 </div>
@@ -970,7 +970,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/default":`{{define "form_default"}}
-<label class="col-sm-2 control-label">{{lang .Head}}</label>
+<label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
         <div class="box-body">
@@ -979,7 +979,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </div>
 </div>
 {{end}}`,"components/form/file":`{{define "form_file"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
 </div>
@@ -1001,7 +1001,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
-<label for="icon" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
         <span class="input-group-addon"><i class="fa fa-bars"></i></span>
@@ -3246,17 +3246,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 </div>
 {{end}}`,"components/form/password":`{{define "form_password"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
-        <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{lang .Head}}">
+        <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{.Head}}">
     </div>
 </div>
 {{end}}`,"components/form/select":`{{define "form_select"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{lang .Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true">
         {{range $key, $v := .Options }}
             <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
@@ -3271,7 +3271,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
         {{range  $key, $v := .Options }}
@@ -3284,9 +3284,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
 {{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{lang .Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true">
     {{range $key, $v := .Options }}
         <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
     {{end}}
@@ -3302,17 +3302,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/text":`{{define "form_text"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{lang .Head}}">
+        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{.Head}}">
     </div>
 </div>
 {{end}}`,"components/form/textarea":`{{define "form_textarea"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{lang .Head}}">{{.Value}}</textarea>
+    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}">{{.Value}}</textarea>
 </div>
 {{end}}`,"components/table/box-header":`{{define "box-header"}}
 <div class="pull-right">

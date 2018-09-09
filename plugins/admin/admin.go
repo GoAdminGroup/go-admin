@@ -3,7 +3,6 @@ package admin
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/modules/connections"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -61,8 +60,4 @@ func (admin *Admin) GetRequest() []context.Path {
 
 func (admin *Admin) GetHandler(url, method string) context.Handler {
 	return plugins.GetHandler(url, method, &admin.app.HandlerList)
-}
-
-func (admin *Admin) GetLocales() map[string]string {
-	return language.Locales[config.Get().LANGUAGE]
 }

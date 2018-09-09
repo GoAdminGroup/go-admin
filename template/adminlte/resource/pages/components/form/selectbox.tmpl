@@ -1,5 +1,5 @@
 {{define "form_selectbox"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{lang .Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
         {{range  $key, $v := .Options }}

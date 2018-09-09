@@ -5,7 +5,7 @@
                 <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{lang (index $head "head")}}
+                    {{index $head "head"}}
                     {{if eq (index $head "sortable") "1"}}
                         <a class="fa fa-fw fa-sort" href=""></a>
                     {{end}}
@@ -20,13 +20,13 @@
                 <th></th>
                 {{range $key, $head := .Thead}}
                     <th>
-                        {{lang (index $head "head")}}
+                        {{index $head "head"}}
                         {{if eq (index $head "sortable") "1"}}
                             <a class="fa fa-fw fa-sort" href=""></a>
                         {{end}}
                     </th>
                 {{end}}
-                <th>操作</th>
+                <th>{{lang "operation"}}</th>
             </tr>
         {{end}}
 
@@ -60,13 +60,13 @@
             let id = $(this).data('id');
 
             swal({
-                title: "你确定要删除吗",
+                title: {{lang "are you sure to delete"}},
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定",
+                confirmButtonText: {{lang "yes"}},
                 closeOnConfirm: false,
-                cancelButtonText: "取消"
+                cancelButtonText: {{lang "cancel"}},
             },
             function(){
                 $.ajax({
@@ -124,13 +124,13 @@
             let id = selectedRows().join();
 
             swal({
-                title: "你确定要删除吗",
+                title: {{lang "are you sure to delete"}},
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定",
+                confirmButtonText: {{lang "yes"}},
                 closeOnConfirm: false,
-                cancelButtonText: "取消"
+                cancelButtonText: {{lang "cancel"}},
             },
             function(){
                 $.ajax({
