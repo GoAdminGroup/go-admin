@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: godmin
-# Generation Time: 2018-09-08 13:53:38 +0000
+# Generation Time: 2018-09-09 15:03:30 +0000
 # ************************************************************
 
 
@@ -34,25 +34,26 @@ CREATE TABLE `goadmin_menu` (
   `uri` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `type` tinyint(4) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 LOCK TABLES `goadmin_menu` WRITE;
 /*!40000 ALTER TABLE `goadmin_menu` DISABLE KEYS */;
 
-INSERT INTO `goadmin_menu` (`id`, `parent_id`, `order`, `title`, `icon`, `uri`, `created_at`, `updated_at`)
+INSERT INTO `goadmin_menu` (`id`, `parent_id`, `order`, `title`, `icon`, `uri`, `created_at`, `updated_at`, `type`)
 VALUES
-	(2,0,2,'Admin','fa-tasks','',NULL,NULL),
-	(3,2,2,'Users','fa-users','/info/manager',NULL,NULL),
-	(4,2,3,'Roles','fa-user','/info/roles',NULL,NULL),
-	(5,2,4,'Permission','fa-ban','/info/permission',NULL,NULL),
-	(6,2,5,'Menu','fa-bars','/menu',NULL,NULL),
-	(7,2,6,'Operation log','fa-history','/info/op',NULL,NULL),
-	(12,0,7,'Users','fa-user','/info/user',NULL,NULL),
-	(13,0,1,'Dashboard','fa-bar-chart','/','2018-08-03 15:24:42',NULL),
-	(16,0,8,'Posts','fa-file-powerpoint-o','/info/posts','2018-09-08 08:43:57','2018-09-08 08:43:57'),
-	(17,0,9,'Authors','fa-users','/info/authors','2018-09-08 08:44:38','2018-09-08 08:44:38'),
-	(18,0,10,'Example Plugin','fa-plug','/example','2018-09-08 09:06:41','2018-09-08 09:06:41');
+	(2,0,2,'Admin','fa-tasks','',NULL,NULL,1),
+	(3,2,2,'Users','fa-users','/info/manager',NULL,NULL,1),
+	(4,2,3,'Roles','fa-user','/info/roles',NULL,NULL,1),
+	(5,2,4,'Permission','fa-ban','/info/permission',NULL,NULL,1),
+	(6,2,5,'Menu','fa-bars','/menu',NULL,NULL,1),
+	(7,2,6,'Operation log','fa-history','/info/op',NULL,NULL,1),
+	(12,0,7,'Users','fa-user','/info/user',NULL,NULL,0),
+	(13,0,1,'Dashboard','fa-bar-chart','/','2018-08-03 15:24:42',NULL,1),
+	(16,0,8,'Posts','fa-file-powerpoint-o','/info/posts','2018-09-08 08:43:57','2018-09-08 08:43:57',0),
+	(17,0,9,'Authors','fa-users','/info/authors','2018-09-08 08:44:38','2018-09-08 08:44:38',0),
+	(18,0,10,'Example Plugin','fa-plug','/example','2018-09-08 09:06:41','2018-09-08 09:06:41',0);
 
 /*!40000 ALTER TABLE `goadmin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -241,7 +242,15 @@ VALUES
 	(1744,1,'/admin/info/op','GET','127.0.0.1','','2018-09-08 16:52:05','2018-09-08 16:52:05'),
 	(1745,1,'/admin/info/op/new','GET','127.0.0.1','','2018-09-08 16:52:07','2018-09-08 16:52:07'),
 	(1746,1,'/admin/info/op','GET','127.0.0.1','','2018-09-08 16:52:08','2018-09-08 16:52:08'),
-	(1747,1,'/admin/info/authors','GET','127.0.0.1','','2018-09-08 16:52:39','2018-09-08 16:52:39');
+	(1747,1,'/admin/info/authors','GET','127.0.0.1','','2018-09-08 16:52:39','2018-09-08 16:52:39'),
+	(1748,1,'/admin/info/manager','GET','127.0.0.1','','2018-09-09 08:58:41','2018-09-09 08:58:41'),
+	(1749,1,'/admin/info/manager/edit','GET','127.0.0.1','','2018-09-09 08:58:44','2018-09-09 08:58:44'),
+	(1750,1,'/admin/edit/manager','POST','127.0.0.1','{\"_previous_\":[\"/admin/info/manager?page=1\\u0026pageSize=10\\u0026sort=id\\u0026sort_type=desc\"],\"_t\":[\"vzvUnkSlnkTFjqJHgBnnL43FJad4ariaU2v\"],\"avatar\":[\"\"],\"id\":[\"1\"],\"name\":[\"admin1\"],\"password\":[\"admin\"],\"permission_id[]\":[\"2\",\"3\"],\"role_id[]\":[\"1\"],\"username\":[\"admin\"]}','2018-09-09 08:58:48','2018-09-09 08:58:48'),
+	(1751,1,'/admin/info/manager/edit','GET','127.0.0.1','','2018-09-09 08:58:51','2018-09-09 08:58:51'),
+	(1752,1,'/admin/edit/manager','POST','127.0.0.1','{\"_previous_\":[\"/admin/info/manager?page=1\\u0026pageSize=10\\u0026sort=id\\u0026sort_type=desc\"],\"_t\":[\"unmND5aAPCbP2ZYedhLQAKfMu31PZ0519bY\"],\"avatar\":[\"\"],\"id\":[\"1\"],\"name\":[\"admin\"],\"password\":[\"admin\"],\"permission_id[]\":[\"2\",\"3\"],\"role_id[]\":[\"1\"],\"username\":[\"admin\"]}','2018-09-09 08:58:55','2018-09-09 08:58:55'),
+	(1753,1,'/admin/info/manager/new','GET','127.0.0.1','','2018-09-09 08:58:58','2018-09-09 08:58:58'),
+	(1754,1,'/admin/new/manager','POST','127.0.0.1','{\"_previous_\":[\"/admin/info/manager?page=1\\u0026pageSize=10\\u0026sort=desc\\u0026sort_type=desc\"],\"_t\":[\"fwd6HsTaoNdejKxDu5EXvbSc3N9wYAYJSYj\"],\"name\":[\"admin234\"],\"password\":[\"123456\"],\"permission_id[]\":[\"1\"],\"role_id[]\":[\"1\"],\"username\":[\"admin234\"]}','2018-09-09 09:00:22','2018-09-09 09:00:22'),
+	(1755,1,'/admin/info/manager/new','GET','127.0.0.1','','2018-09-09 09:05:46','2018-09-09 09:05:46');
 
 /*!40000 ALTER TABLE `goadmin_operation_log` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -348,6 +357,9 @@ LOCK TABLES `goadmin_role_users` WRITE;
 INSERT INTO `goadmin_role_users` (`role_id`, `user_id`, `created_at`, `updated_at`)
 VALUES
 	(1,1,NULL,NULL),
+	(1,2,'2018-09-09 09:25:24','2018-09-09 09:25:24'),
+	(1,3,'2018-09-09 09:27:06','2018-09-09 09:27:06'),
+	(1,4,'2018-09-09 09:29:15','2018-09-09 09:29:15'),
 	(1,5,'2018-08-10 23:06:18','2018-08-10 23:06:18'),
 	(1,6,'2018-08-10 23:08:59','2018-08-10 23:08:59'),
 	(1,7,'2018-08-10 23:13:12','2018-08-10 23:13:12'),
@@ -435,7 +447,11 @@ VALUES
 	(26,'zNqWLogLIfYLPu6','{\"user_id\":\"1\"}','2018-09-06 19:34:01','2018-09-06 19:34:01'),
 	(27,'YKKWYftL2F72mR2','{\"user_id\":\"1\"}','2018-09-07 08:18:35','2018-09-07 08:18:35'),
 	(28,'kLXTe4NtwNnHv6c','{\"user_id\":\"1\"}','2018-09-07 21:05:46','2018-09-07 21:05:46'),
-	(29,'ZJE7SdSTXzmVrBG','{\"user_id\":\"1\"}','2018-09-08 08:34:38','2018-09-08 08:34:38');
+	(29,'ZJE7SdSTXzmVrBG','{\"user_id\":\"1\"}','2018-09-08 08:34:38','2018-09-08 08:34:38'),
+	(30,'YCq6joKjTi8DBpf','{\"user_id\":\"1\"}','2018-09-09 08:18:39','2018-09-09 08:18:39'),
+	(31,'8h4eX4ycywang7H','{\"user_id\":\"1\"}','2018-09-09 08:19:43','2018-09-09 08:19:43'),
+	(33,'AlbK4574BNOmYHQ','{\"user_id\":\"1\"}','2018-09-09 09:54:53','2018-09-09 09:54:53'),
+	(34,'CrEbhokvzFztQ3o','{\"user_id\":\"1\"}','2018-09-09 21:15:53','2018-09-09 21:15:53');
 
 /*!40000 ALTER TABLE `goadmin_session` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -461,6 +477,9 @@ INSERT INTO `goadmin_user_permissions` (`user_id`, `permission_id`, `created_at`
 VALUES
 	(1,2,NULL,NULL),
 	(1,3,NULL,NULL),
+	(2,1,'2018-09-09 09:25:24','2018-09-09 09:25:24'),
+	(3,1,'2018-09-09 09:27:06','2018-09-09 09:27:06'),
+	(4,1,'2018-09-09 09:29:15','2018-09-09 09:29:15'),
 	(5,1,'2018-08-10 23:06:18','2018-08-10 23:06:18'),
 	(5,2,'2018-08-10 23:06:18','2018-08-10 23:06:18'),
 	(6,1,'2018-08-10 23:08:59','2018-08-10 23:08:59'),
@@ -501,7 +520,7 @@ LOCK TABLES `goadmin_users` WRITE;
 
 INSERT INTO `goadmin_users` (`id`, `username`, `password`, `name`, `avatar`, `remember_token`, `created_at`, `updated_at`)
 VALUES
-	(1,'admin','$2a$10$uvMIaI5LPn3Po76gnFtS/eVPImzoOl7qna5T/yvjiqX7yWroWSz6.','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
+	(1,'admin','$2a$10$FgN6YzUL1UZ4IjgDj/Fb5uaKb6zRXISTkM7/vonco1RxpvxMIrzdS','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2018-05-13 10:00:33','2018-05-13 10:00:33');
 
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;
 UNLOCK TABLES;
