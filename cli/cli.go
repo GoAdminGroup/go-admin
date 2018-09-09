@@ -1,13 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
+	"fmt"
 	"path"
 	"strings"
 )
 
 func main()  {
+
+	// compile tmpl
+	CompileTmpl()
+
+	// help to generate data model file
+
+}
+
+func CompileTmpl()  {
 	content := `package tmpl
 
 var List = map[string]string{`
@@ -89,26 +98,6 @@ var List = map[string]string{`
 			content += `"components/table/` + onlyName + `":` + "`" + str + "`,"
 		}
 	}
-	//
-	//files, _ = ioutil.ReadDir("./template/login/")
-	//
-	//for _, f := range files {
-	//	fmt.Println(f.Name())
-	//	b, err := ioutil.ReadFile("./template/login/" + f.Name())
-	//	if err != nil {
-	//		fmt.Print(err)
-	//	}
-	//	str := string(b)
-	//	fmt.Println(str)
-	//
-	//	suffix := path.Ext(f.Name())
-	//	fmt.Println("f.Name()", f.Name(),"suffix",suffix)
-	//	onlyName := strings.TrimSuffix(f.Name(), suffix)
-	//
-	//	if suffix == ".tmpl" {
-	//		content += `"login/` + onlyName + `":` + "`" + str + "`,"
-	//	}
-	//}
 
 	content += `}`
 
