@@ -51,3 +51,7 @@ func (lang LangMap) Get(value string) string {
 		return value
 	}
 }
+
+func Add(key string, lang map[string]string)  {
+	Lang[key] = lang
+}
