@@ -60,7 +60,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 			u := &url.URL{
 				Scheme:   "postgres",
 				User:     url.UserPassword(cfg.USER, cfg.PWD),
-				Host:     fmt.Sprintf("%s:%s", cfg.IP, cfg.PORT),
+				Host:     fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
 				RawQuery: query.Encode(),
 			}
 

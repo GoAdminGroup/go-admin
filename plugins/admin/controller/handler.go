@@ -42,7 +42,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			if mysqlError, ok = err.(*mysql.MySQLError); ok {
 				errMsg = mysqlError.Error()
 			} else {
-				errMsg = "系统错误"
+				errMsg = fmt.Sprint("%v", err)
 			}
 		}
 
@@ -96,18 +96,18 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Panel: types.Panel{
 					Content: alert + template.Get(Config.THEME).Form().
 						SetContent(formData).
-						SetPrefix(Config.ADMIN_PREFIX).
-						SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
+						SetPrefix(Config.PREFIX).
+						SetUrl(Config.PREFIX + "/edit/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: description,
 					Title:       title,
 				},
-				AssertRootUrl: Config.ADMIN_PREFIX,
+				AssertRootUrl: Config.PREFIX,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/info/" + prefix + "/new" + queryParam)
+			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)
 			return
 		}
 
@@ -152,19 +152,19 @@ func GlobalDeferHandler(ctx *context.Context) {
 				},
 				Panel: types.Panel{
 					Content: alert + template.Get(Config.THEME).Form().
-						SetPrefix(Config.ADMIN_PREFIX).
+						SetPrefix(Config.PREFIX).
 						SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
-						SetUrl(Config.ADMIN_PREFIX + "/new/" + prefix).
+						SetUrl(Config.PREFIX + "/new/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: models.GlobalTableList[prefix].Form.Description,
 					Title:       models.GlobalTableList[prefix].Form.Title,
 				},
-				AssertRootUrl: Config.ADMIN_PREFIX,
+				AssertRootUrl: Config.PREFIX,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/info/" + prefix + "/new" + queryParam)
+			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)
 			return
 		}
 

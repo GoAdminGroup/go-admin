@@ -9,7 +9,7 @@ import (
 )
 
 func ShowDashboard(ctx *context.Context) {
-	page.SetPageContent(Config.THEME, Config.ADMIN_PREFIX, ctx, func() types.Panel {
+	page.SetPageContent(Config.THEME, Config.PREFIX, ctx, func() types.Panel {
 
 
 		components := template2.Get(Config.THEME)

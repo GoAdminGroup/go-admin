@@ -4,13 +4,13 @@
 <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">{{.Title}}</h3>
+        <h3 class="box-title">{{lang .Title}}</h3>
         <div class="box-tools">
+            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
+            </div> -->
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
-            </div>
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
             </div>
         </div>
     </div>
@@ -50,12 +50,12 @@
                 <div class="btn-group pull-right">
                     <button type="submit" class="btn btn-info pull-right"
                             data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
-                        Save
+                        {{lang "Save"}}
                     </button>
                 </div>
 
                 <div class="btn-group pull-left">
-                    <button type="reset" class="btn btn-warning">Reset</button>
+                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
                 </div>
 
             </div>

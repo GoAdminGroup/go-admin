@@ -43,7 +43,7 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 			u := &url.URL{
 				Scheme:   "sqlserver",
 				User:     url.UserPassword(cfg.USER, cfg.PWD),
-				Host:     fmt.Sprintf("%s:%s", cfg.IP, cfg.PORT),
+				Host:     fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
 			}
 
 			SqlDB, err = sql.Open("sqlserver", u.String())

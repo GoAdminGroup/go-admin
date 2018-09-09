@@ -40,9 +40,13 @@ func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 				for key, head := range ctx.Response.Header {
 					c.Header(key, head[0])
 				}
-				buf := new(bytes.Buffer)
-				buf.ReadFrom(ctx.Response.Body)
-				c.String(ctx.Response.StatusCode, buf.String())
+				if ctx.Response.Body != nil {
+					buf := new(bytes.Buffer)
+					buf.ReadFrom(ctx.Response.Body)
+					c.String(ctx.Response.StatusCode, buf.String())
+				} else {
+					c.Status(ctx.Response.StatusCode)
+				}
 			})
 		} 
 	}

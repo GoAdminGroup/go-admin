@@ -6,13 +6,21 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
+                {{if eq .User.Avatar ""}}
+                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
+                {{else}}
+                    <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
+                {{end}}
                 <span class="hidden-xs">{{.User.Name}}</span>
             </a>
             <ul class="dropdown-menu">
                 <!-- User image -->
                 <li class="user-header">
-                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    {{if eq .User.Avatar ""}}
+                        <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    {{else}}
+                        <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                    {{end}}
                     <p>
                         {{.User.Name}} -{{.User.Level}}
                         <small>{{.User.CreateAt}}</small>
@@ -45,8 +53,8 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <section class="content-header">
     <h1>
-        {{.Panel.Title}}
-        <small>{{.Panel.Description}}</small>
+        {{lang .Panel.Title}}
+        <small>{{lang .Panel.Description}}</small>
     </h1>
 </section>
 
@@ -210,7 +218,11 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                {{if eq .User.Avatar ""}}
+                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                {{else}}
+                    <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                {{end}}
             </div>
             <div class="pull-left info">
                 admin
@@ -349,7 +361,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 {{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
-        {{.Header}}
+        {{langHtml .Header}}
     </div>
     <div class="box-body">
         {{.Body}}
@@ -380,13 +392,13 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">{{.Title}}</h3>
+        <h3 class="box-title">{{lang .Title}}</h3>
         <div class="box-tools">
+            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
+            </div> -->
             <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
-            </div>
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> Back</a>
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
             </div>
         </div>
     </div>
@@ -426,12 +438,12 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
                 <div class="btn-group pull-right">
                     <button type="submit" class="btn btn-info pull-right"
                             data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
-                        Save
+                        {{lang "Save"}}
                     </button>
                 </div>
 
                 <div class="btn-group pull-left">
-                    <button type="reset" class="btn btn-warning">Reset</button>
+                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
                 </div>
 
             </div>
@@ -669,7 +681,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{index $head "head"}}
+                    {{lang (index $head "head")}}
                     {{if eq (index $head "sortable") "1"}}
                         <a class="fa fa-fw fa-sort" href=""></a>
                     {{end}}
@@ -684,7 +696,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 <th></th>
                 {{range $key, $head := .Thead}}
                     <th>
-                        {{index $head "head"}}
+                        {{lang (index $head "head")}}
                         {{if eq (index $head "sortable") "1"}}
                             <a class="fa fa-fw fa-sort" href=""></a>
                         {{end}}
@@ -958,7 +970,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/default":`{{define "form_default"}}
-<label class="col-sm-2 control-label">{{.Head}}</label>
+<label class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
         <div class="box-body">
@@ -967,7 +979,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </div>
 </div>
 {{end}}`,"components/form/file":`{{define "form_file"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
 </div>
@@ -989,13 +1001,13 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
-<label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="icon" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
         <span class="input-group-addon"><i class="fa fa-bars"></i></span>
         <input style="width: 140px" type="text" id="icon" name="{{.Field}}" value="fa-bars"
                class="form-control icon iconpicker-element iconpicker-input"
-               placeholder="Input Icon">
+               placeholder="{{lang "Input Icon"}}">
     </div>
     <span class="help-block">
         <i class="fa fa-info-circle"></i>&nbsp;For more icons please see <a href="http://fontawesome.io/icons/" target="_blank">http://fontawesome.io/icons/</a>
@@ -3234,17 +3246,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 </div>
 {{end}}`,"components/form/password":`{{define "form_password"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
-        <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="Input {{.Head}}">
+        <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{lang .Head}}">
     </div>
 </div>
 {{end}}`,"components/form/select":`{{define "form_select"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="Input {{.Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{lang .Head}}" tabindex="-1" aria-hidden="true">
         {{range $key, $v := .Options }}
             <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
@@ -3259,7 +3271,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2  control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
         {{range  $key, $v := .Options }}
@@ -3272,9 +3284,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
 {{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="Input {{.Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{lang .Head}}" tabindex="-1" aria-hidden="true">
     {{range $key, $v := .Options }}
         <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
     {{end}}
@@ -3290,17 +3302,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`,"components/form/text":`{{define "form_text"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="Input {{.Head}}">
+        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{lang .Head}}">
     </div>
 </div>
 {{end}}`,"components/form/textarea":`{{define "form_textarea"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="{{.Field}}" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
-    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="Input {{.Head}}">{{.Value}}</textarea>
+    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{lang .Head}}">{{.Value}}</textarea>
 </div>
 {{end}}`,"components/table/box-header":`{{define "box-header"}}
 <div class="pull-right">
@@ -3365,24 +3377,24 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
         <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
 
-            <i class="fa fa-save"></i>&nbsp;&nbsp;New
+            <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
         </a>
     </div>
 </div>
 <span>
     <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
     <div class="btn-group">
-        <a class="btn btn-sm btn-default">Action</a>
+        <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
         <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
         <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
+        <span class="sr-only">{{lang "Toggle Dropdown"}}</span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" class="grid-batch-0">Delete</a></li>
+            <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
         </ul>
     </div>
     <a class="btn btn-sm btn-primary grid-refresh">
-        <i class="fa fa-refresh"></i> Refresh
+        <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
 {{end}}`,}

@@ -40,9 +40,11 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 				for key, head := range ctx.Response.Header {
 					c.Response().Header().Set(key, head[0])
 				}
-				buf := new(bytes.Buffer)
-				buf.ReadFrom(ctx.Response.Body)
-				c.String(ctx.Response.StatusCode, buf.String())
+				if ctx.Response.Body != nil {
+					buf := new(bytes.Buffer)
+					buf.ReadFrom(ctx.Response.Body)
+					c.String(ctx.Response.StatusCode, buf.String())
+				}
 				return nil
 			})
 		}

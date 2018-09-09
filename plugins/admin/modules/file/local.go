@@ -2,7 +2,7 @@ package file
 
 import (
 	"mime/multipart"
-	"github.com/valyala/fasthttp"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 type LocalFileUploader struct {
@@ -11,16 +11,15 @@ type LocalFileUploader struct {
 
 func GetLocalFileUploader() *LocalFileUploader {
 	return &LocalFileUploader{
-		"./resources/adminlte/uploads",
+		config.Get().STORE.PATH,
 	}
 }
 
 func (local *LocalFileUploader) Upload(form *multipart.Form) (*multipart.Form, error) {
 	return Upload(func(fileObj *multipart.FileHeader, filename string) (string, error) {
-		if err := fasthttp.SaveMultipartFile(fileObj, (*local).BasePath+filename); err != nil {
+		if err := SaveMultipartFile(fileObj, (*local).BasePath+"/"+filename); err != nil {
 			return "", err
 		}
-		return "/uploads/" + filename, nil
+		return filename, nil
 	}, form)
 }
-

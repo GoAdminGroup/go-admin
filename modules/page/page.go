@@ -9,7 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/template"
 )
 
-// 设置页面内容
+// SetPageContent set and return the panel of page content.
 func SetPageContent(theme string, AssertRootUrl string, ctx *context.Context, c func() types.Panel) {
 	user := ctx.UserValue["user"].(auth.User)
 

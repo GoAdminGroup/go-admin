@@ -55,16 +55,16 @@ func ShowNewForm(ctx *context.Context) {
 		},
 		Panel: types.Panel{
 			Content:     template.Get(Config.THEME).Form().
-				SetPrefix(Config.ADMIN_PREFIX).
+				SetPrefix(Config.PREFIX).
 				SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
-				SetUrl(Config.ADMIN_PREFIX + "/new/" + prefix).
+				SetUrl(Config.PREFIX + "/new/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
 				GetContent(),
 			Description: models.GlobalTableList[prefix].Form.Description,
 			Title:       models.GlobalTableList[prefix].Form.Title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -137,9 +137,9 @@ func NewForm(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
 
-	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
-	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
-	deleteUrl := Config.ADMIN_PREFIX + "/delete/" + prefix
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
+	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
 
@@ -166,7 +166,7 @@ func NewForm(ctx *context.Context) {
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 
 	ctx.WriteString(buffer.String())

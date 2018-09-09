@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/auth"
 	"html/template"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 type Component interface {
@@ -30,6 +31,7 @@ type Page struct {
 	Panel         Panel
 	System        SystemInfo
 	AssertRootUrl string
+	Lang          language.LangMap
 }
 
 type SystemInfo struct {

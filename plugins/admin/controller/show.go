@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 // 显示列表
@@ -54,9 +55,9 @@ func ShowInfo(ctx *context.Context) {
 		editUrl string
 		//newUrl  string
 	)
-	editUrl = Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
-	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
-	deleteUrl := Config.ADMIN_PREFIX + "/delete/" + prefix
+	editUrl = Config.PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -86,13 +87,14 @@ func ShowInfo(ctx *context.Context) {
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
+		Lang:          language.Lang,
 	})
 	ctx.WriteString(buf.String())
 }
 
 func Assert(ctx *context.Context) {
-	filepath := "template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, Config.ADMIN_PREFIX, "", 1)
+	filepath := "template/adminlte/resource" + strings.Replace(ctx.Request.URL.Path, Config.PREFIX, "", 1)
 	data, err := template.Get("adminlte").GetAsset(filepath)
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)

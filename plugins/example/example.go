@@ -17,7 +17,7 @@ var Config config.Config
 
 func (example *Example) InitPlugin() {
 	cfg := config.Get()
-	ExamplePlug.app = InitRouter("/" + cfg.ADMIN_PREFIX)
+	ExamplePlug.app = InitRouter("/" + cfg.PREFIX)
 
 	Config = cfg
 	if Config.THEME == "" {

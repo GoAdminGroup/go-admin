@@ -31,9 +31,11 @@ func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 						ctx := context.NewContext(httpRequest)
 						plug.GetHandler(req.URL, req.Method)(context.NewContext(httpRequest))
 						httpWriter.WriteHeader(ctx.Response.StatusCode)
-						buf := new(bytes.Buffer)
-						buf.ReadFrom(ctx.Response.Body)
-						httpWriter.Write(buf.Bytes())
+						if ctx.Response.Body != nil {
+							buf := new(bytes.Buffer)
+							buf.ReadFrom(ctx.Response.Body)
+							httpWriter.Write(buf.Bytes())
+						}
 					}
 				}
 			})

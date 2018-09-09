@@ -5,7 +5,7 @@
                 <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{index $head "head"}}
+                    {{lang (index $head "head")}}
                     {{if eq (index $head "sortable") "1"}}
                         <a class="fa fa-fw fa-sort" href=""></a>
                     {{end}}
@@ -20,7 +20,7 @@
                 <th></th>
                 {{range $key, $head := .Thead}}
                     <th>
-                        {{index $head "head"}}
+                        {{lang (index $head "head")}}
                         {{if eq (index $head "sortable") "1"}}
                             <a class="fa fa-fw fa-sort" href=""></a>
                         {{end}}

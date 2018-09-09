@@ -22,7 +22,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "用户名",
+			Head:     "Name",
 			Field:    "username",
 			TypeName: "varchar",
 			Sortable: false,
@@ -31,7 +31,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "昵称",
+			Head:     "Nickname",
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -40,7 +40,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "角色",
+			Head:     "Role",
 			Field:    "roles",
 			TypeName: "varchar",
 			Sortable: false,
@@ -51,7 +51,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -60,7 +60,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -71,8 +71,8 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	}
 
 	ManagerTable.Info.Table = "goadmin_users"
-	ManagerTable.Info.Title = "管理员管理"
-	ManagerTable.Info.Description = "管理员管理"
+	ManagerTable.Info.Title = "Managers"
+	ManagerTable.Info.Description = "Managers"
 
 	var roles, permissions []map[string]string
 	rolesModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
@@ -102,7 +102,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "用户名",
+			Head:     "Name",
 			Field:    "username",
 			TypeName: "varchar",
 			Default:  "",
@@ -112,7 +112,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "昵称",
+			Head:     "Nickname",
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
@@ -142,7 +142,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "角色",
+			Head:     "Role",
 			Field:    "role_id",
 			TypeName: "varchar",
 			Default:  "",
@@ -174,7 +174,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 				return permissions
 			},
 		}, {
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -184,7 +184,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -197,8 +197,8 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	}
 
 	ManagerTable.Form.Table = "goadmin_users"
-	ManagerTable.Form.Title = "管理员管理"
-	ManagerTable.Form.Description = "管理员管理"
+	ManagerTable.Form.Title = "Managers"
+	ManagerTable.Form.Description = "Managers"
 
 	ManagerTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
@@ -218,7 +218,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -236,7 +236,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "方法",
+			Head:     "method",
 			Field:    "http_method",
 			TypeName: "varchar",
 			Sortable: false,
@@ -245,7 +245,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "路径",
+			Head:     "path",
 			Field:    "http_path",
 			TypeName: "varchar",
 			Sortable: false,
@@ -254,7 +254,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -263,7 +263,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -274,8 +274,8 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	}
 
 	PermissionTable.Info.Table = "goadmin_permissions"
-	PermissionTable.Info.Title = "权限管理"
-	PermissionTable.Info.Description = "权限管理"
+	PermissionTable.Info.Title = "Permission Manage"
+	PermissionTable.Info.Description = "Permission Manage"
 
 	PermissionTable.Form.FormList = []types.FormStruct{
 		{
@@ -289,7 +289,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
@@ -309,7 +309,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "方法",
+			Head:     "method",
 			Field:    "http_method",
 			TypeName: "varchar",
 			Default:  "",
@@ -328,7 +328,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				return strings.Split(model.Value, ",")
 			},
 		}, {
-			Head:     "路径",
+			Head:     "path",
 			Field:    "http_path",
 			TypeName: "varchar",
 			Default:  "",
@@ -338,7 +338,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -348,7 +348,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -361,8 +361,8 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	}
 
 	PermissionTable.Form.Table = "goadmin_permissions"
-	PermissionTable.Form.Title = "权限管理"
-	PermissionTable.Form.Description = "权限管理"
+	PermissionTable.Form.Title = "Permission Manage"
+	PermissionTable.Form.Description = "Permission Manage"
 
 	PermissionTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
@@ -391,7 +391,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -409,7 +409,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -418,7 +418,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -444,7 +444,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
@@ -480,7 +480,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 				return permissions
 			},
 		}, {
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -490,7 +490,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -533,7 +533,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "路径",
+			Head:     "path",
 			Field:    "path",
 			TypeName: "varchar",
 			Sortable: false,
@@ -542,7 +542,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "方法",
+			Head:     "method",
 			Field:    "method",
 			TypeName: "varchar",
 			Sortable: false,
@@ -569,7 +569,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -578,7 +578,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -614,7 +614,7 @@ func GetOpTable() (OpTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "路径",
+			Head:     "path",
 			Field:    "path",
 			TypeName: "varchar",
 			Default:  "",
@@ -624,7 +624,7 @@ func GetOpTable() (OpTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "方法",
+			Head:     "method",
 			Field:    "method",
 			TypeName: "varchar",
 			Default:  "",
@@ -654,7 +654,7 @@ func GetOpTable() (OpTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -664,7 +664,7 @@ func GetOpTable() (OpTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -707,7 +707,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "title",
 			TypeName: "varchar",
 			Sortable: false,
@@ -743,7 +743,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -752,7 +752,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 			},
 		},
 		{
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Sortable: false,
@@ -812,7 +812,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 				return menuItem
 			},
 		}, {
-			Head:     "名字",
+			Head:     "Name",
 			Field:    "title",
 			TypeName: "varchar",
 			Default:  "",
@@ -858,7 +858,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 				return roles
 			},
 		}, {
-			Head:     "更新时间",
+			Head:     "updatedAt",
 			Field:    "updated_at",
 			TypeName: "timestamp",
 			Default:  "",
@@ -868,7 +868,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:     "创建时间",
+			Head:     "createdAt",
 			Field:    "created_at",
 			TypeName: "timestamp",
 			Default:  "",

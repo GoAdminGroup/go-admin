@@ -6,6 +6,7 @@ import (
 	"strings"
 	"github.com/chenhg5/go-admin/context"
 	"fmt"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 type User struct {
@@ -96,7 +97,11 @@ func GetCurUserById(id string) (user User, ok bool) {
 	user.LevelName = roleModel[0]["name"].(string)
 	user.Name = admin[0]["name"].(string)
 	user.CreateAt = admin[0]["created_at"].(string)
-	user.Avatar = admin[0]["avatar"].(string)
+	if admin[0]["avatar"].(string) == "" || config.Get().STORE.PREFIX == "" {
+		user.Avatar = ""
+	} else {
+		user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin[0]["avatar"].(string)
+	}
 
 	permissionModel := GetPermissions(roleModel[0]["id"])
 	var permissions []Permission

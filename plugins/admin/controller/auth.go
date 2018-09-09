@@ -21,7 +21,7 @@ func Auth(ctx *context.Context) {
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 200,
 			"msg": "登录成功",
-			"url": Config.ADMIN_PREFIX,
+			"url": Config.PREFIX,
 		})
 		return
 	}
@@ -34,8 +34,8 @@ func Auth(ctx *context.Context) {
 
 func Logout(ctx *context.Context) {
 	auth.DelCookie(ctx)
-	ctx.Response.Header.Add("Location", "/login")
-	ctx.Response.StatusCode = 302
+	ctx.Response.Header.Add("Location", Config.PREFIX + "/login")
+	ctx.SetStatusCode(302)
 }
 
 func ShowLogin(ctx *context.Context) {
@@ -46,7 +46,7 @@ func ShowLogin(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	fmt.Println(tmpl.ExecuteTemplate(buf, name, struct {
 		AssertRootUrl string
-	}{Config.ADMIN_PREFIX}))
+	}{Config.PREFIX}))
 	ctx.WriteString(buf.String())
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")

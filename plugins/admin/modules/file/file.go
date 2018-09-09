@@ -4,15 +4,16 @@ import (
 	"mime/multipart"
 	"path"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
-	"github.com/valyala/fasthttp"
-	"fmt"
+	"os"
+	"io"
+	"sync"
 )
 
-type FileUploader interface {
+type Uploader interface {
 	Upload(*multipart.Form) (*multipart.Form, error)
 }
 
-func GetFileEngine(name string) FileUploader {
+func GetFileEngine(name string) Uploader {
 	if name == "local" {
 		return GetLocalFileUploader()
 	}
@@ -32,9 +33,6 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 
 		suffix = path.Ext(fileObj.Filename)
 		filename = modules.Uuid(50) + suffix
-		if err := fasthttp.SaveMultipartFile(fileObj, "./resources/adminlte/uploads/"+filename); err != nil {
-			fmt.Println("save upload file error:", err)
-		}
 
 		pathStr, err := c(fileObj, filename)
 
@@ -46,4 +44,38 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 	}
 
 	return form, nil
+}
+
+func SaveMultipartFile(fh *multipart.FileHeader, path string) error {
+	f, err := fh.Open()
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if ff, ok := f.(*os.File); ok {
+		return os.Rename(ff.Name(), path)
+	}
+
+	ff, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer ff.Close()
+	_, err = copyZeroAlloc(ff, f)
+	return err
+}
+
+func copyZeroAlloc(w io.Writer, r io.Reader) (int64, error) {
+	vbuf := copyBufPool.Get()
+	buf := vbuf.([]byte)
+	n, err := io.CopyBuffer(w, r, buf)
+	copyBufPool.Put(vbuf)
+	return n, err
+}
+
+var copyBufPool = sync.Pool{
+	New: func() interface{} {
+		return make([]byte, 4096)
+	},
 }

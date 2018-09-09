@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 func ComposeHtml(compo interface{}, templateName... string) template.HTML {
@@ -14,7 +15,10 @@ func ComposeHtml(compo interface{}, templateName... string) template.HTML {
 		text += tmpl.List["components/" + v]
 	}
 
-	tmpla, err := template.New("comp").Parse(text)
+	tmpla, err := template.New("comp").Funcs(template.FuncMap{
+		"lang": language.Get,
+		"langHtml": language.GetFromHtml,
+	}).Parse(text)
 	if err != nil {
 		fmt.Println("ComposeHtml Error:", err)
 	}

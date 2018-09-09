@@ -1,11 +1,11 @@
 {{define "form_iconpicker"}}
-<label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
+<label for="icon" class="col-sm-2 control-label">{{lang .Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
         <span class="input-group-addon"><i class="fa fa-bars"></i></span>
         <input style="width: 140px" type="text" id="icon" name="{{.Field}}" value="fa-bars"
                class="form-control icon iconpicker-element iconpicker-input"
-               placeholder="Input Icon">
+               placeholder="{{lang "Input Icon"}}">
     </div>
     <span class="help-block">
         <i class="fa fa-info-circle"></i>&nbsp;For more icons please see <a href="http://fontawesome.io/icons/" target="_blank">http://fontawesome.io/icons/</a>

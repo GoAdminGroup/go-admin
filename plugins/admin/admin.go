@@ -26,7 +26,7 @@ func (admin *Admin) InitPlugin() {
 		})
 	}
 
-	App.app = InitRouter("/" + cfg.ADMIN_PREFIX)
+	App.app = InitRouter("/" + cfg.PREFIX)
 
 	models.SetTableFuncConfig(map[string]models.GetTableDataFunc{
 		// 管理员管理部分
@@ -39,7 +39,7 @@ func (admin *Admin) InitPlugin() {
 	models.SetTableFuncConfig(admin.tableCfg)
 	models.InitGlobalTableList()
 
-	cfg.ADMIN_PREFIX = "/" + cfg.ADMIN_PREFIX
+	cfg.PREFIX = "/" + cfg.PREFIX
 	if cfg.THEME == "" {
 		cfg.THEME = "adminlte"
 	}

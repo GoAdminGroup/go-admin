@@ -37,7 +37,7 @@ func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 
 		for conn, cfg := range cfglist {
 			SqlDB, err = sql.Open("mysql", cfg.USER+
-				":"+ cfg.PWD+ "@tcp("+ cfg.IP+ ":"+ cfg.PORT+ ")/"+ cfg.NAME+ "?charset=utf8mb4")
+				":"+ cfg.PWD+ "@tcp("+ cfg.HOST+ ":"+ cfg.PORT+ ")/"+ cfg.NAME+ "?charset=utf8mb4")
 
 			if err != nil {
 				SqlDB.Close()

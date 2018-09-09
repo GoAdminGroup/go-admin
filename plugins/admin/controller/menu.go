@@ -48,15 +48,15 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Panel: types.Panel{
 			Content:     template.Get(Config.THEME).Form().
 				SetContent(formData).
-				SetPrefix(Config.ADMIN_PREFIX).
-				SetUrl(Config.ADMIN_PREFIX + "/menu/edit").
+				SetPrefix(Config.PREFIX).
+				SetUrl(Config.PREFIX + "/menu/edit").
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.ADMIN_PREFIX + "/menu").
+				SetInfoUrl(Config.PREFIX + "/menu").
 				GetContent() + template2.HTML(js),
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -99,7 +99,7 @@ func EditMenu(ctx *context.Context) {
 
 	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/menu")
 }
 
 // 新建菜单
@@ -121,7 +121,7 @@ func NewMenu(ctx *context.Context) {
 
 	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.ADMIN_PREFIX + "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/menu")
 }
 
 // 修改菜单顺序
@@ -158,9 +158,9 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(path)
 
-	editUrl := Config.ADMIN_PREFIX + "/menu/edit/show"
-	deleteUrl := Config.ADMIN_PREFIX + "/menu/delete"
-	orderUrl := Config.ADMIN_PREFIX + "/menu/order"
+	editUrl := Config.PREFIX + "/menu/edit/show"
+	deleteUrl := Config.PREFIX + "/menu/delete"
+	orderUrl := Config.PREFIX + "/menu/order"
 
 	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).
 		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
@@ -168,8 +168,8 @@ func GetMenuInfoPanel(ctx *context.Context) {
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
-	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.ADMIN_PREFIX).SetUrl(Config.ADMIN_PREFIX + "/menu/new").
-		SetInfoUrl(Config.ADMIN_PREFIX + "/menu").SetTitle("New").
+	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.PREFIX).SetUrl(Config.PREFIX + "/menu/new").
+		SetInfoUrl(Config.PREFIX + "/menu").SetTitle("New").
 		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
 	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
@@ -194,7 +194,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 			Description: "Menus Manage",
 			Title:       "Menus Manage",
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 
 	ctx.WriteString(buf.String())

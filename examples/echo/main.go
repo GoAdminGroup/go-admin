@@ -17,7 +17,7 @@ func main() {
 	cfg := config.Config{
 		DATABASE: []config.Database{
 			{
-				IP:           "127.0.0.1",
+				HOST:         "127.0.0.1",
 				PORT:         "3306",
 				USER:         "root",
 				PWD:          "root",
@@ -27,9 +27,8 @@ func main() {
 				DRIVER:       "mysql",
 			},
 		},
-		AUTH_DOMAIN:  "localhost",
-		LANGUAGE:     "cn",
-		ADMIN_PREFIX: "admin",
+		DOMAIN: "localhost",
+		PREFIX: "admin",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)

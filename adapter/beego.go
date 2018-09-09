@@ -40,9 +40,11 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 					c.ResponseWriter.Header().Add(key, head[0])
 				}
 				c.ResponseWriter.WriteHeader(ctx.Response.StatusCode)
-				buf := new(bytes.Buffer)
-				buf.ReadFrom(ctx.Response.Body)
-				c.WriteString(buf.String())
+				if ctx.Response.Body != nil {
+					buf := new(bytes.Buffer)
+					buf.ReadFrom(ctx.Response.Body)
+					c.WriteString(buf.String())
+				}
 			})
 		}
 	}

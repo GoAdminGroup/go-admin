@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"net/http"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 var (
@@ -54,7 +55,7 @@ func (ses *Session) Set(key string, value interface{}) {
 	cookie := http.Cookie{
 		Name:     ses.Cookie,
 		Value:    ses.Sid,
-		//Domain:   "/",
+		Domain:   config.Get().DOMAIN,
 		Expires:  time.Now().Add(ses.Expires),
 		HttpOnly: false,
 	}
@@ -112,7 +113,11 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 }
 
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
-	if sid != "" && len(values) != 0 {
+	if sid != "" {
+		if len(values) == 0 {
+			connections.GetConnection().Exec("delete from goadmin_session where sid = ?", sid)
+			return
+		}
 		valuesByte, _ := json.Marshal(values)
 		sesModel, _ := connections.GetConnection().Query("select * from goadmin_session where sid = ?", sid)
 		if len(sesModel) < 1 {

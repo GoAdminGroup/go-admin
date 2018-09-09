@@ -61,24 +61,24 @@
 
         <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
 
-            <i class="fa fa-save"></i>&nbsp;&nbsp;New
+            <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
         </a>
     </div>
 </div>
 <span>
     <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
     <div class="btn-group">
-        <a class="btn btn-sm btn-default">Action</a>
+        <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
         <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
         <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
+        <span class="sr-only">{{lang "Toggle Dropdown"}}</span>
         </button>
         <ul class="dropdown-menu" role="menu">
-            <li><a href="#" class="grid-batch-0">Delete</a></li>
+            <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
         </ul>
     </div>
     <a class="btn btn-sm btn-primary grid-refresh">
-        <i class="fa fa-refresh"></i> Refresh
+        <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
 {{end}}

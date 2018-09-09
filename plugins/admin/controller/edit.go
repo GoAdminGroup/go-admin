@@ -61,15 +61,15 @@ func ShowForm(ctx *context.Context) {
 		Panel: types.Panel{
 			Content:     template.Get(Config.THEME).Form().
 				SetContent(formData).
-				SetPrefix(Config.ADMIN_PREFIX).
-				SetUrl(Config.ADMIN_PREFIX + "/edit/" + prefix).
+				SetPrefix(Config.PREFIX).
+				SetUrl(Config.PREFIX + "/edit/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.ADMIN_PREFIX + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
+				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
 				GetContent(),
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -143,9 +143,9 @@ func EditForm(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(previous)
 
-	editUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
-	newUrl := Config.ADMIN_PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
-	deleteUrl := Config.ADMIN_PREFIX + "/delete/" + prefix
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
+	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
 
@@ -171,7 +171,7 @@ func EditForm(ctx *context.Context) {
 			Description: description,
 			Title:       title,
 		},
-		AssertRootUrl: Config.ADMIN_PREFIX,
+		AssertRootUrl: Config.PREFIX,
 	})
 
 	ctx.WriteString(buf.String())
