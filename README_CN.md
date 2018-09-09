@@ -4,7 +4,7 @@
   </a>
 </p>
 <p align="center">
-    遗失的Golang语言编写的Web管理平台构建框架
+    遗失的Golang语言编写的数据可视化与管理平台构建框架
 </p>
 <p align="center">
 <a href="https://api.travis-ci.org/chenhg5/go-admin"><img alt="Go Report Card" src="https://api.travis-ci.org/chenhg5/go-admin.svg?branch=master"></a>
@@ -21,10 +21,7 @@
 
 ## 前言
 
-对于一个管理平台来说，有几个东西是重要的：
-
-- 安全性和易于使用
-- 独立性，独立于业务系统
+goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
 
 ![](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
 

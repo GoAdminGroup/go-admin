@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    the missing golang admin builder tool.
+    the missing golang data admin builder tool.
 </p>
 
 <p align="center">
@@ -29,10 +29,7 @@
 
 ## Preface
 
-as a admin platform. the following principle is important as i see.
-
-- security and easy to use
-- independent of business platform
+goAmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
 ![](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
 
