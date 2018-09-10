@@ -743,14 +743,16 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             return selected;
         };
 
-        $('.grid-select-all').on('ifChanged', function (event) {
-            if (this.checked) {
-                $('.grid-row-checkbox').iCheck('check');
-            } else {
-                $('.grid-row-checkbox').iCheck('uncheck');
-            }
-        });
-        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+        if ($('.grid-select-all').length > 0) {
+            $('.grid-select-all').on('ifChanged', function (event) {
+                if (this.checked) {
+                    $('.grid-row-checkbox').iCheck('check');
+                } else {
+                    $('.grid-row-checkbox').iCheck('uncheck');
+                }
+            });
+            $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+        }
 
         $(function () {
             $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
