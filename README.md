@@ -44,7 +44,7 @@ goAmin is a toolkit help you to build a data visualization and manage platform f
 
 - [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
 
-## usage
+## how to
 
 see the [wiki](https://github.com/chenhg5/go-admin/wiki) for detail
 
