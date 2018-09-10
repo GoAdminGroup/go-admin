@@ -894,77 +894,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         </tbody>
     </table>
     {{if eq $Type "data-table"}}
-    <script>
-
-        $('.grid-row-delete').unbind('click').click(function () {
-            DeletePost($(this).data('id'))
-        });
-
-        let selectedRows = function () {
-            let selected = [];
-            $('.grid-row-checkbox:checked').each(function(){
-                selected.push($(this).data('id'));
-            });
-            return selected;
-        };
-
-        console.log("$('.grid-select-all')", $('.grid-select-all'));
-        $('.grid-select-all').on('ifChanged', function (event) {
-            if (this.checked) {
-                $('.grid-row-checkbox').iCheck('check');
-            } else {
-                $('.grid-row-checkbox').iCheck('uncheck');
-            }
-        });
-        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
-
-        $(function () {
-            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-                if (this.checked) {
-                    $(this).closest('tr').css('background-color', "#ffffd5");
-                } else {
-                    $(this).closest('tr').css('background-color', '');
-                }
-            });
-        });
-
-        $('.grid-batch-0').on('click', function() {
-            DeletePost(selectedRows().join())
-        });
-
-        function DeletePost(id) {
-            swal({
-                title: {{lang "are you sure to delete"}},
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: {{lang "yes"}},
-                closeOnConfirm: false,
-                cancelButtonText: {{lang "cancel"}},
-            },
-            function(){
-                $.ajax({
-                    method: 'post',
-                    url: {{.DeleteUrl}},
-                    data: {
-                        id: id
-                        // _t: $('#_TOKEN').val()
-                    },
-                    success: function (data) {
-                        $.pjax.reload('#pjax-container');
-
-                        data = JSON.parse(data);
-                        if (data.code === 200) {
-                            $('#_TOKEN').val(data.data);
-                            swal(data.msg, '', 'success');
-                        } else {
-                            swal(data.msg, '', 'error');
-                        }
-                    }
-                });
-            });
-        }
-    </script>
+    
     {{end}}
 {{end}}`,"components/tabs":`{{define "tabs"}}
 <div class="nav-tabs-custom">
