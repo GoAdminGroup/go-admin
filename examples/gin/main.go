@@ -34,7 +34,7 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE: "cn",
+		LANGUAGE: "en",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
