@@ -33,18 +33,18 @@ goAmin is a toolkit help you to build a data visualization and manage platform f
 
 ![](https://cloud.githubusercontent.com/assets/1479100/19625297/3b3deb64-9947-11e6-807c-cffa999004be.jpg)
 
-## feature
+## Feature
 
 - beautiful admin interface builder powerd by adminlte
 - many plugins to use
 - powerful auth manage system
 - support Most of the go web framework
 
-## requirements
+## Requirements
 
 - [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
 
-## how to
+## How to
 
 see the [wiki](https://github.com/chenhg5/go-admin/wiki) for detail
 
@@ -115,11 +115,11 @@ func main() {
 
 More Examples: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 
-## powerd by
+## Powerd by
 
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
 
-## contribution
+## Contribution
 
 very welcome to pr
 
@@ -127,6 +127,6 @@ very welcome to pr
 
 QQ Group Num: 756664859
 
-## special thanks
+## Special thanks
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
