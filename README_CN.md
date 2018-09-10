@@ -46,9 +46,13 @@ goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 ### 利用命令行工具导出数据模型文件
 
-```go install github.com/chenhg5/go-admin/admincli```
+```
 
-```admincli generate -h=127.0.0.1 -p=3306 -P=root -n=godmin -pa=main -o=./model```
+go install github.com/chenhg5/go-admin/admincli
+
+admincli generate -h=127.0.0.1 -p=3306 -P=root -n=godmin -pa=main -o=./model
+
+```
 
 ### Gin 例子
 
