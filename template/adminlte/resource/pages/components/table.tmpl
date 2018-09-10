@@ -55,7 +55,6 @@
     </table>
     {{if eq $Type "data-table"}}
     <script>
-
         $('.grid-row-delete').unbind('click').click(function () {
             DeletePost($(this).data('id'))
         });
@@ -107,7 +106,6 @@
                     url: {{.DeleteUrl}},
                     data: {
                         id: id
-                        // _t: $('#_TOKEN').val()
                     },
                     success: function (data) {
                         $.pjax.reload('#pjax-container');

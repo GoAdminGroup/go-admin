@@ -95,37 +95,39 @@ $(function () {
 });
 
 
-$('.grid-row-delete').unbind('click').click(function () {
-    DeletePost($(this).data('id'));
-});
-
-let selectedRows = function () {
-    let selected = [];
-    $('.grid-row-checkbox:checked').each(function(){
-        selected.push($(this).data('id'));
+if ($('.grid-select-all').length > 0) {
+    $('.grid-row-delete').unbind('click').click(function () {
+        DeletePost($(this).data('id'));
     });
-    return selected;
-};
 
-$('.grid-select-all').on('ifChanged', function (event) {
-    if (this.checked) {
-        $('.grid-row-checkbox').iCheck('check');
-    } else {
-        $('.grid-row-checkbox').iCheck('uncheck');
-    }
-});
-$('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+    let selectedRows = function () {
+        let selected = [];
+        $('.grid-row-checkbox:checked').each(function(){
+            selected.push($(this).data('id'));
+        });
+        return selected;
+    };
 
-$(function () {
-    $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+    $('.grid-select-all').on('ifChanged', function (event) {
         if (this.checked) {
-            $(this).closest('tr').css('background-color', "#ffffd5");
+            $('.grid-row-checkbox').iCheck('check');
         } else {
-            $(this).closest('tr').css('background-color', '');
+            $('.grid-row-checkbox').iCheck('uncheck');
         }
     });
-});
+    $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
-$('.grid-batch-0').on('click', function() {
-    DeletePost(selectedRows().join());
-});
+    $(function () {
+        $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+            if (this.checked) {
+                $(this).closest('tr').css('background-color', "#ffffd5");
+            } else {
+                $(this).closest('tr').css('background-color', '');
+            }
+        });
+    });
+
+    $('.grid-batch-0').on('click', function() {
+        DeletePost(selectedRows().join());
+    });
+}
