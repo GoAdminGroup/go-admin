@@ -38,214 +38,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         </li>
     </ul>
 </div>
-{{end}}`,"content":`{{define "content"}}
-<script>
-    $('.grid-per-pager').on("change", function (e) {
-        console.log("changing...");
-        $.pjax({url: this.value, container: '#pjax-container'});
-    });
-    $('.grid-refresh').on('click', function () {
-        $.pjax.reload('#pjax-container');
-        toastr.success('{{lang "Refresh succeeded"}} !');
-    });
-</script>
-<script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-<section class="content-header">
-    <h1>
-        {{lang .Panel.Title}}
-        <small>{{lang .Panel.Description}}</small>
-    </h1>
-</section>
-
-<!-- Main content -->
-<section class="content">
-    {{.Panel.Content}}
-</section>
-{{end}}`,"footer":`{{define "footer"}}
-<footer class="main-footer">
-    <div class="pull-right hidden-xs">
-        <b>Version</b> {{.System.Version}}
-    </div>
-    <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
-    reserved.
-</footer>
-{{end}}`,"head":`{{define "head"}}
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{.Title}}</title>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <!-- iCheck -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/skin-black.css">
-    <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- Google Font -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
-
-    <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
-</head>
-{{end}}`,"header":`{{define "header"}}
-<header class="main-header">
-    <!-- Logo -->
-    <a href="/" class="logo">
-        <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini">{{.MiniLogo}}</span>
-        <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">{{.Logo}}</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-        <!-- Sidebar toggle button-->
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">Toggle navigation</span>
-        </a>
-
-        {{ template "admin_panel" . }}
-    </nav>
-</header>
-{{end}}`,"js":`{{define "js"}}
-<script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fastclick/lib/fastclick.js"></script>
-<script src="{{.AssertRootUrl}}/assets/select2/select2.full.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/nprogress/nprogress.js"></script>
-<script src="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-pjax/jquery.pjax.js"></script>
-<script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
-{{end}}`,"layout":`{{define "layout"}}
-
-<!DOCTYPE html>
-<html>
-
-{{ template "head" . }}
-
-<body class="hold-transition skin-black sidebar-mini">
-<div class="wrapper">
-
-    {{ template "header" . }}
-
-    {{ template "sidebar" . }}
-
-    <div class="content-wrapper" id="pjax-container">
-
-    {{ template "content" . }}
-
-    </div>
-
-    {{ template "footer" . }}
-
-</div>
-
-{{ template "js" . }}
-
-</body>
-</html>
-
-{{end}}
-`,"menu":`{{define "menu"}}
-<ul class="sidebar-menu" data-widget="tree">
-{{$AssertRootUrl := .AssertRootUrl}}
-{{range $key, $list := .Menu.GlobalMenuList }}
-    {{if eq (len $list.ChildrenList) 0}}
-        <li class='{{$list.Active}}'>
-            {{if eq $list.Url "/"}}
-                <a href='{{$AssertRootUrl}}'>
-            {{else}}
-                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
-            {{end}}
-                <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
-                <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
-            </a>
-        </li>
-    {{else}}
-        <li class="treeview {{$list.Active}}">
-            <a href="#">
-                <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
-                <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
-                    </span>
-            </a>
-            <ul class="treeview-menu">
-            {{range $key2, $item := $list.ChildrenList}}
-                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
-            {{end}}
-            </ul>
-        </li>
-    {{end}}
-{{end}}
-</ul>
-{{end}}`,"sidebar":`{{define "sidebar"}}
-<!-- Left side column. contains the logo and sidebar -->
-<aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-        <!-- Sidebar user panel -->
-        <div class="user-panel">
-            <div class="pull-left image">
-                {{if eq .User.Avatar ""}}
-                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
-                {{else}}
-                    <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
-                {{end}}
-            </div>
-            <div class="pull-left info">
-                admin
-                <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
-            </div>
-        </div>
-        <!-- search form -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
-                </button>
-              </span>
-            </div>
-        </form>
-        <!-- /.search form -->
-
-        {{ template "menu" . }}
-
-    </section>
-    <!-- /.sidebar -->
-</aside>
 {{end}}`,"components/alert":`{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -386,556 +178,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <h5 class="description-header">{{.Number}}</h5>
     <span class="description-text">{{.Title}}</span>
 </div>
-{{end}}`,"components/form":`{{define "form"}}
-<script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
-<script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">{{lang .Title}}</h3>
-        <div class="box-tools">
-            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
-            </div> -->
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
-            </div>
-        </div>
-    </div>
-    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
-        <div class="box-body">
-            <div class="fields-group">
-                {{range $key, $data := .Content}}
-                <div class="form-group">
-                    {{if eq $data.FormType "default"}}
-                        {{ template "form_default" $data }}
-                    {{else if eq $data.FormType "text"}}
-                        {{ template "form_text" $data }}
-                    {{else if eq $data.FormType "file"}}
-                        {{ template "form_file" $data }}
-                    {{else if eq $data.FormType "password"}}
-                        {{ template "form_password" $data }}
-                    {{else if eq $data.FormType "selectbox"}}
-                        {{ template "form_selectbox" $data }}
-                    {{else if eq $data.FormType "select"}}
-                        {{ template "form_select" $data }}
-                    {{else if eq $data.FormType "select_single"}}
-                        {{ template "form_select_single" $data }}
-                    {{else if eq $data.FormType "textarea"}}
-                        {{ template "form_textarea" $data }}
-                    {{else if eq $data.FormType "iconpicker"}}
-                        {{ template "form_iconpicker" $data }}
-                    {{end}}
-                </div>
-                {{end}}
-            </div>
-        </div>
-        <div class="box-footer">
-            <div class="col-md-2">
-            </div>
-            <div class="col-md-8">
-
-                <div class="btn-group pull-right">
-                    <button type="submit" class="btn btn-info pull-right"
-                            data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
-                        {{lang "Save"}}
-                    </button>
-                </div>
-
-                <div class="btn-group pull-left">
-                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
-        {{range $key, $data := .Content}}
-            {{if eq $data.Field "id"}}
-                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
-            {{end}}
-        {{end}}
-        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
-    </form>
-</div>
-{{end}}`,"components/image":`{{define "image"}}
-<img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`,"components/infobox":`{{define "infobox"}}
-<div class="info-box">
-    <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
-    <div class="info-box-content">
-        <span class="info-box-text">{{.Text}}</span>
-        <span class="info-box-number">{{.Number}}</span>
-        {{.Content}}
-    </div>
-</div>
-{{end}}`,"components/label":`{{define "label"}}
-<span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`,"components/line-chart":`{{define "line-chart"}}
-{{if ne .Title ""}}
-<p class="text-center">
-    <strong>{{.Title}}</strong>
-</p>
-{{end}}
-<div class="chart">
-    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
-</div>
-<script>
-    let lineChartCanvas          = $('#{{.ID}}').get(0).getContext('2d');
-    let lineChart                = new Chart(lineChartCanvas);
-    let lineChartData = JSON.parse({{.Data}});
-
-    let lineChartOptions = {
-        // Boolean - If we should show the scale at all
-        showScale               : true,
-        // Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines      : false,
-        // String - Colour of the grid lines
-        scaleGridLineColor      : 'rgba(0,0,0,.05)',
-        // Number - Width of the grid lines
-        scaleGridLineWidth      : 1,
-        // Boolean - Whether to show horizontal lines (except X axis)
-        scaleShowHorizontalLines: true,
-        // Boolean - Whether to show vertical lines (except Y axis)
-        scaleShowVerticalLines  : true,
-        // Boolean - Whether the line is curved between points
-        bezierCurve             : true,
-        // Number - Tension of the bezier curve between points
-        bezierCurveTension      : 0.3,
-        // Boolean - Whether to show a dot for each point
-        pointDot                : false,
-        // Number - Radius of each point dot in pixels
-        pointDotRadius          : 4,
-        // Number - Pixel width of point dot stroke
-        pointDotStrokeWidth     : 1,
-        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-        pointHitDetectionRadius : 20,
-        // Boolean - Whether to show a stroke for datasets
-        datasetStroke           : true,
-        // Number - Pixel width of dataset stroke
-        datasetStrokeWidth      : 2,
-        // Boolean - Whether to fill the dataset with a color
-        datasetFill             : true,
-        // String - A legend template
-        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
-        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-        maintainAspectRatio     : true,
-        // Boolean - whether to make the chart responsive to window resizing
-        responsive              : true
-    };
-
-    lineChartOptions.datasetFill = false;
-    lineChart.Line(lineChartData, lineChartOptions)
-</script>
-{{end}}`,"components/paninator":`{{define "paninator"}}
-Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
-<ul class="pagination pagination-sm no-margin pull-right">
-    <!-- Previous Page Link -->
-    <li class="page-item disabled">
-        {{if eq .PreviousClass "disabled"}}
-            <span class="page-link">«</span>
-        {{else}}
-            <a class="page-link" href='{{.PreviousUrl}}' rel="next">«</a>
-        {{end}}
-    </li>
-
-    <!-- Array Of Links -->
-    {{range $key, $page := .Pages}}
-        {{if eq (index $page "isSplit") "0"}}
-            {{if eq (index $page "active") "0"}}
-                <li class="page-item active"><span class="page-link">{{index $page "page"}}</span></li>
-            {{else}}
-                <li class="page-item"><a class="page-link" href='{{index $page "url"}}'>{{index $page "page"}}</a></li>
-            {{end}}
-        {{else}}
-            <li class="page-item disabled"><span class="page-link">...</span></li>
-        {{end}}
-    {{end}}
-
-
-    <!-- Next Page Link -->
-    <li class='page-item {{.NextClass}}'>
-        {{if eq .NextClass "disabled"}}
-            <span class="page-link">»</span>
-        {{else}}
-            <a class="page-link" href='{{.NextUrl}}' rel="next">»</a>
-        {{end}}
-    </li>
-</ul>
-
-<label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
-
-    <small>Show</small>&nbsp;
-    <select class="input-sm grid-per-pager" name="per-page">
-        <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
-            10
-        </option>
-        <option value="{{.Url}}&pageSize=20" {{index .Option "20"}}>
-            20
-        </option>
-        <option value="{{.Url}}&pageSize=30" {{index .Option "30"}}>
-            30
-        </option>
-        <option value="{{.Url}}&pageSize=50" {{index .Option "50"}}>
-            50
-        </option>
-        <option value="{{.Url}}&pageSize=100" {{index .Option "100"}}>
-            100
-        </option>
-    </select>
-    <small>entries</small>
-</label>
-{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
-{{if ne .Title ""}}
-<p class="text-center">
-    <strong>{{.Title}}</strong>
-</p>
-{{end}}
-<div class="chart-responsive">
-    <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
-</div>
-<script>
-    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
-    let pieChart       = new Chart(pieChartCanvas);
-    let PieData        = JSON.parse({{.Data}});
-    let pieOptions     = {
-        // Boolean - Whether we should show a stroke on each segment
-        segmentShowStroke    : true,
-        // String - The colour of each segment stroke
-        segmentStrokeColor   : '#fff',
-        // Number - The width of each segment stroke
-        segmentStrokeWidth   : 1,
-        // Number - The percentage of the chart that we cut out of the middle
-        percentageInnerCutout: 50, // This is 0 for Pie charts
-        // Number - Amount of animation steps
-        animationSteps       : 100,
-        // String - Animation easing effect
-        animationEasing      : 'easeOutBounce',
-        // Boolean - Whether we animate the rotation of the Doughnut
-        animateRotate        : true,
-        // Boolean - Whether we animate scaling the Doughnut from the centre
-        animateScale         : false,
-        // Boolean - whether to make the chart responsive to window resizing
-        responsive           : true,
-        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
-        maintainAspectRatio  : false,
-        // String - A legend template
-        legendTemplate       : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++){%><li><span style=\'background-color:<%=segments[i].fillColor%>\'></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>',
-        // String - A tooltip template
-        tooltipTemplate      : '<%=value %> <%=label%> users'
-    };
-    // Create pie or douhnut chart
-    // You can switch between pie and douhnut using the method below.
-    pieChart.Doughnut(PieData, pieOptions);
-</script>
-{{end}}`,"components/productlist":`{{define "productlist"}}
-<ul class="products-list product-list-in-box">
-    {{range $key, $data := .Data}}
-    <li class="item">
-        <div class="product-img">
-            <img src="{{index $data "img"}}" alt="Product Image">
-        </div>
-        <div class="product-info">
-            <a href="javascript:void(0)" class="product-title">{{index $data "title"}}
-                {{if eq (index $data "has_tabel") "true"}}
-                    <span class="label label-{{index $data "labeltype"}} pull-right">{{index $data "label"}}</span>
-                {{end}}
-            </a>
-            <span class="product-description">
-                {{index $data "description"}}
-            </span>
-        </div>
-    </li>
-    {{end}}
-</ul>
-{{end}}`,"components/progress-group":`{{define "progress-group"}}
-<div class="progress-group">
-    <span class="progress-text">{{.Title}}</span>
-    <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
-
-    <div class="progress sm">
-        <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
-    </div>
-</div>
-{{end}}`,"components/row":`{{define "row"}}
-<div class="row">{{.Content}}</div>
-{{end}}`,"components/smallbox":`{{define "smallbox"}}
-<div class="small-box bg-{{.Color}}">
-    <div class="inner">
-        <h3>{{.Value}}</h3>
-        <p>{{.Title}}</p>
-    </div>
-    <div class="icon">
-        <i class="fa fa-users"></i>
-    </div>
-    <a href="{{.Url}}" class="small-box-footer">
-        More&nbsp;
-        <i class="fa fa-arrow-circle-right"></i>
-    </a>
-</div>
-{{end}}`,"components/table":`{{define "table"}}
-    <table class="table table-hover">
-        {{if eq .Type "table"}}
-            <thead>
-                <tr>
-                {{range $key, $head := .Thead}}
-                    <th>
-                    {{index $head "head"}}
-                    {{if eq (index $head "sortable") "1"}}
-                        <a class="fa fa-fw fa-sort" href=""></a>
-                    {{end}}
-                    </th>
-                {{end}}
-                </tr>
-            </thead>
-        {{end}}
-        <tbody>
-        {{if eq .Type "data-table"}}
-            <tr>
-                <th></th>
-                {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" href=""></a>
-                        {{end}}
-                    </th>
-                {{end}}
-                <th>{{lang "operation"}}</th>
-            </tr>
-        {{end}}
-
-        {{$Thead := .Thead}}
-        {{$Type := .Type}}
-        {{$EditUrl := .EditUrl}}
-        {{range $key1, $info := .InfoList}}
-            <tr>
-                {{if eq $Type "data-table"}}
-                    <td>
-                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
-                    </td>
-                {{end}}
-                {{range $key2, $head2 := $Thead}}
-                    <td>{{index $info (index $head2 "head")}}</td>
-                {{end}}
-                {{if eq $Type "data-table"}}
-                    <td>
-                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
-                        <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
-                    </td>
-                {{end}}
-            </tr>
-        {{end}}
-        </tbody>
-    </table>
-    {{if eq $Type "data-table"}}
-    <script>
-        $('.grid-row-delete').unbind('click').click(function () {
-            DeletePost($(this).data('id'))
-        });
-
-        let selectedRows = function () {
-            let selected = [];
-            $('.grid-row-checkbox:checked').each(function(){
-                selected.push($(this).data('id'));
-            });
-            return selected;
-        };
-
-        $('.grid-select-all').on('ifChanged', function (event) {
-            if (this.checked) {
-                $('.grid-row-checkbox').iCheck('check');
-            } else {
-                $('.grid-row-checkbox').iCheck('uncheck');
-            }
-        });
-        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
-
-        $(function () {
-            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-                if (this.checked) {
-                    $(this).closest('tr').css('background-color', "#ffffd5");
-                } else {
-                    $(this).closest('tr').css('background-color', '');
-                }
-            });
-        });
-
-        $('.grid-batch-0').on('click', function() {
-            DeletePost(selectedRows().join())
-        });
-
-        function DeletePost(id) {
-            swal({
-                title: {{lang "are you sure to delete"}},
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: {{lang "yes"}},
-                closeOnConfirm: false,
-                cancelButtonText: {{lang "cancel"}},
-            },
-            function(){
-                $.ajax({
-                    method: 'post',
-                    url: {{.DeleteUrl}},
-                    data: {
-                        id: id
-                    },
-                    success: function (data) {
-                        $.pjax.reload('#pjax-container');
-
-                        data = JSON.parse(data);
-                        if (data.code === 200) {
-                            $('#_TOKEN').val(data.data);
-                            swal(data.msg, '', 'success');
-                        } else {
-                            swal(data.msg, '', 'error');
-                        }
-                    }
-                });
-            });
-        }
-    </script>
-    {{end}}
-{{end}}`,"components/tabs":`{{define "tabs"}}
-<div class="nav-tabs-custom">
-    <ul class="nav nav-tabs">
-        {{range $key, $data := .Data}}
-            {{if eq $key 0}}
-                <li class="active"><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
-            {{else}}
-                <li><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
-            {{end}}
-        {{end}}
-    </ul>
-    <div class="tab-content">
-        {{range $key, $data := .Data}}
-            {{if eq $key 0}}
-                <div class="tab-pane active" id="tab_{{$key}}">
-                {{index $data "content"}}
-                </div>
-            {{else}}
-                <div class="tab-pane" id="tab_{{$key}}">
-                {{index $data "content"}}
-                </div>
-            {{end}}
-        {{end}}
-    </div>
-</div>
-{{end}}`,"components/tree-header":`{{define "tree-header"}}
-<div class="btn-group">
-    <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
-        <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
-    </a>
-    <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="collapse">
-        <i class="fa fa-minus-square-o"></i>&nbsp;{{lang "collapse"}}
-    </a>
-</div>
-
-<div class="btn-group">
-    <a class="btn btn-info btn-sm  tree-5b405b7481760-save"><i class="fa fa-save"></i>&nbsp;{{lang "save"}}</a>
-</div>
-
-<div class="btn-group">
-    <a class="btn btn-warning btn-sm tree-5b405b7481760-refresh"><i class="fa fa-refresh"></i>&nbsp;{{lang "refresh"}}</a>
-</div>
-<div class="btn-group">
-</div>
-{{end}}`,"components/tree":`{{define "tree"}}
-<div class="dd" id="tree-5b405b7481760">
-    {{$EditUrl := .EditUrl}}
-    <ol class="dd-list">
-        {{range $key, $list := .Tree}}
-        <li class="dd-item" data-id='{{$list.ID}}'>
-            <div class="dd-handle">
-                <i class="fa {{$list.Icon}}"></i>&nbsp;<strong>{{$list.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
-                    href="{{$list.Url}}" class="dd-nodrag">{{$list.Url}}</a>
-                <span class="pull-right dd-nodrag">
-                <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
-                <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
-            </span>
-            </div>
-            {{if gt (len $list.ChildrenList) 0}}
-            <ol class="dd-list">
-                {{range $key, $item := $list.ChildrenList}}
-                    <li class="dd-item" data-id='{{$item.ID}}'>
-                        <div class="dd-handle">
-                            <i class="fa {{$item.Icon}}"></i>&nbsp;<strong>{{$item.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
-                                href="{{$item.Url}}" class="dd-nodrag">{{$item.Url}}</a>
-                            <span class="pull-right dd-nodrag">
-                                <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
-                                <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
-                            </span>
-                        </div>
-                    </li>
-                {{end}}
-            </ol>
-            {{end}}
-        </li>
-        {{end}}
-    </ol>
-</div>
-<script data-exec-on-popstate="">
-    $(function () {
-        $('#tree-5b405b7481760').nestable([]);
-        $('.tree_branch_delete').click(function () {
-            let id = $(this).data('id');
-            swal({
-                        title: "Are you sure to delete this item ?",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "Confirm",
-                        closeOnConfirm: false,
-                        cancelButtonText: "Cancel"
-                    },
-                    function () {
-                        $.ajax({
-                            method: 'post',
-                            url: {{.DeleteUrl}} + '?id=' + id,
-                            data: {},
-                            success: function (data) {
-                                $.pjax.reload('#pjax-container');
-                                if (data.code === 200) {
-                                    swal(data.msg, '', 'success');
-                                } else {
-                                    swal(data.msg, '', 'error');
-                                }
-                            }
-                        });
-                    });
-        });
-        $('.tree-5b405b7481760-save').click(function () {
-            let serialize = $('#tree-5b405b7481760').nestable('serialize');
-            $.post({{.OrderUrl}}, {
-                        _order: JSON.stringify(serialize)
-                    },
-                    function (data) {
-                        $.pjax.reload('#pjax-container');
-                        toastr.success('Save succeeded !');
-                    });
-        });
-        $('.tree-5b405b7481760-refresh').click(function () {
-            $.pjax.reload('#pjax-container');
-            toastr.success('{{lang "Refresh succeeded"}} !');
-        });
-        $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
-            let target = $(e.target),
-                    action = target.data('action');
-            if (action === 'expand') {
-                $('.dd').nestable('expandAll');
-            }
-            if (action === 'collapse') {
-                $('.dd').nestable('collapseAll');
-            }
-        });
-        $(".parent_id").select2({"allowClear": true, "placeholder": "Parent"});
-        $('.icon').iconpicker({placement: 'bottomLeft'});
-        $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
-    });
-</script>
 {{end}}`,"components/form/default":`{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
@@ -3281,6 +2523,294 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}">{{.Value}}</textarea>
 </div>
+{{end}}`,"components/form":`{{define "form"}}
+<script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
+<script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
+<script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">{{lang .Title}}</h3>
+        <div class="box-tools">
+            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
+            </div> -->
+            <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
+            </div>
+        </div>
+    </div>
+    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+        <div class="box-body">
+            <div class="fields-group">
+                {{range $key, $data := .Content}}
+                <div class="form-group">
+                    {{if eq $data.FormType "default"}}
+                        {{ template "form_default" $data }}
+                    {{else if eq $data.FormType "text"}}
+                        {{ template "form_text" $data }}
+                    {{else if eq $data.FormType "file"}}
+                        {{ template "form_file" $data }}
+                    {{else if eq $data.FormType "password"}}
+                        {{ template "form_password" $data }}
+                    {{else if eq $data.FormType "selectbox"}}
+                        {{ template "form_selectbox" $data }}
+                    {{else if eq $data.FormType "select"}}
+                        {{ template "form_select" $data }}
+                    {{else if eq $data.FormType "select_single"}}
+                        {{ template "form_select_single" $data }}
+                    {{else if eq $data.FormType "textarea"}}
+                        {{ template "form_textarea" $data }}
+                    {{else if eq $data.FormType "iconpicker"}}
+                        {{ template "form_iconpicker" $data }}
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <div class="btn-group pull-right">
+                    <button type="submit" class="btn btn-info pull-right"
+                            data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
+                        {{lang "Save"}}
+                    </button>
+                </div>
+
+                <div class="btn-group pull-left">
+                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+        {{range $key, $data := .Content}}
+            {{if eq $data.Field "id"}}
+                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
+            {{end}}
+        {{end}}
+        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
+    </form>
+</div>
+{{end}}`,"components/image":`{{define "image"}}
+<img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
+{{end}}`,"components/infobox":`{{define "infobox"}}
+<div class="info-box">
+    <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
+    <div class="info-box-content">
+        <span class="info-box-text">{{.Text}}</span>
+        <span class="info-box-number">{{.Number}}</span>
+        {{.Content}}
+    </div>
+</div>
+{{end}}`,"components/label":`{{define "label"}}
+<span class="label label-{{.Color}}">{{.Content}}</span>
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
+<div class="chart">
+    <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
+</div>
+<script>
+    let lineChartCanvas          = $('#{{.ID}}').get(0).getContext('2d');
+    let lineChart                = new Chart(lineChartCanvas);
+    let lineChartData = JSON.parse({{.Data}});
+
+    let lineChartOptions = {
+        // Boolean - If we should show the scale at all
+        showScale               : true,
+        // Boolean - Whether grid lines are shown across the chart
+        scaleShowGridLines      : false,
+        // String - Colour of the grid lines
+        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        // Number - Width of the grid lines
+        scaleGridLineWidth      : 1,
+        // Boolean - Whether to show horizontal lines (except X axis)
+        scaleShowHorizontalLines: true,
+        // Boolean - Whether to show vertical lines (except Y axis)
+        scaleShowVerticalLines  : true,
+        // Boolean - Whether the line is curved between points
+        bezierCurve             : true,
+        // Number - Tension of the bezier curve between points
+        bezierCurveTension      : 0.3,
+        // Boolean - Whether to show a dot for each point
+        pointDot                : false,
+        // Number - Radius of each point dot in pixels
+        pointDotRadius          : 4,
+        // Number - Pixel width of point dot stroke
+        pointDotStrokeWidth     : 1,
+        // Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+        pointHitDetectionRadius : 20,
+        // Boolean - Whether to show a stroke for datasets
+        datasetStroke           : true,
+        // Number - Pixel width of dataset stroke
+        datasetStrokeWidth      : 2,
+        // Boolean - Whether to fill the dataset with a color
+        datasetFill             : true,
+        // String - A legend template
+        legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio     : true,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive              : true
+    };
+
+    lineChartOptions.datasetFill = false;
+    lineChart.Line(lineChartData, lineChartOptions)
+</script>
+{{end}}`,"components/paninator":`{{define "paninator"}}
+Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
+<ul class="pagination pagination-sm no-margin pull-right">
+    <!-- Previous Page Link -->
+    <li class="page-item disabled">
+        {{if eq .PreviousClass "disabled"}}
+            <span class="page-link">«</span>
+        {{else}}
+            <a class="page-link" href='{{.PreviousUrl}}' rel="next">«</a>
+        {{end}}
+    </li>
+
+    <!-- Array Of Links -->
+    {{range $key, $page := .Pages}}
+        {{if eq (index $page "isSplit") "0"}}
+            {{if eq (index $page "active") "0"}}
+                <li class="page-item active"><span class="page-link">{{index $page "page"}}</span></li>
+            {{else}}
+                <li class="page-item"><a class="page-link" href='{{index $page "url"}}'>{{index $page "page"}}</a></li>
+            {{end}}
+        {{else}}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+        {{end}}
+    {{end}}
+
+
+    <!-- Next Page Link -->
+    <li class='page-item {{.NextClass}}'>
+        {{if eq .NextClass "disabled"}}
+            <span class="page-link">»</span>
+        {{else}}
+            <a class="page-link" href='{{.NextUrl}}' rel="next">»</a>
+        {{end}}
+    </li>
+</ul>
+
+<label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
+
+    <small>Show</small>&nbsp;
+    <select class="input-sm grid-per-pager" name="per-page">
+        <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
+            10
+        </option>
+        <option value="{{.Url}}&pageSize=20" {{index .Option "20"}}>
+            20
+        </option>
+        <option value="{{.Url}}&pageSize=30" {{index .Option "30"}}>
+            30
+        </option>
+        <option value="{{.Url}}&pageSize=50" {{index .Option "50"}}>
+            50
+        </option>
+        <option value="{{.Url}}&pageSize=100" {{index .Option "100"}}>
+            100
+        </option>
+    </select>
+    <small>entries</small>
+</label>
+{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
+{{if ne .Title ""}}
+<p class="text-center">
+    <strong>{{.Title}}</strong>
+</p>
+{{end}}
+<div class="chart-responsive">
+    <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
+</div>
+<script>
+    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
+    let pieChart       = new Chart(pieChartCanvas);
+    let PieData        = JSON.parse({{.Data}});
+    let pieOptions     = {
+        // Boolean - Whether we should show a stroke on each segment
+        segmentShowStroke    : true,
+        // String - The colour of each segment stroke
+        segmentStrokeColor   : '#fff',
+        // Number - The width of each segment stroke
+        segmentStrokeWidth   : 1,
+        // Number - The percentage of the chart that we cut out of the middle
+        percentageInnerCutout: 50, // This is 0 for Pie charts
+        // Number - Amount of animation steps
+        animationSteps       : 100,
+        // String - Animation easing effect
+        animationEasing      : 'easeOutBounce',
+        // Boolean - Whether we animate the rotation of the Doughnut
+        animateRotate        : true,
+        // Boolean - Whether we animate scaling the Doughnut from the centre
+        animateScale         : false,
+        // Boolean - whether to make the chart responsive to window resizing
+        responsive           : true,
+        // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+        maintainAspectRatio  : false,
+        // String - A legend template
+        legendTemplate       : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<segments.length; i++){%><li><span style=\'background-color:<%=segments[i].fillColor%>\'></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>',
+        // String - A tooltip template
+        tooltipTemplate      : '<%=value %> <%=label%> users'
+    };
+    // Create pie or douhnut chart
+    // You can switch between pie and douhnut using the method below.
+    pieChart.Doughnut(PieData, pieOptions);
+</script>
+{{end}}`,"components/productlist":`{{define "productlist"}}
+<ul class="products-list product-list-in-box">
+    {{range $key, $data := .Data}}
+    <li class="item">
+        <div class="product-img">
+            <img src="{{index $data "img"}}" alt="Product Image">
+        </div>
+        <div class="product-info">
+            <a href="javascript:void(0)" class="product-title">{{index $data "title"}}
+                {{if eq (index $data "has_tabel") "true"}}
+                    <span class="label label-{{index $data "labeltype"}} pull-right">{{index $data "label"}}</span>
+                {{end}}
+            </a>
+            <span class="product-description">
+                {{index $data "description"}}
+            </span>
+        </div>
+    </li>
+    {{end}}
+</ul>
+{{end}}`,"components/progress-group":`{{define "progress-group"}}
+<div class="progress-group">
+    <span class="progress-text">{{.Title}}</span>
+    <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
+
+    <div class="progress sm">
+        <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+    </div>
+</div>
+{{end}}`,"components/row":`{{define "row"}}
+<div class="row">{{.Content}}</div>
+{{end}}`,"components/smallbox":`{{define "smallbox"}}
+<div class="small-box bg-{{.Color}}">
+    <div class="inner">
+        <h3>{{.Value}}</h3>
+        <p>{{.Title}}</p>
+    </div>
+    <div class="icon">
+        <i class="fa fa-users"></i>
+    </div>
+    <a href="{{.Url}}" class="small-box-footer">
+        More&nbsp;
+        <i class="fa fa-arrow-circle-right"></i>
+    </a>
+</div>
 {{end}}`,"components/table/box-header":`{{define "box-header"}}
 <div class="pull-right">
     <!--
@@ -3364,4 +2894,474 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
+{{end}}`,"components/table":`{{define "table"}}
+    <table class="table table-hover">
+        {{if eq .Type "table"}}
+            <thead>
+                <tr>
+                {{range $key, $head := .Thead}}
+                    <th>
+                    {{index $head "head"}}
+                    {{if eq (index $head "sortable") "1"}}
+                        <a class="fa fa-fw fa-sort" href=""></a>
+                    {{end}}
+                    </th>
+                {{end}}
+                </tr>
+            </thead>
+        {{end}}
+        <tbody>
+        {{if eq .Type "data-table"}}
+            <tr>
+                <th></th>
+                {{range $key, $head := .Thead}}
+                    <th>
+                        {{index $head "head"}}
+                        {{if eq (index $head "sortable") "1"}}
+                            <a class="fa fa-fw fa-sort" href=""></a>
+                        {{end}}
+                    </th>
+                {{end}}
+                <th>{{lang "operation"}}</th>
+            </tr>
+        {{end}}
+
+        {{$Thead := .Thead}}
+        {{$Type := .Type}}
+        {{$EditUrl := .EditUrl}}
+        {{range $key1, $info := .InfoList}}
+            <tr>
+                {{if eq $Type "data-table"}}
+                    <td>
+                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+                    </td>
+                {{end}}
+                {{range $key2, $head2 := $Thead}}
+                    <td>{{index $info (index $head2 "head")}}</td>
+                {{end}}
+                {{if eq $Type "data-table"}}
+                    <td>
+                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+                        <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+                    </td>
+                {{end}}
+            </tr>
+        {{end}}
+        </tbody>
+    </table>
+    {{if eq $Type "data-table"}}
+    <script>
+        $('.grid-row-delete').unbind('click').click(function () {
+            DeletePost($(this).data('id'))
+        });
+
+        let selectedRows = function () {
+            let selected = [];
+            $('.grid-row-checkbox:checked').each(function(){
+                selected.push($(this).data('id'));
+            });
+            return selected;
+        };
+
+        $('.grid-select-all').on('ifChanged', function (event) {
+            if (this.checked) {
+                $('.grid-row-checkbox').iCheck('check');
+            } else {
+                $('.grid-row-checkbox').iCheck('uncheck');
+            }
+        });
+        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+
+        $(function () {
+            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                if (this.checked) {
+                    $(this).closest('tr').css('background-color', "#ffffd5");
+                } else {
+                    $(this).closest('tr').css('background-color', '');
+                }
+            });
+        });
+
+        $('.grid-batch-0').on('click', function() {
+            DeletePost(selectedRows().join())
+        });
+
+        function DeletePost(id) {
+            swal({
+                title: {{lang "are you sure to delete"}},
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: {{lang "yes"}},
+                closeOnConfirm: false,
+                cancelButtonText: {{lang "cancel"}},
+            },
+            function(){
+                $.ajax({
+                    method: 'post',
+                    url: {{.DeleteUrl}},
+                    data: {
+                        id: id
+                    },
+                    success: function (data) {
+                        $.pjax.reload('#pjax-container');
+
+                        data = JSON.parse(data);
+                        if (data.code === 200) {
+                            $('#_TOKEN').val(data.data);
+                            swal(data.msg, '', 'success');
+                        } else {
+                            swal(data.msg, '', 'error');
+                        }
+                    }
+                });
+            });
+        }
+    </script>
+    {{end}}
+{{end}}`,"components/tabs":`{{define "tabs"}}
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <li class="active"><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{else}}
+                <li><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{end}}
+        {{end}}
+    </ul>
+    <div class="tab-content">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <div class="tab-pane active" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{else}}
+                <div class="tab-pane" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{end}}
+        {{end}}
+    </div>
+</div>
+{{end}}`,"components/tree-header":`{{define "tree-header"}}
+<div class="btn-group">
+    <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
+        <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
+    </a>
+    <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="collapse">
+        <i class="fa fa-minus-square-o"></i>&nbsp;{{lang "collapse"}}
+    </a>
+</div>
+
+<div class="btn-group">
+    <a class="btn btn-info btn-sm  tree-5b405b7481760-save"><i class="fa fa-save"></i>&nbsp;{{lang "save"}}</a>
+</div>
+
+<div class="btn-group">
+    <a class="btn btn-warning btn-sm tree-5b405b7481760-refresh"><i class="fa fa-refresh"></i>&nbsp;{{lang "refresh"}}</a>
+</div>
+<div class="btn-group">
+</div>
+{{end}}`,"components/tree":`{{define "tree"}}
+<div class="dd" id="tree-5b405b7481760">
+    {{$EditUrl := .EditUrl}}
+    <ol class="dd-list">
+        {{range $key, $list := .Tree}}
+        <li class="dd-item" data-id='{{$list.ID}}'>
+            <div class="dd-handle">
+                <i class="fa {{$list.Icon}}"></i>&nbsp;<strong>{{$list.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                    href="{{$list.Url}}" class="dd-nodrag">{{$list.Url}}</a>
+                <span class="pull-right dd-nodrag">
+                <a href="{{$EditUrl}}?id={{$list.ID}}"><i class="fa fa-edit"></i></a>
+                <a href="javascript:void(0);" data-id="{{$list.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+            </span>
+            </div>
+            {{if gt (len $list.ChildrenList) 0}}
+            <ol class="dd-list">
+                {{range $key, $item := $list.ChildrenList}}
+                    <li class="dd-item" data-id='{{$item.ID}}'>
+                        <div class="dd-handle">
+                            <i class="fa {{$item.Icon}}"></i>&nbsp;<strong>{{$item.Name}}</strong>&nbsp;&nbsp;&nbsp;<a
+                                href="{{$item.Url}}" class="dd-nodrag">{{$item.Url}}</a>
+                            <span class="pull-right dd-nodrag">
+                                <a href="{{$EditUrl}}?id={{$item.ID}}"><i class="fa fa-edit"></i></a>
+                                <a href="javascript:void(0);" data-id="{{$item.ID}}" class="tree_branch_delete"><i class="fa fa-trash"></i></a>
+                            </span>
+                        </div>
+                    </li>
+                {{end}}
+            </ol>
+            {{end}}
+        </li>
+        {{end}}
+    </ol>
+</div>
+<script data-exec-on-popstate="">
+    $(function () {
+        $('#tree-5b405b7481760').nestable([]);
+        $('.tree_branch_delete').click(function () {
+            let id = $(this).data('id');
+            swal({
+                        title: "Are you sure to delete this item ?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Confirm",
+                        closeOnConfirm: false,
+                        cancelButtonText: "Cancel"
+                    },
+                    function () {
+                        $.ajax({
+                            method: 'post',
+                            url: {{.DeleteUrl}} + '?id=' + id,
+                            data: {},
+                            success: function (data) {
+                                $.pjax.reload('#pjax-container');
+                                if (data.code === 200) {
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
+                                }
+                            }
+                        });
+                    });
+        });
+        $('.tree-5b405b7481760-save').click(function () {
+            let serialize = $('#tree-5b405b7481760').nestable('serialize');
+            $.post({{.OrderUrl}}, {
+                        _order: JSON.stringify(serialize)
+                    },
+                    function (data) {
+                        $.pjax.reload('#pjax-container');
+                        toastr.success('Save succeeded !');
+                    });
+        });
+        $('.tree-5b405b7481760-refresh').click(function () {
+            $.pjax.reload('#pjax-container');
+            toastr.success('{{lang "Refresh succeeded"}} !');
+        });
+        $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
+            let target = $(e.target),
+                    action = target.data('action');
+            if (action === 'expand') {
+                $('.dd').nestable('expandAll');
+            }
+            if (action === 'collapse') {
+                $('.dd').nestable('collapseAll');
+            }
+        });
+        $(".parent_id").select2({"allowClear": true, "placeholder": "Parent"});
+        $('.icon').iconpicker({placement: 'bottomLeft'});
+        $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
+    });
+</script>
+{{end}}`,"content":`{{define "content"}}
+<script>
+    $('.grid-per-pager').on("change", function (e) {
+        console.log("changing...");
+        $.pjax({url: this.value, container: '#pjax-container'});
+    });
+    $('.grid-refresh').on('click', function () {
+        $.pjax.reload('#pjax-container');
+        toastr.success('{{lang "Refresh succeeded"}} !');
+    });
+</script>
+<script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
+<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+<section class="content-header">
+    <h1>
+        {{lang .Panel.Title}}
+        <small>{{lang .Panel.Description}}</small>
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    {{.Panel.Content}}
+</section>
+{{end}}`,"footer":`{{define "footer"}}
+<footer class="main-footer">
+    <div class="pull-right hidden-xs">
+        <b>Version</b> {{.System.Version}}
+    </div>
+    <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
+    reserved.
+</footer>
+{{end}}`,"head":`{{define "head"}}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{.Title}}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
+    <!-- DataTables -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/skin-black.css">
+    <!--[if lt IE 9]>
+    <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Google Font -->
+    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
+
+    <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
+</head>
+{{end}}`,"header":`{{define "header"}}
+<header class="main-header">
+    <!-- Logo -->
+    <a href="/" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        <span class="logo-mini">{{.MiniLogo}}</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg">{{.Logo}}</span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+
+        {{ template "admin_panel" . }}
+    </nav>
+</header>
+{{end}}`,"js":`{{define "js"}}
+<script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/fastclick/lib/fastclick.js"></script>
+<script src="{{.AssertRootUrl}}/assets/select2/select2.full.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/nprogress/nprogress.js"></script>
+<script src="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/jquery-pjax/jquery.pjax.js"></script>
+<script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
+{{end}}`,"layout":`{{define "layout"}}
+
+<!DOCTYPE html>
+<html>
+
+{{ template "head" . }}
+
+<body class="hold-transition skin-black sidebar-mini">
+<div class="wrapper">
+
+    {{ template "header" . }}
+
+    {{ template "sidebar" . }}
+
+    <div class="content-wrapper" id="pjax-container">
+
+    {{ template "content" . }}
+
+    </div>
+
+    {{ template "footer" . }}
+
+</div>
+
+{{ template "js" . }}
+
+</body>
+</html>
+
+{{end}}
+`,"menu":`{{define "menu"}}
+<ul class="sidebar-menu" data-widget="tree">
+{{$AssertRootUrl := .AssertRootUrl}}
+{{range $key, $list := .Menu.GlobalMenuList }}
+    {{if eq (len $list.ChildrenList) 0}}
+        <li class='{{$list.Active}}'>
+            {{if eq $list.Url "/"}}
+                <a href='{{$AssertRootUrl}}'>
+            {{else}}
+                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+            {{end}}
+                <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
+                <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
+            </a>
+        </li>
+    {{else}}
+        <li class="treeview {{$list.Active}}">
+            <a href="#">
+                <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
+                <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+            </a>
+            <ul class="treeview-menu">
+            {{range $key2, $item := $list.ChildrenList}}
+                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+            {{end}}
+            </ul>
+        </li>
+    {{end}}
+{{end}}
+</ul>
+{{end}}`,"sidebar":`{{define "sidebar"}}
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                {{if eq .User.Avatar ""}}
+                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                {{else}}
+                    <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                {{end}}
+            </div>
+            <div class="pull-left info">
+                admin
+                <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
+            </div>
+        </div>
+        <!-- search form -->
+        <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Search...">
+                <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
+                </button>
+              </span>
+            </div>
+        </form>
+        <!-- /.search form -->
+
+        {{ template "menu" . }}
+
+    </section>
+    <!-- /.sidebar -->
+</aside>
 {{end}}`,}
