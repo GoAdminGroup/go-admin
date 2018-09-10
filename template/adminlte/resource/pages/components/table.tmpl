@@ -55,48 +55,16 @@
     </table>
     {{if eq $Type "data-table"}}
     <script>
+
         $('.grid-row-delete').unbind('click').click(function () {
-
-            let id = $(this).data('id');
-
-            swal({
-                title: {{lang "are you sure to delete"}},
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: {{lang "yes"}},
-                closeOnConfirm: false,
-                cancelButtonText: {{lang "cancel"}},
-            },
-            function(){
-                $.ajax({
-                    method: 'post',
-                    url: {{.DeleteUrl}},
-                    data: {
-                        id:id
-                        // _t: $('#_TOKEN').val()
-                    },
-                    success: function (data) {
-                        $.pjax.reload('#pjax-container');
-
-                        data = JSON.parse(data);
-                        if (data.code === 200) {
-                            // $('#_TOKEN').val(data.data);
-                            swal(data.msg, '', 'success');
-                        } else {
-                            swal(data.msg, '', 'error');
-                        }
-                    }
-                });
-            });
+            DeletePost($(this).data('id'))
         });
 
-        var selectedRows = function () {
-            var selected = [];
+        let selectedRows = function () {
+            let selected = [];
             $('.grid-row-checkbox:checked').each(function(){
                 selected.push($(this).data('id'));
             });
-
             return selected;
         };
 
@@ -120,9 +88,10 @@
         });
 
         $('.grid-batch-0').on('click', function() {
+            DeletePost(selectedRows().join())
+        });
 
-            let id = selectedRows().join();
-
+        function DeletePost(id) {
             swal({
                 title: {{lang "are you sure to delete"}},
                 type: "warning",
@@ -153,7 +122,7 @@
                     }
                 });
             });
-        });
+        }
     </script>
     {{end}}
 {{end}}
