@@ -93,3 +93,39 @@ $(function () {
         }
     }
 });
+
+
+$('.grid-row-delete').unbind('click').click(function () {
+    DeletePost($(this).data('id'));
+});
+
+let selectedRows = function () {
+    let selected = [];
+    $('.grid-row-checkbox:checked').each(function(){
+        selected.push($(this).data('id'));
+    });
+    return selected;
+};
+
+$('.grid-select-all').on('ifChanged', function (event) {
+    if (this.checked) {
+        $('.grid-row-checkbox').iCheck('check');
+    } else {
+        $('.grid-row-checkbox').iCheck('uncheck');
+    }
+});
+$('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+
+$(function () {
+    $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+        if (this.checked) {
+            $(this).closest('tr').css('background-color', "#ffffd5");
+        } else {
+            $(this).closest('tr').css('background-color', '');
+        }
+    });
+});
+
+$('.grid-batch-0').on('click', function() {
+    DeletePost(selectedRows().join());
+});
