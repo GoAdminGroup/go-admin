@@ -7,15 +7,16 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/config"
 )
 
 // SetPageContent set and return the panel of page content.
-func SetPageContent(theme string, AssertRootUrl string, ctx *context.Context, c func() types.Panel) {
+func SetPageContent(cfg config.Config, ctx *context.Context, c func() types.Panel) {
 	user := ctx.UserValue["user"].(auth.User)
 
 	panel := c()
 
-	tmpl, tmplName := template.Get(theme).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(cfg.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -27,7 +28,10 @@ func SetPageContent(theme string, AssertRootUrl string, ctx *context.Context, c 
 			"0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: AssertRootUrl,
+		AssertRootUrl: cfg.PREFIX,
+		Title:         cfg.TITLE,
+		Logo:          cfg.LOGO,
+		MiniLogo:      cfg.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 

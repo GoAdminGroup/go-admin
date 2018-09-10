@@ -105,6 +105,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Title:       title,
 				},
 				AssertRootUrl: Config.PREFIX,
+				Title:         Config.TITLE,
+				Logo:          Config.LOGO,
+				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
 			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)
@@ -162,6 +165,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Title:       models.GlobalTableList[prefix].Form.Title,
 				},
 				AssertRootUrl: Config.PREFIX,
+				Title:         Config.TITLE,
+				Logo:          Config.LOGO,
+				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
 			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)

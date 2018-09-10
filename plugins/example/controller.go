@@ -9,7 +9,7 @@ import (
 )
 
 func TestHandler(ctx *context.Context) {
-	page.SetPageContent(Config.THEME, "/" + Config.PREFIX, ctx, func() types.Panel {
+	page.SetPageContent(Config, ctx, func() types.Panel {
 
 		components := template2.Get(Config.THEME)
 		colComp := components.Col()

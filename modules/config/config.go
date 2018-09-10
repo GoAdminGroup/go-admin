@@ -4,7 +4,10 @@
 
 package config
 
-import "sync"
+import (
+	"sync"
+	"html/template"
+)
 
 // Database is a type of database connection config.
 // Because a little difference of different database driver.
@@ -34,27 +37,36 @@ type Store struct {
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
 type Config struct {
-	// DATABASE which is an array supports multi database
-	// connection. The first element of DATABASE is the default
-	// connection. See the file connection.go.
+	// An array supports multi database connection. The first
+	// element of DATABASE is the default connection. See the
+	// file connection.go.
 	DATABASE []Database
 
-	// DOMAIN is the cookie domain used in the auth modules. see
+	// The cookie domain used in the auth modules. see
 	// the session.go.
 	DOMAIN string
 
-	// LANGUAGE is used to set as the localize language which
-	// show in the interface.
+	// Used to set as the localize language which show in the
+	// interface.
 	LANGUAGE string
 
-	// PREFIX is the global url prefix.
+	// The global url prefix.
 	PREFIX string
 
-	// THEME the theme name of template.
+	// The theme name of template.
 	THEME string
 
-	// STORE the path where files will be stored into.
+	// The path where files will be stored into.
 	STORE Store
+
+	// The title of web page.
+	TITLE string
+
+	// Logo is the top text in the sidebar.
+	LOGO  template.HTML
+
+	// Mini-logo is the top text in the sidebar when folding.
+	MINILOGO template.HTML
 }
 
 var (
@@ -66,6 +78,17 @@ var (
 func Set(cfg Config) {
 	mutex.Lock()
 	globalCfg = cfg
+
+	if globalCfg.TITLE == "" {
+		globalCfg.TITLE = "GoAdmin"
+	}
+	if globalCfg.LOGO == "" {
+		globalCfg.LOGO = "<b>Go</b>Admin"
+	}
+	if globalCfg.MINILOGO == "" {
+		globalCfg.MINILOGO = "<b>G</b>A"
+	}
+
 	mutex.Unlock()
 }
 

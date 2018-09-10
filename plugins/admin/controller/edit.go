@@ -70,6 +70,9 @@ func ShowForm(ctx *context.Context) {
 			Title:       title,
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -172,6 +175,9 @@ func EditForm(ctx *context.Context) {
 			Title:       title,
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 
 	ctx.WriteString(buf.String())

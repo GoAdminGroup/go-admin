@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/language"
 )
 
 // 显示列表
@@ -88,7 +87,9 @@ func ShowInfo(ctx *context.Context) {
 			Title:       title,
 		},
 		AssertRootUrl: Config.PREFIX,
-		Lang:          language.Lang,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 }

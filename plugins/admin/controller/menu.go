@@ -57,6 +57,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			Title:       title,
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -195,6 +198,9 @@ func GetMenuInfoPanel(ctx *context.Context) {
 			Title:       "Menus Manage",
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 
 	ctx.WriteString(buf.String())

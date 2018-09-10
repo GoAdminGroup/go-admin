@@ -65,6 +65,9 @@ func ShowNewForm(ctx *context.Context) {
 			Title:       models.GlobalTableList[prefix].Form.Title,
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 }
@@ -167,6 +170,9 @@ func NewForm(ctx *context.Context) {
 			Title:       title,
 		},
 		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
 	})
 
 	ctx.WriteString(buffer.String())
