@@ -32,10 +32,6 @@ goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 - 完善的认证系统
 - 支持多个web框架：gin, beego, echo...
 
-## 环境要求
-
-- [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
-
 ## 使用
 
 详见 [wiki](https://github.com/chenhg5/go-admin/wiki)

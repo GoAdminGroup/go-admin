@@ -40,10 +40,6 @@ goAmin is a toolkit help you to build a data visualization and manage platform f
 - powerful auth manage system
 - support Most of the go web framework
 
-## Requirements
-
-- [GO >= 1.8](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
-
 ## How to
 
 see the [wiki](https://github.com/chenhg5/go-admin/wiki) for detail
