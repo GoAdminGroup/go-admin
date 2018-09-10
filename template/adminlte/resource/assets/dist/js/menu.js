@@ -1,14 +1,3 @@
-
-$('.grid-per-pager').on("change", function (e) {
-    console.log("changing...")
-    $.pjax({url: this.value, container: '#pjax-container'});
-});
-$('.grid-refresh').on('click', function () {
-    $.pjax.reload('#pjax-container');
-    toastr.success('Refresh succeeded !');
-});
-// edit result notify
-// toastr.success('Refresh succeeded !');
 $.fn.editable.defaults.params = function (params) {
     params._token = LA.token;
     params._editable = 1;

@@ -6,7 +6,7 @@
     });
     $('.grid-refresh').on('click', function () {
         $.pjax.reload('#pjax-container');
-        toastr.success('Refresh succeeded !');
+        toastr.success('{{lang "Refresh succeeded"}} !');
     });
 </script>
 <script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>

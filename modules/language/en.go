@@ -29,6 +29,7 @@ var en = map[string]string{
 	"are you sure to delete": "Are you sure to delete",
 	"yes":                    "yes",
 	"cancel":                 "cancel",
+	"refresh succeeded":      "Refresh succeeded",
 
 	"permission manage": "Permission Manage",
 	"menus manage":      "Menus Manage",

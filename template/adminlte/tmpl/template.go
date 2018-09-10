@@ -46,7 +46,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     });
     $('.grid-refresh').on('click', function () {
         $.pjax.reload('#pjax-container');
-        toastr.success('Refresh succeeded !');
+        toastr.success('{{lang "Refresh succeeded"}} !');
     });
 </script>
 <script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
@@ -952,7 +952,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         });
         $('.tree-5b405b7481760-refresh').click(function () {
             $.pjax.reload('#pjax-container');
-            toastr.success('Refresh succeeded !');
+            toastr.success('{{lang "Refresh succeeded"}} !');
         });
         $('.tree-5b405b7481760-tree-tools').on('click', function (e) {
             let target = $(e.target),

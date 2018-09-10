@@ -35,6 +35,7 @@ var cn = map[string]string{
 	"are you sure to delete": "你确定要删除吗",
 	"yes":                    "确定",
 	"cancel":                 "取消",
+	"refresh succeeded":      "刷新成功",
 
 	"avatar":     "头像",
 	"password":   "密码",
