@@ -112,6 +112,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
     <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
     <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+    <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
 </head>
 {{end}}`,"header":`{{define "header"}}
 <header class="main-header">
@@ -140,7 +141,6 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.AssertRootUrl}}/assets/fastclick/lib/fastclick.js"></script>
 <script src="{{.AssertRootUrl}}/assets/select2/select2.full.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/nprogress/nprogress.js"></script>
 <script src="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
@@ -743,16 +743,14 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             return selected;
         };
 
-        if ($('.grid-select-all').length > 0) {
-            $('.grid-select-all').on('ifChanged', function (event) {
-                if (this.checked) {
-                    $('.grid-row-checkbox').iCheck('check');
-                } else {
-                    $('.grid-row-checkbox').iCheck('uncheck');
-                }
-            });
-            $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
-        }
+        $('.grid-select-all').on('ifChanged', function (event) {
+            if (this.checked) {
+                $('.grid-row-checkbox').iCheck('check');
+            } else {
+                $('.grid-row-checkbox').iCheck('uncheck');
+            }
+        });
+        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
         $(function () {
             $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
