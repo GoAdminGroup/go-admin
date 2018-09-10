@@ -908,6 +908,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             return selected;
         };
 
+        console.log("$('.grid-select-all')", $('.grid-select-all'));
         $('.grid-select-all').on('ifChanged', function (event) {
             if (this.checked) {
                 $('.grid-row-checkbox').iCheck('check');
