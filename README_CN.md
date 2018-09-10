@@ -44,6 +44,16 @@ goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 ```go get -v -u github.com/chenhg5/go-admin```
 
+### 导入 sql
+
+[https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
+
+### 利用命令行工具导出数据模型文件
+
+```go install github.com/chenhg5/go-admin/admincli```
+
+```admincli generate -h=127.0.0.1 -p=3306 -P=root -n=godmin -pa=main -o=./model```
+
 ### Gin 例子
 
 ```go
@@ -86,6 +96,7 @@ func main() {
         LANGUAGE: "cn", 
 	}
 
+    // TableFuncConfig： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/global.go
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
 	eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Gin)).Use(r)

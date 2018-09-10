@@ -52,6 +52,16 @@ see the [wiki](https://github.com/chenhg5/go-admin/wiki) for detail
 
 ```go get -v -u github.com/chenhg5/go-admin```
 
+### import sql
+
+[https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
+
+### generate the data model use cli tool
+
+```go install github.com/chenhg5/go-admin/admincli```
+
+```admincli generate -h=127.0.0.1 -p=3306 -P=root -n=godmin -pa=main -o=./model```
+
 ### gin example
 
 ```go
@@ -94,6 +104,7 @@ func main() {
         LANGUAGE: "en",
 	}
 
+    // TableFuncConfig: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/global.go 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
 	eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Gin)).Use(r)
