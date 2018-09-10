@@ -9,6 +9,7 @@ import (
 )
 
 func TestHandler(ctx *context.Context) {
+	Config.PREFIX = "/" + Config.PREFIX
 	page.SetPageContent(Config, ctx, func() types.Panel {
 
 		components := template2.Get(Config.THEME)
