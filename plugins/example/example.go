@@ -23,6 +23,7 @@ func (example *Example) InitPlugin() {
 	if Config.THEME == "" {
 		Config.THEME = "adminlte"
 	}
+	Config.PREFIX = "/" + Config.PREFIX
 
 	menu.InitMenu()
 }
