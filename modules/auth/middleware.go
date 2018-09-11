@@ -178,6 +178,10 @@ func CheckPermissions(user User, ctx *context.Context) bool {
 	method := ctx.Method()
 	prefix := "/" + config.Get().PREFIX
 
+	if path == prefix + "/logout" {
+		return true
+	}
+
 	for _, v := range user.Permissions {
 
 		if v.Method[0] == "" || InMethodArr(v.Method, method) {
