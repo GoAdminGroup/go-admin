@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"sync/atomic"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"fmt"
 )
 
 type Menu struct {
@@ -68,6 +69,9 @@ func SetGlobalMenu(user auth.User) {
 		menus      []map[string]interface{}
 		menuOption = make([]map[string]string, 0)
 	)
+
+	fmt.Println("admin", user.IsSuperAdmin())
+
 	if user.IsSuperAdmin() {
 		menus, _ = connections.GetConnection().Query("select * from goadmin_menu where id > 0 order by `order` asc")
 	} else {

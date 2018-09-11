@@ -5,7 +5,6 @@ import (
 	"regexp"
 	"strings"
 	"github.com/chenhg5/go-admin/context"
-	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 )
 
@@ -33,7 +32,7 @@ type Invoker struct {
 
 func (user User) IsSuperAdmin() bool {
 	for _, per := range user.Permissions {
-		if len(per.Method) == 0 && len(per.Path) > 0 && per.Path[0] == "*" {
+		if len(per.Path) > 0 && per.Path[0] == "*" {
 			return true
 		}
 	}
@@ -179,8 +178,6 @@ func CheckPermissions(user User, ctx *context.Context) bool {
 	method := ctx.Method()
 	prefix := "/" + config.Get().PREFIX
 
-	fmt.Println("permission", user.Permissions, "prefix", prefix, "path", ctx.Path())
-
 	for _, v := range user.Permissions {
 
 		if v.Method[0] == "" || InMethodArr(v.Method, method) {
@@ -209,7 +206,6 @@ func CheckPermissions(user User, ctx *context.Context) bool {
 					continue
 				}
 
-				fmt.Println("path", reg.FindString(path))
 				if reg.FindString(path) == path {
 					return true
 				}

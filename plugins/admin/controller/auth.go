@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"net/http"
 	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 func Auth(ctx *context.Context) {
@@ -17,6 +18,8 @@ func Auth(ctx *context.Context) {
 	if user, ok := auth.Check(password, username); ok {
 
 		auth.SetCookie(ctx, user)
+
+		menu.Unlock()
 
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 200,
