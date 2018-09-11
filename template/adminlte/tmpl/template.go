@@ -214,7 +214,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
         <span class="input-group-addon"><i class="fa fa-bars"></i></span>
-        <input style="width: 140px" type="text" id="icon" name="{{.Field}}" value="fa-bars"
+        <input style="width: 140px" type="text" id="icon" name="{{.Field}}" value="{{.Value}}"
                class="form-control icon iconpicker-element iconpicker-input"
                placeholder="{{lang "Input Icon"}}">
     </div>
@@ -3343,7 +3343,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 {{end}}
             </div>
             <div class="pull-left info">
-                admin
+                {{.User.Name}}
                 <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
             </div>
         </div>

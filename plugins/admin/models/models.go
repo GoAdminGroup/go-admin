@@ -149,7 +149,7 @@ func (tableModel GlobalTable) GetDataFromDatabaseWithId(prefix string, id string
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
 		if CheckInTable(columns, tableModel.Form.FormList[i].Field) {
-			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
+			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" || tableModel.Form.FormList[i].FormType == "select_single" {
 				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),

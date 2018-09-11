@@ -54,8 +54,8 @@ func ShowInfo(ctx *context.Context) {
 		editUrl string
 		//newUrl  string
 	)
-	editUrl = Config.PREFIX + "/info/" + prefix + "/edit?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
-	newUrl := Config.PREFIX + "/info/" + prefix + "/new?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)
+	editUrl = Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sortField)
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sortField)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
@@ -77,7 +77,7 @@ func ShowInfo(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},
@@ -115,4 +115,8 @@ func Assert(ctx *context.Context) {
 			"content-type": contentType,
 		}, string(data))
 	}
+}
+
+func GetRouteParameterString(page, pageSize, sortType, sortField string) string {
+	return "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 }

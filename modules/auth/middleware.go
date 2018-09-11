@@ -17,6 +17,7 @@ type User struct {
 	CreateAt    string
 	Avatar      string
 	Permissions []Permission
+	Menus       []int64
 }
 
 type Permission struct {
@@ -28,18 +29,27 @@ type Invoker struct {
 	prefix string
 }
 
+func (user User) IsSuperAdmin() bool {
+	for _, per := range user.Permissions {
+		if len(per.Method) == 0 && len(per.Path) > 0 && per.Path[0] == "*" {
+			return true
+		}
+	}
+	return false
+}
+
 func SetPrefix(prefix string) *Invoker {
 	return &Invoker{
 		prefix: prefix,
 	}
 }
 
-func(invoker *Invoker) Middleware(h context.Handler) context.Handler {
+func (invoker *Invoker) Middleware(h context.Handler) context.Handler {
 	return func(ctx *context.Context) {
 		var (
-			authOk   bool
+			authOk       bool
 			permissionOk bool
-			user     User
+			user         User
 		)
 
 		if user, authOk, permissionOk = Filter(ctx); authOk && permissionOk {
@@ -90,7 +100,8 @@ func GetCurUserById(id string) (user User, ok bool) {
 		return
 	}
 
-	roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
+	roleModel, _ := connections.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u "+
+		"left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
 
 	user.ID = id
 	user.Level = roleModel[0]["slug"].(string)
@@ -103,6 +114,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 		user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin[0]["avatar"].(string)
 	}
 
+	// TODO: 支持多角色
 	permissionModel := GetPermissions(roleModel[0]["id"])
 	var permissions []Permission
 	for i := 0; i < len(permissionModel); i++ {
@@ -122,13 +134,34 @@ func GetCurUserById(id string) (user User, ok bool) {
 
 	user.Permissions = permissions
 
+	menuIdsModel, _ := connections.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join " +
+		"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
+
+	var menuIds []int64
+
+	for _, mid := range menuIdsModel {
+		if parent_id, ok := mid["parent_id"].(int64); ok && parent_id != 0 {
+			for _, mid2 := range menuIdsModel {
+				if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
+					menuIds = append(menuIds, mid["menu_id"].(int64))
+					break
+				}
+			}
+		} else {
+			menuIds = append(menuIds, mid["menu_id"].(int64))
+		}
+	}
+
+	user.Menus = menuIds
+
 	ok = true
 
 	return
 }
 
 func GetPermissions(role_id interface{}) []map[string]interface{} {
-	permissions, _ := connections.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
+	permissions, _ := connections.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions " +
+		"as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
 	return permissions
 }
 

@@ -4,32 +4,28 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type Example struct {
 	app *context.App
 }
 
-var ExamplePlug = new(Example)
+var Plug = new(Example)
 
 var Config config.Config
 
 func (example *Example) InitPlugin() {
 	cfg := config.Get()
-	ExamplePlug.app = InitRouter("/" + cfg.PREFIX)
 
 	Config = cfg
-	if Config.THEME == "" {
-		Config.THEME = "adminlte"
-	}
 	Config.PREFIX = "/" + Config.PREFIX
 
-	menu.InitMenu()
+	Plug.app = InitRouter(Config.PREFIX)
+
 }
 
 func NewExample() *Example {
-	return ExamplePlug
+	return Plug
 }
 
 func (example *Example) GetRequest() []context.Path {

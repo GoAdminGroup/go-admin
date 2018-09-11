@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/chenhg5/go-admin/modules/config"
+	"strings"
 )
 
 func Check(password string, username string) (user User, ok bool) {
@@ -33,6 +34,46 @@ func Check(password string, username string) (user User, ok bool) {
 			} else {
 				user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin[0]["avatar"].(string)
 			}
+
+			// TODO: 支持多角色
+			permissionModel := GetPermissions(roleModel[0]["id"])
+			var permissions []Permission
+			for i := 0; i < len(permissionModel); i++ {
+
+				var methodArr []string
+
+				if permissionModel[i]["http_method"].(string) != "" {
+					methodArr = strings.Split(permissionModel[i]["http_method"].(string), ",")
+				} else {
+					methodArr = []string{""}
+				}
+				permissions = append(permissions, Permission{
+					methodArr,
+					strings.Split(permissionModel[i]["http_path"].(string), "\n"),
+				})
+			}
+
+			user.Permissions = permissions
+
+			menuIdsModel, _ := connections.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join " +
+				"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
+
+			var menuIds []int64
+
+			for _, mid := range menuIdsModel {
+				if parent_id, ok := mid["parent_id"].(int64); ok && parent_id != 0 {
+					for _, mid2 := range menuIdsModel {
+						if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
+							menuIds = append(menuIds, mid["menu_id"].(int64))
+							break
+						}
+					}
+				} else {
+					menuIds = append(menuIds, mid["menu_id"].(int64))
+				}
+			}
+
+			user.Menus = menuIds
 
 			newPwd := EncodePassword([]byte(password))
 			connections.GetConnection().Exec("update goadmin_users set password = ? where id = ?", newPwd, user.ID)

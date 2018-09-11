@@ -41,12 +41,12 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},
 		Panel: types.Panel{
-			Content:     template.Get(Config.THEME).Form().
+			Content: template.Get(Config.THEME).Form().
 				SetContent(formData).
 				SetPrefix(Config.PREFIX).
 				SetUrl(Config.PREFIX + "/menu/edit").
@@ -67,13 +67,13 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 // 删除菜单
 func DeleteMenu(ctx *context.Context) {
 	id := ctx.Request.URL.Query().Get("id")
+	user := ctx.UserValue["user"].(auth.User)
 
 	buffer := new(bytes.Buffer)
 
 	connections.GetConnection().Exec("delete from goadmin_menu where id = ?", id)
 
-	menu.SetGlobalMenu()
-	//template.MenuPanelPjax((*menu.GlobalMenu).GetEditMenuList(), (*menu.GlobalMenu).GlobalMenuOption, buffer)
+	menu.SetGlobalMenu(user)
 
 	ctx.WriteString(buffer.String())
 
@@ -86,45 +86,66 @@ func DeleteMenu(ctx *context.Context) {
 func EditMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	id := ctx.Request.FormValue("id")[:]
-	title := ctx.Request.FormValue("title")[:]
-	parentId := ctx.Request.FormValue("parent_id")[:]
+	id := ctx.Request.FormValue("id")
+	title := ctx.Request.FormValue("title")
+	parentId := ctx.Request.FormValue("parent_id")
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := ctx.Request.FormValue("icon")[:]
-	uri := ctx.Request.FormValue("uri")[:]
+	icon := ctx.Request.FormValue("icon")
+	uri := ctx.Request.FormValue("uri")
+
+	roles := ctx.Request.Form["roles[]"]
+
+	for _, roleId := range roles {
+		checkRoleMenu, _ := connections.GetConnection().Query("select * from goadmin_role_menu where role_id = ? and menu_id = ?", roleId, id)
+		if len(checkRoleMenu) < 1 {
+			connections.GetConnection().Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+		}
+	}
 
 	connections.GetConnection().Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
 		title, parentId, icon, uri, id)
 
-	menu.SetGlobalMenu()
+	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
 
 	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/menu")
 }
 
 // 新建菜单
 func NewMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	title := ctx.Request.FormValue("title")[:]
-	parentId := ctx.Request.FormValue("parent_id")[:]
+	title := ctx.Request.FormValue("title")
+	parentId := ctx.Request.FormValue("parent_id")
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := ctx.Request.FormValue("icon")[:]
-	uri := ctx.Request.FormValue("uri")[:]
+	icon := ctx.Request.FormValue("icon")
+	uri := ctx.Request.FormValue("uri")
 
-	connections.GetConnection().Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)", title, parentId, icon, uri, (*menu.GlobalMenu).MaxOrder+1)
+	user := ctx.UserValue["user"].(auth.User)
 
-	(*menu.GlobalMenu).SexMaxOrder((*menu.GlobalMenu).MaxOrder + 1)
-	menu.SetGlobalMenu()
+	res := connections.GetConnection().Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)",
+		title, parentId, icon, uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
+
+	roles := ctx.Request.Form["roles[]"]
+
+	id, _ := res.LastInsertId()
+
+	for _, roleId := range roles {
+		connections.GetConnection().Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+	}
+
+	globalMenu := menu.GetGlobalMenu(user)
+	(globalMenu).SexMaxOrder(globalMenu.MaxOrder + 1)
+	menu.SetGlobalMenu(user)
 
 	GetMenuInfoPanel(ctx)
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/menu")
+	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/menu")
 }
 
 // 修改菜单顺序
@@ -147,7 +168,7 @@ func MenuOrder(ctx *context.Context) {
 			count++
 		}
 	}
-	menu.SetGlobalMenu()
+	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
 
 	ctx.SetStatusCode(http.StatusOK)
 	ctx.SetContentType("application/json")
@@ -165,7 +186,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 	deleteUrl := Config.PREFIX + "/menu/delete"
 	orderUrl := Config.PREFIX + "/menu/order"
 
-	tree := template.Get(Config.THEME).Tree().SetTree((*menu.GlobalMenu).GlobalMenuList).
+	tree := template.Get(Config.THEME).Tree().SetTree((menu.GetGlobalMenu(user)).GlobalMenuList).
 		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
 	header := template.Get(Config.THEME).Tree().GetTreeHeader()
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
@@ -188,7 +209,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},

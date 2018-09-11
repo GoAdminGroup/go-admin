@@ -54,7 +54,7 @@ func ShowForm(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},
@@ -146,8 +146,8 @@ func EditForm(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(previous)
 
-	editUrl := Config.PREFIX + "/info/" + prefix + "/edit?page=" + page + "&pageSize=" + pageSize
-	newUrl := Config.PREFIX + "/info/" + prefix + "/new?page=" + page + "&pageSize=" + pageSize + "&sort=" + sort + "&sort_type=" + sortType
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sort)
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
@@ -165,7 +165,7 @@ func EditForm(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},

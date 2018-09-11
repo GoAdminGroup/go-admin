@@ -5,7 +5,6 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/modules/connections"
-	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/controller"
 )
@@ -39,12 +38,8 @@ func (admin *Admin) InitPlugin() {
 	models.InitGlobalTableList()
 
 	cfg.PREFIX = "/" + cfg.PREFIX
-	if cfg.THEME == "" {
-		cfg.THEME = "adminlte"
-	}
 	controller.SetConfig(cfg)
 
-	menu.InitMenu()
 }
 
 var App = new(Admin)

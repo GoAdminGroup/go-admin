@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"sync"
 	"github.com/chenhg5/go-admin/modules/language"
+	"sync/atomic"
+	"github.com/chenhg5/go-admin/modules/auth"
 )
 
 type Menu struct {
@@ -19,18 +21,67 @@ var GlobalMenu = &Menu{
 	MaxOrder:         0,
 }
 
-var InitMenuOnce sync.Once
+var InitMenuOnce = &Once{
+	done: 0,
+}
 
-func InitMenu() {
+type Once struct {
+	m    sync.Mutex
+	done uint32
+}
+
+func (o *Once) Do(f func()) {
+	if atomic.LoadUint32(&o.done) == 1 {
+		return
+	}
+	// Slow-path.
+	o.m.Lock()
+	defer o.m.Unlock()
+	if o.done == 0 {
+		defer atomic.StoreUint32(&o.done, 1)
+		f()
+	}
+}
+
+func (o *Once) unlock() {
+	atomic.StoreUint32(&o.done, 0)
+}
+
+func InitMenu(user auth.User) {
 	InitMenuOnce.Do(func() {
-		SetGlobalMenu()
+		SetGlobalMenu(user)
 	})
 }
 
-func SetGlobalMenu() {
-	menus, _ := connections.GetConnection().Query("select * from goadmin_menu where id > 0 order by `order` asc")
+func GetGlobalMenu(user auth.User) Menu {
+	InitMenu(user)
+	return *GlobalMenu
+}
 
-	menuOption := make([]map[string]string, 0)
+func Unlock() {
+	InitMenuOnce.unlock()
+}
+
+func SetGlobalMenu(user auth.User) {
+
+	var (
+		menus      []map[string]interface{}
+		menuOption = make([]map[string]string, 0)
+	)
+	if user.IsSuperAdmin() {
+		menus, _ = connections.GetConnection().Query("select * from goadmin_menu where id > 0 order by `order` asc")
+	} else {
+
+		qmark := ""
+		var ids []interface{}
+		for i := 0; i < len(user.Menus); i++ {
+			qmark += "?,"
+			ids = append(ids,  user.Menus[i])
+		}
+
+		menus, _ = connections.GetConnection().Query("select * from goadmin_menu where id in (" + qmark[:len(qmark)-1] + ") " +
+			"order by `order` asc", ids...)
+	}
 
 	var title string
 	for i := 0; i < len(menus); i++ {

@@ -88,6 +88,9 @@ func Set(cfg Config) {
 	if globalCfg.MINILOGO == "" {
 		globalCfg.MINILOGO = "<b>G</b>A"
 	}
+	if globalCfg.THEME == "" {
+		globalCfg.THEME = "adminlte"
+	}
 
 	mutex.Unlock()
 }

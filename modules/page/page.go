@@ -23,7 +23,7 @@ func SetPageContent(cfg config.Config, ctx *context.Context, c func() types.Pane
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *menu.GlobalMenu,
+		Menu: menu.GetGlobalMenu(user),
 		System: types.SystemInfo{
 			"0.0.1",
 		},

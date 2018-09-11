@@ -89,7 +89,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 				User: user,
-				Menu: *menu.GlobalMenu,
+				Menu: menu.GetGlobalMenu(user),
 				System: types.SystemInfo{
 					"0.0.1",
 				},
@@ -149,7 +149,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 				User: user,
-				Menu: *menu.GlobalMenu,
+				Menu: menu.GetGlobalMenu(user),
 				System: types.SystemInfo{
 					"0.0.1",
 				},
