@@ -60,13 +60,9 @@ type MiddlewareCallback func(ctx *context.Context)
 
 func (invoker *Invoker) Middleware(h context.Handler) context.Handler {
 	return func(ctx *context.Context) {
-		var (
-			authOk       bool
-			permissionOk bool
-			user         User
-		)
+		user, authOk, permissionOk := Filter(ctx)
 
-		if user, authOk, permissionOk = Filter(ctx); authOk && permissionOk {
+		if authOk && permissionOk {
 			ctx.SetUserValue("user", user)
 			h(ctx)
 			return
@@ -78,6 +74,7 @@ func (invoker *Invoker) Middleware(h context.Handler) context.Handler {
 		}
 
 		if !permissionOk {
+			ctx.SetUserValue("user", user)
 			invoker.permissionDenyCallback(ctx)
 			return
 		}
