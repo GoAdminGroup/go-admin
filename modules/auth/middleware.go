@@ -26,7 +26,9 @@ type Permission struct {
 }
 
 type Invoker struct {
-	prefix string
+	prefix                 string
+	authFailCallback       MiddlewareCallback
+	permissionDenyCallback MiddlewareCallback
 }
 
 func (user User) IsSuperAdmin() bool {
@@ -44,6 +46,18 @@ func SetPrefix(prefix string) *Invoker {
 	}
 }
 
+func (invoker *Invoker) SetAuthFailCallback(callback MiddlewareCallback) *Invoker {
+	invoker.authFailCallback = callback
+	return invoker
+}
+
+func (invoker *Invoker) SetPermissionDenyCallback(callback MiddlewareCallback) *Invoker {
+	invoker.permissionDenyCallback = callback
+	return invoker
+}
+
+type MiddlewareCallback func(ctx *context.Context)
+
 func (invoker *Invoker) Middleware(h context.Handler) context.Handler {
 	return func(ctx *context.Context) {
 		var (
@@ -55,20 +69,17 @@ func (invoker *Invoker) Middleware(h context.Handler) context.Handler {
 		if user, authOk, permissionOk = Filter(ctx); authOk && permissionOk {
 			ctx.SetUserValue("user", user)
 			h(ctx)
+			return
 		}
 
 		if !authOk {
-			ctx.Write(302, map[string]string{
-				"Location": invoker.prefix + "/login",
-			}, ``)
+			invoker.authFailCallback(ctx)
+			return
 		}
 
 		if !permissionOk {
-			fmt.Println("filterOk Path: ", ctx.Path(), "method:", ctx.Method())
-			//ctx.Write(403, map[string]string{}, `{"code":403, "msg":"权限不够"}`)
-			ctx.Write(302, map[string]string{
-				"Location": invoker.prefix + "/login",
-			}, ``)
+			invoker.permissionDenyCallback(ctx)
+			return
 		}
 	}
 }
@@ -134,7 +145,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 
 	user.Permissions = permissions
 
-	menuIdsModel, _ := connections.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join " +
+	menuIdsModel, _ := connections.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join "+
 		"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
 
 	var menuIds []int64
@@ -160,7 +171,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 }
 
 func GetPermissions(role_id interface{}) []map[string]interface{} {
-	permissions, _ := connections.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions " +
+	permissions, _ := connections.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions "+
 		"as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
 	return permissions
 }

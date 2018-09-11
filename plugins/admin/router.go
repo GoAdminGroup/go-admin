@@ -28,7 +28,15 @@ func InitRouter(prefix string) *context.App {
 			app.GET("/assets" + path, controller.Assert)
 		}
 
-		app.Group("", auth.SetPrefix(prefix).Middleware)
+		authenticator := auth.SetPrefix(prefix).SetAuthFailCallback(func (ctx *context.Context)  {
+			ctx.Write(302, map[string]string{
+				"Location": prefix + "/login",
+			}, ``)
+		}).SetPermissionDenyCallback(func (ctx *context.Context)  {
+			controller.ShowErrorPage(ctx)
+		})
+
+		app.Group("", authenticator.Middleware)
 		{
 			// 仪表盘
 			app.GET("/", controller.ShowDashboard)

@@ -40,7 +40,8 @@ func EditManager(dataList map[string][]string) {
 	// 插入管理员角色表
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
 		if dataList["role_id[]"][i] != "" {
-			checkRole, _ := connections.GetConnection().Query("select * from goadmin_role_users where role_id = ? and user_id = ?", dataList["role_id[]"][i], dataList["id"][0])
+			checkRole, _ := connections.GetConnection().Query("select * from goadmin_role_users where role_id = ? and user_id = ?",
+				dataList["role_id[]"][i], dataList["id"][0])
 			if len(checkRole) < 1 {
 				connections.GetConnection().Exec("insert into goadmin_role_users (role_id, user_id) values (?, ?)",
 					dataList["role_id[]"][i], dataList["id"][0])
