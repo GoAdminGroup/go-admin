@@ -33,7 +33,7 @@ func InitRouter(prefix string) *context.App {
 				"Location": prefix + "/login",
 			}, ``)
 		}).SetPermissionDenyCallback(func (ctx *context.Context)  {
-			controller.ShowErrorPage(ctx, "permission deny")
+			controller.ShowErrorPage(ctx, "permission denied")
 		})
 
 		app.Group("", authenticator.Middleware)
