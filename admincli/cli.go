@@ -51,7 +51,7 @@ func main() {
 			generateFlag.StringVar(&user, "u", "root", "database user")
 			generateFlag.StringVar(&password, "P", "root", "database password")
 			generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
-			generateFlag.StringVar(&outputPath, "o", "./", "database output path")
+			generateFlag.StringVar(&outputPath, "o", ".", "database output path")
 			generateFlag.StringVar(&name, "n", "", "database name")
 			generateFlag.StringVar(&packageName, "Pa", "main", "package name")
 			generateFlag.Parse(os.Args[2:])
@@ -198,7 +198,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.GlobalTab
 	return
 }`
 
-	fmt.Println(outputPath + table + ".go")
+	fmt.Println(outputPath + "/" + table + ".go")
 	ioutil.WriteFile(outputPath + table + ".go", []byte(content), 0644)
 }
 
