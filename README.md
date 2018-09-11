@@ -31,7 +31,7 @@
 
 goAmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
-![](https://ws2.sinaimg.cn/large/0069RVTdly1fv5hstucd7j31ap0pngru.jpg)
+![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## Feature
 

@@ -23,7 +23,7 @@
 
 goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
 
-![](https://ws2.sinaimg.cn/large/0069RVTdly1fv5hstucd7j31ap0pngru.jpg)
+![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## 特征
 
