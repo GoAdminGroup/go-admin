@@ -168,7 +168,10 @@ func GetPermissions(role_id interface{}) []map[string]interface{} {
 func CheckPermissions(user User, ctx *context.Context) bool {
 
 	path := ctx.Path()
-	method := string(ctx.Method())
+	method := ctx.Method()
+	prefix := "/" + config.Get().PREFIX
+
+	fmt.Println("permission", user.Permissions, "prefix", prefix, "path", ctx.Path())
 
 	for _, v := range user.Permissions {
 
@@ -179,11 +182,27 @@ func CheckPermissions(user User, ctx *context.Context) bool {
 			}
 
 			for i := 0; i < len(v.Path); i++ {
-				if v.Path[i] == path {
+
+				matchPath := ""
+
+				if v.Path[i] == "/" {
+					matchPath = prefix
+				} else {
+					matchPath = prefix + v.Path[i]
+				}
+
+				if matchPath == path {
 					return true
 				}
 
-				if ok, err := regexp.Match(v.Path[i], []byte(path)); ok && err == nil {
+				reg, err := regexp.Compile(matchPath)
+
+				if err != nil {
+					continue
+				}
+
+				fmt.Println("path", reg.FindString(path))
+				if reg.FindString(path) == path {
 					return true
 				}
 			}
