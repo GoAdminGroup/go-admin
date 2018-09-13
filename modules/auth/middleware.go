@@ -96,7 +96,7 @@ func Filter(ctx *context.Context) (User, bool, bool) {
 		return user, false, false
 	}
 
-	return user, true, CheckPermissions(user, ctx)
+	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
 func GetCurUserById(id string) (user User, ok bool) {
@@ -172,10 +172,8 @@ func GetPermissions(role_id interface{}) []map[string]interface{} {
 	return permissions
 }
 
-func CheckPermissions(user User, ctx *context.Context) bool {
+func CheckPermissions(user User, path string, method string) bool {
 
-	path := ctx.Path()
-	method := ctx.Method()
 	prefix := "/" + config.Get().PREFIX
 
 	if path == prefix + "/logout" {

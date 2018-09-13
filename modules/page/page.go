@@ -11,12 +11,14 @@ import (
 )
 
 // SetPageContent set and return the panel of page content.
-func SetPageContent(cfg config.Config, ctx *context.Context, c func() types.Panel) {
+func SetPageContent(ctx *context.Context, c func() types.Panel) {
 	user := ctx.UserValue["user"].(auth.User)
 
 	panel := c()
 
-	tmpl, tmplName := template.Get(cfg.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	globalConfig := config.Get()
+
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -28,10 +30,10 @@ func SetPageContent(cfg config.Config, ctx *context.Context, c func() types.Pane
 			"0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: cfg.PREFIX,
-		Title:         cfg.TITLE,
-		Logo:          cfg.LOGO,
-		MiniLogo:      cfg.MINILOGO,
+		AssertRootUrl: "/" + globalConfig.PREFIX,
+		Title:         globalConfig.TITLE,
+		Logo:          globalConfig.LOGO,
+		MiniLogo:      globalConfig.MINILOGO,
 	})
 	ctx.WriteString(buf.String())
 

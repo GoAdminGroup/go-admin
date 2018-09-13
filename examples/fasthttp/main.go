@@ -9,7 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/prometheus/common/log"
-	"goAdmin/plugins/example"
+	"github.com/chenhg5/go-admin/plugins/example"
 )
 
 func main() {

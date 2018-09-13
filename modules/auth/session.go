@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	driver MysqlDriver
+	Driver MysqlDriver
 )
 
 type PersistenceDriver interface {
@@ -93,7 +93,7 @@ func InitSession(ctx *context.Context) *Session {
 		Cookie:  "go_admin_session",
 	})
 
-	sessions.UseDatabase(&driver)
+	sessions.UseDatabase(&Driver)
 	sessions.Values = make(map[string]interface{}, 0)
 
 	return sessions.StartCtx(ctx)

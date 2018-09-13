@@ -10,7 +10,7 @@ import (
 )
 
 func Show(ctx *context.Context) {
-	page.SetPageContent(Config, ctx, func() types.Panel {
+	page.SetPageContent(ctx, func() types.Panel {
 
 		prefix := Config.PREFIX
 

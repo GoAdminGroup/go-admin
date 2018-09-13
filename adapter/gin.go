@@ -7,6 +7,13 @@ import (
 	"strings"
 	"github.com/chenhg5/go-admin/context"
 	"bytes"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"net/http"
+	template2 "html/template"
 )
 
 type Gin struct {
@@ -48,9 +55,67 @@ func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 					c.Status(ctx.Response.StatusCode)
 				}
 			})
-		} 
+		}
 	}
 
 	return nil
 }
 
+func GinContent(ctx *gin.Context, c func() types.Panel) {
+	globalConfig := config.Get()
+
+	sesKey, err := ctx.Cookie("go_admin_session")
+
+	if err != nil || sesKey == "" {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Abort()
+	}
+
+	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+
+	if !ok {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Abort()
+	}
+
+	user, ok := auth.GetCurUserById(userId.(string))
+
+	if !ok {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Abort()
+	}
+
+	var panel types.Panel
+
+	if !auth.CheckPermissions(user, ctx.Request.URL.Path, ctx.Request.Method) {
+		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+			SetTheme("warning").SetContent(template2.HTML("没有权限")).GetContent()
+
+		panel = types.Panel{
+			Content:     alert,
+			Description: "Error",
+			Title:       "Error",
+		}
+	} else {
+		panel = c()
+	}
+
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+
+	ctx.Header("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: menu.GetGlobalMenu(user),
+		System: types.SystemInfo{
+			"0.0.1",
+		},
+		Panel:         panel,
+		AssertRootUrl: "/" + globalConfig.PREFIX,
+		Title:         globalConfig.TITLE,
+		Logo:          globalConfig.LOGO,
+		MiniLogo:      globalConfig.MINILOGO,
+	})
+	ctx.String(http.StatusOK, buf.String())
+}

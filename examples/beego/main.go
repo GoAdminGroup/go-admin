@@ -7,7 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/engine"
-	"goAdmin/plugins/example"
+	"github.com/chenhg5/go-admin/plugins/example"
 )
 
 func main() {
@@ -32,6 +32,14 @@ func main() {
 		PREFIX: "admin",
 		INDEX:  "/",
 	}
+
+	// you can custom your pages like:
+	//
+	// app.Handlers.Get("/" + cfg.PREFIX, func(ctx *context.Context) {
+	// 	 adapter.BeegoContent(ctx, func() types.Panel {
+	// 	    return datamodel.GetContent(cfg)
+	// 	 })
+	// })
 
 	examplePlugin := example.NewExample()
 
