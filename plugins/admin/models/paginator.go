@@ -6,13 +6,15 @@ import (
 	"html/template"
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "github.com/chenhg5/go-admin/template"
+	"math"
 )
 
-func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaninatorAttribute {
+func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaginatorAttribute {
 
-	paginator := template2.Get("adminlte").Paninator().(*components.PaninatorAttribute)
+	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
 
 	pageSizeInt, _ := strconv.Atoi(pageSize)
+	totalPage := int(math.Ceil(float64(size)/float64(pageSizeInt)))
 
 	if page == "1" {
 		paginator.PreviousClass = "disabled"
@@ -22,9 +24,13 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 		paginator.PreviousUrl = path + "?page=" + strconv.Itoa(pageInt-1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 	}
 
-	paginator.NextClass = pageSize
-	paginator.NextClass = ""
-	paginator.NextUrl = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+	if pageInt == totalPage {
+		paginator.NextClass = "disabled"
+		paginator.NextUrl = path
+	} else {
+		paginator.NextClass = ""
+		paginator.NextUrl = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+	}
 	paginator.Url = path + "?page=" + page + "&sort=" + sortField + "&sort_type=" + sortType
 	paginator.CurPageEndIndex = strconv.Itoa((pageInt) * pageSizeInt)
 	paginator.CurPageStartIndex = strconv.Itoa((pageInt - 1) * pageSizeInt)
@@ -39,7 +45,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 	paginator.Option[pageSize] = template.HTML("selected")
 
 	paginator.Pages = []map[string]string{}
-	totalPage := size/pageSizeInt + 1
+
 	if totalPage < 10 {
 		var pagesArr []map[string]string
 		for i := 1; i < totalPage+1; i++ {
@@ -62,7 +68,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 		paginator.Pages = pagesArr
 	} else {
 		var pagesArr []map[string]string
-		if pageInt < 5 {
+		if pageInt < 6 {
 			for i := 1; i < totalPage+1; i++ {
 
 				if i == pageInt {

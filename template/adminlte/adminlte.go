@@ -191,9 +191,9 @@ func (*Theme) Label() types.LabelAttribute {
 	}
 }
 
-func (*Theme) Paninator() types.PaninatorAttribute {
-	return &components.PaninatorAttribute{
-		Name: "paninator",
+func (*Theme) Paginator() types.PaginatorAttribute {
+	return &components.PaginatorAttribute{
+		Name: "paginator",
 	}
 }
 

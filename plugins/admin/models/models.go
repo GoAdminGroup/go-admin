@@ -7,6 +7,7 @@ import (
 	"strings"
 	"html/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"fmt"
 )
 
 type ErrStruct struct {
@@ -42,7 +43,7 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 }
 
 // 查数据
-func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaninatorAttribute, string, string) {
+func (tableModel GlobalTable) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaginatorAttribute, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])
 
@@ -246,10 +247,12 @@ func (tableModel GlobalTable) DeleteDataFromDatabase(prefix string, id string) {
 func GetNewFormList(old []types.FormStruct) []types.FormStruct {
 	var newForm []types.FormStruct
 	for _, v := range old {
+		v.Value = ""
 		if v.Field != "id" && v.Field != "created_at" && v.Field != "updated_at" {
 			newForm = append(newForm, v)
 		}
 	}
+	fmt.Println("form", newForm)
 	return newForm
 }
 

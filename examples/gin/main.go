@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/gin-gonic/gin"
+	"github.com/chenhg5/go-admin/plugins/redisclient"
 )
 
 func main() {
@@ -41,7 +42,9 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
+	redisPlugin := redisclient.NewRedisClient()
+
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin, redisPlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
 		panic(err)
 	}
 

@@ -127,7 +127,7 @@ func NewForm(ctx *context.Context) {
 		}
 	}
 
-	thead, infoList, paninator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      prevUrlArr[0],
 		"sortField": sort,
@@ -153,7 +153,7 @@ func NewForm(ctx *context.Context) {
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
-		SetFooter(paninator.GetContent()).
+		SetFooter(paginator.GetContent()).
 		GetContent()
 
 	user := ctx.UserValue["user"].(auth.User)

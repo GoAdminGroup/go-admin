@@ -321,7 +321,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 </div>
 {{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`,"components/paninator":`{{define "paninator"}}
+{{end}}`,"components/paginator":`{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->

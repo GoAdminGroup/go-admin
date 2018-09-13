@@ -64,7 +64,7 @@ func ShowForm(ctx *context.Context) {
 				SetPrefix(Config.PREFIX).
 				SetUrl(Config.PREFIX + "/edit/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + string(page) + "&pageSize=" + string(pageSize) + "&sort=" + string(sortField) + "&sort_type=" + string(sortType)).
+				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
 				GetContent(),
 			Description: description,
 			Title:       title,
@@ -135,7 +135,7 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	thead, infoList, paninator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      prevUrlArr[0],
 		"sortField": sort,
@@ -159,7 +159,7 @@ func EditForm(ctx *context.Context) {
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
-		SetFooter(paninator.GetContent()).
+		SetFooter(paginator.GetContent()).
 		GetContent()
 
 	buf := new(bytes.Buffer)

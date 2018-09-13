@@ -41,7 +41,7 @@ func ShowInfo(ctx *context.Context) {
 		sortType = "desc"
 	}
 
-	thead, infoList, paninator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      ctx.Path(),
 		"sortField": sortField,
@@ -50,11 +50,7 @@ func ShowInfo(ctx *context.Context) {
 		"pageSize":  pageSize,
 	})
 
-	var (
-		editUrl string
-		//newUrl  string
-	)
-	editUrl = Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sortField)
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sortField)
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sortField)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
@@ -69,7 +65,7 @@ func ShowInfo(ctx *context.Context) {
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
-		SetFooter(paninator.GetContent()).
+		SetFooter(paginator.GetContent()).
 		GetContent()
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")

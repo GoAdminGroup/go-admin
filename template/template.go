@@ -19,7 +19,7 @@ type Template interface {
 	DataTable() types.DataTableAttribute
 	Tree() types.TreeAttribute
 	InfoBox() types.InfoBoxAttribute
-	Paninator() types.PaninatorAttribute
+	Paginator() types.PaginatorAttribute
 	AreaChart() types.AreaChartAttribute
 	ProgressGroup() types.ProgressGroupAttribute
 	LineChart() types.LineChartAttribute
@@ -36,13 +36,16 @@ type Template interface {
 	GetTemplate(bool) (*template.Template, string)
 }
 
+var templateMap = map[string]Template{
+	"adminlte": adminlte.GetAdminlte(),
+}
+
 func Get(theme string) Template {
-	switch theme {
-	case "adminlte":
-		return adminlte.GetAdminlte()
-	default:
-		panic("wrong theme name")
-	}
+	return templateMap[theme]
+}
+
+func Add(name string, temp Template) {
+	templateMap[name] = temp
 }
 
 type Component interface {

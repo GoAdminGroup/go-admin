@@ -82,17 +82,17 @@ type TreeAttribute interface {
 	GetTreeHeader() template.HTML
 }
 
-type PaninatorAttribute interface {
-	SetCurPageStartIndex(value string) PaninatorAttribute
-	SetCurPageEndIndex(value string) PaninatorAttribute
-	SetTotal(value string) PaninatorAttribute
-	SetPreviousClass(value string) PaninatorAttribute
-	SetPreviousUrl(value string) PaninatorAttribute
-	SetPages(value []map[string]string) PaninatorAttribute
-	SetNextClass(value string) PaninatorAttribute
-	SetNextUrl(value string) PaninatorAttribute
-	SetOption(value map[string]template.HTML) PaninatorAttribute
-	SetUrl(value string) PaninatorAttribute
+type PaginatorAttribute interface {
+	SetCurPageStartIndex(value string) PaginatorAttribute
+	SetCurPageEndIndex(value string) PaginatorAttribute
+	SetTotal(value string) PaginatorAttribute
+	SetPreviousClass(value string) PaginatorAttribute
+	SetPreviousUrl(value string) PaginatorAttribute
+	SetPages(value []map[string]string) PaginatorAttribute
+	SetNextClass(value string) PaginatorAttribute
+	SetNextUrl(value string) PaginatorAttribute
+	SetOption(value map[string]template.HTML) PaginatorAttribute
+	SetUrl(value string) PaginatorAttribute
 	GetContent() template.HTML
 }
 

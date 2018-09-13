@@ -2665,11 +2665,11 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     lineChartOptions.datasetFill = false;
     lineChart.Line(lineChartData, lineChartOptions)
 </script>
-{{end}}`,"components/paninator":`{{define "paninator"}}
+{{end}}`,"components/paginator":`{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
-    <li class="page-item disabled">
+    <li class="page-item {{.PreviousClass}}">
         {{if eq .PreviousClass "disabled"}}
             <span class="page-link">«</span>
         {{else}}
@@ -2680,7 +2680,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <!-- Array Of Links -->
     {{range $key, $page := .Pages}}
         {{if eq (index $page "isSplit") "0"}}
-            {{if eq (index $page "active") "0"}}
+            {{if eq (index $page "active") "active"}}
                 <li class="page-item active"><span class="page-link">{{index $page "page"}}</span></li>
             {{else}}
                 <li class="page-item"><a class="page-link" href='{{index $page "url"}}'>{{index $page "page"}}</a></li>
