@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/gin-gonic/gin"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 func main() {
@@ -40,6 +41,8 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
+	// you can custom a plugin like:
+
 	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
@@ -47,6 +50,14 @@ func main() {
 	}
 
 	r.Static("/uploads", "./uploads")
+
+	// you can custom your pages like:
+
+	r.GET("/" + cfg.PREFIX + "/custom", func(ctx *gin.Context) {
+		adapter.GinContent(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	r.Run(":9033")
 }

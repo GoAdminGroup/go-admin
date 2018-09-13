@@ -2,12 +2,14 @@ package main
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 func main() {
@@ -33,13 +35,7 @@ func main() {
 		INDEX:  "/",
 	}
 
-	// you can custom your pages like:
-	//
-	// app.Handlers.Get("/" + cfg.PREFIX, func(ctx *context.Context) {
-	// 	 adapter.BeegoContent(ctx, func() types.Panel {
-	// 	    return datamodel.GetContent(cfg)
-	// 	 })
-	// })
+	// you can custom a plugin like:
 
 	examplePlugin := example.NewExample()
 
@@ -48,6 +44,14 @@ func main() {
 		Use(app); err != nil {
 		panic(err)
 	}
+
+	// you can custom your pages like:
+
+	app.Handlers.Get("/" + cfg.PREFIX + "/custom", func(ctx *context.Context) {
+		adapter.BeegoContent(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

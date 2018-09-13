@@ -7,9 +7,9 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 )
 
-func GetContent(Config config.Config) types.Panel {
+func GetContent() types.Panel {
 
-	components := template2.Get(Config.THEME)
+	components := template2.Get(config.Get().THEME)
 	colComp := components.Col()
 
 	/**************************
