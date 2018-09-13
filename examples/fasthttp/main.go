@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/prometheus/common/log"
+	"goAdmin/plugins/example"
 )
 
 func main() {
@@ -31,11 +32,13 @@ func main() {
 		},
 		DOMAIN: "localhost",
 		PREFIX: "admin",
+		INDEX:  "/",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+	examplePlugin := example.NewExample()
 
-	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Fasthttp)).Use(router))
+	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Fasthttp)).Use(router))
 
 	var waitChan chan int
 	go func() {

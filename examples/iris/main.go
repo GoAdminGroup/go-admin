@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
+	"goAdmin/plugins/example"
 )
 
 func main() {
@@ -29,11 +30,13 @@ func main() {
 		},
 		DOMAIN: "localhost",
 		PREFIX: "admin",
+		INDEX:  "/",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Iris)).Use(app); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Iris)).Use(app); err != nil {
 		panic(err)
 	}
 

@@ -24,7 +24,7 @@ func Auth(ctx *context.Context) {
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 200,
 			"msg": "登录成功",
-			"url": Config.PREFIX,
+			"url": Config.PREFIX + Config.INDEX,
 		})
 		return
 	}

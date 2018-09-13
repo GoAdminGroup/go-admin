@@ -8,7 +8,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/gin-gonic/gin"
-	"github.com/chenhg5/go-admin/plugins/redisclient"
 )
 
 func main() {
@@ -36,15 +35,14 @@ func main() {
 			PREFIX: "uploads",
 		},
 		LANGUAGE: "cn",
+		INDEX: "/",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
 
 	examplePlugin := example.NewExample()
 
-	redisPlugin := redisclient.NewRedisClient()
-
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin, redisPlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
 		panic(err)
 	}
 

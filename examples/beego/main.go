@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/engine"
+	"goAdmin/plugins/example"
 )
 
 func main() {
@@ -29,9 +30,12 @@ func main() {
 		},
 		DOMAIN: "localhost",
 		PREFIX: "admin",
+		INDEX:  "/",
 	}
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig)).
+	examplePlugin := example.NewExample()
+
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig), examplePlugin).
 		AddAdapter(new(adapter.Beego)).
 		Use(app); err != nil {
 		panic(err)

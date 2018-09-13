@@ -67,6 +67,9 @@ type Config struct {
 
 	// Mini-logo is the top text in the sidebar when folding.
 	MINILOGO template.HTML
+
+	// The url redirect to after login
+	INDEX  string
 }
 
 var (
@@ -90,6 +93,12 @@ func Set(cfg Config) {
 	}
 	if globalCfg.THEME == "" {
 		globalCfg.THEME = "adminlte"
+	}
+	if globalCfg.INDEX == "" {
+		globalCfg.INDEX = "/info/manager"
+	}
+	if globalCfg.INDEX == "/" {
+		globalCfg.INDEX = ""
 	}
 
 	mutex.Unlock()

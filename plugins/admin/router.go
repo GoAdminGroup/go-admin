@@ -38,9 +38,6 @@ func InitRouter(prefix string) *context.App {
 
 		app.Group("", authenticator.Middleware)
 		{
-			// 仪表盘
-			app.GET("/", controller.ShowDashboard)
-
 			// 授权认证
 			app.GET("/logout",  controller.Logout)
 
