@@ -15,17 +15,17 @@ type TableAttribute struct {
 }
 
 func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
-	(*compo).Thead = value
+	compo.Thead = value
 	return compo
 }
 
 func (compo *TableAttribute) SetInfoList(value []map[string]template.HTML) types.TableAttribute {
-	(*compo).InfoList = value
+	compo.InfoList = value
 	return compo
 }
 
 func (compo *TableAttribute) SetType(value string) types.TableAttribute {
-	(*compo).Type = value
+	compo.Type = value
 	return compo
 }
 
@@ -45,27 +45,27 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 }
 
 func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
-	(*compo).Thead = value
+	compo.Thead = value
 	return compo
 }
 
 func (compo *DataTableAttribute) SetInfoList(value []map[string]template.HTML) types.DataTableAttribute {
-	(*compo).InfoList = value
+	compo.InfoList = value
 	return compo
 }
 
 func (compo *DataTableAttribute) SetEditUrl(value string) types.DataTableAttribute {
-	(*compo).EditUrl = value
+	compo.EditUrl = value
 	return compo
 }
 
 func (compo *DataTableAttribute) SetDeleteUrl(value string) types.DataTableAttribute {
-	(*compo).DeleteUrl = value
+	compo.DeleteUrl = value
 	return compo
 }
 
 func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribute {
-	(*compo).NewUrl = value
+	compo.NewUrl = value
 	return compo
 }
 

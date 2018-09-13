@@ -21,7 +21,7 @@ var Default = &Attribute{
 }
 
 func (compo *Attribute) GetContent(value interface{}) string {
-	return (*compo).Content + value.(string)
+	return compo.Content + value.(string)
 }
 
 type Page struct {

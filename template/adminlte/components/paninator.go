@@ -20,52 +20,52 @@ type PaginatorAttribute struct {
 }
 
 func (compo *PaginatorAttribute) SetCurPageStartIndex(value string) types.PaginatorAttribute {
-	(*compo).CurPageStartIndex = value
+	compo.CurPageStartIndex = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetCurPageEndIndex(value string) types.PaginatorAttribute {
-	(*compo).CurPageEndIndex = value
+	compo.CurPageEndIndex = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetTotal(value string) types.PaginatorAttribute {
-	(*compo).Total = value
+	compo.Total = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetPreviousClass(value string) types.PaginatorAttribute {
-	(*compo).PreviousClass = value
+	compo.PreviousClass = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetPreviousUrl(value string) types.PaginatorAttribute {
-	(*compo).PreviousUrl = value
+	compo.PreviousUrl = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetPages(value []map[string]string) types.PaginatorAttribute {
-	(*compo).Pages = value
+	compo.Pages = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetNextClass(value string) types.PaginatorAttribute {
-	(*compo).NextClass = value
+	compo.NextClass = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetNextUrl(value string) types.PaginatorAttribute {
-	(*compo).NextUrl = value
+	compo.NextUrl = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetOption(value map[string]template.HTML) types.PaginatorAttribute {
-	(*compo).Option = value
+	compo.Option = value
 	return compo
 }
 
 func (compo *PaginatorAttribute) SetUrl(value string) types.PaginatorAttribute {
-	(*compo).Url = value
+	compo.Url = value
 	return compo
 }
 

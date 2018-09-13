@@ -13,14 +13,14 @@ type ColAttribute struct {
 
 
 func (compo *ColAttribute) SetContent(value template.HTML) types.ColAttribute {
-	(*compo).Content = value
+	compo.Content = value
 	return compo
 }
 
 func (compo *ColAttribute) SetSize(value map[string]string) types.ColAttribute {
-	(*compo).Size = ""
+	compo.Size = ""
 	for key, size := range value {
-		(*compo).Size += "col-" + key + "-" + size + " "
+		compo.Size += "col-" + key + "-" + size + " "
 	}
 	return compo
 }

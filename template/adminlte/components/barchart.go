@@ -14,22 +14,22 @@ type BarChartAttribute struct {
 }
 
 func (compo *BarChartAttribute) SetID(value string) types.BarChartAttribute {
-	(*compo).ID = value
+	compo.ID = value
 	return compo
 }
 
 func (compo *BarChartAttribute) SetTitle(value string) types.BarChartAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *BarChartAttribute) SetWidth(value int) types.BarChartAttribute {
-	(*compo).Width = value
+	compo.Width = value
 	return compo
 }
 
 func (compo *BarChartAttribute) SetData(value string) types.BarChartAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

@@ -12,7 +12,7 @@ type LabelAttribute struct {
 }
 
 func (compo *LabelAttribute) SetContent(value string) types.LabelAttribute {
-	(*compo).Content = value
+	compo.Content = value
 	return compo
 }
 

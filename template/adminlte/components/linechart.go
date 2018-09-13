@@ -14,22 +14,22 @@ type LineChartAttribute struct {
 }
 
 func (compo *LineChartAttribute) SetID(value string) types.LineChartAttribute {
-	(*compo).ID = value
+	compo.ID = value
 	return compo
 }
 
 func (compo *LineChartAttribute) SetTitle(value string) types.LineChartAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *LineChartAttribute) SetHeight(value int) types.LineChartAttribute {
-	(*compo).Height = value
+	compo.Height = value
 	return compo
 }
 
 func (compo *LineChartAttribute) SetData(value string) types.LineChartAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

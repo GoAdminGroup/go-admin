@@ -15,27 +15,27 @@ type ProgressGroupAttribute struct {
 }
 
 func (compo *ProgressGroupAttribute) SetTitle(value string) types.ProgressGroupAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *ProgressGroupAttribute) SetColor(value string) types.ProgressGroupAttribute {
-	(*compo).Color = value
+	compo.Color = value
 	return compo
 }
 
 func (compo *ProgressGroupAttribute) SetPercent(value int) types.ProgressGroupAttribute {
-	(*compo).Percent = value
+	compo.Percent = value
 	return compo
 }
 
 func (compo *ProgressGroupAttribute) SetDenominator(value int) types.ProgressGroupAttribute {
-	(*compo).Denominator = value
+	compo.Denominator = value
 	return compo
 }
 
 func (compo *ProgressGroupAttribute) SetMolecular(value int) types.ProgressGroupAttribute {
-	(*compo).Molecular = value
+	compo.Molecular = value
 	return compo
 }
 

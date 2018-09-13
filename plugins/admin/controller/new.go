@@ -59,6 +59,7 @@ func ShowNewForm(ctx *context.Context) {
 				SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
 				SetUrl(Config.PREFIX + "/new/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
+				SetTitle("New").
 				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
 				GetContent(),
 			Description: models.GlobalTableList[prefix].Form.Description,

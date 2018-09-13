@@ -11,7 +11,7 @@ type TabsAttribute struct {
 }
 
 func (compo *TabsAttribute) SetData(value []map[string]template.HTML) types.TabsAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

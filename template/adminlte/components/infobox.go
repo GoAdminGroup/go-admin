@@ -15,27 +15,27 @@ type InfoBoxAttribute struct {
 }
 
 func (compo *InfoBoxAttribute) SetIcon(value string) types.InfoBoxAttribute {
-	(*compo).Icon = value
+	compo.Icon = value
 	return compo
 }
 
 func (compo *InfoBoxAttribute) SetText(value string) types.InfoBoxAttribute {
-	(*compo).Text = value
+	compo.Text = value
 	return compo
 }
 
 func (compo *InfoBoxAttribute) SetNumber(value template.HTML) types.InfoBoxAttribute {
-	(*compo).Number = value
+	compo.Number = value
 	return compo
 }
 
 func (compo *InfoBoxAttribute) SetContent(value string) types.InfoBoxAttribute {
-	(*compo).Content = value
+	compo.Content = value
 	return compo
 }
 
 func (compo *InfoBoxAttribute) SetColor(value string) types.InfoBoxAttribute {
-	(*compo).Color = value
+	compo.Color = value
 	return compo
 }
 

@@ -14,17 +14,17 @@ type SmallBoxAttribute struct {
 }
 
 func (compo *SmallBoxAttribute) SetTitle(value string) types.SmallBoxAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *SmallBoxAttribute) SetValue(value string) types.SmallBoxAttribute {
-	(*compo).Value = value
+	compo.Value = value
 	return compo
 }
 
 func (compo *SmallBoxAttribute) SetUrl(value string) types.SmallBoxAttribute {
-	(*compo).Url = value
+	compo.Url = value
 	return compo
 }
 

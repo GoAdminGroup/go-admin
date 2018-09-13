@@ -13,17 +13,17 @@ type ImgAttribute struct {
 }
 
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
-	(*compo).Witdh = value
+	compo.Witdh = value
 	return compo
 }
 
 func (compo *ImgAttribute) SetHeight(value string) types.ImgAttribute {
-	(*compo).Height = value
+	compo.Height = value
 	return compo
 }
 
 func (compo *ImgAttribute) SetSrc(value string) types.ImgAttribute {
-	(*compo).Src = value
+	compo.Src = value
 	return compo
 }
 

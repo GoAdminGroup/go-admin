@@ -11,7 +11,7 @@ type RowAttribute struct {
 }
 
 func (compo *RowAttribute) SetContent(value template.HTML) types.RowAttribute {
-	(*compo).Content = value
+	compo.Content = value
 	return compo
 }
 

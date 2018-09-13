@@ -14,22 +14,22 @@ type PieChartAttribute struct {
 }
 
 func (compo *PieChartAttribute) SetID(value string) types.PieChartAttribute {
-	(*compo).ID = value
+	compo.ID = value
 	return compo
 }
 
 func (compo *PieChartAttribute) SetTitle(value string) types.PieChartAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *PieChartAttribute) SetData(value string) types.PieChartAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 
 func (compo *PieChartAttribute) SetHeight(value int) types.PieChartAttribute {
-	(*compo).Height = value
+	compo.Height = value
 	return compo
 }
 

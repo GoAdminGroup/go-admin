@@ -16,35 +16,35 @@ type BoxAttribute struct {
 }
 
 func (compo *BoxAttribute) SetTheme(value string) types.BoxAttribute {
-	(*compo).Theme = value
+	compo.Theme = value
 	return compo
 }
 
 func (compo *BoxAttribute) SetHeader(value template.HTML) types.BoxAttribute {
-	(*compo).Header = value
+	compo.Header = value
 	return compo
 }
 
 func (compo *BoxAttribute) SetBody(value template.HTML) types.BoxAttribute {
-	(*compo).Body = value
+	compo.Body = value
 	return compo
 }
 
 func (compo *BoxAttribute) SetFooter(value template.HTML) types.BoxAttribute {
-	(*compo).Footer = value
+	compo.Footer = value
 	return compo
 }
 
 func (compo *BoxAttribute) SetTitle(value template.HTML) types.BoxAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *BoxAttribute) WithHeadBorder(has bool) types.BoxAttribute {
 	if has {
-		(*compo).HeadBorder = "with-border"
+		compo.HeadBorder = "with-border"
 	} else {
-		(*compo).HeadBorder = ""
+		compo.HeadBorder = ""
 	}
 	return compo
 }

@@ -11,7 +11,7 @@ type ChartLegendAttribute struct {
 }
 
 func (compo *ChartLegendAttribute) SetData(value []map[string]string) types.ChartLegendAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

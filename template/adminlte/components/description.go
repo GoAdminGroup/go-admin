@@ -16,32 +16,32 @@ type DescriptionAttribute struct {
 }
 
 func (compo *DescriptionAttribute) SetNumber(value string) types.DescriptionAttribute {
-	(*compo).Number = value
+	compo.Number = value
 	return compo
 }
 
 func (compo *DescriptionAttribute) SetTitle(value string) types.DescriptionAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *DescriptionAttribute) SetArrow(value string) types.DescriptionAttribute {
-	(*compo).Arrow = value
+	compo.Arrow = value
 	return compo
 }
 
 func (compo *DescriptionAttribute) SetPercent(value string) types.DescriptionAttribute {
-	(*compo).Percent = value
+	compo.Percent = value
 	return compo
 }
 
 func (compo *DescriptionAttribute) SetColor(value string) types.DescriptionAttribute {
-	(*compo).Color = value
+	compo.Color = value
 	return compo
 }
 
 func (compo *DescriptionAttribute) SetBorder(value string) types.DescriptionAttribute {
-	(*compo).Border = value
+	compo.Border = value
 	return compo
 }
 

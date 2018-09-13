@@ -14,22 +14,22 @@ type AreaChartAttribute struct {
 }
 
 func (compo *AreaChartAttribute) SetID(value string) types.AreaChartAttribute {
-	(*compo).ID = value
+	compo.ID = value
 	return compo
 }
 
 func (compo *AreaChartAttribute) SetTitle(value string) types.AreaChartAttribute {
-	(*compo).Title = value
+	compo.Title = value
 	return compo
 }
 
 func (compo *AreaChartAttribute) SetHeight(value int) types.AreaChartAttribute {
-	(*compo).Height = value
+	compo.Height = value
 	return compo
 }
 
 func (compo *AreaChartAttribute) SetData(value string) types.AreaChartAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

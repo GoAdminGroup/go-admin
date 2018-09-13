@@ -11,7 +11,7 @@ type ProductListAttribute struct {
 }
 
 func (compo *ProductListAttribute) SetData(value []map[string]string) types.ProductListAttribute {
-	(*compo).Data = value
+	compo.Data = value
 	return compo
 }
 

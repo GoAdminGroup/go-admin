@@ -15,22 +15,22 @@ type TreeAttribute struct {
 }
 
 func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
-	(*compo).Tree = value
+	compo.Tree = value
 	return compo
 }
 
 func (compo *TreeAttribute) SetEditUrl(value string) types.TreeAttribute {
-	(*compo).EditUrl = value
+	compo.EditUrl = value
 	return compo
 }
 
 func (compo *TreeAttribute) SetDeleteUrl(value string) types.TreeAttribute {
-	(*compo).DeleteUrl = value
+	compo.DeleteUrl = value
 	return compo
 }
 
 func (compo *TreeAttribute) SetOrderUrl(value string) types.TreeAttribute {
-	(*compo).OrderUrl = value
+	compo.OrderUrl = value
 	return compo
 }
 
