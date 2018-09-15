@@ -24,8 +24,8 @@ type Plugin interface {
 }
 
 // GetHandler is a help method for Plugin GetHandler.
-func GetHandler(url, method string, handleList *map[context.Path]context.Handler) context.Handler {
-	for path, handler := range *handleList {
+func GetHandler(url, method string, app *context.App) context.Handler {
+	for path, handler := range app.HandlerList {
 		if path.Method == method {
 			if path.RegUrl == "" {
 				if path.URL == url || path.URL + "/" == url || path.URL == url + "/" {
