@@ -7,7 +7,6 @@ package context
 import (
 	"net/http"
 	"strings"
-	"regexp"
 	"io/ioutil"
 	"bytes"
 	"encoding/json"
@@ -31,7 +30,6 @@ type Context struct {
 type Path struct {
 	URL    string
 	Method string
-	RegUrl string
 }
 
 // SetUserValue set the value of user context.
@@ -116,7 +114,7 @@ func (ctx *Context) SetCookie(cookie *http.Cookie) {
 // is the url prefix and MiddlewareList is for control flow.
 type App struct {
 	Requests       []Path
-	HandlerList    map[Path]Handler
+	tree           *node
 	MiddlewareList []Middleware
 	Prefix         string
 }
@@ -125,7 +123,7 @@ type App struct {
 func NewApp() *App {
 	return &App{
 		Requests:       make([]Path, 0),
-		HandlerList:    make(map[Path]Handler, 0),
+		tree:           Tree(),
 		Prefix:         "",
 		MiddlewareList: make([]Middleware, 0),
 	}
@@ -146,41 +144,20 @@ type Middleware func(handler Handler) Handler
 // the handler.
 func (app *App) AppendReqAndResp(url, method string, handler Handler) {
 
-	if url == "/" {
-		if app.Prefix != "" {
-			url = app.Prefix
-		}
-	} else {
-		url = app.Prefix + url
-	}
+	app.Requests = append(app.Requests, Path{
+		URL:    app.Prefix + url,
+		Method: method,
+	})
 
-	for _, middleware := range app.MiddlewareList {
+	for _, middleware := range app.MiddlewareList{
 		handler = middleware(handler)
 	}
 
-	regUrl := ""
+	app.tree.addPath(stringToArr(app.Prefix + url), method, handler)
+}
 
-	if strings.Contains(url, ":") {
-		r, _ := regexp.Compile(":(.*?)/")
-
-		regUrl = r.ReplaceAllString(url, "(.*?)/")
-
-		r, _ = regexp.Compile(":(.*)")
-
-		regUrl = r.ReplaceAllString(regUrl, "(.*)")
-	}
-
-	app.Requests = append(app.Requests, Path{
-		URL:    url,
-		Method: method,
-		RegUrl: regUrl,
-	})
-
-	app.HandlerList[Path{
-		URL:    url,
-		Method: method,
-		RegUrl: regUrl,
-	}] = handler
+func (app *App) Find(url, method string) Handler {
+	return app.tree.findPath(stringToArr(url), method)
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).

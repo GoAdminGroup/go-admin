@@ -6,8 +6,6 @@ package plugins
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"strings"
-	"regexp"
 )
 
 // Plugin as one of the key components of goAdmin has three
@@ -25,21 +23,12 @@ type Plugin interface {
 
 // GetHandler is a help method for Plugin GetHandler.
 func GetHandler(url, method string, app *context.App) context.Handler {
-	for path, handler := range app.HandlerList {
-		if path.Method == method {
-			if path.RegUrl == "" {
-				if path.URL == url || path.URL + "/" == url || path.URL == url + "/" {
-					return handler
-				}
-			} else {
-				if strings.Count(path.RegUrl, "/") == strings.Count(url, "/") {
-					if ok, err := regexp.MatchString(path.RegUrl, url); ok && err == nil {
-						return handler
-					}
-				}
-			}
-		}
+
+	handler := app.Find(url, method)
+
+	if handler == nil {
+		panic("handler not found")
 	}
 
-	panic("handler not found")
+	return handler
 }

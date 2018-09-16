@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/connections"
 )
 
 type Where struct {
@@ -183,7 +182,7 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
-	res, _ := connections.GetConnection().Query(sql.statement, sql.args...)
+	res, _ := GetConnection().Query(sql.statement, sql.args...)
 
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -197,7 +196,7 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
-	res, _ := connections.GetConnection().Query(sql.statement, sql.args...)
+	res, _ := GetConnection().Query(sql.statement, sql.args...)
 
 	return res, nil
 }
@@ -207,7 +206,7 @@ func (sql *Sql) Update(values H) (int64, error) {
 
 	sql.prepareUpdate(values)
 
-	res := connections.GetConnection().Exec(sql.statement, sql.args...)
+	res := GetConnection().Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -221,7 +220,7 @@ func (sql *Sql) Exec() (int64, error) {
 
 	sql.prepareUpdate(H{})
 
-	res := connections.GetConnection().Exec(sql.statement, sql.args...)
+	res := GetConnection().Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -235,7 +234,7 @@ func (sql *Sql) Insert(values H) (int64, error) {
 
 	sql.prepareInsert(values)
 
-	res := connections.GetConnection().Exec(sql.statement, sql.args...)
+	res := GetConnection().Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")

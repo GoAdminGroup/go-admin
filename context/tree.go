@@ -47,11 +47,10 @@ func (n *node) addPath(paths []string, method string, handler Handler) {
 		child := n.addContent(paths[0])
 		if len(paths) > 1 {
 			child.addPath(paths[1:], method, handler)
-			method = ""
-			handler = nil
+		} else {
+			child.method = method
+			child.handle = handler
 		}
-		child.method = method
-		child.handle = handler
 	}
 }
 
@@ -84,4 +83,41 @@ func (n *node) printChildren() {
 	for _, child := range n.children {
 		child.printChildren()
 	}
+}
+
+func stringToArr(path string) []string {
+	var (
+		paths      = make([]string, 0)
+		start      = 0
+		end        = 0
+		iswildcard = false
+	)
+	for i := 0; i < len(path); i++ {
+		if i == 0 && path[0] == '/' {
+			start = 1
+			continue
+		}
+		if path[i] == ':' {
+			iswildcard = true
+		}
+		if i == len(path)-1 {
+			end = i + 1
+			if iswildcard {
+				paths = append(paths, "*")
+			} else {
+				paths = append(paths, path[start:end])
+			}
+		}
+		if path[i] == '/' {
+			end = i
+			if iswildcard {
+				paths = append(paths, "*")
+			} else {
+				paths = append(paths, path[start:end])
+			}
+			start = i + 1
+			iswildcard = false
+		}
+	}
+	return paths
 }
