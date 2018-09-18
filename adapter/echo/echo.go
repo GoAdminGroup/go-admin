@@ -1,4 +1,4 @@
-package adapter
+package echo
 
 import (
 	"bytes"
@@ -7,17 +7,22 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/plugins"
 	"strings"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 type Echo struct {
 }
 
+func init()  {
+	engine.Register(new(Echo))
+}
+
 func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
-		engine *echo.Echo
+		eng *echo.Echo
 		ok     bool
 	)
-	if engine, ok = router.(*echo.Echo); !ok {
+	if eng, ok = router.(*echo.Echo); !ok {
 		return errors.New("wrong parameter")
 	}
 
@@ -25,7 +30,7 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 		var plugCopy plugins.Plugin
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
-			engine.Add(strings.ToUpper(req.Method), req.URL, func(c echo.Context) error {
+			eng.Add(strings.ToUpper(req.Method), req.URL, func(c echo.Context) error {
 				ctx := context.NewContext(c.Request())
 
 				for _, key := range c.ParamNames() {

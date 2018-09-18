@@ -1,4 +1,4 @@
-package adapter
+package iris
 
 import (
 	"bytes"
@@ -7,17 +7,22 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/plugins"
 	"strings"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 type Iris struct {
 }
 
+func init()  {
+	engine.Register(new(Iris))
+}
+
 func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
-		engine *iris.Application
+		eng *iris.Application
 		ok     bool
 	)
-	if engine, ok = router.(*iris.Application); !ok {
+	if eng, ok = router.(*iris.Application); !ok {
 		return errors.New("wrong parameter")
 	}
 
@@ -25,7 +30,7 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 		var plugCopy plugins.Plugin
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
-			engine.Handle(strings.ToUpper(req.Method), req.URL, func(c iris.Context) {
+			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c iris.Context) {
 				ctx := context.NewContext(c.Request())
 
 				var params = map[string]string{}

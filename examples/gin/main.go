@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	adapter "github.com/chenhg5/go-admin/adapter/gin"
 	"github.com/chenhg5/go-admin/template/types"
 )
 
@@ -46,7 +46,6 @@ func main() {
 	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).
-		AddAdapter(new(adapter.Gin)).
 		Use(r); err != nil {
 		panic(err)
 	}
@@ -56,7 +55,7 @@ func main() {
 	// you can custom your pages like:
 
 	r.GET("/"+cfg.PREFIX+"/custom", func(ctx *gin.Context) {
-		adapter.GinContent(ctx, func() types.Panel {
+		adapter.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})
 	})

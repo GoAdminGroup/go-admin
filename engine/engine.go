@@ -22,7 +22,9 @@ type Engine struct {
 
 // Default return the default engine instance.
 func Default() *Engine {
-	return new(Engine)
+	return &Engine{
+		Adapter: DefaultAdapter,
+	}
 }
 
 // Use enable the adapter.
@@ -51,4 +53,13 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada
 	return eng
+}
+
+var DefaultAdapter adapter.WebFrameWork
+
+func Register(ada adapter.WebFrameWork)  {
+	if ada == nil {
+		panic("adapter is nil")
+	}
+	DefaultAdapter = ada
 }

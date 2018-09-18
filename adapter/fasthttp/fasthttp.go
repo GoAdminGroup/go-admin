@@ -1,4 +1,4 @@
-package adapter
+package fasthttp
 
 import (
 	"bytes"
@@ -11,17 +11,22 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 type Fasthttp struct {
 }
 
+func init()  {
+	engine.Register(new(Fasthttp))
+}
+
 func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
-		engine *fasthttprouter.Router
+		eng *fasthttprouter.Router
 		ok     bool
 	)
-	if engine, ok = router.(*fasthttprouter.Router); !ok {
+	if eng, ok = router.(*fasthttprouter.Router); !ok {
 		return errors.New("wrong parameter")
 	}
 
@@ -29,7 +34,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 		var plugCopy plugins.Plugin
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
-			engine.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
+			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
 				httpreq := Convertor(c)
 				ctx := context.NewContext(httpreq)
 

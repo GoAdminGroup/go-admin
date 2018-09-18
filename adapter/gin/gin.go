@@ -1,11 +1,10 @@
-package adapter
+package gin
 
 import (
 	"bytes"
 	"errors"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/context"
-	gctx "github.com/chenhg5/go-admin/context"
+	"github.com/gin-gonic/gin"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -15,17 +14,22 @@ import (
 	template2 "html/template"
 	"net/http"
 	"strings"
+	"github.com/chenhg5/go-admin/engine"
 )
 
-type Beego struct {
+type Gin struct {
 }
 
-func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
+func init()  {
+	engine.Register(new(Gin))
+}
+
+func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
-		engine *beego.App
+		eng *gin.Engine
 		ok     bool
 	)
-	if engine, ok = router.(*beego.App); !ok {
+	if eng, ok = router.(*gin.Engine); !ok {
 		return errors.New("wrong parameter")
 	}
 
@@ -33,24 +37,27 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 		var plugCopy plugins.Plugin
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
-			engine.Handlers.AddMethod(req.Method, req.URL, func(c *context.Context) {
-				for key, value := range c.Input.Params() {
+			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *gin.Context) {
+				ctx := context.NewContext(c.Request)
+
+				for _, param := range c.Params {
 					if c.Request.URL.RawQuery == "" {
-						c.Request.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+						c.Request.URL.RawQuery += strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
 					} else {
-						c.Request.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+						c.Request.URL.RawQuery += "&" + strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
 					}
 				}
-				ctx := gctx.NewContext(c.Request)
+
 				plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))(ctx)
 				for key, head := range ctx.Response.Header {
-					c.ResponseWriter.Header().Add(key, head[0])
+					c.Header(key, head[0])
 				}
-				c.ResponseWriter.WriteHeader(ctx.Response.StatusCode)
 				if ctx.Response.Body != nil {
 					buf := new(bytes.Buffer)
 					buf.ReadFrom(ctx.Response.Body)
-					c.WriteString(buf.String())
+					c.String(ctx.Response.StatusCode, buf.String())
+				} else {
+					c.Status(ctx.Response.StatusCode)
 				}
 			})
 		}
@@ -59,28 +66,28 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
-func BeegoContent(ctx *context.Context, c func() types.Panel) {
+func Content(ctx *gin.Context, c func() types.Panel) {
 	globalConfig := config.Get()
 
-	sesKey := ctx.GetCookie("go_admin_session")
+	sesKey, err := ctx.Cookie("go_admin_session")
 
-	if sesKey == "" {
+	if err != nil || sesKey == "" {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
-		return
+		ctx.Abort()
 	}
 
 	userId, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
-		return
+		ctx.Abort()
 	}
 
 	user, ok := auth.GetCurUserById(userId.(string))
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
-		return
+		ctx.Abort()
 	}
 
 	var panel types.Panel
@@ -100,7 +107,7 @@ func BeegoContent(ctx *context.Context, c func() types.Panel) {
 
 	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
-	ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
+	ctx.Header("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
@@ -115,5 +122,5 @@ func BeegoContent(ctx *context.Context, c func() types.Panel) {
 		Logo:          globalConfig.LOGO,
 		MiniLogo:      globalConfig.MINILOGO,
 	})
-	ctx.WriteString(buf.String())
+	ctx.String(http.StatusOK, buf.String())
 }

@@ -1,4 +1,4 @@
-package adapter
+package http
 
 import (
 	"bytes"
@@ -7,17 +7,22 @@ import (
 	"github.com/chenhg5/go-admin/plugins"
 	"net/http"
 	"strings"
+	"github.com/chenhg5/go-admin/engine"
 )
 
 type Http struct {
 }
 
+func init()  {
+	engine.Register(new(Http))
+}
+
 func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
-		engine *http.ServeMux
+		eng *http.ServeMux
 		ok     bool
 	)
-	if engine, ok = router.(*http.ServeMux); !ok {
+	if eng, ok = router.(*http.ServeMux); !ok {
 		return errors.New("wrong parameter")
 	}
 
@@ -25,7 +30,7 @@ func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 	for _, plug := range plugin {
 		reqs = ConstructNetHttpRequest(plug.GetRequest())
 		for basicUrl, reqlist := range reqs {
-			engine.HandleFunc(basicUrl, func(httpWriter http.ResponseWriter, httpRequest *http.Request) {
+			eng.HandleFunc(basicUrl, func(httpWriter http.ResponseWriter, httpRequest *http.Request) {
 				for _, req := range reqlist {
 					if httpRequest.Method == strings.ToUpper(req.Method) {
 						ctx := context.NewContext(httpRequest)

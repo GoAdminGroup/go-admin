@@ -4,7 +4,7 @@ import (
 	"github.com/buaazp/fasthttprouter"
 	"github.com/prometheus/common/log"
 	"github.com/valyala/fasthttp"
-	"github.com/chenhg5/go-admin/adapter"
+	_ "github.com/chenhg5/go-admin/adapter/fasthttp"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -38,7 +38,7 @@ func main() {
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	examplePlugin := example.NewExample()
 
-	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Fasthttp)).Use(router))
+	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(router))
 
 	var waitChan chan int
 	go func() {
