@@ -24,6 +24,8 @@ func InitTableList() {
 	}
 }
 
+// RefreshTableList refresh the table list when the table
+// relationship changed.
 func RefreshTableList() {
 	for k, v := range Generators {
 		TableList[k] = v()
@@ -40,11 +42,6 @@ type Table struct {
 	Info             types.InfoPanel
 	Form             types.FormPanel
 	ConnectionDriver string
-}
-
-type ErrStruct struct {
-	Class   string
-	Message string
 }
 
 type Columns []string
@@ -67,7 +64,7 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	}
 }
 
-// 查数据
+// GetDataFromDatabase query the data set.
 func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaginatorAttribute, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])
@@ -154,7 +151,7 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 
 }
 
-// 查单个数据
+// GetDataFromDatabaseWithId query the single row of data.
 func (tableModel Table) GetDataFromDatabaseWithId(prefix string, id string) ([]types.FormStruct, string, string) {
 
 	fields := ""
@@ -214,7 +211,7 @@ func (tableModel Table) GetDataFromDatabaseWithId(prefix string, id string) ([]t
 	return tableModel.Form.FormList, tableModel.Form.Title, tableModel.Form.Description
 }
 
-// 改数据
+// UpdateDataFromDatabase update data.
 func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[string][]string) {
 
 	fields := ""
@@ -238,7 +235,7 @@ func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[strin
 	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
 }
 
-// 增数据
+// InsertDataFromDatabase insert data.
 func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[string][]string) {
 
 	fields := ""
@@ -261,7 +258,7 @@ func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[strin
 	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
 }
 
-// 删数据
+// DeleteDataFromDatabase delete data.
 func (tableModel Table) DeleteDataFromDatabase(prefix string, id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
@@ -281,10 +278,10 @@ func GetNewFormList(old []types.FormStruct) []types.FormStruct {
 	return newForm
 }
 
-// 检查字段是否在数据表中
-func CheckInTable(colums []string, find string) bool {
-	for i := 0; i < len(colums); i++ {
-		if colums[i] == find {
+// CheckInTable checks the find string is in the columns or not.
+func CheckInTable(columns []string, find string) bool {
+	for i := 0; i < len(columns); i++ {
+		if columns[i] == find {
 			return true
 		}
 	}

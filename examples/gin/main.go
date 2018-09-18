@@ -45,7 +45,9 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Gin)).Use(r); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).
+		AddAdapter(new(adapter.Gin)).
+		Use(r); err != nil {
 		panic(err)
 	}
 
