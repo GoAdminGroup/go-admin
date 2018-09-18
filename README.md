@@ -82,27 +82,27 @@ func main() {
 	// global config
 	cfg := config.Config{
 		DATABASE: []config.Database{
-            {
-                HOST:         "127.0.0.1",
-                PORT:         "3306",
-                USER:         "root",
-                PWD:          "root",
-                NAME:         "godmin",
-                MAX_IDLE_CON: 50,
-                MAX_OPEN_CON: 150,
-                DRIVER:       "mysql",
-            },
-        },
-        DOMAIN: "localhost",
-        PREFIX: "admin",
-        STORE: config.Store{
-            PATH:   "./uploads",
-            PREFIX: "uploads",
-        },
-        LANGUAGE: "en",
+			{
+				HOST:         "127.0.0.1",
+				PORT:         "3306",
+				USER:         "root",
+				PWD:          "root",
+				NAME:         "godmin",
+				MAX_IDLE_CON: 50,
+				MAX_OPEN_CON: 150,
+				DRIVER:       "mysql",
+			},
+        	},
+		DOMAIN: "localhost",
+		PREFIX: "admin",
+		STORE: config.Store{
+		    PATH:   "./uploads",
+		    PREFIX: "uploads",
+		},
+		LANGUAGE: "en",
 	}
 
-    // Generators: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go 
+    	// Generators: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
 	eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Gin)).Use(r)
