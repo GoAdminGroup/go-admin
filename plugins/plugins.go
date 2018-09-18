@@ -13,8 +13,7 @@ import (
 // plugin. GetHandler according the url and method return the
 // corresponding handler. InitPlugin init the plugin which do
 // something like init the database and set the config and register
-// the routes. Anyone wants to write the Plugin must implement
-// the three methods.
+// the routes. The Plugin must implement the three methods.
 type Plugin interface {
 	GetRequest() []context.Path
 	GetHandler(url, method string) context.Handler

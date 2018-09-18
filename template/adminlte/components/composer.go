@@ -2,21 +2,21 @@ package components
 
 import (
 	"bytes"
-	"html/template"
 	"fmt"
-	"strings"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"github.com/chenhg5/go-admin/modules/language"
+	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"html/template"
+	"strings"
 )
 
-func ComposeHtml(compo interface{}, templateName... string) template.HTML {
+func ComposeHtml(compo interface{}, templateName ...string) template.HTML {
 	var text = ""
 	for _, v := range templateName {
-		text += tmpl.List["components/" + v]
+		text += tmpl.List["components/"+v]
 	}
 
 	tmpla, err := template.New("comp").Funcs(template.FuncMap{
-		"lang": language.Get,
+		"lang":     language.Get,
 		"langHtml": language.GetFromHtml,
 	}).Parse(text)
 	if err != nil {

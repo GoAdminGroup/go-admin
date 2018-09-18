@@ -2,8 +2,8 @@ package example
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins"
 )
 
 type Example struct {

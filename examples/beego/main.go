@@ -4,10 +4,10 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"github.com/chenhg5/go-admin/adapter"
-	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
 )
@@ -39,7 +39,7 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig), examplePlugin).
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.Generators), examplePlugin).
 		AddAdapter(new(adapter.Beego)).
 		Use(app); err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	app.Handlers.Get("/" + cfg.PREFIX + "/custom", func(ctx *context.Context) {
+	app.Handlers.Get("/"+cfg.PREFIX+"/custom", func(ctx *context.Context) {
 		adapter.BeegoContent(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

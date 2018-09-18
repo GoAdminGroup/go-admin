@@ -2,8 +2,8 @@ package language
 
 import (
 	"github.com/chenhg5/go-admin/modules/config"
-	"strings"
 	"html/template"
+	"strings"
 )
 
 func Get(value string) string {
@@ -52,6 +52,6 @@ func (lang LangMap) Get(value string) string {
 	}
 }
 
-func Add(key string, lang map[string]string)  {
+func Add(key string, lang map[string]string) {
 	Lang[key] = lang
 }

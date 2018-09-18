@@ -1,10 +1,14 @@
+// Copyright 2018 ChenHonggui.  All rights reserved.
+// Use of this source code is governed by a MIT style
+// license that can be found in the LICENSE file.
+
 package template
 
 import (
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/adminlte"
-	"html/template"
 	"github.com/chenhg5/go-admin/template/login"
+	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 	"sync"
 )
 

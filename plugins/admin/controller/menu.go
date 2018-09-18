@@ -3,15 +3,15 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/chenhg5/go-admin/modules/connections"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/connections"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
-	"net/http"
 	template2 "html/template"
+	"net/http"
 )
 
 // 显示菜单
@@ -24,7 +24,7 @@ func ShowMenu(ctx *context.Context) {
 // 显示编辑菜单
 func ShowEditMenu(ctx *context.Context) {
 	id := ctx.Request.URL.Query().Get("id")
-	formData, title, description := models.GlobalTableList["menu"].GetDataFromDatabaseWithId("menu", id)
+	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -49,9 +49,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			Content: template.Get(Config.THEME).Form().
 				SetContent(formData).
 				SetPrefix(Config.PREFIX).
-				SetUrl(Config.PREFIX + "/menu/edit").
+				SetUrl(Config.PREFIX+"/menu/edit").
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX + "/menu").
+				SetInfoUrl(Config.PREFIX+"/menu").
 				GetContent() + template2.HTML(js),
 			Description: description,
 			Title:       title,
@@ -194,7 +194,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.PREFIX).SetUrl(Config.PREFIX + "/menu/new").
 		SetInfoUrl(Config.PREFIX + "/menu").SetTitle("New").
-		SetContent(models.GetNewFormList(models.GlobalTableList["menu"].Form.FormList)).GetContent()
+		SetContent(models.GetNewFormList(models.TableList["menu"].Form.FormList)).GetContent()
 	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()

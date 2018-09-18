@@ -1,15 +1,15 @@
 package main
 
 import (
-	"io/ioutil"
-	"fmt"
-	"path"
-	"strings"
-	"os"
-	"flag"
 	"database/sql"
+	"flag"
+	"fmt"
 	"github.com/chenhg5/go-admin/modules/connections/mysql"
+	"io/ioutil"
+	"os"
+	"path"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -58,7 +58,7 @@ func main() {
 
 			// step 1. test connection
 			db, err := sql.Open("mysql", user+
-				":"+ password+ "@tcp("+ host+ ":"+ port+ ")/"+ name+ "?charset=utf8mb4")
+				":"+password+"@tcp("+host+":"+port+")/"+name+"?charset=utf8mb4")
 			defer db.Close()
 
 			if err != nil {
@@ -80,7 +80,7 @@ func main() {
 			// step 4. generate file
 			for i := 0; i < len(tables); i++ {
 				if tables[i][key].(string) != "goadmin_menu" && tables[i][key].(string) != "goadmin_operation_log" &&
-				tables[i][key].(string) != "goadmin_permissions" && tables[i][key].(string) != "goadmin_role_menu" &&
+					tables[i][key].(string) != "goadmin_permissions" && tables[i][key].(string) != "goadmin_role_menu" &&
 					tables[i][key].(string) != "goadmin_roles" && tables[i][key].(string) != "goadmin_session" &&
 					tables[i][key].(string) != "goadmin_users" && tables[i][key].(string) != "goadmin_role_permissions" &&
 					tables[i][key].(string) != "goadmin_role_users" && tables[i][key].(string) != "goadmin_user_permissions" {
@@ -136,14 +136,14 @@ func GetContentFromDir(content string, dirPath string) string {
 func GenerateFile(table string, db *mysql.Mysql) {
 	columnsModel, _ := db.Query("show columns in " + table)
 
-	content := `package `+ packageName + `
+	content := `package ` + packageName + `
 
 import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func Get` + strings.Title(table) + `Table() (` + table + `Table models.GlobalTable) {
+func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 
 	` + table + `Table.Info.FieldList = []types.FieldStruct{`
 
@@ -199,7 +199,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.GlobalTab
 }`
 
 	fmt.Println(outputPath + "/" + table + ".go")
-	ioutil.WriteFile(outputPath + table + ".go", []byte(content), 0644)
+	ioutil.WriteFile(outputPath+table+".go", []byte(content), 0644)
 }
 
 func GetType(typeName string) string {

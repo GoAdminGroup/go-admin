@@ -348,17 +348,17 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"assets/login/css/animate.css": assetsLoginCssAnimateCss,
-	"assets/login/css/bootstrap.min.css": assetsLoginCssBootstrapMinCss,
-	"assets/login/css/style.css": assetsLoginCssStyleCss,
-	"assets/login/images/bg_2.jpg": assetsLoginImagesBg_2Jpg,
-	"assets/login/images/geometry2.png": assetsLoginImagesGeometry2Png,
-	"assets/login/js/bootstrap.min.js": assetsLoginJsBootstrapMinJs,
-	"assets/login/js/jquery.min.js": assetsLoginJsJqueryMinJs,
+	"assets/login/css/animate.css":              assetsLoginCssAnimateCss,
+	"assets/login/css/bootstrap.min.css":        assetsLoginCssBootstrapMinCss,
+	"assets/login/css/style.css":                assetsLoginCssStyleCss,
+	"assets/login/images/bg_2.jpg":              assetsLoginImagesBg_2Jpg,
+	"assets/login/images/geometry2.png":         assetsLoginImagesGeometry2Png,
+	"assets/login/js/bootstrap.min.js":          assetsLoginJsBootstrapMinJs,
+	"assets/login/js/jquery.min.js":             assetsLoginJsJqueryMinJs,
 	"assets/login/js/jquery.placeholder.min.js": assetsLoginJsJqueryPlaceholderMinJs,
-	"assets/login/js/jquery.waypoints.min.js": assetsLoginJsJqueryWaypointsMinJs,
-	"assets/login/js/main.js": assetsLoginJsMainJs,
-	"assets/login/js/modernizr-2.6.2.min.js": assetsLoginJsModernizr262MinJs,
+	"assets/login/js/jquery.waypoints.min.js":   assetsLoginJsJqueryWaypointsMinJs,
+	"assets/login/js/main.js":                   assetsLoginJsMainJs,
+	"assets/login/js/modernizr-2.6.2.min.js":    assetsLoginJsModernizr262MinJs,
 }
 
 // AssetDir returns the file names below a certain
@@ -400,25 +400,26 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"assets": &bintree{nil, map[string]*bintree{
 		"login": &bintree{nil, map[string]*bintree{
 			"css": &bintree{nil, map[string]*bintree{
-				"animate.css": &bintree{assetsLoginCssAnimateCss, map[string]*bintree{}},
+				"animate.css":       &bintree{assetsLoginCssAnimateCss, map[string]*bintree{}},
 				"bootstrap.min.css": &bintree{assetsLoginCssBootstrapMinCss, map[string]*bintree{}},
-				"style.css": &bintree{assetsLoginCssStyleCss, map[string]*bintree{}},
+				"style.css":         &bintree{assetsLoginCssStyleCss, map[string]*bintree{}},
 			}},
 			"images": &bintree{nil, map[string]*bintree{
-				"bg_2.jpg": &bintree{assetsLoginImagesBg_2Jpg, map[string]*bintree{}},
+				"bg_2.jpg":      &bintree{assetsLoginImagesBg_2Jpg, map[string]*bintree{}},
 				"geometry2.png": &bintree{assetsLoginImagesGeometry2Png, map[string]*bintree{}},
 			}},
 			"js": &bintree{nil, map[string]*bintree{
-				"bootstrap.min.js": &bintree{assetsLoginJsBootstrapMinJs, map[string]*bintree{}},
-				"jquery.min.js": &bintree{assetsLoginJsJqueryMinJs, map[string]*bintree{}},
+				"bootstrap.min.js":          &bintree{assetsLoginJsBootstrapMinJs, map[string]*bintree{}},
+				"jquery.min.js":             &bintree{assetsLoginJsJqueryMinJs, map[string]*bintree{}},
 				"jquery.placeholder.min.js": &bintree{assetsLoginJsJqueryPlaceholderMinJs, map[string]*bintree{}},
-				"jquery.waypoints.min.js": &bintree{assetsLoginJsJqueryWaypointsMinJs, map[string]*bintree{}},
-				"main.js": &bintree{assetsLoginJsMainJs, map[string]*bintree{}},
-				"modernizr-2.6.2.min.js": &bintree{assetsLoginJsModernizr262MinJs, map[string]*bintree{}},
+				"jquery.waypoints.min.js":   &bintree{assetsLoginJsJqueryWaypointsMinJs, map[string]*bintree{}},
+				"main.js":                   &bintree{assetsLoginJsMainJs, map[string]*bintree{}},
+				"modernizr-2.6.2.min.js":    &bintree{assetsLoginJsModernizr262MinJs, map[string]*bintree{}},
 			}},
 		}},
 	}},
@@ -470,4 +471,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

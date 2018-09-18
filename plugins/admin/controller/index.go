@@ -1,20 +1,18 @@
 package controller
 
 import (
-	"html/template"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/page"
-	"github.com/chenhg5/go-admin/template/types"
 	template2 "github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 )
 
 func ShowDashboard(ctx *context.Context) {
 	page.SetPageContent(ctx, func() types.Panel {
 
-
 		components := template2.Get(Config.THEME)
 		colComp := components.Col()
-
 
 		/**************************
 		 * Info Box
@@ -44,7 +42,7 @@ func ShowDashboard(ctx *context.Context) {
 			SetIcon("ion-ios-people-outline").
 			GetContent()
 
-		var size = map[string]string{"md": "3","sm": "6","xs": "12"}
+		var size = map[string]string{"md": "3", "sm": "6", "xs": "12"}
 		infoboxCol1 := colComp.SetSize(size).SetContent(infobox).GetContent()
 		infoboxCol2 := colComp.SetSize(size).SetContent(infobox2).GetContent()
 		infoboxCol3 := colComp.SetSize(size).SetContent(infobox3).GetContent()
@@ -92,7 +90,7 @@ func ShowDashboard(ctx *context.Context) {
 		description4 := components.Description().SetPercent("17").
 			SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").GetContent()
 
-		size2 := map[string]string{"sm": "3", "xs":"6"}
+		size2 := map[string]string{"sm": "3", "xs": "6"}
 		boxInternalCol3 := colComp.SetContent(description1).SetSize(size2).GetContent()
 		boxInternalCol4 := colComp.SetContent(description2).SetSize(size2).GetContent()
 		boxInternalCol5 := colComp.SetContent(description3).SetSize(size2).GetContent()
@@ -164,19 +162,19 @@ func ShowDashboard(ctx *context.Context) {
 			{
 				"label": " Chrome",
 				"color": "red",
-			},{
+			}, {
 				"label": " IE",
 				"color": "Green",
-			},{
+			}, {
 				"label": " FireFox",
 				"color": "yellow",
-			},{
+			}, {
 				"label": " Sarafri",
 				"color": "blue",
-			},{
+			}, {
 				"label": " Opera",
 				"color": "light-blue",
-			},{
+			}, {
 				"label": " Navigator",
 				"color": "gray",
 			},
@@ -212,11 +210,11 @@ func ShowDashboard(ctx *context.Context) {
 
 		boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
 			SetBody(components.Row().
-			SetContent(colComp.SetSize(map[string]string{"md":"8"}).
-			SetContent(pie).
-			GetContent() + colComp.SetSize(map[string]string{"md":"4"}).
-			SetContent(legend).
-			GetContent()).GetContent()).
+				SetContent(colComp.SetSize(map[string]string{"md": "8"}).
+					SetContent(pie).
+					GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
+					SetContent(legend).
+					GetContent()).GetContent()).
 			SetFooter(`<p class="text-center"><a href="javascript:void(0)" class="uppercase">View All Users</a></p>`).
 			GetContent()
 
@@ -226,32 +224,32 @@ func ShowDashboard(ctx *context.Context) {
 
 		productList := components.ProductList().SetData([]map[string]string{
 			{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
 			},
 		}).GetContent()
@@ -261,8 +259,8 @@ func ShowDashboard(ctx *context.Context) {
 			SetFooter(`<a href="javascript:void(0)" class="uppercase">View All Products</a>`).
 			GetContent()
 
-		col5 := colComp.SetSize(map[string]string{"md":"8"}).SetContent(boxInfo + chartRow).GetContent()
-		col6 := colComp.SetSize(map[string]string{"md":"4"}).SetContent(boxDanger + boxWarning).GetContent()
+		col5 := colComp.SetSize(map[string]string{"md": "8"}).SetContent(boxInfo + chartRow).GetContent()
+		col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning).GetContent()
 
 		row4 := components.Row().SetContent(col5 + col6).GetContent()
 
@@ -280,7 +278,7 @@ func ShowErrorPage(ctx *context.Context, errorMsg string) {
 			SetTheme("warning").SetContent(template.HTML(errorMsg)).GetContent()
 
 		return types.Panel{
-			Content: alert,
+			Content:     alert,
 			Description: "Error",
 			Title:       "Error",
 		}

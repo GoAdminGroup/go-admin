@@ -2,11 +2,11 @@ package main
 
 import (
 	"github.com/labstack/echo"
-	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/adapter"
-	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 )
 
@@ -33,7 +33,7 @@ func main() {
 		INDEX:  "/",
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Echo)).Use(e); err != nil {

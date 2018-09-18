@@ -2,12 +2,12 @@ package mssql
 
 import (
 	"database/sql"
-	"sync"
-	"github.com/chenhg5/go-admin/modules/config"
-	"net/url"
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"net/url"
+	"sync"
 )
 
 type Mssql struct {
@@ -34,16 +34,16 @@ func (db *Mssql) Exec(query string, args ...interface{}) sql.Result {
 func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 	db.Once.Do(func() {
 		var (
-			err      error
-			SqlDB   *sql.DB
+			err   error
+			SqlDB *sql.DB
 		)
 
 		for conn, cfg := range cfglist {
 
 			u := &url.URL{
-				Scheme:   "sqlserver",
-				User:     url.UserPassword(cfg.USER, cfg.PWD),
-				Host:     fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
+				Scheme: "sqlserver",
+				User:   url.UserPassword(cfg.USER, cfg.PWD),
+				Host:   fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
 			}
 
 			SqlDB, err = sql.Open("sqlserver", u.String())
@@ -61,5 +61,3 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 		}
 	})
 }
-
-

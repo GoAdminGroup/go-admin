@@ -1,12 +1,12 @@
 package adapter
 
 import (
-	"net/http"
-	"github.com/chenhg5/go-admin/plugins"
-	"errors"
-	"strings"
-	"github.com/chenhg5/go-admin/context"
 	"bytes"
+	"errors"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/plugins"
+	"net/http"
+	"strings"
 )
 
 type Http struct {
@@ -48,7 +48,7 @@ func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 func ConstructNetHttpRequest(reqs []context.Path) map[string][]context.Path {
 	var (
 		NetHttpRequest = make(map[string][]context.Path, 0)
-		usedUrl []string
+		usedUrl        []string
 	)
 	for _, req := range reqs {
 		for _, url := range usedUrl {

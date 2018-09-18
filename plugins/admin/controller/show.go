@@ -1,17 +1,17 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/context"
 	"bytes"
-	"net/http"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"strings"
-	"path"
 	"fmt"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"net/http"
+	"path"
+	"strings"
 )
 
 // 显示列表
@@ -41,7 +41,7 @@ func ShowInfo(ctx *context.Context) {
 		sortType = "desc"
 	}
 
-	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      ctx.Path(),
 		"sortField": sortField,

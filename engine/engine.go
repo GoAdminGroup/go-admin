@@ -5,9 +5,9 @@
 package engine
 
 import (
-	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins"
 )
 
 // Engine is the core components of goAdmin. It has two attributes.
@@ -31,7 +31,7 @@ func (eng *Engine) Use(router interface{}) error {
 }
 
 // AddPlugins add the plugins and initialize them.
-func (eng *Engine) AddPlugins(plugs ... plugins.Plugin) *Engine {
+func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 	for _, plug := range plugs {
 		plug.InitPlugin()

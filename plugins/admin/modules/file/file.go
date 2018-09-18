@@ -1,11 +1,11 @@
 package file
 
 import (
-	"mime/multipart"
-	"path"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
-	"os"
 	"io"
+	"mime/multipart"
+	"os"
+	"path"
 	"sync"
 )
 

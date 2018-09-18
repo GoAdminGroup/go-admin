@@ -2,15 +2,15 @@ package controller
 
 import (
 	"bytes"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
-	"strings"
-	"github.com/chenhg5/go-admin/context"
-	"net/http"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"net/http"
+	"strings"
 )
 
 // 显示新建表单
@@ -54,16 +54,16 @@ func ShowNewForm(ctx *context.Context) {
 			"0.0.1",
 		},
 		Panel: types.Panel{
-			Content:     template.Get(Config.THEME).Form().
+			Content: template.Get(Config.THEME).Form().
 				SetPrefix(Config.PREFIX).
-				SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
+				SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
 				SetUrl(Config.PREFIX + "/new/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
 				SetTitle("New").
 				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
 				GetContent(),
-			Description: models.GlobalTableList[prefix].Form.Description,
-			Title:       models.GlobalTableList[prefix].Form.Title,
+			Description: models.TableList[prefix].Form.Description,
+			Title:       models.TableList[prefix].Form.Title,
 		},
 		AssertRootUrl: Config.PREFIX,
 		Title:         Config.TITLE,
@@ -100,10 +100,10 @@ func NewForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理新建
 		NewRole((*form).Value)
 	} else {
-		models.GlobalTableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
+		models.TableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
 	}
 
-	models.RefreshGlobalTableList()
+	models.RefreshTableList()
 
 	previous := ctx.Request.FormValue("_previous_")
 
@@ -128,7 +128,7 @@ func NewForm(ctx *context.Context) {
 		}
 	}
 
-	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      prevUrlArr[0],
 		"sortField": sort,

@@ -1,14 +1,14 @@
 package adminlte
 
 import (
-	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"fmt"
-	"github.com/chenhg5/go-admin/template/adminlte/resource"
 	"github.com/chenhg5/go-admin/modules/language"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/adminlte/resource"
+	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
+	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 )
 
 type Theme struct {
@@ -35,7 +35,7 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 	if !isPjax {
 		name = "layout"
 		tmpler, err = template.New("layout").Funcs(template.FuncMap{
-			"lang": language.Get,
+			"lang":     language.Get,
 			"langHtml": language.GetFromHtml,
 		}).Parse(tmpl.List["layout"] +
 			tmpl.List["head"] + tmpl.List["header"] + tmpl.List["sidebar"] +
@@ -44,7 +44,7 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 	} else {
 		name = "content"
 		tmpler, err = template.New("content").Funcs(template.FuncMap{
-			"lang": language.Get,
+			"lang":     language.Get,
 			"langHtml": language.GetFromHtml,
 		}).Parse(tmpl.List["admin_panel"] + tmpl.List["content"])
 	}

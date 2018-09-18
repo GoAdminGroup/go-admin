@@ -392,15 +392,15 @@ func (sql *Sql) empty() *Sql {
 }
 
 func RecycleSql(sql *Sql) {
-	sql.fields    = make([]string, 0)
-	sql.table     = ""
-	sql.wheres    = make([]Where, 0)
+	sql.fields = make([]string, 0)
+	sql.table = ""
+	sql.wheres = make([]Where, 0)
 	sql.leftjoins = make([]Join, 0)
-	sql.args      = make([]interface{}, 0)
-	sql.order     = ""
-	sql.offset    = ""
-	sql.limit     = ""
-	sql.whereRaw  = ""
+	sql.args = make([]interface{}, 0)
+	sql.order = ""
+	sql.offset = ""
+	sql.limit = ""
+	sql.whereRaw = ""
 	sql.updateRaw = make([]RawUpdate, 0)
 	sql.statement = ""
 

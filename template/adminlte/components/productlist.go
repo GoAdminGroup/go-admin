@@ -6,8 +6,8 @@ import (
 )
 
 type ProductListAttribute struct {
-	Name   string
-	Data   []map[string]string
+	Name string
+	Data []map[string]string
 }
 
 func (compo *ProductListAttribute) SetData(value []map[string]string) types.ProductListAttribute {

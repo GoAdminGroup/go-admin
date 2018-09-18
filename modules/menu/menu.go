@@ -1,12 +1,12 @@
 package menu
 
 import (
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/language"
 	"strconv"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/language"
 	"sync/atomic"
-	"github.com/chenhg5/go-admin/modules/auth"
 )
 
 type Menu struct {
@@ -77,10 +77,10 @@ func SetGlobalMenu(user auth.User) {
 		var ids []interface{}
 		for i := 0; i < len(user.Menus); i++ {
 			qmark += "?,"
-			ids = append(ids,  user.Menus[i])
+			ids = append(ids, user.Menus[i])
 		}
 
-		menus, _ = connections.GetConnection().Query("select * from goadmin_menu where id in (" + qmark[:len(qmark)-1] + ") " +
+		menus, _ = connections.GetConnection().Query("select * from goadmin_menu where id in ("+qmark[:len(qmark)-1]+") "+
 			"order by `order` asc", ids...)
 	}
 

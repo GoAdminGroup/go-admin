@@ -1,12 +1,12 @@
 package adapter
 
 import (
+	"bytes"
 	"errors"
+	"github.com/kataras/iris"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/plugins"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
-	"bytes"
-	"github.com/kataras/iris"
 )
 
 type Iris struct {

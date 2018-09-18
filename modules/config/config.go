@@ -5,8 +5,8 @@
 package config
 
 import (
-	"sync"
 	"html/template"
+	"sync"
 )
 
 // Database is a type of database connection config.
@@ -63,13 +63,13 @@ type Config struct {
 	TITLE string
 
 	// Logo is the top text in the sidebar.
-	LOGO  template.HTML
+	LOGO template.HTML
 
 	// Mini-logo is the top text in the sidebar when folding.
 	MINILOGO template.HTML
 
 	// The url redirect to after login
-	INDEX  string
+	INDEX string
 }
 
 var (

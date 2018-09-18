@@ -3,9 +3,9 @@ package example
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/page"
-	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
 	template2 "github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 )
 
 func TestHandler(ctx *context.Context) {
@@ -42,7 +42,7 @@ func TestHandler(ctx *context.Context) {
 			SetIcon("ion-ios-people-outline").
 			GetContent()
 
-		var size = map[string]string{"md": "3","sm": "6","xs": "12"}
+		var size = map[string]string{"md": "3", "sm": "6", "xs": "12"}
 		infoboxCol1 := colComp.SetSize(size).SetContent(infobox).GetContent()
 		infoboxCol2 := colComp.SetSize(size).SetContent(infobox2).GetContent()
 		infoboxCol3 := colComp.SetSize(size).SetContent(infobox3).GetContent()
@@ -90,7 +90,7 @@ func TestHandler(ctx *context.Context) {
 		description4 := components.Description().SetPercent("17").
 			SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").GetContent()
 
-		size2 := map[string]string{"sm": "3", "xs":"6"}
+		size2 := map[string]string{"sm": "3", "xs": "6"}
 		boxInternalCol3 := colComp.SetContent(description1).SetSize(size2).GetContent()
 		boxInternalCol4 := colComp.SetContent(description2).SetSize(size2).GetContent()
 		boxInternalCol5 := colComp.SetContent(description3).SetSize(size2).GetContent()
@@ -162,19 +162,19 @@ func TestHandler(ctx *context.Context) {
 			{
 				"label": " Chrome",
 				"color": "red",
-			},{
+			}, {
 				"label": " IE",
 				"color": "Green",
-			},{
+			}, {
 				"label": " FireFox",
 				"color": "yellow",
-			},{
+			}, {
 				"label": " Sarafri",
 				"color": "blue",
-			},{
+			}, {
 				"label": " Opera",
 				"color": "light-blue",
-			},{
+			}, {
 				"label": " Navigator",
 				"color": "gray",
 			},
@@ -187,11 +187,11 @@ func TestHandler(ctx *context.Context) {
 
 		boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
 			SetBody(components.Row().
-					SetContent(colComp.SetSize(map[string]string{"md":"8"}).
+				SetContent(colComp.SetSize(map[string]string{"md": "8"}).
 					SetContent(pie).
-					GetContent() + colComp.SetSize(map[string]string{"md":"4"}).
-						SetContent(legend).
-						GetContent()).GetContent()).
+					GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
+					SetContent(legend).
+					GetContent()).GetContent()).
 			SetFooter(`<p class="text-center"><a href="javascript:void(0)" class="uppercase">View All Users</a></p>`).
 			GetContent()
 
@@ -209,7 +209,7 @@ func TestHandler(ctx *context.Context) {
                 my dear friend, so absorbed in the exquisite sense of mere tranquil existence,
                 that I neglect my talents. I should be incapable of drawing a single stroke
                 at the present moment; and yet I feel that I never was a greater artist than now.`),
-			},{
+			}, {
 				"title": "tabs2",
 				"content": template.HTML(`
                 The European languages are members of the same family. Their separate existence is a myth.
@@ -220,7 +220,7 @@ func TestHandler(ctx *context.Context) {
                 words. If several languages coalesce, the grammar of the resulting language is more simple
                 and regular than that of the individual languages.
               `),
-			},{
+			}, {
 				"title": "tabs3",
 				"content": template.HTML(`
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -240,32 +240,32 @@ func TestHandler(ctx *context.Context) {
 
 		productList := components.ProductList().SetData([]map[string]string{
 			{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
-			},{
-				"img": "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
-				"title": "Samsung TV",
-				"has_tabel": "true",
-				"labeltype": "warning",
-				"label": "$1800",
+			}, {
+				"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
+				"title":       "Samsung TV",
+				"has_tabel":   "true",
+				"labeltype":   "warning",
+				"label":       "$1800",
 				"description": `Samsung 32" 1080p 60Hz LED Smart HDTV.`,
 			},
 		}).GetContent()
@@ -275,8 +275,8 @@ func TestHandler(ctx *context.Context) {
 			SetFooter(`<a href="javascript:void(0)" class="uppercase">View All Products</a>`).
 			GetContent()
 
-		col5 := colComp.SetSize(map[string]string{"md":"8"}).SetContent(boxInfo + tabs).GetContent()
-		col6 := colComp.SetSize(map[string]string{"md":"4"}).SetContent(boxDanger + boxWarning).GetContent()
+		col5 := colComp.SetSize(map[string]string{"md": "8"}).SetContent(boxInfo + tabs).GetContent()
+		col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning).GetContent()
 
 		row4 := components.Row().SetContent(col5 + col6).GetContent()
 

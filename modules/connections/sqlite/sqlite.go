@@ -2,10 +2,10 @@ package sqlite
 
 import (
 	"database/sql"
-	"sync"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
-	"github.com/chenhg5/go-admin/modules/config"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"sync"
 )
 
 type Sqlite struct {

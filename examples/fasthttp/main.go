@@ -2,13 +2,13 @@ package main
 
 import (
 	"github.com/buaazp/fasthttprouter"
+	"github.com/prometheus/common/log"
 	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/adapter"
+	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/examples/datamodel"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/prometheus/common/log"
 	"github.com/chenhg5/go-admin/plugins/example"
 )
 
@@ -35,7 +35,7 @@ func main() {
 		INDEX:  "/",
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	examplePlugin := example.NewExample()
 
 	log.Fatal(eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).AddAdapter(new(adapter.Fasthttp)).Use(router))

@@ -1,15 +1,15 @@
 package components
 
 import (
-	"html/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 )
 
 type BarChartAttribute struct {
-	Name   string
-	Title  string
-	Data   string
-	ID     string
+	Name  string
+	Title string
+	Data  string
+	ID    string
 	Width int
 }
 

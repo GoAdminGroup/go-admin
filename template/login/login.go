@@ -1,8 +1,8 @@
 package login
 
 import (
-	"html/template"
 	"fmt"
+	"html/template"
 )
 
 type Login struct {

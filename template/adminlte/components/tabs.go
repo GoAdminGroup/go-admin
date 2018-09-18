@@ -6,8 +6,8 @@ import (
 )
 
 type TabsAttribute struct {
-	Name   string
-	Data   []map[string]template.HTML
+	Name string
+	Data []map[string]template.HTML
 }
 
 func (compo *TabsAttribute) SetData(value []map[string]template.HTML) types.TabsAttribute {

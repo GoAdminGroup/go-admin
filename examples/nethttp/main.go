@@ -1,13 +1,13 @@
 package main
 
 import (
-	"net/http"
 	"github.com/chenhg5/go-admin/adapter"
-	"github.com/chenhg5/go-admin/plugins/admin"
+	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"net/http"
 )
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.TableFuncConfig), examplePlugin).
+	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.Generators), examplePlugin).
 		AddAdapter(new(adapter.Http)).Use(mux); err != nil {
 		panic(err)
 	}

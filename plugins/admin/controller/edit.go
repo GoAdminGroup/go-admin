@@ -2,15 +2,15 @@ package controller
 
 import (
 	"bytes"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
-	"strings"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
+	"strings"
 )
 
 // 显示表单
@@ -24,7 +24,7 @@ func ShowForm(ctx *context.Context) {
 
 	id := ctx.Request.URL.Query().Get("id")
 
-	formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
+	formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -59,7 +59,7 @@ func ShowForm(ctx *context.Context) {
 			"0.0.1",
 		},
 		Panel: types.Panel{
-			Content:     template.Get(Config.THEME).Form().
+			Content: template.Get(Config.THEME).Form().
 				SetContent(formData).
 				SetPrefix(Config.PREFIX).
 				SetUrl(Config.PREFIX + "/edit/" + prefix).
@@ -108,10 +108,10 @@ func EditForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理编辑
 		EditRole((*form).Value)
 	} else {
-		models.GlobalTableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
+		models.TableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
 	}
 
-	models.RefreshGlobalTableList()
+	models.RefreshTableList()
 
 	previous := ctx.Request.FormValue("_previous_")
 	prevUrlArr := strings.Split(previous, "?")
@@ -135,7 +135,7 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	thead, infoList, paginator, title, description := models.GlobalTableList[prefix].GetDataFromDatabase(map[string]string{
+	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,
 		"path":      prevUrlArr[0],
 		"sortField": sort,

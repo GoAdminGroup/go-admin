@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
-	"sync"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/converter"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
-	"github.com/chenhg5/go-admin/modules/config"
+	"sync"
 )
 
 type SqlTxStruct struct {
@@ -31,13 +31,13 @@ func GetMysqlDB() *Mysql {
 func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 	db.Once.Do(func() {
 		var (
-			err      error
-			SqlDB   *sql.DB
+			err   error
+			SqlDB *sql.DB
 		)
 
 		for conn, cfg := range cfglist {
 			SqlDB, err = sql.Open("mysql", cfg.USER+
-				":"+ cfg.PWD+ "@tcp("+ cfg.HOST+ ":"+ cfg.PORT+ ")/"+ cfg.NAME+ "?charset=utf8mb4")
+				":"+cfg.PWD+"@tcp("+cfg.HOST+":"+cfg.PORT+")/"+cfg.NAME+"?charset=utf8mb4")
 
 			if err != nil {
 				SqlDB.Close()

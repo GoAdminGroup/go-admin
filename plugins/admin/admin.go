@@ -3,39 +3,40 @@ package admin
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/modules/connections"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/controller"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
 type Admin struct {
 	app      *context.App
-	tableCfg map[string]models.GetTableDataFunc
+	tableCfg map[string]models.TableGenerator
 }
 
 func (admin *Admin) InitPlugin() {
 
 	cfg := config.Get()
 
+	// Init database
 	for _, databaseCfg := range cfg.DATABASE {
 		connections.GetConnectionByDriver(databaseCfg.DRIVER).InitDB(map[string]config.Database{
 			"default": databaseCfg,
 		})
 	}
 
+	// Init router
 	App.app = InitRouter("/" + cfg.PREFIX)
 
-	models.SetTableFuncConfig(map[string]models.GetTableDataFunc{
-		// 管理员管理部分
-		"manager":    models.GetManagerTable,    // 管理员管理
-		"permission": models.GetPermissionTable, // 权限管理
-		"roles":      models.GetRolesTable,      // 角色管理
-		"op":         models.GetOpTable,         // 操作日志管理
-		"menu":       models.GetMenuTable,       // 菜单管理
+	models.SetGenerators(map[string]models.TableGenerator{
+		"manager":    models.GetManagerTable,
+		"permission": models.GetPermissionTable,
+		"roles":      models.GetRolesTable,
+		"op":         models.GetOpTable,
+		"menu":       models.GetMenuTable,
 	})
-	models.SetTableFuncConfig(admin.tableCfg)
-	models.InitGlobalTableList()
+	models.SetGenerators(admin.tableCfg)
+	models.InitTableList()
 
 	cfg.PREFIX = "/" + cfg.PREFIX
 	controller.SetConfig(cfg)
@@ -44,7 +45,7 @@ func (admin *Admin) InitPlugin() {
 
 var App = new(Admin)
 
-func NewAdmin(tableCfg map[string]models.GetTableDataFunc) *Admin {
+func NewAdmin(tableCfg map[string]models.TableGenerator) *Admin {
 	App.tableCfg = tableCfg
 	return App
 }

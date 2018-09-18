@@ -94,8 +94,8 @@ func main() {
         LANGUAGE: "cn", 
 	}
 
-    // TableFuncConfig： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/global.go
-	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+    // Generators： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/global.go
+	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
 	eng.AddConfig(cfg).AddPlugins(adminPlugin).AddAdapter(new(adapter.Gin)).Use(r)
 

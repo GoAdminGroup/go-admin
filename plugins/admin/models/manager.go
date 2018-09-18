@@ -1,16 +1,16 @@
 package models
 
 import (
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/language"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/language"
 )
 
-func GetManagerTable() (ManagerTable GlobalTable) {
+func GetManagerTable() (ManagerTable Table) {
 
 	ManagerTable.Info.FieldList = []types.FieldStruct{
 		{
@@ -32,7 +32,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 			},
 		},
 		{
-			Head: language.Get("Nickname"),
+			Head:     language.Get("Nickname"),
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -206,7 +206,7 @@ func GetManagerTable() (ManagerTable GlobalTable) {
 	return
 }
 
-func GetPermissionTable() (PermissionTable GlobalTable) {
+func GetPermissionTable() (PermissionTable Table) {
 
 	PermissionTable.Info.FieldList = []types.FieldStruct{
 		{
@@ -370,7 +370,7 @@ func GetPermissionTable() (PermissionTable GlobalTable) {
 	return
 }
 
-func GetRolesTable() (RolesTable GlobalTable) {
+func GetRolesTable() (RolesTable Table) {
 
 	var permissions []map[string]string
 	permissionsModel, _ := connections.GetConnection().Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
@@ -512,7 +512,7 @@ func GetRolesTable() (RolesTable GlobalTable) {
 	return
 }
 
-func GetOpTable() (OpTable GlobalTable) {
+func GetOpTable() (OpTable Table) {
 
 	OpTable.Info.FieldList = []types.FieldStruct{
 		{
@@ -543,7 +543,7 @@ func GetOpTable() (OpTable GlobalTable) {
 			},
 		},
 		{
-			Head:    language.Get("method"),
+			Head:     language.Get("method"),
 			Field:    "method",
 			TypeName: "varchar",
 			Sortable: false,
@@ -686,7 +686,7 @@ func GetOpTable() (OpTable GlobalTable) {
 	return
 }
 
-func GetMenuTable() (MenuTable GlobalTable) {
+func GetMenuTable() (MenuTable Table) {
 
 	MenuTable.Info.FieldList = []types.FieldStruct{
 		{
@@ -823,7 +823,7 @@ func GetMenuTable() (MenuTable GlobalTable) {
 				return model.Value
 			},
 		}, {
-			Head:    language.Get("icon"),
+			Head:     language.Get("icon"),
 			Field:    "icon",
 			TypeName: "varchar",
 			Default:  "",

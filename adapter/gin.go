@@ -1,19 +1,19 @@
 package adapter
 
 import (
-	"github.com/gin-gonic/gin"
-	"errors"
-	"github.com/chenhg5/go-admin/plugins"
-	"strings"
-	"github.com/chenhg5/go-admin/context"
 	"bytes"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/modules/menu"
+	"errors"
+	"github.com/gin-gonic/gin"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"net/http"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
+	"net/http"
+	"strings"
 )
 
 type Gin struct {

@@ -1,8 +1,8 @@
 package components
 
 import (
-	"html/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 )
 
 type FormAttribute struct {
@@ -55,5 +55,5 @@ func (compo *FormAttribute) GetContent() template.HTML {
 	return ComposeHtml(*compo, "form",
 		"form/default", "form/file", "form/textarea",
 		"form/selectbox", "form/text",
-		"form/password", "form/select","form/singleselect", "form/iconpicker")
+		"form/password", "form/select", "form/singleselect", "form/iconpicker")
 }

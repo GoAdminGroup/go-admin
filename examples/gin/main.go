@@ -1,13 +1,13 @@
 package main
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
-	"github.com/gin-gonic/gin"
 	"github.com/chenhg5/go-admin/template/types"
 )
 
@@ -36,10 +36,10 @@ func main() {
 			PREFIX: "uploads",
 		},
 		LANGUAGE: "cn",
-		INDEX: "/",
+		INDEX:    "/",
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.TableFuncConfig)
+	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
 	// you can custom a plugin like:
 
@@ -53,7 +53,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	r.GET("/" + cfg.PREFIX + "/custom", func(ctx *gin.Context) {
+	r.GET("/"+cfg.PREFIX+"/custom", func(ctx *gin.Context) {
 		adapter.GinContent(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

@@ -2,14 +2,14 @@ package postgresql
 
 import (
 	"database/sql"
-	"sync"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
-	"github.com/chenhg5/go-admin/modules/config"
-	_ "github.com/lib/pq"
-	"net/url"
 	"fmt"
-	"strings"
+	_ "github.com/lib/pq"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"net/url"
 	"strconv"
+	"strings"
+	"sync"
 )
 
 type Postgresql struct {
@@ -23,8 +23,8 @@ func GetPostgresqlDB() *Postgresql {
 
 func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	queCount := strings.Count(query, "?")
-	for i := 1; i < queCount + 1; i++ {
-		query = strings.Replace(query, "?", "$" + strconv.Itoa(i), 1)
+	for i := 1; i < queCount+1; i++ {
+		query = strings.Replace(query, "?", "$"+strconv.Itoa(i), 1)
 	}
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号
@@ -35,8 +35,8 @@ func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]int
 
 func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
 	queCount := strings.Count(query, "?")
-	for i := 1; i < queCount + 1; i++ {
-		query = strings.Replace(query, "?", "$" + strconv.Itoa(i), 1)
+	for i := 1; i < queCount+1; i++ {
+		query = strings.Replace(query, "?", "$"+strconv.Itoa(i), 1)
 	}
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号

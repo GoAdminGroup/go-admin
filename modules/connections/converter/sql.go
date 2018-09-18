@@ -221,4 +221,3 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 		}
 	}
 }
-

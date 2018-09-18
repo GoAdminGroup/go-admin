@@ -1,11 +1,11 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
-func GetPostsTable() (postsTable models.GlobalTable) {
+func GetPostsTable() (postsTable models.Table) {
 
 	postsTable.Info.FieldList = []types.FieldStruct{
 		{

@@ -1,12 +1,12 @@
 package models
 
 import (
-	"strconv"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
-	"html/template"
-	"github.com/chenhg5/go-admin/template/types"
 	template2 "github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/types"
+	"html/template"
 	"math"
+	"strconv"
 )
 
 func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaginatorAttribute {
@@ -14,7 +14,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
 
 	pageSizeInt, _ := strconv.Atoi(pageSize)
-	totalPage := int(math.Ceil(float64(size)/float64(pageSizeInt)))
+	totalPage := int(math.Ceil(float64(size) / float64(pageSizeInt)))
 
 	if page == "1" {
 		paginator.PreviousClass = "disabled"

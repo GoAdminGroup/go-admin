@@ -1,6 +1,6 @@
 package login
 
-var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
+var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <!-- User Account: style can be found in dropdown.less -->
@@ -30,7 +30,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         </li>
     </ul>
 </div>
-{{end}}`,"content":`{{define "content"}}
+{{end}}`, "content": `{{define "content"}}
 <section class="content-header">
     <h1>
         {{.Panel.Title}}
@@ -42,7 +42,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <section class="content">
     {{.Panel.Content}}
 </section>
-{{end}}`,"footer":`{{define "footer"}}
+{{end}}`, "footer": `{{define "footer"}}
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
         <b>Version</b> {{.System.Version}}
@@ -50,7 +50,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
     reserved.
 </footer>
-{{end}}`,"head":`{{define "head"}}
+{{end}}`, "head": `{{define "head"}}
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -92,7 +92,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
     <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
 </head>
-{{end}}`,"header":`{{define "header"}}
+{{end}}`, "header": `{{define "header"}}
 <header class="main-header">
     <!-- Logo -->
     <a href="/" class="logo">
@@ -111,7 +111,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{ template "admin_panel" . }}
     </nav>
 </header>
-{{end}}`,"js":`{{define "js"}}
+{{end}}`, "js": `{{define "js"}}
 <script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -128,7 +128,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
-{{end}}`,"layout":`{{define "layout"}}
+{{end}}`, "layout": `{{define "layout"}}
 
 <!DOCTYPE html>
 <html>
@@ -158,7 +158,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 </html>
 
 {{end}}
-`,"menu":`{{define "menu"}}
+`, "menu": `{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
 {{$AssertRootUrl := .AssertRootUrl}}
 {{range $key, $list := .Menu.GlobalMenuList }}
@@ -186,7 +186,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     {{end}}
 {{end}}
 </ul>
-{{end}}`,"sidebar":`{{define "sidebar"}}
+{{end}}`, "sidebar": `{{define "sidebar"}}
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -218,7 +218,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     </section>
     <!-- /.sidebar -->
 </aside>
-{{end}}`,"components/box":`{{define "box"}}
+{{end}}`, "components/box": `{{define "box"}}
 <div class="box">
     <div class="box-header {{.HeadBorder}}">
         {{.Header}}
@@ -230,9 +230,9 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         {{.Footer}}
     </div>
 </div>
-{{end}}`,"components/col":`{{define "col"}}
+{{end}}`, "components/col": `{{define "col"}}
 <div class="col-{{.Type}}-{{.Width}}">{{.Content}}</div>
-{{end}}`,"components/form":`{{define "form"}}
+{{end}}`, "components/form": `{{define "form"}}
 <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
 <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
 <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
@@ -303,9 +303,9 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
     </form>
 </div>
-{{end}}`,"components/image":`{{define "image"}}
+{{end}}`, "components/image": `{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`,"components/infobox":`{{define "infobox"}}
+{{end}}`, "components/infobox": `{{define "infobox"}}
 <div class="small-box bg-{{.Color}}">
     <div class="inner">
         <h3>{{.Value}}</h3>
@@ -319,9 +319,9 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <i class="fa fa-arrow-circle-right"></i>
     </a>
 </div>
-{{end}}`,"components/label":`{{define "label"}}
+{{end}}`, "components/label": `{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`,"components/paginator":`{{define "paginator"}}
+{{end}}`, "components/paginator": `{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
@@ -379,9 +379,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </select>
     <small>entries</small>
 </label>
-{{end}}`,"components/row":`{{define "row"}}
+{{end}}`, "components/row": `{{define "row"}}
 <div class="row">{{.Content}}</div>
-{{end}}`,"components/table":`{{define "table"}}
+{{end}}`, "components/table": `{{define "table"}}
     <table class="table table-hover">
         <tbody>
         <tr>
@@ -424,7 +424,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
         </tbody>
     </table>
-{{end}}`,"components/tree-header":`{{define "tree-header"}}
+{{end}}`, "components/tree-header": `{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
         <i class="fa fa-plus-square-o"></i>&nbsp;Expand
@@ -443,7 +443,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 <div class="btn-group">
 </div>
-{{end}}`,"components/tree":`{{define "tree"}}
+{{end}}`, "components/tree": `{{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
     <ol class="dd-list">
         {{range $key, $list := .Tree}}
@@ -537,7 +537,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
     });
 </script>
-{{end}}`,"components/form/default":`{{define "form_default"}}
+{{end}}`, "components/form/default": `{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
@@ -546,7 +546,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         </div>
     </div>
 </div>
-{{end}}`,"components/form/file":`{{define "form_file"}}
+{{end}}`, "components/form/file": `{{define "form_file"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
@@ -568,7 +568,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         "allowedFileTypes":["image"]
     });
 </script>
-{{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
+{{end}}`, "components/form/iconpicker": `{{define "form_iconpicker"}}
 <script src="../../assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
@@ -2814,7 +2814,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </div>
 </div>
 </div>
-{{end}}`,"components/form/password":`{{define "form_password"}}
+{{end}}`, "components/form/password": `{{define "form_password"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
@@ -2822,7 +2822,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="Input {{.Head}}">
     </div>
 </div>
-{{end}}`,"components/form/select":`{{define "form_select"}}
+{{end}}`, "components/form/select": `{{define "form_select"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="Input {{.Head}}" tabindex="-1" aria-hidden="true">
@@ -2840,7 +2840,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         allowClear: true
     });
 </script>
-{{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
+{{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
@@ -2853,7 +2853,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <script>
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
-{{end}}`,"components/form/text":`{{define "form_text"}}
+{{end}}`, "components/form/text": `{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group">
@@ -2861,12 +2861,12 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="Input {{.Head}}">
     </div>
 </div>
-{{end}}`,"components/form/textarea":`{{define "form_textarea"}}
+{{end}}`, "components/form/textarea": `{{define "form_textarea"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="Input {{.Head}}">{{.Value}}</textarea>
 </div>
-{{end}}`,"components/table/box-header":`{{define "box-header"}}
+{{end}}`, "components/table/box-header": `{{define "box-header"}}
 <div class="pull-right">
     <div class="btn-group pull-right" style="margin-right: 10px">
         <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i class="fa fa-filter"></i>&nbsp;&nbsp;Filter</a>
@@ -2946,7 +2946,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <i class="fa fa-refresh"></i> Refresh
     </a>
 </span>
-{{end}}`,"login/theme1":`{{define "login_theme1"}}
+{{end}}`, "login/theme1": `{{define "login_theme1"}}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -3224,4 +3224,4 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
 </body>
 </html>
-{{end}}`,}
+{{end}}`}

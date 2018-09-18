@@ -1,16 +1,16 @@
 package adapter
 
 import (
-	"errors"
-	"github.com/chenhg5/go-admin/plugins"
-	"strings"
-	"github.com/chenhg5/go-admin/context"
 	"bytes"
+	"errors"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/plugins"
+	"io"
 	"net/http"
 	"net/url"
-	"io"
+	"strings"
 )
 
 type Fasthttp struct {

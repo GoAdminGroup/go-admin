@@ -1,11 +1,11 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
-func GetAuthorsTable() (authorsTable models.GlobalTable) {
+func GetAuthorsTable() (authorsTable models.Table) {
 
 	authorsTable.Info.FieldList = []types.FieldStruct{
 		{

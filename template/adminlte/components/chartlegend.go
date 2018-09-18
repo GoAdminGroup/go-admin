@@ -6,8 +6,8 @@ import (
 )
 
 type ChartLegendAttribute struct {
-	Name   string
-	Data   []map[string]string
+	Name string
+	Data []map[string]string
 }
 
 func (compo *ChartLegendAttribute) SetData(value []map[string]string) types.ChartLegendAttribute {

@@ -5,18 +5,18 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"github.com/mgutz/ansi"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	template2 "html/template"
 	"log"
+	"net/http"
 	"regexp"
 	"runtime/debug"
 	"strconv"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template"
-	"net/http"
-	template2 "html/template"
 )
 
 // 全局错误处理
@@ -57,7 +57,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			id := ctx.Request.URL.Query().Get("id")
 
-			formData, title, description := models.GlobalTableList[prefix].GetDataFromDatabaseWithId(prefix, id)
+			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
 			tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
@@ -97,9 +97,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Content: alert + template.Get(Config.THEME).Form().
 						SetContent(formData).
 						SetPrefix(Config.PREFIX).
-						SetUrl(Config.PREFIX + "/edit/" + prefix).
+						SetUrl(Config.PREFIX+"/edit/"+prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 						GetContent(),
 					Description: description,
 					Title:       title,
@@ -110,7 +110,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)
+			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 
@@ -156,13 +156,13 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Panel: types.Panel{
 					Content: alert + template.Get(Config.THEME).Form().
 						SetPrefix(Config.PREFIX).
-						SetContent(models.GetNewFormList(models.GlobalTableList[prefix].Form.FormList)).
-						SetUrl(Config.PREFIX + "/new/" + prefix).
+						SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
+						SetUrl(Config.PREFIX+"/new/"+prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 						GetContent(),
-					Description: models.GlobalTableList[prefix].Form.Description,
-					Title:       models.GlobalTableList[prefix].Form.Title,
+					Description: models.TableList[prefix].Form.Description,
+					Title:       models.TableList[prefix].Form.Title,
 				},
 				AssertRootUrl: Config.PREFIX,
 				Title:         Config.TITLE,
@@ -170,7 +170,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX + "/info/" + prefix + "/new" + queryParam)
+			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 

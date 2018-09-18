@@ -2,10 +2,10 @@ package redisclient
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/page"
-	"github.com/chenhg5/go-admin/template/types"
-	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/page"
+	template2 "github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 )
 
@@ -24,17 +24,17 @@ func Show(ctx *context.Context) {
 
 		infoList := []map[string]template.HTML{
 			{
-				"Type":   label,
-				"Key":       "userinfo:userid:123",
-				"Value":     "shipped",
+				"Type":  label,
+				"Key":   "userinfo:userid:123",
+				"Value": "shipped",
 			}, {
-				"Type":   label,
-				"Key":       "userinfo:userid:124",
-				"Value":     "shipped",
+				"Type":  label,
+				"Key":   "userinfo:userid:124",
+				"Value": "shipped",
 			}, {
-				"Type":   label,
-				"Key":       "userinfo:userid:125",
-				"Value":     "shipped",
+				"Type":  label,
+				"Key":   "userinfo:userid:125",
+				"Value": "shipped",
 			},
 		}
 
@@ -50,7 +50,6 @@ func Show(ctx *context.Context) {
 				"sortable": "0",
 			},
 		}
-
 
 		header := `<div class="pull-right">
 		<div class="btn-group pull-right" style="margin-right: 10px">

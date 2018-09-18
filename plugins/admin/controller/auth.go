@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
+	"bytes"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
-	"bytes"
-	"net/http"
-	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/template"
+	"net/http"
 )
 
 func Auth(ctx *context.Context) {
@@ -23,21 +23,21 @@ func Auth(ctx *context.Context) {
 
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 200,
-			"msg": "登录成功",
-			"url": Config.PREFIX + Config.INDEX,
+			"msg":  "登录成功",
+			"url":  Config.PREFIX + Config.INDEX,
 		})
 		return
 	}
 	ctx.Json(http.StatusBadRequest, map[string]interface{}{
 		"code": 400,
-		"msg": "登录失败",
+		"msg":  "登录失败",
 	})
 	return
 }
 
 func Logout(ctx *context.Context) {
 	auth.DelCookie(ctx)
-	ctx.Response.Header.Add("Location", Config.PREFIX + "/login")
+	ctx.Response.Header.Add("Location", Config.PREFIX+"/login")
 	ctx.SetStatusCode(302)
 }
 

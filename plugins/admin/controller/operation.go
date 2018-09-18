@@ -1,10 +1,10 @@
 package controller
 
 import (
+	"github.com/gin-gonic/gin/json"
+	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/connections"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/gin-gonic/gin/json"
 )
 
 func RecordOperationLog(ctx *context.Context) {

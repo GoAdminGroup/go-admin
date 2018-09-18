@@ -5,11 +5,11 @@
 package context
 
 import (
-	"net/http"
-	"strings"
-	"io/ioutil"
 	"bytes"
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"strings"
 )
 
 // Context is the simplify version of web framework context.
@@ -149,11 +149,11 @@ func (app *App) AppendReqAndResp(url, method string, handler Handler) {
 		Method: method,
 	})
 
-	for _, middleware := range app.MiddlewareList{
+	for _, middleware := range app.MiddlewareList {
 		handler = middleware(handler)
 	}
 
-	app.tree.addPath(stringToArr(app.Prefix + url), method, handler)
+	app.tree.addPath(stringToArr(app.Prefix+url), method, handler)
 }
 
 // Find is public helper method for findPath of tree.

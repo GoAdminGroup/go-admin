@@ -1,8 +1,8 @@
 package file
 
 import (
-	"mime/multipart"
 	"github.com/chenhg5/go-admin/modules/config"
+	"mime/multipart"
 )
 
 type LocalFileUploader struct {

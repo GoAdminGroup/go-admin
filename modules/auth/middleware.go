@@ -1,11 +1,11 @@
 package auth
 
 import (
+	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections"
 	"regexp"
 	"strings"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/config"
 )
 
 type User struct {
@@ -176,7 +176,7 @@ func CheckPermissions(user User, path string, method string) bool {
 
 	prefix := "/" + config.Get().PREFIX
 
-	if path == prefix + "/logout" {
+	if path == prefix+"/logout" {
 		return true
 	}
 
