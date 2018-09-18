@@ -156,6 +156,7 @@ func (app *App) AppendReqAndResp(url, method string, handler Handler) {
 	app.tree.addPath(stringToArr(app.Prefix + url), method, handler)
 }
 
+// Find is public helper method for findPath of tree.
 func (app *App) Find(url, method string) Handler {
 	return app.tree.findPath(stringToArr(url), method)
 }

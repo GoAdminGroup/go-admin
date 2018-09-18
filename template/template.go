@@ -5,9 +5,14 @@ import (
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"html/template"
 	"github.com/chenhg5/go-admin/template/login"
+	"sync"
 )
 
+// Template is the interface which contains methods of ui components.
+// It will be used in the plugins for custom the ui.
 type Template interface {
+
+	// Components
 	Form() types.FormAttribute
 	Box() types.BoxAttribute
 	Col() types.ColAttribute
@@ -30,35 +35,76 @@ type Template interface {
 	PieChart() types.PieChartAttribute
 	ChartLegend() types.ChartLegendAttribute
 	Tabs() types.TabsAttribute
+
+	// Builder methods
 	GetTmplList() map[string]string
 	GetAssetList() []string
 	GetAsset(string) ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
 }
 
+// The templateMap contains templates registered.
 var templateMap = map[string]Template{
 	"adminlte": adminlte.GetAdminlte(),
 }
 
+// Get the template interface by theme name. If the
+// name is not found, it panics.
 func Get(theme string) Template {
-	return templateMap[theme]
+	if temp, ok := templateMap[theme]; ok {
+		return temp
+	}
+	panic("wrong theme name")
 }
 
+var templateMu sync.Mutex
+
+// Add makes a template available by the provided theme name.
+// If Add is called twice with the same name or if template is nil,
+// it panics.
 func Add(name string, temp Template) {
+	templateMu.Lock()
+	defer templateMu.Unlock()
+	if temp == nil {
+		panic("template is nil")
+	}
+	if _, dup := templateMap[name]; dup {
+		panic("add template twice " + name)
+	}
 	templateMap[name] = temp
 }
 
+// Component is the interface which stand for a ui component.
 type Component interface {
 	GetTemplate() (*template.Template, string)
 	GetAssetList() []string
 	GetAsset(string) ([]byte, error)
 }
 
+var CompMap = map[string]Component{
+	"login": login.GetLoginComponent(),
+}
+
+// GetComp gets the component by registered name. If the
+// name is not found, it panics.
 func GetComp(name string) Component {
-	switch name {
-	case "login":
-		return login.GetLoginComponent()
-	default:
-		panic("wrong component name")
+	if comp, ok := CompMap[name]; ok {
+		return comp
 	}
+	panic("wrong component name")
+}
+
+// AddComp makes a component available by the provided name.
+// If Add is called twice with the same name or if component is nil,
+// it panics.
+func AddComp(name string, comp Component) {
+	templateMu.Lock()
+	defer templateMu.Unlock()
+	if comp == nil {
+		panic("component is nil")
+	}
+	if _, dup := CompMap[name]; dup {
+		panic("add component twice " + name)
+	}
+	CompMap[name] = comp
 }
