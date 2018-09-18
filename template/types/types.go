@@ -106,3 +106,5 @@ type Panel struct {
 	Description string
 	Url         string
 }
+
+type GetPanel func() Panel

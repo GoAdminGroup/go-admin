@@ -9,7 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
-	adapter "github.com/chenhg5/go-admin/adapter/beego"
+	_ "github.com/chenhg5/go-admin/adapter/beego"
 )
 
 func main() {
@@ -47,7 +47,7 @@ func main() {
 	// you can custom your pages like:
 
 	app.Handlers.Get("/"+cfg.PREFIX+"/custom", func(ctx *context.Context) {
-		adapter.Content(ctx, func() types.Panel {
+		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})
 	})

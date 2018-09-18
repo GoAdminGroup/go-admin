@@ -21,14 +21,14 @@ import (
 type Beego struct {
 }
 
-func init()  {
+func init() {
 	engine.Register(new(Beego))
 }
 
 func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *beego.App
-		ok     bool
+		ok  bool
 	)
 	if eng, ok = router.(*beego.App); !ok {
 		return errors.New("wrong parameter")
@@ -64,7 +64,16 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
-func Content(ctx *context.Context, c func() types.Panel) {
+func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
+
+	var (
+		ctx *context.Context
+		ok  bool
+	)
+	if ctx, ok = contextInterface.(*context.Context); !ok {
+		panic("wrong parameter")
+	}
+
 	globalConfig := config.Get()
 
 	sesKey := ctx.GetCookie("go_admin_session")

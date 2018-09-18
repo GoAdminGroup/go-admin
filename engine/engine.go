@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/adapter"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 // Engine is the core components of goAdmin. It has two attributes.
@@ -29,6 +30,9 @@ func Default() *Engine {
 
 // Use enable the adapter.
 func (eng *Engine) Use(router interface{}) error {
+	if eng.Adapter == nil {
+		panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
+	}
 	return eng.Adapter.Use(router, eng.PluginList)
 }
 
@@ -62,4 +66,11 @@ func Register(ada adapter.WebFrameWork)  {
 		panic("adapter is nil")
 	}
 	DefaultAdapter = ada
+}
+
+func Content(ctx interface{}, panel types.GetPanel) {
+	if DefaultAdapter == nil {
+		panic("adapter is nil")
+	}
+	DefaultAdapter.Content(ctx, panel)
 }

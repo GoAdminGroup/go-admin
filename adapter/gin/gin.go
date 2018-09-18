@@ -66,7 +66,16 @@ func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
-func Content(ctx *gin.Context, c func() types.Panel) {
+func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
+
+	var (
+		ctx *gin.Context
+		ok  bool
+	)
+	if ctx, ok = contextInterface.(*gin.Context); !ok {
+		panic("wrong parameter")
+	}
+
 	globalConfig := config.Get()
 
 	sesKey, err := ctx.Cookie("go_admin_session")
