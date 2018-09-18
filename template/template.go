@@ -11,7 +11,6 @@ import (
 // Template is the interface which contains methods of ui components.
 // It will be used in the plugins for custom the ui.
 type Template interface {
-
 	// Components
 	Form() types.FormAttribute
 	Box() types.BoxAttribute
@@ -57,7 +56,10 @@ func Get(theme string) Template {
 	panic("wrong theme name")
 }
 
-var templateMu sync.Mutex
+var (
+	templateMu sync.Mutex
+	compMu     sync.Mutex
+)
 
 // Add makes a template available by the provided theme name.
 // If Add is called twice with the same name or if template is nil,
@@ -98,8 +100,8 @@ func GetComp(name string) Component {
 // If Add is called twice with the same name or if component is nil,
 // it panics.
 func AddComp(name string, comp Component) {
-	templateMu.Lock()
-	defer templateMu.Unlock()
+	compMu.Lock()
+	defer compMu.Unlock()
 	if comp == nil {
 		panic("component is nil")
 	}
