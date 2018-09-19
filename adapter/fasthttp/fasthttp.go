@@ -44,7 +44,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 				httpreq := Convertor(c)
 				ctx := context.NewContext(httpreq)
 
-				var params map[string]string
+				var params = make(map[string]string, 0)
 				c.VisitUserValues(func(i []byte, i2 interface{}) {
 					if value, ok := i2.(string); ok {
 						params[string(i)] = value
