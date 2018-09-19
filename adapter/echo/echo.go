@@ -8,6 +8,13 @@ import (
 	"github.com/chenhg5/go-admin/plugins"
 	"strings"
 	"github.com/chenhg5/go-admin/engine"
+	"net/http"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/template"
+	template2 "html/template"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type Echo struct {
@@ -56,4 +63,73 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	}
 
 	return nil
+}
+
+
+func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
+
+	var (
+		ctx echo.Context
+		ok  bool
+	)
+	if ctx, ok = contextInterface.(echo.Context); !ok {
+		panic("wrong parameter")
+	}
+
+	globalConfig := config.Get()
+
+	sesKey, err := ctx.Cookie("go_admin_session")
+
+	if err != nil || sesKey == nil {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		return
+	}
+
+	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+
+	if !ok {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		return
+	}
+
+	user, ok := auth.GetCurUserById(userId.(string))
+
+	if !ok {
+		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		return
+	}
+
+	var panel types.Panel
+
+	if !auth.CheckPermissions(user, ctx.Path(), ctx.Request().Method) {
+		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+			SetTheme("warning").SetContent(template2.HTML("没有权限")).GetContent()
+
+		panel = types.Panel{
+			Content:     alert,
+			Description: "Error",
+			Title:       "Error",
+		}
+	} else {
+		panel = c()
+	}
+
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request().Header.Get("X-PJAX") == "true")
+
+	ctx.Request().Header.Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: menu.GetGlobalMenu(user),
+		System: types.SystemInfo{
+			"0.0.1",
+		},
+		Panel:         panel,
+		AssertRootUrl: "/" + globalConfig.PREFIX,
+		Title:         globalConfig.TITLE,
+		Logo:          globalConfig.LOGO,
+		MiniLogo:      globalConfig.MINILOGO,
+	})
+	ctx.String(http.StatusOK, buf.String())
 }

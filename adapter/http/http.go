@@ -8,6 +8,12 @@ import (
 	"net/http"
 	"strings"
 	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/template"
+	template2 "html/template"
+	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type Http struct {
@@ -17,7 +23,7 @@ func init()  {
 	engine.Register(new(Http))
 }
 
-func (gins *Http) Use(router interface{}, plugin []plugins.Plugin) error {
+func (ht *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *http.ServeMux
 		ok     bool
@@ -65,4 +71,76 @@ func ConstructNetHttpRequest(reqs []context.Path) map[string][]context.Path {
 		NetHttpRequest[req.URL] = append(NetHttpRequest[req.URL], req)
 	}
 	return NetHttpRequest
+}
+
+
+func (ht *Http) Content(contextInterface interface{}, c types.GetPanel) {
+
+	var (
+		ctx *http.Request
+		ok  bool
+	)
+	if ctx, ok = contextInterface.(*http.Request); !ok {
+		panic("wrong parameter")
+	}
+
+	globalConfig := config.Get()
+
+	sesKey, err := ctx.Cookie("go_admin_session")
+
+	if err != nil || sesKey == nil {
+		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.StatusCode = http.StatusFound
+		return
+	}
+
+	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+
+	if !ok {
+		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.StatusCode = http.StatusFound
+		return
+	}
+
+	user, ok := auth.GetCurUserById(userId.(string))
+
+	if !ok {
+		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.StatusCode = http.StatusFound
+		return
+	}
+
+	var panel types.Panel
+
+	if !auth.CheckPermissions(user, ctx.RequestURI, ctx.Method) {
+		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+			SetTheme("warning").SetContent(template2.HTML("没有权限")).GetContent()
+
+		panel = types.Panel{
+			Content:     alert,
+			Description: "Error",
+			Title:       "Error",
+		}
+	} else {
+		panel = c()
+	}
+
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Header.Get("X-PJAX") == "true")
+
+	ctx.Header.Set("Content-Type", "text/html; charset=utf-8")
+
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: menu.GetGlobalMenu(user),
+		System: types.SystemInfo{
+			"0.0.1",
+		},
+		Panel:         panel,
+		AssertRootUrl: "/" + globalConfig.PREFIX,
+		Title:         globalConfig.TITLE,
+		Logo:          globalConfig.LOGO,
+		MiniLogo:      globalConfig.MINILOGO,
+	})
+	//ctx.Body.(buf.String())
 }
