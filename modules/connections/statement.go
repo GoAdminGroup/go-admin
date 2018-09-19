@@ -100,32 +100,20 @@ func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 }
 
 func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
-	qmark := "("
-	for i := 0; i < len(arg); i++ {
-		qmark += "?, "
-	}
-	qmark = qmark[:len(qmark)-2] + ")"
-
 	sql.wheres = append(sql.wheres, Where{
 		field:     field,
 		operation: "in",
-		qmark:     qmark,
+		qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
 	})
 	sql.args = append(sql.args, arg...)
 	return sql
 }
 
 func (sql *Sql) WhereNotIn(field string, arg []interface{}) *Sql {
-	qmark := "("
-	for i := 0; i < len(arg); i++ {
-		qmark += "?, "
-	}
-	qmark = qmark[:len(qmark)-2] + ")"
-
 	sql.wheres = append(sql.wheres, Where{
 		field:     field,
 		operation: "not in",
-		qmark:     qmark,
+		qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
 	})
 	sql.args = append(sql.args, arg...)
 	return sql

@@ -18,7 +18,12 @@ func InitRouter(prefix string) *context.App {
 	})
 
 	app.GET(prefix+"/example", authenticator.Middleware(TestHandler))
-	app.GET(prefix+"/", authenticator.Middleware(TestHandler))
+
+	if prefix == "" {
+		app.GET(prefix+"/", authenticator.Middleware(TestHandler))
+	} else {
+		app.GET(prefix, authenticator.Middleware(TestHandler))
+	}
 
 	return app
 }
