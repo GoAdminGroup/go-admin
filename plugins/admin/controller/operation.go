@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin/json"
+	"encoding/json"
+
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/connections"
