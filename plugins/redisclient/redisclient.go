@@ -33,5 +33,5 @@ func (redis *RedisClient) GetRequest() []context.Path {
 }
 
 func (redis *RedisClient) GetHandler(url, method string) context.Handler {
-	return plugins.GetHandler(url, method, &redis.app.HandlerList)
+	return plugins.GetHandler(url, method, redis.app)
 }
