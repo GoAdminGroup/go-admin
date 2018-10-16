@@ -3,3 +3,4 @@ demo/config.go
 demo/uploads
 demo/deploy.yml
 demo/hosts
+demo/go-admin
