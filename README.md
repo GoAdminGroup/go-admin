@@ -10,7 +10,8 @@
 
 <p align="center">
     <a href="https://github.com/chenhg5/go-admin/wiki">Documentation</a> | 
-    <a href="./README_CN.md">中文文档</a>
+    <a href="./README_CN.md">中文文档</a> |
+    <a href="http://demo.go-admin.cn/admin">DEMO</a>
 </p>
 
 <p align="center">
