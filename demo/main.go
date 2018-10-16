@@ -29,7 +29,7 @@ func main() {
 				DRIVER:       database.DRIVER,
 			},
 		},
-		DOMAIN: "localhost",
+		DOMAIN: "demo.go-admin.cn",
 		PREFIX: "admin",
 		STORE: config.Store{
 			PATH:   "./uploads",

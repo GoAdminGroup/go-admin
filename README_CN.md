@@ -23,6 +23,9 @@
 
 goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
 
+demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
+账号：admin  密码：admin
+
 ![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## 特征
