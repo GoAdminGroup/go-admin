@@ -41,12 +41,12 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 		for conn, cfg := range cfglist {
 
 			u := &url.URL{
-				Scheme: "sqlserver",
+				Scheme: "mssql",
 				User:   url.UserPassword(cfg.USER, cfg.PWD),
 				Host:   fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
 			}
 
-			SqlDB, err = sql.Open("sqlserver", u.String())
+			SqlDB, err = sql.Open("mssql", u.String())
 
 			if err != nil {
 				SqlDB.Close()
