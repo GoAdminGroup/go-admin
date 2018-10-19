@@ -116,31 +116,25 @@ func (db *Mysql) Exec(query string, args ...interface{}) sql.Result {
 	return performer.Exec(db.SqlDBmap["default"], query, args...)
 }
 
-func (db *Mysql) BeginTransactionsByLevel() *SqlTxStruct {
+func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTxStruct {
+	return db.BeginTransactionsWithLevel(sql.LevelReadUncommitted)
+}
 
-	//LevelDefault IsolationLevel = iota
-	//LevelReadUncommitted
-	//LevelReadCommitted
-	//LevelWriteCommitted
-	//LevelRepeatableRead
-	//LevelSnapshot
-	//LevelSerializable
-	//LevelLinearizable
+func (db *Mysql) BeginTransactionsWithReadCommitted() *SqlTxStruct {
+	return db.BeginTransactionsWithLevel(sql.LevelReadCommitted)
+}
 
-	SqlTx := new(SqlTxStruct)
-
-	tx, err := db.SqlDBmap["default"].BeginTx(context.Background(),
-		&sql.TxOptions{Isolation: sql.LevelReadUncommitted})
-	if err != nil {
-		panic(err)
-	}
-	(*SqlTx).Tx = tx
-	return SqlTx
+func (db *Mysql) BeginTransactionsWithRepeatableRead() *SqlTxStruct {
+	return db.BeginTransactionsWithLevel(sql.LevelRepeatableRead)
 }
 
 func (db *Mysql) BeginTransactions() *SqlTxStruct {
+	return db.BeginTransactionsWithLevel(sql.LevelDefault)
+}
+
+func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SqlTxStruct {
 	tx, err := db.SqlDBmap["default"].BeginTx(context.Background(),
-		&sql.TxOptions{Isolation: sql.LevelDefault})
+		&sql.TxOptions{Isolation: level})
 	if err != nil {
 		panic(err)
 	}
@@ -213,6 +207,28 @@ type TxFn func(*SqlTxStruct) (error, map[string]interface{})
 func (db *Mysql) WithTransaction(fn TxFn) (err error, res map[string]interface{}) {
 
 	SqlTx := db.BeginTransactions()
+
+	defer func() {
+		if p := recover(); p != nil {
+			// a panic occurred, rollback and repanic
+			SqlTx.Tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			// something went wrong, rollback
+			SqlTx.Tx.Rollback()
+		} else {
+			// all good, commit
+			err = SqlTx.Tx.Commit()
+		}
+	}()
+
+	err, res = fn(SqlTx)
+	return
+}
+
+func (db *Mysql) WithTransactionByLevel(level sql.IsolationLevel, fn TxFn) (err error, res map[string]interface{}) {
+
+	SqlTx := db.BeginTransactionsWithLevel(level)
 
 	defer func() {
 		if p := recover(); p != nil {
