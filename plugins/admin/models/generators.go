@@ -708,7 +708,7 @@ func GetMenuTable() (MenuTable Table) {
 			},
 		},
 		{
-			Head:     language.Get("name"),
+			Head:     language.Get("menu name"),
 			Field:    "title",
 			TypeName: "varchar",
 			Sortable: false,
@@ -813,7 +813,7 @@ func GetMenuTable() (MenuTable Table) {
 				return menuItem
 			},
 		}, {
-			Head:     language.Get("name"),
+			Head:     language.Get("menu name"),
 			Field:    "title",
 			TypeName: "varchar",
 			Default:  "",
