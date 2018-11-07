@@ -6,3 +6,4 @@ demo/hosts
 demo/go-admin
 demo/Makefile
 demo/deploy.retry
+examples/gin/uploads/

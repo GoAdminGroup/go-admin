@@ -88,8 +88,9 @@ func main() {
 			DRIVER:       "mysql",
 		    },
         	},
-		DOMAIN: "localhost",
+		DOMAIN: "localhost", // 是cookie相关的，访问网站的域名
 		PREFIX: "admin",
+		// STORE 必须设置且保证有写权限，否则增加不了新的管理员用户
 		STORE: config.Store{
 		    PATH:   "./uploads",
 		    PREFIX: "uploads",

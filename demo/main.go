@@ -32,7 +32,7 @@ func main() {
 		DOMAIN: "demo.go-admin.cn",
 		PREFIX: "admin",
 		STORE: config.Store{
-			PATH:   "./uploads",
+			PATH:   "/data/www/go-admin/uploads",
 			PREFIX: "uploads",
 		},
 		LANGUAGE: "cn",
@@ -49,7 +49,7 @@ func main() {
 		panic(err)
 	}
 
-	r.Static("/uploads", "./uploads")
+	r.Static("/uploads", "/data/www/go-admin/uploads")
 
 	// you can custom your pages like:
 
