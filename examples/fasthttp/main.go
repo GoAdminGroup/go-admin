@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 )
 
 func main() {
@@ -40,6 +41,12 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(router); err != nil {
 		panic(err)
 	}
+
+	router.GET("/"+cfg.PREFIX+"/custom", func(ctx *fasthttp.RequestCtx) {
+		engine.Content(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	var waitChan chan int
 	go func() {
