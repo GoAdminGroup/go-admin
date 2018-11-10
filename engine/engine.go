@@ -56,12 +56,13 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 // AddAdapter add the adapter of engine.
 func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada
+	DefaultAdapter = ada
 	return eng
 }
 
 var DefaultAdapter adapter.WebFrameWork
 
-func Register(ada adapter.WebFrameWork)  {
+func Register(ada adapter.WebFrameWork) {
 	if ada == nil {
 		panic("adapter is nil")
 	}
