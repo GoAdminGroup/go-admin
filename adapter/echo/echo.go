@@ -116,7 +116,7 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 
 	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request().Header.Get("X-PJAX") == "true")
 
-	ctx.Request().Header.Set("Content-Type", "text/html; charset=utf-8")
+	ctx.Response().Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
