@@ -114,7 +114,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 

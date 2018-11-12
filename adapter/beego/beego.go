@@ -112,7 +112,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
 

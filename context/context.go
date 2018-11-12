@@ -125,12 +125,17 @@ func (ctx *Context) QueryDefault(key, def string) string {
 
 // Headers get the value of request headers key.
 func (ctx *Context) Headers(key string) string {
-	return ctx.Request.Header.Get(key)
+	return ctx.Headers(key)
 }
 
 // FormValue get the value of request form key.
 func (ctx *Context) FormValue(key string) string {
-	return ctx.Request.FormValue(key)
+	return ctx.FormValue(key)
+}
+
+// AddHeader adds the key, value pair to the header.
+func (ctx *Context) AddHeader(key, value string) {
+	ctx.Response.Header.Add(key, value)
 }
 
 // App is the key struct of the package. App as a member of plugin

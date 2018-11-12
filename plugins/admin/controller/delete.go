@@ -10,7 +10,7 @@ func DeleteData(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	//token := ctx.Request.FormValue("_t")
+	//token := ctx.FormValue("_t")
 	//
 	//if !auth.TokenHelper.CheckToken(token) {
 	//	ctx.SetStatusCode(http.StatusBadRequest)
@@ -20,7 +20,7 @@ func DeleteData(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
 
-	id := ctx.Request.FormValue("id")
+	id := ctx.FormValue("id")
 
 	models.TableList[prefix].DeleteDataFromDatabase(prefix, id)
 

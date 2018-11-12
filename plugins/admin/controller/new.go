@@ -21,7 +21,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
@@ -65,7 +65,7 @@ func NewForm(ctx *context.Context) {
 
 	defer GlobalDeferHandler(ctx)
 
-	token := ctx.Request.FormValue("_t")
+	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
 		ctx.SetStatusCode(http.StatusBadRequest)
@@ -92,7 +92,7 @@ func NewForm(ctx *context.Context) {
 
 	models.RefreshTableList()
 
-	previous := ctx.Request.FormValue("_previous_")
+	previous := ctx.FormValue("_previous_")
 
 	prevUrlArr := strings.Split(previous, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")

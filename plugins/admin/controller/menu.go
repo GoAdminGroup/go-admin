@@ -26,7 +26,7 @@ func ShowEditMenu(ctx *context.Context) {
 	id := ctx.Query("id")
 	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
@@ -86,14 +86,14 @@ func DeleteMenu(ctx *context.Context) {
 func EditMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	id := ctx.Request.FormValue("id")
-	title := ctx.Request.FormValue("title")
-	parentId := ctx.Request.FormValue("parent_id")
+	id := ctx.FormValue("id")
+	title := ctx.FormValue("title")
+	parentId := ctx.FormValue("parent_id")
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := ctx.Request.FormValue("icon")
-	uri := ctx.Request.FormValue("uri")
+	icon := ctx.FormValue("icon")
+	uri := ctx.FormValue("uri")
 
 	roles := ctx.Request.Form["roles[]"]
 
@@ -118,13 +118,13 @@ func EditMenu(ctx *context.Context) {
 func NewMenu(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
-	title := ctx.Request.FormValue("title")
-	parentId := ctx.Request.FormValue("parent_id")
+	title := ctx.FormValue("title")
+	parentId := ctx.FormValue("parent_id")
 	if parentId == "" {
 		parentId = "0"
 	}
-	icon := ctx.Request.FormValue("icon")
-	uri := ctx.Request.FormValue("uri")
+	icon := ctx.FormValue("icon")
+	uri := ctx.FormValue("uri")
 
 	user := ctx.UserValue["user"].(auth.User)
 
@@ -153,7 +153,7 @@ func MenuOrder(ctx *context.Context) {
 	defer GlobalDeferHandler(ctx)
 
 	var data []map[string]interface{}
-	json.Unmarshal([]byte(ctx.Request.FormValue("_order")), &data)
+	json.Unmarshal([]byte(ctx.FormValue("_order")), &data)
 
 	count := 1
 	for _, v := range data {
@@ -199,7 +199,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(path)
 

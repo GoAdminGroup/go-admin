@@ -12,8 +12,8 @@ import (
 
 func Auth(ctx *context.Context) {
 
-	password := ctx.Request.FormValue("password")
-	username := ctx.Request.FormValue("username")
+	password := ctx.FormValue("password")
+	username := ctx.FormValue("username")
 
 	if user, ok := auth.Check(password, username); ok {
 

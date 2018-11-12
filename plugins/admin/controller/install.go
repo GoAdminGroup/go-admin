@@ -26,11 +26,11 @@ func ShowInstall(ctx *context.Context) {
 
 func CheckDatabase(ctx *context.Context) {
 
-	ip := ctx.Request.FormValue("h")
-	port := ctx.Request.FormValue("po")
-	username := ctx.Request.FormValue("u")
-	password := ctx.Request.FormValue("pa")
-	databaseName := ctx.Request.FormValue("db")
+	ip := ctx.FormValue("h")
+	port := ctx.FormValue("po")
+	username := ctx.FormValue("u")
+	password := ctx.FormValue("pa")
+	databaseName := ctx.FormValue("db")
 
 	SqlDB, err := sql.Open("mysql", username+":"+password+"@tcp("+ip+":"+port+")/"+databaseName+"?charset=utf8mb4")
 	err2 := SqlDB.Ping()
