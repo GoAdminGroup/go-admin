@@ -109,6 +109,20 @@ func (ctx *Context) SetCookie(cookie *http.Cookie) {
 	}
 }
 
+// Query get the query parameter of url.
+func (ctx *Context) Query(key string) string {
+	return ctx.Request.URL.Query().Get(key)
+}
+
+// QueryDefault get the query parameter of url. If it is empty, return the default.
+func (ctx *Context) QueryDefault(key, def string) string {
+	value := ctx.Request.URL.Query().Get(key)
+	if value == "" {
+		return def
+	}
+	return value
+}
+
 // App is the key struct of the package. App as a member of plugin
 // entity contains the request and the corresponding handler. Prefix
 // is the url prefix and MiddlewareList is for control flow.
