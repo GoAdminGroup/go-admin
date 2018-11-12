@@ -17,7 +17,6 @@ import (
 	"regexp"
 	"runtime/debug"
 	"strconv"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 // 全局错误处理
@@ -54,9 +53,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			user := ctx.UserValue["user"].(auth.User)
 
-			prefix := ctx.Request.URL.Query().Get("prefix")
+			prefix := ctx.Query("prefix")
 
-			id := ctx.Request.URL.Query().Get("id")
+			id := ctx.Query("id")
 
 			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
@@ -65,10 +64,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
-			pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
-			sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
-			sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
+			page := ctx.QueryDefault("page", "1")
+			pageSize := ctx.QueryDefault("pageSize", "10")
+			sortField := ctx.QueryDefault("sort", "id")
+			sortType := ctx.QueryDefault("sort_type", "desc")
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -85,9 +84,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Content: alert + template.Get(Config.THEME).Form().
 						SetContent(formData).
 						SetPrefix(Config.PREFIX).
-						SetUrl(Config.PREFIX+"/edit/"+prefix).
+						SetUrl(Config.PREFIX + "/edit/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: description,
 					Title:       title,
@@ -103,7 +102,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 		}
 
 		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
-			prefix := ctx.Request.URL.Query().Get("prefix")
+			prefix := ctx.Query("prefix")
 
 			user := ctx.UserValue["user"].(auth.User)
 
@@ -112,10 +111,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
-			pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
-			sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
-			sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
+			page := ctx.QueryDefault("page", "1")
+			pageSize := ctx.QueryDefault("pageSize", "10")
+			sortField := ctx.QueryDefault("sort", "id")
+			sortType := ctx.QueryDefault("sort_type", "desc")
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -132,9 +131,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Content: alert + template.Get(Config.THEME).Form().
 						SetPrefix(Config.PREFIX).
 						SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
-						SetUrl(Config.PREFIX+"/new/"+prefix).
+						SetUrl(Config.PREFIX + "/new/" + prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 						GetContent(),
 					Description: models.TableList[prefix].Form.Description,
 					Title:       models.TableList[prefix].Form.Title,

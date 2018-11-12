@@ -11,7 +11,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 // 显示新建表单
@@ -20,17 +19,17 @@ func ShowNewForm(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
 
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
-	page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
-	pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
-	sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
-	sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
+	page := ctx.QueryDefault("page", "1")
+	pageSize := ctx.QueryDefault("pageSize", "10")
+	sortField := ctx.QueryDefault("sort", "id")
+	sortType := ctx.QueryDefault("sort_type", "desc")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -74,7 +73,7 @@ func NewForm(ctx *context.Context) {
 		return
 	}
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 
 	form := ctx.Request.MultipartForm
 

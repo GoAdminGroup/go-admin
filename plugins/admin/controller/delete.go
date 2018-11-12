@@ -18,7 +18,7 @@ func DeleteData(ctx *context.Context) {
 	//	return
 	//}
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 
 	id := ctx.Request.FormValue("id")
 

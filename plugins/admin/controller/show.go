@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"path"
 	"strings"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 // 显示列表
@@ -22,12 +21,12 @@ func ShowInfo(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 
-	page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
-	pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
-	sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
-	sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
+	page := ctx.QueryDefault("page", "1")
+	pageSize := ctx.QueryDefault("pageSize", "10")
+	sortField := ctx.QueryDefault("sort", "id")
+	sortType := ctx.QueryDefault("sort_type", "desc")
 
 	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
 		"page":      page,

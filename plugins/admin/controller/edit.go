@@ -11,7 +11,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 // 显示表单
@@ -21,9 +20,9 @@ func ShowForm(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 
-	id := ctx.Request.URL.Query().Get("id")
+	id := ctx.Query("id")
 
 	formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
@@ -32,10 +31,10 @@ func ShowForm(ctx *context.Context) {
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
-	page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
-	pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
-	sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
-	sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
+	page := ctx.QueryDefault("page", "1")
+	pageSize := ctx.QueryDefault("pageSize", "10")
+	sortField := ctx.QueryDefault("sort", "id")
+	sortType := ctx.QueryDefault("sort_type", "desc")
 
 	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -78,7 +77,7 @@ func EditForm(ctx *context.Context) {
 		return
 	}
 
-	prefix := ctx.Request.URL.Query().Get("prefix")
+	prefix := ctx.Query("prefix")
 	user := ctx.UserValue["user"].(auth.User)
 
 	form := ctx.Request.MultipartForm

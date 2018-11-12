@@ -23,7 +23,7 @@ func ShowMenu(ctx *context.Context) {
 
 // 显示编辑菜单
 func ShowEditMenu(ctx *context.Context) {
-	id := ctx.Request.URL.Query().Get("id")
+	id := ctx.Query("id")
 	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
 	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
@@ -66,7 +66,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 // 删除菜单
 func DeleteMenu(ctx *context.Context) {
-	id := ctx.Request.URL.Query().Get("id")
+	id := ctx.Query("id")
 	user := ctx.UserValue["user"].(auth.User)
 
 	buffer := new(bytes.Buffer)
