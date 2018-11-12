@@ -64,7 +64,7 @@ func NewContext(req *http.Request) *Context {
 func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 	ctx.Response.StatusCode = code
 	for key, head := range Header {
-		ctx.Response.Header.Add(key, head)
+		ctx.AddHeader(key, head)
 	}
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
@@ -73,7 +73,7 @@ func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 // It also sets the Content-Type as "application/json".
 func (ctx *Context) Json(code int, Body map[string]interface{}) {
 	ctx.Response.StatusCode = code
-	ctx.Response.Header.Add("Content-Type", "application/json")
+	ctx.AddHeader("Content-Type", "application/json")
 	BodyStr, err := json.Marshal(Body)
 	if err != nil {
 		panic(err)
@@ -94,7 +94,7 @@ func (ctx *Context) SetStatusCode(code int) {
 
 // SetStatusCode save the given content type header into the response header.
 func (ctx *Context) SetContentType(contentType string) {
-	ctx.Response.Header.Add("Content-Type", contentType)
+	ctx.AddHeader("Content-Type", contentType)
 }
 
 // LocalIP return the request client ip.
@@ -105,7 +105,7 @@ func (ctx *Context) LocalIP() string {
 // SetCookie save the given cookie obj into the response Set-Cookie header.
 func (ctx *Context) SetCookie(cookie *http.Cookie) {
 	if v := cookie.String(); v != "" {
-		ctx.Response.Header.Add("Set-Cookie", v)
+		ctx.AddHeader("Set-Cookie", v)
 	}
 }
 
@@ -135,7 +135,7 @@ func (ctx *Context) FormValue(key string) string {
 
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
-	ctx.Response.Header.Add(key, value)
+	ctx.AddHeader(key, value)
 }
 
 // App is the key struct of the package. App as a member of plugin

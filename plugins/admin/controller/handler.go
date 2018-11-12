@@ -69,7 +69,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			sortField := ctx.QueryDefault("sort", "id")
 			sortType := ctx.QueryDefault("sort_type", "desc")
 
-			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+			ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 
@@ -97,7 +97,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
+			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 
@@ -116,7 +116,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 			sortField := ctx.QueryDefault("sort", "id")
 			sortType := ctx.QueryDefault("sort_type", "desc")
 
-			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+			ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 
@@ -144,7 +144,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 				MiniLogo:      Config.MINILOGO,
 			})
 			ctx.WriteString(buf.String())
-			ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
+			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 

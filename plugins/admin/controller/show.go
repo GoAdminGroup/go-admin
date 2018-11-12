@@ -55,7 +55,7 @@ func ShowInfo(ctx *context.Context) {
 		SetFooter(paginator.GetContent()).
 		GetContent()
 
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{

@@ -20,7 +20,7 @@ func SetPageContent(ctx *context.Context, c func() types.Panel) {
 
 	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{

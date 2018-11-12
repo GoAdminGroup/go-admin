@@ -37,7 +37,7 @@ func Auth(ctx *context.Context) {
 
 func Logout(ctx *context.Context) {
 	auth.DelCookie(ctx)
-	ctx.Response.Header.Add("Location", Config.PREFIX+"/login")
+	ctx.AddHeader("Location", Config.PREFIX+"/login")
 	ctx.SetStatusCode(302)
 }
 
@@ -52,5 +52,5 @@ func ShowLogin(ctx *context.Context) {
 	}{Config.PREFIX}))
 	ctx.WriteString(buf.String())
 
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 }

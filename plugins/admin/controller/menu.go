@@ -31,7 +31,7 @@ func ShowEditMenu(ctx *context.Context) {
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	user := ctx.UserValue["user"].(auth.User)
 
 	js := `<script>
@@ -110,8 +110,8 @@ func EditMenu(ctx *context.Context) {
 	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
 
 	GetMenuInfoPanel(ctx)
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/menu")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/menu")
 }
 
 // 新建菜单
@@ -144,8 +144,8 @@ func NewMenu(ctx *context.Context) {
 	menu.SetGlobalMenu(user)
 
 	GetMenuInfoPanel(ctx)
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
-	ctx.Response.Header.Add("X-PJAX-URL", Config.PREFIX+"/menu")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/menu")
 }
 
 // 修改菜单顺序
@@ -203,7 +203,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(path)
 
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 

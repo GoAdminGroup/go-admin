@@ -21,7 +21,7 @@ func ShowInstall(ctx *context.Context) {
 	//fmt.Println(rs2[0]["Field"])
 
 	ctx.WriteString(buffer.String())
-	ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 }
 
 func CheckDatabase(ctx *context.Context) {
