@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"runtime/debug"
 	"strconv"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 )
 
 // 全局错误处理
@@ -64,23 +65,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := ctx.Request.URL.Query().Get("page")
-			if page == "" {
-				page = "1"
-			}
-			pageSize := ctx.Request.URL.Query().Get("pageSize")
-			if pageSize == "" {
-				pageSize = "10"
-			}
-
-			sortField := ctx.Request.URL.Query().Get("sort")
-			if sortField == "" {
-				sortField = "id"
-			}
-			sortType := ctx.Request.URL.Query().Get("sort_type")
-			if sortType == "" {
-				sortType = "desc"
-			}
+			page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
+			pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
+			sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
+			sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 
@@ -124,23 +112,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := ctx.Request.URL.Query().Get("page")
-			if page == "" {
-				page = "1"
-			}
-			pageSize := ctx.Request.URL.Query().Get("pageSize")
-			if pageSize == "" {
-				pageSize = "10"
-			}
-
-			sortField := ctx.Request.URL.Query().Get("sort")
-			if sortField == "" {
-				sortField = "id"
-			}
-			sortType := ctx.Request.URL.Query().Get("sort_type")
-			if sortType == "" {
-				sortType = "desc"
-			}
+			page := modules.SetDefault(ctx.Request.URL.Query().Get("page"), "1")
+			pageSize := modules.SetDefault(ctx.Request.URL.Query().Get("pageSize"), "10")
+			sortField := modules.SetDefault(ctx.Request.URL.Query().Get("sort"), "id")
+			sortType := modules.SetDefault(ctx.Request.URL.Query().Get("sort_type"), "desc")
 
 			ctx.Response.Header.Add("Content-Type", "text/html; charset=utf-8")
 

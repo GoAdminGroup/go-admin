@@ -46,3 +46,10 @@ func Random(strings []string) ([]string, error) {
 	}
 	return str, nil
 }
+
+func SetDefault(source, def string) string {
+	if source == "" {
+		return def
+	}
+	return source
+}
