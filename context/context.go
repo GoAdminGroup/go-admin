@@ -123,6 +123,16 @@ func (ctx *Context) QueryDefault(key, def string) string {
 	return value
 }
 
+// Headers get the value of request headers key.
+func (ctx *Context) Headers(key string) string {
+	return ctx.Request.Header.Get(key)
+}
+
+// FormValue get the value of request form key.
+func (ctx *Context) FormValue(key string) string {
+	return ctx.Request.FormValue(key)
+}
+
 // App is the key struct of the package. App as a member of plugin
 // entity contains the request and the corresponding handler. Prefix
 // is the url prefix and MiddlewareList is for control flow.
