@@ -49,9 +49,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			Content: template.Get(Config.THEME).Form().
 				SetContent(formData).
 				SetPrefix(Config.PREFIX).
-				SetUrl(Config.PREFIX+"/menu/edit").
+				SetUrl(Config.PREFIX + "/menu/edit").
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX+"/menu").
+				SetInfoUrl(Config.PREFIX + "/menu").
 				GetContent() + template2.HTML(js),
 			Description: description,
 			Title:       title,
@@ -69,17 +69,14 @@ func DeleteMenu(ctx *context.Context) {
 	id := ctx.Query("id")
 	user := ctx.UserValue["user"].(auth.User)
 
-	buffer := new(bytes.Buffer)
-
 	connections.GetConnection().Exec("delete from goadmin_menu where id = ?", id)
 
 	menu.SetGlobalMenu(user)
 
-	ctx.WriteString(buffer.String())
-
-	ctx.SetStatusCode(http.StatusOK)
-	ctx.SetContentType("application/json")
-	ctx.WriteString(`{"code":200, "msg":"ok"}`)
+	ctx.Json(http.StatusOK, map[string]interface{}{
+		"code": 200,
+		"msg":  "ok",
+	})
 }
 
 // 编辑菜单
@@ -170,9 +167,10 @@ func MenuOrder(ctx *context.Context) {
 	}
 	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
 
-	ctx.SetStatusCode(http.StatusOK)
-	ctx.SetContentType("application/json")
-	ctx.WriteString(`{"code":200, "msg":"ok"}`)
+	ctx.Json(http.StatusOK, map[string]interface{}{
+		"code": 200,
+		"msg":  "ok",
+	})
 	return
 }
 

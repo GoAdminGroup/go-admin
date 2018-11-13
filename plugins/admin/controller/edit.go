@@ -72,8 +72,10 @@ func EditForm(ctx *context.Context) {
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		ctx.SetStatusCode(http.StatusBadRequest)
-		ctx.WriteString(`{"code":400, "msg":"编辑失败"}`)
+		ctx.Json(http.StatusBadRequest, map[string]interface{}{
+			"code": 400,
+			"msg": "编辑失败",
+		})
 		return
 	}
 

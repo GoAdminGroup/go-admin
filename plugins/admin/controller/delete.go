@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"net/http"
 )
 
 func DeleteData(ctx *context.Context) {
@@ -26,6 +27,10 @@ func DeleteData(ctx *context.Context) {
 
 	newToken := auth.TokenHelper.AddToken()
 
-	ctx.WriteString(`{"code":200, "msg":"删除成功", "data":"` + newToken + `"}`)
+	ctx.Json(http.StatusOK, map[string]interface{}{
+		"code": 200,
+		"msg":  "删除成功",
+		"data": newToken,
+	})
 	return
 }

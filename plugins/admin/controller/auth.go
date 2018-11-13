@@ -2,7 +2,6 @@ package controller
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -47,10 +46,13 @@ func ShowLogin(ctx *context.Context) {
 
 	tmpl, name := template.GetComp("login").GetTemplate()
 	buf := new(bytes.Buffer)
-	fmt.Println(tmpl.ExecuteTemplate(buf, name, struct {
+	if err := tmpl.ExecuteTemplate(buf, name, struct {
 		AssertRootUrl string
-	}{Config.PREFIX}))
-	ctx.WriteString(buf.String())
+	}{Config.PREFIX}); err == nil {
+		ctx.WriteString(buf.String())
+	} else {
+		ctx.WriteString("resolve template error (；′⌒`)")
+	}
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 }
