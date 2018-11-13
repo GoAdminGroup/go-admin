@@ -3,9 +3,9 @@ package mssql
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
+	_ "github.com/denisenkom/go-mssqldb"
 	"net/url"
 	"sync"
 )

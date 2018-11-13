@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/labstack/echo"
 	_ "github.com/chenhg5/go-admin/adapter/echo"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/labstack/echo"
 )
 
 func main() {

@@ -3,9 +3,9 @@ package postgresql
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
+	_ "github.com/lib/pq"
 	"net/url"
 	"strconv"
 	"strings"

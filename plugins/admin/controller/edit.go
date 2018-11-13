@@ -74,7 +74,7 @@ func EditForm(ctx *context.Context) {
 	if !auth.TokenHelper.CheckToken(token) {
 		ctx.Json(http.StatusBadRequest, map[string]interface{}{
 			"code": 400,
-			"msg": "编辑失败",
+			"msg":  "编辑失败",
 		})
 		return
 	}

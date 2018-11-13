@@ -4,29 +4,29 @@ import (
 	"bytes"
 	"errors"
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	template2 "html/template"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/template"
-	template2 "html/template"
-	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type Http struct {
 }
 
-func init()  {
+func init() {
 	engine.Register(new(Http))
 }
 
 func (ht *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *http.ServeMux
-		ok     bool
+		ok  bool
 	)
 	if eng, ok = router.(*http.ServeMux); !ok {
 		return errors.New("wrong parameter")
@@ -72,7 +72,6 @@ func ConstructNetHttpRequest(reqs []context.Path) map[string][]context.Path {
 	}
 	return NetHttpRequest
 }
-
 
 func (ht *Http) Content(contextInterface interface{}, c types.GetPanel) {
 

@@ -3,31 +3,31 @@ package gin
 import (
 	"bytes"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/gin-gonic/gin"
 	template2 "html/template"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/engine"
 )
 
 type Gin struct {
 }
 
-func init()  {
+func init() {
 	engine.Register(new(Gin))
 }
 
 func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *gin.Engine
-		ok     bool
+		ok  bool
 	)
 	if eng, ok = router.(*gin.Engine); !ok {
 		return errors.New("wrong parameter")

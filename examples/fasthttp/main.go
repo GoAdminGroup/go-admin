@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/buaazp/fasthttprouter"
-	"github.com/valyala/fasthttp"
 	_ "github.com/chenhg5/go-admin/adapter/fasthttp"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
@@ -10,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/valyala/fasthttp"
 )
 
 func main() {

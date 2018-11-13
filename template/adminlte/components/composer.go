@@ -20,7 +20,7 @@ func ComposeHtml(compo interface{}, templateName ...string) template.HTML {
 		"langHtml": language.GetFromHtml,
 	}).Parse(text)
 	if err != nil {
-		fmt.Println("ComposeHtml Error:", err)
+		panic("ComposeHtml Error:" + err.Error())
 	}
 	buffer := new(bytes.Buffer)
 

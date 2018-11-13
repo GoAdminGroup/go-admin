@@ -2,9 +2,9 @@ package sqlite
 
 import (
 	"database/sql"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
+	_ "github.com/mattn/go-sqlite3"
 	"sync"
 )
 

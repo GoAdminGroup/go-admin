@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	gctx "github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -15,7 +16,6 @@ import (
 	template2 "html/template"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/engine"
 )
 
 type Beego struct {

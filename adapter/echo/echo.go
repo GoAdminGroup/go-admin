@@ -3,31 +3,31 @@ package echo
 import (
 	"bytes"
 	"errors"
-	"github.com/labstack/echo"
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/plugins"
-	"strings"
 	"github.com/chenhg5/go-admin/engine"
-	"net/http"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/template"
-	template2 "html/template"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/labstack/echo"
+	template2 "html/template"
+	"net/http"
+	"strings"
 )
 
 type Echo struct {
 }
 
-func init()  {
+func init() {
 	engine.Register(new(Echo))
 }
 
 func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *echo.Echo
-		ok     bool
+		ok  bool
 	)
 	if eng, ok = router.(*echo.Echo); !ok {
 		return errors.New("wrong parameter")
@@ -64,7 +64,6 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 
 	return nil
 }
-
 
 func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 

@@ -4,33 +4,33 @@ import (
 	"bytes"
 	"errors"
 	"github.com/buaazp/fasthttprouter"
-	"github.com/valyala/fasthttp"
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/engine"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/valyala/fasthttp"
+	template2 "html/template"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/template"
-	template2 "html/template"
-	"github.com/chenhg5/go-admin/modules/menu"
 )
 
 type Fasthttp struct {
 }
 
-func init()  {
+func init() {
 	engine.Register(new(Fasthttp))
 }
 
 func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *fasthttprouter.Router
-		ok     bool
+		ok  bool
 	)
 	if eng, ok = router.(*fasthttprouter.Router); !ok {
 		return errors.New("wrong parameter")
@@ -129,7 +129,6 @@ func (r *netHTTPBody) Close() error {
 	r.b = r.b[:0]
 	return nil
 }
-
 
 func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 

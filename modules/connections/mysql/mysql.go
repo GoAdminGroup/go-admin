@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/connections/converter"
 	"github.com/chenhg5/go-admin/modules/connections/performer"
+	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )
 

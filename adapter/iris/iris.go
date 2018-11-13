@@ -3,18 +3,18 @@ package iris
 import (
 	"bytes"
 	"errors"
-	"github.com/kataras/iris"
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/plugins"
-	"strings"
 	"github.com/chenhg5/go-admin/engine"
-	"net/http"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/template"
-	template2 "html/template"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/template"
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/kataras/iris"
+	template2 "html/template"
+	"net/http"
+	"strings"
 )
 
 type Iris struct {

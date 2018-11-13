@@ -3,14 +3,14 @@ package controller
 import (
 	"bytes"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
-	"github.com/mgutz/ansi"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/go-sql-driver/mysql"
+	"github.com/mgutz/ansi"
 	template2 "html/template"
 	"log"
 	"net/http"
@@ -84,9 +84,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Content: alert + template.Get(Config.THEME).Form().
 						SetContent(formData).
 						SetPrefix(Config.PREFIX).
-						SetUrl(Config.PREFIX + "/edit/" + prefix).
+						SetUrl(Config.PREFIX+"/edit/"+prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 						GetContent(),
 					Description: description,
 					Title:       title,
@@ -131,9 +131,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 					Content: alert + template.Get(Config.THEME).Form().
 						SetPrefix(Config.PREFIX).
 						SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
-						SetUrl(Config.PREFIX + "/new/" + prefix).
+						SetUrl(Config.PREFIX+"/new/"+prefix).
 						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 						GetContent(),
 					Description: models.TableList[prefix].Form.Description,
 					Title:       models.TableList[prefix].Form.Title,
