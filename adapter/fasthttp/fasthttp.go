@@ -181,7 +181,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 
 	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(string(ctx.Request.Header.Peek("X-PJAX")) == "true")
 
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{

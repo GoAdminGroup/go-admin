@@ -125,7 +125,7 @@ func (ctx *Context) QueryDefault(key, def string) string {
 
 // Headers get the value of request headers key.
 func (ctx *Context) Headers(key string) string {
-	return ctx.Headers(key)
+	return ctx.Response.Header.Get(key)
 }
 
 // FormValue get the value of request form key.
