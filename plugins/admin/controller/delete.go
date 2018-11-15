@@ -9,8 +9,6 @@ import (
 
 func DeleteData(ctx *context.Context) {
 
-	defer GlobalDeferHandler(ctx)
-
 	//token := ctx.FormValue("_t")
 	//
 	//if !auth.TokenHelper.CheckToken(token) {

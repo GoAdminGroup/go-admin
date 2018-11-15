@@ -10,7 +10,7 @@ import (
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 
-	app.Group(prefix)
+	app.Group(prefix, GlobalErrorHandler)
 	{
 		// auth
 		app.GET("/login", controller.ShowLogin)
@@ -45,7 +45,7 @@ func InitRouter(prefix string) *context.App {
 			app.GET("/menu", controller.ShowMenu)
 			app.POST("/menu/delete", controller.DeleteMenu)
 			app.POST("/menu/new", controller.NewMenu)
-			//app.GET("/menu/new", controller.ShowMenu) // TODO: this is a bug of the tire
+			//app.GET("/menu/new", controller.ShowMenu) // TODO: this will cause a bug of the tire
 			app.POST("/menu/edit", controller.EditMenu)
 			app.GET("/menu/edit/show", controller.ShowEditMenu)
 			app.POST("/menu/order", controller.MenuOrder)
@@ -61,4 +61,12 @@ func InitRouter(prefix string) *context.App {
 	}
 
 	return app
+}
+
+func GlobalErrorHandler(h context.Handler) context.Handler {
+	return func(ctx *context.Context) {
+		defer controller.GlobalDeferHandler(ctx)
+		h(ctx)
+		return
+	}
 }

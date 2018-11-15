@@ -16,7 +16,6 @@ import (
 
 // 显示菜单
 func ShowMenu(ctx *context.Context) {
-	defer GlobalDeferHandler(ctx)
 	GetMenuInfoPanel(ctx)
 	return
 }
@@ -81,8 +80,6 @@ func DeleteMenu(ctx *context.Context) {
 
 // 编辑菜单
 func EditMenu(ctx *context.Context) {
-	defer GlobalDeferHandler(ctx)
-
 	id := ctx.FormValue("id")
 	title := ctx.FormValue("title")
 	parentId := ctx.FormValue("parent_id")
@@ -113,7 +110,6 @@ func EditMenu(ctx *context.Context) {
 
 // 新建菜单
 func NewMenu(ctx *context.Context) {
-	defer GlobalDeferHandler(ctx)
 
 	title := ctx.FormValue("title")
 	parentId := ctx.FormValue("parent_id")
@@ -147,7 +143,6 @@ func NewMenu(ctx *context.Context) {
 
 // 修改菜单顺序
 func MenuOrder(ctx *context.Context) {
-	defer GlobalDeferHandler(ctx)
 
 	var data []map[string]interface{}
 	json.Unmarshal([]byte(ctx.FormValue("_order")), &data)

@@ -65,6 +65,7 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 }
 
 // GetDataFromDatabase query the data set.
+// TODO: set return param as a struct
 func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaginatorAttribute, string, string) {
 
 	pageInt, _ := strconv.Atoi(queryParam["page"])

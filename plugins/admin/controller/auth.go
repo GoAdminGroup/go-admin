@@ -42,8 +42,6 @@ func Logout(ctx *context.Context) {
 
 func ShowLogin(ctx *context.Context) {
 
-	defer GlobalDeferHandler(ctx)
-
 	tmpl, name := template.GetComp("login").GetTemplate()
 	buf := new(bytes.Buffer)
 	if err := tmpl.ExecuteTemplate(buf, name, struct {

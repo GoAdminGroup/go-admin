@@ -9,8 +9,6 @@ import (
 
 func ShowInstall(ctx *context.Context) {
 
-	defer GlobalDeferHandler(ctx)
-
 	buffer := new(bytes.Buffer)
 	//template.GetInstallPage(buffer)
 

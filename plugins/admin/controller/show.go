@@ -17,8 +17,6 @@ import (
 // 显示列表
 func ShowInfo(ctx *context.Context) {
 
-	defer GlobalDeferHandler(ctx)
-
 	user := ctx.UserValue["user"].(auth.User)
 
 	prefix := ctx.Query("prefix")

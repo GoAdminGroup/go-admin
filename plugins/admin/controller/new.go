@@ -15,7 +15,6 @@ import (
 
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
-	defer GlobalDeferHandler(ctx)
 
 	user := ctx.UserValue["user"].(auth.User)
 
@@ -62,8 +61,6 @@ func ShowNewForm(ctx *context.Context) {
 
 // 新建数据
 func NewForm(ctx *context.Context) {
-
-	defer GlobalDeferHandler(ctx)
 
 	token := ctx.FormValue("_t")
 

@@ -16,8 +16,6 @@ import (
 // 显示表单
 func ShowForm(ctx *context.Context) {
 
-	defer GlobalDeferHandler(ctx)
-
 	user := ctx.UserValue["user"].(auth.User)
 
 	prefix := ctx.Query("prefix")
@@ -66,8 +64,6 @@ func ShowForm(ctx *context.Context) {
 
 // 编辑数据
 func EditForm(ctx *context.Context) {
-
-	defer GlobalDeferHandler(ctx)
 
 	token := ctx.FormValue("_t")
 
