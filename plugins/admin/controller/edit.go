@@ -49,7 +49,7 @@ func ShowForm(ctx *context.Context) {
 				SetPrefix(Config.PREFIX).
 				SetUrl(Config.PREFIX + "/edit/" + prefix).
 				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
+				SetInfoUrl(Config.PREFIX + "/info/" + prefix + GetRouteParameterString(page, pageSize, sortType, sortField)).
 				GetContent(),
 			Description: description,
 			Title:       title,

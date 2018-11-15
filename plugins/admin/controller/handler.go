@@ -118,7 +118,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+			queryParam := GetRouteParameterString(page, pageSize, sortType, sortField)
 
 			buf := new(bytes.Buffer)
 			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
@@ -148,9 +148,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		ctx.SetStatusCode(http.StatusInternalServerError)
-		ctx.SetContentType("application/json")
-		ctx.WriteString(`{"code":500, "msg":"` + errMsg + `"}`)
+		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
+			"code": 500,
+			"msg": errMsg,
+		})
 		return
 	}
 }

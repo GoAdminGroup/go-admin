@@ -10,6 +10,10 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"sync"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/menu"
+	"goAdmin/modules/config"
+	"bytes"
 )
 
 // Template is the interface which contains methods of ui components.
@@ -113,4 +117,21 @@ func AddComp(name string, comp Component) {
 		panic("add component twice " + name)
 	}
 	CompMap[name] = comp
+}
+
+func Excecute(tmpl *template.Template, tmplName string, user auth.User, panel types.Panel, Config config.Config) *bytes.Buffer {
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+		User: user,
+		Menu: menu.GetGlobalMenu(user),
+		System: types.SystemInfo{
+			Version: "0.0.1",
+		},
+		Panel:         panel,
+		AssertRootUrl: Config.PREFIX,
+		Title:         Config.TITLE,
+		Logo:          Config.LOGO,
+		MiniLogo:      Config.MINILOGO,
+	})
+	return buf
 }
