@@ -53,7 +53,7 @@ func main() {
 			generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
 			generateFlag.StringVar(&outputPath, "o", ".", "database output path")
 			generateFlag.StringVar(&name, "n", "", "database name")
-			generateFlag.StringVar(&packageName, "Pa", "main", "package name")
+			generateFlag.StringVar(&packageName, "pa", "main", "package name")
 			generateFlag.Parse(os.Args[2:])
 
 			// step 1. test connection
