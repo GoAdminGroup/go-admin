@@ -12,7 +12,7 @@ import (
 	"sync"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"goAdmin/modules/config"
+	"github.com/chenhg5/go-admin/modules/config"
 	"bytes"
 )
 

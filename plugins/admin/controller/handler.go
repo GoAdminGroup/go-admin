@@ -73,29 +73,17 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
 
-			buf := new(bytes.Buffer)
-			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-				User: user,
-				Menu: menu.GetGlobalMenu(user),
-				System: types.SystemInfo{
-					"0.0.1",
-				},
-				Panel: types.Panel{
-					Content: alert + template.Get(Config.THEME).Form().
-						SetContent(formData).
-						SetPrefix(Config.PREFIX).
-						SetUrl(Config.PREFIX+"/edit/"+prefix).
-						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
-						GetContent(),
-					Description: description,
-					Title:       title,
-				},
-				AssertRootUrl: Config.PREFIX,
-				Title:         Config.TITLE,
-				Logo:          Config.LOGO,
-				MiniLogo:      Config.MINILOGO,
-			})
+			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+				Content: alert + template.Get(Config.THEME).Form().
+					SetContent(formData).
+					SetPrefix(Config.PREFIX).
+					SetUrl(Config.PREFIX+"/edit/"+prefix).
+					SetToken(auth.TokenHelper.AddToken()).
+					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+					GetContent(),
+				Description: description,
+				Title:       title,
+			}, Config)
 			ctx.WriteString(buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
