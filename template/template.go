@@ -5,15 +5,15 @@
 package template
 
 import (
+	"bytes"
+	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/chenhg5/go-admin/template/login"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/modules/config"
-	"bytes"
 )
 
 // Template is the interface which contains methods of ui components.

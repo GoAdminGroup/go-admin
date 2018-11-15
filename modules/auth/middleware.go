@@ -3,9 +3,9 @@ package auth
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/db"
 	"regexp"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/db"
 )
 
 type User struct {
