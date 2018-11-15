@@ -111,7 +111,7 @@ func (ctx *Context) SetCookie(cookie *http.Cookie) {
 
 // Query get the query parameter of url.
 func (ctx *Context) Query(key string) string {
-	return ctx.Query(key)
+	return ctx.Request.URL.Query().Get(key)
 }
 
 // QueryDefault get the query parameter of url. If it is empty, return the default.
