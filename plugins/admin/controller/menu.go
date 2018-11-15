@@ -37,29 +37,18 @@ func ShowEditMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
-	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content: template.Get(Config.THEME).Form().
-				SetContent(formData).
-				SetPrefix(Config.PREFIX).
-				SetUrl(Config.PREFIX+"/menu/edit").
-				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX+"/menu").
-				GetContent() + template2.HTML(js),
-			Description: description,
-			Title:       title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content: template.Get(Config.THEME).Form().
+			SetContent(formData).
+			SetPrefix(Config.PREFIX).
+			SetUrl(Config.PREFIX+"/menu/edit").
+			SetToken(auth.TokenHelper.AddToken()).
+			SetInfoUrl(Config.PREFIX+"/menu").
+			GetContent() + template2.HTML(js),
+		Description: description,
+		Title:       title,
+	}, Config)
+
 	ctx.WriteString(buf.String())
 }
 

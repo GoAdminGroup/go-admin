@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
@@ -62,23 +61,12 @@ func ShowInfo(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content:     box,
-			Description: description,
-			Title:       title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content:     box,
+		Description: description,
+		Title:       title,
+	}, Config)
+
 	ctx.WriteString(buf.String())
 }
 

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -32,30 +31,18 @@ func ShowNewForm(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content: template.Get(Config.THEME).Form().
-				SetPrefix(Config.PREFIX).
-				SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
-				SetUrl(Config.PREFIX + "/new/" + prefix).
-				SetToken(auth.TokenHelper.AddToken()).
-				SetTitle("New").
-				SetInfoUrl(Config.PREFIX + "/info/" + prefix + "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType).
-				GetContent(),
-			Description: models.TableList[prefix].Form.Description,
-			Title:       models.TableList[prefix].Form.Title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content: template.Get(Config.THEME).Form().
+			SetPrefix(Config.PREFIX).
+			SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
+			SetUrl(Config.PREFIX + "/new/" + prefix).
+			SetToken(auth.TokenHelper.AddToken()).
+			SetTitle("New").
+			SetInfoUrl(Config.PREFIX + "/info/" + prefix + GetRouteParameterString(page, pageSize, sortType, sortField)).
+			GetContent(),
+		Description: models.TableList[prefix].Form.Description,
+		Title:       models.TableList[prefix].Form.Title,
+	}, Config)
 	ctx.WriteString(buf.String())
 }
 
@@ -123,8 +110,6 @@ func NewForm(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(previous)
 
-	buffer := new(bytes.Buffer)
-
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sort)
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
@@ -150,22 +135,11 @@ func NewForm(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
-	tmpl.ExecuteTemplate(buffer, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content:     box,
-			Description: description,
-			Title:       title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content:     box,
+		Description: description,
+		Title:       title,
+	}, Config)
 
 	ctx.WriteString(buffer.String())
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")

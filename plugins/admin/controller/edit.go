@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -36,29 +35,17 @@ func ShowForm(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content: template.Get(Config.THEME).Form().
-				SetContent(formData).
-				SetPrefix(Config.PREFIX).
-				SetUrl(Config.PREFIX + "/edit/" + prefix).
-				SetToken(auth.TokenHelper.AddToken()).
-				SetInfoUrl(Config.PREFIX + "/info/" + prefix + GetRouteParameterString(page, pageSize, sortType, sortField)).
-				GetContent(),
-			Description: description,
-			Title:       title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content: template.Get(Config.THEME).Form().
+			SetContent(formData).
+			SetPrefix(Config.PREFIX).
+			SetUrl(Config.PREFIX + "/edit/" + prefix).
+			SetToken(auth.TokenHelper.AddToken()).
+			SetInfoUrl(Config.PREFIX + "/info/" + prefix + GetRouteParameterString(page, pageSize, sortType, sortField)).
+			GetContent(),
+		Description: description,
+		Title:       title,
+	}, Config)
 	ctx.WriteString(buf.String())
 }
 
@@ -154,23 +141,11 @@ func EditForm(ctx *context.Context) {
 		SetFooter(paginator.GetContent()).
 		GetContent()
 
-	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content:     box,
-			Description: description,
-			Title:       title,
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content:     box,
+		Description: description,
+		Title:       title,
+	}, Config)
 
 	ctx.WriteString(buf.String())
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
@@ -108,29 +107,17 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			queryParam := GetRouteParameterString(page, pageSize, sortType, sortField)
 
-			buf := new(bytes.Buffer)
-			tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-				User: user,
-				Menu: menu.GetGlobalMenu(user),
-				System: types.SystemInfo{
-					"0.0.1",
-				},
-				Panel: types.Panel{
-					Content: alert + template.Get(Config.THEME).Form().
-						SetPrefix(Config.PREFIX).
-						SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
-						SetUrl(Config.PREFIX+"/new/"+prefix).
-						SetToken(auth.TokenHelper.AddToken()).
-						SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
-						GetContent(),
-					Description: models.TableList[prefix].Form.Description,
-					Title:       models.TableList[prefix].Form.Title,
-				},
-				AssertRootUrl: Config.PREFIX,
-				Title:         Config.TITLE,
-				Logo:          Config.LOGO,
-				MiniLogo:      Config.MINILOGO,
-			})
+			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+				Content: alert + template.Get(Config.THEME).Form().
+					SetPrefix(Config.PREFIX).
+					SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
+					SetUrl(Config.PREFIX+"/new/"+prefix).
+					SetToken(auth.TokenHelper.AddToken()).
+					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+					GetContent(),
+				Description: models.TableList[prefix].Form.Description,
+				Title:       models.TableList[prefix].Form.Title,
+			}, Config)
 			ctx.WriteString(buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
