@@ -26,7 +26,7 @@ func ShowEditMenu(ctx *context.Context) {
 	id := ctx.Query("id")
 	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
@@ -197,7 +197,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(path)
 

@@ -106,8 +106,8 @@ func (*Theme) Image() types.ImgAttribute {
 func (*Theme) SmallBox() types.SmallBoxAttribute {
 	return &components.SmallBoxAttribute{
 		Name:  "smallbox",
-		Title: "标题",
-		Value: "值",
+		Title: "title",
+		Value: "value",
 		Url:   "/",
 		Color: "aqua",
 	}
@@ -116,7 +116,7 @@ func (*Theme) SmallBox() types.SmallBoxAttribute {
 func (*Theme) InfoBox() types.InfoBoxAttribute {
 	return &components.InfoBoxAttribute{
 		Name:   "infobox",
-		Text:   "标题",
+		Text:   "title",
 		Icon:   "ion-ios-cart-outline",
 		Number: "90",
 		Color:  "red",

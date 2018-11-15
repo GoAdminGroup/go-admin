@@ -59,7 +59,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-			tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
@@ -106,7 +106,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			user := ctx.UserValue["user"].(auth.User)
 
-			tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)

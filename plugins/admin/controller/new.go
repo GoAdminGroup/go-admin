@@ -21,7 +21,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
@@ -132,7 +132,7 @@ func NewForm(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(true)
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 
 	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
 	table := dataTable.GetContent()

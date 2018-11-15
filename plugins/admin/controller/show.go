@@ -41,7 +41,7 @@ func ShowInfo(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sortField)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	tmpl, tmplName := template.Get("adminlte").GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
@@ -79,7 +79,7 @@ func ShowInfo(ctx *context.Context) {
 
 func Assert(ctx *context.Context) {
 	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), Config.PREFIX, "", 1)
-	data, err := template.Get("adminlte").GetAsset(filepath)
+	data, err := template.Get(Config.THEME).GetAsset(filepath)
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
 
