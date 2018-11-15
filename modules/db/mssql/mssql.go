@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/denisenkom/go-mssqldb"
 	"net/url"
 	"sync"

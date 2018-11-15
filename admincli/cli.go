@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/connections/mysql"
+	"github.com/chenhg5/go-admin/modules/db/mysql"
 	"io/ioutil"
 	"os"
 	"path"

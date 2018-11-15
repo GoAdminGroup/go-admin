@@ -3,10 +3,10 @@ package db
 import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/connections/mssql"
-	"github.com/chenhg5/go-admin/modules/connections/mysql"
-	"github.com/chenhg5/go-admin/modules/connections/postgresql"
-	"github.com/chenhg5/go-admin/modules/connections/sqlite"
+	"github.com/chenhg5/go-admin/modules/db/mssql"
+	"github.com/chenhg5/go-admin/modules/db/mysql"
+	"github.com/chenhg5/go-admin/modules/db/postgresql"
+	"github.com/chenhg5/go-admin/modules/db/sqlite"
 )
 
 type Connection interface {

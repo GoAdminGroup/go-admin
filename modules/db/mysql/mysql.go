@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/connections/converter"
-	"github.com/chenhg5/go-admin/modules/connections/performer"
+	"github.com/chenhg5/go-admin/modules/db/converter"
+	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )
