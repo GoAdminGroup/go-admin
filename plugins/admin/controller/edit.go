@@ -122,8 +122,6 @@ func EditForm(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
-
 	dataTable := template.Get(Config.THEME).
 		DataTable().
 		SetInfoList(infoList).
@@ -141,6 +139,7 @@ func EditForm(ctx *context.Context) {
 		SetFooter(paginator.GetContent()).
 		GetContent()
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: description,

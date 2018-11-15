@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
@@ -25,8 +24,6 @@ func ShowEditMenu(ctx *context.Context) {
 	id := ctx.Query("id")
 	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
@@ -37,13 +34,14 @@ func ShowEditMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
-			SetUrl(Config.PREFIX+"/menu/edit").
+			SetUrl(Config.PREFIX + "/menu/edit").
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX+"/menu").
+			SetInfoUrl(Config.PREFIX + "/menu").
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
@@ -191,30 +189,16 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-
 	menu.GlobalMenu.SetActiveClass(path)
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-	buf := new(bytes.Buffer)
-
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: menu.GetGlobalMenu(user),
-		System: types.SystemInfo{
-			"0.0.1",
-		},
-		Panel: types.Panel{
-			Content:     row,
-			Description: "Menus Manage",
-			Title:       "Menus Manage",
-		},
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-	})
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+		Content:     row,
+		Description: "Menus Manage",
+		Title:       "Menus Manage",
+	}, Config)
 
 	ctx.WriteString(buf.String())
 }

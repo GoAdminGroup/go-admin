@@ -19,8 +19,6 @@ func ShowNewForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
@@ -31,6 +29,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetPrefix(Config.PREFIX).
@@ -114,8 +113,6 @@ func NewForm(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
-
 	dataTable := template.Get(Config.THEME).
 		DataTable().
 		SetInfoList(infoList).
@@ -135,6 +132,7 @@ func NewForm(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: description,

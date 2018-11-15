@@ -38,8 +38,6 @@ func ShowInfo(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sortField)
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	dataTable := template.Get(Config.THEME).
@@ -61,6 +59,7 @@ func ShowInfo(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: description,
