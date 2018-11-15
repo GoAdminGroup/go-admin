@@ -273,8 +273,10 @@ func GetContent() types.Panel {
 		SetFooter(`<a href="javascript:void(0)" class="uppercase">View All Products</a>`).
 		GetContent()
 
-	col5 := colComp.SetSize(map[string]string{"md": "8"}).SetContent(boxInfo + tabs).GetContent()
-	col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning).GetContent()
+	buttonTest := `<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>`
+
+	col5 := colComp.SetSize(map[string]string{"md": "8"}).SetContent(boxInfo + tabs + template.HTML(buttonTest)).GetContent()
+	col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning + components.Popup().GetContent()).GetContent()
 
 	row4 := components.Row().SetContent(col5 + col6).GetContent()
 

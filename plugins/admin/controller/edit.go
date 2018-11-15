@@ -23,8 +23,6 @@ func ShowForm(ctx *context.Context) {
 
 	formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
@@ -35,6 +33,7 @@ func ShowForm(ctx *context.Context) {
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
+	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).

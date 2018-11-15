@@ -130,12 +130,12 @@ func (ctx *Context) Headers(key string) string {
 
 // FormValue get the value of request form key.
 func (ctx *Context) FormValue(key string) string {
-	return ctx.FormValue(key)
+	return ctx.Request.FormValue(key)
 }
 
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
-	ctx.AddHeader(key, value)
+	ctx.Response.Header.Add(key, value)
 }
 
 // App is the key struct of the package. App as a member of plugin

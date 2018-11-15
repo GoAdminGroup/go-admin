@@ -191,6 +191,12 @@ func (*Theme) Label() types.LabelAttribute {
 	}
 }
 
+func (*Theme) Popup() types.PopupAttribute {
+	return &components.PopupAttribute{
+		Name: "popup",
+	}
+}
+
 func (*Theme) Paginator() types.PaginatorAttribute {
 	return &components.PaginatorAttribute{
 		Name: "paginator",

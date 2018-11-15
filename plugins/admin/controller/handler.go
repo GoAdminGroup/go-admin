@@ -58,7 +58,6 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
 
-
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
@@ -92,7 +91,6 @@ func GlobalDeferHandler(ctx *context.Context) {
 			prefix := ctx.Query("prefix")
 
 			user := ctx.UserValue["user"].(auth.User)
-
 
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)

@@ -42,6 +42,7 @@ type Template interface {
 	PieChart() types.PieChartAttribute
 	ChartLegend() types.ChartLegendAttribute
 	Tabs() types.TabsAttribute
+	Popup() types.PopupAttribute
 
 	// Builder methods
 	GetTmplList() map[string]string
