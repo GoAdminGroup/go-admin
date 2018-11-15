@@ -35,9 +35,9 @@ func GetConnection() Connection {
 }
 
 func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return GetConnection().Query(query, args)
+	return GetConnection().Query(query, args...)
 }
 
 func Exec(query string, args ...interface{}) sql.Result {
-	return GetConnection().Exec(query, args)
+	return GetConnection().Exec(query, args...)
 }
