@@ -5,7 +5,7 @@ import (
 
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/db"
 )
 
 func RecordOperationLog(ctx *context.Context) {
@@ -16,7 +16,12 @@ func RecordOperationLog(ctx *context.Context) {
 			input, _ = json.Marshal((*form).Value)
 		}
 
-		connections.GetConnection().Exec("insert into goadmin_operation_log (user_id, path, method, ip, input) values (?, ?, ?, ?, ?)", user.ID, ctx.Path(),
-			ctx.Method(), ctx.LocalIP(), string(input))
+		db.Table("goadmin_operation_log").Insert(db.H{
+			"user_id": user.ID,
+			"path":    ctx.Path(),
+			"method":  ctx.Method(),
+			"ip":      ctx.LocalIP(),
+			"input":   string(input),
+		})
 	}
 }

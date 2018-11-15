@@ -2,7 +2,7 @@ package models
 
 import (
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/connections"
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
@@ -80,7 +80,7 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 		showColumns = "PRAGMA table_info(" + tableModel.Info.Table + ");"
 	}
 
-	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query(showColumns)
+	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query(showColumns)
 	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 
 	var sortable string
@@ -108,7 +108,7 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 		queryParam["sortField"] = "id"
 	}
 
-	res, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by "+queryParam["sortField"]+" "+
+	res, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by "+queryParam["sortField"]+" "+
 		queryParam["sortType"]+" LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
 
 	infoList := make([]map[string]template.HTML, 0)
@@ -137,7 +137,7 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 		infoList = append(infoList, tempModelData)
 	}
 
-	total, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
+	total, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
 	var size int
 	if tableModel.ConnectionDriver == "sqlite" {
 		size = int((*(total[0]["count(*)"].(*interface{}))).(int64))
@@ -156,7 +156,7 @@ func (tableModel Table) GetDataFromDatabaseWithId(prefix string, id string) ([]t
 
 	fields := ""
 
-	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
@@ -167,7 +167,7 @@ func (tableModel Table) GetDataFromDatabaseWithId(prefix string, id string) ([]t
 
 	fields = fields[0 : len(fields)-1]
 
-	res, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
+	res, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tableModel.Form.FormList); i++ {
@@ -216,7 +216,7 @@ func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[strin
 
 	fields := ""
 	valueList := make([]interface{}, 0)
-	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
@@ -232,7 +232,7 @@ func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[strin
 	fields = fields[0 : len(fields)-1]
 	valueList = append(valueList, dataList["id"][0])
 
-	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
+	db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
 }
 
 // InsertDataFromDatabase insert data.
@@ -241,7 +241,7 @@ func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[strin
 	fields := ""
 	queStr := ""
 	var valueList []interface{}
-	columnsModel, _ := connections.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
+	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
 	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
@@ -255,14 +255,14 @@ func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[strin
 	queStr = queStr[0 : len(queStr)-1]
 
 	// TODO: 过滤
-	connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
+	db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
 }
 
 // DeleteDataFromDatabase delete data.
 func (tableModel Table) DeleteDataFromDatabase(prefix string, id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		connections.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+		db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
 	}
 }
 
