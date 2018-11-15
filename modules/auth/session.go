@@ -102,7 +102,7 @@ func InitSession(ctx *context.Context) *Session {
 type MysqlDriver struct{}
 
 func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
-	sesModel, _ := db.GetConnection().Query("select * from goadmin_session where sid = ?", sid)
+	sesModel, _ := db.Query("select * from goadmin_session where sid = ?", sid)
 	if len(sesModel) < 1 {
 		return map[string]interface{}{}
 	} else {
@@ -115,15 +115,15 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
 	if sid != "" {
 		if len(values) == 0 {
-			db.GetConnection().Exec("delete from goadmin_session where sid = ?", sid)
+			db.Exec("delete from goadmin_session where sid = ?", sid)
 			return
 		}
 		valuesByte, _ := json.Marshal(values)
-		sesModel, _ := db.GetConnection().Query("select * from goadmin_session where sid = ?", sid)
+		sesModel, _ := db.Query("select * from goadmin_session where sid = ?", sid)
 		if len(sesModel) < 1 {
-			db.GetConnection().Exec("insert into goadmin_session (`values`, sid) values (?, ?)", string(valuesByte), sid)
+			db.Exec("insert into goadmin_session (`values`, sid) values (?, ?)", string(valuesByte), sid)
 		} else {
-			db.GetConnection().Exec("update goadmin_session set `values` = ? where sid = ?", string(valuesByte), sid)
+			db.Exec("update goadmin_session set `values` = ? where sid = ?", string(valuesByte), sid)
 		}
 	}
 }

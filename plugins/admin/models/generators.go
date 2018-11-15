@@ -46,7 +46,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Sortable: false,
 			ExcuFun: func(model types.RowModel) interface{} {
-				labelModel, _ := db.GetConnection().Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
+				labelModel, _ := db.Query("select r.name from goadmin_role_users as u left join goadmin_roles as r on "+
 					"u.role_id = r.id where user_id = ?", model.ID)
 				return string(template.Get("adminlte").Label().SetContent(labelModel[0]["name"].(string)).GetContent())
 			},
@@ -76,14 +76,14 @@ func GetManagerTable() (ManagerTable Table) {
 	ManagerTable.Info.Description = language.Get("Managers")
 
 	var roles, permissions []map[string]string
-	rolesModel, _ := db.GetConnection().Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
+	rolesModel, _ := db.Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := db.GetConnection().Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
+	permissionsModel, _ := db.Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -151,7 +151,7 @@ func GetManagerTable() (ManagerTable Table) {
 			FormType: "select",
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
-				roleModel, _ := db.GetConnection().Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
+				roleModel, _ := db.Query("select role_id from goadmin_role_users where user_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
 					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
@@ -167,7 +167,7 @@ func GetManagerTable() (ManagerTable Table) {
 			FormType: "select",
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
-				permissionModel, _ := db.GetConnection().Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
+				permissionModel, _ := db.Query("select permission_id from goadmin_user_permissions where user_id = ?", model.ID)
 				var permissions []string
 				for _, v := range permissionModel {
 					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
@@ -373,7 +373,7 @@ func GetPermissionTable() (PermissionTable Table) {
 func GetRolesTable() (RolesTable Table) {
 
 	var permissions []map[string]string
-	permissionsModel, _ := db.GetConnection().Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
+	permissionsModel, _ := db.Query("select `id`, `slug` from goadmin_permissions where id > ?", 0)
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -473,7 +473,7 @@ func GetRolesTable() (RolesTable Table) {
 			FormType: "selectbox",
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
-				perModel, _ := db.GetConnection().Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
+				perModel, _ := db.Query("select permission_id from goadmin_role_permissions where role_id = ?", model.ID)
 				var permissions []string
 				for _, v := range perModel {
 					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
@@ -768,14 +768,14 @@ func GetMenuTable() (MenuTable Table) {
 	MenuTable.Info.Description = language.Get("Menus Manage")
 
 	var roles, parents []map[string]string
-	rolesModel, _ := db.GetConnection().Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
+	rolesModel, _ := db.Query("select `id`, `slug` from goadmin_roles where id > ?", 0)
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	parentsModel, _ := db.GetConnection().Query("select `id`, `title` from goadmin_menu where id > ? order by `order` asc", 0)
+	parentsModel, _ := db.Query("select `id`, `title` from goadmin_menu where id > ? order by `order` asc", 0)
 	for _, v := range parentsModel {
 		parents = append(parents, map[string]string{
 			"field": v["title"].(string),
@@ -807,7 +807,7 @@ func GetMenuTable() (MenuTable Table) {
 			FormType: "select_single",
 			Options:  parents,
 			ExcuFun: func(model types.RowModel) interface{} {
-				menuModel, _ := db.GetConnection().Query("select parent_id from goadmin_menu where id = ?", model.ID)
+				menuModel, _ := db.Query("select parent_id from goadmin_menu where id = ?", model.ID)
 				var menuItem []string
 				menuItem = append(menuItem, strconv.FormatInt(menuModel[0]["parent_id"].(int64), 10))
 				return menuItem
@@ -851,7 +851,7 @@ func GetMenuTable() (MenuTable Table) {
 			FormType: "select",
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
-				roleModel, _ := db.GetConnection().Query("select role_id from goadmin_role_menu where menu_id = ?", model.ID)
+				roleModel, _ := db.Query("select role_id from goadmin_role_menu where menu_id = ?", model.ID)
 				var roles []string
 				for _, v := range roleModel {
 					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))

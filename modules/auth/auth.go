@@ -12,7 +12,7 @@ import (
 
 func Check(password string, username string) (user User, ok bool) {
 
-	admin, _ := db.GetConnection().Query("select * from goadmin_users where username = ?", username)
+	admin, _ := db.Query("select * from goadmin_users where username = ?", username)
 
 	if len(admin) < 1 {
 		ok = false
@@ -20,7 +20,7 @@ func Check(password string, username string) (user User, ok bool) {
 		if ComparePassword(password, admin[0]["password"].(string)) {
 			ok = true
 
-			roleModel, _ := db.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users "+
+			roleModel, _ := db.Query("select r.id, r.name, r.slug from goadmin_role_users "+
 				"as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
 
 			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
@@ -55,7 +55,7 @@ func Check(password string, username string) (user User, ok bool) {
 
 			user.Permissions = permissions
 
-			menuIdsModel, _ := db.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join "+
+			menuIdsModel, _ := db.Query("select menu_id, parent_id from goadmin_role_menu left join "+
 				"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
 
 			var menuIds []int64
@@ -76,7 +76,7 @@ func Check(password string, username string) (user User, ok bool) {
 			user.Menus = menuIds
 
 			newPwd := EncodePassword([]byte(password))
-			db.GetConnection().Exec("update goadmin_users set password = ? where id = ?", newPwd, user.ID)
+			db.Exec("update goadmin_users set password = ? where id = ?", newPwd, user.ID)
 
 		} else {
 			ok = false

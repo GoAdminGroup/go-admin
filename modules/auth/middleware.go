@@ -100,14 +100,14 @@ func Filter(ctx *context.Context) (User, bool, bool) {
 }
 
 func GetCurUserById(id string) (user User, ok bool) {
-	admin, _ := db.GetConnection().Query("select * from goadmin_users where id = ?", id)
+	admin, _ := db.Query("select * from goadmin_users where id = ?", id)
 
 	if len(admin) < 1 {
 		ok = false
 		return
 	}
 
-	roleModel, _ := db.GetConnection().Query("select r.id, r.name, r.slug from goadmin_role_users as u "+
+	roleModel, _ := db.Query("select r.id, r.name, r.slug from goadmin_role_users as u "+
 		"left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
 
 	user.ID = id
@@ -141,7 +141,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 
 	user.Permissions = permissions
 
-	menuIdsModel, _ := db.GetConnection().Query("select menu_id, parent_id from goadmin_role_menu left join "+
+	menuIdsModel, _ := db.Query("select menu_id, parent_id from goadmin_role_menu left join "+
 		"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
 
 	var menuIds []int64
@@ -167,7 +167,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 }
 
 func GetPermissions(role_id interface{}) []map[string]interface{} {
-	permissions, _ := db.GetConnection().Query("select p.http_method, p.http_path from goadmin_role_permissions "+
+	permissions, _ := db.Query("select p.http_method, p.http_path from goadmin_role_permissions "+
 		"as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
 	return permissions
 }

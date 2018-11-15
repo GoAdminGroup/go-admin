@@ -69,7 +69,7 @@ func DeleteMenu(ctx *context.Context) {
 	id := ctx.Query("id")
 	user := ctx.UserValue["user"].(auth.User)
 
-	db.GetConnection().Exec("delete from goadmin_menu where id = ?", id)
+	db.Exec("delete from goadmin_menu where id = ?", id)
 
 	menu.SetGlobalMenu(user)
 
@@ -95,13 +95,13 @@ func EditMenu(ctx *context.Context) {
 	roles := ctx.Request.Form["roles[]"]
 
 	for _, roleId := range roles {
-		checkRoleMenu, _ := db.GetConnection().Query("select * from goadmin_role_menu where role_id = ? and menu_id = ?", roleId, id)
+		checkRoleMenu, _ := db.Query("select * from goadmin_role_menu where role_id = ? and menu_id = ?", roleId, id)
 		if len(checkRoleMenu) < 1 {
-			db.GetConnection().Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+			db.Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
 		}
 	}
 
-	db.GetConnection().Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
+	db.Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
 		title, parentId, icon, uri, id)
 
 	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
@@ -125,7 +125,7 @@ func NewMenu(ctx *context.Context) {
 
 	user := ctx.UserValue["user"].(auth.User)
 
-	res := db.GetConnection().Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)",
+	res := db.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)",
 		title, parentId, icon, uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
 
 	roles := ctx.Request.Form["roles[]"]
@@ -133,7 +133,7 @@ func NewMenu(ctx *context.Context) {
 	id, _ := res.LastInsertId()
 
 	for _, roleId := range roles {
-		db.GetConnection().Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+		db.Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
 	}
 
 	globalMenu := menu.GetGlobalMenu(user)
@@ -155,13 +155,13 @@ func MenuOrder(ctx *context.Context) {
 	count := 1
 	for _, v := range data {
 		if child, ok := v["children"]; ok {
-			db.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
 			for _, v2 := range child.([]interface{}) {
-				db.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
+				db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
 				count++
 			}
 		} else {
-			db.GetConnection().Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
 			count++
 		}
 	}
