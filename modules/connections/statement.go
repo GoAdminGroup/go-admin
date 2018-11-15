@@ -100,6 +100,9 @@ func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 }
 
 func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
+	if len(arg) == 0 {
+		return sql
+	}
 	sql.wheres = append(sql.wheres, Where{
 		field:     field,
 		operation: "in",
@@ -110,6 +113,9 @@ func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
 }
 
 func (sql *Sql) WhereNotIn(field string, arg []interface{}) *Sql {
+	if len(arg) == 0 {
+		return sql
+	}
 	sql.wheres = append(sql.wheres, Where{
 		field:     field,
 		operation: "not in",
@@ -201,6 +207,20 @@ func (sql *Sql) Update(values H) (int64, error) {
 	}
 
 	return res.LastInsertId()
+}
+
+func (sql *Sql) Delete() error {
+	defer RecycleSql(sql)
+
+	sql.statement = "delete from " + sql.table + sql.getWheres()
+
+	res := GetConnection().Exec(sql.statement, sql.args...)
+
+	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
+		return errors.New("no affect row")
+	}
+
+	return nil
 }
 
 func (sql *Sql) Exec() (int64, error) {
