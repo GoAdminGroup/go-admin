@@ -134,7 +134,14 @@ func NewForm(ctx *context.Context) {
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 
-	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
+	dataTable := template.Get(Config.THEME).
+		DataTable().
+		SetInfoList(infoList).
+		SetThead(thead).
+		SetEditUrl(editUrl).
+		SetNewUrl(newUrl).
+		SetDeleteUrl(deleteUrl)
+
 	table := dataTable.GetContent()
 
 	box := template.Get(Config.THEME).Box().

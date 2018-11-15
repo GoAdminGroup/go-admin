@@ -45,7 +45,14 @@ func ShowInfo(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
-	dataTable := template.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
+	dataTable := template.Get(Config.THEME).
+		DataTable().
+		SetInfoList(infoList).
+		SetThead(thead).
+		SetEditUrl(editUrl).
+		SetNewUrl(newUrl).
+		SetDeleteUrl(deleteUrl)
+
 	table := dataTable.GetContent()
 
 	box := template.Get(Config.THEME).Box().

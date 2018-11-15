@@ -184,15 +184,25 @@ func GetMenuInfoPanel(ctx *context.Context) {
 	deleteUrl := Config.PREFIX + "/menu/delete"
 	orderUrl := Config.PREFIX + "/menu/order"
 
-	tree := template.Get(Config.THEME).Tree().SetTree((menu.GetGlobalMenu(user)).GlobalMenuList).
-		SetEditUrl(editUrl).SetDeleteUrl(deleteUrl).SetOrderUrl(orderUrl).GetContent()
+	tree := template.Get(Config.THEME).Tree().
+		SetTree((menu.GetGlobalMenu(user)).GlobalMenuList).
+		SetEditUrl(editUrl).
+		SetDeleteUrl(deleteUrl).
+		SetOrderUrl(orderUrl).
+		GetContent()
+
 	header := template.Get(Config.THEME).Tree().GetTreeHeader()
 	box := template.Get(Config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
 	col1 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
-	newForm := template.Get(Config.THEME).Form().SetPrefix(Config.PREFIX).SetUrl(Config.PREFIX + "/menu/new").
-		SetInfoUrl(Config.PREFIX + "/menu").SetTitle("New").
-		SetContent(models.GetNewFormList(models.TableList["menu"].Form.FormList)).GetContent()
+	newForm := template.Get(Config.THEME).Form().
+		SetPrefix(Config.PREFIX).
+		SetUrl(Config.PREFIX + "/menu/new").
+		SetInfoUrl(Config.PREFIX + "/menu").
+		SetTitle("New").
+		SetContent(models.GetNewFormList(models.TableList["menu"].Form.FormList)).
+		GetContent()
+
 	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()

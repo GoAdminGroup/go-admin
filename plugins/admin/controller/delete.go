@@ -29,7 +29,7 @@ func DeleteData(ctx *context.Context) {
 
 	ctx.Json(http.StatusOK, map[string]interface{}{
 		"code": 200,
-		"msg":  "删除成功",
+		"msg":  "删除成功", // TODO: 配置为根据语言返回内容
 		"data": newToken,
 	})
 	return
