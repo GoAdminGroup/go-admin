@@ -274,9 +274,24 @@ func GetContent() types.Panel {
 		GetContent()
 
 	buttonTest := `<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Open modal for @mdo</button>`
+	popupForm := `<form>
+          <div class="form-group">
+            <label for="recipient-name" class="col-form-label">Recipient:</label>
+            <input type="text" class="form-control" id="recipient-name">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Message:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </form>`
+	popup := components.Popup().SetID("exampleModal").
+		SetFooter("Save Change").
+		SetTitle("this is a popup").
+		SetBody(template.HTML(popupForm)).
+		GetContent()
 
 	col5 := colComp.SetSize(map[string]string{"md": "8"}).SetContent(boxInfo + tabs + template.HTML(buttonTest)).GetContent()
-	col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning + components.Popup().GetContent()).GetContent()
+	col6 := colComp.SetSize(map[string]string{"md": "4"}).SetContent(boxDanger + boxWarning + popup).GetContent()
 
 	row4 := components.Row().SetContent(col5 + col6).GetContent()
 
