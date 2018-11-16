@@ -8,8 +8,8 @@ import (
 type PopupAttribute struct {
 	Name   string
 	ID     string
-	Height int
-	Data   string
+	Body   template.HTML
+	Footer string
 	Title  string
 }
 
@@ -23,13 +23,13 @@ func (compo *PopupAttribute) SetTitle(value string) types.PopupAttribute {
 	return compo
 }
 
-func (compo *PopupAttribute) SetData(value string) types.PopupAttribute {
-	compo.Data = value
+func (compo *PopupAttribute) SetFooter(value string) types.PopupAttribute {
+	compo.Footer = value
 	return compo
 }
 
-func (compo *PopupAttribute) SetHeight(value int) types.PopupAttribute {
-	compo.Height = value
+func (compo *PopupAttribute) SetBody(value template.HTML) types.PopupAttribute {
+	compo.Body = value
 	return compo
 }
 

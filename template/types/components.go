@@ -183,7 +183,7 @@ type AlertAttribute interface {
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value string) PopupAttribute
-	SetData(value string) PopupAttribute
-	SetHeight(value int) PopupAttribute
+	SetFooter(value string) PopupAttribute
+	SetBody(value template.HTML) PopupAttribute
 	GetContent() template.HTML
 }
