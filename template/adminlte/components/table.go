@@ -38,6 +38,9 @@ type DataTableAttribute struct {
 	EditUrl   string
 	NewUrl    string
 	DeleteUrl string
+	InfoUrl   string
+	FilterUrl string
+	Filters   []map[string]string
 }
 
 func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
@@ -46,6 +49,21 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 
 func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
 	compo.Thead = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetInfoUrl(value string) types.DataTableAttribute {
+	compo.InfoUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetFilterUrl(value string) types.DataTableAttribute {
+	compo.FilterUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetFilters(value []map[string]string) types.DataTableAttribute {
+	compo.Filters = value
 	return compo
 }
 

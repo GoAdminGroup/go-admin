@@ -1,10 +1,13 @@
 {{define "box-header"}}
 <div class="pull-right">
-    <!--
+
     <div class="btn-group pull-right" style="margin-right: 10px">
-        <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i class="fa fa-filter"></i>&nbsp;&nbsp;Filter</a>
-        <a href="/story/word" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;Reset</a>
+        <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
+                class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filter"}}</a>
+        <a href="{{.InfoUrl}}" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;{{lang "Reset"}}
+        </a>
     </div>
+
     <div class="modal fade" id="filter-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -13,35 +16,41 @@
                         <span aria-hidden="true">×</span>
                         <span class="sr-only">Close</span>
                     </button>
-                    <h4 class="modal-title" id="myModalLabel">Filter</h4>
+                    <h4 class="modal-title" id="myModalLabel">{{lang "Filter"}}</h4>
                 </div>
-                <form action="/story/word" method="get" pjax-container="">
+                <form action="{{.FilterUrl}}" method="get" pjax-container="">
                     <div class="modal-body">
                         <div class="form">
-                            <div class="form-group">
+                            {{range $key, $filter := .Filters}}
                                 <div class="form-group">
-                                    <label>ID</label>
+                                    <label>{{index $filter "title"}}</label>
                                     <div class="input-group">
                                         <div class="input-group-addon">
                                             <i class="fa fa-pencil"></i>
                                         </div>
-                                        <input type="text" class="form-control id" placeholder="ID" name="id" value="">
+                                        <input type="text" class="form-control id" placeholder="{{index $filter "title"}}"
+                                               name="{{index $filter "name"}}" value="">
                                     </div>
                                 </div>
-                            </div>
+                            {{end}}
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary submit">Submit</button>
-                        <button type="reset" class="btn btn-warning pull-left">Reset
-                        </button>
+                        <button type="submit" id="filter-btn" class="btn btn-primary submit">{{lang "Submit"}}</button>
+                        <button type="reset" class="btn btn-warning pull-left">{{lang "Reset"}}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <script>
+        $("#filter-btn").click(function() {
+            $('.modal-backdrop').hide();
+        });
+    </script>
 
+    <!--
     <div class="btn-group pull-right" style="margin-right: 10px">
         <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
         <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">

@@ -9,19 +9,20 @@ import (
 	"strconv"
 )
 
-func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType string, size int) types.PaginatorAttribute {
+func GetPaginator(path string, params *Parameters, size int) types.PaginatorAttribute {
 
 	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
 
-	pageSizeInt, _ := strconv.Atoi(pageSize)
+	pageInt, _ := strconv.Atoi(params.Page)
+	pageSizeInt, _ := strconv.Atoi(params.PageSize)
 	totalPage := int(math.Ceil(float64(size) / float64(pageSizeInt)))
 
-	if page == "1" {
+	if params.Page == "1" {
 		paginator.PreviousClass = "disabled"
 		paginator.PreviousUrl = path
 	} else {
 		paginator.PreviousClass = ""
-		paginator.PreviousUrl = path + "?page=" + strconv.Itoa(pageInt-1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+		paginator.PreviousUrl = path + params.GetLastPageRouteParamStr()
 	}
 
 	if pageInt == totalPage {
@@ -29,9 +30,9 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 		paginator.NextUrl = path
 	} else {
 		paginator.NextClass = ""
-		paginator.NextUrl = path + "?page=" + strconv.Itoa(pageInt+1) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+		paginator.NextUrl = path + params.GetNextPageRouteParamStr()
 	}
-	paginator.Url = path + "?page=" + page + "&sort=" + sortField + "&sort_type=" + sortType
+	paginator.Url = path + params.GetRouteParamStr()
 	paginator.CurPageEndIndex = strconv.Itoa((pageInt) * pageSizeInt)
 	paginator.CurPageStartIndex = strconv.Itoa((pageInt - 1) * pageSizeInt)
 	paginator.Total = strconv.Itoa(size)
@@ -42,7 +43,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 		"50":  template.HTML(""),
 		"100": template.HTML(""),
 	}
-	paginator.Option[pageSize] = template.HTML("selected")
+	paginator.Option[params.PageSize] = template.HTML("selected")
 
 	paginator.Pages = []map[string]string{}
 
@@ -54,14 +55,14 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 					"page":    strconv.Itoa(i),
 					"active":  "active",
 					"isSplit": "0",
-					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType,
+					"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 				})
 			} else {
 				pagesArr = append(pagesArr, map[string]string{
 					"page":    strconv.Itoa(i),
 					"active":  "",
 					"isSplit": "0",
-					"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType,
+					"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 				})
 			}
 		}
@@ -76,14 +77,14 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    strconv.Itoa(i),
 						"active":  "active",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				} else {
 					pagesArr = append(pagesArr, map[string]string{
 						"page":    strconv.Itoa(i),
 						"active":  "",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				}
 
@@ -92,7 +93,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 					i = totalPage - 1
 				}
@@ -105,14 +106,14 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    strconv.Itoa(i),
 						"active":  "active",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				} else {
 					pagesArr = append(pagesArr, map[string]string{
 						"page":    strconv.Itoa(i),
 						"active":  "",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				}
 
@@ -121,7 +122,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 					if pageInt < 7 {
 						i = 5
@@ -136,7 +137,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 							"page":    "",
 							"active":  "",
 							"isSplit": "1",
-							"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+							"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 						})
 						i = totalPage - 1
 					}
@@ -146,7 +147,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 							"page":    "",
 							"active":  "",
 							"isSplit": "1",
-							"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+							"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 						})
 						i = totalPage - 1
 					}
@@ -160,14 +161,14 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    strconv.Itoa(i),
 						"active":  "active",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				} else {
 					pagesArr = append(pagesArr, map[string]string{
 						"page":    strconv.Itoa(i),
 						"active":  "",
 						"isSplit": "0",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 				}
 
@@ -176,7 +177,7 @@ func GetPaginator(path string, pageInt int, page, pageSize, sortField, sortType 
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     path + "?page=" + strconv.Itoa(i) + "&pageSize=" + pageSize,
+						"url":     path + params.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
 					})
 					i = totalPage - 4
 				}

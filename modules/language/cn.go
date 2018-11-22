@@ -8,6 +8,8 @@ var cn = map[string]string{
 	"createdat": "创建时间",
 	"updatedat": "更新时间",
 	"path":      "路径",
+	"submit":    "提交",
+	"filter":    "筛选",
 
 	"new":             "新建",
 	"action":          "操作",
@@ -34,9 +36,9 @@ var cn = map[string]string{
 	"menu name":         "菜单名",
 
 	"are you sure to delete": "你确定要删除吗",
-	"yes":               "确定",
-	"cancel":            "取消",
-	"refresh succeeded": "刷新成功",
+	"yes":                    "确定",
+	"cancel":                 "取消",
+	"refresh succeeded":      "刷新成功",
 
 	"avatar":     "头像",
 	"password":   "密码",

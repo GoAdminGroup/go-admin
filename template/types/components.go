@@ -70,6 +70,9 @@ type DataTableAttribute interface {
 	SetEditUrl(value string) DataTableAttribute
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
+	SetFilterUrl(value string) DataTableAttribute
+	SetInfoUrl(value string) DataTableAttribute
+	SetFilters(value []map[string]string) DataTableAttribute
 	GetContent() template.HTML
 }
 

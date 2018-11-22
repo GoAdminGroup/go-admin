@@ -61,14 +61,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := ctx.QueryDefault("page", "1")
-			pageSize := ctx.QueryDefault("pageSize", "10")
-			sortField := ctx.QueryDefault("sort", "id")
-			sortType := ctx.QueryDefault("sort_type", "desc")
-
 			ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-			queryParam := "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
+			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
 			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
@@ -95,14 +90,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 			path := ctx.Path()
 			menu.GlobalMenu.SetActiveClass(path)
 
-			page := ctx.QueryDefault("page", "1")
-			pageSize := ctx.QueryDefault("pageSize", "10")
-			sortField := ctx.QueryDefault("sort", "id")
-			sortType := ctx.QueryDefault("sort_type", "desc")
-
 			ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
-			queryParam := GetRouteParameterString(page, pageSize, sortType, sortField)
+			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
 			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 			buf := template.Excecute(tmpl, tmplName, user, types.Panel{

@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/template/types"
@@ -64,53 +63,70 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	}
 }
 
+type PanelInfo struct {
+	Thead       []map[string]string
+	InfoList    []map[string]template.HTML
+	Paginator   types.PaginatorAttribute
+	Title       string
+	Description string
+}
+
 // GetDataFromDatabase query the data set.
-// TODO: set return param as a struct
-func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map[string]string, []map[string]template.HTML, types.PaginatorAttribute, string, string) {
+func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
-	pageInt, _ := strconv.Atoi(queryParam["page"])
+	pageInt, _ := strconv.Atoi(params.Page)
 
-	title := tableModel.Info.Title
-	description := tableModel.Info.Description
+	title := tb.Info.Title
+	description := tb.Info.Description
 
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	showColumns := "show columns in " + tableModel.Info.Table
-	if tableModel.ConnectionDriver == "sqlite" {
-		showColumns = "PRAGMA table_info(" + tableModel.Info.Table + ");"
+	showColumns := "show columns in " + tb.Info.Table
+	if tb.ConnectionDriver == "sqlite" {
+		showColumns = "PRAGMA table_info(" + tb.Info.Table + ");"
 	}
 
-	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query(showColumns)
-	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
+	columnsModel, _ := tb.db().Query(showColumns)
+	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 
 	var sortable string
-	for i := 0; i < len(tableModel.Info.FieldList); i++ {
-		if tableModel.Info.FieldList[i].Field != "id" && CheckInTable(columns, tableModel.Info.FieldList[i].Field) {
-			fields += tableModel.Info.FieldList[i].Field + ","
+	for i := 0; i < len(tb.Info.FieldList); i++ {
+		if tb.Info.FieldList[i].Field != "id" && CheckInTable(columns, tb.Info.FieldList[i].Field) {
+			fields += tb.Info.FieldList[i].Field + ","
 		}
 		sortable = "0"
-		if tableModel.Info.FieldList[i].Sortable {
+		if tb.Info.FieldList[i].Sortable {
 			sortable = "1"
 		}
 		thead = append(thead, map[string]string{
-			"head":     tableModel.Info.FieldList[i].Head,
+			"head":     tb.Info.FieldList[i].Head,
 			"sortable": sortable,
-			"field":    tableModel.Info.FieldList[i].Field,
+			"field":    tb.Info.FieldList[i].Field,
 		})
 	}
 
 	fields += "id"
 
-	if queryParam["sortType"] != "desc" && queryParam["sortType"] != "asc" {
-		queryParam["sortType"] = "desc"
-	}
-	if !CheckInTable(columns, queryParam["sortField"]) {
-		queryParam["sortField"] = "id"
+	if !CheckInTable(columns, params.SortField) {
+		params.SortField = "id"
 	}
 
-	res, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Info.Table+" where id > 0 order by "+queryParam["sortField"]+" "+
-		queryParam["sortType"]+" LIMIT ? OFFSET ?", queryParam["pageSize"], (pageInt-1)*10)
+	wheres := " where "
+	whereArgs := make([]interface{}, 0)
+	if len(params.Fields) == 0 {
+		wheres += "id > 0"
+	} else {
+		for key, value := range params.Fields {
+			wheres += key + " = ? and"
+			whereArgs = append(whereArgs, value)
+		}
+		wheres = wheres[:len(wheres)-4]
+	}
+	args := append(whereArgs, params.PageSize, (pageInt-1)*10)
+
+	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
+		params.SortType+ " LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -119,14 +135,14 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 		// TODO: 加入对象池
 		tempModelData := make(map[string]template.HTML, 0)
 
-		for j := 0; j < len(tableModel.Info.FieldList); j++ {
-			if CheckInTable(columns, tableModel.Info.FieldList[j].Field) {
-				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(types.RowModel{
+		for j := 0; j < len(tb.Info.FieldList); j++ {
+			if CheckInTable(columns, tb.Info.FieldList[j].Field) {
+				tempModelData[tb.Info.FieldList[j].Head] = template.HTML(tb.Info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    res[i]["id"].(int64),
-					Value: GetStringFromType(tableModel.Info.FieldList[j].TypeName, res[i][tableModel.Info.FieldList[j].Field]),
+					Value: GetStringFromType(tb.Info.FieldList[j].TypeName, res[i][tb.Info.FieldList[j].Field]),
 				}).(string))
 			} else {
-				tempModelData[tableModel.Info.FieldList[j].Head] = template.HTML(tableModel.Info.FieldList[j].ExcuFun(types.RowModel{
+				tempModelData[tb.Info.FieldList[j].Head] = template.HTML(tb.Info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    res[i]["id"].(int64),
 					Value: "",
 				}).(string))
@@ -138,87 +154,89 @@ func (tableModel Table) GetDataFromDatabase(queryParam map[string]string) ([]map
 		infoList = append(infoList, tempModelData)
 	}
 
-	total, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select count(*) from "+tableModel.Info.Table+" where id > ?", 0)
+	total, _ := tb.db().Query("select count(*) from "+tb.Info.Table+wheres, whereArgs...)
 	var size int
-	if tableModel.ConnectionDriver == "sqlite" {
+	if tb.ConnectionDriver == "sqlite" {
 		size = int((*(total[0]["count(*)"].(*interface{}))).(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
 	}
 
-	paginator := GetPaginator(queryParam["path"], pageInt, queryParam["page"], queryParam["pageSize"], queryParam["sortField"], queryParam["sortType"], size)
+	paginator := GetPaginator(path, params, size)
 
-	return thead, infoList, paginator, title, description
+	return PanelInfo{
+		thead, infoList, paginator, title, description,
+	}
 
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tableModel Table) GetDataFromDatabaseWithId(prefix string, id string) ([]types.FormStruct, string, string) {
+func (tb Table) GetDataFromDatabaseWithId(prefix string, id string) ([]types.FormStruct, string, string) {
 
 	fields := ""
 
-	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
-	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
+	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 
-	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		if CheckInTable(columns, tableModel.Form.FormList[i].Field) {
-			fields += tableModel.Form.FormList[i].Field + ","
+	for i := 0; i < len(tb.Form.FormList); i++ {
+		if CheckInTable(columns, tb.Form.FormList[i].Field) {
+			fields += tb.Form.FormList[i].Field + ","
 		}
 	}
 
 	fields = fields[0 : len(fields)-1]
 
-	res, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("select "+fields+" from "+tableModel.Form.Table+" where id = ?", id)
+	res, _ := tb.db().Query("select "+fields+" from "+tb.Form.Table+" where id = ?", id)
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
-	for i := 0; i < len(tableModel.Form.FormList); i++ {
-		if CheckInTable(columns, tableModel.Form.FormList[i].Field) {
-			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" || tableModel.Form.FormList[i].FormType == "select_single" {
-				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
+	for i := 0; i < len(tb.Form.FormList); i++ {
+		if CheckInTable(columns, tb.Form.FormList[i].Field) {
+			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" || tb.Form.FormList[i].FormType == "select_single" {
+				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
 				}).([]string)
-				for _, v := range tableModel.Form.FormList[i].Options {
+				for _, v := range tb.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(types.RowModel{
+				tb.Form.FormList[i].Value = tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
 				}).(string)
 			}
 		} else {
-			if tableModel.Form.FormList[i].FormType == "select" || tableModel.Form.FormList[i].FormType == "selectbox" {
-				valueArr := tableModel.Form.FormList[i].ExcuFun(types.RowModel{
+			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" {
+				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tableModel.Form.FormList[i].TypeName, res[0][tableModel.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
 				}).([]string)
-				for _, v := range tableModel.Form.FormList[i].Options {
+				for _, v := range tb.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tableModel.Form.FormList[i].Value = tableModel.Form.FormList[i].ExcuFun(types.RowModel{
+				tb.Form.FormList[i].Value = tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: tableModel.Form.FormList[i].Field,
+					Value: tb.Form.FormList[i].Field,
 				}).(string)
 			}
 		}
 	}
 
-	return tableModel.Form.FormList, tableModel.Form.Title, tableModel.Form.Description
+	return tb.Form.FormList, tb.Form.Title, tb.Form.Description
 }
 
 // UpdateDataFromDatabase update data.
-func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[string][]string) {
+func (tb Table) UpdateDataFromDatabase(prefix string, dataList map[string][]string) {
 
 	fields := ""
 	valueList := make([]interface{}, 0)
-	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
-	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
+	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
@@ -233,17 +251,17 @@ func (tableModel Table) UpdateDataFromDatabase(prefix string, dataList map[strin
 	fields = fields[0 : len(fields)-1]
 	valueList = append(valueList, dataList["id"][0])
 
-	db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("update "+tableModel.Form.Table+" set "+fields+" where id = ?", valueList...)
+	tb.db().Exec("update "+tb.Form.Table+" set "+fields+" where id = ?", valueList...)
 }
 
 // InsertDataFromDatabase insert data.
-func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[string][]string) {
+func (tb Table) InsertDataFromDatabase(prefix string, dataList map[string][]string) {
 
 	fields := ""
 	queStr := ""
 	var valueList []interface{}
-	columnsModel, _ := db.GetConnectionByDriver(tableModel.ConnectionDriver).Query("show columns in " + tableModel.Form.Table)
-	columns := GetColumns(columnsModel, tableModel.ConnectionDriver)
+	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			fields += k + ","
@@ -255,15 +273,14 @@ func (tableModel Table) InsertDataFromDatabase(prefix string, dataList map[strin
 	fields = fields[0 : len(fields)-1]
 	queStr = queStr[0 : len(queStr)-1]
 
-	// TODO: 过滤
-	db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("insert into "+tableModel.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
+	tb.db().Exec("insert into "+tb.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
 }
 
 // DeleteDataFromDatabase delete data.
-func (tableModel Table) DeleteDataFromDatabase(prefix string, id string) {
+func (tb Table) DeleteDataFromDatabase(prefix string, id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		db.GetConnectionByDriver(tableModel.ConnectionDriver).Exec("delete from "+tableModel.Form.Table+" where id = ?", id)
+		tb.db().Exec("delete from "+tb.Form.Table+" where id = ?", id)
 	}
 }
 
@@ -275,8 +292,11 @@ func GetNewFormList(old []types.FormStruct) []types.FormStruct {
 			newForm = append(newForm, v)
 		}
 	}
-	fmt.Println("form", newForm)
 	return newForm
+}
+
+func (tb Table) db() db.Connection {
+	return db.GetConnectionByDriver(tb.ConnectionDriver)
 }
 
 // CheckInTable checks the find string is in the columns or not.

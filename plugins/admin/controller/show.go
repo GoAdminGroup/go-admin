@@ -20,30 +20,22 @@ func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
 
-	page := ctx.QueryDefault("page", "1")
-	pageSize := ctx.QueryDefault("pageSize", "10")
-	sortField := ctx.QueryDefault("sort", "id")
-	sortType := ctx.QueryDefault("sort_type", "desc")
+	params := models.GetParam(ctx.Request.URL.Query())
 
-	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
-		"page":      page,
-		"path":      ctx.Path(),
-		"sortField": sortField,
-		"sortType":  sortType,
-		"prefix":    prefix,
-		"pageSize":  pageSize,
-	})
+	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
 
-	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sortField)
-	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sortField)
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	dataTable := template.Get(Config.THEME).
 		DataTable().
-		SetInfoList(infoList).
-		SetThead(thead).
+		SetInfoList(panelInfo.InfoList).
+		SetFilters([]map[string]string{{"title": "ID", "name": "id",}}).
+		SetInfoUrl(Config.PREFIX + "/info/" + prefix).
+		SetThead(panelInfo.Thead).
 		SetEditUrl(editUrl).
 		SetNewUrl(newUrl).
 		SetDeleteUrl(deleteUrl)
@@ -54,7 +46,7 @@ func ShowInfo(ctx *context.Context) {
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
-		SetFooter(paginator.GetContent()).
+		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -62,8 +54,8 @@ func ShowInfo(ctx *context.Context) {
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
-		Description: description,
-		Title:       title,
+		Description: panelInfo.Description,
+		Title:       panelInfo.Title,
 	}, Config)
 
 	ctx.WriteString(buf.String())

@@ -22,10 +22,7 @@ func ShowNewForm(ctx *context.Context) {
 	path := ctx.Path()
 	menu.GlobalMenu.SetActiveClass(path)
 
-	page := ctx.QueryDefault("page", "1")
-	pageSize := ctx.QueryDefault("pageSize", "10")
-	sortField := ctx.QueryDefault("sort", "id")
-	sortType := ctx.QueryDefault("sort_type", "desc")
+	params := models.GetParam(ctx.Request.URL.Query())
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
@@ -37,7 +34,7 @@ func ShowNewForm(ctx *context.Context) {
 			SetUrl(Config.PREFIX + "/new/" + prefix).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetTitle("New").
-			SetInfoUrl(Config.PREFIX + "/info/" + prefix + GetRouteParameterString(page, pageSize, sortType, sortField)).
+			SetInfoUrl(Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()).
 			GetContent(),
 		Description: models.TableList[prefix].Form.Description,
 		Title:       models.TableList[prefix].Form.Title,
@@ -76,47 +73,21 @@ func NewForm(ctx *context.Context) {
 	models.RefreshTableList()
 
 	previous := ctx.FormValue("_previous_")
-
 	prevUrlArr := strings.Split(previous, "?")
-	paramArr := strings.Split(prevUrlArr[1], "&")
-	page := "1"
-	pageSize := "10"
-	sort := "id"
-	sortType := "desc"
+	params := models.GetParamFromUrl(previous)
 
-	for i := 0; i < len(paramArr); i++ {
-		if strings.Index(paramArr[i], "pageSize") >= 0 {
-			pageSize = strings.Split(paramArr[i], "=")[1]
-		} else {
-			if strings.Index(paramArr[i], "page") >= 0 {
-				page = strings.Split(paramArr[i], "=")[1]
-			} else if strings.Index(paramArr[i], "sort") >= 0 {
-				sort = strings.Split(paramArr[i], "=")[1]
-			} else {
-				sortType = strings.Split(paramArr[i], "=")[1]
-			}
-		}
-	}
-
-	thead, infoList, paginator, title, description := models.TableList[prefix].GetDataFromDatabase(map[string]string{
-		"page":      page,
-		"path":      prevUrlArr[0],
-		"sortField": sort,
-		"sortType":  sortType,
-		"prefix":    prefix,
-		"pageSize":  pageSize,
-	})
+	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
 
 	menu.GlobalMenu.SetActiveClass(previous)
 
-	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + GetRouteParameterString(page, pageSize, sortType, sort)
-	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + GetRouteParameterString(page, pageSize, sortType, sort)
+	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
+	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
 	dataTable := template.Get(Config.THEME).
 		DataTable().
-		SetInfoList(infoList).
-		SetThead(thead).
+		SetInfoList(panelInfo.InfoList).
+		SetThead(panelInfo.Thead).
 		SetEditUrl(editUrl).
 		SetNewUrl(newUrl).
 		SetDeleteUrl(deleteUrl)
@@ -127,7 +98,7 @@ func NewForm(ctx *context.Context) {
 		SetBody(table).
 		SetHeader(dataTable.GetDataTableHeader()).
 		WithHeadBorder(false).
-		SetFooter(paginator.GetContent()).
+		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
 	user := ctx.UserValue["user"].(auth.User)
@@ -135,8 +106,8 @@ func NewForm(ctx *context.Context) {
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
-		Description: description,
-		Title:       title,
+		Description: panelInfo.Description,
+		Title:       panelInfo.Title,
 	}, Config)
 
 	ctx.WriteString(buffer.String())
