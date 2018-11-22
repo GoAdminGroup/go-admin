@@ -33,7 +33,7 @@ func ShowInfo(ctx *context.Context) {
 	dataTable := template.Get(Config.THEME).
 		DataTable().
 		SetInfoList(panelInfo.InfoList).
-		SetFilters([]map[string]string{{"title": "ID", "name": "id",}}).
+		SetFilters(models.TableList[prefix].GetFiltersMap()).
 		SetInfoUrl(Config.PREFIX + "/info/" + prefix).
 		SetThead(panelInfo.Thead).
 		SetEditUrl(editUrl).

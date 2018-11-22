@@ -67,6 +67,7 @@ type FieldStruct struct {
 	TypeName string
 	Head     string
 	Sortable bool
+	Filter   bool
 }
 
 func (field *FieldStruct) SetHead(head string) *FieldStruct {

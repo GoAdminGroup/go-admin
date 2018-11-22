@@ -71,6 +71,25 @@ type PanelInfo struct {
 	Description string
 }
 
+func (tb Table) GetFiltersMap() []map[string]string {
+	var filters = make([]map[string]string, 0)
+	for _, value := range tb.Info.FieldList {
+		if value.Filter {
+			filters = append(filters, map[string]string{
+				"title": value.Head,
+				"name": value.Field,
+			})
+		}
+	}
+	if len(filters) == 0 {
+		filters = append(filters, map[string]string{
+			"title": "ID",
+			"name": "id",
+		})
+	}
+	return filters
+}
+
 // GetDataFromDatabase query the data set.
 func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
