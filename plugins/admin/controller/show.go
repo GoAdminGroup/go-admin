@@ -83,7 +83,3 @@ func Assert(ctx *context.Context) {
 		}, string(data))
 	}
 }
-
-func GetRouteParameterString(page, pageSize, sortType, sortField string) string {
-	return "?page=" + page + "&pageSize=" + pageSize + "&sort=" + sortField + "&sort_type=" + sortType
-}
