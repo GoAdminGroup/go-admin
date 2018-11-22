@@ -2851,7 +2851,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                     </button>
                     <h4 class="modal-title" id="myModalLabel">{{lang "Filter"}}</h4>
                 </div>
-                <form action="{{.FilterUrl}}" method="get" pjax-container="">
+                <form action="{{.InfoUrl}}" method="get" pjax-container="">
                     <div class="modal-body">
                         <div class="form">
                             {{range $key, $filter := .Filters}}
