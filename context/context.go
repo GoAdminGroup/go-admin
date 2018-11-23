@@ -81,9 +81,15 @@ func (ctx *Context) Json(code int, Body map[string]interface{}) {
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewReader(BodyStr))
 }
 
+// Html output html response.
+func (ctx *Context) Html(code int, body string)  {
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.SetStatusCode(code)
+	ctx.WriteString(body)
+}
+
 // Write save the given body string into the response.
 func (ctx *Context) WriteString(Body string) {
-	ctx.SetStatusCode(200)
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
 
@@ -136,6 +142,11 @@ func (ctx *Context) FormValue(key string) string {
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
 	ctx.Response.Header.Add(key, value)
+}
+
+// User return the current login user.
+func (ctx *Context) User() interface{} {
+	return ctx.UserValue["user"]
 }
 
 // App is the key struct of the package. App as a member of plugin

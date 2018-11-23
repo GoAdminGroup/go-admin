@@ -15,23 +15,17 @@ import (
 // 显示表单
 func ShowForm(ctx *context.Context) {
 
-	user := ctx.UserValue["user"].(auth.User)
-
 	prefix := ctx.Query("prefix")
 
-	id := ctx.Query("id")
+	formData, title, description := models.TableList[prefix].
+		GetDataFromDatabaseWithId(ctx.Query("id"))
 
-	formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(prefix, id)
-
-	path := ctx.Path()
-	menu.GlobalMenu.SetActiveClass(path)
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	params := models.GetParam(ctx.Request.URL.Query())
 
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
@@ -42,7 +36,7 @@ func ShowForm(ctx *context.Context) {
 		Description: description,
 		Title:       title,
 	}, Config)
-	ctx.WriteString(buf.String())
+	ctx.Html(http.StatusOK, buf.String())
 }
 
 // 编辑数据
@@ -59,12 +53,10 @@ func EditForm(ctx *context.Context) {
 	}
 
 	prefix := ctx.Query("prefix")
-	user := ctx.UserValue["user"].(auth.User)
 
 	form := ctx.Request.MultipartForm
 
-	path := ctx.Path()
-	menu.GlobalMenu.SetActiveClass(path)
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	// 处理上传文件，目前仅仅支持传本地
 	if len((*form).File) > 0 {
@@ -76,7 +68,7 @@ func EditForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理编辑
 		EditRole((*form).Value)
 	} else {
-		models.TableList[prefix].UpdateDataFromDatabase(prefix, (*form).Value)
+		models.TableList[prefix].UpdateDataFromDatabase((*form).Value)
 	}
 
 	models.RefreshTableList()
@@ -85,13 +77,14 @@ func EditForm(ctx *context.Context) {
 	prevUrlArr := strings.Split(previous, "?")
 	params := models.GetParamFromUrl(previous)
 
-	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
-
 	menu.GlobalMenu.SetActiveClass(previous)
 
+	previous = Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
+
+	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
 
 	dataTable := template.Get(Config.THEME).
 		DataTable().
@@ -111,13 +104,12 @@ func EditForm(ctx *context.Context) {
 		GetContent()
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
 	}, Config)
 
-	ctx.WriteString(buf.String())
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader("X-PJAX-URL", previous)
 }

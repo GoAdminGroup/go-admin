@@ -15,19 +15,12 @@ import (
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
 
-	user := ctx.UserValue["user"].(auth.User)
-
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 	prefix := ctx.Query("prefix")
-
-	path := ctx.Path()
-	menu.GlobalMenu.SetActiveClass(path)
-
 	params := models.GetParam(ctx.Request.URL.Query())
 
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetPrefix(Config.PREFIX).
 			SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
@@ -39,7 +32,7 @@ func ShowNewForm(ctx *context.Context) {
 		Description: models.TableList[prefix].Form.Description,
 		Title:       models.TableList[prefix].Form.Title,
 	}, Config)
-	ctx.WriteString(buf.String())
+	ctx.Html(http.StatusOK, buf.String())
 }
 
 // 新建数据
@@ -48,8 +41,10 @@ func NewForm(ctx *context.Context) {
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		ctx.SetStatusCode(http.StatusBadRequest)
-		ctx.WriteString(`{"code":400, "msg":"新增失败"}`)
+		ctx.Json(http.StatusBadRequest, map[string]interface{}{
+			"code": 400,
+			"msg":  "新增失败",
+		})
 		return
 	}
 
@@ -67,7 +62,7 @@ func NewForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理新建
 		NewRole((*form).Value)
 	} else {
-		models.TableList[prefix].InsertDataFromDatabase(prefix, (*form).Value)
+		models.TableList[prefix].InsertDataFromDatabase((*form).Value)
 	}
 
 	models.RefreshTableList()
@@ -110,7 +105,6 @@ func NewForm(ctx *context.Context) {
 		Title:       panelInfo.Title,
 	}, Config)
 
-	ctx.WriteString(buffer.String())
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.Html(http.StatusOK, buffer.String())
 	ctx.AddHeader("X-PJAX-URL", previous)
 }

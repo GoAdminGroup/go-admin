@@ -16,17 +16,15 @@ import (
 // 显示列表
 func ShowInfo(ctx *context.Context) {
 
-	user := ctx.UserValue["user"].(auth.User)
-
 	prefix := ctx.Query("prefix")
 
 	params := models.GetParam(ctx.Request.URL.Query())
 
-	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
-
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
+
+	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
 
 	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
@@ -49,16 +47,13 @@ func ShowInfo(ctx *context.Context) {
 		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
 	}, Config)
-
-	ctx.WriteString(buf.String())
+	ctx.Html(http.StatusOK, buf.String())
 }
 
 func Assert(ctx *context.Context) {

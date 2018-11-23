@@ -21,21 +21,17 @@ func ShowMenu(ctx *context.Context) {
 
 // 显示编辑菜单
 func ShowEditMenu(ctx *context.Context) {
-	id := ctx.Query("id")
-	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId("menu", id)
 
-	path := ctx.Path()
-	menu.GlobalMenu.SetActiveClass(path)
+	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
 
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-	user := ctx.UserValue["user"].(auth.User)
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	js := `<script>
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
@@ -47,18 +43,14 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Title:       title,
 	}, Config)
 
-	ctx.WriteString(buf.String())
+	ctx.Html(http.StatusOK, buf.String())
 }
 
 // 删除菜单
 func DeleteMenu(ctx *context.Context) {
-	id := ctx.Query("id")
-	user := ctx.UserValue["user"].(auth.User)
 
-	db.Exec("delete from goadmin_menu where id = ?", id)
-
-	menu.SetGlobalMenu(user)
-
+	db.Exec("delete from goadmin_menu where id = ?", ctx.Query("id"))
+	menu.SetGlobalMenu(auth.Auth(ctx))
 	ctx.Json(http.StatusOK, map[string]interface{}{
 		"code": 200,
 		"msg":  "ok",
@@ -88,7 +80,7 @@ func EditMenu(ctx *context.Context) {
 	db.Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
 		title, parentId, icon, uri, id)
 
-	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
+	menu.SetGlobalMenu(auth.Auth(ctx))
 
 	GetMenuInfoPanel(ctx)
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -106,7 +98,7 @@ func NewMenu(ctx *context.Context) {
 	icon := ctx.FormValue("icon")
 	uri := ctx.FormValue("uri")
 
-	user := ctx.UserValue["user"].(auth.User)
+	user := auth.Auth(ctx)
 
 	res := db.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)",
 		title, parentId, icon, uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
@@ -147,7 +139,7 @@ func MenuOrder(ctx *context.Context) {
 			count++
 		}
 	}
-	menu.SetGlobalMenu(ctx.UserValue["user"].(auth.User))
+	menu.SetGlobalMenu(auth.Auth(ctx))
 
 	ctx.Json(http.StatusOK, map[string]interface{}{
 		"code": 200,
@@ -157,10 +149,9 @@ func MenuOrder(ctx *context.Context) {
 }
 
 func GetMenuInfoPanel(ctx *context.Context) {
-	path := ctx.Path()
-	user := ctx.UserValue["user"].(auth.User)
+	user := auth.Auth(ctx)
 
-	menu.GlobalMenu.SetActiveClass(path)
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	editUrl := Config.PREFIX + "/menu/edit/show"
 	deleteUrl := Config.PREFIX + "/menu/delete"
@@ -189,9 +180,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	menu.GlobalMenu.SetActiveClass(path)
-
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	menu.GlobalMenu.SetActiveClass(ctx.Path())
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
@@ -200,5 +189,5 @@ func GetMenuInfoPanel(ctx *context.Context) {
 		Title:       "Menus Manage",
 	}, Config)
 
-	ctx.WriteString(buf.String())
+	ctx.Html(http.StatusOK, buf.String())
 }

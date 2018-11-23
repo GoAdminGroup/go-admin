@@ -17,11 +17,8 @@ func DeleteData(ctx *context.Context) {
 	//	return
 	//}
 
-	prefix := ctx.Query("prefix")
-
-	id := ctx.FormValue("id")
-
-	models.TableList[prefix].DeleteDataFromDatabase(prefix, id)
+	models.TableList[ctx.Query("prefix")].
+		DeleteDataFromDatabase(ctx.FormValue("id"))
 
 	newToken := auth.TokenHelper.AddToken()
 

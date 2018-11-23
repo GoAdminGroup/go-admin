@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
+	"net/http"
 )
 
 func ShowInstall(ctx *context.Context) {
@@ -18,8 +19,7 @@ func ShowInstall(ctx *context.Context) {
 	//rs2, _ := mysql.Query("show columns from users")
 	//fmt.Println(rs2[0]["Field"])
 
-	ctx.WriteString(buffer.String())
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.Html(http.StatusOK, buffer.String())
 }
 
 func CheckDatabase(ctx *context.Context) {
@@ -54,12 +54,20 @@ func CheckDatabase(ctx *context.Context) {
 
 		fmt.Println(list)
 
-		ctx.SetContentType("application/json")
-		ctx.WriteString(`{"code":0, "msg":"连接成功", "data": {"list":` + list + `}}`)
+		ctx.Json(http.StatusOK, map[string]interface{}{
+			"code": 0,
+			"msg": "连接成功",
+			"data": map[string]interface{}{
+				"list": list,
+			},
+		})
+
 	} else {
 		fmt.Println(err)
 		fmt.Println(err2)
-		ctx.SetContentType("application/json")
-		ctx.WriteString(`{"code":500, "msg":"请检查参数是否设置正确"}`)
+		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
+			"code": 500,
+			"msg": "请检查参数是否设置正确",
+		})
 	}
 }

@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+func Auth(ctx *context.Context) User {
+	return ctx.User().(User)
+}
+
 func Check(password string, username string) (user User, ok bool) {
 
 	admin, _ := db.Query("select * from goadmin_users where username = ?", username)

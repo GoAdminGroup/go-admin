@@ -53,17 +53,21 @@ func GetParamFromUrl(value string) *Parameters {
 	sortField := "id"
 	sortType := "desc"
 
+	//fields := make(map[string]string, 0)
+
 	for i := 0; i < len(paramArr); i++ {
-		if strings.Index(paramArr[i], "pageSize") >= 0 {
-			pageSize = strings.Split(paramArr[i], "=")[1]
-		} else {
-			if strings.Index(paramArr[i], "page") >= 0 {
-				page = strings.Split(paramArr[i], "=")[1]
-			} else if strings.Index(paramArr[i], "sort") >= 0 {
-				sortField = strings.Split(paramArr[i], "=")[1]
-			} else {
-				sortType = strings.Split(paramArr[i], "=")[1]
-			}
+		arr := strings.Split(paramArr[i], "=")
+		switch arr[0] {
+		case "pageSize":
+			pageSize = arr[1]
+		case "page":
+			page = arr[1]
+		case "sort":
+			sortField = arr[1]
+		case "sort_type":
+			sortType = arr[1]
+			//default:
+			//	fields[arr[0]] = arr[1]
 		}
 	}
 

@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"strconv"
 	"strings"
+	"fmt"
 )
 
 type TableGenerator func() Table
@@ -144,6 +145,9 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	}
 	args := append(whereArgs, params.PageSize, (pageInt-1)*10)
 
+	fmt.Println("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
+		params.SortType+ " LIMIT ? OFFSET ?")
+
 	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
 		params.SortType+ " LIMIT ? OFFSET ?", args...)
 
@@ -190,9 +194,11 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb Table) GetDataFromDatabaseWithId(prefix string, id string) ([]types.FormStruct, string, string) {
+func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.FormStruct, string, string) {
 
 	fields := ""
+
+	fmt.Println("id", id)
 
 	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
@@ -250,7 +256,7 @@ func (tb Table) GetDataFromDatabaseWithId(prefix string, id string) ([]types.For
 }
 
 // UpdateDataFromDatabase update data.
-func (tb Table) UpdateDataFromDatabase(prefix string, dataList map[string][]string) {
+func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 
 	fields := ""
 	valueList := make([]interface{}, 0)
@@ -274,7 +280,7 @@ func (tb Table) UpdateDataFromDatabase(prefix string, dataList map[string][]stri
 }
 
 // InsertDataFromDatabase insert data.
-func (tb Table) InsertDataFromDatabase(prefix string, dataList map[string][]string) {
+func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 
 	fields := ""
 	queStr := ""
@@ -296,7 +302,7 @@ func (tb Table) InsertDataFromDatabase(prefix string, dataList map[string][]stri
 }
 
 // DeleteDataFromDatabase delete data.
-func (tb Table) DeleteDataFromDatabase(prefix string, id string) {
+func (tb Table) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
 		tb.db().Exec("delete from "+tb.Form.Table+" where id = ?", id)
