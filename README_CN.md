@@ -37,7 +37,7 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 
 ## 使用
 
-详见 [wiki](https://github.com/chenhg5/go-admin/wiki)
+详见 [文档说明](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)
 
 ### 安装
 
