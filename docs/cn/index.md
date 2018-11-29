@@ -11,12 +11,12 @@
             - 配置模型文件介绍与配置
                 - Form
                 - Info
-    - 如何自定义页面
-        - 介绍页面模块
-            - panel 
+    - [如何自定义页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/pages.md)
+        - [介绍页面模块](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/modules.md)
+            - panel
             - 行
             - 列
-        - 介绍页面组件
+        - [介绍页面组件](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/components.md)
             - InfoBox
             - Button
             - BarChart
@@ -31,8 +31,8 @@
             - Image
             - Form
             - Tabs                                
-    - 如何设置菜单
-    - 如何设置管理员，管理角色，管理权限
+    - [如何设置菜单](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/menus.md)
+    - [如何设置管理员，管理角色，管理权限](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/rcba.md)
     
 - 参与开发
     - 开发一个插件
