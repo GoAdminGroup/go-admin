@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"strconv"
 	"strings"
-	"fmt"
 )
 
 type TableGenerator func() Table
@@ -145,8 +144,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	}
 	args := append(whereArgs, params.PageSize, (pageInt-1)*10)
 
-	fmt.Println("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
-		params.SortType+ " LIMIT ? OFFSET ?")
+	// TODO: add left join table relations
 
 	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
 		params.SortType+ " LIMIT ? OFFSET ?", args...)
@@ -197,8 +195,6 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.FormStruct, string, string) {
 
 	fields := ""
-
-	fmt.Println("id", id)
 
 	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
