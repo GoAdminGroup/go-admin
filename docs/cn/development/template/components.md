@@ -66,7 +66,7 @@ func (compo *ImgAttribute) GetContent() template.HTML {
 }
 ```
 
-- 实现```Image()```例子
+- 实现```Image()```
 
 在```./template/adminlte/adminlte.go```中，增加一个函数：
 
