@@ -1,13 +1,13 @@
 # go-admin文档
 
-- 如何使用
-    - 1.1 如何使用插件
-        - 1.1.1 admin插件的使用：配置生成管理页面
-            - 1.1.1.1 使用admincli生产配置文件
-            - 1.1.1.2 配置模型文件介绍与配置
+- [如何使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/instruction.md)
+    - [如何使用插件](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)
+        - [admin插件的使用：配置生成管理页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)
+            - 使用admincli生产配置文件
+            - 配置模型文件介绍与配置
                 - Form
                 - Info
-    - 1.2 如何自定义页面
+    - 如何自定义页面
         - 1.2.1 介绍页面模块
             - panel 
             - 行
@@ -27,21 +27,21 @@
             - Image
             - Form
             - Tabs                                
-    - 1.3 如何设置菜单
-    - 1.4 如何设置管理员，管理角色，管理权限
+    - 如何设置菜单
+    - 如何设置管理员，管理角色，管理权限
     
 - 参与开发
-    - 2.1 开发一个插件
-        - 2.1.1 初始化工作
-        - 2.1.2 路由设置
-        - 2.1.3 处理请求
-        - 2.1.4 返回响应
-        - 2.1.5 一些辅助方法
-    - 2.2 开发一个适配器
-        - 2.2.1 适配器介绍
-        - 2.2.2 实现Use方法
-        - 2.2.3 实现Content方法
-    - 2.3 开发一个主题模板
-        - 2.3.1 页面模块化
-        - 2.3.2 静态资源的处理
-        - 2.3.3 模板的使用       
+    - 开发一个插件
+        - 初始化工作
+        - 路由设置
+        - 处理请求
+        - 返回响应
+        - 一些辅助方法
+    - 开发一个适配器
+        - 适配器介绍
+        - 实现Use方法
+        - 实现Content方法
+    - 开发一个主题模板
+        - 页面模块化
+        - 静态资源的处理
+        - 模板的使用
