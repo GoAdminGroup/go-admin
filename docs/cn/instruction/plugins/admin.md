@@ -141,7 +141,7 @@ func GetUsersTable() (usersTable models.Table) {
 
 是一个函数，返回了```models.Table```这个类型对象。以下是```models.Table```的定义：
 
-```
+```go
 type Table struct {
 	Info             types.InfoPanel
 	Form             types.FormPanel
@@ -161,7 +161,7 @@ type Table struct {
 
 ### Info表格
 
-```
+```go
 type InfoPanel struct {
 	FieldList   []FieldStruct  // 字段类型
 	Table       string         // 表格
@@ -181,7 +181,7 @@ type FieldStruct struct {
 
 ### Form表格
 
-```
+```go
 type FormPanel struct {
 	FormList   []FormStruct    // 字段类型
 	Table       string         // 表格
