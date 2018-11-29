@@ -2,17 +2,21 @@
 
 - [如何使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/instruction.md)
     - [如何使用插件](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)
-        - [admin插件的使用：配置生成管理页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)
-            - 使用admincli生产配置文件
+        - [admin插件的使用：配置生成数据管理平台](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)
+            - 快速开始
+                - 使用admincli生产配置文件
+                - 设置访问路由
+                - 初始化，并在引擎中加载
+                - 设置访问菜单
             - 配置模型文件介绍与配置
                 - Form
                 - Info
     - 如何自定义页面
-        - 1.2.1 介绍页面模块
+        - 介绍页面模块
             - panel 
             - 行
             - 列
-        - 1.2.2 介绍页面组件
+        - 介绍页面组件
             - InfoBox
             - Button
             - BarChart

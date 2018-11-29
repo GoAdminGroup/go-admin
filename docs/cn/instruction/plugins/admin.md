@@ -2,6 +2,8 @@
 
 admin插件可以帮助你实现快速生成数据库数据表增删改查的Web数据管理平台。
 
+## 快速开始
+
 需要如下几步：
 
 - 生成数据表对应的配置文件
@@ -9,7 +11,7 @@ admin插件可以帮助你实现快速生成数据库数据表增删改查的Web
 - 初始化，并在引擎中加载
 - 设置访问菜单
 
-## 生成配置文件
+### 生成配置文件
 
 假设你的数据库里面有一个数据表Users，如：
 
@@ -52,7 +54,7 @@ admincli generate -h=127.0.0.1 -p=3306 -u=root -P=root -pa=main -n=goadmin -o=./
 
 运行完之后，会生成一个文件```users.go```，这个就是对应数据表的配置文件了，关于如何配置，在后面详细介绍。
 
-## 设置访问路由
+### 设置访问路由
 
 生成完配置文件后，你需要设置访问这个数据表数据的路由，如：
 
@@ -70,7 +72,7 @@ var Generators = map[string]models.TableGenerator{
 
 其中，```"user"```就是对应的前缀，```GetUserTable```就是配置文件中的方法，只要一一对应即可。
 
-## 初始化，并在引擎中加载
+### 初始化，并在引擎中加载
 
 初始化，需要调用```NewAdmin```方法，然后将上面的```Generators```传进去即可。然后再调用引擎的```AddPlugins```方法加载引擎。
 
@@ -101,6 +103,101 @@ func main() {
 }
 ```
 
-## 设置访问菜单
+### 设置访问菜单
 
 运行起来后，访问登录网址，进入到菜单管理页面，设置好数据表的管理菜单就可以在侧边栏中进入了。
+
+## 配置文件介绍
+
+配置文件，如下：
+
+```go
+package main
+
+import (
+	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
+)
+
+func GetUsersTable() (usersTable models.Table) {
+
+	usersTable.Info.FieldList = []types.FieldStruct{}
+
+	usersTable.Info.Table = "users"
+	usersTable.Info.Title = "Users"
+	usersTable.Info.Description = "Users"
+
+	usersTable.Form.FormList = []types.FormStruct{}
+
+	usersTable.Form.Table = "users"
+	usersTable.Form.Title = "Users"
+	usersTable.Form.Description = "Users"
+
+	usersTable.ConnectionDriver = "mysql"
+
+	return
+}
+```
+
+是一个函数，返回了```models.Table```这个类型对象。以下是```models.Table```的定义：
+
+```
+type Table struct {
+	Info             types.InfoPanel
+	Form             types.FormPanel
+	ConnectionDriver string
+}
+```
+
+包括了```Info```和```Form```，这两种类型对应的ui就是显示数据的表格和编辑新建数据的表单，截图展示如下：
+
+- 此为```Info```表格
+
+![](https://ws4.sinaimg.cn/large/006tNbRwly1fxoy26qnc5j31y60u0q91.jpg)
+
+- 此为```Form```表单
+
+![](https://ws1.sinaimg.cn/large/006tNbRwly1fxoy2w3cobj318k0ooabv.jpg)
+
+### Info表格
+
+```
+type InfoPanel struct {
+	FieldList   []FieldStruct  // 字段类型
+	Table       string         // 表格
+	Title       string         // 标题
+	Description string         // 描述
+}
+
+type FieldStruct struct {
+	ExcuFun  FieldValueFun     // 过滤函数
+	Field    string            // 字段名
+	TypeName string            // 字段类型名
+	Head     string            // 标题
+	Sortable bool              // 是否可以排序
+	Filter   bool              // 是否可以筛选
+}
+```
+
+### Form表格
+
+```
+type FormPanel struct {
+	FormList   []FormStruct    // 字段类型
+	Table       string         // 表格
+	Title       string         // 标题
+	Description string         // 描述
+}
+
+type FormStruct struct {
+	Field    string                // 字段名
+	TypeName string                // 字段类型名
+	Head     string                // 标题
+	Default  string                // 默认
+	Editable bool                  // 是否可编辑
+	FormType string                // 表单类型
+	Value    string                // 表单默认值
+	Options  []map[string]string   // 表单选项
+	ExcuFun  FieldValueFun         // 过滤函数
+}
+```
