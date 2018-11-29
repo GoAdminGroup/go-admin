@@ -26,7 +26,7 @@
             - Popup
             - Product
             - SmallBox
-            - Tabel
+            - Table
             - Tree
             - Image
             - Form
@@ -45,7 +45,8 @@
         - 适配器介绍
         - 实现Use方法
         - 实现Content方法
-    - 开发一个主题模板
-        - 页面模块化
+    - [开发一个主题模板](https://github.com/chenhg5/go-admin/blob/master/docs/cn/development/template/template.md)
+        - [组件开发](https://github.com/chenhg5/go-admin/blob/master/docs/cn/development/template/components.md)
+        - 表单组件开发
         - 静态资源的处理
         - 模板的使用
