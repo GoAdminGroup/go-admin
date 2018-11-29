@@ -29,13 +29,13 @@ CREATE TABLE `users` (
 
 使用自带的命令行工具可以帮助你快速生成配置文件，如：
 
-安装
+- 安装
 
 ```bash
 go install github.com/chenhg5/go-admin/admincli
 ```
 
-生成
+- 生成
 
 ```bash
 admincli generate -h=127.0.0.1 -p=3306 -u=root -P=root -pa=main -n=goadmin -o=./
