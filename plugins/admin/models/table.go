@@ -77,14 +77,14 @@ func (tb Table) GetFiltersMap() []map[string]string {
 		if value.Filter {
 			filters = append(filters, map[string]string{
 				"title": value.Head,
-				"name": value.Field,
+				"name":  value.Field,
 			})
 		}
 	}
 	if len(filters) == 0 {
 		filters = append(filters, map[string]string{
 			"title": "ID",
-			"name": "id",
+			"name":  "id",
 		})
 	}
 	return filters
@@ -186,7 +186,11 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	paginator := GetPaginator(path, params, size)
 
 	return PanelInfo{
-		thead, infoList, paginator, title, description,
+		Thead:       thead,
+		InfoList:    infoList,
+		Paginator:   paginator,
+		Title:       title,
+		Description: description,
 	}
 
 }

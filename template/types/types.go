@@ -62,26 +62,35 @@ type FieldValueFun func(value RowModel) interface{}
 
 // 展示列
 type FieldStruct struct {
-	ExcuFun  FieldValueFun
-	Field    string
-	TypeName string
-	Head     string
-	Sortable bool
-	Filter   bool
+	ExcuFun   FieldValueFun
+	Field     string
+	TypeName  string
+	Head      string
+	JoinTable []Join
+	Sortable  bool
+	Filter    bool
+}
+
+type Join struct {
+	Table      string
+	Field      string
+	TableField string
+	HasChild   bool
+	JoinTable  Join
 }
 
 func (field *FieldStruct) SetHead(head string) *FieldStruct {
-	(*field).Head = head
+	field.Head = head
 	return field
 }
 
 func (field *FieldStruct) SetTypeName(typeName string) *FieldStruct {
-	(*field).TypeName = typeName
+	field.TypeName = typeName
 	return field
 }
 
 func (field *FieldStruct) SetField(fieldName string) *FieldStruct {
-	(*field).Field = fieldName
+	field.Field = fieldName
 	return field
 }
 
