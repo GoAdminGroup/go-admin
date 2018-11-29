@@ -67,9 +67,9 @@ type ColAttribute interface {
 
 关于```size```，参考的例子是：```map[string]string{"md": "3", "sm": "6", "xs": "12"}```
 
-## Raw 行
+## Row 行
 
-一个raw行对应的是```RowAttribute```这个类型，有三个方法如下：
+一个row行对应的是```RowAttribute```这个类型，有三个方法如下：
 
 ```go
 type RowAttribute interface {
