@@ -66,18 +66,18 @@ type FieldStruct struct {
 	Field     string
 	TypeName  string
 	Head      string
-	//JoinTable []Join
+	JoinTable []Join
 	Sortable  bool
 	Filter    bool
 }
 
-//type Join struct {
-//	Table      string
-//	Field      string
-//	TableField string
-//	HasChild   bool
-//	JoinTable  Join
-//}
+type Join struct {
+	Table      string
+	Field      string
+	TableField string
+	HasChild   bool
+	JoinTable  *Join
+}
 
 func (field *FieldStruct) SetHead(head string) *FieldStruct {
 	field.Head = head
