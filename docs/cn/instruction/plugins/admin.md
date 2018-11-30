@@ -179,7 +179,7 @@ type FieldStruct struct {
 }
 ```
 
-### Form表格
+### Form表单
 
 ```go
 type FormPanel struct {

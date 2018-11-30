@@ -1,6 +1,6 @@
 # go-admin文档
 
-- [如何使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/instruction.md)
+- [如何使用，go-admin介绍](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/instruction.md)
     - [如何使用插件](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)
         - [admin插件的使用：配置生成数据管理平台](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)
             - 快速开始
