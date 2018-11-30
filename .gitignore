@@ -7,3 +7,5 @@ demo/go-admin
 demo/Makefile
 demo/deploy.retry
 examples/gin/uploads/
+vendor/**
+!vendor/vendor.json
