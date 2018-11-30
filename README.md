@@ -46,7 +46,7 @@ account: admin  password: admin
 
 ## How to
 
-see the [wiki](https://github.com/chenhg5/go-admin/wiki) for detail
+see the [docs](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md) for detail
 
 ### install
 
