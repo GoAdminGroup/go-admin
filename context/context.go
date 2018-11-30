@@ -55,7 +55,8 @@ func NewContext(req *http.Request) *Context {
 		Request:   req,
 		UserValue: make(map[string]interface{}, 0),
 		Response: &http.Response{
-			Header: make(http.Header, 0),
+			StatusCode: 200,
+			Header:     make(http.Header, 0),
 		},
 	}
 }
@@ -82,7 +83,7 @@ func (ctx *Context) Json(code int, Body map[string]interface{}) {
 }
 
 // Html output html response.
-func (ctx *Context) Html(code int, body string)  {
+func (ctx *Context) Html(code int, body string) {
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.SetStatusCode(code)
 	ctx.WriteString(body)
