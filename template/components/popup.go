@@ -11,6 +11,7 @@ type PopupAttribute struct {
 	Body   template.HTML
 	Footer string
 	Title  string
+	types.Attribute
 }
 
 func (compo *PopupAttribute) SetID(value string) types.PopupAttribute {
@@ -34,5 +35,5 @@ func (compo *PopupAttribute) SetBody(value template.HTML) types.PopupAttribute {
 }
 
 func (compo *PopupAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "popup")
+	return ComposeHtml(compo.TemplateList, *compo, "popup")
 }

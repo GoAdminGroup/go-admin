@@ -11,6 +11,7 @@ type SmallBoxAttribute struct {
 	Value string
 	Url   string
 	Color string
+	types.Attribute
 }
 
 func (compo *SmallBoxAttribute) SetTitle(value string) types.SmallBoxAttribute {
@@ -29,5 +30,5 @@ func (compo *SmallBoxAttribute) SetUrl(value string) types.SmallBoxAttribute {
 }
 
 func (compo *SmallBoxAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "smallbox")
+	return ComposeHtml(compo.TemplateList, *compo, "smallbox")
 }

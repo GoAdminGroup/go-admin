@@ -12,6 +12,7 @@ type InfoBoxAttribute struct {
 	Number  template.HTML
 	Content string
 	Color   string
+	types.Attribute
 }
 
 func (compo *InfoBoxAttribute) SetIcon(value string) types.InfoBoxAttribute {
@@ -40,5 +41,5 @@ func (compo *InfoBoxAttribute) SetColor(value string) types.InfoBoxAttribute {
 }
 
 func (compo *InfoBoxAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "infobox")
+	return ComposeHtml(compo.TemplateList, *compo, "infobox")
 }

@@ -11,6 +11,7 @@ type BarChartAttribute struct {
 	Data  string
 	ID    string
 	Width int
+	types.Attribute
 }
 
 func (compo *BarChartAttribute) SetID(value string) types.BarChartAttribute {
@@ -34,5 +35,5 @@ func (compo *BarChartAttribute) SetData(value string) types.BarChartAttribute {
 }
 
 func (compo *BarChartAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "bar-chart")
+	return ComposeHtml(compo.TemplateList, *compo, "bar-chart")
 }

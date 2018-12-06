@@ -12,6 +12,7 @@ type TreeAttribute struct {
 	EditUrl   string
 	DeleteUrl string
 	OrderUrl  string
+	types.Attribute
 }
 
 func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
@@ -35,9 +36,9 @@ func (compo *TreeAttribute) SetOrderUrl(value string) types.TreeAttribute {
 }
 
 func (compo *TreeAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "tree")
+	return ComposeHtml(compo.TemplateList, *compo, "tree")
 }
 
 func (compo *TreeAttribute) GetTreeHeader() template.HTML {
-	return ComposeHtml(*compo, "tree-header")
+	return ComposeHtml(compo.TemplateList, *compo, "tree-header")
 }

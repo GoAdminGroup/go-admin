@@ -12,6 +12,7 @@ type TableAttribute struct {
 	Type      string
 	EditUrl   string
 	DeleteUrl string
+	types.Attribute
 }
 
 func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
@@ -30,7 +31,7 @@ func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 }
 
 func (compo *TableAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "table")
+	return ComposeHtml(compo.TemplateList, *compo, "table")
 }
 
 type DataTableAttribute struct {
@@ -41,10 +42,11 @@ type DataTableAttribute struct {
 	InfoUrl   string
 	FilterUrl string
 	Filters   []map[string]string
+	types.Attribute
 }
 
 func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
-	return ComposeHtml(*compo, "table/box-header")
+	return ComposeHtml(compo.TemplateList, *compo, "table/box-header")
 }
 
 func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
@@ -88,5 +90,5 @@ func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribut
 }
 
 func (compo *DataTableAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "table")
+	return ComposeHtml(compo.TemplateList, *compo, "table")
 }

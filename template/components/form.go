@@ -14,6 +14,7 @@ type FormAttribute struct {
 	CSRFToken string
 	Title     string
 	Prefix    string
+	types.Attribute
 }
 
 func (compo *FormAttribute) SetContent(value []types.FormStruct) types.FormAttribute {
@@ -52,7 +53,7 @@ func (compo *FormAttribute) SetToken(value string) types.FormAttribute {
 }
 
 func (compo *FormAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "form",
+	return ComposeHtml(compo.TemplateList, *compo, "form",
 		"form/default", "form/file", "form/textarea",
 		"form/selectbox", "form/text",
 		"form/password", "form/select", "form/singleselect", "form/iconpicker")

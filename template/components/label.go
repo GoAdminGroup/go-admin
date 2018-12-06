@@ -9,6 +9,7 @@ type LabelAttribute struct {
 	Name    string
 	Color   string
 	Content string
+	types.Attribute
 }
 
 func (compo *LabelAttribute) SetContent(value string) types.LabelAttribute {
@@ -17,5 +18,5 @@ func (compo *LabelAttribute) SetContent(value string) types.LabelAttribute {
 }
 
 func (compo *LabelAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "label")
+	return ComposeHtml(compo.TemplateList, *compo, "label")
 }

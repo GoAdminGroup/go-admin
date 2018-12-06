@@ -11,6 +11,7 @@ type AreaChartAttribute struct {
 	Data   string
 	ID     string
 	Height int
+	types.Attribute
 }
 
 func (compo *AreaChartAttribute) SetID(value string) types.AreaChartAttribute {
@@ -34,5 +35,5 @@ func (compo *AreaChartAttribute) SetData(value string) types.AreaChartAttribute 
 }
 
 func (compo *AreaChartAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "area-chart")
+	return ComposeHtml(compo.TemplateList, *compo, "area-chart")
 }

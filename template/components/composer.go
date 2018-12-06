@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/language"
-	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"html/template"
 	"strings"
 )
 
-func ComposeHtml(compo interface{}, templateName ...string) template.HTML {
+func ComposeHtml(temList map[string]string, compo interface{}, templateName ...string) template.HTML {
 	var text = ""
 	for _, v := range templateName {
-		text += tmpl.List["components/"+v]
+		text += temList["components/"+v]
 	}
 
 	tmpla, err := template.New("comp").Funcs(template.FuncMap{

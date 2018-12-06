@@ -8,6 +8,7 @@ import (
 type RowAttribute struct {
 	Name    string
 	Content template.HTML
+	types.Attribute
 }
 
 func (compo *RowAttribute) SetContent(value template.HTML) types.RowAttribute {
@@ -16,5 +17,5 @@ func (compo *RowAttribute) SetContent(value template.HTML) types.RowAttribute {
 }
 
 func (compo *RowAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "row")
+	return ComposeHtml(compo.TemplateList, *compo, "row")
 }

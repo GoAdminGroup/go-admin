@@ -17,6 +17,7 @@ type PaginatorAttribute struct {
 	NextUrl           string
 	Option            map[string]template.HTML
 	Url               string
+	types.Attribute
 }
 
 func (compo *PaginatorAttribute) SetCurPageStartIndex(value string) types.PaginatorAttribute {
@@ -70,5 +71,5 @@ func (compo *PaginatorAttribute) SetUrl(value string) types.PaginatorAttribute {
 }
 
 func (compo *PaginatorAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "paginator")
+	return ComposeHtml(compo.TemplateList, *compo, "paginator")
 }

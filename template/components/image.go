@@ -10,6 +10,7 @@ type ImgAttribute struct {
 	Witdh  string
 	Height string
 	Src    string
+	types.Attribute
 }
 
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
@@ -28,5 +29,5 @@ func (compo *ImgAttribute) SetSrc(value string) types.ImgAttribute {
 }
 
 func (compo *ImgAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "image")
+	return ComposeHtml(compo.TemplateList, *compo, "image")
 }

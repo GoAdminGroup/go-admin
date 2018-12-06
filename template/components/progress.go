@@ -12,6 +12,7 @@ type ProgressGroupAttribute struct {
 	Denominator int
 	Color       string
 	Percent     int
+	types.Attribute
 }
 
 func (compo *ProgressGroupAttribute) SetTitle(value string) types.ProgressGroupAttribute {
@@ -40,5 +41,5 @@ func (compo *ProgressGroupAttribute) SetMolecular(value int) types.ProgressGroup
 }
 
 func (compo *ProgressGroupAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "progress-group")
+	return ComposeHtml(compo.TemplateList, *compo, "progress-group")
 }

@@ -9,6 +9,7 @@ type ColAttribute struct {
 	Name    string
 	Content template.HTML
 	Size    string
+	types.Attribute
 }
 
 func (compo *ColAttribute) SetContent(value template.HTML) types.ColAttribute {
@@ -25,5 +26,5 @@ func (compo *ColAttribute) SetSize(value map[string]string) types.ColAttribute {
 }
 
 func (compo *ColAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "col")
+	return ComposeHtml(compo.TemplateList, *compo, "col")
 }

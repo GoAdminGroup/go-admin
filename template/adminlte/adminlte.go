@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/components"
 	"github.com/chenhg5/go-admin/template/adminlte/resource"
 	"github.com/chenhg5/go-admin/template/adminlte/tmpl"
 	"github.com/chenhg5/go-admin/template/types"
@@ -28,9 +28,7 @@ func (*Theme) GetTmplList() map[string]string {
 }
 
 func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) {
-	var (
-		err error
-	)
+	var err error
 
 	if !isPjax {
 		name = "layout"
@@ -64,6 +62,10 @@ func (*Theme) GetAssetList() []string {
 	return asserts
 }
 
+var Attribute = types.Attribute{
+	TemplateList: tmpl.List,
+}
+
 func (*Theme) Box() types.BoxAttribute {
 	return &components.BoxAttribute{
 		Name:       "box",
@@ -72,150 +74,171 @@ func (*Theme) Box() types.BoxAttribute {
 		Footer:     template.HTML(""),
 		Title:      "",
 		HeadBorder: "",
+		Attribute:  Attribute,
 	}
 }
 
 func (*Theme) Col() types.ColAttribute {
 	return &components.ColAttribute{
-		Name:    "col",
-		Size:    "col-md-2",
-		Content: "",
+		Name:      "col",
+		Size:      "col-md-2",
+		Content:   "",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Form() types.FormAttribute {
 	return &components.FormAttribute{
-		Name:    "form",
-		Content: []types.FormStruct{},
-		Url:     "/",
-		Method:  "post",
-		InfoUrl: "",
-		Title:   "edit",
+		Name:      "form",
+		Content:   []types.FormStruct{},
+		Url:       "/",
+		Method:    "post",
+		InfoUrl:   "",
+		Title:     "edit",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Image() types.ImgAttribute {
 	return &components.ImgAttribute{
-		Name:   "image",
-		Witdh:  "50",
-		Height: "50",
-		Src:    "",
+		Name:      "image",
+		Witdh:     "50",
+		Height:    "50",
+		Src:       "",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) SmallBox() types.SmallBoxAttribute {
 	return &components.SmallBoxAttribute{
-		Name:  "smallbox",
-		Title: "title",
-		Value: "value",
-		Url:   "/",
-		Color: "aqua",
+		Name:      "smallbox",
+		Title:     "title",
+		Value:     "value",
+		Url:       "/",
+		Color:     "aqua",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) InfoBox() types.InfoBoxAttribute {
 	return &components.InfoBoxAttribute{
-		Name:   "infobox",
-		Text:   "title",
-		Icon:   "ion-ios-cart-outline",
-		Number: "90",
-		Color:  "red",
+		Name:      "infobox",
+		Text:      "title",
+		Icon:      "ion-ios-cart-outline",
+		Number:    "90",
+		Color:     "red",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) AreaChart() types.AreaChartAttribute {
 	return &components.AreaChartAttribute{
-		Name: "area-chart",
+		Name:      "area-chart",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) ProgressGroup() types.ProgressGroupAttribute {
 	return &components.ProgressGroupAttribute{
-		Name: "progress-group",
+		Name:      "progress-group",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Description() types.DescriptionAttribute {
 	return &components.DescriptionAttribute{
-		Name: "description",
+		Name:      "description",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) PieChart() types.PieChartAttribute {
 	return &components.PieChartAttribute{
-		Name: "pie-chart",
+		Name:      "pie-chart",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) LineChart() types.LineChartAttribute {
 	return &components.LineChartAttribute{
-		Name: "line-chart",
+		Name:      "line-chart",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) BarChart() types.BarChartAttribute {
 	return &components.BarChartAttribute{
-		Name: "bar-chart",
+		Name:      "bar-chart",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) ChartLegend() types.ChartLegendAttribute {
 	return &components.ChartLegendAttribute{
-		Name: "chart-legend",
+		Name:      "chart-legend",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) ProductList() types.ProductListAttribute {
 	return &components.ProductListAttribute{
-		Name: "productlist",
+		Name:      "productlist",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Tabs() types.TabsAttribute {
 	return &components.TabsAttribute{
-		Name: "tabs",
+		Name:      "tabs",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Alert() types.AlertAttribute {
 	return &components.AlertAttribute{
-		Name: "alert",
+		Name:      "alert",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Label() types.LabelAttribute {
 	return &components.LabelAttribute{
-		Name:    "label",
-		Color:   "success",
-		Content: "",
+		Name:      "label",
+		Color:     "success",
+		Content:   "",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Popup() types.PopupAttribute {
 	return &components.PopupAttribute{
-		Name: "popup",
+		Name:      "popup",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Paginator() types.PaginatorAttribute {
 	return &components.PaginatorAttribute{
-		Name: "paginator",
+		Name:      "paginator",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Row() types.RowAttribute {
 	return &components.RowAttribute{
-		Name:    "row",
-		Content: "",
+		Name:      "row",
+		Content:   "",
+		Attribute: Attribute,
 	}
 }
 
 func (*Theme) Table() types.TableAttribute {
 	return &components.TableAttribute{
-		Name:     "table",
-		Thead:    []map[string]string{},
-		InfoList: []map[string]template.HTML{},
-		Type:     "normal",
+		Name:      "table",
+		Thead:     []map[string]string{},
+		InfoList:  []map[string]template.HTML{},
+		Type:      "normal",
+		Attribute: Attribute,
 	}
 }
 
@@ -224,12 +247,14 @@ func (theme *Theme) DataTable() types.DataTableAttribute {
 		TableAttribute: *(theme.Table().SetType("data-table").(*components.TableAttribute)),
 		EditUrl:        "",
 		NewUrl:         "",
+		Attribute:      Attribute,
 	}
 }
 
 func (*Theme) Tree() types.TreeAttribute {
 	return &components.TreeAttribute{
-		Name: "tree",
-		Tree: []menu.MenuItem{},
+		Name:      "tree",
+		Tree:      []menu.MenuItem{},
+		Attribute: Attribute,
 	}
 }

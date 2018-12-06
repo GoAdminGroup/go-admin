@@ -11,6 +11,7 @@ type PieChartAttribute struct {
 	Height int
 	Data   string
 	Title  string
+	types.Attribute
 }
 
 func (compo *PieChartAttribute) SetID(value string) types.PieChartAttribute {
@@ -34,5 +35,5 @@ func (compo *PieChartAttribute) SetHeight(value int) types.PieChartAttribute {
 }
 
 func (compo *PieChartAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "pie-chart")
+	return ComposeHtml(compo.TemplateList, *compo, "pie-chart")
 }

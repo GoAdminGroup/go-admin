@@ -13,6 +13,7 @@ type BoxAttribute struct {
 	Title      template.HTML
 	Theme      string
 	HeadBorder string
+	types.Attribute
 }
 
 func (compo *BoxAttribute) SetTheme(value string) types.BoxAttribute {
@@ -50,5 +51,5 @@ func (compo *BoxAttribute) WithHeadBorder(has bool) types.BoxAttribute {
 }
 
 func (compo *BoxAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "box")
+	return ComposeHtml(compo.TemplateList, *compo, "box")
 }

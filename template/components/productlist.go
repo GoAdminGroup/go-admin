@@ -8,6 +8,7 @@ import (
 type ProductListAttribute struct {
 	Name string
 	Data []map[string]string
+	types.Attribute
 }
 
 func (compo *ProductListAttribute) SetData(value []map[string]string) types.ProductListAttribute {
@@ -16,5 +17,5 @@ func (compo *ProductListAttribute) SetData(value []map[string]string) types.Prod
 }
 
 func (compo *ProductListAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "productlist")
+	return ComposeHtml(compo.TemplateList, *compo, "productlist")
 }

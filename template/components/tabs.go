@@ -8,6 +8,7 @@ import (
 type TabsAttribute struct {
 	Name string
 	Data []map[string]template.HTML
+	types.Attribute
 }
 
 func (compo *TabsAttribute) SetData(value []map[string]template.HTML) types.TabsAttribute {
@@ -16,5 +17,5 @@ func (compo *TabsAttribute) SetData(value []map[string]template.HTML) types.Tabs
 }
 
 func (compo *TabsAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "tabs")
+	return ComposeHtml(compo.TemplateList, *compo, "tabs")
 }

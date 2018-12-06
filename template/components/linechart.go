@@ -11,6 +11,7 @@ type LineChartAttribute struct {
 	Data   string
 	ID     string
 	Height int
+	types.Attribute
 }
 
 func (compo *LineChartAttribute) SetID(value string) types.LineChartAttribute {
@@ -34,5 +35,5 @@ func (compo *LineChartAttribute) SetData(value string) types.LineChartAttribute 
 }
 
 func (compo *LineChartAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "line-chart")
+	return ComposeHtml(compo.TemplateList, *compo, "line-chart")
 }

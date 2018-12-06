@@ -8,6 +8,7 @@ import (
 type ChartLegendAttribute struct {
 	Name string
 	Data []map[string]string
+	types.Attribute
 }
 
 func (compo *ChartLegendAttribute) SetData(value []map[string]string) types.ChartLegendAttribute {
@@ -16,5 +17,5 @@ func (compo *ChartLegendAttribute) SetData(value []map[string]string) types.Char
 }
 
 func (compo *ChartLegendAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "chart-legend")
+	return ComposeHtml(compo.TemplateList, *compo, "chart-legend")
 }

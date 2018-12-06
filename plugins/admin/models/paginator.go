@@ -2,7 +2,7 @@ package models
 
 import (
 	template2 "github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/adminlte/components"
+	"github.com/chenhg5/go-admin/template/components"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"math"

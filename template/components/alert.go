@@ -10,6 +10,7 @@ type AlertAttribute struct {
 	Theme   string
 	Title   template.HTML
 	Content template.HTML
+	types.Attribute
 }
 
 func (compo *AlertAttribute) SetTheme(value string) types.AlertAttribute {
@@ -28,5 +29,5 @@ func (compo *AlertAttribute) SetContent(value template.HTML) types.AlertAttribut
 }
 
 func (compo *AlertAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "alert")
+	return ComposeHtml(compo.TemplateList, *compo, "alert")
 }

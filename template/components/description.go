@@ -13,6 +13,7 @@ type DescriptionAttribute struct {
 	Arrow   string
 	Color   string
 	Percent string
+	types.Attribute
 }
 
 func (compo *DescriptionAttribute) SetNumber(value string) types.DescriptionAttribute {
@@ -46,5 +47,5 @@ func (compo *DescriptionAttribute) SetBorder(value string) types.DescriptionAttr
 }
 
 func (compo *DescriptionAttribute) GetContent() template.HTML {
-	return ComposeHtml(*compo, "description")
+	return ComposeHtml(compo.TemplateList, *compo, "description")
 }
