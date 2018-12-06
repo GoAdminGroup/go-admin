@@ -1,0 +1,6 @@
+{{define "form_textarea"}}
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}">{{.Value}}</textarea>
+</div>
+{{end}}

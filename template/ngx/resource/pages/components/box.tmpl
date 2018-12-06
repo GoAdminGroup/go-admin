@@ -1,0 +1,15 @@
+{{define "box"}}
+<div class="box box-{{.Theme}}">
+    <div class="box-header {{.HeadBorder}}">
+        {{.Header}}
+    </div>
+    <div class="box-body">
+        {{.Body}}
+    </div>
+    {{if ne .Footer ""}}
+    <div class="box-footer clearfix">
+        {{.Footer}}
+    </div>
+    {{end}}
+</div>
+{{end}}

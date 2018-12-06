@@ -185,11 +185,11 @@ func GetContent() types.Panel {
 
 	boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
 		SetBody(components.Row().
-			SetContent(colComp.SetSize(map[string]string{"md": "8"}).
-				SetContent(pie).
-				GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
-				SetContent(legend).
-				GetContent()).GetContent()).
+		SetContent(colComp.SetSize(map[string]string{"md": "8"}).
+		SetContent(pie).
+		GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
+		SetContent(legend).
+		GetContent()).GetContent()).
 		SetFooter(`<p class="text-center"><a href="javascript:void(0)" class="uppercase">View All Users</a></p>`).
 		GetContent()
 
@@ -296,7 +296,7 @@ func GetContent() types.Panel {
 	row4 := components.Row().SetContent(col5 + col6).GetContent()
 
 	return types.Panel{
-		Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3) + template.HTML(row4),
+		Content:     row1 + row2 + row3 + row4,
 		Title:       "Dashboard",
 		Description: "this is a example",
 	}

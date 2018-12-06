@@ -1,7 +1,6 @@
 package adminlte
 
 import (
-	"fmt"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/template/components"
@@ -48,7 +47,7 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 	}
 
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
 
 	return

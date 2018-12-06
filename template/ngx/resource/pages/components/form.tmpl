@@ -1,0 +1,74 @@
+{{define "form"}}
+<script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
+<script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
+<script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<div class="box box-info">
+    <div class="box-header with-border">
+        <h3 class="box-title">{{lang .Title}}</h3>
+        <div class="box-tools">
+            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
+            </div> -->
+            <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
+            </div>
+        </div>
+    </div>
+    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+        <div class="box-body">
+            <div class="fields-group">
+                {{range $key, $data := .Content}}
+                <div class="form-group">
+                    {{if eq $data.FormType "default"}}
+                        {{ template "form_default" $data }}
+                    {{else if eq $data.FormType "text"}}
+                        {{ template "form_text" $data }}
+                    {{else if eq $data.FormType "file"}}
+                        {{ template "form_file" $data }}
+                    {{else if eq $data.FormType "password"}}
+                        {{ template "form_password" $data }}
+                    {{else if eq $data.FormType "selectbox"}}
+                        {{ template "form_selectbox" $data }}
+                    {{else if eq $data.FormType "select"}}
+                        {{ template "form_select" $data }}
+                    {{else if eq $data.FormType "select_single"}}
+                        {{ template "form_select_single" $data }}
+                    {{else if eq $data.FormType "textarea"}}
+                        {{ template "form_textarea" $data }}
+                    {{else if eq $data.FormType "iconpicker"}}
+                        {{ template "form_iconpicker" $data }}
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+        </div>
+        <div class="box-footer">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-8">
+
+                <div class="btn-group pull-right">
+                    <button type="submit" class="btn btn-info pull-right"
+                            data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
+                        {{lang "Save"}}
+                    </button>
+                </div>
+
+                <div class="btn-group pull-left">
+                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+        {{range $key, $data := .Content}}
+            {{if eq $data.Field "id"}}
+                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
+            {{end}}
+        {{end}}
+        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
+    </form>
+</div>
+{{end}}

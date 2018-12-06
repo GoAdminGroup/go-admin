@@ -1,0 +1,59 @@
+{{define "paginator"}}
+Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
+<ul class="pagination pagination-sm no-margin pull-right">
+    <!-- Previous Page Link -->
+    <li class="page-item {{.PreviousClass}}">
+        {{if eq .PreviousClass "disabled"}}
+            <span class="page-link">«</span>
+        {{else}}
+            <a class="page-link" href='{{.PreviousUrl}}' rel="next">«</a>
+        {{end}}
+    </li>
+
+    <!-- Array Of Links -->
+    {{range $key, $page := .Pages}}
+        {{if eq (index $page "isSplit") "0"}}
+            {{if eq (index $page "active") "active"}}
+                <li class="page-item active"><span class="page-link">{{index $page "page"}}</span></li>
+            {{else}}
+                <li class="page-item"><a class="page-link" href='{{index $page "url"}}'>{{index $page "page"}}</a></li>
+            {{end}}
+        {{else}}
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+        {{end}}
+    {{end}}
+
+
+    <!-- Next Page Link -->
+    <li class='page-item {{.NextClass}}'>
+        {{if eq .NextClass "disabled"}}
+            <span class="page-link">»</span>
+        {{else}}
+            <a class="page-link" href='{{.NextUrl}}' rel="next">»</a>
+        {{end}}
+    </li>
+</ul>
+
+<label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
+
+    <small>Show</small>&nbsp;
+    <select class="input-sm grid-per-pager" name="per-page">
+        <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
+            10
+        </option>
+        <option value="{{.Url}}&pageSize=20" {{index .Option "20"}}>
+            20
+        </option>
+        <option value="{{.Url}}&pageSize=30" {{index .Option "30"}}>
+            30
+        </option>
+        <option value="{{.Url}}&pageSize=50" {{index .Option "50"}}>
+            50
+        </option>
+        <option value="{{.Url}}&pageSize=100" {{index .Option "100"}}>
+            100
+        </option>
+    </select>
+    <small>entries</small>
+</label>
+{{end}}

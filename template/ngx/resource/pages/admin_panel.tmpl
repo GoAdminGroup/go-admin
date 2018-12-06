@@ -1,0 +1,39 @@
+{{define "admin_panel"}}
+<div class="navbar-custom-menu">
+    <ul class="nav navbar-nav">
+        <!-- User Account: style can be found in dropdown.less -->
+        <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {{if eq .User.Avatar ""}}
+                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
+                {{else}}
+                    <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
+                {{end}}
+                <span class="hidden-xs">{{.User.Name}}</span>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- User image -->
+                <li class="user-header">
+                    {{if eq .User.Avatar ""}}
+                        <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    {{else}}
+                        <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                    {{end}}
+                    <p>
+                        {{.User.Name}} -{{.User.Level}}
+                        <small>{{.User.CreateAt}}</small>
+                    </p>
+                </li>
+                <li class="user-footer">
+                    <div class="pull-left">
+                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
+                    </div>
+                    <div class="pull-right">
+                        <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+{{end}}

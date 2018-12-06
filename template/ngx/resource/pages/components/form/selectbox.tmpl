@@ -1,0 +1,14 @@
+{{define "form_selectbox"}}
+<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
+        {{range  $key, $v := .Options }}
+            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
+        {{end}}
+    </select>
+    <input type="hidden" name="{{.Field}}[]" />
+</div>
+<script>
+    $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
+</script>
+{{end}}

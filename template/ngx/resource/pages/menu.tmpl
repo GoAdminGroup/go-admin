@@ -1,0 +1,33 @@
+{{define "menu"}}
+<ul class="sidebar-menu" data-widget="tree">
+{{$AssertRootUrl := .AssertRootUrl}}
+{{range $key, $list := .Menu.GlobalMenuList }}
+    {{if eq (len $list.ChildrenList) 0}}
+        <li class='{{$list.Active}}'>
+            {{if eq $list.Url "/"}}
+                <a href='{{$AssertRootUrl}}'>
+            {{else}}
+                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+            {{end}}
+                <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
+                <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
+            </a>
+        </li>
+    {{else}}
+        <li class="treeview {{$list.Active}}">
+            <a href="#">
+                <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
+                <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+            </a>
+            <ul class="treeview-menu">
+            {{range $key2, $item := $list.ChildrenList}}
+                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+            {{end}}
+            </ul>
+        </li>
+    {{end}}
+{{end}}
+</ul>
+{{end}}

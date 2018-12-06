@@ -1,0 +1,26 @@
+{{define "tabs"}}
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <li class="active"><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{else}}
+                <li><a href="#tab_{{$key}}" data-toggle="tab" aria-expanded="true">{{index $data "title"}}</a></li>
+            {{end}}
+        {{end}}
+    </ul>
+    <div class="tab-content">
+        {{range $key, $data := .Data}}
+            {{if eq $key 0}}
+                <div class="tab-pane active" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{else}}
+                <div class="tab-pane" id="tab_{{$key}}">
+                {{index $data "content"}}
+                </div>
+            {{end}}
+        {{end}}
+    </div>
+</div>
+{{end}}

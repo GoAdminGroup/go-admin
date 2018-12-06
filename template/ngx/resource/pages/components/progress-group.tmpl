@@ -1,0 +1,10 @@
+{{define "progress-group"}}
+<div class="progress-group">
+    <span class="progress-text">{{.Title}}</span>
+    <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
+
+    <div class="progress sm">
+        <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+    </div>
+</div>
+{{end}}

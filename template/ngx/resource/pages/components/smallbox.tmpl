@@ -1,0 +1,15 @@
+{{define "smallbox"}}
+<div class="small-box bg-{{.Color}}">
+    <div class="inner">
+        <h3>{{.Value}}</h3>
+        <p>{{.Title}}</p>
+    </div>
+    <div class="icon">
+        <i class="fa fa-users"></i>
+    </div>
+    <a href="{{.Url}}" class="small-box-footer">
+        More&nbsp;
+        <i class="fa fa-arrow-circle-right"></i>
+    </a>
+</div>
+{{end}}

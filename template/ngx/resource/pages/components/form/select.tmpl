@@ -1,0 +1,18 @@
+{{define "form_select"}}
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true">
+        {{range $key, $v := .Options }}
+            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
+        {{end}}
+    </select>
+    <!--<span class="help-block">
+        <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+    </span>-->
+</div>
+<script>
+    $(".{{.Field}}").select2({
+        allowClear: true
+    });
+</script>
+{{end}}

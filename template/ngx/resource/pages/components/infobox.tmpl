@@ -1,0 +1,10 @@
+{{define "infobox"}}
+<div class="info-box">
+    <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
+    <div class="info-box-content">
+        <span class="info-box-text">{{.Text}}</span>
+        <span class="info-box-number">{{.Number}}</span>
+        {{.Content}}
+    </div>
+</div>
+{{end}}

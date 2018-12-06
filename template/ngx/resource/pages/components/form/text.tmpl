@@ -1,0 +1,9 @@
+{{define "form_text"}}
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{.Head}}">
+    </div>
+</div>
+{{end}}

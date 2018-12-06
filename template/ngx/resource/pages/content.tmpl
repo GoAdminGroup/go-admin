@@ -1,0 +1,25 @@
+{{define "content"}}
+<script>
+    $('.grid-per-pager').on("change", function (e) {
+        console.log("changing...");
+        $.pjax({url: this.value, container: '#pjax-container'});
+    });
+    $('.grid-refresh').on('click', function () {
+        $.pjax.reload('#pjax-container');
+        toastr.success('{{lang "Refresh succeeded"}} !');
+    });
+</script>
+<script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
+<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+<section class="content-header">
+    <h1>
+        {{lang .Panel.Title}}
+        <small>{{lang .Panel.Description}}</small>
+    </h1>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    {{.Panel.Content}}
+</section>
+{{end}}
