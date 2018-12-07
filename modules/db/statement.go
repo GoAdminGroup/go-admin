@@ -320,8 +320,14 @@ func (sql *Sql) getWheres() string {
 		return ""
 	}
 	wheres := " where "
+	var arr []string
 	for _, where := range sql.wheres {
-		wheres += where.field + " " + where.operation + " " + where.qmark + " and "
+		arr = strings.Split(where.field, ".")
+		if len(arr) > 1 {
+			wheres += arr[0] + ".`" + arr[1] + "` " + where.operation + " " + where.qmark + " and "
+		} else {
+			wheres += "`" + where.field + "` " + where.operation + " " + where.qmark + " and "
+		}
 	}
 
 	if sql.whereRaw != "" {
