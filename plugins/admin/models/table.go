@@ -43,26 +43,6 @@ type Table struct {
 	ConnectionDriver string
 }
 
-type Columns []string
-
-func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
-	columns := make(Columns, len(columnsModel))
-	switch driver {
-	case "mysql":
-		for key, model := range columnsModel {
-			columns[key] = model["Field"].(string)
-		}
-		return columns
-	case "sqlite":
-		for key, model := range columnsModel {
-			columns[key] = string((*(model["name"].(*interface{}))).([]uint8))
-		}
-		return columns
-	default:
-		panic("wrong driver")
-	}
-}
-
 type PanelInfo struct {
 	Thead       []map[string]string
 	InfoList    []map[string]template.HTML
@@ -309,6 +289,11 @@ func (tb Table) DeleteDataFromDatabase(id string) {
 	}
 }
 
+// db is a helper function return db connection.
+func (tb Table) db() db.Connection {
+	return db.GetConnectionByDriver(tb.ConnectionDriver)
+}
+
 func GetNewFormList(old []types.Form) []types.Form {
 	var newForm []types.Form
 	for _, v := range old {
@@ -320,8 +305,28 @@ func GetNewFormList(old []types.Form) []types.Form {
 	return newForm
 }
 
-func (tb Table) db() db.Connection {
-	return db.GetConnectionByDriver(tb.ConnectionDriver)
+// ***************************************
+// helper function for database operation
+// ***************************************
+
+type Columns []string
+
+func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
+	columns := make(Columns, len(columnsModel))
+	switch driver {
+	case "mysql":
+		for key, model := range columnsModel {
+			columns[key] = model["Field"].(string)
+		}
+		return columns
+	case "sqlite":
+		for key, model := range columnsModel {
+			columns[key] = string((*(model["name"].(*interface{}))).([]uint8))
+		}
+		return columns
+	default:
+		panic("wrong driver")
+	}
 }
 
 // CheckInTable checks the find string is in the columns or not.

@@ -6,30 +6,55 @@ import (
 	"html/template"
 )
 
-type Component interface {
-	GetContent(interface{}) string
-}
-
+// Attribute is the component interface of template. Every component of
+// template should implement it.
 type Attribute struct {
 	TemplateList map[string]string
 }
 
+// Page used in the template as a top variable.
 type Page struct {
-	User          auth.User
-	Menu          menu.Menu
-	Panel         Panel
-	System        SystemInfo
+	// User is the login user.
+	User auth.User
+
+	// Menu is the left side menu of the template.
+	Menu menu.Menu
+
+	// Panel is the main content of template.
+	Panel Panel
+
+	// System contains some system info.
+	System SystemInfo
+
+	// AssertRootUrl is the url of asserts.
 	AssertRootUrl string
-	Title         string
-	Logo          template.HTML
-	MiniLogo      template.HTML
+
+	// Title is the title of the web page.
+	Title string
+
+	// Logo is the logo of the template.
+	Logo template.HTML
+
+	// MiniLogo is the downsizing logo of the template.
+	MiniLogo template.HTML
 }
 
+// SystemInfo contains basic info of system.
 type SystemInfo struct {
 	Version string
 }
 
-// 表单列
+// Panel contains the main content of the template which used as pjax.
+type Panel struct {
+	Content     template.HTML
+	Title       string
+	Description string
+	Url         string
+}
+
+type GetPanel func() Panel
+
+// Form is the form field with different options.
 type Form struct {
 	Field    string
 	TypeName string
@@ -42,15 +67,16 @@ type Form struct {
 	ExcuFun  FieldValueFun
 }
 
+// RowModel contains ID and value of the single query result.
 type RowModel struct {
 	ID    int64
 	Value string
 }
 
-// 数据过滤函数
+// FieldValueFun is filter function of data.
 type FieldValueFun func(value RowModel) interface{}
 
-// 展示列
+// Field is the table field.
 type Field struct {
 	ExcuFun   FieldValueFun
 	Field     string
@@ -69,22 +95,7 @@ type Join struct {
 	JoinTable  *Join
 }
 
-func (field *Field) SetHead(head string) *Field {
-	field.Head = head
-	return field
-}
-
-func (field *Field) SetTypeName(typeName string) *Field {
-	field.TypeName = typeName
-	return field
-}
-
-func (field *Field) SetField(fieldName string) *Field {
-	field.Field = fieldName
-	return field
-}
-
-// 展示面板
+// InfoPanel
 type InfoPanel struct {
 	FieldList   []Field
 	Table       string
@@ -92,19 +103,10 @@ type InfoPanel struct {
 	Description string
 }
 
-// 表单面板
+// FormPanel
 type FormPanel struct {
 	FormList    []Form
 	Table       string
 	Title       string
 	Description string
 }
-
-type Panel struct {
-	Content     template.HTML
-	Title       string
-	Description string
-	Url         string
-}
-
-type GetPanel func() Panel
