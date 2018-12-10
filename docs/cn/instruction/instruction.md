@@ -4,7 +4,7 @@ go-admin通过各种适配器使得你在各个web framework中使用都十分�
 
 ## 例子
 
-先导入$GOPATH/github.com/chenhg5/go-admin/examples/datamodel/admin.sql到数据库中。
+先导入```$GOPATH/github.com/chenhg5/go-admin/examples/datamodel/admin.sql```到数据库中。
 
 下面看一个Gin框架的例子：
 
