@@ -30,7 +30,7 @@ type SystemInfo struct {
 }
 
 // 表单列
-type FormStruct struct {
+type Form struct {
 	Field    string
 	TypeName string
 	Head     string
@@ -51,7 +51,7 @@ type RowModel struct {
 type FieldValueFun func(value RowModel) interface{}
 
 // 展示列
-type FieldStruct struct {
+type Field struct {
 	ExcuFun   FieldValueFun
 	Field     string
 	TypeName  string
@@ -69,24 +69,24 @@ type Join struct {
 	JoinTable  *Join
 }
 
-func (field *FieldStruct) SetHead(head string) *FieldStruct {
+func (field *Field) SetHead(head string) *Field {
 	field.Head = head
 	return field
 }
 
-func (field *FieldStruct) SetTypeName(typeName string) *FieldStruct {
+func (field *Field) SetTypeName(typeName string) *Field {
 	field.TypeName = typeName
 	return field
 }
 
-func (field *FieldStruct) SetField(fieldName string) *FieldStruct {
+func (field *Field) SetField(fieldName string) *Field {
 	field.Field = fieldName
 	return field
 }
 
 // 展示面板
 type InfoPanel struct {
-	FieldList   []FieldStruct
+	FieldList   []Field
 	Table       string
 	Title       string
 	Description string
@@ -94,7 +94,7 @@ type InfoPanel struct {
 
 // 表单面板
 type FormPanel struct {
-	FormList    []FormStruct
+	FormList    []Form
 	Table       string
 	Title       string
 	Description string

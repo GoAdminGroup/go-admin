@@ -145,7 +145,7 @@ import (
 
 func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 
-	` + table + `Table.Info.FieldList = []types.FieldStruct{`
+	` + table + `Table.Info.FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
 		content += `{
@@ -165,7 +165,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 	` + table + `Table.Info.Title = "` + strings.Title(table) + `"
 	` + table + `Table.Info.Description = "` + strings.Title(table) + `"
 
-	` + table + `Table.Form.FormList = []types.FormStruct{`
+	` + table + `Table.Form.FormList = []types.Form{`
 
 	for _, model := range columnsModel {
 

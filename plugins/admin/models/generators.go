@@ -12,7 +12,7 @@ import (
 
 func GetManagerTable() (ManagerTable Table) {
 
-	ManagerTable.Info.FieldList = []types.FieldStruct{
+	ManagerTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -91,7 +91,7 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 	}
 
-	ManagerTable.Form.FormList = []types.FormStruct{
+	ManagerTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -208,7 +208,7 @@ func GetManagerTable() (ManagerTable Table) {
 
 func GetPermissionTable() (PermissionTable Table) {
 
-	PermissionTable.Info.FieldList = []types.FieldStruct{
+	PermissionTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -278,7 +278,7 @@ func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable.Info.Title = language.Get("Permission Manage")
 	PermissionTable.Info.Description = language.Get("Permission Manage")
 
-	PermissionTable.Form.FormList = []types.FormStruct{
+	PermissionTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -381,7 +381,7 @@ func GetRolesTable() (RolesTable Table) {
 		})
 	}
 
-	RolesTable.Info.FieldList = []types.FieldStruct{
+	RolesTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -433,7 +433,7 @@ func GetRolesTable() (RolesTable Table) {
 	RolesTable.Info.Title = language.Get("Roles Manage")
 	RolesTable.Info.Description = language.Get("Roles Manage")
 
-	RolesTable.Form.FormList = []types.FormStruct{
+	RolesTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -514,7 +514,7 @@ func GetRolesTable() (RolesTable Table) {
 
 func GetOpTable() (OpTable Table) {
 
-	OpTable.Info.FieldList = []types.FieldStruct{
+	OpTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -593,7 +593,7 @@ func GetOpTable() (OpTable Table) {
 	OpTable.Info.Title = language.Get("operation log")
 	OpTable.Info.Description = language.Get("operation log")
 
-	OpTable.Form.FormList = []types.FormStruct{
+	OpTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -688,7 +688,7 @@ func GetOpTable() (OpTable Table) {
 
 func GetMenuTable() (MenuTable Table) {
 
-	MenuTable.Info.FieldList = []types.FieldStruct{
+	MenuTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -787,7 +787,7 @@ func GetMenuTable() (MenuTable Table) {
 		"value": "0",
 	}}, parents...)
 
-	MenuTable.Form.FormList = []types.FormStruct{
+	MenuTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",

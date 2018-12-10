@@ -196,7 +196,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.FormStruct, string, string) {
+func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, string) {
 
 	fields := ""
 
@@ -309,8 +309,8 @@ func (tb Table) DeleteDataFromDatabase(id string) {
 	}
 }
 
-func GetNewFormList(old []types.FormStruct) []types.FormStruct {
-	var newForm []types.FormStruct
+func GetNewFormList(old []types.Form) []types.Form {
+	var newForm []types.Form
 	for _, v := range old {
 		v.Value = ""
 		if v.Field != "id" && v.Field != "created_at" && v.Field != "updated_at" {

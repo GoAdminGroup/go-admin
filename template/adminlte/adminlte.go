@@ -89,7 +89,7 @@ func (*Theme) Col() types.ColAttribute {
 func (*Theme) Form() types.FormAttribute {
 	return &components.FormAttribute{
 		Name:      "form",
-		Content:   []types.FormStruct{},
+		Content:   []types.Form{},
 		Url:       "/",
 		Method:    "post",
 		InfoUrl:   "",

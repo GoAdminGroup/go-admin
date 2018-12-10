@@ -121,13 +121,13 @@ import (
 
 func GetUsersTable() (usersTable models.Table) {
 
-	usersTable.Info.FieldList = []types.FieldStruct{}
+	usersTable.Info.FieldList = []types.Field{}
 
 	usersTable.Info.Table = "users"
 	usersTable.Info.Title = "Users"
 	usersTable.Info.Description = "Users"
 
-	usersTable.Form.FormList = []types.FormStruct{}
+	usersTable.Form.FormList = []types.Form{}
 
 	usersTable.Form.Table = "users"
 	usersTable.Form.Title = "Users"
@@ -163,13 +163,13 @@ type Table struct {
 
 ```go
 type InfoPanel struct {
-	FieldList   []FieldStruct  // 字段类型
+	FieldList   []Field  // 字段类型
 	Table       string         // 表格
 	Title       string         // 标题
 	Description string         // 描述
 }
 
-type FieldStruct struct {
+type Field struct {
 	ExcuFun  FieldValueFun     // 过滤函数
 	Field    string            // 字段名
 	TypeName string            // 字段类型名
@@ -183,13 +183,13 @@ type FieldStruct struct {
 
 ```go
 type FormPanel struct {
-	FormList   []FormStruct    // 字段类型
+	FormList   []Form    // 字段类型
 	Table       string         // 表格
 	Title       string         // 标题
 	Description string         // 描述
 }
 
-type FormStruct struct {
+type Form struct {
 	Field    string                // 字段名
 	TypeName string                // 字段类型名
 	Head     string                // 标题

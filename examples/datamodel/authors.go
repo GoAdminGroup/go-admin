@@ -7,7 +7,7 @@ import (
 
 func GetAuthorsTable() (authorsTable models.Table) {
 
-	authorsTable.Info.FieldList = []types.FieldStruct{
+	authorsTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -68,7 +68,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 	authorsTable.Info.Title = "Authors"
 	authorsTable.Info.Description = "Authors"
 
-	authorsTable.Form.FormList = []types.FormStruct{
+	authorsTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",

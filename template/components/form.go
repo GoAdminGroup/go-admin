@@ -7,7 +7,7 @@ import (
 
 type FormAttribute struct {
 	Name      string
-	Content   []types.FormStruct
+	Content   []types.Form
 	Url       string
 	Method    string
 	InfoUrl   string
@@ -17,7 +17,7 @@ type FormAttribute struct {
 	types.Attribute
 }
 
-func (compo *FormAttribute) SetContent(value []types.FormStruct) types.FormAttribute {
+func (compo *FormAttribute) SetContent(value []types.Form) types.FormAttribute {
 	compo.Content = value
 	return compo
 }

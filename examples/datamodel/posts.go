@@ -7,7 +7,7 @@ import (
 
 func GetPostsTable() (postsTable models.Table) {
 
-	postsTable.Info.FieldList = []types.FieldStruct{
+	postsTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -59,7 +59,7 @@ func GetPostsTable() (postsTable models.Table) {
 	postsTable.Info.Title = "Posts"
 	postsTable.Info.Description = "Posts"
 
-	postsTable.Form.FormList = []types.FormStruct{
+	postsTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",

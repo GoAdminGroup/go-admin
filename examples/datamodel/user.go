@@ -7,7 +7,7 @@ import (
 
 func GetUserTable() (userTable models.Table) {
 
-	userTable.Info.FieldList = []types.FieldStruct{
+	userTable.Info.FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -65,7 +65,7 @@ func GetUserTable() (userTable models.Table) {
 	userTable.Info.Title = "Users"
 	userTable.Info.Description = "Users"
 
-	userTable.Form.FormList = []types.FormStruct{
+	userTable.Form.FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",

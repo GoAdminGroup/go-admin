@@ -6,7 +6,7 @@ import (
 )
 
 type FormAttribute interface {
-	SetContent(value []FormStruct) FormAttribute
+	SetContent(value []Form) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetInfoUrl(value string) FormAttribute
