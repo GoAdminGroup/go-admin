@@ -140,8 +140,9 @@ func (sql *Sql) Count() (int64, error) {
 	return res["count(*)"].(int64), nil
 }
 
-func (sql *Sql) WhereRaw(raw string) *Sql {
+func (sql *Sql) WhereRaw(raw string, args ...interface{}) *Sql {
 	sql.whereRaw = raw
+	sql.args = append(sql.args, args...)
 	return sql
 }
 
