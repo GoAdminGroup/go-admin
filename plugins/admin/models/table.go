@@ -126,8 +126,8 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
-		params.SortType+ " LIMIT ? OFFSET ?", args...)
+	res, _ := tb.db().Query("select "+fields+" from "+tb.Info.Table+wheres+" order by "+params.SortField+" "+
+		params.SortType+" LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 

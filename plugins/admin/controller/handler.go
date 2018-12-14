@@ -63,9 +63,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Content: alert + template.Get(Config.THEME).Form().
 					SetContent(formData).
 					SetPrefix(Config.PREFIX).
-					SetUrl(Config.PREFIX + "/edit/" + prefix).
+					SetUrl(Config.PREFIX+"/edit/"+prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 					GetContent(),
 				Description: description,
 				Title:       title,
@@ -87,9 +87,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Content: alert + template.Get(Config.THEME).Form().
 					SetPrefix(Config.PREFIX).
 					SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
-					SetUrl(Config.PREFIX + "/new/" + prefix).
+					SetUrl(Config.PREFIX+"/new/"+prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 					GetContent(),
 				Description: models.TableList[prefix].Form.Description,
 				Title:       models.TableList[prefix].Form.Title,

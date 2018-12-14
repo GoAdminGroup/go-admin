@@ -185,11 +185,11 @@ func GetContent() types.Panel {
 
 	boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
 		SetBody(components.Row().
-		SetContent(colComp.SetSize(map[string]string{"md": "8"}).
-		SetContent(pie).
-		GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
-		SetContent(legend).
-		GetContent()).GetContent()).
+			SetContent(colComp.SetSize(map[string]string{"md": "8"}).
+				SetContent(pie).
+				GetContent() + colComp.SetSize(map[string]string{"md": "4"}).
+				SetContent(legend).
+				GetContent()).GetContent()).
 		SetFooter(`<p class="text-center"><a href="javascript:void(0)" class="uppercase">View All Users</a></p>`).
 		GetContent()
 

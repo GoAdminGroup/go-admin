@@ -56,7 +56,7 @@ func CheckDatabase(ctx *context.Context) {
 
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 0,
-			"msg": "连接成功",
+			"msg":  "连接成功",
 			"data": map[string]interface{}{
 				"list": list,
 			},
@@ -67,7 +67,7 @@ func CheckDatabase(ctx *context.Context) {
 		fmt.Println(err2)
 		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
 			"code": 500,
-			"msg": "请检查参数是否设置正确",
+			"msg":  "请检查参数是否设置正确",
 		})
 	}
 }

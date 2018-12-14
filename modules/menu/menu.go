@@ -9,6 +9,11 @@ import (
 	"sync/atomic"
 )
 
+// TODO:
+// 1. 多go程数据污染问题
+// 2. 菜单权限：用户权限缓存获取
+// 3. 菜单活跃：根据路径计算活跃菜单
+
 type Menu struct {
 	GlobalMenuList   []MenuItem
 	GlobalMenuOption []map[string]string
