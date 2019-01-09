@@ -246,7 +246,7 @@ func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
-				valueList = append(valueList, strings.Join(modules.RemoveBlackFromArray(v), ","))
+				valueList = append(valueList, strings.Join(modules.RemoveBlankFromArray(v), ","))
 			} else {
 				valueList = append(valueList, v[0])
 			}

@@ -11,7 +11,7 @@ func InArray(arr []string, str string) bool {
 	return false
 }
 
-func RemoveBlackFromArray(s []string) []string {
+func RemoveBlankFromArray(s []string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {
