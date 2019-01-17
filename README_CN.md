@@ -119,6 +119,8 @@ func main() {
 
 QQ群: 756664859
 
+这里是[开发计划](https://github.com/chenhg5/go-admin/projects/1)
+
 ## 十分感谢
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
