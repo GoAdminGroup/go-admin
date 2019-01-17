@@ -16,6 +16,7 @@ import (
 	"regexp"
 	"runtime/debug"
 	"strconv"
+	"strings"
 )
 
 // 全局错误处理
@@ -54,12 +55,12 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
 
-			menu.GlobalMenu.SetActiveClass(ctx.Path())
-
 			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
+			user := auth.Auth(ctx)
+
 			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-			buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 				Content: alert + template.Get(Config.THEME).Form().
 					SetContent(formData).
 					SetPrefix(Config.PREFIX).
@@ -69,7 +70,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 					GetContent(),
 				Description: description,
 				Title:       title,
-			}, Config)
+			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 			ctx.Html(http.StatusOK, buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
@@ -78,12 +79,12 @@ func GlobalDeferHandler(ctx *context.Context) {
 		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
 			prefix := ctx.Query("prefix")
 
-			menu.GlobalMenu.SetActiveClass(ctx.Path())
-
 			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
+			user := auth.Auth(ctx)
+
 			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-			buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 				Content: alert + template.Get(Config.THEME).Form().
 					SetPrefix(Config.PREFIX).
 					SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
@@ -93,7 +94,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 					GetContent(),
 				Description: models.TableList[prefix].Form.Description,
 				Title:       models.TableList[prefix].Form.Title,
-			}, Config)
+			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 			ctx.Html(http.StatusOK, buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return

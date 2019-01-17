@@ -18,7 +18,7 @@ func Show(ctx *context.Context) {
 		newUrl := Config.PREFIX + "/info/" + prefix + "/new"
 		deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-		menu.GlobalMenu.SetActiveClass(ctx.Path())
+		menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1))
 
 		label := template2.Get(Config.THEME).Label().SetContent("list").GetContent()
 

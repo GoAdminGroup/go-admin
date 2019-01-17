@@ -26,8 +26,6 @@ func ShowInfo(ctx *context.Context) {
 
 	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
-
 	dataTable := template.Get(Config.THEME).
 		DataTable().
 		SetInfoList(panelInfo.InfoList).
@@ -47,12 +45,14 @@ func ShowInfo(ctx *context.Context) {
 		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
+	user := auth.Auth(ctx)
+
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 

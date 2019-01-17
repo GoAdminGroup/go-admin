@@ -120,11 +120,17 @@ func AddComp(name string, comp Component) {
 	CompMap[name] = comp
 }
 
-func Excecute(tmpl *template.Template, tmplName string, user auth.User, panel types.Panel, Config config.Config) *bytes.Buffer {
+func Excecute(tmpl *template.Template,
+	tmplName string,
+	user auth.User,
+	panel types.Panel,
+	Config config.Config,
+	globalMenu *menu.Menu) *bytes.Buffer {
+
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: menu.GetGlobalMenu(user),
+		Menu: *globalMenu,
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

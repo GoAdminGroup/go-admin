@@ -7,12 +7,8 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
+	"fmt"
 )
-
-// TODO:
-// 1. 多go程数据污染问题
-// 2. 菜单权限：用户权限缓存获取
-// 3. 菜单活跃：根据路径计算活跃菜单
 
 type Menu struct {
 	GlobalMenuList   []MenuItem
@@ -53,14 +49,12 @@ func (o *Once) unlock() {
 }
 
 func InitMenu(user auth.User) {
-	InitMenuOnce.Do(func() {
-		SetGlobalMenu(user)
-	})
+	SetGlobalMenu(user)
 }
 
-func GetGlobalMenu(user auth.User) Menu {
+func GetGlobalMenu(user auth.User) *Menu {
 	InitMenu(user)
-	return *GlobalMenu
+	return GlobalMenu
 }
 
 func Unlock() {
@@ -85,7 +79,7 @@ func SetGlobalMenu(user auth.User) {
 			ids = append(ids, user.Menus[i])
 		}
 
-		menus, _ = db.Query("select * from goadmin_menu where id in ("+qmark[:len(qmark)-1]+") "+
+		menus, _ = db.Query("select * from goadmin_menu where id in (" + qmark[:len(qmark)-1] + ") "+
 			"order by `order` asc", ids...)
 	}
 
@@ -160,28 +154,31 @@ func GetMenuItemById(id string) MenuItem {
 	}
 }
 
-func (menu *Menu) SetActiveClass(path string) {
+func (menu *Menu) SetActiveClass(path string) *Menu {
+
+	fmt.Println("path", path)
 
 	for i := 0; i < len((*menu).GlobalMenuList); i++ {
 		(*menu).GlobalMenuList[i].Active = ""
 	}
 
-Loop:
 	for i := 0; i < len((*menu).GlobalMenuList); i++ {
 		if (*menu).GlobalMenuList[i].Url == path {
 			(*menu).GlobalMenuList[i].Active = "active"
-			break Loop
+			return menu
 		} else {
 			for j := 0; j < len((*menu).GlobalMenuList[i].ChildrenList); j++ {
 				if (*menu).GlobalMenuList[i].ChildrenList[j].Url == path {
 					(*menu).GlobalMenuList[i].Active = "active"
-					break Loop
+					return menu
 				} else {
 					(*menu).GlobalMenuList[i].Active = ""
 				}
 			}
 		}
 	}
+
+	return menu
 }
 
 type MenuItem struct {

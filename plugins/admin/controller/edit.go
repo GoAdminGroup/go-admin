@@ -20,12 +20,12 @@ func ShowForm(ctx *context.Context) {
 	formData, title, description := models.TableList[prefix].
 		GetDataFromDatabaseWithId(ctx.Query("id"))
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
-
 	params := models.GetParam(ctx.Request.URL.Query())
 
+	user := auth.Auth(ctx)
+
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
@@ -35,7 +35,7 @@ func ShowForm(ctx *context.Context) {
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
@@ -56,7 +56,7 @@ func EditForm(ctx *context.Context) {
 
 	form := ctx.Request.MultipartForm
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1))
 
 	// 处理上传文件，目前仅仅支持传本地
 	if len((*form).File) > 0 {
@@ -76,8 +76,6 @@ func EditForm(ctx *context.Context) {
 	previous := ctx.FormValue("_previous_")
 	prevUrlArr := strings.Split(previous, "?")
 	params := models.GetParamFromUrl(previous)
-
-	menu.GlobalMenu.SetActiveClass(previous)
 
 	previous = Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
@@ -103,12 +101,14 @@ func EditForm(ctx *context.Context) {
 		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
+	user := auth.Auth(ctx)
+
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
-	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous,  Config.PREFIX, "",  1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader("X-PJAX-URL", previous)

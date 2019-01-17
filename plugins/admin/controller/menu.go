@@ -11,6 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
+	"strings"
 )
 
 // 显示菜单
@@ -24,14 +25,14 @@ func ShowEditMenu(ctx *context.Context) {
 
 	formData, title, description := models.TableList["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
+	user := auth.Auth(ctx)
 
 	js := `<script>
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
@@ -41,7 +42,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 }
@@ -151,7 +152,7 @@ func MenuOrder(ctx *context.Context) {
 func GetMenuInfoPanel(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1))
 
 	editUrl := Config.PREFIX + "/menu/edit/show"
 	deleteUrl := Config.PREFIX + "/menu/delete"
@@ -180,14 +181,14 @@ func GetMenuInfoPanel(ctx *context.Context) {
 
 	row := template.Get(Config.THEME).Row().SetContent(col1 + col2).GetContent()
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1))
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 }

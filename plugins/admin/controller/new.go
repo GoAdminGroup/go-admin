@@ -15,12 +15,13 @@ import (
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
 
-	menu.GlobalMenu.SetActiveClass(ctx.Path())
 	prefix := ctx.Query("prefix")
 	params := models.GetParam(ctx.Request.URL.Query())
 
+	user := auth.Auth(ctx)
+
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
-	buf := template.Excecute(tmpl, tmplName, auth.Auth(ctx), types.Panel{
+	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetPrefix(Config.PREFIX).
 			SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
@@ -31,7 +32,7 @@ func ShowNewForm(ctx *context.Context) {
 			GetContent(),
 		Description: models.TableList[prefix].Form.Description,
 		Title:       models.TableList[prefix].Form.Title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
@@ -73,8 +74,6 @@ func NewForm(ctx *context.Context) {
 
 	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
 
-	menu.GlobalMenu.SetActiveClass(previous)
-
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
@@ -96,14 +95,14 @@ func NewForm(ctx *context.Context) {
 		SetFooter(panelInfo.Paginator.GetContent()).
 		GetContent()
 
-	user := ctx.UserValue["user"].(auth.User)
+	user := auth.Auth(ctx)
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(true)
 	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, Config)
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous,  Config.PREFIX, "",  1)))
 
 	ctx.Html(http.StatusOK, buffer.String())
 	ctx.AddHeader("X-PJAX-URL", previous)

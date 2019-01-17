@@ -121,7 +121,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: menu.GetGlobalMenu(user),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), "/" + globalConfig.PREFIX, "",  1))),
 		System: types.SystemInfo{
 			"0.0.1",
 		},
