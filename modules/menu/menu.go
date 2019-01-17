@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"fmt"
 )
 
 type Menu struct {
@@ -79,7 +78,7 @@ func SetGlobalMenu(user auth.User) {
 			ids = append(ids, user.Menus[i])
 		}
 
-		menus, _ = db.Query("select * from goadmin_menu where id in (" + qmark[:len(qmark)-1] + ") "+
+		menus, _ = db.Query("select * from goadmin_menu where id in ("+qmark[:len(qmark)-1]+") "+
 			"order by `order` asc", ids...)
 	}
 
@@ -155,8 +154,6 @@ func GetMenuItemById(id string) MenuItem {
 }
 
 func (menu *Menu) SetActiveClass(path string) *Menu {
-
-	fmt.Println("path", path)
 
 	for i := 0; i < len((*menu).GlobalMenuList); i++ {
 		(*menu).GlobalMenuList[i].Active = ""

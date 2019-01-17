@@ -26,7 +26,7 @@ func SetPageContent(ctx *context.Context, c func() types.Panel) {
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), "/" + config.Get().PREFIX, "",  1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), "/"+config.Get().PREFIX, "", 1))),
 		System: types.SystemInfo{
 			"0.0.1",
 		},

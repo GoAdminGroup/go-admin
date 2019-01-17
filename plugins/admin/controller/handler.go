@@ -70,7 +70,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 					GetContent(),
 				Description: description,
 				Title:       title,
-			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
+			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 			ctx.Html(http.StatusOK, buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
@@ -94,7 +94,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 					GetContent(),
 				Description: models.TableList[prefix].Form.Description,
 				Title:       models.TableList[prefix].Form.Title,
-			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
+			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 			ctx.Html(http.StatusOK, buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return

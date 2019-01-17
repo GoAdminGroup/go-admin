@@ -35,7 +35,7 @@ func ShowForm(ctx *context.Context) {
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1)))
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
@@ -56,7 +56,7 @@ func EditForm(ctx *context.Context) {
 
 	form := ctx.Request.MultipartForm
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(),  Config.PREFIX, "",  1))
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1))
 
 	// 处理上传文件，目前仅仅支持传本地
 	if len((*form).File) > 0 {
@@ -108,7 +108,7 @@ func EditForm(ctx *context.Context) {
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous,  Config.PREFIX, "",  1)))
+	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, Config.PREFIX, "", 1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader("X-PJAX-URL", previous)
