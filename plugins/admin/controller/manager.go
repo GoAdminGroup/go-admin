@@ -7,6 +7,12 @@ import (
 
 func NewManager(dataList map[string][]string) {
 
+	if dataList["name"][0] == "" ||
+		dataList["username"][0] == "" ||
+		dataList["password"][0] == "" {
+			panic("账号密码不能为空")
+	}
+
 	// 更新管理员表
 	result := db.Exec("insert into goadmin_users (username, password, name, avatar) values (?, ?, ?, ?)",
 		dataList["username"][0], auth.EncodePassword([]byte(dataList["password"][0])), dataList["name"][0], dataList["avatar"][0])
@@ -31,6 +37,12 @@ func NewManager(dataList map[string][]string) {
 }
 
 func EditManager(dataList map[string][]string) {
+
+	if dataList["name"][0] == "" ||
+		dataList["username"][0] == "" ||
+		dataList["password"][0] == "" {
+		panic("账号密码不能为空")
+	}
 
 	// 更新管理员表
 	db.Exec("update goadmin_users set username = ?, password = ?, name = ?, avatar = ? where id = ?",

@@ -113,7 +113,7 @@ func NewMenu(ctx *context.Context) {
 	}
 
 	globalMenu := menu.GetGlobalMenu(user)
-	(globalMenu).SexMaxOrder(globalMenu.MaxOrder + 1)
+	globalMenu.SexMaxOrder(globalMenu.MaxOrder + 1)
 	menu.SetGlobalMenu(user)
 
 	GetMenuInfoPanel(ctx)
