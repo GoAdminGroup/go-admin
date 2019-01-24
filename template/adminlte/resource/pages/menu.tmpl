@@ -6,6 +6,8 @@
         <li class='{{$list.Active}}'>
             {{if eq $list.Url "/"}}
                 <a href='{{$AssertRootUrl}}'>
+            {{else if isLinkUrl $list.Url}}
+                <a href='{{$list.Url}}'>
             {{else}}
                 <a href='{{$AssertRootUrl}}{{$list.Url}}'>
             {{end}}
