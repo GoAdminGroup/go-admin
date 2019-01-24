@@ -77,3 +77,8 @@ type RowAttribute interface {
 	GetContent() template.HTML                    // 获取内容
 }
 ```
+
+
+[返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
+[上一页：自定义页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/pages.md)<br>
+[下一页：介绍页面组件](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/components.md)

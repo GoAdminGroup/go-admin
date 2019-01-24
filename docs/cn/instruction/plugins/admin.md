@@ -201,3 +201,7 @@ type Form struct {
 	ExcuFun  FieldValueFun         // 过滤函数
 }
 ```
+
+[返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
+[上一页：插件的使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)<br>
+[下一页：自定义页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/pages.md)

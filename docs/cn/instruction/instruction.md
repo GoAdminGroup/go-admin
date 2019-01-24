@@ -130,3 +130,6 @@ type Config struct {
 }
 
 ```
+
+[返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
+[下一页：插件的使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)

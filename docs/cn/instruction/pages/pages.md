@@ -82,3 +82,7 @@ func GetContent() types.Panel {
 	}
 }
 ```
+
+[返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
+[上一页：admin插件的使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)<br>
+[下一页：介绍页面模块](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/modules.md)

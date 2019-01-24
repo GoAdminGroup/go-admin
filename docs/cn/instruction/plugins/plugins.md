@@ -32,3 +32,7 @@ func main() {
 	r.Run(":9033")
 }
 ```
+
+[返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
+[上一页：go-admin介绍](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/instruction.md)<br>
+[下一页：admin插件的使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/admin.md)
