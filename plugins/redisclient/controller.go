@@ -7,6 +7,7 @@ import (
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
+	"strings"
 )
 
 func Show(ctx *context.Context) {
