@@ -11,7 +11,6 @@ import (
 )
 
 func Get(value string) string {
-
 	if config.Get().LANGUAGE == "" {
 		return value
 	}
@@ -24,7 +23,6 @@ func Get(value string) string {
 }
 
 func GetFromHtml(value template.HTML) template.HTML {
-
 	if config.Get().LANGUAGE == "" {
 		return value
 	}

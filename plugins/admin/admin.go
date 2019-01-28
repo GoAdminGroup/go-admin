@@ -19,6 +19,7 @@ func (admin *Admin) InitPlugin() {
 	cfg := config.Get()
 
 	// Init database
+	// TODO: support multi driver
 	for _, databaseCfg := range cfg.DATABASE {
 		db.GetConnectionByDriver(databaseCfg.DRIVER).InitDB(map[string]config.Database{
 			"default": databaseCfg,

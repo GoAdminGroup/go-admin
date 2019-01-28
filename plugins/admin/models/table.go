@@ -81,6 +81,8 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	thead := make([]map[string]string, 0)
 	fields := ""
 
+	// TODO: use sql dialect to support different database
+
 	showColumns := "show columns in " + tb.Info.Table
 	if tb.ConnectionDriver == "sqlite" {
 		showColumns = "PRAGMA table_info(" + tb.Info.Table + ");"

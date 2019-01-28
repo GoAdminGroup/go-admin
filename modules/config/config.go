@@ -82,24 +82,14 @@ func Set(cfg Config) {
 	mutex.Lock()
 	globalCfg = cfg
 
-	if globalCfg.TITLE == "" {
-		globalCfg.TITLE = "GoAdmin"
-	}
-	if globalCfg.LOGO == "" {
-		globalCfg.LOGO = "<b>Go</b>Admin"
-	}
-	if globalCfg.MINILOGO == "" {
-		globalCfg.MINILOGO = "<b>G</b>A"
-	}
-	if globalCfg.THEME == "" {
-		globalCfg.THEME = "adminlte"
-	}
-	if globalCfg.INDEX == "" {
-		globalCfg.INDEX = "/info/manager"
-	}
-	if globalCfg.INDEX == "/" {
-		globalCfg.INDEX = ""
-	}
+	globalCfg.TITLE = Default(globalCfg.TITLE, "", "GoAdmin")
+	globalCfg.LOGO = template.HTML(Default(string(globalCfg.LOGO), "", "<b>Go</b>Admin"))
+	globalCfg.MINILOGO = template.HTML(Default(string(globalCfg.MINILOGO), "", "<b>G</b>A"))
+	globalCfg.THEME = Default(globalCfg.THEME, "", "adminlte")
+	globalCfg.INDEX = Default(globalCfg.INDEX, "", "/info/manager")
+	globalCfg.INDEX = Default(globalCfg.INDEX, "/", "")
+
+	// TODO: fix prefix
 
 	mutex.Unlock()
 }
@@ -107,4 +97,11 @@ func Set(cfg Config) {
 // Get gets the config.
 func Get() Config {
 	return globalCfg
+}
+
+func Default(value, condition, def string) string {
+	if value == condition {
+		return def
+	}
+	return value
 }

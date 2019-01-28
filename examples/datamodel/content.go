@@ -18,25 +18,29 @@ func GetContent() types.Panel {
 
 	infobox := components.InfoBox().
 		SetText("CPU TRAFFIC").
-		SetColor("blue").SetNumber("41,410").
+		SetColor("blue").
+		SetNumber("41,410").
 		SetIcon("ion-ios-gear-outline").
 		GetContent()
 
 	infobox2 := components.InfoBox().
 		SetText("Likes").
-		SetColor("red").SetNumber("90<small>%</small>").
+		SetColor("red").
+		SetNumber("90<small>%</small>").
 		SetIcon("fa-google-plus").
 		GetContent()
 
 	infobox3 := components.InfoBox().
 		SetText("Sales").
-		SetColor("green").SetNumber("760").
+		SetColor("green").
+		SetNumber("760").
 		SetIcon("ion-ios-cart-outline").
 		GetContent()
 
 	infobox4 := components.InfoBox().
 		SetText("New Members").
-		SetColor("yellow").SetNumber("2,000").
+		SetColor("yellow").
+		SetNumber("2,000").
 		SetIcon("ion-ios-people-outline").
 		GetContent()
 
@@ -59,14 +63,38 @@ func GetContent() types.Panel {
 		SetTitle("Sales: 1 Jan, 2014 - 30 Jul, 2014").GetContent()
 
 	title := `<p class="text-center"><strong>Goal Completion</strong></p>`
-	progressGroup := components.ProgressGroup().SetTitle("Add Products to Cart").
-		SetColor("aqua").SetDenominator(200).SetMolecular(160).SetPercent(80).GetContent()
-	progressGroup1 := components.ProgressGroup().SetTitle("Complete Purchase").
-		SetColor("red").SetDenominator(400).SetMolecular(310).SetPercent(80).GetContent()
-	progressGroup2 := components.ProgressGroup().SetTitle("Visit Premium Page").
-		SetColor("green").SetDenominator(800).SetMolecular(490).SetPercent(80).GetContent()
-	progressGroup3 := components.ProgressGroup().SetTitle("Send Inquiries").
-		SetColor("yellow").SetDenominator(500).SetMolecular(250).SetPercent(50).GetContent()
+	progressGroup := components.ProgressGroup().
+		SetTitle("Add Products to Cart").
+		SetColor("aqua").
+		SetDenominator(200).
+		SetMolecular(160).
+		SetPercent(80).
+		GetContent()
+
+	progressGroup1 := components.ProgressGroup().
+		SetTitle("Complete Purchase").
+		SetColor("red").
+		SetDenominator(400).
+		SetMolecular(310).
+		SetPercent(80).
+		GetContent()
+
+	progressGroup2 := components.ProgressGroup().
+		SetTitle("Visit Premium Page").
+		SetColor("green").
+		SetDenominator(800).
+		SetMolecular(490).
+		SetPercent(80).
+		GetContent()
+
+	progressGroup3 := components.ProgressGroup().
+		SetTitle("Send Inquiries").
+		SetColor("yellow").
+		SetDenominator(500).
+		SetMolecular(250).
+		SetPercent(50).
+		GetContent()
+
 
 	boxInternalCol1 := colComp.SetContent(lineChart).SetSize(map[string]string{"md": "8"}).GetContent()
 	boxInternalCol2 := colComp.
@@ -77,16 +105,38 @@ func GetContent() types.Panel {
 	boxInternalRow := components.Row().SetContent(boxInternalCol1 + boxInternalCol2).GetContent()
 
 	description1 := components.Description().SetPercent("17").
-		SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").
-		SetBorder("right").GetContent()
-	description2 := components.Description().SetPercent("17").
-		SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").
-		SetBorder("right").GetContent()
-	description3 := components.Description().SetPercent("17").
-		SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").
-		SetBorder("right").GetContent()
-	description4 := components.Description().SetPercent("17").
-		SetNumber("¥100,000").SetTitle("TOTAL REVENUE").SetArrow("up").SetColor("green").GetContent()
+		SetNumber("¥100,000").
+		SetTitle("TOTAL REVENUE").
+		SetArrow("up").
+		SetColor("green").
+		SetBorder("right").
+		GetContent()
+
+	description2 := components.Description().
+		SetPercent("17").
+		SetNumber("¥100,000").
+		SetTitle("TOTAL REVENUE").
+		SetArrow("up").
+		SetColor("green").
+		SetBorder("right").
+		GetContent()
+
+	description3 := components.Description().
+		SetPercent("17").
+		SetNumber("¥100,000").
+		SetTitle("TOTAL REVENUE").
+		SetArrow("up").
+		SetColor("green").
+		SetBorder("right").
+		GetContent()
+
+	description4 := components.Description().
+		SetPercent("17").
+		SetNumber("¥100,000").
+		SetTitle("TOTAL REVENUE").
+		SetArrow("up").
+		SetColor("green").
+		GetContent()
 
 	size2 := map[string]string{"sm": "3", "xs": "6"}
 	boxInternalCol3 := colComp.SetContent(description1).SetSize(size2).GetContent()

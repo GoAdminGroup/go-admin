@@ -15,13 +15,9 @@ var Plug = new(Example)
 var Config config.Config
 
 func (example *Example) InitPlugin() {
-	cfg := config.Get()
-
-	Config = cfg
+	Config = config.Get()
 	Config.PREFIX = "/" + Config.PREFIX
-
 	Plug.app = InitRouter(Config.PREFIX)
-
 }
 
 func NewExample() *Example {
