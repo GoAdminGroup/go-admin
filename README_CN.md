@@ -119,7 +119,7 @@ func main() {
 
 QQ群: 756664859
 
-这里是[开发计划](https://github.com/chenhg5/go-admin/projects/1)
+这里是[开发计划](https://github.com/chenhg5/go-admin/projects)
 
 ## 十分感谢
 
