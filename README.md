@@ -30,7 +30,7 @@
 
 ## Preface
 
-goAmin is a toolkit help you to build a data visualization and manage platform for your golang app.
+goAdmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 account: admin  password: admin
