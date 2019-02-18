@@ -289,6 +289,22 @@ func (tb Table) DeleteDataFromDatabase(id string) {
 	for _, id := range idArr {
 		tb.db().Exec("delete from "+tb.Form.Table+" where id = ?", id)
 	}
+	if tb.Form.Table == "goadmin_roles" {
+		tb.db().Exec("delete from goadmin_role_users where role_id = ?", id)
+		tb.db().Exec("delete from goadmin_role_permissions where role_id = ?", id)
+		tb.db().Exec("delete from goadmin_role_menu where role_id = ?", id)
+	}
+	if tb.Form.Table == "goadmin_users" {
+		tb.db().Exec("delete from goadmin_role_users where user_id = ?", id)
+		tb.db().Exec("delete from goadmin_user_permissions where user_id = ?", id)
+	}
+	if tb.Form.Table == "goadmin_permissions" {
+		tb.db().Exec("delete from goadmin_role_permissions where permission_id = ?", id)
+		tb.db().Exec("delete from goadmin_user_permissions where permission_id = ?", id)
+	}
+	if tb.Form.Table == "goadmin_menu" {
+		tb.db().Exec("delete from goadmin_role_menu where menu_id = ?", id)
+	}
 }
 
 // db is a helper function return db connection.
