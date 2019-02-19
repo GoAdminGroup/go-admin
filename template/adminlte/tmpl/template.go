@@ -103,7 +103,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
 </div>
 <script>
-    let barChartData = JSON.parse({{.Data}});
+    let barChartData;
+    barChartData = JSON.parse({{.Data}});
     barChartData.datasets[1].fillColor = '#00a65a';
     barChartData.datasets[1].strokeColor = '#00a65a';
     barChartData.datasets[1].pointColor = '#00a65a';
