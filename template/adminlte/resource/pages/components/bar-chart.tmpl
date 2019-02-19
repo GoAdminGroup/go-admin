@@ -8,13 +8,11 @@
     <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
 </div>
 <script>
-    let barChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
-    let barChart = new Chart(barChartCanvas{{.ID}});
     let barChartData = JSON.parse({{.Data}});
     barChartData.datasets[1].fillColor = '#00a65a';
     barChartData.datasets[1].strokeColor = '#00a65a';
     barChartData.datasets[1].pointColor = '#00a65a';
-    let barChartOptions = {
+    (new Chart($('#{{.ID}}').get(0).getContext('2d'))).Bar(barChartData, {
         //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
         scaleBeginAtZero: true,
         //Boolean - Whether grid lines are shown across the chart
@@ -39,10 +37,8 @@
         legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
         //Boolean - whether to make the chart responsive
         responsive: true,
-        maintainAspectRatio: true
-    };
-
-    barChartOptions.datasetFill = false;
-    barChart.Bar(barChartData, barChartOptions)
+        maintainAspectRatio: true,
+        datasetFill: false,
+    })
 </script>
 {{end}}

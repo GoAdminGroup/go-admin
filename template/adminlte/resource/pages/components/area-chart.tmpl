@@ -8,14 +8,7 @@
     <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
 </div>
 <script>
-    // Get context with jQuery - using jQuery's .get() method.
-    let salesChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
-    // This will get the first returned node in the jQuery collection.
-    let salesChart       = new Chart(salesChartCanvas{{.ID}});
-
-    let salesChartData = JSON.parse({{.Data}});
-
-    let salesChartOptions = {
+    (new Chart($('#{{.ID}}').get(0).getContext('2d'))).Line(JSON.parse({{.Data}}), {
         // Boolean - If we should show the scale at all
         showScale               : true,
         // Boolean - Whether grid lines are shown across the chart
@@ -52,9 +45,6 @@
         maintainAspectRatio     : true,
         // Boolean - whether to make the chart responsive to window resizing
         responsive              : true
-    };
-
-    // Create the line chart
-    salesChart.Line(salesChartData, salesChartOptions);
+    });
 </script>
 {{end}}
