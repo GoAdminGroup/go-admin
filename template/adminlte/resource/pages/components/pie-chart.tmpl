@@ -8,8 +8,8 @@
     <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
 </div>
 <script>
-    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
-    let pieChart       = new Chart(pieChartCanvas);
+    let pieChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
+    let pieChart       = new Chart(pieChartCanvas{{.ID}});
     let PieData        = JSON.parse({{.Data}});
     let pieOptions     = {
         // Boolean - Whether we should show a stroke on each segment

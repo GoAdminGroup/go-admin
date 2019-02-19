@@ -10,7 +10,7 @@ func NewManager(dataList map[string][]string) {
 	if dataList["name"][0] == "" ||
 		dataList["username"][0] == "" ||
 		dataList["password"][0] == "" {
-			panic("账号密码不能为空")
+		panic("账号密码不能为空")
 	}
 
 	// 更新管理员表

@@ -55,9 +55,9 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 </div>
 <script>
     // Get context with jQuery - using jQuery's .get() method.
-    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
+    let salesChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
     // This will get the first returned node in the jQuery collection.
-    let salesChart       = new Chart(salesChartCanvas);
+    let salesChart       = new Chart(salesChartCanvas{{.ID}});
 
     let salesChartData = JSON.parse({{.Data}});
 
@@ -113,38 +113,38 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
     <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
 </div>
 <script>
-    let barChartCanvas                   = $('#{{.ID}}').get(0).getContext('2d');
-    let barChart                         = new Chart(barChartCanvas);
-    let barChartData                     = JSON.parse({{.Data}});
-    barChartData.datasets[1].fillColor   = '#00a65a';
+    let barChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
+    let barChart = new Chart(barChartCanvas{{.ID}});
+    let barChartData = JSON.parse({{.Data}});
+    barChartData.datasets[1].fillColor = '#00a65a';
     barChartData.datasets[1].strokeColor = '#00a65a';
-    barChartData.datasets[1].pointColor  = '#00a65a';
-    let barChartOptions                  = {
+    barChartData.datasets[1].pointColor = '#00a65a';
+    let barChartOptions = {
         //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
-        scaleBeginAtZero        : true,
+        scaleBeginAtZero: true,
         //Boolean - Whether grid lines are shown across the chart
-        scaleShowGridLines      : true,
+        scaleShowGridLines: true,
         //String - Colour of the grid lines
-        scaleGridLineColor      : 'rgba(0,0,0,.05)',
+        scaleGridLineColor: 'rgba(0,0,0,.05)',
         //Number - Width of the grid lines
-        scaleGridLineWidth      : 1,
+        scaleGridLineWidth: 1,
         //Boolean - Whether to show horizontal lines (except X axis)
         scaleShowHorizontalLines: true,
         //Boolean - Whether to show vertical lines (except Y axis)
-        scaleShowVerticalLines  : true,
+        scaleShowVerticalLines: true,
         //Boolean - If there is a stroke on each bar
-        barShowStroke           : true,
+        barShowStroke: true,
         //Number - Pixel width of the bar stroke
-        barStrokeWidth          : 2,
+        barStrokeWidth: 2,
         //Number - Spacing between each of the X value sets
-        barValueSpacing         : 5,
+        barValueSpacing: 5,
         //Number - Spacing between data sets within X values
-        barDatasetSpacing       : 1,
+        barDatasetSpacing: 1,
         //String - A legend template
-        legendTemplate          : '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
+        legendTemplate: '<ul class="<%=name.toLowerCase()%>-legend"><% for (var i=0; i<datasets.length; i++){%><li><span style="background-color:<%=datasets[i].fillColor%>"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>',
         //Boolean - whether to make the chart responsive
-        responsive              : true,
-        maintainAspectRatio     : true
+        responsive: true,
+        maintainAspectRatio: true
     };
 
     barChartOptions.datasetFill = false;
@@ -2733,8 +2733,8 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <canvas id="{{.ID}}" style="height: {{.Height}}px"></canvas>
 </div>
 <script>
-    let pieChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
-    let pieChart       = new Chart(pieChartCanvas);
+    let pieChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
+    let pieChart       = new Chart(pieChartCanvas{{.ID}});
     let PieData        = JSON.parse({{.Data}});
     let pieOptions     = {
         // Boolean - Whether we should show a stroke on each segment

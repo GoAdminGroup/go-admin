@@ -9,9 +9,9 @@
 </div>
 <script>
     // Get context with jQuery - using jQuery's .get() method.
-    let salesChartCanvas = $('#{{.ID}}').get(0).getContext('2d');
+    let salesChartCanvas{{.ID}} = $('#{{.ID}}').get(0).getContext('2d');
     // This will get the first returned node in the jQuery collection.
-    let salesChart       = new Chart(salesChartCanvas);
+    let salesChart       = new Chart(salesChartCanvas{{.ID}});
 
     let salesChartData = JSON.parse({{.Data}});
 

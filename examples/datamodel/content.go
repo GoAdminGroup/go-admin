@@ -95,7 +95,6 @@ func GetContent() types.Panel {
 		SetPercent(50).
 		GetContent()
 
-
 	boxInternalCol1 := colComp.SetContent(lineChart).SetSize(map[string]string{"md": "8"}).GetContent()
 	boxInternalCol2 := colComp.
 		SetContent(template.HTML(title) + progressGroup + progressGroup1 + progressGroup2 + progressGroup3).
