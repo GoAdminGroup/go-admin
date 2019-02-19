@@ -103,7 +103,6 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
 </div>
 <script>
-    let barChartData;
     barChartData = JSON.parse({{.Data}});
     barChartData.datasets[1].fillColor = '#00a65a';
     barChartData.datasets[1].strokeColor = '#00a65a';
@@ -134,7 +133,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         //Boolean - whether to make the chart responsive
         responsive: true,
         maintainAspectRatio: true,
-        datasetFill: false,
+        datasetFill: false
     })
 </script>
 {{end}}`, "components/box": `{{define "box"}}
@@ -2606,11 +2605,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <canvas id="{{.ID}}" style="height: {{.Height}}px;"></canvas>
 </div>
 <script>
-    let lineChartCanvas          = $('#{{.ID}}').get(0).getContext('2d');
-    let lineChart                = new Chart(lineChartCanvas);
-    let lineChartData = JSON.parse({{.Data}});
-
-    let lineChartOptions = {
+    (new Chart($('#{{.ID}}').get(0).getContext('2d'))).Line(JSON.parse({{.Data}}), {
         // Boolean - If we should show the scale at all
         showScale               : true,
         // Boolean - Whether grid lines are shown across the chart
@@ -2640,17 +2635,14 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         // Number - Pixel width of dataset stroke
         datasetStrokeWidth      : 2,
         // Boolean - Whether to fill the dataset with a color
-        datasetFill             : true,
+        datasetFill             : false,
         // String - A legend template
         legendTemplate          : '<ul class=\'<%=name.toLowerCase()%>-legend\'><% for (var i=0; i<datasets.length; i++){%><li><span style=\'background-color:<%=datasets[i].lineColor%>\'></span><%=datasets[i].label%></li><%}%></ul>',
         // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
         maintainAspectRatio     : true,
         // Boolean - whether to make the chart responsive to window resizing
         responsive              : true
-    };
-
-    lineChartOptions.datasetFill = false;
-    lineChart.Line(lineChartData, lineChartOptions)
+    })
 </script>
 {{end}}`, "components/paginator": `{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
@@ -2966,7 +2958,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             DeletePost($(this).data('id'))
         });
 
-        let selectedRows = function () {
+        selectedRows = function () {
             let selected = [];
             $('.grid-row-checkbox:checked').each(function(){
                 selected.push($(this).data('id'));

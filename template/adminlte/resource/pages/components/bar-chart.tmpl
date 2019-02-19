@@ -8,7 +8,6 @@
     <canvas id="{{.ID}}" style="width: {{.Width}}px;"></canvas>
 </div>
 <script>
-    let barChartData;
     barChartData = JSON.parse({{.Data}});
     barChartData.datasets[1].fillColor = '#00a65a';
     barChartData.datasets[1].strokeColor = '#00a65a';
@@ -39,7 +38,7 @@
         //Boolean - whether to make the chart responsive
         responsive: true,
         maintainAspectRatio: true,
-        datasetFill: false,
+        datasetFill: false
     })
 </script>
 {{end}}

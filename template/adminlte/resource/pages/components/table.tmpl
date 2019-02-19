@@ -59,7 +59,7 @@
             DeletePost($(this).data('id'))
         });
 
-        let selectedRows = function () {
+        selectedRows = function () {
             let selected = [];
             $('.grid-row-checkbox:checked').each(function(){
                 selected.push($(this).data('id'));
