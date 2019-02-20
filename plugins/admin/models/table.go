@@ -119,7 +119,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		wheres += "id > 0"
 	} else {
 		for key, value := range params.Fields {
-			wheres += key + " = ? and"
+			wheres += key + " = ? and "
 			whereArgs = append(whereArgs, value)
 		}
 		wheres = wheres[:len(wheres)-4]
