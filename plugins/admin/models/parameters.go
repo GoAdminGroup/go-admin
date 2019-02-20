@@ -89,6 +89,10 @@ func (param *Parameters) GetRouteParamStr() string {
 	return "?page=" + param.Page + param.GetFixedParamStr()
 }
 
+func (param *Parameters) GetRouteParamStrWithoutPageSize() string {
+	return "?page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
+}
+
 func (param *Parameters) GetLastPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
 	return "?page=" + strconv.Itoa(pageInt-1) + param.GetFixedParamStr()
@@ -97,6 +101,14 @@ func (param *Parameters) GetLastPageRouteParamStr() string {
 func (param *Parameters) GetNextPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
 	return "?page=" + strconv.Itoa(pageInt+1) + param.GetFixedParamStr()
+}
+
+func (param *Parameters) GetFixedParamStrWithoutPageSize() string {
+	str := "&"
+	for key, value := range param.Fields {
+		str += key + "=" + value + "&"
+	}
+	return "&sort=" + param.SortField + "&sort_type=" + param.SortType + str[:len(str)-1]
 }
 
 func (param *Parameters) GetFixedParamStr() string {

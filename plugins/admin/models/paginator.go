@@ -32,7 +32,7 @@ func GetPaginator(path string, params *Parameters, size int) types.PaginatorAttr
 		paginator.NextClass = ""
 		paginator.NextUrl = path + params.GetNextPageRouteParamStr()
 	}
-	paginator.Url = path + params.GetRouteParamStr()
+	paginator.Url = path + params.GetRouteParamStrWithoutPageSize()
 	paginator.CurPageEndIndex = strconv.Itoa((pageInt) * pageSizeInt)
 	paginator.CurPageStartIndex = strconv.Itoa((pageInt - 1) * pageSizeInt)
 	paginator.Total = strconv.Itoa(size)
