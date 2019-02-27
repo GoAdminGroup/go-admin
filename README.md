@@ -128,7 +128,7 @@ very welcome to pr
 
 <strong>here to join into the develop team</strong>
 
-QQ Group Num: 756664859
+QQ Group Num: 756664859, remember to add the reason of apply.
 
 ## Special thanks
 
