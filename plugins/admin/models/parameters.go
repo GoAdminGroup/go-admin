@@ -23,15 +23,19 @@ func GetParam(values url.Values) *Parameters {
 	fields := make(map[string]string, 0)
 
 	for key, value := range values {
-		if key != "page" && key != "pageSize" && key != "sort" && key != "sort_type" && key != "prefix" && key != "_pjax" {
-			if value[0] != "" {
-				if key == "sort_type" {
-					if value[0] != "desc" && value[0] != "asc" {
-						fields[key] = "desc"
-					}
-				} else {
-					fields[key] = value[0]
+		if key != "page" &&
+			key != "pageSize" &&
+			key != "sort" &&
+			key != "sort_type" &&
+			key != "prefix" &&
+			key != "_pjax" &&
+			value[0] != "" {
+			if key == "sort_type" {
+				if value[0] != "desc" && value[0] != "asc" {
+					fields[key] = "desc"
 				}
+			} else {
+				fields[key] = value[0]
 			}
 		}
 	}
