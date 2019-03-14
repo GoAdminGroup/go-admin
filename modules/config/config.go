@@ -7,6 +7,7 @@ package config
 import (
 	"html/template"
 	"sync"
+	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // Database is a type of database connection config.
@@ -70,6 +71,18 @@ type Config struct {
 
 	// The url redirect to after login
 	INDEX string
+
+	// Debug mode
+	Debug bool
+
+	// Info log path
+	InfoLog string
+
+	// Error log path
+	ErrorLog string
+
+	// Access log path
+	AccessLog string
 }
 
 var (
@@ -90,6 +103,18 @@ func Set(cfg Config) {
 	globalCfg.INDEX = Default(globalCfg.INDEX, "/", "")
 
 	// TODO: fix prefix
+
+	if cfg.InfoLog != "" {
+		logger.SetInfoLogger(cfg.InfoLog, cfg.Debug)
+	}
+
+	if cfg.ErrorLog != "" {
+		logger.SetErrorLogger(cfg.ErrorLog, cfg.Debug)
+	}
+
+	if cfg.AccessLog != "" {
+		logger.SetAccessLogger(cfg.AccessLog, cfg.Debug)
+	}
 
 	mutex.Unlock()
 }

@@ -11,18 +11,18 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/mgutz/ansi"
 	template2 "html/template"
-	"log"
 	"net/http"
 	"regexp"
 	"runtime/debug"
 	"strconv"
 	"strings"
+	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // 全局错误处理
 func GlobalDeferHandler(ctx *context.Context) {
 
-	log.Println("[GoAdmin]",
+	logger.AccessLogger.Println("[GoAdmin]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		ctx.Path())

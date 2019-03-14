@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
+	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // 显示列表
@@ -46,6 +47,8 @@ func ShowInfo(ctx *context.Context) {
 		GetContent()
 
 	user := auth.Auth(ctx)
+
+	logger.Info("12312", "1232122")
 
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{

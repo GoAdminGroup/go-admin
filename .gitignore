@@ -9,3 +9,4 @@ demo/deploy.retry
 examples/gin/uploads/
 vendor/**
 !vendor/vendor.json
+logs
