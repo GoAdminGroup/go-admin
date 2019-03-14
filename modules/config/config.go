@@ -72,17 +72,17 @@ type Config struct {
 	// The url redirect to after login
 	INDEX string
 
-	// Debug mode
-	Debug bool
+	// DEBUG mode
+	DEBUG bool
 
 	// Info log path
-	InfoLog string
+	INFOLOG string
 
 	// Error log path
-	ErrorLog string
+	ERRORLOG string
 
 	// Access log path
-	AccessLog string
+	ACCESSLOG string
 }
 
 var (
@@ -104,16 +104,16 @@ func Set(cfg Config) {
 
 	// TODO: fix prefix
 
-	if cfg.InfoLog != "" {
-		logger.SetInfoLogger(cfg.InfoLog, cfg.Debug)
+	if cfg.INFOLOG != "" {
+		logger.SetInfoLogger(cfg.INFOLOG, cfg.DEBUG)
 	}
 
-	if cfg.ErrorLog != "" {
-		logger.SetErrorLogger(cfg.ErrorLog, cfg.Debug)
+	if cfg.ERRORLOG != "" {
+		logger.SetErrorLogger(cfg.ERRORLOG, cfg.DEBUG)
 	}
 
-	if cfg.AccessLog != "" {
-		logger.SetAccessLogger(cfg.AccessLog, cfg.Debug)
+	if cfg.ACCESSLOG != "" {
+		logger.SetAccessLogger(cfg.ACCESSLOG, cfg.DEBUG)
 	}
 
 	mutex.Unlock()

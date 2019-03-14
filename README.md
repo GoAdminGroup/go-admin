@@ -105,6 +105,12 @@ func main() {
 		    PREFIX: "uploads",
 		},
 		LANGUAGE: "en",
+		// debug mode
+		DEBUG: true,
+		// log file absolute path
+		INFOLOG: "/var/logs/info.log",
+		ACCESSLOG: "/var/logs/access.log",
+		ERRORLOG: "/var/logs/error.log",
 	}
 
     	// Generators: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go 

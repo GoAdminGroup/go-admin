@@ -37,7 +37,7 @@ func main() {
 		},
 		LANGUAGE: "cn",
 		INDEX:    "/",
-		Debug:    true,
+		DEBUG:    true,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)

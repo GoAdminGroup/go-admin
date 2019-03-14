@@ -96,6 +96,12 @@ func main() {
 		    PREFIX: "uploads",
 		},
 		LANGUAGE: "cn", 
+		// 开发模式
+                DEBUG: true,
+                // 日志文件位置，需为绝对路径
+                INFOLOG: "/var/logs/info.log",
+                ACCESSLOG: "/var/logs/access.log",
+                ERRORLOG: "/var/logs/error.log",
 	}
 
     	// Generators： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go
