@@ -19,12 +19,15 @@ import (
 	template2 "html/template"
 	"net/http"
 	"strings"
+	"io/ioutil"
 )
 
 type Gin struct {
 }
 
 func init() {
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
 	engine.Register(new(Gin))
 }
 
