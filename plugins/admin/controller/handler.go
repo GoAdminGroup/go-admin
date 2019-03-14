@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
@@ -16,7 +17,6 @@ import (
 	"runtime/debug"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // 全局错误处理
@@ -30,8 +30,8 @@ func GlobalDeferHandler(ctx *context.Context) {
 	RecordOperationLog(ctx)
 
 	if err := recover(); err != nil {
-		fmt.Println(err)
-		fmt.Println(string(debug.Stack()[:]))
+		logger.Error(err)
+		logger.Error(string(debug.Stack()[:]))
 
 		var (
 			errMsg     string

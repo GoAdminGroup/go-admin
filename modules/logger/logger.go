@@ -6,9 +6,9 @@ package logger
 
 import (
 	"github.com/sirupsen/logrus"
-	"os"
-	"log"
 	"io"
+	"log"
+	"os"
 )
 
 var (

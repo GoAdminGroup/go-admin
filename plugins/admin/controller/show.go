@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
@@ -11,7 +11,6 @@ import (
 	"net/http"
 	"path"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // 显示列表
@@ -48,8 +47,6 @@ func ShowInfo(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	logger.Info("12312", "1232122")
-
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
@@ -73,7 +70,7 @@ func Assert(ctx *context.Context) {
 	}
 
 	if err != nil {
-		fmt.Println("asset err", err)
+		logger.Error("asset err", err)
 		ctx.Write(http.StatusNotFound, map[string]string{}, "")
 	} else {
 		ctx.Write(http.StatusOK, map[string]string{

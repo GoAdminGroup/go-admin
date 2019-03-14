@@ -17,9 +17,9 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	template2 "html/template"
+	"io/ioutil"
 	"net/http"
 	"strings"
-	"io/ioutil"
 )
 
 type Gin struct {

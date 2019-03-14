@@ -5,9 +5,9 @@
 package config
 
 import (
+	"github.com/chenhg5/go-admin/modules/logger"
 	"html/template"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/logger"
 )
 
 // Database is a type of database connection config.

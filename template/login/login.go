@@ -1,7 +1,7 @@
 package login
 
 import (
-	"fmt"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"html/template"
 )
 
@@ -16,7 +16,7 @@ func (*Login) GetTemplate() (*template.Template, string) {
 	tmpler, err := template.New("login_theme1").Parse(List["login/theme1"])
 
 	if err != nil {
-		fmt.Println(err)
+		logger.Error("Login GetTemplate Error: ", err)
 	}
 
 	return tmpler, "login_theme1"
