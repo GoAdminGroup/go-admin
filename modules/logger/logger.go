@@ -69,3 +69,7 @@ func Error(err ...interface{}) {
 func Info(info ...interface{}) {
 	InfoLogger.Infoln(info...)
 }
+
+func Warn(info ...interface{}) {
+	InfoLogger.Warnln(info...)
+}

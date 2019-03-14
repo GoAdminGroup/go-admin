@@ -88,6 +88,7 @@ type Config struct {
 var (
 	globalCfg Config
 	mutex     sync.Mutex
+	declare   sync.Once
 )
 
 // Set sets the config.
@@ -114,6 +115,13 @@ func Set(cfg Config) {
 
 	if cfg.ACCESSLOG != "" {
 		logger.SetAccessLogger(cfg.ACCESSLOG, cfg.DEBUG)
+	}
+
+	if cfg.DEBUG {
+		declare.Do(func() {
+			logger.Warn(`go-admin is now running.
+Running in "debug" mode. Switch to "release" mode in production.`)
+		})
 	}
 
 	mutex.Unlock()
