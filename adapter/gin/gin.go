@@ -17,7 +17,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	template2 "html/template"
-	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -26,8 +25,6 @@ type Gin struct {
 }
 
 func init() {
-	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = ioutil.Discard
 	engine.Register(new(Gin))
 }
 

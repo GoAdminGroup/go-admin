@@ -9,10 +9,14 @@ import (
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 )
 
 func main() {
 	r := gin.Default()
+
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
 
 	eng := engine.Default()
 

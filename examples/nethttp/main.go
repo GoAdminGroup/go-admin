@@ -31,6 +31,7 @@ func main() {
 		DOMAIN: "localhost",
 		PREFIX: "admin",
 		INDEX:  "/",
+		DEBUG:  true,
 	}
 
 	examplePlugin := example.NewExample()

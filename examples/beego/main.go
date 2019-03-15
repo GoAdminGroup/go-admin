@@ -33,6 +33,7 @@ func main() {
 		DOMAIN: "localhost",
 		PREFIX: "admin",
 		INDEX:  "/",
+		DEBUG: true,
 	}
 
 	// you can custom a plugin like:

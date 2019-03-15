@@ -120,7 +120,9 @@ func Set(cfg Config) {
 	if cfg.DEBUG {
 		declare.Do(func() {
 			logger.Warn(`go-admin is now running.
-Running in "debug" mode. Switch to "release" mode in production.`)
+Running in "debug" mode. Switch to "release" mode in production.
+
+`)
 		})
 	}
 
