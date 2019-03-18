@@ -10,6 +10,9 @@ import (
 
 func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch typeName {
+	case "INT4":
+		var s sql.NullInt64
+		(*colVar)[i] = &s
 	case "INT":
 		var s sql.NullInt64
 		(*colVar)[i] = &s
@@ -46,6 +49,9 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	case "DATETIME":
 		var s sql.NullString
 		(*colVar)[i] = &s
+	case "TIMESTAMPTZ":
+		var s sql.NullString
+		(*colVar)[i] = &s
 	case "TIMESTAMP":
 		var s sql.NullString
 		(*colVar)[i] = &s
@@ -75,6 +81,13 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 
 func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch typeName {
+	case "INT4":
+		temp := *(colVar.(*sql.NullInt64))
+		if temp.Valid {
+			(*result)[index] = temp.Int64
+		} else {
+			(*result)[index] = nil
+		}
 	case "INT":
 		temp := *(colVar.(*sql.NullInt64))
 		if temp.Valid {
@@ -161,6 +174,13 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 			(*result)[index] = nil
 		}
 	case "TIMESTAMP":
+		temp := *(colVar.(*sql.NullString))
+		if temp.Valid {
+			(*result)[index] = temp.String
+		} else {
+			(*result)[index] = nil
+		}
+	case "TIMESTAMPTZ":
 		temp := *(colVar.(*sql.NullString))
 		if temp.Valid {
 			(*result)[index] = temp.String
