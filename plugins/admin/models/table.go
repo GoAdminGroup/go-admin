@@ -161,6 +161,8 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	var size int
 	if tb.ConnectionDriver == "sqlite" {
 		size = int((*(total[0]["count(*)"].(*interface{}))).(int64))
+	} else if tb.ConnectionDriver == "postgresql" {
+		size = int(total[0]["count"].(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
 	}
@@ -332,6 +334,11 @@ type Columns []string
 func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	columns := make(Columns, len(columnsModel))
 	switch driver {
+	case "postgresql":
+		for key, model := range columnsModel {
+			columns[key] = model["column_name"].(string)
+		}
+		return columns
 	case "mysql":
 		for key, model := range columnsModel {
 			columns[key] = model["Field"].(string)
