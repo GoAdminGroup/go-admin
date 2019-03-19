@@ -33,6 +33,7 @@ func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]int
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号
 	query = strings.Replace(query, "by order ", `by "order" `, -1)
+	query = strings.Replace(query, "show columns in goadmin_users", "SELECT * from information_schema.columns WHERE table_name = 'goadmin_users'", -1)
 	fmt.Println("query", query)
 	return performer.Query(db.SqlDBmap["default"], query, args...)
 }
@@ -45,6 +46,7 @@ func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号
 	query = strings.Replace(query, "by order ", `by "order" `, -1)
+	query = strings.Replace(query, "show columns in goadmin_users", "SELECT * from information_schema.columns WHERE table_name = 'goadmin_users'", -1)
 	fmt.Println("query", query)
 	return performer.Exec(db.SqlDBmap["default"], query, args...)
 }
