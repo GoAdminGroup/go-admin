@@ -10,6 +10,9 @@ import (
 
 func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch typeName {
+	case "BOOL":
+		var s sql.NullBool
+		(*colVar)[i] = &s
 	case "INT4":
 		var s sql.NullInt64
 		(*colVar)[i] = &s
@@ -73,6 +76,15 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	case "TEXT":
 		var s sql.NullString
 		(*colVar)[i] = &s
+	case "NAME":
+		var s sql.NullString
+		(*colVar)[i] = &s
+	case "UUID":
+		var s sql.NullString
+		(*colVar)[i] = &s
+	case "INET":
+		var s sql.NullString
+		(*colVar)[i] = &s
 	default:
 		var s interface{}
 		(*colVar)[i] = &s
@@ -81,6 +93,13 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 
 func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch typeName {
+	case "BOOL":
+		temp := *(colVar.(*sql.NullBool))
+		if temp.Valid {
+			(*result)[index] = temp.Bool
+		} else {
+			(*result)[index] = nil
+		}
 	case "INT4":
 		temp := *(colVar.(*sql.NullInt64))
 		if temp.Valid {
@@ -223,6 +242,27 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 			(*result)[index] = nil
 		}
 	case "TEXT":
+		temp := *(colVar.(*sql.NullString))
+		if temp.Valid {
+			(*result)[index] = temp.String
+		} else {
+			(*result)[index] = nil
+		}
+	case "NAME":
+		temp := *(colVar.(*sql.NullString))
+		if temp.Valid {
+			(*result)[index] = temp.String
+		} else {
+			(*result)[index] = nil
+		}
+	case "UUID":
+		temp := *(colVar.(*sql.NullString))
+		if temp.Valid {
+			(*result)[index] = temp.String
+		} else {
+			(*result)[index] = nil
+		}
+	case "INET":
 		temp := *(colVar.(*sql.NullString))
 		if temp.Valid {
 			(*result)[index] = temp.String

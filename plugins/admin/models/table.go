@@ -83,7 +83,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: use sql dialect to support different database
 
-	showColumns := "show columns in " + tb.Info.Table
+	showColumns := "show columns in '" + tb.Info.Table + "'"
 	if tb.ConnectionDriver == "sqlite" {
 		showColumns = "PRAGMA table_info(" + tb.Info.Table + ");"
 	}
@@ -184,7 +184,7 @@ func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, stri
 
 	fields := ""
 
-	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 
 	for i := 0; i < len(tb.Form.FormList); i++ {
@@ -244,7 +244,7 @@ func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 
 	fields := ""
 	valueList := make([]interface{}, 0)
-	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
@@ -269,7 +269,7 @@ func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 	fields := ""
 	queStr := ""
 	var valueList []interface{}
-	columnsModel, _ := tb.db().Query("show columns in " + tb.Form.Table)
+	columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
