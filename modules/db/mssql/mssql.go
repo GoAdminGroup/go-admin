@@ -27,6 +27,10 @@ func GetMssqlDB() *Mssql {
 	return &DB
 }
 
+func (db *Mssql) ShowColumns(tableName string) ([]map[string]interface{}, *sql.Rows) {
+	return db.Query("show columns in " + tableName)
+}
+
 func (db *Mssql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	return performer.Query(db.SqlDBmap["default"], query, args...)
 }

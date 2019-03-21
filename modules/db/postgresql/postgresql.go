@@ -25,6 +25,10 @@ func GetPostgresqlDB() *Postgresql {
 	return &DB
 }
 
+func (db *Postgresql) ShowColumns(tableName string) ([]map[string]interface{}, *sql.Rows) {
+	return db.Query("select column_name, udt_name from information_schema.columns where table_name = '" + tableName + "'")
+}
+
 func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	queCount := strings.Count(query, "?")
 	for i := 1; i < queCount+1; i++ {
@@ -33,7 +37,6 @@ func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]int
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号
 	query = strings.Replace(query, "by order ", `by "order" `, -1)
-	query = strings.Replace(query, "show columns in ", "select column_name, udt_name from information_schema.columns where table_name = ", -1)
 	query = strings.Replace(query, "show tables", "select tablename from pg_catalog.pg_tables", -1)
 	fmt.Println("query", query)
 	return performer.Query(db.SqlDBmap["default"], query, args...)
@@ -47,7 +50,6 @@ func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: 关键字加双引号
 	query = strings.Replace(query, "by order ", `by "order" `, -1)
-	query = strings.Replace(query, "show columns in ", "select column_name, udt_name from information_schema.columns where table_name = ", -1)
 	query = strings.Replace(query, "show tables", "select tablename from pg_catalog.pg_tables", -1)
 	fmt.Println("exec", query)
 	return performer.Exec(db.SqlDBmap["default"], query, args...)
