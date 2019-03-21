@@ -7,10 +7,10 @@ import (
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/modules/db"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		DOMAIN: "localhost",
 		PREFIX: "admin",
 		INDEX:  "/",
-		DEBUG: true,
+		DEBUG:  true,
 	}
 
 	// you can custom a plugin like:

@@ -7,10 +7,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/db"
 	_ "github.com/chenhg5/go-admin/modules/db/mysql"
 	_ "github.com/chenhg5/go-admin/modules/db/postgresql"
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/config"
 	"io/ioutil"
 	"os"
 	"path"
@@ -33,82 +33,82 @@ var (
 func main() {
 
 	if len(os.Args) > 1 {
-        switch os.Args[1] {
-        case "compile":
+		switch os.Args[1] {
+		case "compile":
 
-            if len(os.Args) > 2 {
-                compileFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-                compileFlag.StringVar(&rootPath, "path", "./template/adminlte/resource/pages/", "compile root path")
-                compileFlag.StringVar(&outputPath, "path", "./template/adminlte/tmpl/template.go", "compile output path")
-                compileFlag.Parse(os.Args[2:])
-            } else {
-                rootPath = "./template/adminlte/resource/pages/"
-                outputPath = "./template/adminlte/tmpl/template.go"
-            }
+			if len(os.Args) > 2 {
+				compileFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+				compileFlag.StringVar(&rootPath, "path", "./template/adminlte/resource/pages/", "compile root path")
+				compileFlag.StringVar(&outputPath, "path", "./template/adminlte/tmpl/template.go", "compile output path")
+				compileFlag.Parse(os.Args[2:])
+			} else {
+				rootPath = "./template/adminlte/resource/pages/"
+				outputPath = "./template/adminlte/tmpl/template.go"
+			}
 
-            CompileTmpl()
+			CompileTmpl()
 
-        case "generate":
-            if len(os.Args) < 2 {
-                panic("need options")
-            }
+		case "generate":
+			if len(os.Args) < 2 {
+				panic("need options")
+			}
 
-            generateFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-            generateFlag.StringVar(&driver, "d", "mysql", "database driver")
-            generateFlag.StringVar(&port, "p", "3306", "database port")
-            generateFlag.StringVar(&user, "u", "root", "database user")
-            generateFlag.StringVar(&password, "P", "root", "database password")
-            generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
-            generateFlag.StringVar(&outputPath, "o", "template/", "database output path")
-            generateFlag.StringVar(&name, "n", "", "database name")
-            generateFlag.StringVar(&packageName, "pa", "main", "package name") //把原Pa改成pa，使与说明文档一致
-            generateFlag.Parse(os.Args[2:])
+			generateFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
+			generateFlag.StringVar(&driver, "d", "mysql", "database driver")
+			generateFlag.StringVar(&port, "p", "3306", "database port")
+			generateFlag.StringVar(&user, "u", "root", "database user")
+			generateFlag.StringVar(&password, "P", "root", "database password")
+			generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
+			generateFlag.StringVar(&outputPath, "o", "template/", "database output path")
+			generateFlag.StringVar(&name, "n", "", "database name")
+			generateFlag.StringVar(&packageName, "pa", "main", "package name") //把原Pa改成pa，使与说明文档一致
+			generateFlag.Parse(os.Args[2:])
 
-            conn := db.GetConnectionByDriver(driver)
-            if conn == nil {
-                panic("Erorr db init")
-            }
-            cfg := map[string]config.Database{
-                "default": config.Database{
-                    HOST:         host,
-                    PORT:         port,
-                    USER:         user,
-                    PWD:          password,
-                    NAME:         name,
-                    MAX_IDLE_CON: 50,
-                    MAX_OPEN_CON: 150,
-                    DRIVER:       driver,
-                },
-            }
-            // step 1. test connection
-            conn.InitDB(cfg)
+			conn := db.GetConnectionByDriver(driver)
+			if conn == nil {
+				panic("Erorr db init")
+			}
+			cfg := map[string]config.Database{
+				"default": config.Database{
+					HOST:         host,
+					PORT:         port,
+					USER:         user,
+					PWD:          password,
+					NAME:         name,
+					MAX_IDLE_CON: 50,
+					MAX_OPEN_CON: 150,
+					DRIVER:       driver,
+				},
+			}
+			// step 1. test connection
+			conn.InitDB(cfg)
 
-            // step 2. show tables
-            tables, _ := db.WithDriver(conn.GetName()).ShowTables()
+			// step 2. show tables
+			tables, _ := db.WithDriver(conn.GetName()).ShowTables()
 
-            key := "Tables_in_" + name
-            fieldField := "Field"
-            typeField := "Type"
-            if driver == "postgresql" {
-                key = "tablename"
-                fieldField = "column_name"
-                typeField = "udt_name"
-            }
+			key := "Tables_in_" + name
+			fieldField := "Field"
+			typeField := "Type"
+			if driver == "postgresql" {
+				key = "tablename"
+				fieldField = "column_name"
+				typeField = "udt_name"
+			}
 
-            // step 3. show columns
-            // step 4. generate file
-            for i := 0; i < len(tables); i++ {
-                if tables[i][key].(string) != "goadmin_menu" && tables[i][key].(string) != "goadmin_operation_log" &&
-                tables[i][key].(string) != "goadmin_permissions" && tables[i][key].(string) != "goadmin_role_menu" &&
-                tables[i][key].(string) != "goadmin_roles" && tables[i][key].(string) != "goadmin_session" &&
-                tables[i][key].(string) != "goadmin_users" && tables[i][key].(string) != "goadmin_role_permissions" &&
-                tables[i][key].(string) != "goadmin_role_users" && tables[i][key].(string) != "goadmin_user_permissions" {
-                    GenerateFile(tables[i][key].(string), conn, fieldField, typeField)
-                }
-            }
-        default:
-            panic("wrong option")
-        }
+			// step 3. show columns
+			// step 4. generate file
+			for i := 0; i < len(tables); i++ {
+				if tables[i][key].(string) != "goadmin_menu" && tables[i][key].(string) != "goadmin_operation_log" &&
+					tables[i][key].(string) != "goadmin_permissions" && tables[i][key].(string) != "goadmin_role_menu" &&
+					tables[i][key].(string) != "goadmin_roles" && tables[i][key].(string) != "goadmin_session" &&
+					tables[i][key].(string) != "goadmin_users" && tables[i][key].(string) != "goadmin_role_permissions" &&
+					tables[i][key].(string) != "goadmin_role_users" && tables[i][key].(string) != "goadmin_user_permissions" {
+					GenerateFile(tables[i][key].(string), conn, fieldField, typeField)
+				}
+			}
+		default:
+			panic("wrong option")
+		}
 	}
 }
 
@@ -153,8 +153,8 @@ func GetContentFromDir(content string, dirPath string) string {
 }
 
 func GenerateFile(table string, conn db.Connection, fieldField, typeField string) {
-  
-  columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
+
+	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
 	content := `package ` + packageName + `
 

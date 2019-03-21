@@ -6,10 +6,10 @@ package db
 
 import (
 	"errors"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"strconv"
 	"strings"
 	"sync"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 type Where struct {

@@ -21,7 +21,6 @@ const (
 )
 
 type Connection interface {
-	ShowColumns(tableName string) ([]map[string]interface{}, *sql.Rows)
 	Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
 	Exec(query string, args ...interface{}) sql.Result
 	InitDB(cfg map[string]config.Database)

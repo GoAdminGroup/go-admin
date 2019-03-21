@@ -5,6 +5,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template"
@@ -12,7 +13,6 @@ import (
 	template2 "html/template"
 	"net/http"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 // 显示菜单
@@ -37,9 +37,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
-			SetUrl(Config.PREFIX + "/menu/edit").
+			SetUrl(Config.PREFIX+"/menu/edit").
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX + "/menu").
+			SetInfoUrl(Config.PREFIX+"/menu").
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
@@ -152,20 +152,20 @@ func MenuOrder(ctx *context.Context) {
 		if child, ok := v["children"]; ok {
 			db.Table("goadmin_menu").
 				Where("id", "=", v["id"]).Update(dialect.H{
-				"order":     count,
+				"order": count,
 			})
 
 			for _, v2 := range child.([]interface{}) {
 				db.Table("goadmin_menu").
 					Where("id", "=", v2.(map[string]interface{})["id"]).Update(dialect.H{
-					"order":     count,
+					"order": count,
 				})
 				count++
 			}
 		} else {
 			db.Table("goadmin_menu").
 				Where("id", "=", v["id"]).Update(dialect.H{
-				"order":     count,
+				"order": count,
 			})
 			count++
 		}

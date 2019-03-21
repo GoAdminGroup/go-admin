@@ -8,11 +8,11 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 func Auth(ctx *context.Context) User {

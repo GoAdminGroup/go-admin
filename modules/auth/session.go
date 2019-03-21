@@ -9,10 +9,10 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"net/http"
 	"time"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 var (
@@ -135,8 +135,8 @@ func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
 			db.Table("goadmin_session").
 				Where("sid", "=", sid).
 				Update(dialect.H{
-				"values": string(valuesByte),
-			})
+					"values": string(valuesByte),
+				})
 		}
 	}
 }

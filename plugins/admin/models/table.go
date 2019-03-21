@@ -2,12 +2,12 @@ package models
 
 import (
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 type TableGenerator func() Table
@@ -123,8 +123,8 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
-		params.SortType+ " LIMIT ? OFFSET ?", args...)
+	res, _ := tb.db().Query("select "+fields+" from "+tb.Info.Table+wheres+" order by "+params.SortField+" "+
+		params.SortType+" LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 

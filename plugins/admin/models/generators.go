@@ -779,7 +779,6 @@ func GetMenuTable() (MenuTable Table) {
 	var roles, parents []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
 
-
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
 			"field": v["slug"].(string),

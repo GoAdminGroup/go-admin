@@ -5,12 +5,12 @@ import (
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
-	"github.com/chenhg5/go-admin/modules/db"
 )
 
 func main() {
