@@ -243,6 +243,7 @@ func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 	value := make(dialect.H, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
+
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
@@ -267,6 +268,7 @@ func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 	value := make(dialect.H, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
+
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {

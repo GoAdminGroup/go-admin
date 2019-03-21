@@ -153,9 +153,8 @@ func GetContentFromDir(content string, dirPath string) string {
 }
 
 func GenerateFile(table string, conn db.Connection, fieldField, typeField string) {
-	//columnsModel, _ := conn.Query("show columns in '" + table + "'")
-
-	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
+  
+  columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
 	content := `package ` + packageName + `
 
