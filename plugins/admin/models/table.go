@@ -153,6 +153,8 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		infoList = append(infoList, tempModelData)
 	}
 
+	// TODO: use the dialect
+
 	total, _ := tb.db().Query("select count(*) from "+tb.Info.Table+wheres, whereArgs...)
 	var size int
 	if tb.ConnectionDriver == "sqlite" {
