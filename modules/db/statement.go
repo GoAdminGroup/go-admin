@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
-	"fmt"
 )
 
 type Where struct {
@@ -189,8 +188,6 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
 	sql.dialect.Select(&sql.SqlComponent)
-
-	fmt.Println("statement", sql.Statement)
 
 	res, _ := sql.diver.Query(sql.Statement, sql.Args...)
 
