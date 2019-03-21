@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 type Where struct {
@@ -41,6 +42,8 @@ type Sql struct {
 	whereRaw  string
 	updateRaw []RawUpdate
 	statement string
+	diver     Connection
+	dialect   dialect.Dialect
 }
 
 var SqlPool = sync.Pool{
@@ -53,6 +56,8 @@ var SqlPool = sync.Pool{
 			leftjoins: make([]Join, 0),
 			updateRaw: make([]RawUpdate, 0),
 			whereRaw:  "",
+			diver:     GetConnection(),
+			dialect:   dialect.GetDialect(),
 		}
 	},
 }
@@ -69,6 +74,18 @@ func newSql() *Sql {
 
 func Table(table string) *Sql {
 	sql := newSql()
+	sql.table = table
+	return sql
+}
+
+func WithDriver(driver string) *Sql {
+	sql := newSql()
+	sql.diver = GetConnectionByDriver(driver)
+	sql.dialect = dialect.GetDialectByDriver(driver)
+	return sql
+}
+
+func (sql *Sql) Table(table string) *Sql {
 	sql.table = table
 	return sql
 }
@@ -181,7 +198,7 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
-	res, _ := GetConnection().Query(sql.statement, sql.args...)
+	res, _ := sql.diver.Query(sql.statement, sql.args...)
 
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -195,7 +212,23 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
 		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
 
-	res, _ := GetConnection().Query(sql.statement, sql.args...)
+	res, _ := sql.diver.Query(sql.statement, sql.args...)
+
+	return res, nil
+}
+
+func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
+	defer RecycleSql(sql)
+
+	res, _ := sql.diver.Query(sql.dialect.ShowColumns(sql.table))
+
+	return res, nil
+}
+
+func (sql *Sql) ShowTables() ([]map[string]interface{}, error) {
+	defer RecycleSql(sql)
+
+	res, _ := sql.diver.Query(sql.dialect.ShowTables())
 
 	return res, nil
 }
@@ -205,7 +238,7 @@ func (sql *Sql) Update(values H) (int64, error) {
 
 	sql.prepareUpdate(values)
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -219,7 +252,7 @@ func (sql *Sql) Delete() error {
 
 	sql.statement = "delete from " + sql.table + sql.getWheres()
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return errors.New("no affect row")
@@ -233,7 +266,7 @@ func (sql *Sql) Exec() (int64, error) {
 
 	sql.prepareUpdate(H{})
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -247,7 +280,7 @@ func (sql *Sql) Insert(values H) (int64, error) {
 
 	sql.prepareInsert(values)
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.statement, sql.args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")

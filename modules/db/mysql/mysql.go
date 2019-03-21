@@ -32,6 +32,10 @@ func GetMysqlDB() *Mysql {
 	return &DB
 }
 
+func (db *Mysql) GetName() string {
+	return "mysql"
+}
+
 func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 	db.Once.Do(func() {
 		var (

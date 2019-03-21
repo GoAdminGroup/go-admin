@@ -21,6 +21,10 @@ func GetSqliteDB() *Sqlite {
 	return &DB
 }
 
+func (db *Sqlite) GetName() string {
+	return "sqlite"
+}
+
 func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	return performer.Query(db.SqlDBmap["default"], query, args...)
 }
