@@ -27,7 +27,6 @@ type Connection interface {
 	GetName() string
 }
 
-// TODO: redesign and add sql dialect level and scope
 func GetConnectionByDriver(driver string) Connection {
 	switch driver {
 	case "mysql":
