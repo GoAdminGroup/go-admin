@@ -36,6 +36,8 @@ func GetDialectByDriver(driver string) Dialect {
 	switch driver {
 	case "mysql":
 		return mysql{}
+	case "mssql":
+		return mssql{}
 	case "postgresql":
 		return postgresql{}
 	case "sqlite":
