@@ -39,8 +39,8 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 		panic(err)
 	}
 
-	// TODO: 正则表达式为了适配 sqlite
-	// 这里判断 driver 减少正则的性能损耗
+	// TODO: regular expressions for sqlite, use the dialect module
+	// tell the drive to reduce the performance loss
 	results := make([]map[string]interface{}, 0)
 
 	r, _ := regexp.Compile("\\((.*)\\)")

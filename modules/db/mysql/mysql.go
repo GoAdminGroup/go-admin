@@ -51,9 +51,9 @@ func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 				SqlDB.Close()
 				panic(err.Error())
 			} else {
-				// 设置数据库最大连接 减少timewait 正式环境调大
-				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON) // 连接池连接数 = mysql最大连接数/2
-				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON) // 最大打开连接 = mysql最大连接数
+				// Largest set up the database connection reduce timewait
+				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON)
+				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON)
 
 				db.SqlDBmap[conn] = SqlDB
 			}
