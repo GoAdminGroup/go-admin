@@ -37,9 +37,8 @@ func CheckDatabase(ctx *context.Context) {
 	if err == nil && err2 == nil {
 
 		//db.InitDB(username, password, port, ip, databaseName, 100, 100)
-		//tables, _ := db.Query("show tables")
 
-		tables := []map[string]interface{}{}
+		tables := make([]map[string]interface{}, 0)
 
 		list := "["
 

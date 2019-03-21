@@ -89,7 +89,7 @@ func (sql *Sql) Select(fields ...string) *Sql {
 }
 
 func (sql *Sql) OrderBy(filed string, order string) *Sql {
-	sql.Order = filed + " " + order
+	sql.Order = "`" + filed + "` " + order
 	return sql
 }
 

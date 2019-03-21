@@ -12,6 +12,7 @@ import (
 	template2 "html/template"
 	"net/http"
 	"strings"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 // 显示菜单
@@ -36,9 +37,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
-			SetUrl(Config.PREFIX+"/menu/edit").
+			SetUrl(Config.PREFIX + "/menu/edit").
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX+"/menu").
+			SetInfoUrl(Config.PREFIX + "/menu").
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
@@ -50,7 +51,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 // 删除菜单
 func DeleteMenu(ctx *context.Context) {
 
-	db.Exec("delete from goadmin_menu where id = ?", ctx.Query("id"))
+	db.Table("goadmin_menu").Where("id", "=", ctx.Query("id")).Delete()
+
 	menu.SetGlobalMenu(auth.Auth(ctx))
 	ctx.Json(http.StatusOK, map[string]interface{}{
 		"code": 200,
@@ -72,14 +74,26 @@ func EditMenu(ctx *context.Context) {
 	roles := ctx.Request.Form["roles[]"]
 
 	for _, roleId := range roles {
-		checkRoleMenu, _ := db.Query("select * from goadmin_role_menu where role_id = ? and menu_id = ?", roleId, id)
-		if len(checkRoleMenu) < 1 {
-			db.Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+		checkRoleMenu, _ := db.Table("goadmin_role_menu").
+			Where("role_id", "=", roleId).
+			Where("menu_id", "=", id).
+			First()
+
+		if checkRoleMenu == nil {
+			db.Table("goadmin_role_menu").Insert(dialect.H{
+				"menu_id": id,
+				"role_id": roleId,
+			})
 		}
 	}
 
-	db.Exec("update goadmin_menu set title = ?, parent_id = ?, icon = ?, uri = ? where id = ?",
-		title, parentId, icon, uri, id)
+	db.Table("goadmin_menu").
+		Where("id", "=", id).Update(dialect.H{
+		"title":     title,
+		"parent_id": parentId,
+		"icon":      icon,
+		"uri":       uri,
+	})
 
 	menu.SetGlobalMenu(auth.Auth(ctx))
 
@@ -101,15 +115,21 @@ func NewMenu(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	res := db.Exec("insert into goadmin_menu (title, parent_id, icon, uri, `order`) values (?, ?, ?, ?, ?)",
-		title, parentId, icon, uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
+	id, _ := db.Table("goadmin_role_menu").Insert(dialect.H{
+		"title":     title,
+		"parent_id": parentId,
+		"icon":      icon,
+		"uri":       uri,
+		"order":     (menu.GetGlobalMenu(user)).MaxOrder + 1,
+	})
 
 	roles := ctx.Request.Form["roles[]"]
 
-	id, _ := res.LastInsertId()
-
 	for _, roleId := range roles {
-		db.Exec("insert into goadmin_role_menu (menu_id, role_id) values (?, ?)", id, roleId)
+		db.Table("goadmin_role_menu").Insert(dialect.H{
+			"menu_id": id,
+			"role_id": roleId,
+		})
 	}
 
 	globalMenu := menu.GetGlobalMenu(user)
@@ -130,13 +150,23 @@ func MenuOrder(ctx *context.Context) {
 	count := 1
 	for _, v := range data {
 		if child, ok := v["children"]; ok {
-			db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			db.Table("goadmin_menu").
+				Where("id", "=", v["id"]).Update(dialect.H{
+				"order":     count,
+			})
+
 			for _, v2 := range child.([]interface{}) {
-				db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v2.(map[string]interface{})["id"])
+				db.Table("goadmin_menu").
+					Where("id", "=", v2.(map[string]interface{})["id"]).Update(dialect.H{
+					"order":     count,
+				})
 				count++
 			}
 		} else {
-			db.Exec("update goadmin_menu set `order` = ? where id = ?", count, v["id"])
+			db.Table("goadmin_menu").
+				Where("id", "=", v["id"]).Update(dialect.H{
+				"order":     count,
+			})
 			count++
 		}
 	}

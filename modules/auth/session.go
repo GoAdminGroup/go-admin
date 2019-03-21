@@ -12,6 +12,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"net/http"
 	"time"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 var (
@@ -106,12 +107,13 @@ func InitSession(ctx *context.Context) *Session {
 type MysqlDriver struct{}
 
 func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
-	sesModel, _ := db.Query("select * from goadmin_session where sid = ?", sid)
-	if len(sesModel) < 1 {
+	sesModel, _ := db.Table("goadmin_session").Where("sid", "=", sid).First()
+
+	if sesModel == nil {
 		return map[string]interface{}{}
 	} else {
 		var values map[string]interface{}
-		json.Unmarshal([]byte(sesModel[0]["values"].(string)), &values)
+		json.Unmarshal([]byte(sesModel["values"].(string)), &values)
 		return values
 	}
 }
@@ -119,15 +121,22 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
 	if sid != "" {
 		if len(values) == 0 {
-			db.Exec("delete from goadmin_session where sid = ?", sid)
+			db.Table("goadmin_session").Where("sid", "=", sid).Delete()
 			return
 		}
 		valuesByte, _ := json.Marshal(values)
-		sesModel, _ := db.Query("select * from goadmin_session where sid = ?", sid)
-		if len(sesModel) < 1 {
-			db.Exec("insert into goadmin_session (`values`, sid) values (?, ?)", string(valuesByte), sid)
+		sesModel, _ := db.Table("goadmin_session").Where("sid", "=", sid).First()
+		if sesModel == nil {
+			db.Table("goadmin_session").Insert(dialect.H{
+				"values": string(valuesByte),
+				"sid":    sid,
+			})
 		} else {
-			db.Exec("update goadmin_session set `values` = ? where sid = ?", string(valuesByte), sid)
+			db.Table("goadmin_session").
+				Where("sid", "=", sid).
+				Update(dialect.H{
+				"values": string(valuesByte),
+			})
 		}
 	}
 }
