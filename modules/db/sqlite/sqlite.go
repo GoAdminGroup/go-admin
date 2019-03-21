@@ -21,8 +21,8 @@ func GetSqliteDB() *Sqlite {
 	return &DB
 }
 
-func (db *Sqlite) ShowColumns(tableName string) ([]map[string]interface{}, *sql.Rows) {
-	return db.Query("PRAGMA table_info(" + tableName + ");")
+func (db *Sqlite) GetName() string {
+	return "sqlite"
 }
 
 func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {

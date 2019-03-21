@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 func RecordOperationLog(ctx *context.Context) {
@@ -16,7 +17,7 @@ func RecordOperationLog(ctx *context.Context) {
 			input, _ = json.Marshal((*form).Value)
 		}
 
-		db.Table("goadmin_operation_log").Insert(db.H{
+		db.Table("goadmin_operation_log").Insert(dialect.H{
 			"user_id": user.ID,
 			"path":    ctx.Path(),
 			"method":  ctx.Method(),

@@ -104,29 +104,32 @@ func Filter(ctx *context.Context) (User, bool, bool) {
 }
 
 func GetCurUserById(id string) (user User, ok bool) {
-	admin, _ := db.Query("select * from goadmin_users where id = ?", id)
+	admin, _ := db.Table("goadmin_users").Find(id)
 
-	if len(admin) < 1 {
+	if admin == nil {
 		ok = false
 		return
 	}
 
-	roleModel, _ := db.Query("select r.id, r.name, r.slug from goadmin_role_users as u "+
-		"left join goadmin_roles as r on u.role_id = r.id where user_id = ?", id)
+	roleModel, _ := db.Table("goadmin_role_users").
+		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+		Where("user_id", "=", id).
+		Select("goadmin_roles.id", "goadmin_roles.name", "goadmin_roles.slug").
+		First()
 
 	user.ID = id
-	user.Level = roleModel[0]["slug"].(string)
-	user.LevelName = roleModel[0]["name"].(string)
-	user.Name = admin[0]["name"].(string)
-	user.CreateAt = admin[0]["created_at"].(string)
-	if admin[0]["avatar"].(string) == "" || config.Get().STORE.PREFIX == "" {
+	user.Level = roleModel["slug"].(string)
+	user.LevelName = roleModel["name"].(string)
+	user.Name = admin["name"].(string)
+	user.CreateAt = admin["created_at"].(string)
+	if admin["avatar"].(string) == "" || config.Get().STORE.PREFIX == "" {
 		user.Avatar = ""
 	} else {
-		user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin[0]["avatar"].(string)
+		user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin["avatar"].(string)
 	}
 
 	// TODO: 支持多角色
-	permissionModel := GetPermissions(roleModel[0]["id"])
+	permissionModel := GetPermissions(roleModel["id"])
 	var permissions []Permission
 	for i := 0; i < len(permissionModel); i++ {
 
@@ -145,8 +148,11 @@ func GetCurUserById(id string) (user User, ok bool) {
 
 	user.Permissions = permissions
 
-	menuIdsModel, _ := db.Query("select menu_id, parent_id from goadmin_role_menu left join "+
-		"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
+	menuIdsModel, _ := db.Table("goadmin_role_menu").
+		LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
+		Where("goadmin_role_menu.role_id", "=", roleModel["id"]).
+		Select("menu_id", "parent_id").
+		All()
 
 	var menuIds []int64
 
@@ -171,8 +177,12 @@ func GetCurUserById(id string) (user User, ok bool) {
 }
 
 func GetPermissions(role_id interface{}) []map[string]interface{} {
-	permissions, _ := db.Query("select p.http_method, p.http_path from goadmin_role_permissions "+
-		"as rp left join goadmin_permissions as p on rp.permission_id = p.id where role_id = ?", role_id)
+	permissions, _ := db.Table("goadmin_role_permissions").
+		LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_role_permissions.permission_id").
+		Where("role_id", "=", role_id).
+		Select("goadmin_permissions.http_method", "goadmin_permissions.http_path").
+		All()
+
 	return permissions
 }
 

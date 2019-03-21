@@ -12,6 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"strings"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 func Auth(ctx *context.Context) User {
@@ -20,31 +21,34 @@ func Auth(ctx *context.Context) User {
 
 func Check(password string, username string) (user User, ok bool) {
 
-	admin, _ := db.Query("select * from goadmin_users where username = ?", username)
+	admin, _ := db.Table("goadmin_users").Where("username", "=", username).First()
 
-	if len(admin) < 1 {
+	if admin == nil {
 		ok = false
 	} else {
-		if ComparePassword(password, admin[0]["password"].(string)) {
+		if ComparePassword(password, admin["password"].(string)) {
 			ok = true
 
-			roleModel, _ := db.Query("select r.id, r.name, r.slug from goadmin_role_users "+
-				"as u left join goadmin_roles as r on u.role_id = r.id where user_id = ?", admin[0]["id"])
+			roleModel, _ := db.Table("goadmin_role_users").
+				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+				Where("user_id", "=", admin["id"]).
+				Select("goadmin_roles.id", "goadmin_roles.name", "goadmin_roles.slug").
+				First()
 
-			user.ID = strconv.FormatInt(admin[0]["id"].(int64), 10)
-			user.Level = roleModel[0]["slug"].(string)
-			user.LevelName = roleModel[0]["name"].(string)
-			user.Name = admin[0]["name"].(string)
-			user.CreateAt = admin[0]["created_at"].(string)
+			user.ID = strconv.FormatInt(admin["id"].(int64), 10)
+			user.Level = roleModel["slug"].(string)
+			user.LevelName = roleModel["name"].(string)
+			user.Name = admin["name"].(string)
+			user.CreateAt = admin["created_at"].(string)
 
-			if admin[0]["avatar"].(string) == "" || config.Get().STORE.PREFIX == "" {
+			if admin["avatar"].(string) == "" || config.Get().STORE.PREFIX == "" {
 				user.Avatar = ""
 			} else {
-				user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin[0]["avatar"].(string)
+				user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin["avatar"].(string)
 			}
 
 			// TODO: 支持多角色
-			permissionModel := GetPermissions(roleModel[0]["id"])
+			permissionModel := GetPermissions(roleModel["id"])
 			var permissions []Permission
 			for i := 0; i < len(permissionModel); i++ {
 
@@ -63,8 +67,11 @@ func Check(password string, username string) (user User, ok bool) {
 
 			user.Permissions = permissions
 
-			menuIdsModel, _ := db.Query("select menu_id, parent_id from goadmin_role_menu left join "+
-				"goadmin_menu on goadmin_menu.id = goadmin_role_menu.menu_id where goadmin_role_menu.role_id = ?", roleModel[0]["id"])
+			menuIdsModel, _ := db.Table("goadmin_role_menu").
+				LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
+				Where("goadmin_role_menu.role_id", "=", roleModel["id"]).
+				Select("menu_id", "parent_id").
+				All()
 
 			var menuIds []int64
 
@@ -84,7 +91,9 @@ func Check(password string, username string) (user User, ok bool) {
 			user.Menus = menuIds
 
 			newPwd := EncodePassword([]byte(password))
-			db.Exec("update goadmin_users set password = ? where id = ?", newPwd, user.ID)
+			db.Table("goadmin_users").Where("id", "=", user.ID).Update(dialect.H{
+				"password": newPwd,
+			})
 
 		} else {
 			ok = false

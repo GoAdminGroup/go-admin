@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 type Where struct {
@@ -30,29 +31,25 @@ type RawUpdate struct {
 }
 
 type Sql struct {
-	fields    []string
-	table     string
-	wheres    []Where
-	leftjoins []Join
-	args      []interface{}
-	order     string
-	offset    string
-	limit     string
-	whereRaw  string
-	updateRaw []RawUpdate
-	statement string
+	dialect.SqlComponent
+	diver   Connection
+	dialect dialect.Dialect
 }
 
 var SqlPool = sync.Pool{
 	New: func() interface{} {
 		return &Sql{
-			fields:    make([]string, 0),
-			table:     "",
-			args:      make([]interface{}, 0),
-			wheres:    make([]Where, 0),
-			leftjoins: make([]Join, 0),
-			updateRaw: make([]RawUpdate, 0),
-			whereRaw:  "",
+			SqlComponent: dialect.SqlComponent{
+				Fields:     make([]string, 0),
+				TableName:  "",
+				Args:       make([]interface{}, 0),
+				Wheres:     make([]dialect.Where, 0),
+				Leftjoins:  make([]dialect.Join, 0),
+				UpdateRaws: make([]dialect.RawUpdate, 0),
+				WhereRaws:  "",
+			},
+			diver:   GetConnection(),
+			dialect: dialect.GetDialect(),
 		}
 	},
 }
@@ -69,37 +66,49 @@ func newSql() *Sql {
 
 func Table(table string) *Sql {
 	sql := newSql()
-	sql.table = table
+	sql.TableName = table
+	return sql
+}
+
+func WithDriver(driver string) *Sql {
+	sql := newSql()
+	sql.diver = GetConnectionByDriver(driver)
+	sql.dialect = dialect.GetDialectByDriver(driver)
+	return sql
+}
+
+func (sql *Sql) Table(table string) *Sql {
+	sql.TableName = table
 	return sql
 }
 
 func (sql *Sql) Select(fields ...string) *Sql {
-	sql.fields = fields
+	sql.Fields = fields
 	return sql
 }
 
 func (sql *Sql) OrderBy(filed string, order string) *Sql {
-	sql.order = filed + " " + order
+	sql.Order = "`" + filed + "` " + order
 	return sql
 }
 
 func (sql *Sql) Skip(offset int) *Sql {
-	sql.offset = strconv.Itoa(offset)
+	sql.Offset = strconv.Itoa(offset)
 	return sql
 }
 
 func (sql *Sql) Take(take int) *Sql {
-	sql.limit = strconv.Itoa(take)
+	sql.Limit = strconv.Itoa(take)
 	return sql
 }
 
 func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
-	sql.wheres = append(sql.wheres, Where{
-		field:     field,
-		operation: operation,
-		qmark:     "?",
+	sql.Wheres = append(sql.Wheres, dialect.Where{
+		Field:     field,
+		Operation: operation,
+		Qmark:     "?",
 	})
-	sql.args = append(sql.args, arg)
+	sql.Args = append(sql.Args, arg)
 	return sql
 }
 
@@ -107,12 +116,12 @@ func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
 	if len(arg) == 0 {
 		return sql
 	}
-	sql.wheres = append(sql.wheres, Where{
-		field:     field,
-		operation: "in",
-		qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
+	sql.Wheres = append(sql.Wheres, dialect.Where{
+		Field:     field,
+		Operation: "in",
+		Qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
 	})
-	sql.args = append(sql.args, arg...)
+	sql.Args = append(sql.Args, arg...)
 	return sql
 }
 
@@ -120,12 +129,12 @@ func (sql *Sql) WhereNotIn(field string, arg []interface{}) *Sql {
 	if len(arg) == 0 {
 		return sql
 	}
-	sql.wheres = append(sql.wheres, Where{
-		field:     field,
-		operation: "not in",
-		qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
+	sql.Wheres = append(sql.Wheres, dialect.Where{
+		Field:     field,
+		Operation: "not in",
+		Qmark:     "(" + strings.Repeat("?,", len(arg)-1) + "?)",
 	})
-	sql.args = append(sql.args, arg...)
+	sql.Args = append(sql.Args, arg...)
 	return sql
 }
 
@@ -145,25 +154,25 @@ func (sql *Sql) Count() (int64, error) {
 }
 
 func (sql *Sql) WhereRaw(raw string, args ...interface{}) *Sql {
-	sql.whereRaw = raw
-	sql.args = append(sql.args, args...)
+	sql.WhereRaws = raw
+	sql.Args = append(sql.Args, args...)
 	return sql
 }
 
 func (sql *Sql) UpdateRaw(raw string, args ...interface{}) *Sql {
-	sql.updateRaw = append(sql.updateRaw, RawUpdate{
-		expression: raw,
-		args:       args,
+	sql.UpdateRaws = append(sql.UpdateRaws, dialect.RawUpdate{
+		Expression: raw,
+		Args:       args,
 	})
 	return sql
 }
 
 func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB string) *Sql {
-	sql.leftjoins = append(sql.leftjoins, Join{
-		fieldA:    fieldA,
-		fieldB:    fieldB,
-		table:     table,
-		operation: operation,
+	sql.Leftjoins = append(sql.Leftjoins, dialect.Join{
+		FieldA:    fieldA,
+		FieldB:    fieldB,
+		Table:     table,
+		Operation: operation,
 	})
 	return sql
 }
@@ -178,10 +187,9 @@ func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB s
 func (sql *Sql) First() (map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
-		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
+	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := GetConnection().Query(sql.statement, sql.args...)
+	res, _ := sql.diver.Query(sql.Statement, sql.Args...)
 
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -192,20 +200,37 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 func (sql *Sql) All() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	sql.statement = "select " + sql.getFields() + " from " + sql.table + sql.getJoins() + sql.getWheres() +
-		sql.getOrderBy() + sql.getLimit() + sql.getOffset()
+	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := GetConnection().Query(sql.statement, sql.args...)
+	res, _ := sql.diver.Query(sql.Statement, sql.Args...)
 
 	return res, nil
 }
 
-func (sql *Sql) Update(values H) (int64, error) {
+func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	sql.prepareUpdate(values)
+	res, _ := sql.diver.Query(sql.dialect.ShowColumns(sql.TableName))
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	return res, nil
+}
+
+func (sql *Sql) ShowTables() ([]map[string]interface{}, error) {
+	defer RecycleSql(sql)
+
+	res, _ := sql.diver.Query(sql.dialect.ShowTables())
+
+	return res, nil
+}
+
+func (sql *Sql) Update(values dialect.H) (int64, error) {
+	defer RecycleSql(sql)
+
+	sql.Values = values
+
+	sql.dialect.Update(&sql.SqlComponent)
+
+	res := sql.diver.Exec(sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -217,9 +242,9 @@ func (sql *Sql) Update(values H) (int64, error) {
 func (sql *Sql) Delete() error {
 	defer RecycleSql(sql)
 
-	sql.statement = "delete from " + sql.table + sql.getWheres()
+	sql.dialect.Delete(&sql.SqlComponent)
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return errors.New("no affect row")
@@ -231,9 +256,9 @@ func (sql *Sql) Delete() error {
 func (sql *Sql) Exec() (int64, error) {
 	defer RecycleSql(sql)
 
-	sql.prepareUpdate(H{})
+	sql.dialect.Update(&sql.SqlComponent)
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	res := sql.diver.Exec(sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -242,186 +267,43 @@ func (sql *Sql) Exec() (int64, error) {
 	return res.LastInsertId()
 }
 
-func (sql *Sql) Insert(values H) (int64, error) {
+func (sql *Sql) Insert(values dialect.H) (int64, error) {
 	defer RecycleSql(sql)
 
-	sql.prepareInsert(values)
+	sql.Values = values
 
-	res := GetConnection().Exec(sql.statement, sql.args...)
+	sql.dialect.Insert(&sql.SqlComponent)
+
+	res := sql.diver.Exec(sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
 	}
 
 	return res.LastInsertId()
-}
-
-// *******************************
-// internal help function
-// *******************************
-
-func (sql *Sql) getLimit() string {
-	if sql.limit == "" {
-		return ""
-	}
-	return " limit " + sql.limit + " "
-}
-
-func (sql *Sql) getOffset() string {
-	if sql.offset == "" {
-		return ""
-	}
-	return " offset " + sql.offset + " "
-}
-
-func (sql *Sql) getOrderBy() string {
-	if sql.order == "" {
-		return ""
-	}
-	return " order by " + sql.order + " "
-}
-
-func (sql *Sql) getJoins() string {
-	if len(sql.leftjoins) == 0 {
-		return ""
-	}
-	joins := ""
-	for _, join := range sql.leftjoins {
-		joins += " left join " + join.table + " on " + join.fieldA + " " + join.operation + " " + join.fieldB + " "
-	}
-	return joins
-}
-
-func (sql *Sql) getFields() string {
-	if len(sql.fields) == 0 {
-		return "*"
-	}
-	if sql.fields[0] == "count(*)" {
-		return "count(*)"
-	}
-	fields := ""
-	if len(sql.leftjoins) == 0 {
-		for _, field := range sql.fields {
-			fields += "`" + field + "`,"
-		}
-	} else {
-		for _, field := range sql.fields {
-			arr := strings.Split(field, ".")
-			if len(arr) > 1 {
-				fields += arr[0] + ".`" + arr[1] + "`,"
-			} else {
-				fields += "`" + field + "`,"
-			}
-		}
-	}
-	return fields[:len(fields)-1]
-}
-
-func (sql *Sql) getWheres() string {
-	if len(sql.wheres) == 0 {
-		if sql.whereRaw != "" {
-			return " where " + sql.whereRaw
-		}
-		return ""
-	}
-	wheres := " where "
-	var arr []string
-	for _, where := range sql.wheres {
-		arr = strings.Split(where.field, ".")
-		if len(arr) > 1 {
-			wheres += arr[0] + ".`" + arr[1] + "` " + where.operation + " " + where.qmark + " and "
-		} else {
-			wheres += "`" + where.field + "` " + where.operation + " " + where.qmark + " and "
-		}
-	}
-
-	if sql.whereRaw != "" {
-		return wheres + sql.whereRaw
-	} else {
-		return wheres[:len(wheres)-5]
-	}
-}
-
-func (sql *Sql) prepareUpdate(values H) {
-	fields := ""
-	args := make([]interface{}, 0)
-
-	if len(values) != 0 {
-
-		for key, value := range values {
-			fields += "`" + key + "` = ?, "
-			args = append(args, value)
-		}
-
-		if len(sql.updateRaw) == 0 {
-			fields = fields[:len(fields)-2]
-		} else {
-			for i := 0; i < len(sql.updateRaw); i++ {
-				if i == len(sql.updateRaw)-1 {
-					fields += sql.updateRaw[i].expression + " "
-				} else {
-					fields += sql.updateRaw[i].expression + ","
-				}
-				args = append(args, sql.updateRaw[i].args...)
-			}
-		}
-
-		sql.args = append(args, sql.args...)
-	} else {
-		if len(sql.updateRaw) == 0 {
-			panic("prepareUpdate: wrong parameter")
-		} else {
-			for i := 0; i < len(sql.updateRaw); i++ {
-				if i == len(sql.updateRaw)-1 {
-					fields += sql.updateRaw[i].expression + " "
-				} else {
-					fields += sql.updateRaw[i].expression + ","
-				}
-				args = append(args, sql.updateRaw[i].args...)
-			}
-		}
-		sql.args = append(args, sql.args...)
-	}
-
-	sql.statement = "update " + sql.table + " set " + fields + sql.getWheres()
-}
-
-func (sql *Sql) prepareInsert(values H) {
-	fields := "("
-	quesMark := "("
-
-	for key, value := range values {
-		fields += "`" + key + "`,"
-		quesMark += "?,"
-		sql.args = append(sql.args, value)
-	}
-	fields = fields[:len(fields)-1] + ")"
-	quesMark = quesMark[:len(quesMark)-1] + ")"
-
-	sql.statement = "insert into " + sql.table + fields + " values " + quesMark
 }
 
 func (sql *Sql) empty() *Sql {
-	sql.fields = make([]string, 0)
-	sql.args = make([]interface{}, 0)
-	sql.table = ""
-	sql.wheres = make([]Where, 0)
-	sql.leftjoins = make([]Join, 0)
+	sql.Fields = make([]string, 0)
+	sql.Args = make([]interface{}, 0)
+	sql.TableName = ""
+	sql.Wheres = make([]dialect.Where, 0)
+	sql.Leftjoins = make([]dialect.Join, 0)
 	return sql
 }
 
 func RecycleSql(sql *Sql) {
-	sql.fields = make([]string, 0)
-	sql.table = ""
-	sql.wheres = make([]Where, 0)
-	sql.leftjoins = make([]Join, 0)
-	sql.args = make([]interface{}, 0)
-	sql.order = ""
-	sql.offset = ""
-	sql.limit = ""
-	sql.whereRaw = ""
-	sql.updateRaw = make([]RawUpdate, 0)
-	sql.statement = ""
+	sql.Fields = make([]string, 0)
+	sql.TableName = ""
+	sql.Wheres = make([]dialect.Where, 0)
+	sql.Leftjoins = make([]dialect.Join, 0)
+	sql.Args = make([]interface{}, 0)
+	sql.Order = ""
+	sql.Offset = ""
+	sql.Limit = ""
+	sql.WhereRaws = ""
+	sql.UpdateRaws = make([]dialect.RawUpdate, 0)
+	sql.Statement = ""
 
 	SqlPool.Put(sql)
 }

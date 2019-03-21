@@ -10,6 +10,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/modules/db"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 				NAME:         "godmin",
 				MAX_IDLE_CON: 50,
 				MAX_OPEN_CON: 150,
-				DRIVER:       "mysql",
+				DRIVER:       db.DRIVER_MYSQL,
 			},
 		},
 		DOMAIN: "localhost",

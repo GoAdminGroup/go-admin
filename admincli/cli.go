@@ -84,7 +84,7 @@ func main() {
             conn.InitDB(cfg)
 
             // step 2. show tables
-            tables, _ := conn.Query("show tables")
+            tables, _ := db.WithDriver(conn.GetName()).ShowTables()
 
             key := "Tables_in_" + name
             fieldField := "Field"
@@ -153,7 +153,8 @@ func GetContentFromDir(content string, dirPath string) string {
 }
 
 func GenerateFile(table string, conn db.Connection, fieldField, typeField string) {
-	columnsModel, _ := conn.ShowColumns(table)
+  
+  columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
 	content := `package ` + packageName + `
 

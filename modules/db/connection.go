@@ -13,11 +13,19 @@ import (
 	"github.com/chenhg5/go-admin/modules/db/sqlite"
 )
 
+const (
+	DRIVER_MYSQL      = "mysql"
+	DRIVER_MSSQL      = "mssql"
+	DRIVER_SQLITE     = "sqlite"
+	DRIVER_POSTGRESQL = "postgresql"
+)
+
 type Connection interface {
 	ShowColumns(tableName string) ([]map[string]interface{}, *sql.Rows)
 	Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
 	Exec(query string, args ...interface{}) sql.Result
 	InitDB(cfg map[string]config.Database)
+	GetName() string
 }
 
 // TODO: redesign and add sql dialect level and scope

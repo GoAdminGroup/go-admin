@@ -72,18 +72,22 @@ func SetGlobalMenu(user auth.User) {
 	)
 
 	if user.IsSuperAdmin() {
-		menus, _ = db.Query("select * from goadmin_menu where id > 0 order by `order` asc")
+		menus, _ = db.Table("goadmin_menu").
+			Where("id", ">", 0).
+			OrderBy("order", "asc").
+			All()
 	} else {
 
-		qmark := ""
 		var ids []interface{}
 		for i := 0; i < len(user.Menus); i++ {
-			qmark += "?,"
 			ids = append(ids, user.Menus[i])
 		}
 
-		menus, _ = db.Query("select * from goadmin_menu where id in ("+qmark[:len(qmark)-1]+") "+
-			"order by `order` asc", ids...)
+		menus, _ = db.Table("goadmin_menu").
+			WhereIn("id", ids).
+			OrderBy("order", "asc").
+			All()
+
 	}
 
 	var title string
@@ -145,13 +149,13 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 }
 
 func GetMenuItemById(id string) MenuItem {
-	menu, _ := db.Query("select * from goadmin_menu where id = ?", id)
+	menu, _ := db.Table("goadmin_menu").Find(id)
 
 	return MenuItem{
-		Name:         menu[0]["title"].(string),
-		ID:           strconv.FormatInt(menu[0]["id"].(int64), 10),
-		Url:          menu[0]["uri"].(string),
-		Icon:         menu[0]["icon"].(string),
+		Name:         menu["title"].(string),
+		ID:           strconv.FormatInt(menu["id"].(int64), 10),
+		Url:          menu["uri"].(string),
+		Icon:         menu["icon"].(string),
 		Active:       "",
 		ChildrenList: []MenuItem{},
 	}
