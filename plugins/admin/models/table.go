@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"strconv"
 	"strings"
+	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
 
 type TableGenerator func() Table
@@ -81,15 +82,6 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	// TODO: use sql dialect to support different database
-
-	//showColumns := "show columns in '" + tb.Info.Table + "'"
-	//if tb.ConnectionDriver == "sqlite" {
-	//	showColumns = "PRAGMA table_info(" + tb.Info.Table + ");"
-	//}
-	//
-	//columnsModel, _ := tb.db().Query(showColumns)
-
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Info.Table).ShowColumns()
 
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
@@ -131,14 +123,15 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().Query("select "+fields+" from "+tb.Info.Table+wheres+" order by "+params.SortField+" "+
-		params.SortType+" LIMIT ? OFFSET ?", args...)
+	res, _ := tb.db().Query("select " + fields + " from " + tb.Info.Table + wheres + " order by " + params.SortField + " "+
+		params.SortType+ " LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 
 	for i := 0; i < len(res); i++ {
 
-		// TODO: 加入对象池
+		// TODO: add object pool
+
 		tempModelData := make(map[string]template.HTML, 0)
 
 		for j := 0; j < len(tb.Info.FieldList); j++ {
@@ -185,22 +178,22 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 // GetDataFromDatabaseWithId query the single row of data.
 func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, string) {
 
-	fields := ""
-
-	//columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
+	fields := make([]string, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 
 	for i := 0; i < len(tb.Form.FormList); i++ {
 		if CheckInTable(columns, tb.Form.FormList[i].Field) {
-			fields += tb.Form.FormList[i].Field + ","
+			fields = append(fields, tb.Form.FormList[i].Field)
 		}
 	}
 
-	fields = fields[0 : len(fields)-1]
+	res, _ := db.WithDriver(tb.ConnectionDriver).
+		Table(tb.Form.Table).Select(fields...).
+		Where("id", "=", id).
+		First()
 
-	res, _ := tb.db().Query("select "+fields+" from "+tb.Form.Table+" where id = ?", id)
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tb.Form.FormList); i++ {
@@ -208,7 +201,7 @@ func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, stri
 			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" || tb.Form.FormList[i].FormType == "select_single" {
 				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
 				}).([]string)
 				for _, v := range tb.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -218,14 +211,14 @@ func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, stri
 			} else {
 				tb.Form.FormList[i].Value = tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
 				}).(string)
 			}
 		} else {
 			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" {
 				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[0][tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
 				}).([]string)
 				for _, v := range tb.Form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -247,74 +240,101 @@ func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, stri
 // UpdateDataFromDatabase update data.
 func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 
-	fields := ""
-	valueList := make([]interface{}, 0)
-	//columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
+	value := make(dialect.H, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
-			fields += strings.Replace(k, "[]", "", -1) + " = ?,"
 			if len(v) > 0 {
-				valueList = append(valueList, strings.Join(modules.RemoveBlankFromArray(v), ","))
+				value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
 			} else {
-				valueList = append(valueList, v[0])
+				value[strings.Replace(k, "[]", "", -1)] = v[0]
 			}
 		}
 	}
 
-	fields = fields[0 : len(fields)-1]
-	valueList = append(valueList, dataList["id"][0])
+	db.WithDriver(tb.ConnectionDriver).
+		Table(tb.Form.Table).
+		Where("id", "=", dataList["id"][0]).
+		Update(value)
 
-	tb.db().Exec("update "+tb.Form.Table+" set "+fields+" where id = ?", valueList...)
 }
 
 // InsertDataFromDatabase insert data.
 func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 
-	fields := ""
-	queStr := ""
-	var valueList []interface{}
-	//columnsModel, _ := tb.db().Query("show columns in '" + tb.Form.Table + "'")
+	value := make(dialect.H, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
-			fields += k + ","
-			queStr += "?,"
-			valueList = append(valueList, v[0])
+			if len(v) > 0 {
+				value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
+			} else {
+				value[strings.Replace(k, "[]", "", -1)] = v[0]
+			}
 		}
 	}
 
-	fields = fields[0 : len(fields)-1]
-	queStr = queStr[0 : len(queStr)-1]
-
-	tb.db().Exec("insert into "+tb.Form.Table+"("+fields+") values ("+queStr+")", valueList...)
+	db.WithDriver(tb.ConnectionDriver).
+		Table(tb.Form.Table).
+		Insert(value)
 }
 
 // DeleteDataFromDatabase delete data.
 func (tb Table) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		tb.db().Exec("delete from "+tb.Form.Table+" where id = ?", id)
+		db.WithDriver(tb.ConnectionDriver).
+			Table(tb.Form.Table).
+			Where("id", "=", id).
+			Delete()
 	}
 	if tb.Form.Table == "goadmin_roles" {
-		tb.db().Exec("delete from goadmin_role_users where role_id = ?", id)
-		tb.db().Exec("delete from goadmin_role_permissions where role_id = ?", id)
-		tb.db().Exec("delete from goadmin_role_menu where role_id = ?", id)
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_users").
+			Where("role_id", "=", id).
+			Delete()
+
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_permissions").
+			Where("role_id", "=", id).
+			Delete()
+
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_menu").
+			Where("role_id", "=", id).
+			Delete()
 	}
 	if tb.Form.Table == "goadmin_users" {
-		tb.db().Exec("delete from goadmin_role_users where user_id = ?", id)
-		tb.db().Exec("delete from goadmin_user_permissions where user_id = ?", id)
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_users").
+			Where("user_id", "=", id).
+			Delete()
+
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_user_permissions").
+			Where("user_id", "=", id).
+			Delete()
 	}
 	if tb.Form.Table == "goadmin_permissions" {
-		tb.db().Exec("delete from goadmin_role_permissions where permission_id = ?", id)
-		tb.db().Exec("delete from goadmin_user_permissions where permission_id = ?", id)
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_permissions").
+			Where("permission_id", "=", id).
+			Delete()
+
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_user_permissions").
+			Where("permission_id", "=", id).
+			Delete()
 	}
 	if tb.Form.Table == "goadmin_menu" {
-		tb.db().Exec("delete from goadmin_role_menu where menu_id = ?", id)
+		db.WithDriver(tb.ConnectionDriver).
+			Table("goadmin_role_menu").
+			Where("menu_id", "=", id).
+			Delete()
 	}
 }
 

@@ -1,6 +1,7 @@
 package dialect
 
 type mysql struct {
+	commonDialect
 }
 
 func (mysql) GetName() string {
