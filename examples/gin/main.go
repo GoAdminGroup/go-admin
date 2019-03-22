@@ -34,7 +34,7 @@ func main() {
 				DRIVER:       db.DRIVER_MYSQL,
 
 				//DRIVER: db.DRIVER_SQLITE,
-				//FILE:   "/Users/chenhg5/go/src/github.com/chenhg5/go-admin/examples/datamodel/admin.db",
+				//FILE:   "..../datamodel/admin.db",
 			},
 		},
 		DOMAIN: "localhost",
