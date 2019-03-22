@@ -25,10 +25,16 @@
 			"revisionTime": "2018-11-16T10:20:33Z"
 		},
 		{
-			"checksumSHA1": "xxLSo5tKtXc7jGrR70yoEfza8Cw=",
+			"checksumSHA1": "Aulh7C5SVOA4Jzt5eHNH6197Mbk=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e",
+			"revisionTime": "2019-02-26T22:47:05Z"
+		},
+		{
+			"checksumSHA1": "GC0jsooT3y4aYcqEUNOvlCDwj94=",
 			"path": "github.com/lib/pq",
-			"revision": "9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee",
-			"revisionTime": "2018-10-16T16:26:27Z"
+			"revision": "5ccc9857e3a95a4233a13e445831cb31b90e73a6",
+			"revisionTime": "2019-03-21T21:06:58Z"
 		},
 		{
 			"checksumSHA1": "AU3fA8Sm33Vj9PBoRPSeYfxLRuE=",
@@ -41,6 +47,12 @@
 			"path": "github.com/mattn/go-sqlite3",
 			"revision": "6a9185d7b1f12363e2c904449d374b63b6093b16",
 			"revisionTime": "2018-11-21T16:49:42Z"
+		},
+		{
+			"checksumSHA1": "mDNBjIi/nvEt2poJ+qdeyosk/IM=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "dae0fa8d5b0c810a8ab733fbd5510c7cae84eca4",
+			"revisionTime": "2019-03-11T16:20:41Z"
 		},
 		{
 			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
@@ -61,11 +73,29 @@
 			"revisionTime": "2018-11-27T08:28:20Z"
 		},
 		{
+			"checksumSHA1": "QU00lGkD/G00hoTs2qG7q4xsLVc=",
+			"path": "golang.org/x/crypto/ssh/terminal",
+			"revision": "b7391e95e576cacdcdd422573063bc057239113d",
+			"revisionTime": "2019-03-19T22:29:04Z"
+		},
+		{
+			"checksumSHA1": "XJ4TterqeY89DOiG5um1kkilZZw=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "f49334f85ddcf0f08d7fb6dd7363e9e6d6b777eb",
+			"revisionTime": "2019-03-21T05:14:46Z"
+		},
+		{
+			"checksumSHA1": "aSRB7hpfVTSX2fx/Xo8+wr9WMNI=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "f49334f85ddcf0f08d7fb6dd7363e9e6d6b777eb",
+			"revisionTime": "2019-03-21T05:14:46Z"
+		},
+		{
 			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
 			"path": "google.golang.org/appengine/cloudsql",
 			"revision": "4a4468ece617fc8205e99368fa2200e9d1fad421",
 			"revisionTime": "2018-10-31T00:20:03Z"
 		}
 	],
-	"rootPath": "goAdmin"
+	"rootPath": "github.com/chenhg5/go-admin"
 }
