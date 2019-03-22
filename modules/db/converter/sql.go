@@ -270,18 +270,18 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 			(*result)[index] = nil
 		}
 	default:
-		var ok bool
-
-		if colVar, ok = (*(colVar.(*interface{}))).(int64); ok {
-			(*result)[index] = colVar
-		} else if colVar, ok = (*(colVar.(*interface{}))).(string); ok {
-			(*result)[index] = colVar
-		} else if colVar, ok = (*(colVar.(*interface{}))).(float64); ok {
-			(*result)[index] = colVar
-		} else if colVar, ok = (*(colVar.(*interface{}))).([]uint8); ok {
-			(*result)[index] = colVar
-		} else {
-			(*result)[index] = colVar
+		if colVar2, ok := colVar.(*interface{}); ok {
+			if colVar, ok = (*colVar2).(int64); ok {
+				(*result)[index] = colVar
+			} else if colVar, ok = (*colVar2).(string); ok {
+				(*result)[index] = colVar
+			} else if colVar, ok = (*colVar2).(float64); ok {
+				(*result)[index] = colVar
+			} else if colVar, ok = (*colVar2).([]uint8); ok {
+				(*result)[index] = colVar
+			} else {
+				(*result)[index] = colVar
+			}
 		}
 	}
 }

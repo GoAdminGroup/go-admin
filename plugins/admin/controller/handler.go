@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
@@ -27,7 +28,10 @@ func GlobalDeferHandler(ctx *context.Context) {
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		ctx.Path())
 
-	RecordOperationLog(ctx)
+	// TODO: sqlite will cause a panic. database is locked.
+	if config.Get().DATABASE[0].DRIVER != "sqlite" {
+		RecordOperationLog(ctx)
+	}
 
 	if err := recover(); err != nil {
 		logger.Error(err)

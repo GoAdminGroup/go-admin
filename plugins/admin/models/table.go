@@ -158,7 +158,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 	total, _ := tb.db().Query("select count(*) from "+tb.Info.Table+wheres, whereArgs...)
 	var size int
 	if tb.ConnectionDriver == "sqlite" {
-		size = int((*(total[0]["count(*)"].(*interface{}))).(int64))
+		size = int(total[0]["count(*)"].(int64))
 	} else if tb.ConnectionDriver == "postgresql" {
 		size = int(total[0]["count"].(int64))
 	} else {
@@ -379,7 +379,7 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 		return columns
 	case "sqlite":
 		for key, model := range columnsModel {
-			columns[key] = string((*(model["name"].(*interface{}))).([]uint8))
+			columns[key] = string(model["name"].([]uint8))
 		}
 		return columns
 	default:
