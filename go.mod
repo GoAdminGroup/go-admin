@@ -1,11 +1,12 @@
-module go-admin
+module github.com/chenhg5/go-admin
+
+go 1.12
 
 require (
 	cloud.google.com/go v0.37.1 // indirect
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
 	github.com/astaxie/beego v1.11.1
 	github.com/buaazp/fasthttprouter v0.1.1
-	github.com/chenhg5/go-admin v0.0.2
 	github.com/denisenkom/go-mssqldb v0.0.0-20181014144952-4e0d7dc8888f
 	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 // indirect
 	github.com/gin-gonic/gin v1.3.0
