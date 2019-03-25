@@ -11,7 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 )
 
-// Engine is the core components of goAdmin. It has two attributes.
+// Engine is the core component of goAdmin. It has two attributes.
 // PluginList is an array of plugin. Adapter is the adapter of
 // web framework context and goAdmin context. The relationship of adapter and
 // plugin is that the adapter use the plugin which contains routers and
