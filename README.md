@@ -42,7 +42,7 @@ account: admin  password: admin
 - beautiful admin interface builder powerd by adminlte
 - many plugins to use
 - powerful auth manage system
-- support Most of the go web framework
+- support most of the go web framework
 
 ## How to
 
