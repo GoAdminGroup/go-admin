@@ -134,7 +134,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "file",
+			FormType: form.File,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -144,7 +144,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "password",
+			FormType: form.Password,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -477,7 +477,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "selectbox",
+			FormType: form.SelectBox,
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
 				perModel, _ := db.Table("goadmin_role_permissions").
@@ -821,7 +821,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: true,
-			FormType: "select_single",
+			FormType: form.SelectSingle,
 			Options:  parents,
 			ExcuFun: func(model types.RowModel) interface{} {
 				menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)
@@ -846,7 +846,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "iconpicker",
+			FormType: form.IconPicker,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
