@@ -6,7 +6,6 @@ package performer
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/chenhg5/go-admin/modules/db/converter"
 	"regexp"
 	"strings"
