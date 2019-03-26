@@ -37,7 +37,6 @@ func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]int
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: add " to the keyword
 	query = strings.Replace(query, "by order ", `by "order" `, -1)
-	fmt.Println("query", query)
 	return performer.Query(db.SqlDBmap["default"], query, args...)
 }
 

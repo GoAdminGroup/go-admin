@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"strconv"
 	"strings"
+	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func GetManagerTable() (ManagerTable Table) {
@@ -103,7 +104,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -113,7 +114,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -123,7 +124,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -153,7 +154,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "select",
+			FormType: form.Select,
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
 				roleModel, _ := db.Table("goadmin_role_users").Select("role_id").Where("user_id", "=", model.ID).All()
@@ -169,7 +170,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "select",
+			FormType: form.Select,
 			Options:  permissions,
 			ExcuFun: func(model types.RowModel) interface{} {
 				permissionModel, _ := db.Table("goadmin_user_permissions").Select("permission_id").Where("user_id", "=", model.ID).All()
@@ -185,7 +186,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -195,7 +196,7 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -290,7 +291,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -300,7 +301,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -310,7 +311,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -320,7 +321,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "select",
+			FormType: form.Select,
 			Options: []map[string]string{
 				{"value": "GET", "field": "GET"},
 				{"value": "PUT", "field": "PUT"},
@@ -349,7 +350,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -359,7 +360,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -446,7 +447,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -456,7 +457,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -466,7 +467,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -495,7 +496,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -505,7 +506,7 @@ func GetRolesTable() (RolesTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -609,7 +610,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -619,7 +620,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -629,7 +630,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -639,7 +640,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -649,7 +650,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -659,7 +660,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -669,7 +670,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -679,7 +680,7 @@ func GetOpTable() (OpTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -810,7 +811,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -835,7 +836,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -855,7 +856,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -865,10 +866,13 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "select",
+			FormType: form.Select,
 			Options:  roles,
 			ExcuFun: func(model types.RowModel) interface{} {
-				roleModel, _ := db.Table("goadmin_role_menu").Select("role_id").Where("menu_id", "=", model.ID).All()
+				roleModel, _ := db.Table("goadmin_role_menu").
+					Select("role_id").
+					Where("menu_id", "=", model.ID).
+					All()
 				var roles []string
 				for _, v := range roleModel {
 					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
@@ -881,7 +885,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -891,7 +895,7 @@ func GetMenuTable() (MenuTable Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

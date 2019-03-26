@@ -61,7 +61,7 @@ func main() {
 			generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
 			generateFlag.StringVar(&outputPath, "o", "template/", "database output path")
 			generateFlag.StringVar(&name, "n", "", "database name")
-			generateFlag.StringVar(&packageName, "pa", "main", "package name") //把原Pa改成pa，使与说明文档一致
+			generateFlag.StringVar(&packageName, "pa", "main", "package name")
 			generateFlag.Parse(os.Args[2:])
 
 			conn := db.GetConnectionByDriver(driver)

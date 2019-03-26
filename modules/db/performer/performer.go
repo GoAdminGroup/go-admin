@@ -14,8 +14,6 @@ import (
 
 func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 
-	fmt.Println("query", query)
-
 	rs, err := db.Query(query, args...)
 
 	if err != nil {
