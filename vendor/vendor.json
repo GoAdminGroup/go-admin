@@ -43,10 +43,28 @@
 			"revisionTime": "2018-10-16T16:26:27Z"
 		},
 		{
+			"checksumSHA1": "jRou8frV+eGk0Cj6benPsxoEDAc=",
+			"path": "github.com/mattn/go-colorable",
+			"revision": "3a70a971f94a22f2fa562ffcc7a0eb45f5daf045",
+			"revisionTime": "2019-02-22T16:30:38Z"
+		},
+		{
+			"checksumSHA1": "Ya+baVBU/RkXXUWD3LGFmGJiiIg=",
+			"path": "github.com/mattn/go-isatty",
+			"revision": "c2a7a6ca930a4cd0bc33a3f298eb71960732a3a7",
+			"revisionTime": "2019-03-12T13:58:54Z"
+		},
+		{
 			"checksumSHA1": "b9/P1CBYP0KL47ut31lyXRR2C6Q=",
 			"path": "github.com/mattn/go-sqlite3",
 			"revision": "6a9185d7b1f12363e2c904449d374b63b6093b16",
 			"revisionTime": "2018-11-21T16:49:42Z"
+		},
+		{
+			"checksumSHA1": "CIK3BBNX3nuUQCmNqTQydNfMNKI=",
+			"path": "github.com/mgutz/ansi",
+			"revision": "9520e82c474b0a04dd04f8a40959027271bab992",
+			"revisionTime": "2017-02-06T15:57:36Z"
 		},
 		{
 			"checksumSHA1": "mDNBjIi/nvEt2poJ+qdeyosk/IM=",
