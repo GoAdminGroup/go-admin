@@ -69,7 +69,7 @@ func main() {
 				panic("Erorr db init")
 			}
 			cfg := map[string]config.Database{
-				"default": config.Database{
+				"default": {
 					HOST:         host,
 					PORT:         port,
 					USER:         user,

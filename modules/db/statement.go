@@ -48,8 +48,8 @@ var SqlPool = sync.Pool{
 				UpdateRaws: make([]dialect.RawUpdate, 0),
 				WhereRaws:  "",
 			},
-			diver:   GetConnection(),
-			dialect: dialect.GetDialect(),
+			diver:   nil,
+			dialect: nil,
 		}
 	},
 }
@@ -67,6 +67,8 @@ func newSql() *Sql {
 func Table(table string) *Sql {
 	sql := newSql()
 	sql.TableName = table
+	sql.diver = GetConnection()
+	sql.dialect = dialect.GetDialect()
 	return sql
 }
 
