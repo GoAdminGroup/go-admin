@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path"
 	"strings"
+	template2 "html/template"
 )
 
 // 显示列表
@@ -26,24 +27,42 @@ func ShowInfo(ctx *context.Context) {
 
 	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
 
-	dataTable := template.Get(Config.THEME).
-		DataTable().
-		SetInfoList(panelInfo.InfoList).
-		SetFilters(models.TableList[prefix].GetFiltersMap()).
-		SetInfoUrl(Config.PREFIX + "/info/" + prefix).
-		SetThead(panelInfo.Thead).
-		SetEditUrl(editUrl).
-		SetNewUrl(newUrl).
-		SetDeleteUrl(deleteUrl)
+	var box template2.HTML
 
-	table := dataTable.GetContent()
+	if prefix != "op" {
+		dataTable := template.Get(Config.THEME).
+			DataTable().
+			SetInfoList(panelInfo.InfoList).
+			SetFilters(models.TableList[prefix].GetFiltersMap()).
+			SetInfoUrl(Config.PREFIX + "/info/" + prefix).
+			SetThead(panelInfo.Thead).
+			SetEditUrl(editUrl).
+			SetNewUrl(newUrl).
+			SetDeleteUrl(deleteUrl)
 
-	box := template.Get(Config.THEME).Box().
-		SetBody(table).
-		SetHeader(dataTable.GetDataTableHeader()).
-		WithHeadBorder(false).
-		SetFooter(panelInfo.Paginator.GetContent()).
-		GetContent()
+		table := dataTable.GetContent()
+
+		box = template.Get(Config.THEME).Box().
+			SetBody(table).
+			SetHeader(dataTable.GetDataTableHeader()).
+			WithHeadBorder(false).
+			SetFooter(panelInfo.Paginator.GetContent()).
+			GetContent()
+	} else {
+		dataTable := template.Get(Config.THEME).
+			Table().
+			SetType("table").
+			SetThead(panelInfo.Thead).
+			SetInfoList(panelInfo.InfoList)
+
+		table := dataTable.GetContent()
+
+		box = template.Get(Config.THEME).Box().
+			SetBody(table).
+			WithHeadBorder(false).
+			SetFooter(panelInfo.Paginator.GetContent()).
+			GetContent()
+	}
 
 	user := auth.Auth(ctx)
 
