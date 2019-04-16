@@ -115,7 +115,7 @@ func NewMenu(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	id, _ := db.Table("goadmin_role_menu").Insert(dialect.H{
+	id, _ := db.Table("goadmin_menu").Insert(dialect.H{
 		"title":     title,
 		"parent_id": parentId,
 		"icon":      icon,
