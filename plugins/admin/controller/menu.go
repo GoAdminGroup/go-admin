@@ -37,9 +37,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
-			SetUrl(Config.PREFIX+"/menu/edit").
+			SetUrl(Config.PREFIX + "/menu/edit").
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX+"/menu").
+			SetInfoUrl(Config.PREFIX + "/menu").
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
@@ -152,20 +152,23 @@ func MenuOrder(ctx *context.Context) {
 		if child, ok := v["children"]; ok {
 			db.Table("goadmin_menu").
 				Where("id", "=", v["id"]).Update(dialect.H{
-				"order": count,
+				"order":     count,
+				"parent_id": 0,
 			})
 
 			for _, v2 := range child.([]interface{}) {
 				db.Table("goadmin_menu").
 					Where("id", "=", v2.(map[string]interface{})["id"]).Update(dialect.H{
-					"order": count,
+					"order":     count,
+					"parent_id": v["id"],
 				})
 				count++
 			}
 		} else {
 			db.Table("goadmin_menu").
 				Where("id", "=", v["id"]).Update(dialect.H{
-				"order": count,
+				"order":     count,
+				"parent_id": 0,
 			})
 			count++
 		}
