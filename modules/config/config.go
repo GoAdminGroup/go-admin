@@ -99,13 +99,13 @@ func Set(cfg Config) {
 	mutex.Lock()
 	globalCfg = cfg
 
-	globalCfg.TITLE = Default(globalCfg.TITLE, "", "GoAdmin")
-	globalCfg.LOGO = template.HTML(Default(string(globalCfg.LOGO), "", "<b>Go</b>Admin"))
-	globalCfg.MINILOGO = template.HTML(Default(string(globalCfg.MINILOGO), "", "<b>G</b>A"))
-	globalCfg.THEME = Default(globalCfg.THEME, "", "adminlte")
-	globalCfg.INDEX = Default(globalCfg.INDEX, "", "/info/manager")
-	globalCfg.INDEX = Default(globalCfg.INDEX, "/", "")
-	globalCfg.COLORSCHEME = Default(globalCfg.COLORSCHEME, "", "skin-black")
+	globalCfg.TITLE = setDefault(globalCfg.TITLE, "", "GoAdmin")
+	globalCfg.LOGO = template.HTML(setDefault(string(globalCfg.LOGO), "", "<b>Go</b>Admin"))
+	globalCfg.MINILOGO = template.HTML(setDefault(string(globalCfg.MINILOGO), "", "<b>G</b>A"))
+	globalCfg.THEME = setDefault(globalCfg.THEME, "", "adminlte")
+	globalCfg.INDEX = setDefault(globalCfg.INDEX, "", "/info/manager")
+	globalCfg.INDEX = setDefault(globalCfg.INDEX, "/", "")
+	globalCfg.COLORSCHEME = setDefault(globalCfg.COLORSCHEME, "", "skin-black")
 
 	// TODO: fix prefix
 
@@ -138,7 +138,7 @@ func Get() Config {
 	return globalCfg
 }
 
-func Default(value, condition, def string) string {
+func setDefault(value, condition, def string) string {
 	if value == condition {
 		return def
 	}
