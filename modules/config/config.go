@@ -83,6 +83,9 @@ type Config struct {
 
 	// Access log path
 	ACCESSLOG string
+
+	// Color scheme
+	COLORSCHEME string
 }
 
 var (
@@ -102,6 +105,7 @@ func Set(cfg Config) {
 	globalCfg.THEME = Default(globalCfg.THEME, "", "adminlte")
 	globalCfg.INDEX = Default(globalCfg.INDEX, "", "/info/manager")
 	globalCfg.INDEX = Default(globalCfg.INDEX, "/", "")
+	globalCfg.COLORSCHEME = Default(globalCfg.COLORSCHEME, "", "skin-black")
 
 	// TODO: fix prefix
 

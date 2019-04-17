@@ -10,6 +10,21 @@ import (
 	"html/template"
 )
 
+const (
+	COLORSCHEME_SKIN_BLACK        = "skin-black"
+	COLORSCHEME_SKIN_BLACK_LIGHT  = "skin-black-light"
+	COLORSCHEME_SKIN_BLUE         = "skin-blue"
+	COLORSCHEME_SKIN_BLUE_LIGHT   = "skin-blue-light"
+	COLORSCHEME_SKIN_GREEN        = "skin-green"
+	COLORSCHEME_SKIN_GREEN_LIGHT  = "skin-green-light"
+	COLORSCHEME_SKIN_PURPLE       = "skin-purple"
+	COLORSCHEME_SKIN_PURPLE_LIGHT = "skin-purple-light"
+	COLORSCHEME_SKIN_RED          = "skin-red"
+	COLORSCHEME_SKIN_RED_LIGHT    = "skin-red-light"
+	COLORSCHEME_SKIN_YELLOW       = "skin-yellow"
+	COLORSCHEME_SKIN_YELLOW_LIGHT = "skin-yellow-light"
+)
+
 type Theme struct {
 	Name string
 }

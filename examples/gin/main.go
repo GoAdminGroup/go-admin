@@ -11,6 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"github.com/chenhg5/go-admin/template/adminlte"
 )
 
 func main() {
@@ -43,9 +44,10 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE: "cn",
-		INDEX:    "/",
-		DEBUG:    true,
+		LANGUAGE:    "cn",
+		INDEX:       "/",
+		DEBUG:       true,
+		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)

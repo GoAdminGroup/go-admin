@@ -41,6 +41,9 @@ type Page struct {
 
 	// MiniLogo is the downsizing logo of the template.
 	MiniLogo template.HTML
+
+	// ColorScheme is the color scheme of the template.
+	ColorScheme string
 }
 
 // SystemInfo contains basic info of system.

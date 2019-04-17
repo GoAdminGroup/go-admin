@@ -134,6 +134,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 		Title:         globalConfig.TITLE,
 		Logo:          globalConfig.LOGO,
 		MiniLogo:      globalConfig.MINILOGO,
+		ColorScheme:   globalConfig.COLORSCHEME,
 	})
 	ctx.String(http.StatusOK, buf.String())
 }

@@ -39,6 +39,7 @@ func SetPageContent(ctx *context.Context, c func() types.Panel) {
 		Title:         globalConfig.TITLE,
 		Logo:          globalConfig.LOGO,
 		MiniLogo:      globalConfig.MINILOGO,
+		ColorScheme:   globalConfig.COLORSCHEME,
 	})
 	ctx.WriteString(buf.String())
 
