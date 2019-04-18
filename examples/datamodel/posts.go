@@ -3,6 +3,7 @@ package datamodel
 import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func GetPostsTable() (postsTable models.Table) {
@@ -106,7 +107,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.RichText,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

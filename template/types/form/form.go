@@ -9,4 +9,5 @@ const (
 	SelectBox    = "selectbox"
 	File         = "file"
 	Password     = "password"
+	RichText     = "richtext"
 )
