@@ -127,12 +127,6 @@ func Excecute(tmpl *template.Template,
 	Config config.Config,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
-	cs := "skin-black"
-
-	if Config.COLORSCHEME != "" {
-		cs = Config.COLORSCHEME
-	}
-
 	buf := new(bytes.Buffer)
 	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
@@ -145,7 +139,7 @@ func Excecute(tmpl *template.Template,
 		Title:         Config.TITLE,
 		Logo:          Config.LOGO,
 		MiniLogo:      Config.MINILOGO,
-		ColorScheme:   cs,
+		ColorScheme:   Config.COLORSCHEME,
 	})
 	return buf
 }

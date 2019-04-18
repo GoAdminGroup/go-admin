@@ -56,5 +56,5 @@ func (compo *FormAttribute) GetContent() template.HTML {
 	return ComposeHtml(compo.TemplateList, *compo, "form",
 		"form/default", "form/file", "form/textarea",
 		"form/selectbox", "form/text",
-		"form/password", "form/select", "form/singleselect", "form/iconpicker")
+		"form/password", "form/select", "form/singleselect", "form/richtext", "form/iconpicker")
 }

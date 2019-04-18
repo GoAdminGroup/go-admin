@@ -2448,6 +2448,22 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{.Head}}">
     </div>
 </div>
+{{end}}`,"components/form/richtext":`{{define "form_rich_text"}}
+<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+<div class="col-sm-8">
+    <div id="{{.Field}}-editor">
+        <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
+    </div>
+    <input type="hidden" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' placeholder="{{lang "Input"}} {{.Head}}">
+</div>
+<script type="text/javascript">
+    editor = new window.wangEditor('#{{.Field}}-editor');
+    editor.customConfig.onchange = function (html) {
+        $('#{{.Field}}').val(html)
+    };
+    editor.create();
+    editor.txt.html('{{.Value}}');
+</script>
 {{end}}`,"components/form/select":`{{define "form_select"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
@@ -2513,6 +2529,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
 <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
 <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="{{.Prefix}}/assets/wang-editor/wangEditor.min.js"></script>
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">{{lang .Title}}</h3>
@@ -2548,6 +2565,8 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
                         {{ template "form_textarea" $data }}
                     {{else if eq $data.FormType "iconpicker"}}
                         {{ template "form_iconpicker" $data }}
+                    {{else if eq $data.FormType "richtext"}}
+                        {{ template "form_rich_text" $data }}
                     {{end}}
                 </div>
                 {{end}}

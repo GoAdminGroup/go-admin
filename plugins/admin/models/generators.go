@@ -340,7 +340,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "textarea",
+			FormType: "richtext",
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

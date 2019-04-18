@@ -304,4 +304,5 @@ var asserts = []string{
 	"/toastr/build/toastr.min.css",
 	"/toastr/build/toastr.min.js",
 	"/chartjs/chart.js",
+	"/wang-editor/wangEditor.min.js",
 }
