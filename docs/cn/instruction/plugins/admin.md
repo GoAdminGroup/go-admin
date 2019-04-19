@@ -202,6 +202,65 @@ type Form struct {
 }
 ```
 
+目前支持的表单类型有：
+
+- 默认
+- 普通文本
+- 单选
+- 密码
+- 富文本
+- 文件
+- 双选择框
+- 多选
+- icon下拉选择框
+
+可以这样子去引用：
+
+```
+
+import "github.com/chenhg5/go-admin/template/types/form"
+
+...
+FormType: form.File,
+...
+
+```
+
+对于选择类型：单选、多选、选择框，需要指定 Options 值。格式为：
+
+```
+...
+Options: []map[string]string{
+	{
+        "field": "name",
+        "value": "张三",
+    },{
+        "field": "name",
+        "value": "李四",
+    },
+}
+...
+```
+
+其中，field为字段名，value为选择对应的值。
+
+### 过滤函数ExcuFun说明
+
+```go
+// RowModel contains ID and value of the single query result.
+type RowModel struct {
+	ID    int64
+	Value string
+}
+
+// FieldValueFun is filter function of data.
+type FieldValueFun func(value RowModel) interface{}
+```
+
+过滤函数接收一个参数，RowModel，表示当前编辑目标行，包含了id和显示的value，而过滤函数的返回值即是最终表单行显示的默认值。
+在表格中，可以自定义html返回。
+在表单中，对于非选择的表单类型，须返回string，对于单选、多选等选择表单类型，则返回[]string。
+
 [返回目录](https://github.com/chenhg5/go-admin/blob/master/docs/cn/index.md)<br>
 [上一页：插件的使用](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/plugins/plugins.md)<br>
 [下一页：自定义页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/pages.md)

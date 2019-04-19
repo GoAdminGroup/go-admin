@@ -10,6 +10,15 @@
                 - 设置访问菜单
             - 配置模型文件介绍与配置
                 - Form
+                    - 默认
+                    - 普通文本
+                    - 单选
+                    - 密码
+                    - 富文本
+                    - 文件
+                    - 双选择框
+                    - 多选
+                    - icon下拉选择框
                 - Info
     - [如何自定义页面](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/pages.md)
         - [介绍页面模块](https://github.com/chenhg5/go-admin/blob/master/docs/cn/instruction/pages/modules.md)
