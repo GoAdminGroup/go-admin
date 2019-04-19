@@ -6,9 +6,9 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/types/form"
 	"strconv"
 	"strings"
-	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func GetManagerTable() (ManagerTable Table) {
