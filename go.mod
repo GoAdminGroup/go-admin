@@ -1,7 +1,5 @@
 module github.com/chenhg5/go-admin
 
-go 1.12
-
 require (
 	cloud.google.com/go v0.37.1 // indirect
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
