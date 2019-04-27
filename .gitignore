@@ -11,3 +11,4 @@ vendor/**
 !vendor/vendor.json
 logs
 go.sum
+modules/db/go.sum

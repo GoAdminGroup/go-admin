@@ -48,7 +48,9 @@ func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 				":"+cfg.PWD+"@tcp("+cfg.HOST+":"+cfg.PORT+")/"+cfg.NAME+"?charset=utf8mb4")
 
 			if err != nil {
-				SqlDB.Close()
+				if SqlDB != nil {
+					_ = SqlDB.Close()
+				}
 				panic(err.Error())
 			} else {
 				// Largest set up the database connection reduce timewait
