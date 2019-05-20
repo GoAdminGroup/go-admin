@@ -99,7 +99,7 @@ func EditForm(ctx *context.Context) {
 	if panelInfo.Editable {
 		dataTable.SetEditUrl(editUrl)
 	}
-	if panelInfo.Deleteable {
+	if panelInfo.Deletable {
 		dataTable.SetDeleteUrl(deleteUrl)
 	}
 

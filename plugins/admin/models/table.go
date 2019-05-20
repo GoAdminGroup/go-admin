@@ -44,7 +44,7 @@ type Table struct {
 	ConnectionDriver string
 	CanAdd           bool
 	Editable         bool
-	Deleteable       bool
+	Deletable        bool
 }
 
 type PanelInfo struct {
@@ -55,7 +55,7 @@ type PanelInfo struct {
 	Description string
 	CanAdd      bool
 	Editable    bool
-	Deleteable  bool
+	Deletable   bool
 }
 
 func (tb Table) GetFiltersMap() []map[string]string {
@@ -181,7 +181,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		Description: description,
 		CanAdd:      tb.CanAdd,
 		Editable:    tb.Editable,
-		Deleteable:  tb.Deleteable,
+		Deletable:   tb.Deletable,
 	}
 
 }

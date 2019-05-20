@@ -2953,12 +2953,13 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
+		{{$DeleteUrl := .DeleteUrl}}
         {{range $key1, $info := .InfoList}}
             <tr>
                 {{if eq $Type "data-table"}}				
                     <td>
-						{{if .DeleteUrl}}
-                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+						{{if $DeleteUrl}}
+                        	<input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
 						{{end}}
                     </td>				
                 {{end}}

@@ -9,7 +9,7 @@ import (
 
 func DeleteData(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].Deleteable {
+	if !models.TableList[prefix].Deletable {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
