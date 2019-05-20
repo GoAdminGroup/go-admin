@@ -27,7 +27,7 @@ require (
 	github.com/sirupsen/logrus v1.4.0
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
 	github.com/ugorji/go v1.1.4 // indirect
-	github.com/valyala/fasthttp v1.2.0
+	github.com/valyala/fasthttp v1.3.0
 	github.com/valyala/fasttemplate v1.0.1 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
