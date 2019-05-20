@@ -260,6 +260,12 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
 
+	var id = int64(0)
+	if idArr, ok := dataList["id"]; ok {
+		idInt, _ := strconv.Atoi(idArr[0])
+		id = int64(idInt)
+	}
+
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
 	var fun types.PostFun
 	for k, v := range dataList {
@@ -271,13 +277,19 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 			}
 			if len(v) > 0 {
 				if fun != nil {
-					value[strings.Replace(k, "[]", "", -1)] = fun(strings.Join(modules.RemoveBlankFromArray(v), ","))
+					value[strings.Replace(k, "[]", "", -1)] = fun(types.RowModel{
+						ID:    id,
+						Value: strings.Join(modules.RemoveBlankFromArray(v), ","),
+					})
 				} else {
 					value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
 				}
 			} else {
 				if fun != nil {
-					value[strings.Replace(k, "[]", "", -1)] = fun(v[0])
+					value[strings.Replace(k, "[]", "", -1)] = fun(types.RowModel{
+						ID:    id,
+						Value: v[0],
+					})
 				} else {
 					value[strings.Replace(k, "[]", "", -1)] = v[0]
 				}

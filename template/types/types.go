@@ -85,7 +85,7 @@ type RowModel struct {
 type FieldValueFun func(value RowModel) interface{}
 
 // PostFun is post process function of data.
-type PostFun func(value string) interface{}
+type PostFun func(value RowModel) interface{}
 
 // Field is the table field.
 type Field struct {
