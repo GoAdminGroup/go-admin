@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -41,12 +40,13 @@ func GlobalDeferHandler(ctx *context.Context) {
 			errMsg     string
 			mysqlError *mysql.MySQLError
 			ok         bool
+			aerr       error
 		)
 		if errMsg, ok = err.(string); !ok {
 			if mysqlError, ok = err.(*mysql.MySQLError); ok {
 				errMsg = mysqlError.Error()
-			} else {
-				errMsg = fmt.Sprint("%v", err)
+			} else if aerr, ok = err.(error); ok {
+				errMsg = aerr.Error()
 			}
 		}
 

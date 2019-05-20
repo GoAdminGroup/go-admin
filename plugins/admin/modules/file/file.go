@@ -28,7 +28,7 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 		filename string
 	)
 
-	for k, _ := range (*form).File {
+	for k := range (*form).File {
 		fileObj := form.File[k][0]
 
 		suffix = path.Ext(fileObj.Filename)
@@ -46,12 +46,17 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 	return form, nil
 }
 
-func SaveMultipartFile(fh *multipart.FileHeader, path string) error {
-	f, err := fh.Open()
+func SaveMultipartFile(fh *multipart.FileHeader, path string) (err error) {
+	var f multipart.File
+	f, err = fh.Open()
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if err2 := f.Close(); err2 != nil {
+			err = err2
+		}
+	}()
 
 	if ff, ok := f.(*os.File); ok {
 		return os.Rename(ff.Name(), path)
@@ -61,7 +66,11 @@ func SaveMultipartFile(fh *multipart.FileHeader, path string) error {
 	if err != nil {
 		return err
 	}
-	defer ff.Close()
+	defer func() {
+		if err2 := ff.Close(); err2 != nil {
+			err = err2
+		}
+	}()
 	_, err = copyZeroAlloc(ff, f)
 	return err
 }

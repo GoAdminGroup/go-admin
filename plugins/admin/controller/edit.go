@@ -60,7 +60,7 @@ func EditForm(ctx *context.Context) {
 
 	// 处理上传文件，目前仅仅支持传本地
 	if len((*form).File) > 0 {
-		file.GetFileEngine("local").Upload(form)
+		_, _ = file.GetFileEngine("local").Upload(form)
 	}
 
 	if prefix == "manager" { // 管理员管理编辑

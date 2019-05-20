@@ -257,7 +257,7 @@ func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
 		}
 	}
 
-	db.WithDriver(tb.ConnectionDriver).
+	_, _ = db.WithDriver(tb.ConnectionDriver).
 		Table(tb.Form.Table).
 		Where("id", "=", dataList["id"][0]).
 		Update(value)
@@ -282,7 +282,7 @@ func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 		}
 	}
 
-	db.WithDriver(tb.ConnectionDriver).
+	_, _ = db.WithDriver(tb.ConnectionDriver).
 		Table(tb.Form.Table).
 		Insert(value)
 }
@@ -291,51 +291,51 @@ func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
 func (tb Table) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table(tb.Form.Table).
 			Where("id", "=", id).
 			Delete()
 	}
 	if tb.Form.Table == "goadmin_roles" {
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_users").
 			Where("role_id", "=", id).
 			Delete()
 
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_permissions").
 			Where("role_id", "=", id).
 			Delete()
 
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_menu").
 			Where("role_id", "=", id).
 			Delete()
 	}
 	if tb.Form.Table == "goadmin_users" {
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_users").
 			Where("user_id", "=", id).
 			Delete()
 
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_user_permissions").
 			Where("user_id", "=", id).
 			Delete()
 	}
 	if tb.Form.Table == "goadmin_permissions" {
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_permissions").
 			Where("permission_id", "=", id).
 			Delete()
 
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_user_permissions").
 			Where("permission_id", "=", id).
 			Delete()
 	}
 	if tb.Form.Table == "goadmin_menu" {
-		db.WithDriver(tb.ConnectionDriver).
+		_ = db.WithDriver(tb.ConnectionDriver).
 			Table("goadmin_role_menu").
 			Where("menu_id", "=", id).
 			Delete()

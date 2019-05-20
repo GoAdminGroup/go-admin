@@ -17,7 +17,7 @@ func RecordOperationLog(ctx *context.Context) {
 			input, _ = json.Marshal((*form).Value)
 		}
 
-		db.Table("goadmin_operation_log").Insert(dialect.H{
+		_, _ = db.Table("goadmin_operation_log").Insert(dialect.H{
 			"user_id": user.ID,
 			"path":    ctx.Path(),
 			"method":  ctx.Method(),

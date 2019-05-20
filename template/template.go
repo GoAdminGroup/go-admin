@@ -128,7 +128,7 @@ func Excecute(tmpl *template.Template,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *globalMenu,
 		System: types.SystemInfo{

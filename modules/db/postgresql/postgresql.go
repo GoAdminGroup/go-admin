@@ -71,8 +71,6 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 				RawQuery: query.Encode(),
 			}
 
-			fmt.Println("connection: ", u.String())
-
 			sqlDB, err = sql.Open("postgres", u.String())
 
 			if err != nil {

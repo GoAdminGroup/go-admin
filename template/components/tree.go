@@ -8,14 +8,14 @@ import (
 
 type TreeAttribute struct {
 	Name      string
-	Tree      []menu.MenuItem
+	Tree      []menu.Item
 	EditUrl   string
 	DeleteUrl string
 	OrderUrl  string
 	types.Attribute
 }
 
-func (compo *TreeAttribute) SetTree(value []menu.MenuItem) types.TreeAttribute {
+func (compo *TreeAttribute) SetTree(value []menu.Item) types.TreeAttribute {
 	compo.Tree = value
 	return compo
 }

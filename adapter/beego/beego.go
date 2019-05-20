@@ -58,7 +58,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 				c.ResponseWriter.WriteHeader(ctx.Response.StatusCode)
 				if ctx.Response.Body != nil {
 					buf := new(bytes.Buffer)
-					buf.ReadFrom(ctx.Response.Body)
+					_, _ = buf.ReadFrom(ctx.Response.Body)
 					c.WriteString(buf.String())
 				}
 			})
@@ -121,11 +121,11 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), "/"+globalConfig.PREFIX, "", 1))),
 		System: types.SystemInfo{
-			"0.0.1",
+			Version: "0.0.1",
 		},
 		Panel:         panel,
 		AssertRootUrl: "/" + globalConfig.PREFIX,

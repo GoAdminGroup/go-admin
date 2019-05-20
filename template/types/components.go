@@ -81,7 +81,7 @@ type DataTableAttribute interface {
 }
 
 type TreeAttribute interface {
-	SetTree(value []menu.MenuItem) TreeAttribute
+	SetTree(value []menu.Item) TreeAttribute
 	SetEditUrl(value string) TreeAttribute
 	SetOrderUrl(value string) TreeAttribute
 	SetDeleteUrl(value string) TreeAttribute

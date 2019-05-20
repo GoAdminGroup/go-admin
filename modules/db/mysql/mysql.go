@@ -69,7 +69,9 @@ func (db *Mysql) QueryWithConnection(con string, query string, args ...interface
 
 	if err != nil {
 		if rs != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 		}
 		panic(err)
 	}
@@ -78,7 +80,9 @@ func (db *Mysql) QueryWithConnection(con string, query string, args ...interface
 
 	if colErr != nil {
 		if rs != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 		}
 		panic(colErr)
 	}
@@ -86,7 +90,9 @@ func (db *Mysql) QueryWithConnection(con string, query string, args ...interface
 	typeVal, err := rs.ColumnTypes()
 	if err != nil {
 		if rs != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 		}
 		panic(err)
 	}
@@ -100,7 +106,9 @@ func (db *Mysql) QueryWithConnection(con string, query string, args ...interface
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 			panic(scanErr)
 		}
 		for j := 0; j < len(col); j++ {
@@ -110,11 +118,15 @@ func (db *Mysql) QueryWithConnection(con string, query string, args ...interface
 	}
 	if err := rs.Err(); err != nil {
 		if rs != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 		}
 		panic(err)
 	}
-	rs.Close()
+	if cerr := rs.Close(); cerr != nil {
+		panic(cerr)
+	}
 	return results, rs
 }
 
@@ -178,13 +190,17 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 	col, colErr := rs.Columns()
 
 	if colErr != nil {
-		rs.Close()
+		if cerr := rs.Close(); cerr != nil {
+			panic(cerr)
+		}
 		panic(colErr)
 	}
 
 	typeVal, err := rs.ColumnTypes()
 	if err != nil {
-		rs.Close()
+		if cerr := rs.Close(); cerr != nil {
+			panic(cerr)
+		}
 		panic(err)
 	}
 
@@ -197,7 +213,9 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			rs.Close()
+			if cerr := rs.Close(); cerr != nil {
+				panic(cerr)
+			}
 			panic(scanErr)
 		}
 		for j := 0; j < len(col); j++ {
@@ -206,7 +224,9 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 		results = append(results, result)
 	}
 	if err := rs.Err(); err != nil {
-		rs.Close()
+		if cerr := rs.Close(); cerr != nil {
+			panic(cerr)
+		}
 		panic(err)
 	}
 	return results, nil
@@ -221,11 +241,11 @@ func (db *Mysql) WithTransaction(fn TxFn) (err error, res map[string]interface{}
 	defer func() {
 		if p := recover(); p != nil {
 			// a panic occurred, rollback and repanic
-			SqlTx.Tx.Rollback()
+			_ = SqlTx.Tx.Rollback()
 			panic(p)
 		} else if err != nil {
 			// something went wrong, rollback
-			SqlTx.Tx.Rollback()
+			_ = SqlTx.Tx.Rollback()
 		} else {
 			// all good, commit
 			err = SqlTx.Tx.Commit()
@@ -243,11 +263,11 @@ func (db *Mysql) WithTransactionByLevel(level sql.IsolationLevel, fn TxFn) (err 
 	defer func() {
 		if p := recover(); p != nil {
 			// a panic occurred, rollback and repanic
-			SqlTx.Tx.Rollback()
+			_ = SqlTx.Tx.Rollback()
 			panic(p)
 		} else if err != nil {
 			// something went wrong, rollback
-			SqlTx.Tx.Rollback()
+			_ = SqlTx.Tx.Rollback()
 		} else {
 			// all good, commit
 			err = SqlTx.Tx.Commit()
