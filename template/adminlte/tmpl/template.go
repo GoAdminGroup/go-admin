@@ -2893,14 +2893,15 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     -->
 
     <div class="btn-group pull-right" style="margin-right: 10px">
-
-        <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
-
-            <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
-        </a>
+		{{if .NewUrl}}
+			<a href="{{.NewUrl}}" class="btn btn-sm btn-success">
+				<i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
+			</a>
+		{{end}}
     </div>
 </div>
 <span>
+    {{if .DeleteUrl}}
     <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
     <div class="btn-group">
         <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
@@ -2908,10 +2909,11 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <span class="caret"></span>
         <span class="sr-only">{{lang "Toggle Dropdown"}}</span>
         </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
+        <ul class="dropdown-menu" role="menu">			
+			<li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>			
         </ul>
     </div>
+    {{end}}
     <a class="btn btn-sm btn-primary grid-refresh">
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
@@ -2951,20 +2953,25 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
+		{{$DeleteUrl := .DeleteUrl}}
         {{range $key1, $info := .InfoList}}
             <tr>
-                {{if eq $Type "data-table"}}
+                {{if eq $Type "data-table"}}				
                     <td>
-                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
-                    </td>
+						{{if $DeleteUrl}}
+                        	<input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+						{{end}}
+                    </td>				
                 {{end}}
                 {{range $key2, $head2 := $Thead}}
                     <td>{{index $info (index $head2 "head")}}</td>
                 {{end}}
                 {{if eq $Type "data-table"}}
                     <td>
-                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
-                        <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+						{{if $EditUrl}}
+							<a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+							<a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+						{{end}}
                     </td>
                 {{end}}
             </tr>
@@ -3027,8 +3034,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                     },
                     success: function (data) {
                         $.pjax.reload('#pjax-container');
-
-                        data = JSON.parse(data);
+						if(typeof(data) === "string"){
+							data = JSON.parse(data);
+						}                        
                         if (data.code === 200) {
                             $('#_TOKEN').val(data.data);
                             swal(data.msg, '', 'success');

@@ -14,8 +14,11 @@ import (
 
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
-
 	prefix := ctx.Query("prefix")
+	if !models.TableList[prefix].CanAdd {
+		ctx.Html(http.StatusNotFound, "page not found")
+		return
+	}
 	params := models.GetParam(ctx.Request.URL.Query())
 
 	user := auth.Auth(ctx)
@@ -38,6 +41,11 @@ func ShowNewForm(ctx *context.Context) {
 
 // 新建数据
 func NewForm(ctx *context.Context) {
+	prefix := ctx.Query("prefix")
+	if !models.TableList[prefix].CanAdd {
+		ctx.Html(http.StatusNotFound, "page not found")
+		return
+	}
 
 	token := ctx.FormValue("_t")
 
@@ -48,8 +56,6 @@ func NewForm(ctx *context.Context) {
 		})
 		return
 	}
-
-	prefix := ctx.Query("prefix")
 
 	form := ctx.Request.MultipartForm
 

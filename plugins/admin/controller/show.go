@@ -35,10 +35,17 @@ func ShowInfo(ctx *context.Context) {
 			SetInfoList(panelInfo.InfoList).
 			SetFilters(models.TableList[prefix].GetFiltersMap()).
 			SetInfoUrl(Config.PREFIX + "/info/" + prefix).
-			SetThead(panelInfo.Thead).
-			SetEditUrl(editUrl).
-			SetNewUrl(newUrl).
-			SetDeleteUrl(deleteUrl)
+			SetThead(panelInfo.Thead)
+
+		if panelInfo.CanAdd {
+			dataTable.SetNewUrl(newUrl)
+		}
+		if panelInfo.Editable {
+			dataTable.SetEditUrl(editUrl)
+		}
+		if panelInfo.Deletable {
+			dataTable.SetDeleteUrl(deleteUrl)
+		}
 
 		table := dataTable.GetContent()
 
