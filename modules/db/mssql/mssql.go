@@ -56,8 +56,12 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 
 			SqlDB, err = sql.Open("mssql", u.String())
 
+			if SqlDB == nil {
+				panic("invalid connection")
+			}
+
 			if err != nil {
-				SqlDB.Close()
+				_ = SqlDB.Close()
 				panic(err.Error())
 			} else {
 				// 设置数据库最大连接 减少timewait 正式环境调大

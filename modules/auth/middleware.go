@@ -157,7 +157,7 @@ func GetCurUserById(id string) (user User, ok bool) {
 	var menuIds []int64
 
 	for _, mid := range menuIdsModel {
-		if parent_id, ok := mid["parent_id"].(int64); ok && parent_id != 0 {
+		if parentId, ok := mid["parent_id"].(int64); ok && parentId != 0 {
 			for _, mid2 := range menuIdsModel {
 				if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
 					menuIds = append(menuIds, mid["menu_id"].(int64))
@@ -176,10 +176,10 @@ func GetCurUserById(id string) (user User, ok bool) {
 	return
 }
 
-func GetPermissions(role_id interface{}) []map[string]interface{} {
+func GetPermissions(roleId interface{}) []map[string]interface{} {
 	permissions, _ := db.Table("goadmin_role_permissions").
 		LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_role_permissions.permission_id").
-		Where("role_id", "=", role_id).
+		Where("role_id", "=", roleId).
 		Select("goadmin_permissions.http_method", "goadmin_permissions.http_path").
 		All()
 

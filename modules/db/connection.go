@@ -14,10 +14,10 @@ import (
 )
 
 const (
-	DRIVER_MYSQL      = "mysql"
-	DRIVER_MSSQL      = "mssql"
-	DRIVER_SQLITE     = "sqlite"
-	DRIVER_POSTGRESQL = "postgresql"
+	DriverMysql      = "mysql"
+	DriverMssql      = "mssql"
+	DriverSqlite     = "sqlite"
+	DriverPostgresql = "postgresql"
 )
 
 type Connection interface {

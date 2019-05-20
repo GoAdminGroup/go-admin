@@ -32,7 +32,7 @@ func main() {
 				NAME:         "godmin",
 				MAX_IDLE_CON: 50,
 				MAX_OPEN_CON: 150,
-				DRIVER:       db.DRIVER_MYSQL,
+				DRIVER:       db.DriverMysql,
 
 				//DRIVER: db.DRIVER_SQLITE,
 				//FILE:   "..../datamodel/admin.db",

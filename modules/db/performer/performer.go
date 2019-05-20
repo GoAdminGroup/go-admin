@@ -17,7 +17,7 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 
 	if err != nil {
 		if rs != nil {
-			rs.Close()
+			_ = rs.Close()
 		}
 		panic(err)
 	}
@@ -26,7 +26,7 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 
 	if colErr != nil {
 		if rs != nil {
-			rs.Close()
+			_ = rs.Close()
 		}
 		panic(colErr)
 	}
@@ -34,7 +34,7 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 	typeVal, err := rs.ColumnTypes()
 	if err != nil {
 		if rs != nil {
-			rs.Close()
+			_ = rs.Close()
 		}
 		panic(err)
 	}
@@ -52,7 +52,7 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			rs.Close()
+			_ = rs.Close()
 			panic(scanErr)
 		}
 		for j := 0; j < len(col); j++ {
@@ -63,11 +63,11 @@ func Query(db *sql.DB, query string, args ...interface{}) ([]map[string]interfac
 	}
 	if err := rs.Err(); err != nil {
 		if rs != nil {
-			rs.Close()
+			_ = rs.Close()
 		}
 		panic(err)
 	}
-	rs.Close()
+	_ = rs.Close()
 	return results, rs
 }
 

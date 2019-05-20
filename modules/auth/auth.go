@@ -76,7 +76,7 @@ func Check(password string, username string) (user User, ok bool) {
 			var menuIds []int64
 
 			for _, mid := range menuIdsModel {
-				if parent_id, ok := mid["parent_id"].(int64); ok && parent_id != 0 {
+				if parentId, ok := mid["parent_id"].(int64); ok && parentId != 0 {
 					for _, mid2 := range menuIdsModel {
 						if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
 							menuIds = append(menuIds, mid["menu_id"].(int64))
@@ -91,7 +91,8 @@ func Check(password string, username string) (user User, ok bool) {
 			user.Menus = menuIds
 
 			newPwd := EncodePassword([]byte(password))
-			db.Table("goadmin_users").Where("id", "=", user.ID).Update(dialect.H{
+			_, _ = db.Table("goadmin_users").
+				Where("id", "=", user.ID).Update(dialect.H{
 				"password": newPwd,
 			})
 

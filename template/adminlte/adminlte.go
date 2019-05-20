@@ -271,7 +271,7 @@ func (theme *Theme) DataTable() types.DataTableAttribute {
 func (*Theme) Tree() types.TreeAttribute {
 	return &components.TreeAttribute{
 		Name:      "tree",
-		Tree:      []menu.MenuItem{},
+		Tree:      []menu.Item{},
 		Attribute: Attribute,
 	}
 }

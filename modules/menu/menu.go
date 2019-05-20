@@ -14,13 +14,13 @@ import (
 )
 
 type Menu struct {
-	GlobalMenuList   []MenuItem
+	GlobalMenuList   []Item
 	GlobalMenuOption []map[string]string
 	MaxOrder         int64
 }
 
 var GlobalMenu = &Menu{
-	GlobalMenuList:   []MenuItem{},
+	GlobalMenuList:   []Item{},
 	GlobalMenuOption: []map[string]string{},
 	MaxOrder:         0,
 }
@@ -116,9 +116,9 @@ func (menu *Menu) SexMaxOrder(order int64) {
 	menu.MaxOrder = order
 }
 
-func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuItem {
+func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 
-	branch := make([]MenuItem, 0)
+	branch := make([]Item, 0)
 
 	var title string
 	for j := 0; j < len(menus); j++ {
@@ -132,7 +132,7 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 				title = menus[j]["title"].(string)
 			}
 
-			child := MenuItem{
+			child := Item{
 				Name:         title,
 				ID:           strconv.FormatInt(menus[j]["id"].(int64), 10),
 				Url:          menus[j]["uri"].(string),
@@ -148,16 +148,16 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []MenuIte
 	return branch
 }
 
-func GetMenuItemById(id string) MenuItem {
+func GetMenuItemById(id string) Item {
 	menu, _ := db.Table("goadmin_menu").Find(id)
 
-	return MenuItem{
+	return Item{
 		Name:         menu["title"].(string),
 		ID:           strconv.FormatInt(menu["id"].(int64), 10),
 		Url:          menu["uri"].(string),
 		Icon:         menu["icon"].(string),
 		Active:       "",
-		ChildrenList: []MenuItem{},
+		ChildrenList: []Item{},
 	}
 }
 
@@ -186,15 +186,15 @@ func (menu *Menu) SetActiveClass(path string) *Menu {
 	return menu
 }
 
-type MenuItem struct {
+type Item struct {
 	Name         string
 	ID           string
 	Url          string
 	Icon         string
 	Active       string
-	ChildrenList []MenuItem
+	ChildrenList []Item
 }
 
-func (menu *Menu) GetEditMenuList() []MenuItem {
+func (menu *Menu) GetEditMenuList() []Item {
 	return (*menu).GlobalMenuList
 }

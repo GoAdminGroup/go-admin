@@ -58,8 +58,8 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 				}
 				if ctx.Response.Body != nil {
 					buf := new(bytes.Buffer)
-					buf.ReadFrom(ctx.Response.Body)
-					c.String(ctx.Response.StatusCode, buf.String())
+					_, _ = buf.ReadFrom(ctx.Response.Body)
+					_ = c.String(ctx.Response.StatusCode, buf.String())
 				}
 				return nil
 			})
@@ -84,21 +84,21 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 	sesKey, err := ctx.Cookie("go_admin_session")
 
 	if err != nil || sesKey == nil {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		_ = ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		return
 	}
 
 	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		_ = ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		return
 	}
 
 	user, ok := auth.GetCurUserById(userId.(string))
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		_ = ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		return
 	}
 
@@ -122,11 +122,11 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Response().Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request().URL.String(), "/"+globalConfig.PREFIX, "", 1))),
 		System: types.SystemInfo{
-			"0.0.1",
+			Version: "0.0.1",
 		},
 		Panel:         panel,
 		AssertRootUrl: "/" + globalConfig.PREFIX,
@@ -135,5 +135,5 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 		MiniLogo:      globalConfig.MINILOGO,
 		ColorScheme:   globalConfig.COLORSCHEME,
 	})
-	ctx.String(http.StatusOK, buf.String())
+	_ = ctx.String(http.StatusOK, buf.String())
 }

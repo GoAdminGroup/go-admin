@@ -25,7 +25,7 @@ func NewManager(dataList map[string][]string) {
 	// 插入管理员角色表
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
 		if dataList["role_id[]"][i] != "" {
-			db.Table("goadmin_role_users").
+			_, _ = db.Table("goadmin_role_users").
 				Insert(dialect.H{
 					"role_id": dataList["role_id[]"][i],
 					"user_id": id,
@@ -36,7 +36,7 @@ func NewManager(dataList map[string][]string) {
 	// 更新管理员权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		if dataList["permission_id[]"][i] != "" {
-			db.Table("goadmin_user_permissions").
+			_, _ = db.Table("goadmin_user_permissions").
 				Insert(dialect.H{
 					"permission_id": dataList["permission_id[]"][i],
 					"user_id":       id,
@@ -54,7 +54,7 @@ func EditManager(dataList map[string][]string) {
 	}
 
 	// 更新管理员表
-	db.Table("goadmin_users").
+	_, _ = db.Table("goadmin_users").
 		Where("id", "=", dataList["id"][0]).
 		Update(dialect.H{
 			"username": dataList["username"][0],
@@ -72,7 +72,7 @@ func EditManager(dataList map[string][]string) {
 				First()
 
 			if checkRole == nil {
-				db.Table("goadmin_role_users").
+				_, _ = db.Table("goadmin_role_users").
 					Insert(dialect.H{
 						"role_id": dataList["role_id[]"][i],
 						"user_id": dataList["id"][0],
@@ -90,7 +90,7 @@ func EditManager(dataList map[string][]string) {
 				First()
 
 			if checkPermission == nil {
-				db.Table("goadmin_user_permissions").
+				_, _ = db.Table("goadmin_user_permissions").
 					Insert(dialect.H{
 						"permission_id": dataList["permission_id[]"][i],
 						"user_id":       dataList["id"][0],
@@ -111,7 +111,7 @@ func NewRole(dataList map[string][]string) {
 	// 更新管理员角色权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		if dataList["permission_id[]"][i] != "" {
-			db.Table("goadmin_role_permissions").
+			_, _ = db.Table("goadmin_role_permissions").
 				Insert(dialect.H{
 					"permission_id": dataList["permission_id[]"][i],
 					"role_id":       id,
@@ -122,7 +122,7 @@ func NewRole(dataList map[string][]string) {
 
 func EditRole(dataList map[string][]string) {
 	// 更新管理员角色表
-	db.Table("goadmin_roles").
+	_, _ = db.Table("goadmin_roles").
 		Where("id", "=", dataList["id"][0]).
 		Update(dialect.H{
 			"name": dataList["name"][0],
@@ -138,7 +138,7 @@ func EditRole(dataList map[string][]string) {
 				First()
 
 			if checkPermission == nil {
-				db.Table("goadmin_role_permissions").
+				_, _ = db.Table("goadmin_role_permissions").
 					Insert(dialect.H{
 						"permission_id": dataList["permission_id[]"][i],
 						"role_id":       dataList["id"][0],

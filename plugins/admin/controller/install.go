@@ -3,7 +3,6 @@ package controller
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"net/http"
 )
@@ -31,42 +30,52 @@ func CheckDatabase(ctx *context.Context) {
 	databaseName := ctx.FormValue("db")
 
 	SqlDB, err := sql.Open("mysql", username+":"+password+"@tcp("+ip+":"+port+")/"+databaseName+"?charset=utf8mb4")
-	err2 := SqlDB.Ping()
-	defer SqlDB.Close()
-
-	if err == nil && err2 == nil {
-
-		//db.InitDB(username, password, port, ip, databaseName, 100, 100)
-
-		tables := make([]map[string]interface{}, 0)
-
-		list := "["
-
-		for i := 0; i < len(tables); i++ {
-			if i != len(tables)-1 {
-				list += `"` + tables[i]["Tables_in_godmin"].(string) + `",`
-			} else {
-				list += `"` + tables[i]["Tables_in_godmin"].(string) + `"`
-			}
+	if SqlDB != nil {
+		if SqlDB.Ping() != nil {
+			ctx.Json(http.StatusInternalServerError, map[string]interface{}{
+				"code": 500,
+				"msg":  "请检查参数是否设置正确",
+			})
+			return
 		}
-		list += "]"
+	}
 
-		fmt.Println(list)
+	defer func() {
+		SqlDB.Close()
+	}()
 
-		ctx.Json(http.StatusOK, map[string]interface{}{
-			"code": 0,
-			"msg":  "连接成功",
-			"data": map[string]interface{}{
-				"list": list,
-			},
-		})
+	if err != nil {
 
-	} else {
-		fmt.Println(err)
-		fmt.Println(err2)
 		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
 			"code": 500,
 			"msg":  "请检查参数是否设置正确",
 		})
+		return
+
 	}
+
+	//db.InitDB(username, password, port, ip, databaseName, 100, 100)
+
+	tables := make([]map[string]interface{}, 0)
+
+	list := "["
+
+	for i := 0; i < len(tables); i++ {
+		if i != len(tables)-1 {
+			list += `"` + tables[i]["Tables_in_godmin"].(string) + `",`
+		} else {
+			list += `"` + tables[i]["Tables_in_godmin"].(string) + `"`
+		}
+	}
+	list += "]"
+
+	ctx.Json(http.StatusOK, map[string]interface{}{
+		"code": 0,
+		"msg":  "连接成功",
+		"data": map[string]interface{}{
+			"list": list,
+		},
+	})
+
+	return
 }

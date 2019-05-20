@@ -113,7 +113,7 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 		return map[string]interface{}{}
 	} else {
 		var values map[string]interface{}
-		json.Unmarshal([]byte(sesModel["values"].(string)), &values)
+		_ = json.Unmarshal([]byte(sesModel["values"].(string)), &values)
 		return values
 	}
 }
@@ -121,18 +121,18 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
 	if sid != "" {
 		if len(values) == 0 {
-			db.Table("goadmin_session").Where("sid", "=", sid).Delete()
+			_ = db.Table("goadmin_session").Where("sid", "=", sid).Delete()
 			return
 		}
 		valuesByte, _ := json.Marshal(values)
 		sesModel, _ := db.Table("goadmin_session").Where("sid", "=", sid).First()
 		if sesModel == nil {
-			db.Table("goadmin_session").Insert(dialect.H{
+			_, _ = db.Table("goadmin_session").Insert(dialect.H{
 				"values": string(valuesByte),
 				"sid":    sid,
 			})
 		} else {
-			db.Table("goadmin_session").
+			_, _ = db.Table("goadmin_session").
 				Where("sid", "=", sid).
 				Update(dialect.H{
 					"values": string(valuesByte),

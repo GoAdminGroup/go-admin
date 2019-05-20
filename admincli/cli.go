@@ -40,7 +40,7 @@ func main() {
 				compileFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 				compileFlag.StringVar(&rootPath, "path", "./template/adminlte/resource/pages/", "compile root path")
 				compileFlag.StringVar(&outputPath, "path", "./template/adminlte/tmpl/template.go", "compile output path")
-				compileFlag.Parse(os.Args[2:])
+				_ = compileFlag.Parse(os.Args[2:])
 			} else {
 				rootPath = "./template/adminlte/resource/pages/"
 				outputPath = "./template/adminlte/tmpl/template.go"
@@ -62,7 +62,7 @@ func main() {
 			generateFlag.StringVar(&outputPath, "o", "template/", "database output path")
 			generateFlag.StringVar(&name, "n", "", "database name")
 			generateFlag.StringVar(&packageName, "pa", "main", "package name")
-			generateFlag.Parse(os.Args[2:])
+			_ = generateFlag.Parse(os.Args[2:])
 
 			conn := db.GetConnectionByDriver(driver)
 			if conn == nil {
@@ -121,7 +121,7 @@ var List = map[string]string{`
 
 	content += `}`
 
-	ioutil.WriteFile(outputPath, []byte(content), 0644)
+	_ = ioutil.WriteFile(outputPath, []byte(content), 0644)
 }
 
 func GetContentFromDir(content string, dirPath string) string {
@@ -219,7 +219,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 }`
 
 	fmt.Println(outputPath + "/" + table + ".go")
-	ioutil.WriteFile(outputPath+table+".go", []byte(content), 0644)
+	_ = ioutil.WriteFile(outputPath+table+".go", []byte(content), 0644)
 }
 
 func GetType(typeName string) string {
