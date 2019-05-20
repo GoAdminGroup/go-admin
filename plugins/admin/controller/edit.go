@@ -16,6 +16,10 @@ import (
 func ShowForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
+	if !models.TableList[prefix].Editable {
+		ctx.Html(http.StatusNotFound, "page not found")
+		return
+	}
 
 	formData, title, description := models.TableList[prefix].
 		GetDataFromDatabaseWithId(ctx.Query("id"))
@@ -41,7 +45,11 @@ func ShowForm(ctx *context.Context) {
 
 // 编辑数据
 func EditForm(ctx *context.Context) {
-
+	prefix := ctx.Query("prefix")
+	if !models.TableList[prefix].Editable {
+		ctx.Html(http.StatusNotFound, "page not found")
+		return
+	}
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
@@ -51,8 +59,6 @@ func EditForm(ctx *context.Context) {
 		})
 		return
 	}
-
-	prefix := ctx.Query("prefix")
 
 	form := ctx.Request.MultipartForm
 
@@ -88,9 +94,14 @@ func EditForm(ctx *context.Context) {
 		DataTable().
 		SetInfoList(panelInfo.InfoList).
 		SetThead(panelInfo.Thead).
-		SetEditUrl(editUrl).
-		SetNewUrl(newUrl).
-		SetDeleteUrl(deleteUrl)
+		SetNewUrl(newUrl)
+
+	if panelInfo.Editable {
+		dataTable.SetEditUrl(editUrl)
+	}
+	if panelInfo.Deleteable {
+		dataTable.SetDeleteUrl(deleteUrl)
+	}
 
 	table := dataTable.GetContent()
 

@@ -42,6 +42,9 @@ type Table struct {
 	Info             types.InfoPanel
 	Form             types.FormPanel
 	ConnectionDriver string
+	CanAdd           bool
+	Editable         bool
+	Deleteable       bool
 }
 
 type PanelInfo struct {
@@ -50,6 +53,9 @@ type PanelInfo struct {
 	Paginator   types.PaginatorAttribute
 	Title       string
 	Description string
+	CanAdd      bool
+	Editable    bool
+	Deleteable  bool
 }
 
 func (tb Table) GetFiltersMap() []map[string]string {
@@ -173,6 +179,9 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		Paginator:   paginator,
 		Title:       title,
 		Description: description,
+		CanAdd:      tb.CanAdd,
+		Editable:    tb.Editable,
+		Deleteable:  tb.Deleteable,
 	}
 
 }
@@ -418,7 +427,7 @@ func GetStringFromType(typeName string, value interface{}) string {
 	case "DOUBLE":
 		return strconv.FormatFloat(value.(float64), 'g', 5, 32)
 	case "DECIMAL":
-		return string(value.(uint8))
+		return string(value.([]uint8))
 	case "DATE":
 		return value.(string)
 	case "TIME":
