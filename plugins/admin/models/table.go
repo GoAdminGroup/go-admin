@@ -241,50 +241,50 @@ func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, stri
 
 // UpdateDataFromDatabase update data.
 func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
-
-	value := make(dialect.H, 0)
-
-	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
-
-	columns := GetColumns(columnsModel, tb.ConnectionDriver)
-	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
-			if len(v) > 0 {
-				value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
-			} else {
-				value[strings.Replace(k, "[]", "", -1)] = v[0]
-			}
-		}
-	}
-
 	_, _ = db.WithDriver(tb.ConnectionDriver).
 		Table(tb.Form.Table).
 		Where("id", "=", dataList["id"][0]).
-		Update(value)
+		Update(tb.getValues(dataList))
 
 }
 
 // InsertDataFromDatabase insert data.
 func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
+	_, _ = db.WithDriver(tb.ConnectionDriver).
+		Table(tb.Form.Table).
+		Insert(tb.getValues(dataList))
+}
 
+func (tb Table) getValues(dataList map[string][]string) dialect.H {
 	value := make(dialect.H, 0)
 
 	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
 
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
+	var fun types.PostFun
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
+			for i := 0; i < len(tb.Form.FormList); i++ {
+				if k == tb.Form.FormList[i].Field {
+					fun = tb.Form.FormList[i].PostFun
+				}
+			}
 			if len(v) > 0 {
-				value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
+				if fun != nil {
+					value[strings.Replace(k, "[]", "", -1)] = fun(strings.Join(modules.RemoveBlankFromArray(v), ","))
+				} else {
+					value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
+				}
 			} else {
-				value[strings.Replace(k, "[]", "", -1)] = v[0]
+				if fun != nil {
+					value[strings.Replace(k, "[]", "", -1)] = fun(v[0])
+				} else {
+					value[strings.Replace(k, "[]", "", -1)] = v[0]
+				}
 			}
 		}
 	}
-
-	_, _ = db.WithDriver(tb.ConnectionDriver).
-		Table(tb.Form.Table).
-		Insert(value)
+	return value
 }
 
 // DeleteDataFromDatabase delete data.

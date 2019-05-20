@@ -72,6 +72,7 @@ type Form struct {
 	Value    string
 	Options  []map[string]string
 	ExcuFun  FieldValueFun
+	PostFun  PostFun
 }
 
 // RowModel contains ID and value of the single query result.
@@ -82,6 +83,9 @@ type RowModel struct {
 
 // FieldValueFun is filter function of data.
 type FieldValueFun func(value RowModel) interface{}
+
+// PostFun is post process function of data.
+type PostFun func(value string) interface{}
 
 // Field is the table field.
 type Field struct {
