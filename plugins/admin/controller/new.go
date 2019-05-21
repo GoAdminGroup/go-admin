@@ -15,7 +15,7 @@ import (
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].CanAdd {
+	if !models.TableList[prefix].GetCanAdd() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -27,14 +27,14 @@ func ShowNewForm(ctx *context.Context) {
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetPrefix(Config.PREFIX).
-			SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
+			SetContent(models.GetNewFormList(models.TableList[prefix].GetForm().FormList)).
 			SetUrl(Config.PREFIX + "/new/" + prefix).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetTitle("New").
 			SetInfoUrl(Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()).
 			GetContent(),
-		Description: models.TableList[prefix].Form.Description,
-		Title:       models.TableList[prefix].Form.Title,
+		Description: models.TableList[prefix].GetForm().Description,
+		Title:       models.TableList[prefix].GetForm().Title,
 	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
@@ -42,7 +42,7 @@ func ShowNewForm(ctx *context.Context) {
 // 新建数据
 func NewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].CanAdd {
+	if !models.TableList[prefix].GetCanAdd() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}

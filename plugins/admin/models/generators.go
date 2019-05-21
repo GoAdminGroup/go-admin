@@ -12,8 +12,8 @@ import (
 )
 
 func GetManagerTable() (ManagerTable Table) {
-
-	ManagerTable.Info.FieldList = []types.Field{
+	ManagerTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	ManagerTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -76,9 +76,9 @@ func GetManagerTable() (ManagerTable Table) {
 		},
 	}
 
-	ManagerTable.Info.Table = "goadmin_users"
-	ManagerTable.Info.Title = language.Get("Managers")
-	ManagerTable.Info.Description = language.Get("Managers")
+	ManagerTable.GetInfo().Table = "goadmin_users"
+	ManagerTable.GetInfo().Title = language.Get("Managers")
+	ManagerTable.GetInfo().Description = language.Get("Managers")
 
 	var roles, permissions []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -97,7 +97,7 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 	}
 
-	ManagerTable.Form.FormList = []types.Form{
+	ManagerTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -203,18 +203,16 @@ func GetManagerTable() (ManagerTable Table) {
 		},
 	}
 
-	ManagerTable.Form.Table = "goadmin_users"
-	ManagerTable.Form.Title = language.Get("Managers")
-	ManagerTable.Form.Description = language.Get("Managers")
-
-	ManagerTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
+	ManagerTable.GetForm().Table = "goadmin_users"
+	ManagerTable.GetForm().Title = language.Get("Managers")
+	ManagerTable.GetForm().Description = language.Get("Managers")
 
 	return
 }
 
 func GetPermissionTable() (PermissionTable Table) {
-
-	PermissionTable.Info.FieldList = []types.Field{
+	PermissionTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	PermissionTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -280,11 +278,11 @@ func GetPermissionTable() (PermissionTable Table) {
 		},
 	}
 
-	PermissionTable.Info.Table = "goadmin_permissions"
-	PermissionTable.Info.Title = language.Get("Permission Manage")
-	PermissionTable.Info.Description = language.Get("Permission Manage")
+	PermissionTable.GetInfo().Table = "goadmin_permissions"
+	PermissionTable.GetInfo().Title = language.Get("Permission Manage")
+	PermissionTable.GetInfo().Description = language.Get("Permission Manage")
 
-	PermissionTable.Form.FormList = []types.Form{
+	PermissionTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -367,17 +365,16 @@ func GetPermissionTable() (PermissionTable Table) {
 		},
 	}
 
-	PermissionTable.Form.Table = "goadmin_permissions"
-	PermissionTable.Form.Title = language.Get("Permission Manage")
-	PermissionTable.Form.Description = language.Get("Permission Manage")
+	PermissionTable.GetForm().Table = "goadmin_permissions"
+	PermissionTable.GetForm().Title = language.Get("Permission Manage")
+	PermissionTable.GetForm().Description = language.Get("Permission Manage")
 
-	PermissionTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
 
 func GetRolesTable() (RolesTable Table) {
-
+	RolesTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
 	var permissions []map[string]string
 	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
 
@@ -388,7 +385,7 @@ func GetRolesTable() (RolesTable Table) {
 		})
 	}
 
-	RolesTable.Info.FieldList = []types.Field{
+	RolesTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -436,11 +433,11 @@ func GetRolesTable() (RolesTable Table) {
 		},
 	}
 
-	RolesTable.Info.Table = "goadmin_roles"
-	RolesTable.Info.Title = language.Get("Roles Manage")
-	RolesTable.Info.Description = language.Get("Roles Manage")
+	RolesTable.GetInfo().Table = "goadmin_roles"
+	RolesTable.GetInfo().Title = language.Get("Roles Manage")
+	RolesTable.GetInfo().Description = language.Get("Roles Manage")
 
-	RolesTable.Form.FormList = []types.Form{
+	RolesTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -513,18 +510,17 @@ func GetRolesTable() (RolesTable Table) {
 		},
 	}
 
-	RolesTable.Form.Table = "goadmin_roles"
-	RolesTable.Form.Title = language.Get("Roles Manage")
-	RolesTable.Form.Description = language.Get("Roles Manage")
+	RolesTable.GetForm().Table = "goadmin_roles"
+	RolesTable.GetForm().Title = language.Get("Roles Manage")
+	RolesTable.GetForm().Description = language.Get("Roles Manage")
 
-	RolesTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
 
 func GetOpTable() (OpTable Table) {
-
-	OpTable.Info.FieldList = []types.Field{
+	OpTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -599,11 +595,11 @@ func GetOpTable() (OpTable Table) {
 		},
 	}
 
-	OpTable.Info.Table = "goadmin_operation_log"
-	OpTable.Info.Title = language.Get("operation log")
-	OpTable.Info.Description = language.Get("operation log")
+	OpTable.GetInfo().Table = "goadmin_operation_log"
+	OpTable.GetInfo().Title = language.Get("operation log")
+	OpTable.GetInfo().Description = language.Get("operation log")
 
-	OpTable.Form.FormList = []types.Form{
+	OpTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -687,18 +683,17 @@ func GetOpTable() (OpTable Table) {
 		},
 	}
 
-	OpTable.Form.Table = "goadmin_operation_log"
-	OpTable.Form.Title = language.Get("operation log")
-	OpTable.Form.Description = language.Get("operation log")
+	OpTable.GetForm().Table = "goadmin_operation_log"
+	OpTable.GetForm().Title = language.Get("operation log")
+	OpTable.GetForm().Description = language.Get("operation log")
 
-	OpTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }
 
 func GetMenuTable() (MenuTable Table) {
-
-	MenuTable.Info.FieldList = []types.Field{
+	MenuTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	MenuTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -773,9 +768,9 @@ func GetMenuTable() (MenuTable Table) {
 		},
 	}
 
-	MenuTable.Info.Table = "goadmin_menu"
-	MenuTable.Info.Title = language.Get("Menus Manage")
-	MenuTable.Info.Description = language.Get("Menus Manage")
+	MenuTable.GetInfo().Table = "goadmin_menu"
+	MenuTable.GetInfo().Title = language.Get("Menus Manage")
+	MenuTable.GetInfo().Description = language.Get("Menus Manage")
 
 	var roles, parents []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -804,7 +799,7 @@ func GetMenuTable() (MenuTable Table) {
 		"value": "0",
 	}}, parents...)
 
-	MenuTable.Form.FormList = []types.Form{
+	MenuTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -902,11 +897,10 @@ func GetMenuTable() (MenuTable Table) {
 		},
 	}
 
-	MenuTable.Form.Table = "goadmin_menu"
-	MenuTable.Form.Title = language.Get("Menus Manage")
-	MenuTable.Form.Description = language.Get("Menus Manage")
+	MenuTable.GetForm().Table = "goadmin_menu"
+	MenuTable.GetForm().Title = language.Get("Menus Manage")
+	MenuTable.GetForm().Description = language.Get("Menus Manage")
 
-	MenuTable.ConnectionDriver = config.Get().DATABASE[0].DRIVER
 
 	return
 }

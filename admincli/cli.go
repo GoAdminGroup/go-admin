@@ -164,8 +164,9 @@ import (
 )
 
 func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
-
-	` + table + `Table.Info.FieldList = []types.Field{`
+	
+	` + table + `Table = models.NewDefaultTable("` + driver + `", true, true, true)
+	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
 		content += `{
@@ -181,11 +182,11 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 
 	content += `}
 
-	` + table + `Table.Info.Table = "` + table + `"
-	` + table + `Table.Info.Title = "` + strings.Title(table) + `"
-	` + table + `Table.Info.Description = "` + strings.Title(table) + `"
+	` + table + `Table.GetInfo().Table = "` + table + `"
+	` + table + `Table.GetInfo().Title = "` + strings.Title(table) + `"
+	` + table + `Table.GetInfo().Description = "` + strings.Title(table) + `"
 
-	` + table + `Table.Form.FormList = []types.Form{`
+	` + table + `Table.GetForm().FormList = []types.Form{`
 
 	for _, model := range columnsModel {
 
@@ -209,11 +210,9 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 
 	content += `	}
 
-	` + table + `Table.Form.Table = "` + table + `"
-	` + table + `Table.Form.Title = "` + strings.Title(table) + `"
-	` + table + `Table.Form.Description = "` + strings.Title(table) + `"
-
-	` + table + `Table.ConnectionDriver = "` + driver + `"
+	` + table + `Table.GetForm().Table = "` + table + `"
+	` + table + `Table.GetForm().Title = "` + strings.Title(table) + `"
+	` + table + `Table.GetForm().Description = "` + strings.Title(table) + `"
 
 	return
 }`

@@ -16,7 +16,7 @@ import (
 func ShowForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].Editable {
+	if !models.TableList[prefix].GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -46,7 +46,7 @@ func ShowForm(ctx *context.Context) {
 // 编辑数据
 func EditForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].Editable {
+	if !models.TableList[prefix].GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -75,7 +75,7 @@ func EditForm(ctx *context.Context) {
 		EditRole((*form).Value)
 	} else {
 		val := (*form).Value
-		for _, f := range models.TableList[prefix].Form.FormList {
+		for _, f := range models.TableList[prefix].GetForm().FormList {
 			if f.Editable {
 				continue
 			}
