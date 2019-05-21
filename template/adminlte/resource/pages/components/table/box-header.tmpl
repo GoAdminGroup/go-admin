@@ -67,14 +67,15 @@
     -->
 
     <div class="btn-group pull-right" style="margin-right: 10px">
-
-        <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
-
-            <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
-        </a>
+        {{if .NewUrl}}
+            <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
+                <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
+            </a>
+        {{end}}
     </div>
 </div>
 <span>
+    {{if .DeleteUrl}}
     <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
     <div class="btn-group">
         <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
@@ -86,6 +87,7 @@
             <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
         </ul>
     </div>
+    {{end}}
     <a class="btn btn-sm btn-primary grid-refresh">
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
