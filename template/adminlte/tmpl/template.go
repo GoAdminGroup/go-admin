@@ -2443,10 +2443,16 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/form/password": `{{define "form_password"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <div class="input-group">
-        <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
-        <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{.Head}}">
-    </div>
+    {{if .Editable}}
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-eye-slash"></i></span>
+            <input type="password" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control password" placeholder="{{lang "Input"}} {{.Head}}">
+        </div>
+    {{else}}
+        <div class="box box-solid box-default no-margin">
+            <div class="box-body">********</div>
+         </div>
+    {{end}}
 </div>
 {{end}}`, "components/form/richtext": `{{define "form_rich_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
@@ -2463,11 +2469,14 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     };
     editor.create();
     editor.txt.html('{{.Value}}');
+    {{if not .Editable}}
+    editor.$textElem.attr('contenteditable', false);
+    {{end}}
 </script>
 {{end}}`, "components/form/select": `{{define "form_select"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
         {{range $key, $v := .Options }}
             <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
@@ -2484,7 +2493,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  >
+    <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  {{if not .Editable}}disabled="disabled"{{end}}>
         {{range  $key, $v := .Options }}
             <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
         {{end}}
@@ -2497,7 +2506,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true">
+    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
     {{range $key, $v := .Options }}
         <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
     {{end}}
@@ -2515,15 +2524,21 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/form/text": `{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <div class="input-group">
-        <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-        <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{.Head}}">
-    </div>
+    {{if .Editable}}
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+            <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json" placeholder="{{lang "Input"}} {{.Head}}">
+        </div>
+    {{else}}
+        <div class="box box-solid box-default no-margin">
+            <div class="box-body">{{.Value}}</div>
+        </div>
+    {{end}}
 </div>
 {{end}}`, "components/form/textarea": `{{define "form_textarea"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
-    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}">{{.Value}}</textarea>
+    <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}" {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
 </div>
 {{end}}`, "components/form": `{{define "form"}}
 <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
