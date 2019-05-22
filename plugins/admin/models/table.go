@@ -143,6 +143,9 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) Pane
 		if tb.info.FieldList[i].Field != "id" && CheckInTable(columns, tb.info.FieldList[i].Field) {
 			fields += tb.info.FieldList[i].Field + ","
 		}
+		if tb.info.FieldList[i].Hide {
+			continue
+		}
 		sortable = "0"
 		if tb.info.FieldList[i].Sortable {
 			sortable = "1"
@@ -185,17 +188,23 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) Pane
 		// TODO: add object pool
 
 		tempModelData := make(map[string]template.HTML, 0)
+		row := res[i]
 
 		for j := 0; j < len(tb.info.FieldList); j++ {
+			if tb.info.FieldList[j].Hide {
+				continue
+			}
 			if CheckInTable(columns, tb.info.FieldList[j].Field) {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
-					ID:    res[i]["id"].(int64),
-					Value: GetStringFromType(tb.info.FieldList[j].TypeName, res[i][tb.info.FieldList[j].Field]),
+					ID:    row["id"].(int64),
+					Value: GetStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					Row:   row,
 				}).(string))
 			} else {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
-					ID:    res[i]["id"].(int64),
+					ID:    row["id"].(int64),
 					Value: "",
+					Row:   row,
 				}).(string))
 			}
 		}
@@ -259,6 +268,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -269,6 +279,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).(string)
 			}
 		} else {
@@ -276,6 +287,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
@@ -286,6 +298,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
 					Value: tb.form.FormList[i].Field,
+					Row:   res,
 				}).(string)
 			}
 		}
