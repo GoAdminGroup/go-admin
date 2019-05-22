@@ -23,11 +23,15 @@ func ShowNewForm(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
+	formList := models.GetNewFormList(models.TableList[prefix].GetForm().FormList)
+	for i := 0; i < len(formList); i++ {
+		formList[i].Editable = true
+	}
 	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: template.Get(Config.THEME).Form().
 			SetPrefix(Config.PREFIX).
-			SetContent(models.GetNewFormList(models.TableList[prefix].GetForm().FormList)).
+			SetContent(formList).
 			SetUrl(Config.PREFIX + "/new/" + prefix).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetTitle("New").
