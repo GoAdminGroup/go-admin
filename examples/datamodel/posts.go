@@ -129,6 +129,7 @@ func GetPostsTable() (postsTable models.Table) {
 	postsTable.Form.Description = "Posts"
 
 	postsTable.ConnectionDriver = "mysql"
+	postsTable.Editable = true
 
 	return
 }

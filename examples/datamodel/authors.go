@@ -147,6 +147,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 	authorsTable.Form.Description = "Authors"
 
 	authorsTable.ConnectionDriver = "mysql"
+	authorsTable.Editable = true
 
 	return
 }

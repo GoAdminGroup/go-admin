@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -35,7 +36,7 @@ func ShowForm(ctx *context.Context) {
 			SetPrefix(Config.PREFIX).
 			SetUrl(Config.PREFIX + "/edit/" + prefix).
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()).
+			SetInfoUrl(Config.PREFIX + "/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), "")).
 			GetContent(),
 		Description: description,
 		Title:       title,
@@ -96,7 +97,7 @@ func EditForm(ctx *context.Context) {
 	prevUrlArr := strings.Split(previous, "?")
 	params := models.GetParamFromUrl(previous)
 
-	previous = Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()
+	previous = Config.PREFIX + "/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), "")
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
