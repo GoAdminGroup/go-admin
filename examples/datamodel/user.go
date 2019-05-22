@@ -134,6 +134,7 @@ func GetUserTable() (userTable models.Table) {
 	userTable.Form.Description = "Users"
 
 	userTable.ConnectionDriver = "mysql"
+	userTable.Editable = true
 
 	return
 }
