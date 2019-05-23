@@ -79,9 +79,9 @@ func generating() {
 
 	checkError(err)
 
-	host := promptWithDefault("sql address", "127.0.0.1")
-	port := promptWithDefault("sql port", "3306")
-	user := promptWithDefault("sql username", "root")
+	host := prompt("sql address")
+	port := prompt("sql port")
+	user := prompt("sql username")
 	password := promptPassword("sql password")
 	name := prompt("sql database name")
 
@@ -174,7 +174,7 @@ func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbNa
 
 func selectTemplateWithTitle(title string) *promptui.SelectTemplates {
 	return &promptui.SelectTemplates{
-		Label:    "{{ . }}✔",
+		Label:    "{{ . }}: ",
 		Active:   ansi.Color("❯", "cyan") + " {{ . | cyan }}",
 		Inactive: "  {{ . }}",
 		Selected: ansi.Color("✔", "green") + " " + title + ": {{ . | cyan }}",
