@@ -5,132 +5,309 @@
 package main
 
 import (
-	"flag"
+	"errors"
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	_ "github.com/chenhg5/go-admin/modules/db/mysql"
 	_ "github.com/chenhg5/go-admin/modules/db/postgresql"
+	cli "github.com/jawher/mow.cli"
+	"github.com/manifoldco/promptui"
+	"github.com/mgutz/ansi"
+	"github.com/schollz/progressbar"
 	"io/ioutil"
 	"os"
 	"path"
 	"regexp"
 	"strings"
-)
-
-var (
-	rootPath    string
-	outputPath  string
-	driver      string
-	port        string
-	user        string
-	password    string
-	host        string
-	name        string
-	packageName string
+	"time"
 )
 
 func main() {
 
-	if len(os.Args) > 1 {
-		switch os.Args[1] {
-		case "compile":
-
-			if len(os.Args) > 2 {
-				compileFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-				compileFlag.StringVar(&rootPath, "path", "./template/adminlte/resource/pages/", "compile root path")
-				compileFlag.StringVar(&outputPath, "path", "./template/adminlte/tmpl/template.go", "compile output path")
-				_ = compileFlag.Parse(os.Args[2:])
-			} else {
-				rootPath = "./template/adminlte/resource/pages/"
-				outputPath = "./template/adminlte/tmpl/template.go"
+	defer func() {
+		if err := recover(); err != nil {
+			if errs, ok := err.(error); ok {
+				fmt.Println()
+				fmt.Println()
+				fmt.Println(ansi.Color("go-admin cli error: "+errs.Error(), "red"))
+				fmt.Println()
 			}
-
-			CompileTmpl()
-
-		case "generate":
-			if len(os.Args) < 2 {
-				panic("need options")
-			}
-
-			generateFlag := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-			generateFlag.StringVar(&driver, "d", "mysql", "database driver")
-			generateFlag.StringVar(&port, "p", "3306", "database port")
-			generateFlag.StringVar(&user, "u", "root", "database user")
-			generateFlag.StringVar(&password, "P", "root", "database password")
-			generateFlag.StringVar(&host, "h", "127.0.0.1", "database host")
-			generateFlag.StringVar(&outputPath, "o", "template/", "database output path")
-			generateFlag.StringVar(&name, "n", "", "database name")
-			generateFlag.StringVar(&packageName, "pa", "main", "package name")
-			_ = generateFlag.Parse(os.Args[2:])
-
-			conn := db.GetConnectionByDriver(driver)
-			if conn == nil {
-				panic("Erorr db init")
-			}
-			cfg := map[string]config.Database{
-				"default": {
-					HOST:         host,
-					PORT:         port,
-					USER:         user,
-					PWD:          password,
-					NAME:         name,
-					MAX_IDLE_CON: 50,
-					MAX_OPEN_CON: 150,
-					DRIVER:       driver,
-				},
-			}
-			// step 1. test connection
-			conn.InitDB(cfg)
-
-			// step 2. show tables
-			tables, _ := db.WithDriver(conn.GetName()).ShowTables()
-
-			key := "Tables_in_" + name
-			fieldField := "Field"
-			typeField := "Type"
-			if driver == "postgresql" {
-				key = "tablename"
-				fieldField = "column_name"
-				typeField = "udt_name"
-			}
-
-			// step 3. show columns
-			// step 4. generate file
-			for i := 0; i < len(tables); i++ {
-				if tables[i][key].(string) != "goadmin_menu" && tables[i][key].(string) != "goadmin_operation_log" &&
-					tables[i][key].(string) != "goadmin_permissions" && tables[i][key].(string) != "goadmin_role_menu" &&
-					tables[i][key].(string) != "goadmin_roles" && tables[i][key].(string) != "goadmin_session" &&
-					tables[i][key].(string) != "goadmin_users" && tables[i][key].(string) != "goadmin_role_permissions" &&
-					tables[i][key].(string) != "goadmin_role_users" && tables[i][key].(string) != "goadmin_user_permissions" {
-					GenerateFile(tables[i][key].(string), conn, fieldField, typeField)
-				}
-			}
-		default:
-			panic("wrong option")
 		}
+	}()
+
+	app := cli.App("go-admin cli tool", "cli tool for developing and generating")
+
+	app.Spec = "[-v]"
+
+	var verbose = app.BoolOpt("v verbose", false, "out debug info")
+
+	app.Before = func() {
+		if *verbose {
+			fmt.Println("debug mode is on")
+		}
+	}
+
+	app.Command("compile", "compile template file for developing", func(cmd *cli.Cmd) {
+		var (
+			rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/pages/", "compile root path")
+			outputPath = cmd.StringOpt("out", "./template/adminlte/tmpl/template.go", "compile output path")
+		)
+
+		cmd.Action = func() {
+			compileTmpl(*rootPath, *outputPath)
+		}
+	})
+
+	app.Command("generate", "generate table model files", func(cmd *cli.Cmd) {
+		cmd.Action = func() {
+			generating()
+		}
+	})
+
+	_ = app.Run(os.Args)
+}
+
+func generating() {
+	promptSelect := promptui.Select{
+		Label:     "choose a driver",
+		Items:     []string{"mysql", "mssql", "postgresql", "sqlite"},
+		Templates: selectTemplateWithTitle("choose a driver"),
+	}
+
+	_, driver, err := promptSelect.Run()
+
+	checkError(err)
+
+	host := promptWithDefault("sql address", "127.0.0.1")
+	port := promptWithDefault("sql port", "3306")
+	user := promptWithDefault("sql username", "root")
+	password := promptPassword("sql password")
+	name := prompt("sql database name")
+
+	conn := db.GetConnectionByDriver(driver)
+	if conn == nil {
+		panic("invalid db connection")
+	}
+	cfg := map[string]config.Database{
+		"default": {
+			HOST:         host,
+			PORT:         port,
+			USER:         user,
+			PWD:          password,
+			NAME:         name,
+			MAX_IDLE_CON: 50,
+			MAX_OPEN_CON: 150,
+			DRIVER:       driver,
+		},
+	}
+	// step 1. test connection
+	conn.InitDB(cfg)
+
+	// step 2. show tables
+	tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
+
+	fmt.Println(ansi.Color("✔", "green") + " choose tables: ")
+
+	tables := getTablesFromSqlResult(tableModels, driver, name)
+	if len(tables) == 0 {
+		panic("no tables")
+	}
+	chooseTables := make([]string, 0)
+	var value string
+	for {
+		value = selects(tables)
+		if value == "[finish]" {
+			break
+		}
+		chooseTables = append(chooseTables, value)
+		tables = removeItem(tables, value)
+		if tables[0] == "[finish]" {
+			break
+		}
+	}
+
+	packageName := promptWithDefault("set package name", "main")
+	outputPath := promptWithDefault("set file output path", "./models")
+
+	fmt.Println(ansi.Color("✔", "green") + " generating: ")
+	fmt.Println()
+
+	fieldField := "Field"
+	typeField := "Type"
+	if driver == "postgresql" {
+		fieldField = "column_name"
+		typeField = "udt_name"
+	}
+
+	bar := progressbar.New(len(chooseTables))
+	for i := 0; i < len(chooseTables); i++ {
+		_ = bar.Add(1)
+		time.Sleep(10 * time.Millisecond)
+		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver, outputPath)
+	}
+
+	fmt.Println()
+	fmt.Println()
+}
+
+func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
+	key := "Tables_in_" + dbName
+	if driver == "postgresql" {
+		key = "tablename"
+	}
+
+	tables := make([]string, 0)
+
+	for i := 0; i < len(models); i++ {
+		if models[i][key].(string) != "goadmin_menu" && models[i][key].(string) != "goadmin_operation_log" &&
+			models[i][key].(string) != "goadmin_permissions" && models[i][key].(string) != "goadmin_role_menu" &&
+			models[i][key].(string) != "goadmin_roles" && models[i][key].(string) != "goadmin_session" &&
+			models[i][key].(string) != "goadmin_users" && models[i][key].(string) != "goadmin_role_permissions" &&
+			models[i][key].(string) != "goadmin_role_users" && models[i][key].(string) != "goadmin_user_permissions" {
+			tables = append(tables, models[i][key].(string))
+		}
+	}
+
+	return append(tables, "[finish]")
+}
+
+func selectTemplateWithTitle(title string) *promptui.SelectTemplates {
+	return &promptui.SelectTemplates{
+		Label:    "{{ . }}✔",
+		Active:   ansi.Color("❯", "cyan") + " {{ . | cyan }}",
+		Inactive: "  {{ . }}",
+		Selected: ansi.Color("✔", "green") + " " + title + ": {{ . | cyan }}",
 	}
 }
 
-func CompileTmpl() {
+func tableSelectTemplateWithTitle() *promptui.SelectTemplates {
+	return &promptui.SelectTemplates{
+		Label:    "{{ . }}?",
+		Active:   ansi.Color("❯", "cyan") + " {{ . | cyan }}",
+		Inactive: "  {{ . }}",
+		Selected: "    " + ansi.Color("✔", "green") + " {{ . | cyan }}",
+		Help:     "Use the arrow keys to navigate: ↓ ↑ → ←, choose [finish] to exit",
+	}
+}
+
+func promptTemplateWithTitle(title string) *promptui.PromptTemplates {
+	return &promptui.PromptTemplates{
+		Success: ansi.Color("✔", "green") + " " + title + ": ",
+	}
+}
+
+func prompt(label string) string {
+
+	validate := func(input string) error {
+		if input == "" {
+			return errors.New(label + " is empty")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:     label,
+		Templates: promptTemplateWithTitle(label),
+		Validate:  validate,
+	}
+
+	result, err := prompt.Run()
+
+	checkError(err)
+
+	return result
+}
+
+func promptWithDefault(label string, defaultValue string) string {
+
+	validate := func(input string) error {
+		if input == "" {
+			return errors.New(label + " is empty")
+		}
+		return nil
+	}
+
+	prompt := promptui.Prompt{
+		Label:     label,
+		Templates: promptTemplateWithTitle(label),
+		Default:   defaultValue,
+		Validate:  validate,
+	}
+
+	result, err := prompt.Run()
+
+	checkError(err)
+
+	return result
+}
+
+func promptPassword(label string) string {
+	prompt := promptui.Prompt{
+		Label:     label,
+		Mask:      '*',
+		Templates: promptTemplateWithTitle(label),
+	}
+
+	result, err := prompt.Run()
+
+	checkError(err)
+
+	return result
+}
+
+func selects(tables []string) string {
+	promptSelect := promptui.Select{
+		Label:     "choose table to generate",
+		Items:     tables,
+		Templates: tableSelectTemplateWithTitle(),
+	}
+
+	_, result, err := promptSelect.Run()
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		return ""
+	}
+
+	return result
+}
+
+func removeItem(tables []string, table string) []string {
+	index := 0
+	for i := 0; i < len(tables); i++ {
+		if tables[i] == table {
+			index = i
+		}
+	}
+	return append(tables[:index], tables[index+1:]...)
+}
+
+func checkError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
+func compileTmpl(rootPath, outputPath string) {
 	content := `package tmpl
 
 var List = map[string]string{`
 
-	content = GetContentFromDir(content, rootPath)
+	content = getContentFromDir(content, rootPath, rootPath)
 
 	content += `}`
 
 	_ = ioutil.WriteFile(outputPath, []byte(content), 0644)
 }
 
-func GetContentFromDir(content string, dirPath string) string {
+func getContentFromDir(content, dirPath, rootPath string) string {
 	files, _ := ioutil.ReadDir(dirPath)
 
 	for _, f := range files {
 
 		if f.IsDir() {
-			content = GetContentFromDir(content, dirPath+f.Name()+"/")
+			content = getContentFromDir(content, dirPath+f.Name()+"/", rootPath)
 			continue
 		}
 
@@ -152,7 +329,7 @@ func GetContentFromDir(content string, dirPath string) string {
 	return content
 }
 
-func GenerateFile(table string, conn db.Connection, fieldField, typeField string) {
+func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, driver, outputPath string) {
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
@@ -163,9 +340,9 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
-	
-	` + table + `Table = models.NewDefaultTable("` + driver + `", true, true, true)
+func Get` + strings.Title(table) + `Table() models.Table {
+
+    ` + table + `Table := models.NewDefaultTable("` + driver + `", true, true, true)
 	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
@@ -214,11 +391,11 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 	` + table + `Table.GetForm().Title = "` + strings.Title(table) + `"
 	` + table + `Table.GetForm().Description = "` + strings.Title(table) + `"
 
-	return
+	return ` + table + `Table
 }`
 
-	fmt.Println(outputPath + "/" + table + ".go")
-	_ = ioutil.WriteFile(outputPath+table+".go", []byte(content), 0644)
+	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
+	checkError(err)
 }
 
 func GetType(typeName string) string {
