@@ -71,7 +71,7 @@ func generating() {
 	print("\033[H\033[2J")
 	fmt.Println("GoAdmin CLI v1.0.0")
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "enter to select", -1)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
 
 	var qs = []*survey.Question{
 		{
@@ -149,7 +149,7 @@ func generating() {
 		exitWithError("no tables")
 	}
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "enter to select", "space to select", -1)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
 
 	chooseTables := selects(tables)
 	if len(chooseTables) == 0 {

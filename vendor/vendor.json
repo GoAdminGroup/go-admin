@@ -7,10 +7,10 @@
 			"revision": ""
 		},
 		{
-			"checksumSHA1": "0rXUgJC/GgF8XbLxmJiMgC4peQQ=",
+			"checksumSHA1": "jWN4w1TKKvoLMMy6nktpz1ELVEw=",
 			"path": "github.com/denisenkom/go-mssqldb",
-			"revision": "4e0d7dc8888fbb59764060e99b7b68e77a6f9698",
-			"revisionTime": "2018-10-14T14:49:52Z"
+			"revision": "eb9f6a1743f30383c8168cc520ca5db1f744d6f4",
+			"revisionTime": "2019-05-15T21:35:11Z"
 		},
 		{
 			"checksumSHA1": "wu8t19t2rmyrrfDfdu9v7f/+iag=",
@@ -25,22 +25,82 @@
 			"revisionTime": "2018-11-16T10:20:33Z"
 		},
 		{
+			"checksumSHA1": "ehuLWnL0b3XwaXRNFAnTkhVx/zU=",
+			"path": "github.com/jawher/mow.cli",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "uwnJHm8Gd1eHtNSpUGdSk5BlxfU=",
+			"path": "github.com/jawher/mow.cli/internal/container",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "qOpDoI5EiHFjKS8ViJo51HiLPCg=",
+			"path": "github.com/jawher/mow.cli/internal/flow",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "72Uqy51AQymJlWzn/9vYWhqhW04=",
+			"path": "github.com/jawher/mow.cli/internal/fsm",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "eGqEe3arPjA/O1spS3zpggrcQW8=",
+			"path": "github.com/jawher/mow.cli/internal/lexer",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "X+8dP0sl3vXz8NnbZlZzxflY2TU=",
+			"path": "github.com/jawher/mow.cli/internal/matcher",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "DvUiOG6lUYXPhHGHhD7RqNxnX3E=",
+			"path": "github.com/jawher/mow.cli/internal/parser",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "GHreRiT3fKUJBdNs3IfOcqWfzzw=",
+			"path": "github.com/jawher/mow.cli/internal/values",
+			"revision": "9b8ce431ec028691b79d71211c3848f1ad4078d7",
+			"revisionTime": "2019-05-09T20:56:37Z"
+		},
+		{
+			"checksumSHA1": "aaUR0FaTkm9HdCovPv3tecD71/s=",
+			"path": "github.com/kballard/go-shellquote",
+			"revision": "95032a82bc518f77982ea72343cc1ade730072f0",
+			"revisionTime": "2018-04-28T03:00:07Z"
+		},
+		{
 			"checksumSHA1": "Aulh7C5SVOA4Jzt5eHNH6197Mbk=",
 			"path": "github.com/konsorten/go-windows-terminal-sequences",
 			"revision": "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e",
 			"revisionTime": "2019-02-26T22:47:05Z"
 		},
 		{
-			"checksumSHA1": "GC0jsooT3y4aYcqEUNOvlCDwj94=",
+			"checksumSHA1": "F6mCaMfANCOCP8pLnk94HmRyVpg=",
 			"path": "github.com/lib/pq",
-			"revision": "5ccc9857e3a95a4233a13e445831cb31b90e73a6",
-			"revisionTime": "2019-03-21T21:06:58Z"
+			"revision": "2ff3cb3adc01768e0a552b3a02575a6df38a9bea",
+			"revisionTime": "2019-05-07T19:18:18Z"
 		},
 		{
 			"checksumSHA1": "AU3fA8Sm33Vj9PBoRPSeYfxLRuE=",
 			"path": "github.com/lib/pq/oid",
 			"revision": "9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee",
 			"revisionTime": "2018-10-16T16:26:27Z"
+		},
+		{
+			"checksumSHA1": "ywel3wHXnu1eLhyT1/FolporeAc=",
+			"path": "github.com/lib/pq/scram",
+			"revision": "2ff3cb3adc01768e0a552b3a02575a6df38a9bea",
+			"revisionTime": "2019-05-07T19:18:18Z"
 		},
 		{
 			"checksumSHA1": "jRou8frV+eGk0Cj6benPsxoEDAc=",
@@ -55,10 +115,10 @@
 			"revisionTime": "2019-03-12T13:58:54Z"
 		},
 		{
-			"checksumSHA1": "b9/P1CBYP0KL47ut31lyXRR2C6Q=",
+			"checksumSHA1": "Zczu9iXhw6WC6Q9M2D1L4m/q/OQ=",
 			"path": "github.com/mattn/go-sqlite3",
-			"revision": "6a9185d7b1f12363e2c904449d374b63b6093b16",
-			"revisionTime": "2018-11-21T16:49:42Z"
+			"revision": "afa0250ddf60dda4e8b2382b90ae1f72e0300380",
+			"revisionTime": "2019-05-23T15:19:27Z"
 		},
 		{
 			"checksumSHA1": "CIK3BBNX3nuUQCmNqTQydNfMNKI=",
@@ -67,10 +127,22 @@
 			"revisionTime": "2017-02-06T15:57:36Z"
 		},
 		{
-			"checksumSHA1": "mDNBjIi/nvEt2poJ+qdeyosk/IM=",
+			"checksumSHA1": "T8ZqoYpAeehnFMDOmQ2yNqS3scY=",
+			"path": "github.com/mitchellh/colorstring",
+			"revision": "d06e56a500db4d08c33db0b79461e7c9beafca2d",
+			"revisionTime": "2019-02-13T21:29:51Z"
+		},
+		{
+			"checksumSHA1": "oOoDJy0YA6rX7qMjWu+KXmTJdPg=",
+			"path": "github.com/schollz/progressbar",
+			"revision": "07ba2d7b211fa8d13e6da8f863ecf68be2b9ec94",
+			"revisionTime": "2019-05-15T15:55:15Z"
+		},
+		{
+			"checksumSHA1": "SVO+Zm6SNwWrpgyc6mcTXbH4aJ8=",
 			"path": "github.com/sirupsen/logrus",
-			"revision": "dae0fa8d5b0c810a8ab733fbd5510c7cae84eca4",
-			"revisionTime": "2019-03-11T16:20:41Z"
+			"revision": "2a22dbedbad1fd454910cd1f44f210ef90c28464",
+			"revisionTime": "2019-05-18T13:52:02Z"
 		},
 		{
 			"checksumSHA1": "oCH3J96RWvO8W4xjix47PModpio=",
@@ -113,6 +185,24 @@
 			"path": "google.golang.org/appengine/cloudsql",
 			"revision": "4a4468ece617fc8205e99368fa2200e9d1fad421",
 			"revisionTime": "2018-10-31T00:20:03Z"
+		},
+		{
+			"checksumSHA1": "LXAuJgAoEI+vvX0iKgSLPhCmRvg=",
+			"path": "gopkg.in/AlecAivazis/survey.v1",
+			"revision": "7cbcdead7f38aefeda49da82a8ec69910154b154",
+			"revisionTime": "2019-05-06T21:47:26Z"
+		},
+		{
+			"checksumSHA1": "ayw+m2WGHgk8fK/KO8vDCXIRKXg=",
+			"path": "gopkg.in/AlecAivazis/survey.v1/core",
+			"revision": "7cbcdead7f38aefeda49da82a8ec69910154b154",
+			"revisionTime": "2019-05-06T21:47:26Z"
+		},
+		{
+			"checksumSHA1": "cVJqz+n+8PxDflXJZqDTCXq5qBs=",
+			"path": "gopkg.in/AlecAivazis/survey.v1/terminal",
+			"revision": "7cbcdead7f38aefeda49da82a8ec69910154b154",
+			"revisionTime": "2019-05-06T21:47:26Z"
 		}
 	],
 	"rootPath": "github.com/chenhg5/go-admin"
