@@ -170,7 +170,7 @@ func generating() {
 		time.Sleep(10 * time.Millisecond)
 		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver, outputPath)
 	}
-	generateTables(outputPath, chooseTables)
+	generateTables(outputPath, chooseTables, packageName)
 
 	fmt.Println()
 	fmt.Println()
@@ -430,7 +430,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 	checkError(err)
 }
 
-func generateTables(outputPath string, tables []string) {
+func generateTables(outputPath string, tables []string, packageName string) {
 
 	tableStr := ""
 
@@ -439,7 +439,7 @@ func generateTables(outputPath string, tables []string) {
 	"` + tables[i] + `": Get` + strings.Title(tables[i]) + `Table,`
 	}
 
-	content := `package datamodel
+	content := `package ` + packageName + `
 
 import "github.com/chenhg5/go-admin/plugins/admin/models"
 
