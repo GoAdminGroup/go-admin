@@ -276,7 +276,7 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 	}
 
 	columns := GetColumns(columnsModel, tb.ConnectionDriver)
-	var fun types.PostFun
+	var fun types.FieldValueFun
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			for i := 0; i < len(tb.Form.FormList); i++ {
