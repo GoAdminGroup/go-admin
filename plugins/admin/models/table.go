@@ -335,7 +335,7 @@ func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 	}
 
 	columns := GetColumns(columnsModel, tb.connectionDriver)
-	var fun types.PostFun
+	var fun types.FieldValueFun
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
 			for i := 0; i < len(tb.form.FormList); i++ {
@@ -371,55 +371,31 @@ func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 func (tb DefaultTable) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		_ = db.WithDriver(tb.connectionDriver).
-			Table(tb.form.Table).
-			Where("id", "=", id).
-			Delete()
+		tb.delete(tb.form.Table, "id", id)
 	}
 	if tb.form.Table == "goadmin_roles" {
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_users").
-			Where("role_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_permissions").
-			Where("role_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_menu").
-			Where("role_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_users", "role_id", id)
+		tb.delete("goadmin_role_permissions", "role_id", id)
+		tb.delete("goadmin_role_menu", "role_id", id)
 	}
 	if tb.form.Table == "goadmin_users" {
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_users").
-			Where("user_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_user_permissions").
-			Where("user_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_users", "user_id", id)
+		tb.delete("goadmin_user_permissions", "user_id", id)
 	}
 	if tb.form.Table == "goadmin_permissions" {
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_permissions").
-			Where("permission_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_user_permissions").
-			Where("permission_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_permissions", "permission_id", id)
+		tb.delete("goadmin_user_permissions", "permission_id", id)
 	}
 	if tb.form.Table == "goadmin_menu" {
-		_ = db.WithDriver(tb.connectionDriver).
-			Table("goadmin_role_menu").
-			Where("menu_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_menu", "menu_id", id)
 	}
+}
+
+func (tb DefaultTable) delete(table, key, id string) {
+	_ = db.WithDriver(tb.connectionDriver).
+		Table(table).
+		Where(key, "=", id).
+		Delete()
 }
 
 // db is a helper function return db connection.

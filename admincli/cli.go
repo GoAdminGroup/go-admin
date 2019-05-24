@@ -5,16 +5,15 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	_ "github.com/chenhg5/go-admin/modules/db/mysql"
 	_ "github.com/chenhg5/go-admin/modules/db/postgresql"
 	cli "github.com/jawher/mow.cli"
-	"github.com/manifoldco/promptui"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
+	"gopkg.in/AlecAivazis/survey.v1"
 	"io/ioutil"
 	"os"
 	"path"
@@ -28,7 +27,6 @@ func main() {
 	defer func() {
 		if err := recover(); err != nil {
 			if errs, ok := err.(error); ok {
-				fmt.Println()
 				fmt.Println()
 				fmt.Println(ansi.Color("go-admin cli error: "+errs.Error(), "red"))
 				fmt.Println()
@@ -69,66 +67,97 @@ func main() {
 }
 
 func generating() {
-	promptSelect := promptui.Select{
-		Label:     "choose a driver",
-		Items:     []string{"mysql", "mssql", "postgresql", "sqlite"},
-		Templates: selectTemplateWithTitle("choose a driver"),
-	}
 
-	_, driver, err := promptSelect.Run()
+	print("\033[H\033[2J")
+	fmt.Println("GoAdmin CLI v1.0.0")
 
-	checkError(err)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "enter to select", -1)
 
-	host := promptWithDefault("sql address", "127.0.0.1")
-	port := promptWithDefault("sql port", "3306")
-	user := promptWithDefault("sql username", "root")
-	password := promptPassword("sql password")
-	name := prompt("sql database name")
-
-	conn := db.GetConnectionByDriver(driver)
-	if conn == nil {
-		panic("invalid db connection")
-	}
-	cfg := map[string]config.Database{
-		"default": {
-			HOST:         host,
-			PORT:         port,
-			USER:         user,
-			PWD:          password,
-			NAME:         name,
-			MAX_IDLE_CON: 50,
-			MAX_OPEN_CON: 150,
-			DRIVER:       driver,
+	var qs = []*survey.Question{
+		{
+			Name: "driver",
+			Prompt: &survey.Select{
+				Message: "choose a driver",
+				Options: []string{"mysql", "mssql", "postgresql", "sqlite"},
+				Default: "mysql",
+			},
 		},
 	}
+
+	var result = make(map[string]interface{}, 0)
+
+	err := survey.Ask(qs, &result)
+	checkError(err)
+	driver := result["driver"].(string)
+
+	var (
+		cfg  map[string]config.Database
+		name string
+		conn = db.GetConnectionByDriver(driver)
+	)
+
+	if driver != "sqlite" {
+		host := promptWithDefault("sql address", "127.0.0.1")
+		port := promptWithDefault("sql port", "3306")
+		user := promptWithDefault("sql username", "root")
+		password := promptPassword()
+
+		name = prompt("sql database name")
+
+		if conn == nil {
+			exitWithError("invalid db connection")
+			panic("invalid db connection")
+		}
+		cfg = map[string]config.Database{
+			"default": {
+				HOST:         host,
+				PORT:         port,
+				USER:         user,
+				PWD:          password,
+				NAME:         name,
+				MAX_IDLE_CON: 50,
+				MAX_OPEN_CON: 150,
+				DRIVER:       driver,
+				FILE:         "",
+			},
+		}
+	} else {
+		file := prompt("sql file")
+
+		name = prompt("sql database name")
+
+		if conn == nil {
+			exitWithError("invalid db connection")
+			panic("invalid db connection")
+		}
+		cfg = map[string]config.Database{
+			"default": {
+				DRIVER: driver,
+				FILE:   file,
+			},
+		}
+	}
+
 	// step 1. test connection
 	conn.InitDB(cfg)
 
 	// step 2. show tables
 	tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
 
-	fmt.Println(ansi.Color("✔", "green") + " choose tables: ")
-
 	tables := getTablesFromSqlResult(tableModels, driver, name)
 	if len(tables) == 0 {
-		panic("no tables")
+		exitWithError("no tables")
 	}
-	chooseTables := make([]string, 0)
-	var value string
-	for {
-		value = selects(tables)
-		if value == "[finish]" {
-			break
-		}
-		chooseTables = append(chooseTables, value)
-		tables = removeItem(tables, value)
-		if tables[0] == "[finish]" {
-			break
-		}
+
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "enter to select", "space to select", -1)
+
+	chooseTables := selects(tables)
+	if len(chooseTables) == 0 {
+		exitWithError("no choosing tables")
 	}
 
 	packageName := promptWithDefault("set package name", "main")
-	outputPath := promptWithDefault("set file output path", "./models")
+	outputPath := promptWithDefault("set file output path", "./")
 
 	fmt.Println(ansi.Color("✔", "green") + " generating: ")
 	fmt.Println()
@@ -146,9 +175,22 @@ func generating() {
 		time.Sleep(10 * time.Millisecond)
 		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver, outputPath)
 	}
+	generateTables(outputPath, chooseTables, packageName)
 
 	fmt.Println()
 	fmt.Println()
+	fmt.Println(ansi.Color("generate success~~🍺🍺", "green"))
+	fmt.Println()
+	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/#/introduce/plugins/admin", "blue"))
+	fmt.Println()
+	fmt.Println()
+}
+
+func exitWithError(msg string) {
+	fmt.Println()
+	fmt.Println(ansi.Color("go-admin cli error: "+msg, "red"))
+	fmt.Println()
+	os.Exit(-1)
 }
 
 func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
@@ -169,118 +211,73 @@ func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbNa
 		}
 	}
 
-	return append(tables, "[finish]")
-}
-
-func selectTemplateWithTitle(title string) *promptui.SelectTemplates {
-	return &promptui.SelectTemplates{
-		Label:    "{{ . }}✔",
-		Active:   ansi.Color("❯", "cyan") + " {{ . | cyan }}",
-		Inactive: "  {{ . }}",
-		Selected: ansi.Color("✔", "green") + " " + title + ": {{ . | cyan }}",
-	}
-}
-
-func tableSelectTemplateWithTitle() *promptui.SelectTemplates {
-	return &promptui.SelectTemplates{
-		Label:    "{{ . }}?",
-		Active:   ansi.Color("❯", "cyan") + " {{ . | cyan }}",
-		Inactive: "  {{ . }}",
-		Selected: "    " + ansi.Color("✔", "green") + " {{ . | cyan }}",
-		Help:     "Use the arrow keys to navigate: ↓ ↑ → ←, choose [finish] to exit",
-	}
-}
-
-func promptTemplateWithTitle(title string) *promptui.PromptTemplates {
-	return &promptui.PromptTemplates{
-		Success: ansi.Color("✔", "green") + " " + title + ": ",
-	}
+	return tables
 }
 
 func prompt(label string) string {
 
-	validate := func(input string) error {
-		if input == "" {
-			return errors.New(label + " is empty")
-		}
-		return nil
+	var qs = []*survey.Question{
+		{
+			Name:     label,
+			Prompt:   &survey.Input{Message: label},
+			Validate: survey.Required,
+		},
 	}
 
-	prompt := promptui.Prompt{
-		Label:     label,
-		Templates: promptTemplateWithTitle(label),
-		Validate:  validate,
-	}
+	var result = make(map[string]interface{}, 0)
 
-	result, err := prompt.Run()
+	err := survey.Ask(qs, &result)
 
 	checkError(err)
 
-	return result
+	return result[label].(string)
 }
 
 func promptWithDefault(label string, defaultValue string) string {
 
-	validate := func(input string) error {
-		if input == "" {
-			return errors.New(label + " is empty")
-		}
-		return nil
+	var qs = []*survey.Question{
+		{
+			Name:     label,
+			Prompt:   &survey.Input{Message: label, Default: defaultValue},
+			Validate: survey.Required,
+		},
 	}
 
-	prompt := promptui.Prompt{
-		Label:     label,
-		Templates: promptTemplateWithTitle(label),
-		Default:   defaultValue,
-		Validate:  validate,
-	}
+	var result = make(map[string]interface{}, 0)
 
-	result, err := prompt.Run()
+	err := survey.Ask(qs, &result)
 
 	checkError(err)
 
-	return result
+	return result[label].(string)
 }
 
-func promptPassword(label string) string {
-	prompt := promptui.Prompt{
-		Label:     label,
-		Mask:      '*',
-		Templates: promptTemplateWithTitle(label),
-	}
+func promptPassword() string {
 
-	result, err := prompt.Run()
+	password := ""
+	prompt := &survey.Password{
+		Message: "sql password",
+	}
+	err := survey.AskOne(prompt, &password, nil)
 
 	checkError(err)
 
-	return result
+	return password
 }
 
-func selects(tables []string) string {
-	promptSelect := promptui.Select{
-		Label:     "choose table to generate",
-		Items:     tables,
-		Templates: tableSelectTemplateWithTitle(),
+func selects(tables []string) []string {
+
+	chooseTables := make([]string, 0)
+	prompt := &survey.MultiSelect{
+		Message:  "choose table to generate",
+		Options:  tables,
+		PageSize: 10,
 	}
+	err := survey.AskOne(prompt, &chooseTables, nil)
 
-	_, result, err := promptSelect.Run()
+	checkError(err)
 
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		return ""
-	}
-
-	return result
-}
-
-func removeItem(tables []string, table string) []string {
-	index := 0
-	for i := 0; i < len(tables); i++ {
-		if tables[i] == table {
-			index = i
-		}
-	}
-	return append(tables[:index], tables[index+1:]...)
+	return chooseTables
 }
 
 func checkError(err error) {
@@ -391,10 +388,33 @@ func Get` + strings.Title(table) + `Table() models.Table {
 	` + table + `Table.GetForm().Title = "` + strings.Title(table) + `"
 	` + table + `Table.GetForm().Description = "` + strings.Title(table) + `"
 
+
 	return ` + table + `Table
 }`
 
 	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
+	checkError(err)
+}
+
+func generateTables(outputPath string, tables []string, packageName string) {
+
+	tableStr := ""
+
+	for i := 0; i < len(tables); i++ {
+		tableStr += `
+	"` + tables[i] + `": Get` + strings.Title(tables[i]) + `Table,`
+	}
+
+	content := `package ` + packageName + `
+
+import "github.com/chenhg5/go-admin/plugins/admin/models"
+
+// The key of Generators is the prefix of table info url.
+// The corresponding value is the Form and Table data.
+var Generators = map[string]models.TableGenerator{` + tableStr + `
+}
+`
+	err := ioutil.WriteFile(outputPath+"/tables.go", []byte(content), 0644)
 	checkError(err)
 }
 
