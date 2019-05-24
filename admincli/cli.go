@@ -266,8 +266,9 @@ func selects(tables []string) []string {
 
 	chooseTables := make([]string, 0)
 	prompt := &survey.MultiSelect{
-		Message: "choose table to generate",
-		Options: tables,
+		Message:  "choose table to generate",
+		Options:  tables,
+		PageSize: 10,
 	}
 	err := survey.AskOne(prompt, &chooseTables, nil)
 
