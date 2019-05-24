@@ -79,28 +79,52 @@ func generating() {
 
 	checkError(err)
 
-	host := prompt("sql address")
-	port := prompt("sql port")
-	user := prompt("sql username")
-	password := promptPassword("sql password")
-	name := prompt("sql database name")
+	var (
+		cfg  map[string]config.Database
+		name string
+		conn = db.GetConnectionByDriver(driver)
+	)
 
-	conn := db.GetConnectionByDriver(driver)
-	if conn == nil {
-		panic("invalid db connection")
+	if driver != "sqlite" {
+		host := prompt("sql address")
+		port := prompt("sql port")
+		user := prompt("sql username")
+		password := promptPassword("sql password")
+
+		name = prompt("sql database name")
+
+		if conn == nil {
+			panic("invalid db connection")
+		}
+		cfg = map[string]config.Database{
+			"default": {
+				HOST:         host,
+				PORT:         port,
+				USER:         user,
+				PWD:          password,
+				NAME:         name,
+				MAX_IDLE_CON: 50,
+				MAX_OPEN_CON: 150,
+				DRIVER:       driver,
+				FILE:         "",
+			},
+		}
+	} else {
+		file := promptPassword("sql file")
+
+		name = prompt("sql database name")
+
+		if conn == nil {
+			panic("invalid db connection")
+		}
+		cfg = map[string]config.Database{
+			"default": {
+				DRIVER: driver,
+				FILE:   file,
+			},
+		}
 	}
-	cfg := map[string]config.Database{
-		"default": {
-			HOST:         host,
-			PORT:         port,
-			USER:         user,
-			PWD:          password,
-			NAME:         name,
-			MAX_IDLE_CON: 50,
-			MAX_OPEN_CON: 150,
-			DRIVER:       driver,
-		},
-	}
+
 	// step 1. test connection
 	conn.InitDB(cfg)
 
@@ -128,7 +152,7 @@ func generating() {
 	}
 
 	packageName := promptWithDefault("set package name", "main")
-	outputPath := promptWithDefault("set file output path", "./models")
+	outputPath := promptWithDefault("set file output path", "./")
 
 	fmt.Println(ansi.Color("✔", "green") + " generating: ")
 	fmt.Println()
@@ -146,7 +170,13 @@ func generating() {
 		time.Sleep(10 * time.Millisecond)
 		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver, outputPath)
 	}
+	generateTables(outputPath, chooseTables)
 
+	fmt.Println()
+	fmt.Println()
+	fmt.Println(ansi.Color("generate success~~🍺🍺", "green"))
+	fmt.Println()
+	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/#/introduce/plugins/plugins", "blue"))
 	fmt.Println()
 	fmt.Println()
 }
@@ -397,6 +427,28 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 }`
 
 	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
+	checkError(err)
+}
+
+func generateTables(outputPath string, tables []string) {
+
+	tableStr := ""
+
+	for i := 0; i < len(tables); i++ {
+		tableStr += `
+	"` + tables[i] + `": Get` + strings.Title(tables[i]) + `Table,`
+	}
+
+	content := `package datamodel
+
+import "github.com/chenhg5/go-admin/plugins/admin/models"
+
+// The key of Generators is the prefix of table info url.
+// The corresponding value is the Form and Table data.
+var Generators = map[string]models.TableGenerator{` + tableStr + `
+}
+`
+	err := ioutil.WriteFile(outputPath+"/tables.go", []byte(content), 0644)
 	checkError(err)
 }
 
