@@ -28,7 +28,6 @@ func main() {
 		if err := recover(); err != nil {
 			if errs, ok := err.(error); ok {
 				fmt.Println()
-				fmt.Println()
 				fmt.Println(ansi.Color("go-admin cli error: "+errs.Error(), "red"))
 				fmt.Println()
 			}
@@ -68,6 +67,8 @@ func main() {
 }
 
 func generating() {
+
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "enter to select", -1)
 
 	var qs = []*survey.Question{
 		{
@@ -144,6 +145,9 @@ func generating() {
 	if len(tables) == 0 {
 		exitWithError("no tables")
 	}
+
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "enter to select", "space to select", -1)
+
 	chooseTables := selects(tables)
 	if len(chooseTables) == 0 {
 		exitWithError("no choosing tables")
@@ -174,7 +178,7 @@ func generating() {
 	fmt.Println()
 	fmt.Println(ansi.Color("generate success~~🍺🍺", "green"))
 	fmt.Println()
-	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/#/introduce/plugins/plugins", "blue"))
+	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/#/introduce/plugins/admin", "blue"))
 	fmt.Println()
 	fmt.Println()
 }
