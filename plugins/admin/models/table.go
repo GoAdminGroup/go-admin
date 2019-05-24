@@ -312,55 +312,31 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 func (tb Table) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table(tb.Form.Table).
-			Where("id", "=", id).
-			Delete()
+		tb.delete(tb.Form.Table, "id", id)
 	}
 	if tb.Form.Table == "goadmin_roles" {
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_users").
-			Where("role_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_permissions").
-			Where("role_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_menu").
-			Where("role_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_users", "role_id", id)
+		tb.delete("goadmin_role_permissions", "role_id", id)
+		tb.delete("goadmin_role_menu", "role_id", id)
 	}
 	if tb.Form.Table == "goadmin_users" {
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_users").
-			Where("user_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_user_permissions").
-			Where("user_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_users", "user_id", id)
+		tb.delete("goadmin_user_permissions", "user_id", id)
 	}
 	if tb.Form.Table == "goadmin_permissions" {
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_permissions").
-			Where("permission_id", "=", id).
-			Delete()
-
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_user_permissions").
-			Where("permission_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_permissions", "permission_id", id)
+		tb.delete("goadmin_user_permissions", "permission_id", id)
 	}
 	if tb.Form.Table == "goadmin_menu" {
-		_ = db.WithDriver(tb.ConnectionDriver).
-			Table("goadmin_role_menu").
-			Where("menu_id", "=", id).
-			Delete()
+		tb.delete("goadmin_role_menu", "menu_id", id)
 	}
+}
+
+func (tb Table) delete(table, key, id string) {
+	_ = db.WithDriver(tb.ConnectionDriver).
+		Table(table).
+		Where(key, "=", id).
+		Delete()
 }
 
 // db is a helper function return db connection.
