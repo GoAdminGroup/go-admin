@@ -68,6 +68,9 @@ func main() {
 
 func generating() {
 
+	print("\033[H\033[2J")
+	fmt.Println("GoAdmin CLI v1.0.0")
+
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "enter to select", -1)
 
 	var qs = []*survey.Question{
@@ -384,7 +387,7 @@ func Get` + strings.Title(table) + `Table() (` + table + `Table models.Table) {
 	` + table + `Table.Form.Title = "` + strings.Title(table) + `"
 	` + table + `Table.Form.Description = "` + strings.Title(table) + `"
 
-	` + table + `Table.Editable = true"
+	` + table + `Table.Editable = true
 	` + table + `Table.ConnectionDriver = "` + driver + `"
 
 	return
