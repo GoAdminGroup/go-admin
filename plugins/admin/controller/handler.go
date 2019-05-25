@@ -91,13 +91,13 @@ func GlobalDeferHandler(ctx *context.Context) {
 			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 				Content: alert + template.Get(Config.THEME).Form().
 					SetPrefix(Config.PREFIX).
-					SetContent(models.GetNewFormList(models.TableList[prefix].Form.FormList)).
+					SetContent(models.GetNewFormList(models.TableList[prefix].GetForm().FormList)).
 					SetUrl(Config.PREFIX+"/new/"+prefix).
 					SetToken(auth.TokenHelper.AddToken()).
 					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
 					GetContent(),
-				Description: models.TableList[prefix].Form.Description,
-				Title:       models.TableList[prefix].Form.Title,
+				Description: models.TableList[prefix].GetForm().Description,
+				Title:       models.TableList[prefix].GetForm().Title,
 			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 			ctx.Html(http.StatusOK, buf.String())
 			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)

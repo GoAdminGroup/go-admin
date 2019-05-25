@@ -13,5 +13,8 @@
     };
     editor.create();
     editor.txt.html('{{.Value}}');
+    {{if not .Editable}}
+    editor.$textElem.attr('contenteditable', false);
+    {{end}}
 </script>
 {{end}}

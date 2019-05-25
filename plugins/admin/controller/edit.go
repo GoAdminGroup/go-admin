@@ -17,7 +17,7 @@ import (
 func ShowForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].Editable {
+	if !models.TableList[prefix].GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -47,7 +47,7 @@ func ShowForm(ctx *context.Context) {
 // 编辑数据
 func EditForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].Editable {
+	if !models.TableList[prefix].GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -75,6 +75,19 @@ func EditForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理编辑
 		EditRole((*form).Value)
 	} else {
+		val := (*form).Value
+		for _, f := range models.TableList[prefix].GetForm().FormList {
+			if f.Editable {
+				continue
+			}
+			if len(val[f.Field]) > 0 && f.Field != "id"{
+				ctx.Json(http.StatusBadRequest, map[string]interface{}{
+					"code": 400,
+					"msg":  "字段[" + f.Field + "]不可编辑",
+				})
+				return
+			}
+		}
 		models.TableList[prefix].UpdateDataFromDatabase((*form).Value)
 	}
 
