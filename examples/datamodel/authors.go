@@ -7,7 +7,9 @@ import (
 
 func GetAuthorsTable() (authorsTable models.Table) {
 
-	authorsTable.Info.FieldList = []types.Field{
+	authorsTable = models.NewDefaultTable(models.DefaultTableConfig)
+
+	authorsTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -64,11 +66,11 @@ func GetAuthorsTable() (authorsTable models.Table) {
 		},
 	}
 
-	authorsTable.Info.Table = "authors"
-	authorsTable.Info.Title = "Authors"
-	authorsTable.Info.Description = "Authors"
+	authorsTable.GetInfo().Table = "authors"
+	authorsTable.GetInfo().Title = "Authors"
+	authorsTable.GetInfo().Description = "Authors"
 
-	authorsTable.Form.FormList = []types.Form{
+	authorsTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -142,12 +144,9 @@ func GetAuthorsTable() (authorsTable models.Table) {
 		},
 	}
 
-	authorsTable.Form.Table = "authors"
-	authorsTable.Form.Title = "Authors"
-	authorsTable.Form.Description = "Authors"
-
-	authorsTable.ConnectionDriver = "mysql"
-	authorsTable.Editable = true
+	authorsTable.GetForm().Table = "authors"
+	authorsTable.GetForm().Title = "Authors"
+	authorsTable.GetForm().Description = "Authors"
 
 	return
 }

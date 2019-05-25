@@ -7,7 +7,9 @@ import (
 
 func GetUserTable() (userTable models.Table) {
 
-	userTable.Info.FieldList = []types.Field{
+	userTable = models.NewDefaultTable(models.DefaultTableConfig)
+
+	userTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -61,11 +63,11 @@ func GetUserTable() (userTable models.Table) {
 		},
 	}
 
-	userTable.Info.Table = "users"
-	userTable.Info.Title = "Users"
-	userTable.Info.Description = "Users"
+	userTable.GetInfo().Table = "users"
+	userTable.GetInfo().Title = "Users"
+	userTable.GetInfo().Description = "Users"
 
-	userTable.Form.FormList = []types.Form{
+	userTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -129,12 +131,9 @@ func GetUserTable() (userTable models.Table) {
 		},
 	}
 
-	userTable.Form.Table = "users"
-	userTable.Form.Title = "Users"
-	userTable.Form.Description = "Users"
-
-	userTable.ConnectionDriver = "mysql"
-	userTable.Editable = true
+	userTable.GetForm().Table = "users"
+	userTable.GetForm().Title = "Users"
+	userTable.GetForm().Description = "Users"
 
 	return
 }

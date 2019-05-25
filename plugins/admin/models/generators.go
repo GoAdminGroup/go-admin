@@ -12,7 +12,7 @@ import (
 )
 
 func GetManagerTable() (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	ManagerTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE[0].DRIVER))
 	ManagerTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -211,7 +211,7 @@ func GetManagerTable() (ManagerTable Table) {
 }
 
 func GetPermissionTable() (PermissionTable Table) {
-	PermissionTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	PermissionTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE[0].DRIVER))
 	PermissionTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -369,12 +369,11 @@ func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable.GetForm().Title = language.Get("Permission Manage")
 	PermissionTable.GetForm().Description = language.Get("Permission Manage")
 
-
 	return
 }
 
 func GetRolesTable() (RolesTable Table) {
-	RolesTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	RolesTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE[0].DRIVER))
 	var permissions []map[string]string
 	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
 
@@ -514,12 +513,11 @@ func GetRolesTable() (RolesTable Table) {
 	RolesTable.GetForm().Title = language.Get("Roles Manage")
 	RolesTable.GetForm().Description = language.Get("Roles Manage")
 
-
 	return
 }
 
 func GetOpTable() (OpTable Table) {
-	OpTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	OpTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE[0].DRIVER))
 	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -687,12 +685,11 @@ func GetOpTable() (OpTable Table) {
 	OpTable.GetForm().Title = language.Get("operation log")
 	OpTable.GetForm().Description = language.Get("operation log")
 
-
 	return
 }
 
 func GetMenuTable() (MenuTable Table) {
-	MenuTable = NewDefaultTable(config.Get().DATABASE[0].DRIVER, true, true, true)
+	MenuTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE[0].DRIVER))
 	MenuTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -900,7 +897,6 @@ func GetMenuTable() (MenuTable Table) {
 	MenuTable.GetForm().Table = "goadmin_menu"
 	MenuTable.GetForm().Title = language.Get("Menus Manage")
 	MenuTable.GetForm().Description = language.Get("Menus Manage")
-
 
 	return
 }

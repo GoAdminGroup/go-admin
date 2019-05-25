@@ -8,7 +8,9 @@ import (
 
 func GetPostsTable() (postsTable models.Table) {
 
-	postsTable.Info.FieldList = []types.Field{
+	postsTable = models.NewDefaultTable(models.DefaultTableConfig)
+
+	postsTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -56,11 +58,11 @@ func GetPostsTable() (postsTable models.Table) {
 		},
 	}
 
-	postsTable.Info.Table = "posts"
-	postsTable.Info.Title = "Posts"
-	postsTable.Info.Description = "Posts"
+	postsTable.GetInfo().Table = "posts"
+	postsTable.GetInfo().Title = "Posts"
+	postsTable.GetInfo().Description = "Posts"
 
-	postsTable.Form.FormList = []types.Form{
+	postsTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
 			Field:    "id",
@@ -124,12 +126,9 @@ func GetPostsTable() (postsTable models.Table) {
 		},
 	}
 
-	postsTable.Form.Table = "posts"
-	postsTable.Form.Title = "Posts"
-	postsTable.Form.Description = "Posts"
-
-	postsTable.ConnectionDriver = "mysql"
-	postsTable.Editable = true
+	postsTable.GetForm().Table = "posts"
+	postsTable.GetForm().Title = "Posts"
+	postsTable.GetForm().Description = "Posts"
 
 	return
 }

@@ -72,14 +72,37 @@ type PanelInfo struct {
 	Deletable   bool
 }
 
-func NewDefaultTable(connectionDriver string, canAdd, editable, deletable bool) Table {
+type TableConfig struct {
+	Driver    string
+	CanAdd    bool
+	Editable  bool
+	Deletable bool
+}
+
+var DefaultTableConfig = &TableConfig{
+	Driver:    "mysql",
+	CanAdd:    true,
+	Editable:  true,
+	Deletable: true,
+}
+
+func DefaultTableConfigWithDriver(driver string) *TableConfig {
+	return &TableConfig{
+		Driver:    driver,
+		CanAdd:    true,
+		Editable:  true,
+		Deletable: true,
+	}
+}
+
+func NewDefaultTable(cfg *TableConfig) Table {
 	tb := &DefaultTable{
-		info: &types.InfoPanel{},
-		form: &types.FormPanel{},
-		connectionDriver: connectionDriver,
-		canAdd: canAdd,
-		editable: editable,
-		deletable: deletable,
+		info:             &types.InfoPanel{},
+		form:             &types.FormPanel{},
+		connectionDriver: cfg.Driver,
+		canAdd:           cfg.CanAdd,
+		editable:         cfg.Editable,
+		deletable:        cfg.Deletable,
 	}
 	return tb
 }

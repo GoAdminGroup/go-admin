@@ -333,13 +333,13 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 	content := `package ` + packageName + `
 
 import (
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/types"	
 )
 
 func Get` + strings.Title(table) + `Table() models.Table {
 
-    ` + table + `Table := models.NewDefaultTable("` + driver + `", true, true, true)
+    ` + table + `Table := models.NewDefaultTable(models.DefaultTableConfigWithDriver("` + driver + `"))
 	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
