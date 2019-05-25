@@ -50,7 +50,9 @@ see the [docs](http://doc.go-admin.cn) for detail
 
 ### install
 
-```go get -v -u github.com/chenhg5/go-admin```
+```
+$ go get -v -u github.com/chenhg5/go-admin
+```
 
 ### import sql
 
@@ -59,9 +61,9 @@ see the [docs](http://doc.go-admin.cn) for detail
 ### generate the data model use cli tool
 
 ```
-go install github.com/chenhg5/go-admin/admincli
+$ go install github.com/chenhg5/go-admin/admincli
 
-admincli generate -h=127.0.0.1 -p=3306 -P=root -n=godmin -pa=main -o=./model
+$ admincli generate
 ```
 
 ### gin example
