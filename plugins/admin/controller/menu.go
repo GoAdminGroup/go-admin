@@ -207,7 +207,7 @@ func GetMenuInfoPanel(ctx *context.Context) {
 		SetUrl(Config.PREFIX + "/menu/new").
 		SetInfoUrl(Config.PREFIX + "/menu").
 		SetTitle("New").
-		SetContent(models.GetNewFormList(models.TableList["menu"].Form.FormList)).
+		SetContent(models.GetNewFormList(models.TableList["menu"].GetForm().FormList)).
 		GetContent()
 
 	col2 := template.Get(Config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()

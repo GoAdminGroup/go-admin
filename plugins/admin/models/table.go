@@ -38,13 +38,27 @@ func SetGenerators(generators map[string]TableGenerator) {
 	}
 }
 
-type Table struct {
-	Info             types.InfoPanel
-	Form             types.FormPanel
-	ConnectionDriver string
-	CanAdd           bool
-	Editable         bool
-	Deletable        bool
+type Table interface {
+	GetInfo() *types.InfoPanel
+	GetForm() *types.FormPanel
+	GetCanAdd() bool
+	GetEditable() bool
+	GetDeletable() bool
+	GetFiltersMap() []map[string]string
+	GetDataFromDatabase(path string, params *Parameters) PanelInfo
+	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
+	UpdateDataFromDatabase(dataList map[string][]string)
+	InsertDataFromDatabase(dataList map[string][]string)
+	DeleteDataFromDatabase(id string)
+}
+
+type DefaultTable struct {
+	info             *types.InfoPanel
+	form             *types.FormPanel
+	connectionDriver string
+	canAdd           bool
+	editable         bool
+	deletable        bool
 }
 
 type PanelInfo struct {
@@ -58,9 +72,41 @@ type PanelInfo struct {
 	Deletable   bool
 }
 
-func (tb Table) GetFiltersMap() []map[string]string {
+func NewDefaultTable(connectionDriver string, canAdd, editable, deletable bool) Table {
+	tb := &DefaultTable{
+		info: &types.InfoPanel{},
+		form: &types.FormPanel{},
+		connectionDriver: connectionDriver,
+		canAdd: canAdd,
+		editable: editable,
+		deletable: deletable,
+	}
+	return tb
+}
+
+func (tb DefaultTable) GetInfo() *types.InfoPanel {
+	return tb.info
+}
+
+func (tb DefaultTable) GetForm() *types.FormPanel {
+	return tb.form
+}
+
+func (tb DefaultTable) GetCanAdd() bool {
+	return tb.canAdd
+}
+
+func (tb DefaultTable) GetEditable() bool {
+	return tb.editable
+}
+
+func (tb DefaultTable) GetDeletable() bool {
+	return tb.deletable
+}
+
+func (tb DefaultTable) GetFiltersMap() []map[string]string {
 	var filters = make([]map[string]string, 0)
-	for _, value := range tb.Info.FieldList {
+	for _, value := range tb.info.FieldList {
 		if value.Filter {
 			filters = append(filters, map[string]string{
 				"title": value.Head,
@@ -78,33 +124,36 @@ func (tb Table) GetFiltersMap() []map[string]string {
 }
 
 // GetDataFromDatabase query the data set.
-func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
+func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	pageInt, _ := strconv.Atoi(params.Page)
 
-	title := tb.Info.Title
-	description := tb.Info.Description
+	title := tb.info.Title
+	description := tb.info.Description
 
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Info.Table).ShowColumns()
+	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.info.Table).ShowColumns()
 
-	columns := GetColumns(columnsModel, tb.ConnectionDriver)
+	columns := GetColumns(columnsModel, tb.connectionDriver)
 
 	var sortable string
-	for i := 0; i < len(tb.Info.FieldList); i++ {
-		if tb.Info.FieldList[i].Field != "id" && CheckInTable(columns, tb.Info.FieldList[i].Field) {
-			fields += tb.Info.FieldList[i].Field + ","
+	for i := 0; i < len(tb.info.FieldList); i++ {
+		if tb.info.FieldList[i].Field != "id" && CheckInTable(columns, tb.info.FieldList[i].Field) {
+			fields += tb.info.FieldList[i].Field + ","
+		}
+		if tb.info.FieldList[i].Hide {
+			continue
 		}
 		sortable = "0"
-		if tb.Info.FieldList[i].Sortable {
+		if tb.info.FieldList[i].Sortable {
 			sortable = "1"
 		}
 		thead = append(thead, map[string]string{
-			"head":     tb.Info.FieldList[i].Head,
+			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
-			"field":    tb.Info.FieldList[i].Field,
+			"field":    tb.info.FieldList[i].Field,
 		})
 	}
 
@@ -129,7 +178,7 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().Query("select "+fields+" from "+tb.Info.Table+wheres+" order by "+params.SortField+" "+
+	res, _ := tb.db().Query("select "+fields+" from "+tb.info.Table+wheres+" order by "+params.SortField+" "+
 		params.SortType+" LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
@@ -139,17 +188,23 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		// TODO: add object pool
 
 		tempModelData := make(map[string]template.HTML, 0)
+		row := res[i]
 
-		for j := 0; j < len(tb.Info.FieldList); j++ {
-			if CheckInTable(columns, tb.Info.FieldList[j].Field) {
-				tempModelData[tb.Info.FieldList[j].Head] = template.HTML(tb.Info.FieldList[j].ExcuFun(types.RowModel{
-					ID:    res[i]["id"].(int64),
-					Value: GetStringFromType(tb.Info.FieldList[j].TypeName, res[i][tb.Info.FieldList[j].Field]),
+		for j := 0; j < len(tb.info.FieldList); j++ {
+			if tb.info.FieldList[j].Hide {
+				continue
+			}
+			if CheckInTable(columns, tb.info.FieldList[j].Field) {
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
+					ID:    row["id"].(int64),
+					Value: GetStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					Row:   row,
 				}).(string))
 			} else {
-				tempModelData[tb.Info.FieldList[j].Head] = template.HTML(tb.Info.FieldList[j].ExcuFun(types.RowModel{
-					ID:    res[i]["id"].(int64),
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
+					ID:    row["id"].(int64),
 					Value: "",
+					Row:   row,
 				}).(string))
 			}
 		}
@@ -161,11 +216,11 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 
 	// TODO: use the dialect
 
-	total, _ := tb.db().Query("select count(*) from "+tb.Info.Table+wheres, whereArgs...)
+	total, _ := tb.db().Query("select count(*) from "+tb.info.Table+wheres, whereArgs...)
 	var size int
-	if tb.ConnectionDriver == "sqlite" {
+	if tb.connectionDriver == "sqlite" {
 		size = int(total[0]["count(*)"].(int64))
-	} else if tb.ConnectionDriver == "postgresql" {
+	} else if tb.connectionDriver == "postgresql" {
 		size = int(total[0]["count"].(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
@@ -179,95 +234,99 @@ func (tb Table) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
 		Paginator:   paginator,
 		Title:       title,
 		Description: description,
-		CanAdd:      tb.CanAdd,
-		Editable:    tb.Editable,
-		Deletable:   tb.Deletable,
+		CanAdd:      tb.canAdd,
+		Editable:    tb.editable,
+		Deletable:   tb.deletable,
 	}
 
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb Table) GetDataFromDatabaseWithId(id string) ([]types.Form, string, string) {
+func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, string, string) {
 
 	fields := make([]string, 0)
 
-	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
-	columns := GetColumns(columnsModel, tb.ConnectionDriver)
+	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.form.Table).ShowColumns()
+	columns := GetColumns(columnsModel, tb.connectionDriver)
 
-	for i := 0; i < len(tb.Form.FormList); i++ {
-		if CheckInTable(columns, tb.Form.FormList[i].Field) {
-			fields = append(fields, tb.Form.FormList[i].Field)
+	for i := 0; i < len(tb.form.FormList); i++ {
+		if CheckInTable(columns, tb.form.FormList[i].Field) {
+			fields = append(fields, tb.form.FormList[i].Field)
 		}
 	}
 
-	res, _ := db.WithDriver(tb.ConnectionDriver).
-		Table(tb.Form.Table).Select(fields...).
+	res, _ := db.WithDriver(tb.connectionDriver).
+		Table(tb.form.Table).Select(fields...).
 		Where("id", "=", id).
 		First()
 
 	idint64, _ := strconv.ParseInt(id, 10, 64)
 
-	for i := 0; i < len(tb.Form.FormList); i++ {
-		if CheckInTable(columns, tb.Form.FormList[i].Field) {
-			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" || tb.Form.FormList[i].FormType == "select_single" {
-				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
+	for i := 0; i < len(tb.form.FormList); i++ {
+		if CheckInTable(columns, tb.form.FormList[i].Field) {
+			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
+				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).([]string)
-				for _, v := range tb.Form.FormList[i].Options {
+				for _, v := range tb.form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tb.Form.FormList[i].Value = tb.Form.FormList[i].ExcuFun(types.RowModel{
+				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).(string)
 			}
 		} else {
-			if tb.Form.FormList[i].FormType == "select" || tb.Form.FormList[i].FormType == "selectbox" {
-				valueArr := tb.Form.FormList[i].ExcuFun(types.RowModel{
+			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
+				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: GetStringFromType(tb.Form.FormList[i].TypeName, res[tb.Form.FormList[i].Field]),
+					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Row:   res,
 				}).([]string)
-				for _, v := range tb.Form.FormList[i].Options {
+				for _, v := range tb.form.FormList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tb.Form.FormList[i].Value = tb.Form.FormList[i].ExcuFun(types.RowModel{
+				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idint64,
-					Value: tb.Form.FormList[i].Field,
+					Value: tb.form.FormList[i].Field,
+					Row:   res,
 				}).(string)
 			}
 		}
 	}
 
-	return tb.Form.FormList, tb.Form.Title, tb.Form.Description
+	return tb.form.FormList, tb.form.Title, tb.form.Description
 }
 
 // UpdateDataFromDatabase update data.
-func (tb Table) UpdateDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriver(tb.ConnectionDriver).
-		Table(tb.Form.Table).
+func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
+	_, _ = db.WithDriver(tb.connectionDriver).
+		Table(tb.form.Table).
 		Where("id", "=", dataList["id"][0]).
 		Update(tb.getValues(dataList))
 
 }
 
 // InsertDataFromDatabase insert data.
-func (tb Table) InsertDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriver(tb.ConnectionDriver).
-		Table(tb.Form.Table).
+func (tb DefaultTable) InsertDataFromDatabase(dataList map[string][]string) {
+	_, _ = db.WithDriver(tb.connectionDriver).
+		Table(tb.form.Table).
 		Insert(tb.getValues(dataList))
 }
 
-func (tb Table) getValues(dataList map[string][]string) dialect.H {
+func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 	value := make(dialect.H, 0)
 
-	columnsModel, _ := db.WithDriver(tb.ConnectionDriver).Table(tb.Form.Table).ShowColumns()
+	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.form.Table).ShowColumns()
 
 	var id = int64(0)
 	if idArr, ok := dataList["id"]; ok {
@@ -275,13 +334,13 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 		id = int64(idInt)
 	}
 
-	columns := GetColumns(columnsModel, tb.ConnectionDriver)
+	columns := GetColumns(columnsModel, tb.connectionDriver)
 	var fun types.FieldValueFun
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
-			for i := 0; i < len(tb.Form.FormList); i++ {
-				if k == tb.Form.FormList[i].Field {
-					fun = tb.Form.FormList[i].PostFun
+			for i := 0; i < len(tb.form.FormList); i++ {
+				if k == tb.form.FormList[i].Field {
+					fun = tb.form.FormList[i].PostFun
 				}
 			}
 			if len(v) > 0 {
@@ -309,39 +368,39 @@ func (tb Table) getValues(dataList map[string][]string) dialect.H {
 }
 
 // DeleteDataFromDatabase delete data.
-func (tb Table) DeleteDataFromDatabase(id string) {
+func (tb DefaultTable) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		tb.delete(tb.Form.Table, "id", id)
+		tb.delete(tb.form.Table, "id", id)
 	}
-	if tb.Form.Table == "goadmin_roles" {
+	if tb.form.Table == "goadmin_roles" {
 		tb.delete("goadmin_role_users", "role_id", id)
 		tb.delete("goadmin_role_permissions", "role_id", id)
 		tb.delete("goadmin_role_menu", "role_id", id)
 	}
-	if tb.Form.Table == "goadmin_users" {
+	if tb.form.Table == "goadmin_users" {
 		tb.delete("goadmin_role_users", "user_id", id)
 		tb.delete("goadmin_user_permissions", "user_id", id)
 	}
-	if tb.Form.Table == "goadmin_permissions" {
+	if tb.form.Table == "goadmin_permissions" {
 		tb.delete("goadmin_role_permissions", "permission_id", id)
 		tb.delete("goadmin_user_permissions", "permission_id", id)
 	}
-	if tb.Form.Table == "goadmin_menu" {
+	if tb.form.Table == "goadmin_menu" {
 		tb.delete("goadmin_role_menu", "menu_id", id)
 	}
 }
 
-func (tb Table) delete(table, key, id string) {
-	_ = db.WithDriver(tb.ConnectionDriver).
+func (tb DefaultTable) delete(table, key, id string) {
+	_ = db.WithDriver(tb.connectionDriver).
 		Table(table).
 		Where(key, "=", id).
 		Delete()
 }
 
 // db is a helper function return db connection.
-func (tb Table) db() db.Connection {
-	return db.GetConnectionByDriver(tb.ConnectionDriver)
+func (tb DefaultTable) db() db.Connection {
+	return db.GetConnectionByDriver(tb.connectionDriver)
 }
 
 func GetNewFormList(old []types.Form) []types.Form {

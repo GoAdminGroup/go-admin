@@ -79,6 +79,7 @@ type Form struct {
 type RowModel struct {
 	ID    int64
 	Value string
+	Row   map[string]interface{}
 }
 
 // FieldValueFun is filter function of data.
@@ -93,6 +94,7 @@ type Field struct {
 	JoinTable []Join
 	Sortable  bool
 	Filter    bool
+	Hide      bool
 }
 
 type Join struct {

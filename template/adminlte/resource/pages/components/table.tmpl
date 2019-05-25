@@ -37,7 +37,9 @@
             <tr>
                 {{if eq $Type "data-table"}}
                     <td>
+                        {{if .DeleteUrl}}
                         <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+                        {{end}}
                     </td>
                 {{end}}
                 {{range $key2, $head2 := $Thead}}
@@ -45,8 +47,10 @@
                 {{end}}
                 {{if eq $Type "data-table"}}
                     <td>
+                        {{if $EditUrl}}
                         <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
                         <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+                        {{end}}
                     </td>
                 {{end}}
             </tr>
@@ -109,8 +113,9 @@
                     },
                     success: function (data) {
                         $.pjax.reload('#pjax-container');
-
-                        data = JSON.parse(data);
+                        if(typeof(data) === "string"){
+                        	data = JSON.parse(data);
+                        } 
                         if (data.code === 200) {
                             $('#_TOKEN').val(data.data);
                             swal(data.msg, '', 'success');
