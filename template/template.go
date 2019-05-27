@@ -92,14 +92,14 @@ type Component interface {
 	GetAsset(string) ([]byte, error)
 }
 
-var CompMap = map[string]Component{
+var compMap = map[string]Component{
 	"login": login.GetLoginComponent(),
 }
 
 // GetComp gets the component by registered name. If the
 // name is not found, it panics.
 func GetComp(name string) Component {
-	if comp, ok := CompMap[name]; ok {
+	if comp, ok := compMap[name]; ok {
 		return comp
 	}
 	panic("wrong component name")
@@ -114,10 +114,24 @@ func AddComp(name string, comp Component) {
 	if comp == nil {
 		panic("component is nil")
 	}
-	if _, dup := CompMap[name]; dup {
+	if _, dup := compMap[name]; dup {
 		panic("add component twice " + name)
 	}
-	CompMap[name] = comp
+	compMap[name] = comp
+}
+
+// SetComp makes a component available by the provided name.
+// If the value corresponding to the key is empty or if component is nil,
+// it panics.
+func SetComp(name string, comp Component) {
+	compMu.Lock()
+	defer compMu.Unlock()
+	if comp == nil {
+		panic("component is nil")
+	}
+	if _, dup := compMap[name]; dup {
+		compMap[name] = comp
+	}
 }
 
 func Excecute(tmpl *template.Template,

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
 )
@@ -17,7 +18,7 @@ func NewManager(dataList map[string][]string) {
 	id, _ := db.Table("goadmin_users").
 		Insert(dialect.H{
 			"username": dataList["username"][0],
-			"password": dataList["password"][0],
+			"password": auth.EncodePassword([]byte(dataList["password"][0])),
 			"name":     dataList["name"][0],
 			"avatar":   dataList["avatar"][0],
 		})
@@ -58,7 +59,7 @@ func EditManager(dataList map[string][]string) {
 		Where("id", "=", dataList["id"][0]).
 		Update(dialect.H{
 			"username": dataList["username"][0],
-			"password": dataList["password"][0],
+			"password": auth.EncodePassword([]byte(dataList["password"][0])),
 			"name":     dataList["name"][0],
 			"avatar":   dataList["avatar"][0],
 		})
