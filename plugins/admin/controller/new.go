@@ -15,7 +15,8 @@ import (
 // 显示新建表单
 func ShowNewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].GetCanAdd() {
+	panel := models.TableList[prefix]
+	if !panel.GetCanAdd() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -23,7 +24,7 @@ func ShowNewForm(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	formList := models.GetNewFormList(models.TableList[prefix].GetForm().FormList)
+	formList := models.GetNewFormList(panel.GetForm().FormList)
 	for i := 0; i < len(formList); i++ {
 		formList[i].Editable = true
 	}
@@ -36,9 +37,11 @@ func ShowNewForm(ctx *context.Context) {
 			SetToken(auth.TokenHelper.AddToken()).
 			SetTitle("New").
 			SetInfoUrl(Config.PREFIX + "/info/" + prefix + params.GetRouteParamStr()).
+			SetHeader(panel.GetForm().HeaderHtml).
+			SetFooter(panel.GetForm().FooterHtml).
 			GetContent(),
-		Description: models.TableList[prefix].GetForm().Description,
-		Title:       models.TableList[prefix].GetForm().Title,
+		Description: panel.GetForm().Description,
+		Title:       panel.GetForm().Title,
 	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
@@ -46,7 +49,8 @@ func ShowNewForm(ctx *context.Context) {
 // 新建数据
 func NewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].GetCanAdd() {
+	panel := models.TableList[prefix]
+	if !panel.GetCanAdd() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -73,7 +77,7 @@ func NewForm(ctx *context.Context) {
 	} else if prefix == "roles" { // 管理员角色管理新建
 		NewRole((*form).Value)
 	} else {
-		models.TableList[prefix].InsertDataFromDatabase((*form).Value)
+		panel.InsertDataFromDatabase((*form).Value)
 	}
 
 	models.RefreshTableList()
@@ -82,7 +86,7 @@ func NewForm(ctx *context.Context) {
 	prevUrlArr := strings.Split(previous, "?")
 	params := models.GetParamFromUrl(previous)
 
-	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
@@ -100,9 +104,9 @@ func NewForm(ctx *context.Context) {
 
 	box := template.Get(Config.THEME).Box().
 		SetBody(table).
-		SetHeader(dataTable.GetDataTableHeader()).
+		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder(false).
-		SetFooter(panelInfo.Paginator.GetContent()).
+		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 		GetContent()
 
 	user := auth.Auth(ctx)

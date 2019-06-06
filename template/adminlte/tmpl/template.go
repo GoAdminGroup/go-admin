@@ -2557,6 +2557,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </div>
         </div>
     </div>
+	{{.Header}}
     <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
         <div class="box-body">
             <div class="fields-group">
@@ -2615,6 +2616,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{end}}
         <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
     </form>
+	{{.Footer}}
 </div>
 {{end}}`, "components/image": `{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
@@ -2775,11 +2777,11 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     });
 </script>
 {{end}}`, "components/popup": `{{define "popup"}}
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="{{.ID}}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="{{.ID}}" tabindex="-1" role="dialog" aria-labelledby="{{.ID}}" aria-hidden="true">
+    <div class="modal-dialog modal-{{.Size}}" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="{{.ID}}">{{.Title}}</h5>
+                <h5 class="modal-title" id="{{.ID}}Title">{{.Title}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -2789,7 +2791,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{lang "Close"}}</button>
+				{{if .Footer}}
                 <button type="button" class="btn btn-primary">{{.Footer}}</button>
+				{{end}}
             </div>
         </div>
     </div>

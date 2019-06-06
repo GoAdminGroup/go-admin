@@ -17,13 +17,13 @@ import (
 func ShowForm(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].GetEditable() {
+	panel := models.TableList[prefix]
+	if !panel.GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
 
-	formData, title, description := models.TableList[prefix].
-		GetDataFromDatabaseWithId(ctx.Query("id"))
+	formData, title, description := panel.GetDataFromDatabaseWithId(ctx.Query("id"))
 
 	params := models.GetParam(ctx.Request.URL.Query())
 
@@ -37,6 +37,8 @@ func ShowForm(ctx *context.Context) {
 			SetUrl(Config.PREFIX + "/edit/" + prefix).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(Config.PREFIX + "/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), "")).
+			SetHeader(panel.GetForm().HeaderHtml).
+			SetFooter(panel.GetForm().FooterHtml).
 			GetContent(),
 		Description: description,
 		Title:       title,
@@ -47,7 +49,8 @@ func ShowForm(ctx *context.Context) {
 // 编辑数据
 func EditForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
-	if !models.TableList[prefix].GetEditable() {
+	panel := models.TableList[prefix]
+	if !panel.GetEditable() {
 		ctx.Html(http.StatusNotFound, "page not found")
 		return
 	}
@@ -76,7 +79,7 @@ func EditForm(ctx *context.Context) {
 		EditRole((*form).Value)
 	} else {
 		val := (*form).Value
-		for _, f := range models.TableList[prefix].GetForm().FormList {
+		for _, f := range panel.GetForm().FormList {
 			if f.Editable {
 				continue
 			}
@@ -88,7 +91,7 @@ func EditForm(ctx *context.Context) {
 				return
 			}
 		}
-		models.TableList[prefix].UpdateDataFromDatabase((*form).Value)
+		panel.UpdateDataFromDatabase((*form).Value)
 	}
 
 	models.RefreshTableList()
@@ -102,7 +105,7 @@ func EditForm(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	panelInfo := models.TableList[prefix].GetDataFromDatabase(prevUrlArr[0], params)
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	dataTable := template.Get(Config.THEME).
 		DataTable().
@@ -121,9 +124,9 @@ func EditForm(ctx *context.Context) {
 
 	box := template.Get(Config.THEME).Box().
 		SetBody(table).
-		SetHeader(dataTable.GetDataTableHeader()).
+		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder(false).
-		SetFooter(panelInfo.Paginator.GetContent()).
+		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 		GetContent()
 
 	user := auth.Auth(ctx)

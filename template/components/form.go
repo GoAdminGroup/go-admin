@@ -7,7 +7,9 @@ import (
 
 type FormAttribute struct {
 	Name      string
+	Header     template.HTML
 	Content   []types.Form
+	Footer     template.HTML
 	Url       string
 	Method    string
 	InfoUrl   string
@@ -17,8 +19,18 @@ type FormAttribute struct {
 	types.Attribute
 }
 
+func (compo *FormAttribute) SetHeader(value template.HTML) types.FormAttribute {
+	compo.Header = value
+	return compo
+}
+
 func (compo *FormAttribute) SetContent(value []types.Form) types.FormAttribute {
 	compo.Content = value
+	return compo
+}
+
+func (compo *FormAttribute) SetFooter(value template.HTML) types.FormAttribute {
+	compo.Footer = value
 	return compo
 }
 
