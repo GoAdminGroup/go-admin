@@ -15,6 +15,7 @@
             </div>
         </div>
     </div>
+    {{.Header}}
     <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
         <div class="box-body">
             <div class="fields-group">
@@ -73,5 +74,6 @@
         {{end}}
         <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
     </form>
+    {{.Footer}}
 </div>
 {{end}}

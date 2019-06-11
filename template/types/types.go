@@ -111,6 +111,8 @@ type InfoPanel struct {
 	Table       string
 	Title       string
 	Description string
+	HeaderHtml  template.HTML
+	FooterHtml  template.HTML
 }
 
 // FormPanel
@@ -119,4 +121,6 @@ type FormPanel struct {
 	Table       string
 	Title       string
 	Description string
+	HeaderHtml  template.HTML
+	FooterHtml  template.HTML
 }

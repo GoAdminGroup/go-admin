@@ -10,7 +10,9 @@ import (
 )
 
 type FormAttribute interface {
+	SetHeader(value template.HTML) FormAttribute
 	SetContent(value []Form) FormAttribute
+	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetInfoUrl(value string) FormAttribute
@@ -192,5 +194,6 @@ type PopupAttribute interface {
 	SetTitle(value string) PopupAttribute
 	SetFooter(value string) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
+	SetSize(value string) PopupAttribute
 	GetContent() template.HTML
 }

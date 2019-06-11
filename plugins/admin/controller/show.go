@@ -18,6 +18,7 @@ import (
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
+	panel := models.TableList[prefix]
 
 	params := models.GetParam(ctx.Request.URL.Query())
 
@@ -25,15 +26,14 @@ func ShowInfo(ctx *context.Context) {
 	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
 	deleteUrl := Config.PREFIX + "/delete/" + prefix
 
-	panelInfo := models.TableList[prefix].GetDataFromDatabase(ctx.Path(), params)
+	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
 
 	var box template2.HTML
-
 	if prefix != "op" {
 		dataTable := template.Get(Config.THEME).
 			DataTable().
 			SetInfoList(panelInfo.InfoList).
-			SetFilters(models.TableList[prefix].GetFiltersMap()).
+			SetFilters(panel.GetFiltersMap()).
 			SetInfoUrl(Config.PREFIX + "/info/" + prefix).
 			SetThead(panelInfo.Thead)
 
@@ -51,9 +51,9 @@ func ShowInfo(ctx *context.Context) {
 
 		box = template.Get(Config.THEME).Box().
 			SetBody(table).
-			SetHeader(dataTable.GetDataTableHeader()).
+			SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 			WithHeadBorder(false).
-			SetFooter(panelInfo.Paginator.GetContent()).
+			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 			GetContent()
 	} else {
 		dataTable := template.Get(Config.THEME).
@@ -67,7 +67,8 @@ func ShowInfo(ctx *context.Context) {
 		box = template.Get(Config.THEME).Box().
 			SetBody(table).
 			WithHeadBorder(false).
-			SetFooter(panelInfo.Paginator.GetContent()).
+			SetHeader(panel.GetInfo().HeaderHtml).
+			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 			GetContent()
 	}
 
