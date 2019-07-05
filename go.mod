@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go v0.37.4 // indirect
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
 	github.com/Netflix/go-expect v0.0.0-20180928190340-9d1f4485533b // indirect
-	github.com/astaxie/beego v1.11.1
+	github.com/astaxie/beego v1.12.0
 	github.com/buaazp/fasthttprouter v0.1.1
 	github.com/denisenkom/go-mssqldb v0.0.0-20181014144952-4e0d7dc8888f
 	github.com/gin-gonic/gin v1.4.0
