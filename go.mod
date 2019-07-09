@@ -28,7 +28,7 @@ require (
 	github.com/schollz/progressbar/v2 v2.13.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
-	github.com/valyala/fasthttp v1.3.0
+	github.com/valyala/fasthttp v1.4.0
 	github.com/valyala/fasttemplate v1.0.1 // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20190513172903-22d7a77e9e5f
