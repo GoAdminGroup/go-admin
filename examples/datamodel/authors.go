@@ -3,6 +3,7 @@ package datamodel
 import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func GetAuthorsTable() (authorsTable models.Table) {
@@ -77,7 +78,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -87,7 +88,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -97,7 +98,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -107,7 +108,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -117,7 +118,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -127,7 +128,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "date",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -137,7 +138,7 @@ func GetAuthorsTable() (authorsTable models.Table) {
 			TypeName: "timestamp",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

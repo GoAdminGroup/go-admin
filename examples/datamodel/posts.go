@@ -69,7 +69,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -79,7 +79,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -89,7 +89,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -99,7 +99,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -119,7 +119,7 @@ func GetPostsTable() (postsTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

@@ -7,9 +7,9 @@ import (
 
 type FormAttribute struct {
 	Name      string
-	Header     template.HTML
+	Header    template.HTML
 	Content   []types.Form
-	Footer     template.HTML
+	Footer    template.HTML
 	Url       string
 	Method    string
 	InfoUrl   string
@@ -68,5 +68,6 @@ func (compo *FormAttribute) GetContent() template.HTML {
 	return ComposeHtml(compo.TemplateList, *compo, "form",
 		"form/default", "form/file", "form/textarea",
 		"form/selectbox", "form/text",
-		"form/password", "form/select", "form/singleselect", "form/richtext", "form/iconpicker")
+		"form/password", "form/select", "form/singleselect",
+		"form/richtext", "form/iconpicker", "form/datetime")
 }

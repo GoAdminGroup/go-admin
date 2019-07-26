@@ -41,6 +41,8 @@
                         {{ template "form_iconpicker" $data }}
                     {{else if eq $data.FormType "richtext"}}
                         {{ template "form_rich_text" $data }}
+                    {{else if eq $data.FormType "datetime"}}
+                        {{ template "form_datetime" $data }}
                     {{end}}
                 </div>
                 {{end}}

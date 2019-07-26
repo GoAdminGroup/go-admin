@@ -3,6 +3,7 @@ package datamodel
 import (
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/types"
+	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func GetUserTable() (userTable models.Table) {
@@ -74,7 +75,7 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "int",
 			Default:  "",
 			Editable: false,
-			FormType: "default",
+			FormType: form.Default,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -84,7 +85,7 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -94,7 +95,7 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -104,7 +105,7 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "tinyint",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -114,7 +115,7 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -124,7 +125,27 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: "text",
+			FormType: form.Text,
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     "Created at",
+			Field:    "created_at",
+			TypeName: "varchar",
+			Default:  "2017-01-05 23:01:17",
+			Editable: true,
+			FormType: form.Datetime,
+			ExcuFun: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     "Updated at",
+			Field:    "updated_at",
+			TypeName: "varchar",
+			Default:  "2017-01-05 23:01:17",
+			Editable: true,
+			FormType: form.Datetime,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

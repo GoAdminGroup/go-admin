@@ -10,4 +10,5 @@ const (
 	File         = "file"
 	Password     = "password"
 	RichText     = "richtext"
+	Datetime     = "datetime"
 )

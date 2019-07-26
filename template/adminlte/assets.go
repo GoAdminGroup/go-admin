@@ -305,4 +305,7 @@ var asserts = []string{
 	"/toastr/build/toastr.min.js",
 	"/chartjs/chart.js",
 	"/wang-editor/wangEditor.min.js",
+	"/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css",
+	"/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js",
+	"/moment/min/moment-with-locales.min.js",
 }
