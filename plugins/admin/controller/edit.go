@@ -83,7 +83,7 @@ func EditForm(ctx *context.Context) {
 			if f.Editable {
 				continue
 			}
-			if len(val[f.Field]) > 0 && f.Field != "id"{
+			if len(val[f.Field]) > 0 && f.Field != "id" {
 				ctx.Json(http.StatusBadRequest, map[string]interface{}{
 					"code": 400,
 					"msg":  "字段[" + f.Field + "]不可编辑",
