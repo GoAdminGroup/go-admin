@@ -11,4 +11,11 @@ const (
 	Password     = "password"
 	RichText     = "richtext"
 	Datetime     = "datetime"
+	Radio        = "radio"
+	Email        = "email"
+	Url          = "url"
+	Ip           = "ip"
+	Color        = "color"
+	Currency     = "currency"
+	Number       = "number"
 )

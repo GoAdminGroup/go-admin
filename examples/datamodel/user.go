@@ -105,7 +105,20 @@ func GetUserTable() (userTable models.Table) {
 			TypeName: "tinyint",
 			Default:  "",
 			Editable: true,
-			FormType: form.Text,
+			Options: []map[string]string{
+				{
+					"field":    "gender",
+					"label":    "male",
+					"value":    "0",
+					"selected": "true",
+				}, {
+					"field":    "gender",
+					"label":    "female",
+					"value":    "1",
+					"selected": "false",
+				},
+			},
+			FormType: form.Radio,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

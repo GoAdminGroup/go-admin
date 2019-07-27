@@ -1,0 +1,16 @@
+{{define "form_radio"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        {{$field := .Field}}
+        {{range $key, $v := .Options }}
+            <input type="radio" name="{{index $v "field"}}" value="{{index $v "value"}}"
+                   class="minimal {{$field}}" checked="{{index $v "selected"}}"
+                   style="position: absolute; opacity: 0;">&nbsp;{{index $v "label"}}&nbsp;&nbsp;
+        {{end}}
+    </div>
+    <script>
+        $(function () {
+            $('.{{.Field}}').iCheck({radioClass: 'iradio_minimal-blue'});
+        });
+    </script>
+{{end}}

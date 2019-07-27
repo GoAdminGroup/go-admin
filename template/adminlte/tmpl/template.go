@@ -1,6 +1,6 @@
 package tmpl
 
-var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
+var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <!-- User Account: style can be found in dropdown.less -->
@@ -38,13 +38,13 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </li>
     </ul>
 </div>
-{{end}}`, "components/alert": `{{define "alert"}}
+{{end}}`,"components/alert":`{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4>{{.Title}}</h4>
     {{.Content}}
 </div>
-{{end}}`, "components/area-chart": `{{define "area-chart"}}
+{{end}}`,"components/area-chart":`{{define "area-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -93,7 +93,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     });
 </script>
-{{end}}`, "components/bar-chart": `{{define "bar-chart"}}
+{{end}}`,"components/bar-chart":`{{define "bar-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -136,7 +136,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         datasetFill: false
     })
 </script>
-{{end}}`, "components/box": `{{define "box"}}
+{{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
         {{.Header}}
@@ -150,21 +150,46 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
     {{end}}
 </div>
-{{end}}`, "components/chart-legend": `{{define "chart-legend"}}
+{{end}}`,"components/chart-legend":`{{define "chart-legend"}}
 <ul class="chart-legend clearfix">
     {{range $key, $data := .Data}}
         <li><i class="fa fa-circle-o text-{{index $data "color"}}"></i>{{index $data "label"}}</li>
     {{end}}
 </ul>
-{{end}}`, "components/col": `{{define "col"}}
+{{end}}`,"components/col":`{{define "col"}}
 <div class="{{.Size}}">{{.Content}}</div>
-{{end}}`, "components/description": `{{define "description"}}
+{{end}}`,"components/description":`{{define "description"}}
 <div class="description-block border-{{.Border}}">
     <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{.Percent}}%</span>
     <h5 class="description-header">{{.Number}}</h5>
     <span class="description-text">{{.Title}}</span>
 </div>
-{{end}}`, "components/form/datetime": `{{define "form_datetime"}}
+{{end}}`,"components/form/color":`{{define "form_color"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group colorpicker-element">
+            <span class="input-group-addon"><i style="background-color: rgb(0, 0, 0);"></i></span>
+            <input style="width: 140px" type="text" id="{{.Field}}" name="{{.Field}}" value="" class="form-control {{.Field}}" placeholder="{{.Value}}">
+        </div>
+    </div>
+    <script>
+        $('.{{.Field}}').parent().colorpicker([]);
+    </script>
+{{end}}`,"components/form/currency":`{{define "form_currency"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input style="width: 120px; text-align: right;" type="text" id="{{.Field}}" name="{{.Field}}"
+                   value="{{.Value}}" class="form-control {{.Field}}" placeholder="{{.Head}}">
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $('.{{.Field}}').inputmask({"alias": "currency", "radixPoint": ".", "prefix": "", "removeMaskOnSubmit": true});
+        });
+    </script>
+{{end}}`,"components/form/datetime":`{{define "form_datetime"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -182,7 +207,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             });
         });
     </script>
-{{end}}`, "components/form/default": `{{define "form_default"}}
+{{end}}`,"components/form/default":`{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
@@ -191,7 +216,16 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 </div>
-{{end}}`, "components/form/file": `{{define "form_file"}}
+{{end}}`,"components/form/email":`{{define "form_email"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-envelope fa-fw"></i></span>
+            <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json"
+                   placeholder="{{lang "Input"}} {{.Head}}">
+        </div>
+    </div>
+{{end}}`,"components/form/file":`{{define "form_file"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
@@ -213,7 +247,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         "allowedFileTypes":["image"]
     });
 </script>
-{{end}}`, "components/form/iconpicker": `{{define "form_iconpicker"}}
+{{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
 <label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
@@ -2458,7 +2492,36 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
 </div>
 </div>
-{{end}}`, "components/form/password": `{{define "form_password"}}
+{{end}}`,"components/form/ip":`{{define "form_ip"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-laptop fa-fw"></i></span>
+            <input style="width: 130px" type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json"
+                   placeholder="{{lang "Input"}} {{.Head}}">
+        </div>
+    </div>
+{{end}}`,"components/form/number":`{{define "form_number"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <input style="width: 100px; text-align: center;" type="text" id="{{.Field}}" name="{{.Field}}"
+                   value="{{.Value}}" class="form-control {{.Field}}"
+                   placeholder="{{.Head}}">
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $('.{{.Field}}:not(.initialized)')
+                .addClass('initialized')
+                .bootstrapNumber({
+                    upClass: 'success',
+                    downClass: 'primary',
+                    center: true
+                });
+        })
+    </script>
+{{end}}`,"components/form/password":`{{define "form_password"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2472,7 +2535,22 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
          </div>
     {{end}}
 </div>
-{{end}}`, "components/form/richtext": `{{define "form_rich_text"}}
+{{end}}`,"components/form/radio":`{{define "form_radio"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        {{$field := .Field}}
+        {{range $key, $v := .Options }}
+            <input type="radio" name="{{index $v "field"}}" value="{{index $v "value"}}"
+                   class="minimal {{$field}}" checked="{{index $v "selected"}}"
+                   style="position: absolute; opacity: 0;">&nbsp;{{index $v "label"}}&nbsp;&nbsp;
+        {{end}}
+    </div>
+    <script>
+        $(function () {
+            $('.{{.Field}}').iCheck({radioClass: 'iradio_minimal-blue'});
+        });
+    </script>
+{{end}}`,"components/form/richtext":`{{define "form_rich_text"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div id="{{.Field}}-editor">
@@ -2492,24 +2570,26 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         editor.$textElem.attr('contenteditable', false);
         {{end}}
     </script>
-{{end}}`, "components/form/select": `{{define "form_select"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
-<div class="col-sm-8">
-    <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
-        {{range $key, $v := .Options }}
-            <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
-        {{end}}
-    </select>
-    <!--<span class="help-block">
-        <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
-    </span>-->
-</div>
-<script>
-    $(".{{.Field}}").select2({
-        allowClear: true
-    });
-</script>
-{{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
+{{end}}`,"components/form/select":`{{define "form_select"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]"
+                multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true"
+                {{if not .Editable}}disabled="disabled"{{end}}>
+            {{range $key, $v := .Options }}
+                <option value='{{index $v "value"}}' {{index $v "selected"}}>{{index $v "field"}}</option>
+            {{end}}
+        </select>
+        <!--<span class="help-block">
+            <i class="fa fa-info-circle"></i>&nbsp;All methods if empty
+        </span>-->
+    </div>
+    <script>
+        $(".{{.Field}}").select2({
+            allowClear: true
+        });
+    </script>
+{{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2522,7 +2602,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 <script>
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
-{{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
+{{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2540,7 +2620,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         maximumSelectionLength: 1
     });
 </script>
-{{end}}`, "components/form/text": `{{define "form_text"}}
+{{end}}`,"components/form/text":`{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2554,94 +2634,118 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     {{end}}
 </div>
-{{end}}`, "components/form/textarea": `{{define "form_textarea"}}
+{{end}}`,"components/form/textarea":`{{define "form_textarea"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}" {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
 </div>
-{{end}}`, "components/form": `{{define "form"}}
-<script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
-<script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script src="{{.Prefix}}/assets/wang-editor/wangEditor.min.js"></script>
-<div class="box box-info">
-    <div class="box-header with-border">
-        <h3 class="box-title">{{lang .Title}}</h3>
-        <div class="box-tools">
-            <!-- <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
-            </div> -->
-            <div class="btn-group pull-right" style="margin-right: 10px">
-                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
-            </div>
+{{end}}`,"components/form/url":`{{define "form_url"}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-internet-explorer fa-fw"></i></span>
+            <input type="text" id="{{.Field}}" name="{{.Field}}" value='{{.Value}}' class="form-control json"
+                   placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-    {{.Header}}
-    <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
-        <div class="box-body">
-            <div class="fields-group">
-                {{range $key, $data := .Content}}
-                <div class="form-group">
-                    {{if eq $data.FormType "default"}}
-                        {{ template "form_default" $data }}
-                    {{else if eq $data.FormType "text"}}
-                        {{ template "form_text" $data }}
-                    {{else if eq $data.FormType "file"}}
-                        {{ template "form_file" $data }}
-                    {{else if eq $data.FormType "password"}}
-                        {{ template "form_password" $data }}
-                    {{else if eq $data.FormType "selectbox"}}
-                        {{ template "form_selectbox" $data }}
-                    {{else if eq $data.FormType "select"}}
-                        {{ template "form_select" $data }}
-                    {{else if eq $data.FormType "select_single"}}
-                        {{ template "form_select_single" $data }}
-                    {{else if eq $data.FormType "textarea"}}
-                        {{ template "form_textarea" $data }}
-                    {{else if eq $data.FormType "iconpicker"}}
-                        {{ template "form_iconpicker" $data }}
-                    {{else if eq $data.FormType "richtext"}}
-                        {{ template "form_rich_text" $data }}
-                    {{else if eq $data.FormType "datetime"}}
-                        {{ template "form_datetime" $data }}
+{{end}}`,"components/form":`{{define "form"}}
+    <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
+    <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
+    <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+    <script src="{{.Prefix}}/assets/wang-editor/wangEditor.min.js"></script>
+    <div class="box box-info">
+        <div class="box-header with-border">
+            <h3 class="box-title">{{lang .Title}}</h3>
+            <div class="box-tools">
+                <!-- <div class="btn-group pull-right" style="margin-right: 10px">
+                <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
+            </div> -->
+                <div class="btn-group pull-right" style="margin-right: 10px">
+                    <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
+                </div>
+            </div>
+        </div>
+        {{.Header}}
+        <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
+            <div class="box-body">
+                <div class="fields-group">
+                    {{range $key, $data := .Content}}
+                        <div class="form-group">
+                            {{if eq $data.FormType "default"}}
+                                {{ template "form_default" $data }}
+                            {{else if eq $data.FormType "text"}}
+                                {{ template "form_text" $data }}
+                            {{else if eq $data.FormType "file"}}
+                                {{ template "form_file" $data }}
+                            {{else if eq $data.FormType "password"}}
+                                {{ template "form_password" $data }}
+                            {{else if eq $data.FormType "selectbox"}}
+                                {{ template "form_selectbox" $data }}
+                            {{else if eq $data.FormType "select"}}
+                                {{ template "form_select" $data }}
+                            {{else if eq $data.FormType "select_single"}}
+                                {{ template "form_select_single" $data }}
+                            {{else if eq $data.FormType "textarea"}}
+                                {{ template "form_textarea" $data }}
+                            {{else if eq $data.FormType "iconpicker"}}
+                                {{ template "form_iconpicker" $data }}
+                            {{else if eq $data.FormType "richtext"}}
+                                {{ template "form_rich_text" $data }}
+                            {{else if eq $data.FormType "datetime"}}
+                                {{ template "form_datetime" $data }}
+                            {{else if eq $data.FormType "radio"}}
+                                {{ template "form_radio" $data }}
+                            {{else if eq $data.FormType "email"}}
+                                {{ template "form_email" $data }}
+                            {{else if eq $data.FormType "url"}}
+                                {{ template "form_url" $data }}
+                            {{else if eq $data.FormType "ip"}}
+                                {{ template "form_ip" $data }}
+                            {{else if eq $data.FormType "color"}}
+                                {{ template "form_color" $data }}
+                            {{else if eq $data.FormType "currency"}}
+                                {{ template "form_currency" $data }}
+                            {{else if eq $data.FormType "number"}}
+                                {{ template "form_number" $data }}
+                            {{end}}
+                        </div>
                     {{end}}
                 </div>
+            </div>
+            <div class="box-footer">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-8">
+
+                    <div class="btn-group pull-right">
+                        <button type="submit" class="btn btn-info pull-right"
+                                data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
+                            {{lang "Save"}}
+                        </button>
+                    </div>
+
+                    <div class="btn-group pull-left">
+                        <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+            {{range $key, $data := .Content}}
+                {{if eq $data.Field "id"}}
+                    <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
                 {{end}}
-            </div>
-        </div>
-        <div class="box-footer">
-            <div class="col-md-2">
-            </div>
-            <div class="col-md-8">
-
-                <div class="btn-group pull-right">
-                    <button type="submit" class="btn btn-info pull-right"
-                            data-loading-text="&lt;i class='fa fa-spinner fa-spin '&gt;&lt;/i&gt; Save">
-                        {{lang "Save"}}
-                    </button>
-                </div>
-
-                <div class="btn-group pull-left">
-                    <button type="reset" class="btn btn-warning">{{lang "Reset"}}</button>
-                </div>
-
-            </div>
-
-        </div>
-
-        <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
-        {{range $key, $data := .Content}}
-            {{if eq $data.Field "id"}}
-                <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
             {{end}}
-        {{end}}
-        <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
-    </form>
-    {{.Footer}}
-</div>
-{{end}}`, "components/image": `{{define "image"}}
+            <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
+        </form>
+        {{.Footer}}
+    </div>
+{{end}}`,"components/image":`{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`, "components/infobox": `{{define "infobox"}}
+{{end}}`,"components/infobox":`{{define "infobox"}}
 <div class="info-box">
     <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
     <div class="info-box-content">
@@ -2650,9 +2754,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{.Content}}
     </div>
 </div>
-{{end}}`, "components/label": `{{define "label"}}
+{{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`, "components/line-chart": `{{define "line-chart"}}
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -2701,7 +2805,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     })
 </script>
-{{end}}`, "components/paginator": `{{define "paginator"}}
+{{end}}`,"components/paginator":`{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
@@ -2759,7 +2863,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </select>
     <small>entries</small>
 </label>
-{{end}}`, "components/pie-chart": `{{define "pie-chart"}}
+{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -2797,7 +2901,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         tooltipTemplate      : '<%=value %> <%=label%> users'
     });
 </script>
-{{end}}`, "components/popup": `{{define "popup"}}
+{{end}}`,"components/popup":`{{define "popup"}}
 <div class="modal fade" id="{{.ID}}" tabindex="-1" role="dialog" aria-labelledby="{{.ID}}" aria-hidden="true">
     <div class="modal-dialog modal-{{.Size}}" role="document">
         <div class="modal-content">
@@ -2819,7 +2923,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         </div>
     </div>
 </div>
-{{end}}`, "components/productlist": `{{define "productlist"}}
+{{end}}`,"components/productlist":`{{define "productlist"}}
 <ul class="products-list product-list-in-box">
     {{range $key, $data := .Data}}
     <li class="item">
@@ -2839,7 +2943,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </li>
     {{end}}
 </ul>
-{{end}}`, "components/progress-group": `{{define "progress-group"}}
+{{end}}`,"components/progress-group":`{{define "progress-group"}}
 <div class="progress-group">
     <span class="progress-text">{{.Title}}</span>
     <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
@@ -2848,9 +2952,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
     </div>
 </div>
-{{end}}`, "components/row": `{{define "row"}}
+{{end}}`,"components/row":`{{define "row"}}
 <div class="row">{{.Content}}</div>
-{{end}}`, "components/smallbox": `{{define "smallbox"}}
+{{end}}`,"components/smallbox":`{{define "smallbox"}}
 <div class="small-box bg-{{.Color}}">
     <div class="inner">
         <h3>{{.Value}}</h3>
@@ -2864,7 +2968,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <i class="fa fa-arrow-circle-right"></i>
     </a>
 </div>
-{{end}}`, "components/table/box-header": `{{define "box-header"}}
+{{end}}`,"components/table/box-header":`{{define "box-header"}}
 <div class="pull-right">
 
     <div class="btn-group pull-right" style="margin-right: 10px">
@@ -2958,7 +3062,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
-{{end}}`, "components/table": `{{define "table"}}
+{{end}}`,"components/table":`{{define "table"}}
     <table class="table table-hover">
         {{if eq .Type "table"}}
             <thead>
@@ -3088,7 +3192,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         }
     </script>
     {{end}}
-{{end}}`, "components/tabs": `{{define "tabs"}}
+{{end}}`,"components/tabs":`{{define "tabs"}}
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         {{range $key, $data := .Data}}
@@ -3113,7 +3217,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
     </div>
 </div>
-{{end}}`, "components/tree-header": `{{define "tree-header"}}
+{{end}}`,"components/tree-header":`{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
         <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
@@ -3132,7 +3236,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 <div class="btn-group">
 </div>
-{{end}}`, "components/tree": `{{define "tree"}}
+{{end}}`,"components/tree":`{{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
     {{$EditUrl := .EditUrl}}
     <ol class="dd-list">
@@ -3225,7 +3329,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
     });
 </script>
-{{end}}`, "content": `{{define "content"}}
+{{end}}`,"content":`{{define "content"}}
 <script>
     $('.grid-per-pager').on("change", function (e) {
         console.log("changing...");
@@ -3249,7 +3353,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <section class="content">
     {{.Panel.Content}}
 </section>
-{{end}}`, "footer": `{{define "footer"}}
+{{end}}`,"footer":`{{define "footer"}}
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
         <b>Version</b> {{.System.Version}}
@@ -3257,52 +3361,58 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
     reserved.
 </footer>
-{{end}}`, "head": `{{define "head"}}
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{.Title}}</title>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
-    <!-- Ionicons -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
-    <!-- DataTables -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
-    <!-- iCheck -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/{{.ColorScheme}}.css">
-    <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+{{end}}`,"head":`{{define "head"}}
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{{.Title}}</title>
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <!-- Bootstrap 3.3.7 -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
+        <!-- Ionicons -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
+        <!-- DataTables -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
+        <!-- iCheck -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/colorpicker/bootstrap-colorpicker.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
+        <link rel="stylesheet"
+              href="{{.AssertRootUrl}}/assets/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
+        <link rel="stylesheet"
+              href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/{{.ColorScheme}}.css">
+        <!--[if lt IE 9]>
+        <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
 
-    <!-- Google Font -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
+        <!-- Google Font -->
+        <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
 
-    <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
-</head>
-{{end}}`, "header": `{{define "header"}}
+        <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/colorpicker/bootstrap-colorpicker.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/input-mask/jquery.inputmask.bundle.min.js"></script>
+        <script src="{{.AssertRootUrl}}/assets/number-input/bootstrap-number-input.js"></script>
+    </head>
+{{end}}`,"header":`{{define "header"}}
 <header class="main-header">
     <!-- Logo -->
     <a href="/" class="logo">
@@ -3321,7 +3431,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{ template "admin_panel" . }}
     </nav>
 </header>
-{{end}}`, "js": `{{define "js"}}
+{{end}}`,"js":`{{define "js"}}
 <script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -3339,7 +3449,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
-{{end}}`, "layout": `{{define "layout"}}
+{{end}}`,"layout":`{{define "layout"}}
 
 <!DOCTYPE html>
 <html>
@@ -3369,7 +3479,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </html>
 
 {{end}}
-`, "menu": `{{define "menu"}}
+`,"menu":`{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
 {{$AssertRootUrl := .AssertRootUrl}}
 {{range $key, $list := .Menu.GlobalMenuList }}
@@ -3403,7 +3513,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     {{end}}
 {{end}}
 </ul>
-{{end}}`, "sidebar": `{{define "sidebar"}}
+{{end}}`,"sidebar":`{{define "sidebar"}}
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -3439,4 +3549,4 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </section>
     <!-- /.sidebar -->
 </aside>
-{{end}}`}
+{{end}}`,}
