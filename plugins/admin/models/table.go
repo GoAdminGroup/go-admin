@@ -458,7 +458,7 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 		return columns
 	case "sqlite":
 		for key, model := range columnsModel {
-			columns[key] = string(model["name"].([]uint8))
+			columns[key] = string(model["name"].(string))
 		}
 		return columns
 	default:
