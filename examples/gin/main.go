@@ -25,17 +25,17 @@ func main() {
 	cfg := config.Config{
 		DATABASE: []config.Database{
 			{
-				//HOST:         "127.0.0.1",
-				//PORT:         "3306",
-				//USER:         "root",
-				//PWD:          "root",
-				//NAME:         "godmin",
-				//MAX_IDLE_CON: 50,
-				//MAX_OPEN_CON: 150,
-				//DRIVER:       db.DriverMysql,
+				HOST:         "127.0.0.1",
+				PORT:         "3306",
+				USER:         "root",
+				PWD:          "root",
+				NAME:         "godmin",
+				MAX_IDLE_CON: 50,
+				MAX_OPEN_CON: 150,
+				DRIVER:       db.DriverMysql,
 
-				DRIVER: db.DriverSqlite,
-				FILE:   "../datamodel/admin.db",
+				//DRIVER: db.DriverSqlite,
+				//FILE:   "../datamodel/admin.db",
 			},
 		},
 		DOMAIN: "localhost",
