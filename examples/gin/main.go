@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/adminlte"
@@ -44,7 +45,7 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE:    "cn",
+		LANGUAGE:    language.CN,
 		INDEX:       "/",
 		DEBUG:       true,
 		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,

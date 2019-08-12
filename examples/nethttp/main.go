@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"net/http"
@@ -29,10 +30,11 @@ func main() {
 				DRIVER:       db.DriverMysql,
 			},
 		},
-		DOMAIN: "localhost",
-		PREFIX: "admin",
-		INDEX:  "/",
-		DEBUG:  true,
+		DOMAIN:   "localhost",
+		PREFIX:   "admin",
+		INDEX:    "/",
+		DEBUG:    true,
+		LANGUAGE: language.CN,
 	}
 
 	examplePlugin := example.NewExample()
@@ -42,5 +44,5 @@ func main() {
 		panic(err)
 	}
 
-	http.ListenAndServe(":9002", mux)
+	_ = http.ListenAndServe(":9002", mux)
 }

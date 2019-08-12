@@ -10,6 +10,12 @@ import (
 	"strings"
 )
 
+const (
+	EN = "en"
+	CN = "cn"
+	JP = "jp"
+)
+
 func Get(value string) string {
 	if config.Get().LANGUAGE == "" {
 		return value
