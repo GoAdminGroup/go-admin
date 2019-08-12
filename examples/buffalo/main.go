@@ -1,20 +1,24 @@
 package main
 
 import (
-	"github.com/buaazp/fasthttprouter"
-	_ "github.com/chenhg5/go-admin/adapter/fasthttp"
+	_ "github.com/chenhg5/go-admin/adapter/buffalo"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/chenhg5/go-admin/template/types"
-	"github.com/valyala/fasthttp"
+	"github.com/gobuffalo/buffalo"
+	"net/http"
 )
 
 func main() {
-	router := fasthttprouter.New()
+	bu := buffalo.New(buffalo.Options{
+		Env:  "test",
+		Addr: "127.0.0.1:9033",
+	})
 
 	eng := engine.Default()
 
@@ -33,26 +37,36 @@ func main() {
 		},
 		DOMAIN: "localhost",
 		PREFIX: "admin",
-		INDEX:  "/",
-		DEBUG:  true,
+		STORE: config.Store{
+			PATH:   "./uploads",
+			PREFIX: "uploads",
+		},
+		LANGUAGE:    "cn",
+		INDEX:       "/",
+		DEBUG:       true,
+		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+
+	// you can custom a plugin like:
+
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(router); err != nil {
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(bu); err != nil {
 		panic(err)
 	}
 
-	router.GET("/"+cfg.PREFIX+"/custom", func(ctx *fasthttp.RequestCtx) {
+	bu.ServeFiles("/uploads", http.Dir("./uploads"))
+
+	// you can custom your pages like:
+
+	bu.GET("/"+cfg.PREFIX+"/custom", func(ctx buffalo.Context) error {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})
+		return nil
 	})
 
-	var waitChan chan int
-	go func() {
-		_ = fasthttp.ListenAndServe(":8897", router.Handler)
-	}()
-	<-waitChan
+	_ = bu.Serve()
 }

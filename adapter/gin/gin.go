@@ -87,6 +87,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	if err != nil || sesKey == "" {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		ctx.Abort()
+		return
 	}
 
 	userId, ok := auth.Driver.Load(sesKey)["user_id"]
@@ -94,6 +95,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	if !ok {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		ctx.Abort()
+		return
 	}
 
 	user, ok := auth.GetCurUserById(userId.(string))
@@ -101,6 +103,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	if !ok {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
 		ctx.Abort()
+		return
 	}
 
 	var panel types.Panel
