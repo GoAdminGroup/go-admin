@@ -41,13 +41,13 @@ import (
 
 type ImgAttribute struct {
 	Name   string
-	Witdh  string
+	Width  string
 	Height string
 	Src    string
 }
 
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
-	compo.Witdh = value
+	compo.Width = value
 	return compo
 }
 
@@ -74,7 +74,7 @@ func (compo *ImgAttribute) GetContent() template.HTML {
 func (*Theme) Image() types.ImgAttribute {
 	return &components.ImgAttribute{
 		Name:   "image",
-		Witdh:  "50",
+		Width:  "50",
 		Height: "50",
 		Src:    "",
 	}

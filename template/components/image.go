@@ -7,14 +7,14 @@ import (
 
 type ImgAttribute struct {
 	Name   string
-	Witdh  string
+	Width  string
 	Height string
 	Src    string
 	types.Attribute
 }
 
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
-	compo.Witdh = value
+	compo.Width = value
 	return compo
 }
 
