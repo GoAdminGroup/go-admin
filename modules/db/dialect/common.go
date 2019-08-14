@@ -1,5 +1,7 @@
 package dialect
 
+import "fmt"
+
 type commonDialect struct {
 }
 
@@ -30,7 +32,7 @@ func (commonDialect) Select(comp *SqlComponent) string {
 }
 
 func (commonDialect) ShowColumns(table string) string {
-	return "select column_name, udt_name from information_schema.columns where table_name = " + table
+	return fmt.Sprintf("select column_name, udt_name from information_schema.columns where table_name = '%s'", table)
 }
 
 func (commonDialect) GetName() string {
