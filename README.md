@@ -136,7 +136,7 @@ very welcome to pr
 
 <strong>here to join into the develop team</strong>
 
-QQ Group Num: 756664859, remember to add the reason of apply.
+[join slack](https://app.slack.com/client/T029RQSE6/CME0MBX38/thread/C3MSAFD40-1565569187.323500)
 
 ## Special thanks
 
