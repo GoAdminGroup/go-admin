@@ -119,7 +119,7 @@ func (*Theme) Form() types.FormAttribute {
 func (*Theme) Image() types.ImgAttribute {
 	return &components.ImgAttribute{
 		Name:      "image",
-		Witdh:     "50",
+		Width:     "50",
 		Height:    "50",
 		Src:       "",
 		Attribute: Attribute,

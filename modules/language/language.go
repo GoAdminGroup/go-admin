@@ -14,6 +14,7 @@ const (
 	EN = "en"
 	CN = "cn"
 	JP = "jp"
+	TC = "tc"
 )
 
 func Get(value string) string {
@@ -46,6 +47,7 @@ var Lang = LangMap{
 	"cn": cn,
 	"en": en,
 	"jp": jp,
+	"tc": tc,
 }
 
 func (lang LangMap) Get(value string) string {

@@ -1,10 +1,10 @@
-# 组件开发
+# Component development
 
-组件开发，以图片组件为例。
+New image component development.
 
-## 上层接口新增类型与方法
+## New types and methods of upper interface
 
-- 新建一个```ImgAttribute```类型
+- Create a new ```ImgAttribute``` type:
 
 ```go
 type ImgAttribute interface {
@@ -15,7 +15,7 @@ type ImgAttribute interface {
 }
 ```
 
-- 在```Template```接口中，增加一个方法：
+- Add a method to the ```Template``` interface:
 
 ```go
 type Template interface {
@@ -25,11 +25,11 @@ type Template interface {
 }
 ```
 
-## 具体实现，以```adminlte```为例子
+## Implementation with ```adminlte```
 
-- 实现```ImgAttribute```
+- Implement ```ImgAttribute```
 
-在```./template/adminlte/components```下新建```image.go```文件，内容如下：
+Create a new ```image.go``` file under ```./template/adminlte/components```:
 
 ```go
 package components
@@ -41,13 +41,13 @@ import (
 
 type ImgAttribute struct {
 	Name   string
-	Width  string
+	Witdh  string
 	Height string
 	Src    string
 }
 
 func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
-	compo.Width = value
+	compo.Witdh = value
 	return compo
 }
 
@@ -66,30 +66,26 @@ func (compo *ImgAttribute) GetContent() template.HTML {
 }
 ```
 
-- 实现```Image()```
+- Implement ```Image()``` method
 
-在```./template/adminlte/adminlte.go```中，增加一个函数：
+Add following function to ```.template/adminlte/adminlte.go```:
 
 ```go
 func (*Theme) Image() types.ImgAttribute {
 	return &components.ImgAttribute{
 		Name:   "image",
-		Width:  "50",
+		Witdh:  "50",
 		Height: "50",
 		Src:    "",
 	}
 }
 ```
 
-到这里还是没有完成的，需要增加静态资源文件。
+- Add a static resource file
 
-- 增加静态资源文件
+Create ```image.tmpl``` file under ```.template/adminlte/resource/pages/components```
 
-在```./template/adminlte/resource/pages/components```增加```image.tmpl```文件
-
-烦人，还有最后一步
-
-- 在根目录下执行：
+- Execute in the root directory:
 
 ```shell
 admincli compile

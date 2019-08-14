@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="http://doc.go-admin.cn">Documentation</a> | 
+    <a href="https://github.com/chenhg5/go-admin/blob/master/docs/en/index.md">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
     <a href="http://demo.go-admin.cn/admin">DEMO</a>
 </p>
@@ -46,7 +46,7 @@ account: admin  password: admin
 
 ## How to
 
-see the [docs](http://doc.go-admin.cn) for detail
+see the [docs](https://github.com/chenhg5/go-admin/blob/master/docs/en/index.md) for detail
 
 ### install
 
@@ -136,7 +136,7 @@ very welcome to pr
 
 <strong>here to join into the develop team</strong>
 
-QQ Group Num: 756664859, remember to add the reason of apply.
+[join slack](https://app.slack.com/client/T029RQSE6/CME0MBX38/thread/C3MSAFD40-1565569187.323500)
 
 ## Special thanks
 
