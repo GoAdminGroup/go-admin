@@ -17,7 +17,7 @@ import (
 )
 
 func main() {
-	mux := mux.NewRouter()
+	app := mux.NewRouter()
 	eng := engine.Default()
 
 	cfg := config.Config{
@@ -47,10 +47,10 @@ func main() {
 	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfig(cfg).AddPlugins(admin.NewAdmin(datamodel.Generators), examplePlugin).
-		Use(mux); err != nil {
+		Use(app); err != nil {
 		panic(err)
 	}
 
 	log.Println("Listening 8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(":8080", app))
 }

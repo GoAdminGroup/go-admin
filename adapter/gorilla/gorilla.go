@@ -5,6 +5,7 @@ import (
 	"errors"
 	template2 "html/template"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -35,12 +36,30 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 		return errors.New("wrong parameter")
 	}
 
+	reg1 := regexp.MustCompile(":(.*?)/")
+	reg2 := regexp.MustCompile(":(.*?)$")
+
 	for _, plug := range plugin {
 		var plugCopy plugins.Plugin
 		plugCopy = plug
 		for _, req := range plug.GetRequest() {
-			eng.HandleFunc(req.URL, func(w http.ResponseWriter, r *http.Request) {
+
+			url := req.URL
+			url = reg1.ReplaceAllString(url, "{$1}/")
+			url = reg2.ReplaceAllString(url, "{$1}")
+
+			eng.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
 				ctx := context.NewContext(r)
+
+				params := mux.Vars(r)
+
+				for key, param := range params {
+					if r.URL.RawQuery == "" {
+						r.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param
+					} else {
+						r.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param
+					}
+				}
 
 				plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method))(ctx)
 				for key, head := range ctx.Response.Header {
@@ -58,6 +77,7 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 				_, err := w.Write(buf.Bytes())
 				if err != nil {
 					w.WriteHeader(http.StatusInternalServerError)
+					return
 				}
 				w.WriteHeader(ctx.Response.StatusCode)
 			}).Methods(strings.ToUpper(req.Method))
