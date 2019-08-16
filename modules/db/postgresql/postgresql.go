@@ -7,13 +7,13 @@ package postgresql
 import (
 	"database/sql"
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/performer"
-	_ "github.com/lib/pq"
-	"net/url"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/db/performer"
+	_ "github.com/lib/pq"
 )
 
 type Postgresql struct {
@@ -60,24 +60,15 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 		)
 
 		for conn, cfg := range cfgList {
+			connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+				cfg.HOST, cfg.PORT, cfg.USER, cfg.PWD, cfg.NAME)
 
-			query := url.Values{}
-			query.Add("sslmode", "disable") // "verify-full"
-
-			u := &url.URL{
-				Scheme:   "postgres",
-				User:     url.UserPassword(cfg.USER, cfg.PWD),
-				Host:     fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
-				RawQuery: query.Encode(),
-			}
-
-			sqlDB, err = sql.Open("postgres", u.String())
-
+			sqlDB, err = sql.Open("postgres", connStr)
 			if err != nil {
 				panic(err)
-			} else {
-				db.SqlDBmap[conn] = sqlDB
 			}
+
+			db.SqlDBmap[conn] = sqlDB
 		}
 	})
 }
