@@ -36,14 +36,14 @@ func (db *Mysql) GetName() string {
 	return "mysql"
 }
 
-func (db *Mysql) InitDB(cfglist map[string]config.Database) {
+func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 	db.Once.Do(func() {
 		var (
 			err   error
 			SqlDB *sql.DB
 		)
 
-		for conn, cfg := range cfglist {
+		for conn, cfg := range cfgs {
 			SqlDB, err = sql.Open("mysql", cfg.USER+
 				":"+cfg.PWD+"@tcp("+cfg.HOST+":"+cfg.PORT+")/"+cfg.NAME+"?charset=utf8mb4")
 
@@ -53,7 +53,7 @@ func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 				}
 				panic(err.Error())
 			} else {
-				// Largest set up the database connection reduce timewait
+				// Largest set up the database connection reduce time wait
 				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON)
 				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON)
 

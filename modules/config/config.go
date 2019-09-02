@@ -34,6 +34,23 @@ func (d DatabaseList) GetDefault() Database {
 	return d["default"]
 }
 
+func (d DatabaseList) Add(key string, db Database) {
+	d[key] = db
+}
+
+func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
+	drivers := make(map[string]DatabaseList, 0)
+	for key, item := range d {
+		if driverList, ok := drivers[item.DRIVER]; ok {
+			driverList.Add(key, item)
+		} else {
+			drivers[item.DRIVER] = make(DatabaseList, 0)
+			drivers[item.DRIVER].Add(key, item)
+		}
+	}
+	return drivers
+}
+
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {

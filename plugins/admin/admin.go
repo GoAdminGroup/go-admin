@@ -19,10 +19,8 @@ func (admin *Admin) InitPlugin() {
 	cfg := config.Get()
 
 	// Init database
-	for _, databaseCfg := range cfg.DATABASE {
-		db.GetConnectionByDriver(databaseCfg.DRIVER).InitDB(map[string]config.Database{
-			"default": databaseCfg,
-		})
+	for driver, databaseCfg := range cfg.DATABASE.GroupByDriver() {
+		db.GetConnectionByDriver(driver).InitDB(databaseCfg)
 	}
 
 	// Init router
