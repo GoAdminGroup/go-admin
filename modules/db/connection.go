@@ -23,6 +23,8 @@ const (
 type Connection interface {
 	Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
 	Exec(query string, args ...interface{}) sql.Result
+	QueryWithConnection(conn, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
+	ExecWithConnection(conn, query string, args ...interface{}) sql.Result
 	InitDB(cfg map[string]config.Database)
 	GetName() string
 }
@@ -43,7 +45,7 @@ func GetConnectionByDriver(driver string) Connection {
 }
 
 func GetConnection() Connection {
-	return GetConnectionByDriver(config.Get().DATABASE[0].DRIVER)
+	return GetConnectionByDriver(config.Get().DATABASE.GetDefault().DRIVER)
 }
 
 func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {

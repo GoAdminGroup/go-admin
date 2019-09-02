@@ -22,14 +22,14 @@ func Auth(ctx *context.Context) {
 
 		ctx.Json(http.StatusOK, map[string]interface{}{
 			"code": 200,
-			"msg":  "登录成功",
+			"msg":  "ok",
 			"url":  Config.PREFIX + Config.INDEX,
 		})
 		return
 	}
 	ctx.Json(http.StatusBadRequest, map[string]interface{}{
 		"code": 400,
-		"msg":  "登录失败",
+		"msg":  "fail",
 	})
 	return
 }

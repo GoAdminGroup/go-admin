@@ -17,8 +17,8 @@ import (
 )
 
 type Postgresql struct {
-	SqlDBmap map[string]*sql.DB
-	Once     sync.Once
+	DbList map[string]*sql.DB
+	Once   sync.Once
 }
 
 func GetPostgresqlDB() *Postgresql {
@@ -29,27 +29,30 @@ func (db *Postgresql) GetName() string {
 	return "postgresql"
 }
 
+func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+	return performer.Query(db.DbList[con], filterQuery(query), args...)
+}
+
+func (db *Postgresql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+	return performer.Exec(db.DbList[con], filterQuery(query), args...)
+}
+
 func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	queCount := strings.Count(query, "?")
-	for i := 1; i < queCount+1; i++ {
-		query = strings.Replace(query, "?", "$"+strconv.Itoa(i), 1)
-	}
-	query = strings.Replace(query, "`", "", -1)
-	// TODO: add " to the keyword
-	query = strings.Replace(query, "by order ", `by "order" `, -1)
-	return performer.Query(db.SqlDBmap["default"], query, args...)
+	return performer.Query(db.DbList["default"], filterQuery(query), args...)
 }
 
 func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
+	return performer.Exec(db.DbList["default"], filterQuery(query), args...)
+}
+
+func filterQuery(query string) string {
 	queCount := strings.Count(query, "?")
 	for i := 1; i < queCount+1; i++ {
 		query = strings.Replace(query, "?", "$"+strconv.Itoa(i), 1)
 	}
 	query = strings.Replace(query, "`", "", -1)
 	// TODO: add " to the keyword
-	query = strings.Replace(query, "by order ", `by "order" `, -1)
-	fmt.Println("exec", query)
-	return performer.Exec(db.SqlDBmap["default"], query, args...)
+	return strings.Replace(query, "by order ", `by "order" `, -1)
 }
 
 func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
@@ -68,11 +71,11 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 				panic(err)
 			}
 
-			db.SqlDBmap[conn] = sqlDB
+			db.DbList[conn] = sqlDB
 		}
 	})
 }
 
 var DB = Postgresql{
-	SqlDBmap: map[string]*sql.DB{},
+	DbList: map[string]*sql.DB{},
 }

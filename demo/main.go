@@ -17,8 +17,8 @@ func main() {
 	eng := engine.Default()
 
 	cfg := config.Config{
-		DATABASE: []config.Database{
-			{
+		DATABASE: config.DatabaseList{
+			"default": {
 				HOST:         database.HOST,
 				PORT:         database.PORT,
 				USER:         database.USER,

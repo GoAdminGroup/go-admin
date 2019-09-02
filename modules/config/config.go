@@ -28,6 +28,12 @@ type Database struct {
 	FILE string
 }
 
+type DatabaseList map[string]Database
+
+func (d DatabaseList) GetDefault() Database {
+	return d["default"]
+}
+
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {
@@ -38,10 +44,10 @@ type Store struct {
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
 type Config struct {
-	// An array supports multi database connection. The first
+	// An map supports multi database connection. The first
 	// element of DATABASE is the default connection. See the
 	// file connection.go.
-	DATABASE []Database
+	DATABASE DatabaseList
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.

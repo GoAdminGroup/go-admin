@@ -10,6 +10,9 @@ func GetAuthorsTable() (authorsTable models.Table) {
 
 	authorsTable = models.NewDefaultTable(models.DefaultTableConfig)
 
+	// connect your custom connection
+	// authorsTable = models.NewDefaultTable(models.DefaultTableConfigWithDriverAndConnection("mysql", "admin"))
+
 	authorsTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",

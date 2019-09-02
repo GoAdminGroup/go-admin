@@ -20,12 +20,12 @@ type SqlTxStruct struct {
 }
 
 type Mysql struct {
-	SqlDBmap map[string]*sql.DB
-	Once     sync.Once
+	DbList map[string]*sql.DB
+	Once   sync.Once
 }
 
 var DB = Mysql{
-	SqlDBmap: map[string]*sql.DB{},
+	DbList: map[string]*sql.DB{},
 }
 
 func GetMysqlDB() *Mysql {
@@ -57,85 +57,26 @@ func (db *Mysql) InitDB(cfglist map[string]config.Database) {
 				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON)
 				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON)
 
-				db.SqlDBmap[conn] = SqlDB
+				db.DbList[conn] = SqlDB
 			}
 		}
 	})
 }
 
 func (db *Mysql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+	return performer.Query(db.DbList[con], query, args...)
+}
 
-	rs, err := db.SqlDBmap[con].Query(query, args...)
-
-	if err != nil {
-		if rs != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
-			}
-		}
-		panic(err)
-	}
-
-	col, colErr := rs.Columns()
-
-	if colErr != nil {
-		if rs != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
-			}
-		}
-		panic(colErr)
-	}
-
-	typeVal, err := rs.ColumnTypes()
-	if err != nil {
-		if rs != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
-			}
-		}
-		panic(err)
-	}
-
-	results := make([]map[string]interface{}, 0)
-
-	for rs.Next() {
-		var colVar = make([]interface{}, len(col))
-		for i := 0; i < len(col); i++ {
-			converter.SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
-		}
-		result := make(map[string]interface{})
-		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
-			}
-			panic(scanErr)
-		}
-		for j := 0; j < len(col); j++ {
-			converter.SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
-		}
-		results = append(results, result)
-	}
-	if err := rs.Err(); err != nil {
-		if rs != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
-			}
-		}
-		panic(err)
-	}
-	if cerr := rs.Close(); cerr != nil {
-		panic(cerr)
-	}
-	return results, rs
+func (db *Mysql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+	return performer.Exec(db.DbList[con], query, args...)
 }
 
 func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.SqlDBmap["default"], query, args...)
+	return performer.Query(db.DbList["default"], query, args...)
 }
 
 func (db *Mysql) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.SqlDBmap["default"], query, args...)
+	return performer.Exec(db.DbList["default"], query, args...)
 }
 
 func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTxStruct {
@@ -155,7 +96,7 @@ func (db *Mysql) BeginTransactions() *SqlTxStruct {
 }
 
 func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SqlTxStruct {
-	tx, err := db.SqlDBmap["default"].BeginTx(context.Background(),
+	tx, err := db.DbList["default"].BeginTx(context.Background(),
 		&sql.TxOptions{Isolation: level})
 	if err != nil {
 		panic(err)
@@ -190,16 +131,16 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 	col, colErr := rs.Columns()
 
 	if colErr != nil {
-		if cerr := rs.Close(); cerr != nil {
-			panic(cerr)
+		if closeErr := rs.Close(); closeErr != nil {
+			panic(closeErr)
 		}
 		panic(colErr)
 	}
 
 	typeVal, err := rs.ColumnTypes()
 	if err != nil {
-		if cerr := rs.Close(); cerr != nil {
-			panic(cerr)
+		if closeErr := rs.Close(); closeErr != nil {
+			panic(closeErr)
 		}
 		panic(err)
 	}
@@ -213,8 +154,8 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			if cerr := rs.Close(); cerr != nil {
-				panic(cerr)
+			if closeErr := rs.Close(); closeErr != nil {
+				panic(closeErr)
 			}
 			panic(scanErr)
 		}
@@ -224,8 +165,8 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 		results = append(results, result)
 	}
 	if err := rs.Err(); err != nil {
-		if cerr := rs.Close(); cerr != nil {
-			panic(cerr)
+		if closeErr := rs.Close(); closeErr != nil {
+			panic(closeErr)
 		}
 		panic(err)
 	}

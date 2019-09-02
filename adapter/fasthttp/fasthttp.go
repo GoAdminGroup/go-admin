@@ -171,7 +171,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 
 	if !auth.CheckPermissions(user, string(ctx.Path()), string(ctx.Method())) {
 		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
-			SetTheme("warning").SetContent(template2.HTML("没有权限")).GetContent()
+			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
 
 		panel = types.Panel{
 			Content:     alert,

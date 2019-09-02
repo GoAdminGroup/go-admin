@@ -120,20 +120,20 @@ import (
 )
 
 func GetUsersTable() (usersTable models.Table) {
+	
+	usersTable = models.NewDefaultTable(models.DefaultTableConfig)
 
-	usersTable.Info.FieldList = []types.Field{}
+	usersTable.GetInfo().FieldList = []types.Field{}
 
-	usersTable.Info.Table = "users"
-	usersTable.Info.Title = "Users"
-	usersTable.Info.Description = "Users"
+	usersTable.GetInfo().Table = "users"
+	usersTable.GetInfo().Title = "Users"
+	usersTable.GetInfo().Description = "Users"
 
-	usersTable.Form.FormList = []types.Form{}
+	usersTable.GetForm().FormList = []types.Form{}
 
-	usersTable.Form.Table = "users"
-	usersTable.Form.Title = "Users"
-	usersTable.Form.Description = "Users"
-
-	usersTable.ConnectionDriver = "mysql"
+	usersTable.GetForm().Table = "users"
+	usersTable.GetForm().Title = "Users"
+	usersTable.GetForm().Description = "Users"
 
 	return
 }

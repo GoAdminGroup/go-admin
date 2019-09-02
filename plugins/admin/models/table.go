@@ -56,6 +56,7 @@ type DefaultTable struct {
 	info             *types.InfoPanel
 	form             *types.FormPanel
 	connectionDriver string
+	connection       string
 	canAdd           bool
 	editable         bool
 	deletable        bool
@@ -73,25 +74,38 @@ type PanelInfo struct {
 }
 
 type TableConfig struct {
-	Driver    string
-	CanAdd    bool
-	Editable  bool
-	Deletable bool
+	Driver     string
+	Connection string
+	CanAdd     bool
+	Editable   bool
+	Deletable  bool
 }
 
 var DefaultTableConfig = &TableConfig{
-	Driver:    "mysql",
-	CanAdd:    true,
-	Editable:  true,
-	Deletable: true,
+	Driver:     "mysql",
+	CanAdd:     true,
+	Editable:   true,
+	Deletable:  true,
+	Connection: "default",
 }
 
 func DefaultTableConfigWithDriver(driver string) *TableConfig {
 	return &TableConfig{
-		Driver:    driver,
-		CanAdd:    true,
-		Editable:  true,
-		Deletable: true,
+		Driver:     driver,
+		Connection: "default",
+		CanAdd:     true,
+		Editable:   true,
+		Deletable:  true,
+	}
+}
+
+func DefaultTableConfigWithDriverAndConnection(driver, conn string) *TableConfig {
+	return &TableConfig{
+		Driver:     driver,
+		Connection: conn,
+		CanAdd:     true,
+		Editable:   true,
+		Deletable:  true,
 	}
 }
 
@@ -100,6 +114,7 @@ func NewDefaultTable(cfg *TableConfig) Table {
 		info:             &types.InfoPanel{},
 		form:             &types.FormPanel{},
 		connectionDriver: cfg.Driver,
+		connection:       cfg.Connection,
 		canAdd:           cfg.CanAdd,
 		editable:         cfg.Editable,
 		deletable:        cfg.Deletable,
@@ -157,7 +172,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) Pane
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.info.Table).ShowColumns()
+	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.info.Table).ShowColumns()
 
 	columns := GetColumns(columnsModel, tb.connectionDriver)
 
@@ -269,7 +284,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 	fields := make([]string, 0)
 
-	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.form.Table).ShowColumns()
+	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.form.Table).ShowColumns()
 	columns := GetColumns(columnsModel, tb.connectionDriver)
 
 	for i := 0; i < len(tb.form.FormList); i++ {
@@ -278,7 +293,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 		}
 	}
 
-	res, _ := db.WithDriver(tb.connectionDriver).
+	res, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
 		Table(tb.form.Table).Select(fields...).
 		Where("id", "=", id).
 		First()
@@ -332,7 +347,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriver(tb.connectionDriver).
+	_, _ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
 		Table(tb.form.Table).
 		Where("id", "=", dataList["id"][0]).
 		Update(tb.getValues(dataList))
@@ -341,7 +356,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
 
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriver(tb.connectionDriver).
+	_, _ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
 		Table(tb.form.Table).
 		Insert(tb.getValues(dataList))
 }
@@ -349,7 +364,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList map[string][]string) {
 func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 	value := make(dialect.H, 0)
 
-	columnsModel, _ := db.WithDriver(tb.connectionDriver).Table(tb.form.Table).ShowColumns()
+	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.form.Table).ShowColumns()
 
 	var id = int64(0)
 	if idArr, ok := dataList["id"]; ok {
@@ -415,7 +430,7 @@ func (tb DefaultTable) DeleteDataFromDatabase(id string) {
 }
 
 func (tb DefaultTable) delete(table, key, id string) {
-	_ = db.WithDriver(tb.connectionDriver).
+	_ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
 		Table(table).
 		Where(key, "=", id).
 		Delete()

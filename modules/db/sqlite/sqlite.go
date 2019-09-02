@@ -13,8 +13,8 @@ import (
 )
 
 type Sqlite struct {
-	SqlDBmap map[string]*sql.DB
-	Once     sync.Once
+	DbList map[string]*sql.DB
+	Once   sync.Once
 }
 
 func GetSqliteDB() *Sqlite {
@@ -25,12 +25,20 @@ func (db *Sqlite) GetName() string {
 	return "sqlite"
 }
 
+func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+	return performer.Query(db.DbList[con], query, args...)
+}
+
+func (db *Sqlite) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+	return performer.Exec(db.DbList[con], query, args...)
+}
+
 func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.SqlDBmap["default"], query, args...)
+	return performer.Query(db.DbList["default"], query, args...)
 }
 
 func (db *Sqlite) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.SqlDBmap["default"], query, args...)
+	return performer.Exec(db.DbList["default"], query, args...)
 }
 
 func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
@@ -46,12 +54,12 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 			if err != nil {
 				panic(err)
 			} else {
-				db.SqlDBmap[conn] = sqlDB
+				db.DbList[conn] = sqlDB
 			}
 		}
 	})
 }
 
 var DB = Sqlite{
-	SqlDBmap: map[string]*sql.DB{},
+	DbList: map[string]*sql.DB{},
 }

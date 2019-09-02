@@ -34,6 +34,7 @@ type Sql struct {
 	dialect.SqlComponent
 	diver   Connection
 	dialect dialect.Dialect
+	conn    string
 }
 
 var SqlPool = sync.Pool{
@@ -69,6 +70,7 @@ func Table(table string) *Sql {
 	sql.TableName = table
 	sql.diver = GetConnection()
 	sql.dialect = dialect.GetDialect()
+	sql.conn = "default"
 	return sql
 }
 
@@ -76,6 +78,20 @@ func WithDriver(driver string) *Sql {
 	sql := newSql()
 	sql.diver = GetConnectionByDriver(driver)
 	sql.dialect = dialect.GetDialectByDriver(driver)
+	sql.conn = "default"
+	return sql
+}
+
+func WithDriverAndConnection(conn, driver string) *Sql {
+	sql := newSql()
+	sql.diver = GetConnectionByDriver(driver)
+	sql.dialect = dialect.GetDialectByDriver(driver)
+	sql.conn = conn
+	return sql
+}
+
+func (sql *Sql) WithConnection(conn string) *Sql {
+	sql.conn = conn
 	return sql
 }
 
@@ -191,7 +207,7 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := sql.diver.Query(sql.Statement, sql.Args...)
+	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -204,7 +220,7 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := sql.diver.Query(sql.Statement, sql.Args...)
+	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	return res, nil
 }
@@ -212,7 +228,7 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	res, _ := sql.diver.Query(sql.dialect.ShowColumns(sql.TableName))
+	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumns(sql.TableName))
 
 	return res, nil
 }
@@ -220,7 +236,7 @@ func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
 func (sql *Sql) ShowTables() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	res, _ := sql.diver.Query(sql.dialect.ShowTables())
+	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
 
 	return res, nil
 }
@@ -232,7 +248,7 @@ func (sql *Sql) Update(values dialect.H) (int64, error) {
 
 	sql.dialect.Update(&sql.SqlComponent)
 
-	res := sql.diver.Exec(sql.Statement, sql.Args...)
+	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -246,7 +262,7 @@ func (sql *Sql) Delete() error {
 
 	sql.dialect.Delete(&sql.SqlComponent)
 
-	res := sql.diver.Exec(sql.Statement, sql.Args...)
+	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return errors.New("no affect row")
@@ -260,7 +276,7 @@ func (sql *Sql) Exec() (int64, error) {
 
 	sql.dialect.Update(&sql.SqlComponent)
 
-	res := sql.diver.Exec(sql.Statement, sql.Args...)
+	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -276,7 +292,7 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 
 	sql.dialect.Insert(&sql.SqlComponent)
 
-	res := sql.diver.Exec(sql.Statement, sql.Args...)
+	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")

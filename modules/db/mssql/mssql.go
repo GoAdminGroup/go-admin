@@ -15,12 +15,12 @@ import (
 )
 
 type Mssql struct {
-	SqlDBmap map[string]*sql.DB
-	Once     sync.Once
+	DbList map[string]*sql.DB
+	Once   sync.Once
 }
 
 var DB = Mssql{
-	SqlDBmap: map[string]*sql.DB{},
+	DbList: map[string]*sql.DB{},
 }
 
 func GetMssqlDB() *Mssql {
@@ -31,12 +31,20 @@ func (db *Mssql) GetName() string {
 	return "mssql"
 }
 
+func (db *Mssql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+	return performer.Query(db.DbList[con], query, args...)
+}
+
+func (db *Mssql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+	return performer.Exec(db.DbList[con], query, args...)
+}
+
 func (db *Mssql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.SqlDBmap["default"], query, args...)
+	return performer.Query(db.DbList["default"], query, args...)
 }
 
 func (db *Mssql) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.SqlDBmap["default"], query, args...)
+	return performer.Exec(db.DbList["default"], query, args...)
 }
 
 func (db *Mssql) InitDB(cfglist map[string]config.Database) {
@@ -68,7 +76,7 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON) // 连接池连接数 = mysql最大连接数/2
 				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON) // 最大打开连接 = mysql最大连接数
 
-				db.SqlDBmap[conn] = SqlDB
+				db.DbList[conn] = SqlDB
 			}
 		}
 	})
