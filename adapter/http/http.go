@@ -17,6 +17,7 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
+	"regexp"
 	"strings"
 )
 
@@ -38,19 +39,28 @@ func (ht *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 
 	var reqs map[string][]context.Path
 	for _, plug := range plugin {
-		reqs = ConstructNetHttpRequest(plug.GetRequest())
-		for basicUrl, reqlist := range reqs {
+		var plugCopy plugins.Plugin
+		plugCopy = plug
+		reqs = constructNetHttpRequest(plugCopy.GetRequest())
+		for basicUrl, reqList := range reqs {
+			var reqListCopy []context.Path
+			reqListCopy = reqList
 			eng.HandleFunc(basicUrl, func(httpWriter http.ResponseWriter, httpRequest *http.Request) {
-				for _, req := range reqlist {
+				for _, req := range reqListCopy {
 					if httpRequest.Method == strings.ToUpper(req.Method) {
 						ctx := context.NewContext(httpRequest)
-						plug.GetHandler(req.URL, req.Method)(context.NewContext(httpRequest))
+						plugCopy.GetHandler(req.URL, req.Method)(ctx)
+						for key, head := range ctx.Response.Header {
+							httpWriter.Header().Add(key, head[0])
+						}
+						// NOTE: The following WriteHeader must set after the other headers.
 						httpWriter.WriteHeader(ctx.Response.StatusCode)
 						if ctx.Response.Body != nil {
 							buf := new(bytes.Buffer)
 							_, _ = buf.ReadFrom(ctx.Response.Body)
 							_, _ = httpWriter.Write(buf.Bytes())
 						}
+						return
 					}
 				}
 			})
@@ -60,16 +70,24 @@ func (ht *Http) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
-func ConstructNetHttpRequest(reqs []context.Path) map[string][]context.Path {
+func constructNetHttpRequest(reqs []context.Path) map[string][]context.Path {
 	var (
 		NetHttpRequest = make(map[string][]context.Path, 0)
 		usedUrl        []string
+		used           = false
 	)
+	reg := regexp.MustCompile(":(.*?)$")
 	for _, req := range reqs {
+		req.URL = reg.ReplaceAllString(req.URL, "")
+		used = false
 		for _, url := range usedUrl {
 			if url == req.URL {
-				continue
+				used = true
+				break
 			}
+		}
+		if used {
+			continue
 		}
 		usedUrl = append(usedUrl, req.URL)
 		NetHttpRequest[req.URL] = append(NetHttpRequest[req.URL], req)
@@ -146,5 +164,5 @@ func (ht *Http) Content(contextInterface interface{}, c types.GetPanel) {
 		MiniLogo:      globalConfig.MINILOGO,
 		ColorScheme:   globalConfig.COLORSCHEME,
 	})
-	//ctx.Body.(buf.String())
+	_ = ctx.Response.Write(buf)
 }

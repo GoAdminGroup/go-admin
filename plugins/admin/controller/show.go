@@ -86,6 +86,13 @@ func ShowInfo(ctx *context.Context) {
 func Assert(ctx *context.Context) {
 	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), Config.PREFIX, "", 1)
 	data, err := template.Get(Config.THEME).GetAsset(filepath)
+
+	if err != nil {
+		logger.Error("asset err", err)
+		ctx.Write(http.StatusNotFound, map[string]string{}, "")
+		return
+	}
+
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
 
@@ -96,12 +103,7 @@ func Assert(ctx *context.Context) {
 		contentType = "image/" + fileSuffix
 	}
 
-	if err != nil {
-		logger.Error("asset err", err)
-		ctx.Write(http.StatusNotFound, map[string]string{}, "")
-	} else {
-		ctx.Write(http.StatusOK, map[string]string{
-			"content-type": contentType,
-		}, string(data))
-	}
+	ctx.Write(http.StatusOK, map[string]string{
+		"content-type": contentType,
+	}, string(data))
 }
