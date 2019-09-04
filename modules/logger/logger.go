@@ -8,7 +8,6 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/mgutz/ansi"
 	"github.com/sirupsen/logrus"
-	"goAdmin/modules/logger"
 	"io"
 	"os"
 	"strconv"
@@ -74,7 +73,7 @@ func Warn(info ...interface{}) {
 }
 
 func Access(ctx *context.Context) {
-	logger.AccessLogger.Println("[GoAdmin]",
+	manager["access"].Println("[GoAdmin]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		ctx.Path())
