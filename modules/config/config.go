@@ -107,6 +107,9 @@ type Config struct {
 	// Access log path
 	ACCESSLOG string
 
+	// Sql operator record log switch
+	SQLLOG bool
+
 	// Color scheme
 	COLORSCHEME string
 }
@@ -130,8 +133,6 @@ func Set(cfg Config) {
 	globalCfg.INDEX = setDefault(globalCfg.INDEX, "/", "")
 	globalCfg.COLORSCHEME = setDefault(globalCfg.COLORSCHEME, "", "skin-black")
 
-	// TODO: fix prefix
-
 	if cfg.INFOLOG != "" {
 		logger.SetInfoLogger(cfg.INFOLOG, cfg.DEBUG)
 	}
@@ -144,9 +145,13 @@ func Set(cfg Config) {
 		logger.SetAccessLogger(cfg.ACCESSLOG, cfg.DEBUG)
 	}
 
+	if cfg.SQLLOG {
+		logger.OpenSqlLog()
+	}
+
 	if cfg.DEBUG {
 		declare.Do(func() {
-			logger.Warn(`go-admin is now running.
+			logger.Info(`go-admin is now running.
 Running in "debug" mode. Switch to "release" mode in production.
 
 `)

@@ -7,6 +7,7 @@ package db
 import (
 	"errors"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"strconv"
 	"strings"
 	"sync"
@@ -311,6 +312,9 @@ func (sql *Sql) empty() *Sql {
 }
 
 func RecycleSql(sql *Sql) {
+
+	logger.LogSql("statement", sql.Statement, "args", sql.Args)
+
 	sql.Fields = make([]string, 0)
 	sql.TableName = ""
 	sql.Wheres = make([]dialect.Where, 0)

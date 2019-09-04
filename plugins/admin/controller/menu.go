@@ -37,9 +37,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: template.Get(Config.THEME).Form().
 			SetContent(formData).
 			SetPrefix(Config.PREFIX).
-			SetUrl(Config.PREFIX+"/menu/edit").
+			SetUrl(Config.PREFIX + "/menu/edit").
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(Config.PREFIX+"/menu").
+			SetInfoUrl(Config.PREFIX + "/menu").
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,

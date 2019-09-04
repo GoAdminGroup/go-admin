@@ -10,22 +10,17 @@ import (
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/go-sql-driver/mysql"
-	"github.com/mgutz/ansi"
 	template2 "html/template"
 	"net/http"
 	"regexp"
 	"runtime/debug"
-	"strconv"
 	"strings"
 )
 
 // 全局错误处理
 func GlobalDeferHandler(ctx *context.Context) {
 
-	logger.AccessLogger.Println("[GoAdmin]",
-		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-		ctx.Path())
+	logger.Access(ctx)
 
 	// TODO: sqlite will cause a panic. database is locked.
 	if config.Get().DATABASE.GetDefault().DRIVER != "sqlite" {
@@ -68,9 +63,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Content: alert + template.Get(Config.THEME).Form().
 					SetContent(formData).
 					SetPrefix(Config.PREFIX).
-					SetUrl(Config.PREFIX+"/edit/"+prefix).
+					SetUrl(Config.PREFIX + "/edit/" + prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 					GetContent(),
 				Description: description,
 				Title:       title,
@@ -92,9 +87,9 @@ func GlobalDeferHandler(ctx *context.Context) {
 				Content: alert + template.Get(Config.THEME).Form().
 					SetPrefix(Config.PREFIX).
 					SetContent(models.GetNewFormList(models.TableList[prefix].GetForm().FormList)).
-					SetUrl(Config.PREFIX+"/new/"+prefix).
+					SetUrl(Config.PREFIX + "/new/" + prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX+"/info/"+prefix+queryParam).
+					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
 					GetContent(),
 				Description: models.TableList[prefix].GetForm().Description,
 				Title:       models.TableList[prefix].GetForm().Title,

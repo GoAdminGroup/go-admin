@@ -5,71 +5,83 @@
 package logger
 
 import (
+	"github.com/chenhg5/go-admin/context"
+	"github.com/mgutz/ansi"
 	"github.com/sirupsen/logrus"
+	"goAdmin/modules/logger"
 	"io"
-	"log"
 	"os"
+	"strconv"
 )
 
 var (
-	InfoLogger   = logrus.New()
-	ErrorLogger  = logrus.New()
-	AccessLogger = logrus.New()
+	manager = map[string]*logrus.Logger{
+		"info":   logrus.New(),
+		"error":  logrus.New(),
+		"access": logrus.New(),
+	}
+	sqlLogOpen = false
 )
 
 func init() {
-	InfoLogger.Out = os.Stdout
-	ErrorLogger.Out = os.Stdout
-	AccessLogger.Out = os.Stdout
+	for _, l := range manager {
+		l.Out = os.Stdout
+	}
 }
 
 func SetInfoLogger(path string, debug bool) {
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	if debug {
-		InfoLogger.Out = io.MultiWriter(file, os.Stdout)
-	} else {
-		InfoLogger.Out = file
-	}
+	SetLogger("info", path, debug)
 }
 
 func SetErrorLogger(path string, debug bool) {
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	if debug {
-		ErrorLogger.Out = io.MultiWriter(file, os.Stdout)
-	} else {
-		ErrorLogger.Out = file
-	}
+	SetLogger("error", path, debug)
 }
 
 func SetAccessLogger(path string, debug bool) {
+	SetLogger("access", path, debug)
+}
+
+func SetLogger(kind, path string, debug bool) {
+	if debug {
+		manager[kind].Out = io.MultiWriter(openFile(path), os.Stdout)
+	} else {
+		manager[kind].Out = openFile(path)
+	}
+}
+
+func openFile(path string) *os.File {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
+	return file
+}
 
-	if debug {
-		AccessLogger.Out = io.MultiWriter(file, os.Stdout)
-	} else {
-		AccessLogger.Out = file
-	}
+func OpenSqlLog() {
+	sqlLogOpen = true
 }
 
 func Error(err ...interface{}) {
-	ErrorLogger.Errorln(err...)
+	manager["error"].Errorln(err...)
 }
 
 func Info(info ...interface{}) {
-	InfoLogger.Infoln(info...)
+	manager["info"].Infoln(info...)
 }
 
 func Warn(info ...interface{}) {
-	InfoLogger.Warnln(info...)
+	manager["info"].Warnln(info...)
+}
+
+func Access(ctx *context.Context) {
+	logger.AccessLogger.Println("[GoAdmin]",
+		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
+		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+		ctx.Path())
+}
+
+func LogSql(info ...interface{}) {
+	if sqlLogOpen {
+		manager["info"].Infoln(info...)
+	}
 }
