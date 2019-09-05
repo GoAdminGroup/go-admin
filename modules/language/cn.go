@@ -43,6 +43,8 @@ var cn = map[string]string{
 	"yes":                    "确定",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",
+	"edit fail":              "编辑失败",
+	"create fail":            "新增失败",
 
 	"avatar":     "头像",
 	"password":   "密码",
@@ -59,4 +61,6 @@ var cn = map[string]string{
 	"roles":     "角色",
 	"menu":      "菜单",
 	"dashboard": "仪表盘",
+
+	"username and password can not be empty": "账号密码不能为空",
 }

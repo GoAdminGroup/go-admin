@@ -58,11 +58,11 @@ After generating the configuration file, you need to set the route to access the
 ```go
 package datamodel
 
-import "github.com/chenhg5/go-admin/plugins/admin/models"
+import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
-var Generators = map[string]models.TableGenerator{
+var Generators = map[string]table.Generator{
 	"user":    GetUserTable,
 }
 ```

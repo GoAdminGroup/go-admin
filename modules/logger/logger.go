@@ -6,6 +6,7 @@ package logger
 
 import (
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/mgutz/ansi"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -73,7 +74,7 @@ func Warn(info ...interface{}) {
 }
 
 func Access(ctx *context.Context) {
-	manager["access"].Println("[GoAdmin]",
+	manager["access"].Println("[" + constant.Title + "]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		ctx.Path())

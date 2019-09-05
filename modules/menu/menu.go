@@ -87,7 +87,6 @@ func SetGlobalMenu(user auth.User) {
 			WhereIn("id", ids).
 			OrderBy("order", "asc").
 			All()
-
 	}
 
 	var title string
@@ -105,15 +104,19 @@ func SetGlobalMenu(user auth.User) {
 		})
 	}
 
-	menulist := ConstructMenuTree(menus, 0)
+	menuList := ConstructMenuTree(menus, 0)
 
 	GlobalMenu.GlobalMenuOption = menuOption
-	GlobalMenu.GlobalMenuList = menulist
+	GlobalMenu.GlobalMenuList = menuList
 	GlobalMenu.MaxOrder = menus[len(menus)-1]["parent_id"].(int64)
 }
 
 func (menu *Menu) SexMaxOrder(order int64) {
 	menu.MaxOrder = order
+}
+
+func (menu *Menu) AddMaxOrder() {
+	menu.MaxOrder += 1
 }
 
 func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {

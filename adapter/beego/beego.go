@@ -15,6 +15,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
@@ -116,7 +117,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
 
 	ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
 

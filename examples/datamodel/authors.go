@@ -1,17 +1,17 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
-func GetAuthorsTable() (authorsTable models.Table) {
+func GetAuthorsTable() (authorsTable table.Table) {
 
-	authorsTable = models.NewDefaultTable(models.DefaultTableConfig)
+	authorsTable = table.NewDefaultTable(table.DefaultTableConfig)
 
 	// connect your custom connection
-	// authorsTable = models.NewDefaultTable(models.DefaultTableConfigWithDriverAndConnection("mysql", "admin"))
+	// authorsTable = table.NewDefaultTable(table.DefaultTableConfigWithDriverAndConnection("mysql", "admin"))
 
 	authorsTable.GetInfo().FieldList = []types.Field{
 		{

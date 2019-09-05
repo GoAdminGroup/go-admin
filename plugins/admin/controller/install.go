@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql"
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"net/http"
 )
 
@@ -32,10 +33,7 @@ func CheckDatabase(ctx *context.Context) {
 	SqlDB, err := sql.Open("mysql", username+":"+password+"@tcp("+ip+":"+port+")/"+databaseName+"?charset=utf8mb4")
 	if SqlDB != nil {
 		if SqlDB.Ping() != nil {
-			ctx.Json(http.StatusInternalServerError, map[string]interface{}{
-				"code": 500,
-				"msg":  "请检查参数是否设置正确",
-			})
+			response.Error(ctx, "请检查参数是否设置正确")
 			return
 		}
 	}
@@ -45,11 +43,7 @@ func CheckDatabase(ctx *context.Context) {
 	}()
 
 	if err != nil {
-
-		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
-			"code": 500,
-			"msg":  "请检查参数是否设置正确",
-		})
+		response.Error(ctx, "请检查参数是否设置正确")
 		return
 
 	}
@@ -69,13 +63,8 @@ func CheckDatabase(ctx *context.Context) {
 	}
 	list += "]"
 
-	ctx.Json(http.StatusOK, map[string]interface{}{
-		"code": 0,
-		"msg":  "连接成功",
-		"data": map[string]interface{}{
-			"list": list,
-		},
+	response.OkWithData(ctx, map[string]interface{}{
+		"list": list,
 	})
-
 	return
 }

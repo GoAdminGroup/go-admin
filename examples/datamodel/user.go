@@ -1,14 +1,14 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
-func GetUserTable() (userTable models.Table) {
+func GetUserTable() (userTable table.Table) {
 
-	userTable = models.NewDefaultTable(models.DefaultTableConfig)
+	userTable = table.NewDefaultTable(table.DefaultTableConfig)
 
 	userTable.GetInfo().FieldList = []types.Field{
 		{

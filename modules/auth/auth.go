@@ -19,6 +19,10 @@ func Auth(ctx *context.Context) User {
 	return ctx.User().(User)
 }
 
+func SetUser(ctx *context.Context, user User) {
+	ctx.UserValue["user"] = user
+}
+
 func Check(password string, username string) (user User, ok bool) {
 
 	admin, _ := db.Table("goadmin_users").Where("username", "=", username).First()
@@ -47,7 +51,7 @@ func Check(password string, username string) (user User, ok bool) {
 				user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + admin["avatar"].(string)
 			}
 
-			// TODO: 支持多角色
+			// TODO: Support multi roles
 			permissionModel := GetPermissions(roleModel["id"])
 			var permissions []Permission
 			for i := 0; i < len(permissionModel); i++ {

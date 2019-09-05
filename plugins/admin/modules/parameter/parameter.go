@@ -1,4 +1,4 @@
-package models
+package parameter
 
 import (
 	"net/url"

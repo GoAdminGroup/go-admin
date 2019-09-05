@@ -61,11 +61,11 @@ admincli generate -h=127.0.0.1 -p=3306 -u=root -P=root -pa=main -n=goadmin -o=./
 ```go
 package datamodel
 
-import "github.com/chenhg5/go-admin/plugins/admin/models"
+import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
-var Generators = map[string]models.TableGenerator{
+var Generators = map[string]table.Generator{
 	"user":    GetUserTable,
 }
 ```

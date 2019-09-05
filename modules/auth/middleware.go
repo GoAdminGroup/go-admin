@@ -43,6 +43,39 @@ func (user User) IsSuperAdmin() bool {
 	return false
 }
 
+func (user User) UpdateMenus() User {
+	roleModel, _ := db.Table("goadmin_role_users").
+		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+		Where("user_id", "=", user.ID).
+		Select("goadmin_roles.id", "goadmin_roles.name", "goadmin_roles.slug").
+		First()
+
+	menuIdsModel, _ := db.Table("goadmin_role_menu").
+		LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
+		Where("goadmin_role_menu.role_id", "=", roleModel["id"]).
+		Select("menu_id", "parent_id").
+		All()
+
+	var menuIds []int64
+
+	for _, mid := range menuIdsModel {
+		if parentId, ok := mid["parent_id"].(int64); ok && parentId != 0 {
+			for _, mid2 := range menuIdsModel {
+				if mid2["menu_id"].(int64) == mid["parent_id"].(int64) {
+					menuIds = append(menuIds, mid["menu_id"].(int64))
+					break
+				}
+			}
+		} else {
+			menuIds = append(menuIds, mid["menu_id"].(int64))
+		}
+	}
+
+	user.Menus = menuIds
+
+	return user
+}
+
 func SetPrefix(prefix string) *Invoker {
 	return &Invoker{
 		prefix: prefix,

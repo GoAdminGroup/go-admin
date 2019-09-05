@@ -3082,10 +3082,10 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 'password': $("#password").val()
             },
             success: function (data) {
-                location.href = data.url
+                location.href = data.data.url
             },
             error: function (data) {
-                alert("登录失败");
+                alert("login fail");
             }
         });
     });

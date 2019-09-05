@@ -1,150 +1,81 @@
 package controller
 
 import (
+	"errors"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func NewManager(dataList map[string][]string) {
+func newManager(dataList map[string][]string) error {
 
 	if dataList["name"][0] == "" ||
 		dataList["username"][0] == "" ||
 		dataList["password"][0] == "" {
-		panic("账号密码不能为空")
+		return errors.New("username and password can not be empty")
 	}
 
-	// 更新管理员表
-	id, _ := db.Table("goadmin_users").
-		Insert(dialect.H{
-			"username": dataList["username"][0],
-			"password": auth.EncodePassword([]byte(dataList["password"][0])),
-			"name":     dataList["name"][0],
-			"avatar":   dataList["avatar"][0],
-		})
+	user := models.User().New(dataList["username"][0],
+		auth.EncodePassword([]byte(dataList["password"][0])),
+		dataList["name"][0],
+		dataList["avatar"][0])
 
-	// 插入管理员角色表
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
-		if dataList["role_id[]"][i] != "" {
-			_, _ = db.Table("goadmin_role_users").
-				Insert(dialect.H{
-					"role_id": dataList["role_id[]"][i],
-					"user_id": id,
-				})
-		}
+		user.AddRole(dataList["role_id[]"][i])
 	}
 
-	// 更新管理员权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
-		if dataList["permission_id[]"][i] != "" {
-			_, _ = db.Table("goadmin_user_permissions").
-				Insert(dialect.H{
-					"permission_id": dataList["permission_id[]"][i],
-					"user_id":       id,
-				})
-		}
+		user.AddPermission(dataList["permission_id[]"][i])
 	}
+
+	return nil
 }
 
-func EditManager(dataList map[string][]string) {
+func editManager(dataList map[string][]string) error {
 
 	if dataList["name"][0] == "" ||
 		dataList["username"][0] == "" ||
 		dataList["password"][0] == "" {
-		panic("账号密码不能为空")
+		return errors.New("username and password can not be empty")
 	}
 
-	// 更新管理员表
-	_, _ = db.Table("goadmin_users").
-		Where("id", "=", dataList["id"][0]).
-		Update(dialect.H{
-			"username": dataList["username"][0],
-			"password": auth.EncodePassword([]byte(dataList["password"][0])),
-			"name":     dataList["name"][0],
-			"avatar":   dataList["avatar"][0],
-		})
+	user := models.UserWithId(dataList["id"][0])
 
-	// 插入管理员角色表
+	user.Update(dataList["username"][0],
+		auth.EncodePassword([]byte(dataList["password"][0])),
+		dataList["name"][0],
+		dataList["avatar"][0])
+
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
-		if dataList["role_id[]"][i] != "" {
-			checkRole, _ := db.Table("goadmin_role_users").
-				Where("role_id", "=", dataList["role_id[]"][i]).
-				Where("user_id", "=", dataList["id"][0]).
-				First()
-
-			if checkRole == nil {
-				_, _ = db.Table("goadmin_role_users").
-					Insert(dialect.H{
-						"role_id": dataList["role_id[]"][i],
-						"user_id": dataList["id"][0],
-					})
-			}
-		}
+		user.AddRole(dataList["role_id[]"][i])
 	}
 
-	// 更新管理员权限表
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
-		if dataList["permission_id[]"][i] != "" {
-			checkPermission, _ := db.Table("goadmin_user_permissions").
-				Where("permission_id", "=", dataList["permission_id[]"][i]).
-				Where("user_id", "=", dataList["id"][0]).
-				First()
-
-			if checkPermission == nil {
-				_, _ = db.Table("goadmin_user_permissions").
-					Insert(dialect.H{
-						"permission_id": dataList["permission_id[]"][i],
-						"user_id":       dataList["id"][0],
-					})
-			}
-		}
+		user.AddPermission(dataList["permission_id[]"][i])
 	}
+
+	return nil
 }
 
-func NewRole(dataList map[string][]string) {
-	// 更新管理员角色表
-	id, _ := db.Table("goadmin_roles").
-		Insert(dialect.H{
-			"name": dataList["name"][0],
-			"slug": dataList["slug"][0],
-		})
+func newRole(dataList map[string][]string) error {
 
-	// 更新管理员角色权限表
+	role := models.Role().New(dataList["name"][0], dataList["slug"][0])
+
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
-		if dataList["permission_id[]"][i] != "" {
-			_, _ = db.Table("goadmin_role_permissions").
-				Insert(dialect.H{
-					"permission_id": dataList["permission_id[]"][i],
-					"role_id":       id,
-				})
-		}
+		role.AddPermission(dataList["permission_id[]"][i])
 	}
+
+	return nil
 }
 
-func EditRole(dataList map[string][]string) {
-	// 更新管理员角色表
-	_, _ = db.Table("goadmin_roles").
-		Where("id", "=", dataList["id"][0]).
-		Update(dialect.H{
-			"name": dataList["name"][0],
-			"slug": dataList["slug"][0],
-		})
+func editRole(dataList map[string][]string) error {
 
-	// 更新管理员角色权限表
+	role := models.RoleWithId(dataList["id"][0])
+
+	role.Update(dataList["name"][0], dataList["slug"][0])
+
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
-		if dataList["permission_id[]"][i] != "" {
-			checkPermission, _ := db.Table("goadmin_role_permissions").
-				Where("permission_id", "=", dataList["permission_id[]"][i]).
-				Where("role_id", "=", dataList["id"][0]).
-				First()
-
-			if checkPermission == nil {
-				_, _ = db.Table("goadmin_role_permissions").
-					Insert(dialect.H{
-						"permission_id": dataList["permission_id[]"][i],
-						"role_id":       dataList["id"][0],
-					})
-			}
-		}
+		role.AddPermission(dataList["permission_id[]"][i])
 	}
+
+	return nil
 }

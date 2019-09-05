@@ -6,6 +6,7 @@ package config
 
 import (
 	"github.com/chenhg5/go-admin/modules/logger"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"html/template"
 	"sync"
 )
@@ -114,6 +115,14 @@ type Config struct {
 	COLORSCHEME string
 }
 
+func (c Config) GetIndexUrl() string {
+	return c.PREFIX + c.INDEX
+}
+
+func (c Config) Url(suffix string) string {
+	return c.PREFIX + suffix
+}
+
 var (
 	globalCfg Config
 	mutex     sync.Mutex
@@ -125,7 +134,7 @@ func Set(cfg Config) {
 	mutex.Lock()
 	globalCfg = cfg
 
-	globalCfg.TITLE = setDefault(globalCfg.TITLE, "", "GoAdmin")
+	globalCfg.TITLE = setDefault(globalCfg.TITLE, "", constant.Title)
 	globalCfg.LOGO = template.HTML(setDefault(string(globalCfg.LOGO), "", "<b>Go</b>Admin"))
 	globalCfg.MINILOGO = template.HTML(setDefault(string(globalCfg.MINILOGO), "", "<b>G</b>A"))
 	globalCfg.THEME = setDefault(globalCfg.THEME, "", "adminlte")

@@ -114,8 +114,10 @@ func AddComp(name string, comp Component) {
 	if comp == nil {
 		panic("component is nil")
 	}
-	if _, dup := compMap[name]; dup {
-		panic("add component twice " + name)
+	if name != "login" {
+		if _, dup := compMap[name]; dup {
+			panic("add component twice " + name)
+		}
 	}
 	compMap[name] = comp
 }

@@ -3,10 +3,12 @@ package controller
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/go-sql-driver/mysql"
@@ -23,7 +25,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 	logger.Access(ctx)
 
 	// TODO: sqlite will cause a panic. database is locked.
-	if config.Get().DATABASE.GetDefault().DRIVER != "sqlite" {
+	if config.DATABASE.GetDefault().DRIVER != "sqlite" {
 		RecordOperationLog(ctx)
 	}
 
@@ -45,64 +47,61 @@ func GlobalDeferHandler(ctx *context.Context) {
 			}
 		}
 
-		alert := template.Get(Config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template.Get(config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template2.HTML(errMsg)).GetContent()
 
 		if ok, _ = regexp.Match("/edit(.*)", []byte(ctx.Path())); ok {
 
 			prefix := ctx.Query("prefix")
 
-			formData, title, description := models.TableList[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
+			formData, title, description := table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
 
-			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
+			queryParam := parameter.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
 			user := auth.Auth(ctx)
 
-			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
+			tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-				Content: alert + template.Get(Config.THEME).Form().
+				Content: alert + template.Get(config.THEME).Form().
 					SetContent(formData).
-					SetPrefix(Config.PREFIX).
-					SetUrl(Config.PREFIX + "/edit/" + prefix).
+					SetPrefix(config.PREFIX).
+					SetUrl(config.PREFIX + "/edit/" + prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+					SetInfoUrl(config.PREFIX + "/info/" + prefix + queryParam).
 					GetContent(),
 				Description: description,
 				Title:       title,
-			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
+			}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
 			ctx.Html(http.StatusOK, buf.String())
-			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
+			ctx.AddHeader(constant.PjaxUrlHeader, config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 
 		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
 			prefix := ctx.Query("prefix")
 
-			queryParam := models.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
+			queryParam := parameter.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
 			user := auth.Auth(ctx)
 
-			tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
+			tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 			buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-				Content: alert + template.Get(Config.THEME).Form().
-					SetPrefix(Config.PREFIX).
-					SetContent(models.GetNewFormList(models.TableList[prefix].GetForm().FormList)).
-					SetUrl(Config.PREFIX + "/new/" + prefix).
+				Content: alert + template.Get(config.THEME).Form().
+					SetPrefix(config.PREFIX).
+					SetContent(table.GetNewFormList(table.List[prefix].GetForm().FormList)).
+					SetUrl(config.PREFIX + "/new/" + prefix).
 					SetToken(auth.TokenHelper.AddToken()).
-					SetInfoUrl(Config.PREFIX + "/info/" + prefix + queryParam).
+					SetInfoUrl(config.PREFIX + "/info/" + prefix + queryParam).
 					GetContent(),
-				Description: models.TableList[prefix].GetForm().Description,
-				Title:       models.TableList[prefix].GetForm().Title,
-			}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
+				Description: table.List[prefix].GetForm().Description,
+				Title:       table.List[prefix].GetForm().Title,
+			}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
 			ctx.Html(http.StatusOK, buf.String())
-			ctx.AddHeader("X-PJAX-URL", Config.PREFIX+"/info/"+prefix+"/new"+queryParam)
+			ctx.AddHeader(constant.PjaxUrlHeader, config.PREFIX+"/info/"+prefix+"/new"+queryParam)
 			return
 		}
 
-		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
-			"code": 500,
-			"msg":  errMsg,
-		})
+		response.Error(ctx, errMsg)
 		return
 	}
 }

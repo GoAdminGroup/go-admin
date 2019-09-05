@@ -1,26 +1,28 @@
-package models
+package table
 
 import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/paginator"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"strconv"
 	"strings"
 )
 
-type TableGenerator func() Table
+type Generator func() Table
 
 var (
-	Generators = map[string]TableGenerator{}
-	TableList  = map[string]Table{}
+	Generators = map[string]Generator{}
+	List       = map[string]Table{}
 )
 
 func InitTableList() {
-	TableList = make(map[string]Table, len(Generators))
+	List = make(map[string]Table, len(Generators))
 	for prefix, generator := range Generators {
-		TableList[prefix] = generator()
+		List[prefix] = generator()
 	}
 }
 
@@ -28,11 +30,11 @@ func InitTableList() {
 // relationship changed.
 func RefreshTableList() {
 	for k, v := range Generators {
-		TableList[k] = v()
+		List[k] = v()
 	}
 }
 
-func SetGenerators(generators map[string]TableGenerator) {
+func SetGenerators(generators map[string]Generator) {
 	for key, generator := range generators {
 		Generators[key] = generator
 	}
@@ -45,7 +47,7 @@ type Table interface {
 	GetEditable() bool
 	GetDeletable() bool
 	GetFiltersMap() []map[string]string
-	GetDataFromDatabase(path string, params *Parameters) PanelInfo
+	GetDataFromDatabase(path string, params *parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
 	UpdateDataFromDatabase(dataList map[string][]string)
 	InsertDataFromDatabase(dataList map[string][]string)
@@ -162,7 +164,7 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 }
 
 // GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) PanelInfo {
+func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parameters) PanelInfo {
 
 	pageInt, _ := strconv.Atoi(params.Page)
 
@@ -264,12 +266,10 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *Parameters) Pane
 		size = int(total[0]["count(*)"].(int64))
 	}
 
-	paginator := GetPaginator(path, params, size)
-
 	return PanelInfo{
 		Thead:       thead,
 		InfoList:    infoList,
-		Paginator:   paginator,
+		Paginator:   paginator.Get(path, params, size),
 		Title:       title,
 		Description: description,
 		CanAdd:      tb.canAdd,

@@ -333,13 +333,13 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 	content := `package ` + packageName + `
 
 import (
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"	
 )
 
-func Get` + strings.Title(table) + `Table() models.Table {
+func Get` + strings.Title(table) + `Table() table.Table {
 
-    ` + table + `Table := models.NewDefaultTable(models.DefaultTableConfigWithDriver("` + driver + `"))
+    ` + table + `Table := table.NewDefaultTable(table.DefaultTableConfigWithDriver("` + driver + `"))
 	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
@@ -407,11 +407,11 @@ func generateTables(outputPath string, tables []string, packageName string) {
 
 	content := `package ` + packageName + `
 
-import "github.com/chenhg5/go-admin/plugins/admin/models"
+import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
-var Generators = map[string]models.TableGenerator{` + tableStr + `
+var Generators = map[string]table.Generator{` + tableStr + `
 }
 `
 	err := ioutil.WriteFile(outputPath+"/tables.go", []byte(content), 0644)

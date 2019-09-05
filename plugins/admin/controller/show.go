@@ -5,7 +5,9 @@ import (
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
@@ -18,23 +20,23 @@ import (
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
-	panel := models.TableList[prefix]
+	panel := table.List[prefix]
 
-	params := models.GetParam(ctx.Request.URL.Query())
+	params := parameter.GetParam(ctx.Request.URL.Query())
 
-	editUrl := Config.PREFIX + "/info/" + prefix + "/edit" + params.GetRouteParamStr()
-	newUrl := Config.PREFIX + "/info/" + prefix + "/new" + params.GetRouteParamStr()
-	deleteUrl := Config.PREFIX + "/delete/" + prefix
+	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
+	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
+	deleteUrl := config.Url("/delete/" + prefix)
 
 	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
 
 	var box template2.HTML
 	if prefix != "op" {
-		dataTable := template.Get(Config.THEME).
+		dataTable := template.Get(config.THEME).
 			DataTable().
 			SetInfoList(panelInfo.InfoList).
 			SetFilters(panel.GetFiltersMap()).
-			SetInfoUrl(Config.PREFIX + "/info/" + prefix).
+			SetInfoUrl(config.Url("/info/" + prefix)).
 			SetThead(panelInfo.Thead)
 
 		if panelInfo.CanAdd {
@@ -47,25 +49,21 @@ func ShowInfo(ctx *context.Context) {
 			dataTable.SetDeleteUrl(deleteUrl)
 		}
 
-		table := dataTable.GetContent()
-
-		box = template.Get(Config.THEME).Box().
-			SetBody(table).
+		box = template.Get(config.THEME).Box().
+			SetBody(dataTable.GetContent()).
 			SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 			WithHeadBorder(false).
 			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 			GetContent()
 	} else {
-		dataTable := template.Get(Config.THEME).
+		dataTable := template.Get(config.THEME).
 			Table().
 			SetType("table").
 			SetThead(panelInfo.Thead).
 			SetInfoList(panelInfo.InfoList)
 
-		table := dataTable.GetContent()
-
-		box = template.Get(Config.THEME).Box().
-			SetBody(table).
+		box = template.Get(config.THEME).Box().
+			SetBody(dataTable.GetContent()).
 			WithHeadBorder(false).
 			SetHeader(panel.GetInfo().HeaderHtml).
 			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
@@ -74,18 +72,18 @@ func ShowInfo(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(Config.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, Config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
 func Assert(ctx *context.Context) {
-	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), Config.PREFIX, "", 1)
-	data, err := template.Get(Config.THEME).GetAsset(filepath)
+	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), config.PREFIX, "", 1)
+	data, err := template.Get(config.THEME).GetAsset(filepath)
 
 	if err != nil {
 		logger.Error("asset err", err)

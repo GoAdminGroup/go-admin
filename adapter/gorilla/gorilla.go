@@ -3,6 +3,7 @@ package gorilla
 import (
 	"bytes"
 	"errors"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	template2 "html/template"
 	"net/http"
 	"regexp"
@@ -138,7 +139,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Header.Get("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Header.Get(constant.PjaxHeader) == "true")
 
 	ctx.Header.Set("Content-Type", "text/html; charset=utf-8")
 

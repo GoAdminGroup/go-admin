@@ -1,14 +1,14 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
-func GetPostsTable() (postsTable models.Table) {
+func GetPostsTable() (postsTable table.Table) {
 
-	postsTable = models.NewDefaultTable(models.DefaultTableConfig)
+	postsTable = table.NewDefaultTable(table.DefaultTableConfig)
 
 	postsTable.GetInfo().FieldList = []types.Field{
 		{

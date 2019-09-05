@@ -1,6 +1,7 @@
-package models
+package paginator
 
 import (
+	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/components"
 	"github.com/chenhg5/go-admin/template/types"
@@ -9,7 +10,7 @@ import (
 	"strconv"
 )
 
-func GetPaginator(path string, params *Parameters, size int) types.PaginatorAttribute {
+func Get(path string, params *parameter.Parameters, size int) types.PaginatorAttribute {
 
 	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
 

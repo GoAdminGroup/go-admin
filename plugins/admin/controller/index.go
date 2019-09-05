@@ -11,7 +11,7 @@ import (
 func ShowDashboard(ctx *context.Context) {
 	page.SetPageContent(ctx, func() types.Panel {
 
-		components := template2.Get(Config.THEME)
+		components := template2.Get(config.THEME)
 		colComp := components.Col()
 
 		/**************************
@@ -266,15 +266,15 @@ func ShowDashboard(ctx *context.Context) {
 
 		return types.Panel{
 			Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3) + template.HTML(row4),
-			Title:       "仪表盘",
-			Description: "仪表盘",
+			Title:       "Dashboard",
+			Description: "Dashboard",
 		}
 	})
 }
 
 func ShowErrorPage(ctx *context.Context, errorMsg string) {
 	page.SetPageContent(ctx, func() types.Panel {
-		alert := template2.Get(Config.THEME).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template2.Get(config.THEME).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template.HTML(errorMsg)).GetContent()
 
 		return types.Panel{

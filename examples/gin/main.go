@@ -53,7 +53,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
-	// you can custom a plugin like:
+	// customize a plugin
 
 	examplePlugin := example.NewExample()
 
@@ -63,13 +63,16 @@ func main() {
 
 	r.Static("/uploads", "./uploads")
 
-	// you can custom your pages like:
+	// customize your pages
 
 	r.GET("/"+cfg.PREFIX+"/custom", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})
 	})
+
+	// customize the login page
+	// template.AddComp("login", // template.Component //)
 
 	_ = r.Run(":9033")
 }

@@ -6,12 +6,12 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/controller"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 )
 
 type Admin struct {
 	app      *context.App
-	tableCfg map[string]models.TableGenerator
+	tableCfg map[string]table.Generator
 }
 
 func (admin *Admin) InitPlugin() {
@@ -26,15 +26,15 @@ func (admin *Admin) InitPlugin() {
 	// Init router
 	App.app = InitRouter("/" + cfg.PREFIX)
 
-	models.SetGenerators(map[string]models.TableGenerator{
-		"manager":    models.GetManagerTable,
-		"permission": models.GetPermissionTable,
-		"roles":      models.GetRolesTable,
-		"op":         models.GetOpTable,
-		"menu":       models.GetMenuTable,
+	table.SetGenerators(map[string]table.Generator{
+		"manager":    table.GetManagerTable,
+		"permission": table.GetPermissionTable,
+		"roles":      table.GetRolesTable,
+		"op":         table.GetOpTable,
+		"menu":       table.GetMenuTable,
 	})
-	models.SetGenerators(admin.tableCfg)
-	models.InitTableList()
+	table.SetGenerators(admin.tableCfg)
+	table.InitTableList()
 
 	cfg.PREFIX = "/" + cfg.PREFIX
 	controller.SetConfig(cfg)
@@ -43,7 +43,7 @@ func (admin *Admin) InitPlugin() {
 
 var App = new(Admin)
 
-func NewAdmin(tableCfg map[string]models.TableGenerator) *Admin {
+func NewAdmin(tableCfg map[string]table.Generator) *Admin {
 	App.tableCfg = tableCfg
 	return App
 }

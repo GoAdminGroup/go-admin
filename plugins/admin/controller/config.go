@@ -1,9 +1,11 @@
 package controller
 
-import "github.com/chenhg5/go-admin/modules/config"
+import (
+	c "github.com/chenhg5/go-admin/modules/config"
+)
 
-var Config config.Config
+var config c.Config
 
-func SetConfig(cfg config.Config) {
-	Config = cfg
+func SetConfig(cfg c.Config) {
+	config = cfg
 }

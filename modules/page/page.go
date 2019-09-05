@@ -10,6 +10,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"strings"
@@ -23,7 +24,7 @@ func SetPageContent(ctx *context.Context, c func() types.Panel) {
 
 	globalConfig := config.Get()
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers("X-PJAX") == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 

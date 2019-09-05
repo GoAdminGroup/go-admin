@@ -55,7 +55,7 @@ func InitRouter(prefix string) *context.App {
 			app.GET("/info/:prefix/edit", controller.ShowForm)
 			app.GET("/info/:prefix/new", controller.ShowNewForm)
 			app.POST("/edit/:prefix", controller.EditForm)
-			app.POST("/delete/:prefix", controller.DeleteData)
+			app.POST("/delete/:prefix", controller.Delete)
 			app.POST("/new/:prefix", controller.NewForm)
 		}
 	}
