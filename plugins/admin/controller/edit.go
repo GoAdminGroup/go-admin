@@ -21,8 +21,7 @@ func ShowForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
 	panel := table.List[prefix]
 	if !panel.GetEditable() {
-		// TODO: add css style
-		response.PageNotFound(ctx)
+		response.Alert(ctx, config, panel.GetForm().Description, panel.GetForm().Title, "operation not allow")
 		return
 	}
 
@@ -32,9 +31,9 @@ func ShowForm(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-		Content: template.Get(config.THEME).Form().
+		Content: aForm().
 			SetContent(formData).
 			SetPrefix(config.PREFIX).
 			SetUrl(config.Url("/edit/" + prefix)).
@@ -51,15 +50,20 @@ func ShowForm(ctx *context.Context) {
 
 func EditForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
+	previous := ctx.FormValue("_previous_")
+	prevUrlArr := strings.Split(previous, "?")
+	params := parameter.GetParamFromUrl(previous)
 	panel := table.List[prefix]
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
+
 	if !panel.GetEditable() {
-		response.PageNotFound(ctx)
+		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "operation not allow")
 		return
 	}
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		response.BadRequest(ctx, "edit fail")
+		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "edit fail, wrong token")
 		return
 	}
 
@@ -72,17 +76,10 @@ func EditForm(ctx *context.Context) {
 		_, _ = file.GetFileEngine("local").Upload(form)
 	}
 
-	var err error
 	if prefix == "manager" { // manager edit
-		if err = editManager(form.Value); err != nil {
-			response.Error(ctx, err.Error())
-			return
-		}
+		editManager(form.Value)
 	} else if prefix == "roles" { // role edit
-		if err = editRole(form.Value); err != nil {
-			response.Error(ctx, err.Error())
-			return
-		}
+		editRole(form.Value)
 	} else {
 		val := form.Value
 		for _, f := range panel.GetForm().FormList {
@@ -90,7 +87,7 @@ func EditForm(ctx *context.Context) {
 				continue
 			}
 			if len(val[f.Field]) > 0 && f.Field != "id" {
-				response.BadRequest(ctx, "field["+f.Field+"]is not editable")
+				response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "field["+f.Field+"]is not editable")
 				return
 			}
 		}
@@ -99,19 +96,12 @@ func EditForm(ctx *context.Context) {
 
 	table.RefreshTableList()
 
-	previous := ctx.FormValue("_previous_")
-	prevUrlArr := strings.Split(previous, "?")
-	params := parameter.GetParamFromUrl(previous)
-
 	previous = config.Url("/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), ""))
 	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
 	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
 	deleteUrl := config.Url("/delete/" + prefix)
 
-	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
-
-	dataTable := template.Get(config.THEME).
-		DataTable().
+	dataTable := aDataTable().
 		SetInfoList(panelInfo.InfoList).
 		SetThead(panelInfo.Thead).
 		SetNewUrl(newUrl)
@@ -123,7 +113,7 @@ func EditForm(ctx *context.Context) {
 		dataTable.SetDeleteUrl(deleteUrl)
 	}
 
-	box := template.Get(config.THEME).Box().
+	box := aBox().
 		SetBody(dataTable.GetContent()).
 		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder(false).
@@ -132,7 +122,7 @@ func EditForm(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(true)
+	tmpl, tmplName := aTemplate().GetTemplate(true)
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,

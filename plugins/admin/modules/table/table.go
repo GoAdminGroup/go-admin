@@ -75,7 +75,7 @@ type PanelInfo struct {
 	Deletable   bool
 }
 
-type TableConfig struct {
+type Config struct {
 	Driver     string
 	Connection string
 	CanAdd     bool
@@ -83,7 +83,7 @@ type TableConfig struct {
 	Deletable  bool
 }
 
-var DefaultTableConfig = &TableConfig{
+var DefaultConfig = &Config{
 	Driver:     "mysql",
 	CanAdd:     true,
 	Editable:   true,
@@ -91,8 +91,8 @@ var DefaultTableConfig = &TableConfig{
 	Connection: "default",
 }
 
-func DefaultTableConfigWithDriver(driver string) *TableConfig {
-	return &TableConfig{
+func DefaultConfigWithDriver(driver string) *Config {
+	return &Config{
 		Driver:     driver,
 		Connection: "default",
 		CanAdd:     true,
@@ -101,8 +101,8 @@ func DefaultTableConfigWithDriver(driver string) *TableConfig {
 	}
 }
 
-func DefaultTableConfigWithDriverAndConnection(driver, conn string) *TableConfig {
-	return &TableConfig{
+func DefaultConfigWithDriverAndConnection(driver, conn string) *Config {
+	return &Config{
 		Driver:     driver,
 		Connection: conn,
 		CanAdd:     true,
@@ -111,7 +111,7 @@ func DefaultTableConfigWithDriverAndConnection(driver, conn string) *TableConfig
 	}
 }
 
-func NewDefaultTable(cfg *TableConfig) Table {
+func NewDefaultTable(cfg *Config) Table {
 	tb := &DefaultTable{
 		info:             &types.InfoPanel{},
 		form:             &types.FormPanel{},
@@ -218,7 +218,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().Query("select "+fields+" from "+tb.info.Table+wheres+" order by "+params.SortField+" "+
+	res, _ := tb.db().QueryWithConnection(tb.connection, "select "+fields+" from "+tb.info.Table+wheres+" order by "+params.SortField+" "+
 		params.SortType+" LIMIT ? OFFSET ?", args...)
 
 	infoList := make([]map[string]template.HTML, 0)
@@ -256,7 +256,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 
 	// TODO: use the dialect
 
-	total, _ := tb.db().Query("select count(*) from "+tb.info.Table+wheres, whereArgs...)
+	total, _ := tb.db().QueryWithConnection(tb.connection, "select count(*) from "+tb.info.Table+wheres, whereArgs...)
 	var size int
 	if tb.connectionDriver == "sqlite" {
 		size = int(total[0]["count(*)"].(int64))
@@ -298,13 +298,13 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 		Where("id", "=", id).
 		First()
 
-	idint64, _ := strconv.ParseInt(id, 10, 64)
+	idInt64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tb.form.FormList); i++ {
 		if CheckInTable(columns, tb.form.FormList[i].Field) {
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
-					ID:    idint64,
+					ID:    idInt64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).([]string)
@@ -315,7 +315,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				}
 			} else {
 				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
-					ID:    idint64,
+					ID:    idInt64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).(string)
@@ -323,7 +323,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 		} else {
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
-					ID:    idint64,
+					ID:    idInt64,
 					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).([]string)
@@ -334,7 +334,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				}
 			} else {
 				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
-					ID:    idint64,
+					ID:    idInt64,
 					Value: tb.form.FormList[i].Field,
 					Row:   res,
 				}).(string)

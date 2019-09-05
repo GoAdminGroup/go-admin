@@ -63,4 +63,5 @@ var cn = map[string]string{
 	"dashboard": "仪表盘",
 
 	"username and password can not be empty": "账号密码不能为空",
+	"operation not allow":                    "不允许的操作",
 }

@@ -339,7 +339,7 @@ import (
 
 func Get` + strings.Title(table) + `Table() table.Table {
 
-    ` + table + `Table := table.NewDefaultTable(table.DefaultTableConfigWithDriver("` + driver + `"))
+    ` + table + `Table := table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))
 	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {

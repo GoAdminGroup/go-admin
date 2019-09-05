@@ -12,7 +12,7 @@ import (
 )
 
 func GetManagerTable() (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
 	ManagerTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -211,7 +211,7 @@ func GetManagerTable() (ManagerTable Table) {
 }
 
 func GetPermissionTable() (PermissionTable Table) {
-	PermissionTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
 	PermissionTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -373,7 +373,7 @@ func GetPermissionTable() (PermissionTable Table) {
 }
 
 func GetRolesTable() (RolesTable Table) {
-	RolesTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
 	var permissions []map[string]string
 	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
 
@@ -517,7 +517,7 @@ func GetRolesTable() (RolesTable Table) {
 }
 
 func GetOpTable() (OpTable Table) {
-	OpTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	OpTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
 	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -689,7 +689,7 @@ func GetOpTable() (OpTable Table) {
 }
 
 func GetMenuTable() (MenuTable Table) {
-	MenuTable = NewDefaultTable(DefaultTableConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
 	MenuTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",

@@ -8,10 +8,10 @@ import (
 
 func GetAuthorsTable() (authorsTable table.Table) {
 
-	authorsTable = table.NewDefaultTable(table.DefaultTableConfig)
+	authorsTable = table.NewDefaultTable(table.DefaultConfig)
 
 	// connect your custom connection
-	// authorsTable = table.NewDefaultTable(table.DefaultTableConfigWithDriverAndConnection("mysql", "admin"))
+	// authorsTable = table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("mysql", "admin"))
 
 	authorsTable.GetInfo().FieldList = []types.Field{
 		{

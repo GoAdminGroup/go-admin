@@ -8,7 +8,7 @@ import (
 
 func GetUserTable() (userTable table.Table) {
 
-	userTable = table.NewDefaultTable(table.DefaultTableConfig)
+	userTable = table.NewDefaultTable(table.DefaultConfig)
 
 	userTable.GetInfo().FieldList = []types.Field{
 		{

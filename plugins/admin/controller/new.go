@@ -19,7 +19,7 @@ func ShowNewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
 	panel := table.List[prefix]
 	if !panel.GetCanAdd() {
-		response.PageNotFound(ctx)
+		response.Alert(ctx, config, panel.GetForm().Description, panel.GetForm().Title, "operation not allow")
 		return
 	}
 	params := parameter.GetParam(ctx.Request.URL.Query())
@@ -30,9 +30,9 @@ func ShowNewForm(ctx *context.Context) {
 	for i := 0; i < len(formList); i++ {
 		formList[i].Editable = true
 	}
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-		Content: template.Get(config.THEME).Form().
+		Content: aForm().
 			SetPrefix(config.PREFIX).
 			SetContent(formList).
 			SetUrl(config.Url("/new/" + prefix)).
@@ -50,16 +50,21 @@ func ShowNewForm(ctx *context.Context) {
 
 func NewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
+	previous := ctx.FormValue("_previous_")
+	prevUrlArr := strings.Split(previous, "?")
+	params := parameter.GetParamFromUrl(previous)
 	panel := table.List[prefix]
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
+
 	if !panel.GetCanAdd() {
-		response.PageNotFound(ctx)
+		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "operation not allow")
 		return
 	}
 
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		response.BadRequest(ctx, "create fail")
+		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "create fail, wrong token")
 		return
 	}
 
@@ -70,42 +75,28 @@ func NewForm(ctx *context.Context) {
 		_, _ = file.GetFileEngine("local").Upload(form)
 	}
 
-	var err error
 	if prefix == "manager" { // manager edit
-		if err = newManager(form.Value); err != nil {
-			response.Error(ctx, err.Error())
-			return
-		}
+		newManager(form.Value)
 	} else if prefix == "roles" { // role edit
-		if err = newRole(form.Value); err != nil {
-			response.Error(ctx, err.Error())
-			return
-		}
+		newRole(form.Value)
 	} else {
 		panel.InsertDataFromDatabase(form.Value)
 	}
 
 	table.RefreshTableList()
 
-	previous := ctx.FormValue("_previous_")
-	prevUrlArr := strings.Split(previous, "?")
-	params := parameter.GetParamFromUrl(previous)
-
-	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
-
 	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
 	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
 	deleteUrl := config.Url("/delete/" + prefix)
 
-	dataTable := template.Get(config.THEME).
-		DataTable().
+	dataTable := aDataTable().
 		SetInfoList(panelInfo.InfoList).
 		SetThead(panelInfo.Thead).
 		SetEditUrl(editUrl).
 		SetNewUrl(newUrl).
 		SetDeleteUrl(deleteUrl)
 
-	box := template.Get(config.THEME).Box().
+	box := aBox().
 		SetBody(dataTable.GetContent()).
 		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder(false).
@@ -114,7 +105,7 @@ func NewForm(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(true)
+	tmpl, tmplName := aTemplate().GetTemplate(true)
 	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,

@@ -16,7 +16,6 @@ import (
 	"strings"
 )
 
-// 显示列表
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("prefix")
@@ -32,8 +31,7 @@ func ShowInfo(ctx *context.Context) {
 
 	var box template2.HTML
 	if prefix != "op" {
-		dataTable := template.Get(config.THEME).
-			DataTable().
+		dataTable := aDataTable().
 			SetInfoList(panelInfo.InfoList).
 			SetFilters(panel.GetFiltersMap()).
 			SetInfoUrl(config.Url("/info/" + prefix)).
@@ -49,20 +47,20 @@ func ShowInfo(ctx *context.Context) {
 			dataTable.SetDeleteUrl(deleteUrl)
 		}
 
-		box = template.Get(config.THEME).Box().
+		box = aBox().
 			SetBody(dataTable.GetContent()).
 			SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 			WithHeadBorder(false).
 			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 			GetContent()
 	} else {
-		dataTable := template.Get(config.THEME).
+		dataTable := aTemplate().
 			Table().
 			SetType("table").
 			SetThead(panelInfo.Thead).
 			SetInfoList(panelInfo.InfoList)
 
-		box = template.Get(config.THEME).Box().
+		box = aBox().
 			SetBody(dataTable.GetContent()).
 			WithHeadBorder(false).
 			SetHeader(panel.GetInfo().HeaderHtml).
@@ -72,7 +70,7 @@ func ShowInfo(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
@@ -83,7 +81,7 @@ func ShowInfo(ctx *context.Context) {
 
 func Assert(ctx *context.Context) {
 	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), config.PREFIX, "", 1)
-	data, err := template.Get(config.THEME).GetAsset(filepath)
+	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
 		logger.Error("asset err", err)

@@ -31,9 +31,9 @@ func ShowEditMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-		Content: template.Get(config.THEME).Form().
+		Content: aForm().
 			SetContent(formData).
 			SetPrefix(config.PREFIX).
 			SetUrl(config.Url("/menu/edit")).
@@ -130,18 +130,18 @@ func GetMenuInfoPanel(ctx *context.Context) {
 	deleteUrl := config.Url("/menu/delete")
 	orderUrl := config.Url("/menu/order")
 
-	tree := template.Get(config.THEME).Tree().
+	tree := aTree().
 		SetTree((menu.GetGlobalMenu(user)).GlobalMenuList).
 		SetEditUrl(editUrl).
 		SetDeleteUrl(deleteUrl).
 		SetOrderUrl(orderUrl).
 		GetContent()
 
-	header := template.Get(config.THEME).Tree().GetTreeHeader()
-	box := template.Get(config.THEME).Box().SetHeader(header).SetBody(tree).GetContent()
-	col1 := template.Get(config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
+	header := aTree().GetTreeHeader()
+	box := aBox().SetHeader(header).SetBody(tree).GetContent()
+	col1 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
-	newForm := template.Get(config.THEME).Form().
+	newForm := aForm().
 		SetPrefix(config.PREFIX).
 		SetUrl(config.Url("/menu/new")).
 		SetInfoUrl(config.Url("/menu")).
@@ -149,13 +149,13 @@ func GetMenuInfoPanel(ctx *context.Context) {
 		SetContent(table.GetNewFormList(table.List["menu"].GetForm().FormList)).
 		GetContent()
 
-	col2 := template.Get(config.THEME).Col().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
+	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
-	row := template.Get(config.THEME).Row().SetContent(col1 + col2).GetContent()
+	row := aRow().SetContent(col1 + col2).GetContent()
 
 	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     row,
 		Description: "Menus Manage",

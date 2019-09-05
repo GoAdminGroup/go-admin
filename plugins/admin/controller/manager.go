@@ -1,17 +1,16 @@
 package controller
 
 import (
-	"errors"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func newManager(dataList map[string][]string) error {
+func newManager(dataList map[string][]string) {
 
 	if dataList["name"][0] == "" ||
 		dataList["username"][0] == "" ||
 		dataList["password"][0] == "" {
-		return errors.New("username and password can not be empty")
+		panic("username and password can not be empty")
 	}
 
 	user := models.User().New(dataList["username"][0],
@@ -27,15 +26,14 @@ func newManager(dataList map[string][]string) error {
 		user.AddPermission(dataList["permission_id[]"][i])
 	}
 
-	return nil
 }
 
-func editManager(dataList map[string][]string) error {
+func editManager(dataList map[string][]string) {
 
 	if dataList["name"][0] == "" ||
 		dataList["username"][0] == "" ||
 		dataList["password"][0] == "" {
-		return errors.New("username and password can not be empty")
+		panic("username and password can not be empty")
 	}
 
 	user := models.UserWithId(dataList["id"][0])
@@ -53,21 +51,18 @@ func editManager(dataList map[string][]string) error {
 		user.AddPermission(dataList["permission_id[]"][i])
 	}
 
-	return nil
 }
 
-func newRole(dataList map[string][]string) error {
+func newRole(dataList map[string][]string) {
 
 	role := models.Role().New(dataList["name"][0], dataList["slug"][0])
 
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		role.AddPermission(dataList["permission_id[]"][i])
 	}
-
-	return nil
 }
 
-func editRole(dataList map[string][]string) error {
+func editRole(dataList map[string][]string) {
 
 	role := models.RoleWithId(dataList["id"][0])
 
@@ -76,6 +71,4 @@ func editRole(dataList map[string][]string) error {
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		role.AddPermission(dataList["permission_id[]"][i])
 	}
-
-	return nil
 }

@@ -10,7 +10,7 @@ import (
 func Delete(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
 	if !table.List[prefix].GetDeletable() {
-		response.PageNotFound(ctx)
+		response.Error(ctx, "operation not allow")
 		return
 	}
 

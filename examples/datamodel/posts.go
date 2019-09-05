@@ -8,7 +8,7 @@ import (
 
 func GetPostsTable() (postsTable table.Table) {
 
-	postsTable = table.NewDefaultTable(table.DefaultTableConfig)
+	postsTable = table.NewDefaultTable(table.DefaultConfig)
 
 	postsTable.GetInfo().FieldList = []types.Field{
 		{
