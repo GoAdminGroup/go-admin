@@ -3,7 +3,6 @@ package models
 import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
-	"strconv"
 )
 
 type OperationLogModel struct {
@@ -28,7 +27,7 @@ func (t OperationLogModel) Find(id interface{}) OperationLogModel {
 	return t.MapToModel(item)
 }
 
-func (t OperationLogModel) New(userId, path, method, ip, input string) OperationLogModel {
+func (t OperationLogModel) New(userId int64, path, method, ip, input string) OperationLogModel {
 
 	id, _ := db.Table(t.Table).Insert(dialect.H{
 		"user_id": userId,
@@ -39,8 +38,7 @@ func (t OperationLogModel) New(userId, path, method, ip, input string) Operation
 	})
 
 	t.Id = id
-	uid, _ := strconv.Atoi(userId)
-	t.UserId = int64(uid)
+	t.UserId = userId
 	t.Path = path
 	t.Method = method
 	t.Ip = ip

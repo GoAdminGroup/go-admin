@@ -22,6 +22,7 @@ type Context struct {
 	Request   *http.Request
 	Response  *http.Response
 	UserValue map[string]interface{}
+	Aborted   bool
 }
 
 // Path is used in the matching of request and response. URL stores the
@@ -40,6 +41,11 @@ func (ctx *Context) SetUserValue(key string, value interface{}) {
 // Path return the url path.
 func (ctx *Context) Path() string {
 	return ctx.Request.URL.Path
+}
+
+// Abort abort the context.
+func (ctx *Context) Abort() {
+	ctx.Aborted = true
 }
 
 // Method return the request method.
@@ -154,25 +160,33 @@ func (ctx *Context) User() interface{} {
 // entity contains the request and the corresponding handler. Prefix
 // is the url prefix and MiddlewareList is for control flow.
 type App struct {
-	Requests       []Path
-	tree           *node
-	MiddlewareList []Middleware
-	Prefix         string
+	Requests    []Path
+	tree        *node
+	Middlewares Handlers
+	Prefix      string
 }
 
 // NewApp return an empty app.
 func NewApp() *App {
 	return &App{
-		Requests:       make([]Path, 0),
-		tree:           Tree(),
-		Prefix:         "",
-		MiddlewareList: make([]Middleware, 0),
+		Requests:    make([]Path, 0),
+		tree:        Tree(),
+		Prefix:      "",
+		Middlewares: make([]Handler, 0),
 	}
 }
 
 type Handler func(ctx *Context)
 
-type Middleware func(handler Handler) Handler
+type Handlers []Handler
+
+func (h Handlers) Handle(ctx *Context) {
+	for _, hh := range h {
+		if !ctx.Aborted {
+			hh(ctx)
+		}
+	}
+}
 
 // AppendReqAndResp stores the request info and handle into app.
 // support the route parameter. The route parameter will be recognized as
@@ -183,58 +197,54 @@ type Middleware func(handler Handler) Handler
 //
 // The RegUrl will be used to recognize the incoming path and find
 // the handler.
-func (app *App) AppendReqAndResp(url, method string, handler Handler) {
+func (app *App) AppendReqAndResp(url, method string, handler []Handler) {
 
 	app.Requests = append(app.Requests, Path{
 		URL:    app.Prefix + url,
 		Method: method,
 	})
 
-	for _, middleware := range app.MiddlewareList {
-		handler = middleware(handler)
-	}
-
-	app.tree.addPath(stringToArr(app.Prefix+url), method, handler)
+	app.tree.addPath(stringToArr(app.Prefix+url), method, append(app.Middlewares, handler...))
 }
 
 // Find is public helper method for findPath of tree.
-func (app *App) Find(url, method string) Handler {
+func (app *App) Find(url, method string) []Handler {
 	return app.tree.findPath(stringToArr(url), method)
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
-func (app *App) POST(url string, handler Handler) {
+func (app *App) POST(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "post", handler)
 }
 
 // GET is a shortcut for app.AppendReqAndResp(url, "get", handler).
-func (app *App) GET(url string, handler Handler) {
+func (app *App) GET(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "get", handler)
 }
 
 // DELETE is a shortcut for app.AppendReqAndResp(url, "delete", handler).
-func (app *App) DELETE(url string, handler Handler) {
+func (app *App) DELETE(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "delete", handler)
 }
 
 // PUT is a shortcut for app.AppendReqAndResp(url, "put", handler).
-func (app *App) PUT(url string, handler Handler) {
+func (app *App) PUT(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "put", handler)
 }
 
 // OPTIONS is a shortcut for app.AppendReqAndResp(url, "options", handler).
-func (app *App) OPTIONS(url string, handler Handler) {
+func (app *App) OPTIONS(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "options", handler)
 }
 
 // HEAD is a shortcut for app.AppendReqAndResp(url, "head", handler).
-func (app *App) HEAD(url string, handler Handler) {
+func (app *App) HEAD(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
 // Any registers a route that matches all the HTTP methods.
 // GET, POST, PUT, HEAD, OPTIONS, DELETE.
-func (app *App) ANY(url string, handler Handler) {
+func (app *App) ANY(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "post", handler)
 	app.AppendReqAndResp(url, "get", handler)
 	app.AppendReqAndResp(url, "delete", handler)
@@ -244,7 +254,8 @@ func (app *App) ANY(url string, handler Handler) {
 }
 
 // Group add middlewares and prefix for App.
-func (app *App) Group(prefix string, middleware ...Middleware) {
-	app.MiddlewareList = append(app.MiddlewareList, middleware...)
+// TODO: solve Group problem
+func (app *App) Group(prefix string, middleware ...Handler) {
+	app.Middlewares = append(app.Middlewares, middleware...)
 	app.Prefix += prefix
 }

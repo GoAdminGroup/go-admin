@@ -1,6 +1,7 @@
 package table
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
@@ -26,14 +27,14 @@ func InitTableList() {
 	}
 }
 
-// RefreshTableList refresh the table list when the table
-// relationship changed.
+// RefreshTableList refresh the table list when the table relationship changed.
 func RefreshTableList() {
 	for k, v := range Generators {
 		List[k] = v()
 	}
 }
 
+// SetGenerators update Generators.
 func SetGenerators(generators map[string]Generator) {
 	for key, generator := range generators {
 		Generators[key] = generator
@@ -166,21 +167,21 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 // GetDataFromDatabase query the data set.
 func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parameters) PanelInfo {
 
-	pageInt, _ := strconv.Atoi(params.Page)
-
-	title := tb.info.Title
-	description := tb.info.Description
+	const (
+		queryStatement = "select %s from %s%s order by %s %s LIMIT ? OFFSET ?"
+		countStatement = "select count(*) from %s%s"
+	)
 
 	thead := make([]map[string]string, 0)
 	fields := ""
 
-	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.info.Table).ShowColumns()
+	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
 
-	columns := GetColumns(columnsModel, tb.connectionDriver)
+	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != "id" && CheckInTable(columns, tb.info.FieldList[i].Field) {
+		if tb.info.FieldList[i].Field != "id" && checkInTable(columns, tb.info.FieldList[i].Field) {
 			fields += tb.info.FieldList[i].Field + ","
 		}
 		if tb.info.FieldList[i].Hide {
@@ -199,7 +200,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 
 	fields += "id"
 
-	if !CheckInTable(columns, params.SortField) {
+	if !checkInTable(columns, params.SortField) {
 		params.SortField = "id"
 	}
 
@@ -214,12 +215,13 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 		}
 		wheres = wheres[:len(wheres)-4]
 	}
-	args := append(whereArgs, params.PageSize, (pageInt-1)*10)
+	args := append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().QueryWithConnection(tb.connection, "select "+fields+" from "+tb.info.Table+wheres+" order by "+params.SortField+" "+
-		params.SortType+" LIMIT ? OFFSET ?", args...)
+	res, _ := tb.db().QueryWithConnection(tb.connection,
+		fmt.Sprintf(queryStatement, fields, tb.info.Table, wheres, params.SortField, params.SortType),
+		args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -234,10 +236,10 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
-			if CheckInTable(columns, tb.info.FieldList[j].Field) {
+			if checkInTable(columns, tb.info.FieldList[j].Field) {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
 					ID:    row["id"].(int64),
-					Value: GetStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					Value: getStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
 					Row:   row,
 				}).(string))
 			} else {
@@ -249,14 +251,14 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 			}
 		}
 
-		tempModelData["id"] = template.HTML(GetStringFromType("int", res[i]["id"]))
+		tempModelData["id"] = template.HTML(getStringFromType("int", res[i]["id"]))
 
 		infoList = append(infoList, tempModelData)
 	}
 
 	// TODO: use the dialect
 
-	total, _ := tb.db().QueryWithConnection(tb.connection, "select count(*) from "+tb.info.Table+wheres, whereArgs...)
+	total, _ := tb.db().QueryWithConnection(tb.connection, fmt.Sprintf(countStatement, tb.info.Table, wheres), whereArgs...)
 	var size int
 	if tb.connectionDriver == "sqlite" {
 		size = int(total[0]["count(*)"].(int64))
@@ -270,8 +272,8 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parame
 		Thead:       thead,
 		InfoList:    infoList,
 		Paginator:   paginator.Get(path, params, size),
-		Title:       title,
-		Description: description,
+		Title:       tb.info.Title,
+		Description: tb.info.Description,
 		CanAdd:      tb.canAdd,
 		Editable:    tb.editable,
 		Deletable:   tb.deletable,
@@ -284,16 +286,16 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 	fields := make([]string, 0)
 
-	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.form.Table).ShowColumns()
-	columns := GetColumns(columnsModel, tb.connectionDriver)
+	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
+	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	for i := 0; i < len(tb.form.FormList); i++ {
-		if CheckInTable(columns, tb.form.FormList[i].Field) {
+		if checkInTable(columns, tb.form.FormList[i].Field) {
 			fields = append(fields, tb.form.FormList[i].Field)
 		}
 	}
 
-	res, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
+	res, _ := tb.sql().
 		Table(tb.form.Table).Select(fields...).
 		Where("id", "=", id).
 		First()
@@ -301,11 +303,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 	idInt64, _ := strconv.ParseInt(id, 10, 64)
 
 	for i := 0; i < len(tb.form.FormList); i++ {
-		if CheckInTable(columns, tb.form.FormList[i].Field) {
+		if checkInTable(columns, tb.form.FormList[i].Field) {
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idInt64,
-					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
@@ -316,7 +318,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			} else {
 				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idInt64,
-					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).(string)
 			}
@@ -324,7 +326,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
 				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
 					ID:    idInt64,
-					Value: GetStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
@@ -347,8 +349,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
-		Table(tb.form.Table).
+	_, _ = tb.sql().Table(tb.form.Table).
 		Where("id", "=", dataList["id"][0]).
 		Update(tb.getValues(dataList))
 
@@ -356,15 +357,13 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
 
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList map[string][]string) {
-	_, _ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
-		Table(tb.form.Table).
-		Insert(tb.getValues(dataList))
+	_, _ = tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
 }
 
 func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 	value := make(dialect.H, 0)
 
-	columnsModel, _ := db.WithDriverAndConnection(tb.connection, tb.connectionDriver).Table(tb.form.Table).ShowColumns()
+	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 
 	var id = int64(0)
 	if idArr, ok := dataList["id"]; ok {
@@ -372,10 +371,10 @@ func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 		id = int64(idInt)
 	}
 
-	columns := GetColumns(columnsModel, tb.connectionDriver)
+	columns := getColumns(columnsModel, tb.connectionDriver)
 	var fun types.FieldValueFun
 	for k, v := range dataList {
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && CheckInTable(columns, k) {
+		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
 			for i := 0; i < len(tb.form.FormList); i++ {
 				if k == tb.form.FormList[i].Field {
 					fun = tb.form.FormList[i].PostFun
@@ -430,15 +429,19 @@ func (tb DefaultTable) DeleteDataFromDatabase(id string) {
 }
 
 func (tb DefaultTable) delete(table, key, id string) {
-	_ = db.WithDriverAndConnection(tb.connection, tb.connectionDriver).
-		Table(table).
+	_ = tb.sql().Table(table).
 		Where(key, "=", id).
 		Delete()
 }
 
-// db is a helper function return db connection.
+// db is a helper function return raw db connection.
 func (tb DefaultTable) db() db.Connection {
 	return db.GetConnectionByDriver(tb.connectionDriver)
+}
+
+// sql is a helper function return db sql.
+func (tb DefaultTable) sql() *db.Sql {
+	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
 func GetNewFormList(old []types.Form) []types.Form {
@@ -458,7 +461,7 @@ func GetNewFormList(old []types.Form) []types.Form {
 
 type Columns []string
 
-func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
+func getColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	columns := make(Columns, len(columnsModel))
 	switch driver {
 	case "postgresql":
@@ -481,8 +484,8 @@ func GetColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	}
 }
 
-// CheckInTable checks the find string is in the columns or not.
-func CheckInTable(columns []string, find string) bool {
+// checkInTable checks the find string is in the columns or not.
+func checkInTable(columns []string, find string) bool {
 	for i := 0; i < len(columns); i++ {
 		if columns[i] == find {
 			return true
@@ -491,7 +494,8 @@ func CheckInTable(columns []string, find string) bool {
 	return false
 }
 
-func GetStringFromType(typeName string, value interface{}) string {
+// getStringFromType get the value from sql raw type.
+func getStringFromType(typeName string, value interface{}) string {
 	typeName = strings.ToUpper(typeName)
 	if value == nil {
 		return ""

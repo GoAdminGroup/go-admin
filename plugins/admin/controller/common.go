@@ -20,8 +20,8 @@ func aForm() types.FormAttribute {
 	return aTemplate().Form()
 }
 
-func aRow() types.ColAttribute {
-	return aTemplate().Col()
+func aRow() types.RowAttribute {
+	return aTemplate().Row()
 }
 
 func aCol() types.ColAttribute {

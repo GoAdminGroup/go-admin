@@ -10,7 +10,7 @@ import (
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 
-	app.Group(prefix, GlobalErrorHandler)
+	app.Group(prefix, GlobalErrorHandler())
 	{
 		// auth
 		app.GET("/login", controller.ShowLogin)
@@ -28,15 +28,7 @@ func InitRouter(prefix string) *context.App {
 			app.GET("/assets"+path, controller.Assert)
 		}
 
-		authenticator := auth.SetPrefix(prefix).SetAuthFailCallback(func(ctx *context.Context) {
-			ctx.Write(302, map[string]string{
-				"Location": prefix + "/login",
-			}, ``)
-		}).SetPermissionDenyCallback(func(ctx *context.Context) {
-			controller.ShowErrorPage(ctx, "permission denied")
-		})
-
-		app.Group("", authenticator.Middleware)
+		app.Group("", auth.Middleware())
 		{
 			// auth
 			app.GET("/logout", controller.Logout)
@@ -63,10 +55,9 @@ func InitRouter(prefix string) *context.App {
 	return app
 }
 
-func GlobalErrorHandler(h context.Handler) context.Handler {
+func GlobalErrorHandler() context.Handler {
 	return func(ctx *context.Context) {
 		defer controller.GlobalDeferHandler(ctx)
-		h(ctx)
 		return
 	}
 }

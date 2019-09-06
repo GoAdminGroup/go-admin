@@ -5,9 +5,9 @@
 package menu
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/language"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"strconv"
 	"sync"
 	"sync/atomic"
@@ -51,11 +51,11 @@ func (o *Once) unlock() {
 	atomic.StoreUint32(&o.done, 0)
 }
 
-func InitMenu(user auth.User) {
+func InitMenu(user models.UserModel) {
 	SetGlobalMenu(user)
 }
 
-func GetGlobalMenu(user auth.User) *Menu {
+func GetGlobalMenu(user models.UserModel) *Menu {
 	InitMenu(user)
 	return GlobalMenu
 }
@@ -64,7 +64,7 @@ func Unlock() {
 	InitMenuOnce.unlock()
 }
 
-func SetGlobalMenu(user auth.User) {
+func SetGlobalMenu(user models.UserModel) {
 
 	var (
 		menus      []map[string]interface{}
@@ -79,8 +79,8 @@ func SetGlobalMenu(user auth.User) {
 	} else {
 
 		var ids []interface{}
-		for i := 0; i < len(user.Menus); i++ {
-			ids = append(ids, user.Menus[i])
+		for i := 0; i < len(user.MenuIds); i++ {
+			ids = append(ids, user.MenuIds[i])
 		}
 
 		menus, _ = db.Table("goadmin_menu").

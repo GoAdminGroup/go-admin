@@ -72,7 +72,7 @@ func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))(ctx)
+				plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method)).Handle(ctx)
 				for key, head := range ctx.Response.Header {
 					c.Response().Header().Set(key, head[0])
 				}
@@ -141,7 +141,7 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(userId.(string))
+	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
 		_ = ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")

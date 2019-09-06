@@ -17,7 +17,7 @@ import (
 )
 
 func ShowMenu(ctx *context.Context) {
-	GetMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx)
 	return
 }
 
@@ -51,7 +51,7 @@ func DeleteMenu(ctx *context.Context) {
 
 	models.MenuWithId(ctx.Query("id")).Delete()
 
-	menu.SetGlobalMenu(auth.Auth(ctx).UpdateMenus())
+	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 	table.RefreshTableList()
 	response.Ok(ctx)
 }
@@ -101,7 +101,7 @@ func NewMenu(ctx *context.Context) {
 		menuModel.AddRole(roleId)
 	}
 
-	menu.GetGlobalMenu(user.UpdateMenus()).AddMaxOrder()
+	menu.GetGlobalMenu(user.WithRoles().WithMenus()).AddMaxOrder()
 	table.RefreshTableList()
 
 	GetMenuInfoPanel(ctx)
@@ -121,7 +121,7 @@ func MenuOrder(ctx *context.Context) {
 	return
 }
 
-func GetMenuInfoPanel(ctx *context.Context) {
+func getMenuInfoPanel(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))

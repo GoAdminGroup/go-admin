@@ -52,7 +52,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 				ctx := gctx.NewContext(c.Request)
-				plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))(ctx)
+				plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method)).Handle(ctx)
 				for key, head := range ctx.Response.Header {
 					c.ResponseWriter.Header().Add(key, head[0])
 				}
@@ -95,7 +95,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(userId.(string))
+	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")

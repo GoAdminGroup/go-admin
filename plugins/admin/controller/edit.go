@@ -54,16 +54,15 @@ func EditForm(ctx *context.Context) {
 	prevUrlArr := strings.Split(previous, "?")
 	params := parameter.GetParamFromUrl(previous)
 	panel := table.List[prefix]
-	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	if !panel.GetEditable() {
-		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "operation not allow")
+		response.Alert(ctx, config, panel.GetInfo().Description, panel.GetInfo().Title, "operation not allow")
 		return
 	}
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "edit fail, wrong token")
+		response.Alert(ctx, config, panel.GetInfo().Description, panel.GetInfo().Title, "edit fail, wrong token")
 		return
 	}
 
@@ -87,7 +86,7 @@ func EditForm(ctx *context.Context) {
 				continue
 			}
 			if len(val[f.Field]) > 0 && f.Field != "id" {
-				response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "field["+f.Field+"]is not editable")
+				response.Alert(ctx, config, panel.GetInfo().Description, panel.GetInfo().Title, "field["+f.Field+"]is not editable")
 				return
 			}
 		}
@@ -95,6 +94,8 @@ func EditForm(ctx *context.Context) {
 	}
 
 	table.RefreshTableList()
+
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	previous = config.Url("/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), ""))
 	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())

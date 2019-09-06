@@ -16,16 +16,16 @@ import (
 // the routes. The Plugin must implement the three methods.
 type Plugin interface {
 	GetRequest() []context.Path
-	GetHandler(url, method string) context.Handler
+	GetHandler(url, method string) context.Handlers
 	InitPlugin()
 }
 
 // GetHandler is a help method for Plugin GetHandler.
-func GetHandler(url, method string, app *context.App) context.Handler {
+func GetHandler(url, method string, app *context.App) context.Handlers {
 
 	handler := app.Find(url, method)
 
-	if handler == nil {
+	if len(handler) == 0 {
 		panic("handler not found")
 	}
 

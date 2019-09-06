@@ -2,6 +2,7 @@ package redisclient
 
 import (
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/modules/page"
 	template2 "github.com/chenhg5/go-admin/template"
@@ -11,7 +12,7 @@ import (
 )
 
 func Show(ctx *context.Context) {
-	page.SetPageContent(ctx, func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
 		prefix := Config.PREFIX
 

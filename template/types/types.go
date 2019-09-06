@@ -5,8 +5,8 @@
 package types
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"html/template"
 )
 
@@ -19,7 +19,7 @@ type Attribute struct {
 // Page used in the template as a top variable.
 type Page struct {
 	// User is the login user.
-	User auth.User
+	User models.UserModel
 
 	// Menu is the left side menu of the template.
 	Menu menu.Menu

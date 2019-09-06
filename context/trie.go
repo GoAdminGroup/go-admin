@@ -10,7 +10,7 @@ type node struct {
 	children []*node
 	value    string
 	method   string
-	handle   Handler
+	handle   []Handler
 }
 
 func Tree() *node {
@@ -46,7 +46,7 @@ func (n *node) search(value string) *node {
 	return nil
 }
 
-func (n *node) addPath(paths []string, method string, handler Handler) {
+func (n *node) addPath(paths []string, method string, handler []Handler) {
 	if len(paths) > 0 {
 		child := n.addContent(paths[0])
 		if len(paths) > 1 {
@@ -58,7 +58,7 @@ func (n *node) addPath(paths []string, method string, handler Handler) {
 	}
 }
 
-func (n *node) findPath(paths []string, method string) Handler {
+func (n *node) findPath(paths []string, method string) []Handler {
 	if len(paths) > 0 {
 		child := n.search(paths[0])
 		if child == nil {

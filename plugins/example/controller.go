@@ -2,6 +2,7 @@ package example
 
 import (
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/page"
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
@@ -9,7 +10,7 @@ import (
 )
 
 func TestHandler(ctx *context.Context) {
-	page.SetPageContent(ctx, func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
 		components := template2.Get(Config.THEME)
 		colComp := components.Col()

@@ -15,12 +15,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
                     <p>
                         {{.User.Name}} -{{.User.Level}}
-                        <small>{{.User.CreateAt}}</small>
+                        <small>{{.User.CreatedAt}}</small>
                     </p>
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">Setting</a>
+                        <a href="/info/manager/edit?id={{.User.Id}}" class="btn btn-default btn-flat">Setting</a>
                     </div>
                     <div class="pull-right">
                         <a href="/logout" class="btn btn-default btn-flat">Sign out</a>
@@ -2975,7 +2975,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <link rel="shortcut icon" href="http://yanshi.sucaihuo.com/modals/26/2674/demo/favicon.ico">
 
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.proxy.ustclug.org/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/animate.css">

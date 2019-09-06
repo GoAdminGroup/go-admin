@@ -1,6 +1,9 @@
 package modules
 
-import "github.com/NebulousLabs/fastrand"
+import (
+	"github.com/NebulousLabs/fastrand"
+	"strconv"
+)
 
 func InArray(arr []string, str string) bool {
 	for _, v := range arr {
@@ -52,4 +55,13 @@ func SetDefault(source, def string) string {
 		return def
 	}
 	return source
+}
+
+func GetPage(page string) (pageInt int) {
+	if page == "" {
+		pageInt = 1
+	} else {
+		pageInt, _ = strconv.Atoi(page)
+	}
+	return
 }

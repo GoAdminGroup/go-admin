@@ -2,6 +2,7 @@ package controller
 
 import (
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/page"
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
@@ -9,7 +10,7 @@ import (
 )
 
 func ShowDashboard(ctx *context.Context) {
-	page.SetPageContent(ctx, func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
 		components := template2.Get(config.THEME)
 		colComp := components.Col()
@@ -273,7 +274,7 @@ func ShowDashboard(ctx *context.Context) {
 }
 
 func ShowErrorPage(ctx *context.Context, errorMsg string) {
-	page.SetPageContent(ctx, func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 		alert := template2.Get(config.THEME).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template.HTML(errorMsg)).GetContent()
 

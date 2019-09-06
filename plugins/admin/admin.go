@@ -52,6 +52,6 @@ func (admin *Admin) GetRequest() []context.Path {
 	return admin.app.Requests
 }
 
-func (admin *Admin) GetHandler(url, method string) context.Handler {
+func (admin *Admin) GetHandler(url, method string) context.Handlers {
 	return plugins.GetHandler(url, method, admin.app)
 }

@@ -58,7 +58,7 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))(ctx)
+				plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method)).Handle(ctx)
 				for key, head := range ctx.Response.Header {
 					c.Header(key, head[0])
 				}
@@ -101,7 +101,7 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(userId.(string))
+	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
 		ctx.Redirect("/"+globalConfig.PREFIX+"/login", http.StatusFound)

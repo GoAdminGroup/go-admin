@@ -23,12 +23,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     {{end}}
                     <p>
                         {{.User.Name}} -{{.User.Level}}
-                        <small>{{.User.CreateAt}}</small>
+                        <small>{{.User.CreatedAt}}</small>
                     </p>
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.ID}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
+                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.Id}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
                     </div>
                     <div class="pull-right">
                         <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>

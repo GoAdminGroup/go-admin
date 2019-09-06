@@ -54,17 +54,16 @@ func NewForm(ctx *context.Context) {
 	prevUrlArr := strings.Split(previous, "?")
 	params := parameter.GetParamFromUrl(previous)
 	panel := table.List[prefix]
-	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	if !panel.GetCanAdd() {
-		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "operation not allow")
+		response.Alert(ctx, config, panel.GetInfo().Description, panel.GetInfo().Title, "operation not allow")
 		return
 	}
 
 	token := ctx.FormValue("_t")
 
 	if !auth.TokenHelper.CheckToken(token) {
-		response.Alert(ctx, config, panelInfo.Description, panelInfo.Title, "create fail, wrong token")
+		response.Alert(ctx, config, panel.GetInfo().Description, panel.GetInfo().Title, "create fail, wrong token")
 		return
 	}
 
@@ -88,6 +87,8 @@ func NewForm(ctx *context.Context) {
 	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
 	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
 	deleteUrl := config.Url("/delete/" + prefix)
+
+	panelInfo := panel.GetDataFromDatabase(prevUrlArr[0], params)
 
 	dataTable := aDataTable().
 		SetInfoList(panelInfo.InfoList).

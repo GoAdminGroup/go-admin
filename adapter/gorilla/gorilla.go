@@ -62,7 +62,7 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method))(ctx)
+				plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method)).Handle(ctx)
 				for key, head := range ctx.Response.Header {
 					w.Header().Add(key, head[0])
 				}
@@ -116,7 +116,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(userId.(string))
+	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
 		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")

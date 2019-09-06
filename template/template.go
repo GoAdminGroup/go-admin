@@ -6,9 +6,9 @@ package template
 
 import (
 	"bytes"
-	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/chenhg5/go-admin/template/login"
 	"github.com/chenhg5/go-admin/template/types"
@@ -138,7 +138,7 @@ func SetComp(name string, comp Component) {
 
 func Excecute(tmpl *template.Template,
 	tmplName string,
-	user auth.User,
+	user models.UserModel,
 	panel types.Panel,
 	Config config.Config,
 	globalMenu *menu.Menu) *bytes.Buffer {
