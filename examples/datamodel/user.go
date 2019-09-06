@@ -16,7 +16,7 @@ func GetUserTable() (userTable table.Table) {
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -25,7 +25,7 @@ func GetUserTable() (userTable table.Table) {
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -34,7 +34,7 @@ func GetUserTable() (userTable table.Table) {
 			Field:    "gender",
 			TypeName: "tinyint",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				if model.Value == "1" {
 					return "man"
 				}
@@ -49,7 +49,7 @@ func GetUserTable() (userTable table.Table) {
 			Field:    "phone",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -58,7 +58,7 @@ func GetUserTable() (userTable table.Table) {
 			Field:    "city",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -76,7 +76,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -86,7 +86,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -96,7 +96,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -119,7 +119,7 @@ func GetUserTable() (userTable table.Table) {
 				},
 			},
 			FormType: form.Radio,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -129,7 +129,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -139,7 +139,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -149,7 +149,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "2017-01-05 23:01:17",
 			Editable: true,
 			FormType: form.Datetime,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -159,7 +159,7 @@ func GetUserTable() (userTable table.Table) {
 			Default:  "2017-01-05 23:01:17",
 			Editable: true,
 			FormType: form.Datetime,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},

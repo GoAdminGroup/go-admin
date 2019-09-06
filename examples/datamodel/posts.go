@@ -16,7 +16,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -25,7 +25,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Field:    "title",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -34,7 +34,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Field:    "description",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -43,7 +43,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Field:    "content",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -52,7 +52,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Field:    "date",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -70,7 +70,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -80,7 +80,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -90,7 +90,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -100,7 +100,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -110,7 +110,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.RichText,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -120,7 +120,7 @@ func GetPostsTable() (postsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Datetime,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},

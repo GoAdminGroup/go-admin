@@ -74,7 +74,7 @@ func Warn(info ...interface{}) {
 }
 
 func Access(ctx *context.Context) {
-	manager["access"].Println("[" + constant.Title + "]",
+	manager["access"].Println("["+constant.Title+"]",
 		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 		ctx.Path())

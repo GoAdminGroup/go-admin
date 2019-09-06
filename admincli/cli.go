@@ -348,7 +348,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 			Field:    "` + model[fieldField].(string) + `",
 			TypeName: "` + GetType(model[typeField].(string)) + `",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},`
@@ -376,7 +376,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 			Default:  "",
 			Editable: false,
 			FormType: "` + formType + `",
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},`

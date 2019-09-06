@@ -237,13 +237,13 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 				continue
 			}
 			if checkInTable(columns, tb.info.FieldList[j].Field) {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    row["id"].(int64),
 					Value: getStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
 					Row:   row,
 				}).(string))
 			} else {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].ExcuFun(types.RowModel{
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    row["id"].(int64),
 					Value: "",
 					Row:   row,
@@ -305,7 +305,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 	for i := 0; i < len(tb.form.FormList); i++ {
 		if checkInTable(columns, tb.form.FormList[i].Field) {
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
-				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
+				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
 					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
@@ -316,7 +316,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 					}
 				}
 			} else {
-				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
+				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
 					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
@@ -324,7 +324,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			}
 		} else {
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
-				valueArr := tb.form.FormList[i].ExcuFun(types.RowModel{
+				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
 					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
 					Row:   res,
@@ -335,7 +335,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 					}
 				}
 			} else {
-				tb.form.FormList[i].Value = tb.form.FormList[i].ExcuFun(types.RowModel{
+				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
 					Value: tb.form.FormList[i].Field,
 					Row:   res,
@@ -372,7 +372,7 @@ func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
 	}
 
 	columns := getColumns(columnsModel, tb.connectionDriver)
-	var fun types.FieldValueFun
+	var fun types.FieldFilterFn
 	for k, v := range dataList {
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
 			for i := 0; i < len(tb.form.FormList); i++ {

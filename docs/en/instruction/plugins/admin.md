@@ -166,7 +166,7 @@ type InfoPanel struct {
 }
 
 type Field struct {
-	ExcuFun  FieldValueFun // filter function
+	FilterFn  FieldFilterFn // filter function
 	Field    string        // field name
 	TypeName string        // field type name
 	Head     string        // title
@@ -194,7 +194,7 @@ type Form struct {
 	FormType string
 	Value    string
 	Options  []map[string]string
-	ExcuFun  FieldValueFun // filter function
+	FilterFn  FieldFilterFn // filter function
 }
 ```
 
@@ -245,7 +245,7 @@ Options: []map[string]string{
 ...
 ```
 
-### Filter function `ExcuFun`
+### Filter function `FilterFn`
 
 ```go
 // RowModel contains ID and value of the single query result.
@@ -254,8 +254,8 @@ type RowModel struct {
 	Value string
 }
 
-// FieldValueFun is filter function of data.
-type FieldValueFun func(value RowModel) interface{}
+// FieldFilterFn is filter function of data.
+type FieldFilterFn func(value RowModel) interface{}
 ```
 
 The filter function receives a parameter, RowModel, which represents the current edit target line, contains the id and the displayed value.

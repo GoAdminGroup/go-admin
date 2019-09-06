@@ -19,7 +19,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "id",
 			TypeName: "int",
 			Sortable: true,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -28,7 +28,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "first_name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -37,7 +37,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "last_name",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -46,7 +46,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "email",
 			TypeName: "varchar",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -55,7 +55,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "birthdate",
 			TypeName: "date",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -64,7 +64,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Field:    "added",
 			TypeName: "timestamp",
 			Sortable: false,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},
@@ -82,7 +82,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -92,7 +92,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -102,7 +102,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -112,7 +112,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -122,7 +122,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -132,7 +132,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
@@ -142,7 +142,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
-			ExcuFun: func(model types.RowModel) interface{} {
+			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		},

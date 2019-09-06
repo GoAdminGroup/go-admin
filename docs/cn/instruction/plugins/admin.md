@@ -170,7 +170,7 @@ type InfoPanel struct {
 }
 
 type Field struct {
-	ExcuFun  FieldValueFun     // 过滤函数
+	FilterFn  FieldFilterFn     // 过滤函数
 	Field    string            // 字段名
 	TypeName string            // 字段类型名
 	Head     string            // 标题
@@ -198,7 +198,7 @@ type Form struct {
 	FormType string                // 表单类型
 	Value    string                // 表单默认值
 	Options  []map[string]string   // 表单选项
-	ExcuFun  FieldValueFun         // 过滤函数
+	FilterFn  FieldFilterFn         // 过滤函数
 }
 ```
 
@@ -245,7 +245,7 @@ Options: []map[string]string{
 
 其中，field为字段名，value为选择对应的值。
 
-### 过滤函数ExcuFun说明
+### 过滤函数FilterFn说明
 
 ```go
 // RowModel contains ID and value of the single query result.
@@ -254,8 +254,8 @@ type RowModel struct {
 	Value string
 }
 
-// FieldValueFun is filter function of data.
-type FieldValueFun func(value RowModel) interface{}
+// FieldFilterFn is filter function of data.
+type FieldFilterFn func(value RowModel) interface{}
 ```
 
 过滤函数接收一个参数，RowModel，表示当前编辑目标行，包含了id和显示的value，而过滤函数的返回值即是最终表单行显示的默认值。
