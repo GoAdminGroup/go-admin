@@ -10,47 +10,45 @@ import (
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 
-	app.Group(prefix, GlobalErrorHandler())
-	{
-		// auth
-		app.GET("/login", controller.ShowLogin)
-		app.POST("/signin", controller.Auth)
+	route := app.Group(prefix, GlobalErrorHandler())
 
-		// auto install
-		app.GET("/install", controller.ShowInstall)
-		app.POST("/install/database/check", controller.CheckDatabase)
+	// auth
+	route.GET("/login", controller.ShowLogin)
+	route.POST("/signin", controller.Auth)
 
-		for _, path := range template.Get("adminlte").GetAssetList() {
-			app.GET("/assets"+path, controller.Assert)
-		}
+	// auto install
+	route.GET("/install", controller.ShowInstall)
+	route.POST("/install/database/check", controller.CheckDatabase)
 
-		for _, path := range template.GetComp("login").GetAssetList() {
-			app.GET("/assets"+path, controller.Assert)
-		}
-
-		app.Group("", auth.Middleware())
-		{
-			// auth
-			app.GET("/logout", controller.Logout)
-
-			// menus
-			app.GET("/menu", controller.ShowMenu)
-			app.POST("/menu/delete", controller.DeleteMenu)
-			app.POST("/menu/new", controller.NewMenu)
-			//app.GET("/menu/new", controller.ShowMenu) // TODO: this will cause a bug of the tire
-			app.POST("/menu/edit", controller.EditMenu)
-			app.GET("/menu/edit/show", controller.ShowEditMenu)
-			app.POST("/menu/order", controller.MenuOrder)
-
-			// add delete modify query
-			app.GET("/info/:prefix", controller.ShowInfo)
-			app.GET("/info/:prefix/edit", controller.ShowForm)
-			app.GET("/info/:prefix/new", controller.ShowNewForm)
-			app.POST("/edit/:prefix", controller.EditForm)
-			app.POST("/delete/:prefix", controller.Delete)
-			app.POST("/new/:prefix", controller.NewForm)
-		}
+	for _, path := range template.Get("adminlte").GetAssetList() {
+		route.GET("/assets"+path, controller.Assert)
 	}
+
+	for _, path := range template.GetComp("login").GetAssetList() {
+		route.GET("/assets"+path, controller.Assert)
+	}
+
+	authRoute := route.Group("", auth.Middleware())
+
+	// auth
+	authRoute.GET("/logout", controller.Logout)
+
+	// menus
+	authRoute.GET("/menu", controller.ShowMenu)
+	authRoute.POST("/menu/delete", controller.DeleteMenu)
+	authRoute.POST("/menu/new", controller.NewMenu)
+	//authRoute.GET("/menu/new", controller.ShowMenu) // TODO: this will cause a bug of the tire
+	authRoute.POST("/menu/edit", controller.EditMenu)
+	authRoute.GET("/menu/edit/show", controller.ShowEditMenu)
+	authRoute.POST("/menu/order", controller.MenuOrder)
+
+	// add delete modify query
+	authRoute.GET("/info/:prefix", controller.ShowInfo)
+	authRoute.GET("/info/:prefix/edit", controller.ShowForm)
+	authRoute.GET("/info/:prefix/new", controller.ShowNewForm)
+	authRoute.POST("/edit/:prefix", controller.EditForm)
+	authRoute.POST("/delete/:prefix", controller.Delete)
+	authRoute.POST("/new/:prefix", controller.NewForm)
 
 	return app
 }

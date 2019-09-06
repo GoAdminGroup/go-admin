@@ -76,7 +76,7 @@ func EditMenu(ctx *context.Context) {
 
 	menu.SetGlobalMenu(auth.Auth(ctx))
 
-	GetMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx)
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }
@@ -104,7 +104,7 @@ func NewMenu(ctx *context.Context) {
 	menu.GetGlobalMenu(user.WithRoles().WithMenus()).AddMaxOrder()
 	table.RefreshTableList()
 
-	GetMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx)
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }

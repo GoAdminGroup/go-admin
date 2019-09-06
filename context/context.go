@@ -254,8 +254,86 @@ func (app *App) ANY(url string, handler ...Handler) {
 }
 
 // Group add middlewares and prefix for App.
-// TODO: solve Group problem
-func (app *App) Group(prefix string, middleware ...Handler) {
-	app.Middlewares = append(app.Middlewares, middleware...)
-	app.Prefix += prefix
+func (app *App) Group(prefix string, middleware ...Handler) *RouterGroup {
+	return &RouterGroup{
+		app:         app,
+		Middlewares: append(app.Middlewares, middleware...),
+		Prefix:      prefix,
+	}
+}
+
+// RouterGroup is a group of routes.
+type RouterGroup struct {
+	app         *App
+	Middlewares Handlers
+	Prefix      string
+}
+
+// AppendReqAndResp stores the request info and handle into app.
+// support the route parameter. The route parameter will be recognized as
+// wildcard store into the RegUrl of Path struct. For example:
+//
+//         /user/:id      => /user/(.*)
+//         /user/:id/info => /user/(.*?)/info
+//
+// The RegUrl will be used to recognize the incoming path and find
+// the handler.
+func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
+
+	g.app.Requests = append(g.app.Requests, Path{
+		URL:    g.Prefix + url,
+		Method: method,
+	})
+
+	g.app.tree.addPath(stringToArr(g.Prefix+url), method, append(g.Middlewares, handler...))
+}
+
+// POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
+func (g *RouterGroup) POST(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "post", handler)
+}
+
+// GET is a shortcut for app.AppendReqAndResp(url, "get", handler).
+func (g *RouterGroup) GET(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "get", handler)
+}
+
+// DELETE is a shortcut for app.AppendReqAndResp(url, "delete", handler).
+func (g *RouterGroup) DELETE(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "delete", handler)
+}
+
+// PUT is a shortcut for app.AppendReqAndResp(url, "put", handler).
+func (g *RouterGroup) PUT(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "put", handler)
+}
+
+// OPTIONS is a shortcut for app.AppendReqAndResp(url, "options", handler).
+func (g *RouterGroup) OPTIONS(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "options", handler)
+}
+
+// HEAD is a shortcut for app.AppendReqAndResp(url, "head", handler).
+func (g *RouterGroup) HEAD(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "head", handler)
+}
+
+// Any registers a route that matches all the HTTP methods.
+// GET, POST, PUT, HEAD, OPTIONS, DELETE.
+func (g *RouterGroup) ANY(url string, handler ...Handler) {
+	g.AppendReqAndResp(url, "post", handler)
+	g.AppendReqAndResp(url, "get", handler)
+	g.AppendReqAndResp(url, "delete", handler)
+	g.AppendReqAndResp(url, "put", handler)
+	g.AppendReqAndResp(url, "options", handler)
+	g.AppendReqAndResp(url, "head", handler)
+}
+
+// Group add middlewares and prefix for App.
+func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
+	return &RouterGroup{
+		app:         g.app,
+		Middlewares: append(g.Middlewares, middleware...),
+		Prefix:      g.Prefix + prefix,
+	}
 }
