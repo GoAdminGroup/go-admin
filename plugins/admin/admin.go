@@ -24,7 +24,7 @@ func (admin *Admin) InitPlugin() {
 	}
 
 	// Init router
-	App.app = InitRouter("/" + cfg.PREFIX)
+	App.app = InitRouter(cfg.Prefix())
 
 	table.SetGenerators(map[string]table.Generator{
 		"manager":    table.GetManagerTable,
@@ -36,9 +36,7 @@ func (admin *Admin) InitPlugin() {
 	table.SetGenerators(admin.tableCfg)
 	table.InitTableList()
 
-	cfg.PREFIX = "/" + cfg.PREFIX
 	controller.SetConfig(cfg)
-
 }
 
 var App = new(Admin)

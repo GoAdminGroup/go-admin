@@ -62,7 +62,7 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method)).Handle(ctx)
+				ctx.SetHandlers(plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
 				for key, head := range ctx.Response.Header {
 					w.Header().Add(key, head[0])
 				}

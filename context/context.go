@@ -8,9 +8,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"strings"
 )
+
+const abortIndex int8 = math.MaxInt8 / 2
 
 // Context is the simplify version of web framework context.
 // But it is important which will be used in plugins to custom
@@ -22,7 +25,8 @@ type Context struct {
 	Request   *http.Request
 	Response  *http.Response
 	UserValue map[string]interface{}
-	Aborted   bool
+	index     int8
+	handlers  Handlers
 }
 
 // Path is used in the matching of request and response. URL stores the
@@ -45,7 +49,21 @@ func (ctx *Context) Path() string {
 
 // Abort abort the context.
 func (ctx *Context) Abort() {
-	ctx.Aborted = true
+	ctx.index = abortIndex
+}
+
+// Next should be used only inside middleware.
+func (ctx *Context) Next() {
+	ctx.index++
+	for s := int8(len(ctx.handlers)); ctx.index < s; ctx.index++ {
+		ctx.handlers[ctx.index](ctx)
+	}
+}
+
+// Next should be used only inside middleware.
+func (ctx *Context) SetHandlers(handlers Handlers) *Context {
+	ctx.handlers = handlers
+	return ctx
 }
 
 // Method return the request method.
@@ -64,6 +82,7 @@ func NewContext(req *http.Request) *Context {
 			StatusCode: 200,
 			Header:     make(http.Header, 0),
 		},
+		index: -1,
 	}
 }
 
@@ -171,7 +190,7 @@ func NewApp() *App {
 	return &App{
 		Requests:    make([]Path, 0),
 		tree:        Tree(),
-		Prefix:      "",
+		Prefix:      "/",
 		Middlewares: make([]Handler, 0),
 	}
 }
@@ -179,14 +198,6 @@ func NewApp() *App {
 type Handler func(ctx *Context)
 
 type Handlers []Handler
-
-func (h Handlers) Handle(ctx *Context) {
-	for _, hh := range h {
-		if !ctx.Aborted {
-			hh(ctx)
-		}
-	}
-}
 
 // AppendReqAndResp stores the request info and handle into app.
 // support the route parameter. The route parameter will be recognized as
@@ -204,7 +215,7 @@ func (app *App) AppendReqAndResp(url, method string, handler []Handler) {
 		Method: method,
 	})
 
-	app.tree.addPath(stringToArr(app.Prefix+url), method, append(app.Middlewares, handler...))
+	app.tree.addPath(stringToArr(join(app.Prefix, slash(url))), method, append(app.Middlewares, handler...))
 }
 
 // Find is public helper method for findPath of tree.
@@ -258,7 +269,7 @@ func (app *App) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         app,
 		Middlewares: append(app.Middlewares, middleware...),
-		Prefix:      prefix,
+		Prefix:      slash(prefix),
 	}
 }
 
@@ -285,7 +296,7 @@ func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 		Method: method,
 	})
 
-	g.app.tree.addPath(stringToArr(g.Prefix+url), method, append(g.Middlewares, handler...))
+	g.app.tree.addPath(stringToArr(join(g.Prefix, slash(url))), method, append(g.Middlewares, handler...))
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
@@ -334,6 +345,42 @@ func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         g.app,
 		Middlewares: append(g.Middlewares, middleware...),
-		Prefix:      g.Prefix + prefix,
+		Prefix:      join(slash(g.Prefix), slash(prefix)),
 	}
+}
+
+// slash fix the path which has wrong format problem.
+//
+// 	 ""      => "/"
+// 	 "abc/"  => "/abc"
+// 	 "/abc/" => "/abc"
+// 	 "/abc"  => "/abc"
+// 	 "/"     => "/"
+//
+func slash(prefix string) string {
+	prefix = strings.TrimSpace(prefix)
+	if prefix == "" || prefix == "/" {
+		return "/"
+	}
+	if prefix[0] != '/' {
+		if prefix[len(prefix)-1] == '/' {
+			return "/" + prefix[:len(prefix)-1]
+		}
+		return "/" + prefix
+	}
+	if prefix[len(prefix)-1] == '/' {
+		return prefix[:len(prefix)-1]
+	}
+	return prefix
+}
+
+// join join the path.
+func join(prefix, suffix string) string {
+	if prefix == "/" {
+		return suffix
+	}
+	if suffix == "/" {
+		return prefix
+	}
+	return prefix + suffix
 }

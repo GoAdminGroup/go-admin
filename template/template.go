@@ -6,7 +6,7 @@ package template
 
 import (
 	"bytes"
-	"github.com/chenhg5/go-admin/modules/config"
+	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/adminlte"
@@ -140,7 +140,7 @@ func Excecute(tmpl *template.Template,
 	tmplName string,
 	user models.UserModel,
 	panel types.Panel,
-	Config config.Config,
+	config c.Config,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
@@ -151,11 +151,11 @@ func Excecute(tmpl *template.Template,
 			Version: "0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: Config.PREFIX,
-		Title:         Config.TITLE,
-		Logo:          Config.LOGO,
-		MiniLogo:      Config.MINILOGO,
-		ColorScheme:   Config.COLORSCHEME,
+		AssertRootUrl: config.PrefixFixSlash(),
+		Title:         config.TITLE,
+		Logo:          config.LOGO,
+		MiniLogo:      config.MINILOGO,
+		ColorScheme:   config.COLORSCHEME,
 	})
 	return buf
 }

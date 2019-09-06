@@ -2,7 +2,7 @@ package redisclient
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/config"
+	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins"
 )
 
@@ -12,16 +12,11 @@ type RedisClient struct {
 
 var Plug = new(RedisClient)
 
-var Config config.Config
+var config c.Config
 
 func (redis *RedisClient) InitPlugin() {
-	cfg := config.Get()
-
-	Config = cfg
-	Config.PREFIX = "/" + Config.PREFIX
-
-	Plug.app = InitRouter(Config.PREFIX)
-
+	config = c.Get()
+	Plug.app = InitRouter(config.Prefix())
 }
 
 func NewRedisClient() *RedisClient {

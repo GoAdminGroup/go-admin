@@ -72,7 +72,7 @@ func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method)).Handle(ctx)
+				ctx.SetHandlers(plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
 				for key, head := range ctx.Response.Header {
 					c.Response().Header().Set(key, head[0])
 				}

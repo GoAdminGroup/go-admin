@@ -33,7 +33,7 @@ func ShowNewForm(ctx *context.Context) {
 	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
-			SetPrefix(config.PREFIX).
+			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
 			SetUrl(config.Url("/new/" + prefix)).
 			SetToken(auth.TokenHelper.AddToken()).
@@ -44,7 +44,7 @@ func ShowNewForm(ctx *context.Context) {
 			GetContent(),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
@@ -111,7 +111,7 @@ func NewForm(ctx *context.Context) {
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, config.Prefix(), "", 1)))
 
 	ctx.Html(http.StatusOK, buffer.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, previous)

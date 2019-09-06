@@ -10,7 +10,7 @@ import (
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 
-	route := app.Group(prefix, GlobalErrorHandler())
+	route := app.Group(prefix, GlobalErrorHandler)
 
 	// auth
 	route.GET("/login", controller.ShowLogin)
@@ -28,7 +28,7 @@ func InitRouter(prefix string) *context.App {
 		route.GET("/assets"+path, controller.Assert)
 	}
 
-	authRoute := route.Group("", auth.Middleware())
+	authRoute := route.Group("/", auth.Middleware)
 
 	// auth
 	authRoute.GET("/logout", controller.Logout)
@@ -53,9 +53,8 @@ func InitRouter(prefix string) *context.App {
 	return app
 }
 
-func GlobalErrorHandler() context.Handler {
-	return func(ctx *context.Context) {
-		defer controller.GlobalDeferHandler(ctx)
-		return
-	}
+func GlobalErrorHandler(ctx *context.Context) {
+	defer controller.GlobalDeferHandler(ctx)
+	ctx.Next()
+	return
 }

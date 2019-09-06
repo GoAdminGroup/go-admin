@@ -47,12 +47,11 @@ func GlobalDeferHandler(ctx *context.Context) {
 			}
 		}
 
-		if ok, _ = regexp.Match("/edit(.*)", []byte(ctx.Path())); ok {
+		if ok, _ = regexp.MatchString("/edit(.*)", ctx.Path()); ok {
 			setFormWithReturnErrMessage(ctx, errMsg, "edit")
 			return
 		}
-
-		if ok, _ = regexp.Match("/new(.*)", []byte(ctx.Path())); ok {
+		if ok, _ = regexp.MatchString("/new(.*)", ctx.Path()); ok {
 			setFormWithReturnErrMessage(ctx, errMsg, "new")
 			return
 		}
@@ -71,7 +70,20 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		SetContent(template2.HTML(errMsg)).
 		GetContent()
 
-	formData, title, description := table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
+	var (
+		formData           []types.Form
+		title, description string
+	)
+
+	if kind == "edit" {
+		formData, title, description = table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
+	} else {
+		prefix := ctx.Query("prefix")
+		panel := table.List[prefix]
+		formData = table.GetNewFormList(panel.GetForm().FormList)
+		title = panel.GetForm().Title
+		description = panel.GetForm().Description
+	}
 
 	queryParam := parameter.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
 
@@ -81,14 +93,15 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
-			SetPrefix(config.PREFIX).
+			SetTitle(strings.Title(kind)).
+			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/" + kind + "/" + prefix)).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(config.Url("/info/" + prefix + queryParam)).
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

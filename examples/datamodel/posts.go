@@ -119,7 +119,7 @@ func GetPostsTable() (postsTable table.Table) {
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,
-			FormType: form.Text,
+			FormType: form.Datetime,
 			ExcuFun: func(model types.RowModel) interface{} {
 				return model.Value
 			},

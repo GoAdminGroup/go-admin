@@ -14,15 +14,13 @@ import (
 func Show(ctx *context.Context) {
 	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
-		prefix := Config.PREFIX
+		editUrl := config.Url("/info/" + config.Prefix() + "/edit")
+		newUrl := config.Url("/info/" + config.Prefix() + "/new")
+		deleteUrl := config.Url("/delete/" + config.Prefix())
 
-		editUrl := Config.PREFIX + "/info/" + prefix + "/edit"
-		newUrl := Config.PREFIX + "/info/" + prefix + "/new"
-		deleteUrl := Config.PREFIX + "/delete/" + prefix
+		menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
 
-		menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), Config.PREFIX, "", 1))
-
-		label := template2.Get(Config.THEME).Label().SetContent("list").GetContent()
+		label := template2.Get(config.THEME).Label().SetContent("list").GetContent()
 
 		infoList := []map[string]template.HTML{
 			{
@@ -95,13 +93,13 @@ func Show(ctx *context.Context) {
 		</ul>
 		</div>`
 
-		dataTable := template2.Get(Config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).
+		dataTable := template2.Get(config.THEME).DataTable().SetInfoList(infoList).SetThead(thead).
 			SetEditUrl(editUrl).SetNewUrl(newUrl).SetDeleteUrl(deleteUrl)
 		table := dataTable.GetContent()
 
-		paginator := template2.Get(Config.THEME).Paginator().GetContent()
+		paginator := template2.Get(config.THEME).Paginator().GetContent()
 
-		box := template2.Get(Config.THEME).Box().
+		box := template2.Get(config.THEME).Box().
 			SetBody(table).
 			SetHeader(template.HTML(header)).
 			WithHeadBorder(false).

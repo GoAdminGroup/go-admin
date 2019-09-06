@@ -21,9 +21,7 @@ type Invoker struct {
 	permissionDenyCallback MiddlewareCallback
 }
 
-func Middleware() context.Handler {
-	return DefaultInvoker().Middleware()
-}
+var Middleware = DefaultInvoker().Middleware()
 
 func DefaultInvoker() *Invoker {
 	return &Invoker{
@@ -72,6 +70,7 @@ func (invoker *Invoker) Middleware() context.Handler {
 
 		if authOk && permissionOk {
 			ctx.SetUserValue("user", user)
+			ctx.Next()
 			return
 		}
 

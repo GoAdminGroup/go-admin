@@ -35,14 +35,14 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
-			SetPrefix(config.PREFIX).
+			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/menu/edit")).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(config.Url("/menu")).
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 }
@@ -124,7 +124,7 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
 
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")
@@ -142,7 +142,7 @@ func getMenuInfoPanel(ctx *context.Context) {
 	col1 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
 	newForm := aForm().
-		SetPrefix(config.PREFIX).
+		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
@@ -153,14 +153,14 @@ func getMenuInfoPanel(ctx *context.Context) {
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
 
 	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content:     row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 }

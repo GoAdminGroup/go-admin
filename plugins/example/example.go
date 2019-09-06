@@ -2,7 +2,7 @@ package example
 
 import (
 	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/config"
+	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins"
 )
 
@@ -12,12 +12,11 @@ type Example struct {
 
 var Plug = new(Example)
 
-var Config config.Config
+var config c.Config
 
 func (example *Example) InitPlugin() {
-	Config = config.Get()
-	Config.PREFIX = "/" + Config.PREFIX
-	Plug.app = InitRouter(Config.PREFIX)
+	config = c.Get()
+	Plug.app = InitRouter(config.Prefix())
 }
 
 func NewExample() *Example {

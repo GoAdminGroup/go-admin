@@ -8,14 +8,8 @@ import (
 func InitRouter(prefix string) *context.App {
 
 	app := context.NewApp()
-
-	app.GET(prefix+"/example", auth.Middleware(), TestHandler)
-
-	if prefix == "" {
-		app.GET(prefix+"/", auth.Middleware(), TestHandler)
-	} else {
-		app.GET(prefix, auth.Middleware(), TestHandler)
-	}
+	app.GET(prefix+"/example", auth.Middleware, TestHandler)
+	app.GET(prefix, auth.Middleware, TestHandler)
 
 	return app
 }

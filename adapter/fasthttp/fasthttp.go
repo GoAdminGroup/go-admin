@@ -64,7 +64,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 
-				plugCopy.GetHandler(string(c.Path()), strings.ToLower(string(c.Method()))).Handle(ctx)
+				ctx.SetHandlers(plugCopy.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))).Next()
 				for key, head := range ctx.Response.Header {
 					c.Response.Header.Set(key, head[0])
 				}

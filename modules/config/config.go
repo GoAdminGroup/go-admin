@@ -116,11 +116,49 @@ type Config struct {
 }
 
 func (c Config) GetIndexUrl() string {
-	return c.PREFIX + c.INDEX
+	index := c.Index()
+	if index == "/" {
+		return c.Prefix()
+	}
+	return c.Prefix() + index
 }
 
 func (c Config) Url(suffix string) string {
-	return c.PREFIX + suffix
+	prefix := c.Prefix()
+	if prefix == "/" {
+		return suffix
+	}
+	return prefix + suffix
+}
+
+func (c Config) Index() string {
+	if c.INDEX == "" {
+		return "/"
+	}
+	if c.INDEX[0] != '/' {
+		return "/" + c.INDEX
+	}
+	return c.INDEX
+}
+
+func (c Config) Prefix() string {
+	if c.PREFIX == "" {
+		return "/"
+	}
+	if c.PREFIX[0] != '/' {
+		return "/" + c.PREFIX
+	}
+	return c.PREFIX
+}
+
+func (c Config) PrefixFixSlash() string {
+	if c.PREFIX == "/" {
+		return ""
+	}
+	if c.PREFIX[0] != '/' {
+		return "/" + c.PREFIX
+	}
+	return c.PREFIX
 }
 
 var (

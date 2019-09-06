@@ -7,6 +7,6 @@ import (
 
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
-	app.GET(prefix+"/redisclient", auth.Middleware(), Show)
+	app.GET(prefix+"/redisclient", auth.Middleware, Show)
 	return app
 }

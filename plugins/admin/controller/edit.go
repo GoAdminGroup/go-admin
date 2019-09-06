@@ -35,7 +35,7 @@ func ShowForm(ctx *context.Context) {
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
-			SetPrefix(config.PREFIX).
+			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/edit/" + prefix)).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(config.Url("/info/" + prefix + regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(params.GetRouteParamStr(), ""))).
@@ -44,7 +44,7 @@ func ShowForm(ctx *context.Context) {
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
@@ -68,7 +68,7 @@ func EditForm(ctx *context.Context) {
 
 	form := ctx.Request.MultipartForm
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
+	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
 
 	// process uploading files, only support local storage
 	if len(form.File) > 0 {
@@ -128,7 +128,7 @@ func EditForm(ctx *context.Context) {
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, config.Prefix(), "", 1)))
 
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, previous)

@@ -52,7 +52,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 					}
 				}
 				ctx := gctx.NewContext(c.Request)
-				plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method)).Handle(ctx)
+				ctx.SetHandlers(plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
 				for key, head := range ctx.Response.Header {
 					c.ResponseWriter.Header().Add(key, head[0])
 				}

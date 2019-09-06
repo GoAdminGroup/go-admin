@@ -50,7 +50,7 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string) 
 		Content:     alert,
 		Description: desc,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 

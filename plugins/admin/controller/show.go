@@ -75,12 +75,12 @@ func ShowInfo(ctx *context.Context) {
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
 func Assert(ctx *context.Context) {
-	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), config.PREFIX, "", 1)
+	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), config.Prefix(), "", 1)
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
