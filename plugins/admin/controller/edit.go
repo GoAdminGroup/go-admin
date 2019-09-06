@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -131,5 +132,6 @@ func EditForm(ctx *context.Context) {
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(previous, config.Prefix(), "", 1)))
 
 	ctx.Html(http.StatusOK, buf.String())
+	fmt.Println("previous", previous)
 	ctx.AddHeader(constant.PjaxUrlHeader, previous)
 }

@@ -1,6 +1,7 @@
 package parameter
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -14,7 +15,7 @@ type Parameters struct {
 	Fields    map[string]string
 }
 
-func GetParam(values url.Values) *Parameters {
+func GetParam(values url.Values) Parameters {
 	page := GetDefault(values, "page", "1")
 	pageSize := GetDefault(values, "pageSize", "10")
 	sortField := GetDefault(values, "sort", "id")
@@ -40,7 +41,9 @@ func GetParam(values url.Values) *Parameters {
 		}
 	}
 
-	return &Parameters{
+	fmt.Println("page", page)
+
+	return Parameters{
 		Page:      page,
 		PageSize:  pageSize,
 		SortField: sortField,
@@ -49,15 +52,16 @@ func GetParam(values url.Values) *Parameters {
 	}
 }
 
-func GetParamFromUrl(value string) *Parameters {
+func GetParamFromUrl(value string) Parameters {
 	prevUrlArr := strings.Split(value, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
+
+	fmt.Println("paramArr", paramArr)
+
 	page := "1"
 	pageSize := "10"
 	sortField := "id"
 	sortType := "desc"
-
-	//fields := make(map[string]string, 0)
 
 	for i := 0; i < len(paramArr); i++ {
 		arr := strings.Split(paramArr[i], "=")
@@ -70,44 +74,41 @@ func GetParamFromUrl(value string) *Parameters {
 			sortField = arr[1]
 		case "sort_type":
 			sortType = arr[1]
-			//default:
-			//	fields[arr[0]] = arr[1]
 		}
 	}
 
-	return &Parameters{
+	return Parameters{
 		Page:      page,
 		PageSize:  pageSize,
 		SortField: sortField,
 		SortType:  sortType,
-		//Fields:    fields,
 	}
 }
 
-func (param *Parameters) SetPage(page string) *Parameters {
+func (param Parameters) SetPage(page string) Parameters {
 	param.Page = page
 	return param
 }
 
-func (param *Parameters) GetRouteParamStr() string {
+func (param Parameters) GetRouteParamStr() string {
 	return "?page=" + param.Page + param.GetFixedParamStr()
 }
 
-func (param *Parameters) GetRouteParamStrWithoutPageSize() string {
+func (param Parameters) GetRouteParamStrWithoutPageSize() string {
 	return "?page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
 }
 
-func (param *Parameters) GetLastPageRouteParamStr() string {
+func (param Parameters) GetLastPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
 	return "?page=" + strconv.Itoa(pageInt-1) + param.GetFixedParamStr()
 }
 
-func (param *Parameters) GetNextPageRouteParamStr() string {
+func (param Parameters) GetNextPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
 	return "?page=" + strconv.Itoa(pageInt+1) + param.GetFixedParamStr()
 }
 
-func (param *Parameters) GetFixedParamStrWithoutPageSize() string {
+func (param Parameters) GetFixedParamStrWithoutPageSize() string {
 	str := "&"
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"
@@ -115,7 +116,7 @@ func (param *Parameters) GetFixedParamStrWithoutPageSize() string {
 	return "&sort=" + param.SortField + "&sort_type=" + param.SortType + str[:len(str)-1]
 }
 
-func (param *Parameters) GetFixedParamStr() string {
+func (param Parameters) GetFixedParamStr() string {
 	str := "&"
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"

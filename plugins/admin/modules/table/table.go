@@ -48,7 +48,7 @@ type Table interface {
 	GetEditable() bool
 	GetDeletable() bool
 	GetFiltersMap() []map[string]string
-	GetDataFromDatabase(path string, params *parameter.Parameters) PanelInfo
+	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
 	UpdateDataFromDatabase(dataList map[string][]string)
 	InsertDataFromDatabase(dataList map[string][]string)
@@ -165,7 +165,7 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 }
 
 // GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params *parameter.Parameters) PanelInfo {
+func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo {
 
 	const (
 		queryStatement = "select %s from %s%s order by %s %s LIMIT ? OFFSET ?"

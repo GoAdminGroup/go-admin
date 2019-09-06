@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func Get(path string, params *parameter.Parameters, size int) types.PaginatorAttribute {
+func Get(path string, params parameter.Parameters, size int) types.PaginatorAttribute {
 
 	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
 

@@ -17,6 +17,7 @@ import (
 
 func ShowNewForm(ctx *context.Context) {
 	prefix := ctx.Query("prefix")
+	table.RefreshTableList()
 	panel := table.List[prefix]
 	if !panel.GetCanAdd() {
 		response.Alert(ctx, config, panel.GetForm().Description, panel.GetForm().Title, "operation not allow")
