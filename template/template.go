@@ -87,8 +87,23 @@ func Add(name string, temp Template) {
 
 // Component is the interface which stand for a ui component.
 type Component interface {
+	// GetTemplate return a *template.Template and a given key.
 	GetTemplate() (*template.Template, string)
+
+	// GetAssetList return the assets url suffix used in the component.
+	// example:
+	//
+	// {{.AssertRootUrl}}/assets/login/css/bootstrap.min.css => login/css/bootstrap.min.css
+	//
+	// See:
+	// https://github.com/chenhg5/go-admin/blob/master/template/login/theme1.tmpl#L32
+	// https://github.com/chenhg5/go-admin/blob/master/template/login/list.go
 	GetAssetList() []string
+
+	// GetAsset return the asset content according to the corresponding url suffix.
+	// Asset content is recommended to use the tool go-bindata to generate.
+	//
+	// See: http://github.com/jteeuwen/go-bindata
 	GetAsset(string) ([]byte, error)
 }
 
@@ -136,7 +151,7 @@ func SetComp(name string, comp Component) {
 	}
 }
 
-func Excecute(tmpl *template.Template,
+func Execute(tmpl *template.Template,
 	tmplName string,
 	user models.UserModel,
 	panel types.Panel,

@@ -14,7 +14,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
-	"strings"
 )
 
 func ShowMenu(ctx *context.Context) {
@@ -33,7 +32,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
 			SetPrefix(config.PrefixFixSlash()).
@@ -43,7 +42,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
 
 	ctx.Html(http.StatusOK, buf.String())
 }
@@ -124,7 +123,7 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
+	menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
 
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")
@@ -153,14 +152,14 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
-	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
+	menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
 
 	ctx.Html(http.StatusOK, buf.String())
 }

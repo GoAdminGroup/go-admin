@@ -65,9 +65,11 @@ func main() {
 	examplePlugin := example.NewExample()
 
 	// customize the login page
-	// template.AddComp("login", // template.Component //)
+	// template.AddComp("login", datamodel.LoginPage)
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
+	if err := eng.AddConfig(cfg).
+		AddPlugins(adminPlugin, examplePlugin).
+		Use(r); err != nil {
 		panic(err)
 	}
 

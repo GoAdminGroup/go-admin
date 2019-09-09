@@ -5,9 +5,11 @@
 package config
 
 import (
+	"encoding/json"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"html/template"
+	"io/ioutil"
 	"strings"
 	"sync"
 )
@@ -173,11 +175,19 @@ var (
 )
 
 func ReadFromJson(path string) {
+	jsonByte, err := ioutil.ReadFile(path)
 
-}
+	if err != nil {
+		panic(err)
+	}
 
-func ReadFromIni(path string) {
+	err = json.Unmarshal(jsonByte, &globalCfg)
 
+	if err != nil {
+		panic(err)
+	}
+
+	Set(globalCfg)
 }
 
 // Set sets the config.

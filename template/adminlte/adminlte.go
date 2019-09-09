@@ -72,6 +72,7 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 }
 
 func (*Theme) GetAsset(path string) ([]byte, error) {
+	path = "template/adminlte/resource" + path
 	return resource.Asset(path)
 }
 

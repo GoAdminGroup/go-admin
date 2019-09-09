@@ -53,6 +53,12 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 	return eng
 }
 
+// AddConfigFromJson set the global config from json file.
+func (eng *Engine) AddConfigFromJson(path string) *Engine {
+	config.ReadFromJson(path)
+	return eng
+}
+
 // AddAdapter add the adapter of engine.
 func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada

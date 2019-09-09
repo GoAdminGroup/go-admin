@@ -11,7 +11,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
-	"strings"
 )
 
 func Ok(ctx *context.Context) {
@@ -46,11 +45,11 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string) 
 		GetContent()
 
 	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     alert,
 		Description: desc,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
 	ctx.Html(http.StatusOK, buf.String())
 }
 

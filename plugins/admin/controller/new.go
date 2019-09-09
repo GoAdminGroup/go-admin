@@ -29,7 +29,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 		formList[i].Editable = true
 	}
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
@@ -89,7 +89,7 @@ func NewForm(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	tmpl, tmplName := aTemplate().GetTemplate(true)
-	buffer := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buffer := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,

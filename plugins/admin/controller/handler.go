@@ -90,7 +90,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	user := auth.Auth(ctx)
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
 			SetTitle(strings.Title(kind)).
@@ -101,7 +101,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

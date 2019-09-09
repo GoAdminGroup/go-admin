@@ -70,22 +70,25 @@ func ShowInfo(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
 	ctx.Html(http.StatusOK, buf.String())
 }
 
 func Assert(ctx *context.Context) {
-	filepath := "template/adminlte/resource" + strings.Replace(ctx.Path(), config.Prefix(), "", 1)
+	filepath := config.UrlRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
-		logger.Error("asset err", err)
-		ctx.Write(http.StatusNotFound, map[string]string{}, "")
-		return
+		data, err = loginComponent().GetAsset(filepath)
+		if err != nil {
+			logger.Error("asset err", err)
+			ctx.Write(http.StatusNotFound, map[string]string{}, "")
+			return
+		}
 	}
 
 	fileSuffix := path.Ext(filepath)

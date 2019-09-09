@@ -26,6 +26,6 @@ func (*Login) GetAssetList() []string {
 	return asserts
 }
 
-func (*Login) GetAsset(string) ([]byte, error) {
-	panic("implement me")
+func (*Login) GetAsset(name string) ([]byte, error) {
+	return Asset(name)
 }
