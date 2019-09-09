@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
@@ -17,7 +18,7 @@ import (
 )
 
 func ShowMenu(ctx *context.Context) {
-	getMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx, "")
 	return
 }
 
@@ -31,7 +32,7 @@ func ShowEditMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
-	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
@@ -49,62 +50,61 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 func DeleteMenu(ctx *context.Context) {
 
-	models.MenuWithId(ctx.Query("id")).Delete()
-
+	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).Delete()
 	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 	table.RefreshTableList()
 	response.Ok(ctx)
 }
 
 func EditMenu(ctx *context.Context) {
-	id := ctx.FormValue("id")
-	title := ctx.FormValue("title")
-	parentId := ctx.FormValue("parent_id")
-	if parentId == "" {
-		parentId = "0"
+
+	param := guard.GetMenuEditParam(ctx)
+
+	if param.HasAlert() {
+		getMenuInfoPanel(ctx, param.Alert)
+		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+		ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
+		return
 	}
-	icon := ctx.FormValue("icon")
-	uri := ctx.FormValue("uri")
 
-	menuModel := models.MenuWithId(id)
+	menuModel := models.MenuWithId(param.Id)
 
-	for _, roleId := range ctx.Request.Form["roles[]"] {
+	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
 
-	menuModel.Update(title, parentId, icon, uri)
+	menuModel.Update(param.Title, param.ParentId, param.Icon, param.Uri)
 
 	menu.SetGlobalMenu(auth.Auth(ctx))
 
-	getMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }
 
 func NewMenu(ctx *context.Context) {
 
-	title := ctx.FormValue("title")
-	parentId := ctx.FormValue("parent_id")
-	if parentId == "" {
-		parentId = "0"
+	param := guard.GetMenuNewParam(ctx)
+
+	if param.HasAlert() {
+		getMenuInfoPanel(ctx, param.Alert)
+		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+		ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
+		return
 	}
-	icon := ctx.FormValue("icon")
-	uri := ctx.FormValue("uri")
 
 	user := auth.Auth(ctx)
 
-	menuModel := models.Menu().New(title, parentId, icon, uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
+	menuModel := models.Menu().New(param.Title, param.ParentId, param.Icon, param.Uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
 
-	roles := ctx.Request.Form["roles[]"]
-
-	for _, roleId := range roles {
+	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
 
 	menu.GetGlobalMenu(user.WithRoles().WithMenus()).AddMaxOrder()
 	table.RefreshTableList()
 
-	getMenuInfoPanel(ctx)
+	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }
@@ -121,7 +121,7 @@ func MenuOrder(ctx *context.Context) {
 	return
 }
 
-func getMenuInfoPanel(ctx *context.Context) {
+func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
 	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
@@ -155,9 +155,9 @@ func getMenuInfoPanel(ctx *context.Context) {
 
 	menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1))
 
-	tmpl, tmplName := aTemplate().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Excecute(tmpl, tmplName, user, types.Panel{
-		Content:     row,
+		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), config.Prefix(), "", 1)))

@@ -23,13 +23,21 @@ func main() {
 	cfg := config.Config{}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	
+	// add generator, first parameter is the url prefix of table when visit.
+        // example:
+        //
+        // "user" => http://localhost:9033/admin/info/user
+        //
+        adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	
 	examplePlugin := example.NewExample()
 
-	eng.AddConfig(cfg).
+	_ = eng.AddConfig(cfg).
 		AddPlugins(adminPlugin, examplePlugin). // Load plugin
 		Use(r)
 
-	r.Run(":9033")
+	_ = r.Run(":9033")
 }
 ```
 

@@ -223,7 +223,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			},
 		},
 		{
-			Head:     language.Get("name"),
+			Head:     language.Get("permission"),
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -294,7 +294,7 @@ func GetPermissionTable() (PermissionTable Table) {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("name"),
+			Head:     language.Get("permission"),
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",
@@ -395,7 +395,7 @@ func GetRolesTable() (RolesTable Table) {
 			},
 		},
 		{
-			Head:     language.Get("name"),
+			Head:     language.Get("role"),
 			Field:    "name",
 			TypeName: "varchar",
 			Sortable: false,
@@ -448,7 +448,7 @@ func GetRolesTable() (RolesTable Table) {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("name"),
+			Head:     language.Get("role"),
 			Field:    "name",
 			TypeName: "varchar",
 			Default:  "",

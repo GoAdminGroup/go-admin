@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"github.com/chenhg5/go-admin/context"
 	c "github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 )
@@ -46,4 +48,8 @@ func aBox() types.BoxAttribute {
 
 func aTemplate() template.Template {
 	return template.Get(config.THEME)
+}
+
+func isPjax(ctx *context.Context) bool {
+	return ctx.Headers(constant.PjaxHeader) == "true"
 }

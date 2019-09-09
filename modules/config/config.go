@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"html/template"
+	"strings"
 	"sync"
 )
 
@@ -131,6 +132,10 @@ func (c Config) Url(suffix string) string {
 	return prefix + suffix
 }
 
+func (c Config) UrlRemovePrefix(u string) string {
+	return strings.Replace(u, c.Prefix(), "", 1)
+}
+
 func (c Config) Index() string {
 	if c.INDEX == "" {
 		return "/"
@@ -166,6 +171,14 @@ var (
 	mutex     sync.Mutex
 	declare   sync.Once
 )
+
+func ReadFromJson(path string) {
+	
+}
+
+func ReadFromIni(path string) {
+
+}
 
 // Set sets the config.
 func Set(cfg Config) {

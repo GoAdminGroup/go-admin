@@ -62,7 +62,15 @@ import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
-var Generators = map[string]table.Generator{
+//
+// http://{{config.DOMAIN}}:{{PORT}}/{{config.PREFIX}}/info/{{key}}
+//
+// example:
+//
+// "posts"   => http://localhost:9033/admin/info/posts
+// "authors" => http://localhost:9033/admin/info/authors
+//
+var Generators = table.GeneratorList{
 	"user":    GetUserTable,
 }
 ```
@@ -92,11 +100,11 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
-	eng.AddConfig(cfg).
+	_ = eng.AddConfig(cfg).
 		AddPlugins(adminPlugin). // Load plugin
 		Use(r)
 
-	r.Run(":9033")
+	_ = r.Run(":9033")
 }
 ```
 
@@ -112,13 +120,13 @@ Configuration file can looks like:
 package main
 
 import (
+	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
 )
 
-func GetUsersTable() (usersTable models.Table) {
+func GetUsersTable() (usersTable table.Table) {
 	
-	usersTable = models.NewDefaultTable(models.DefaultTableConfig)
+	usersTable = table.NewDefaultTable(table.DefaultConfig)
 
 	usersTable.GetInfo().FieldList = []types.Field{}
 

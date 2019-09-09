@@ -117,10 +117,17 @@ func main() {
 
     	// Generators: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	
+	// add generator, first parameter is the url prefix of table when visit.
+    	// example:
+    	//
+    	// "user" => http://localhost:9033/admin/info/user
+    	//
+    	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
+	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 
-	r.Run(":9033")
+	_ = r.Run(":9033")
 }
 ```
 

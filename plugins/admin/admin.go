@@ -11,7 +11,7 @@ import (
 
 type Admin struct {
 	app      *context.App
-	tableCfg map[string]table.Generator
+	tableCfg table.GeneratorList
 }
 
 func (admin *Admin) InitPlugin() {
@@ -26,7 +26,7 @@ func (admin *Admin) InitPlugin() {
 	// Init router
 	App.app = InitRouter(cfg.Prefix())
 
-	table.SetGenerators(map[string]table.Generator{
+	table.SetGenerators(table.GeneratorList{
 		"manager":    table.GetManagerTable,
 		"permission": table.GetPermissionTable,
 		"roles":      table.GetRolesTable,
@@ -39,11 +39,18 @@ func (admin *Admin) InitPlugin() {
 	controller.SetConfig(cfg)
 }
 
-var App = new(Admin)
+var App = &Admin{
+	tableCfg: make(table.GeneratorList, 0),
+}
 
-func NewAdmin(tableCfg map[string]table.Generator) *Admin {
+func NewAdmin(tableCfg table.GeneratorList) *Admin {
 	App.tableCfg = tableCfg
 	return App
+}
+
+func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
+	admin.tableCfg.Add(key, g)
+	return admin
 }
 
 func (admin *Admin) GetRequest() []context.Path {

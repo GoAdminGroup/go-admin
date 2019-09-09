@@ -53,9 +53,19 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
+	// add generator, first parameter is the url prefix of table when visit.
+	// example:
+	//
+	// "user" => http://localhost:9033/admin/info/user
+	//
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+
 	// customize a plugin
 
 	examplePlugin := example.NewExample()
+
+	// customize the login page
+	// template.AddComp("login", // template.Component //)
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
 		panic(err)
@@ -70,9 +80,6 @@ func main() {
 			return datamodel.GetContent()
 		})
 	})
-
-	// customize the login page
-	// template.AddComp("login", // template.Component //)
 
 	_ = r.Run(":9033")
 }

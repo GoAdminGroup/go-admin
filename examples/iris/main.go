@@ -38,6 +38,7 @@ func main() {
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {

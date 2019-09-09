@@ -42,6 +42,13 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
+	// add generator, first parameter is the url prefix of table when visit.
+	// example:
+	//
+	// "user" => http://localhost:9033/admin/info/user
+	//
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+
 	// you can custom a plugin like:
 
 	examplePlugin := example.NewExample()

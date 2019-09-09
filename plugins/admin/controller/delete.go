@@ -3,16 +3,14 @@ package controller
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 )
 
 func Delete(ctx *context.Context) {
-	prefix := ctx.Query("prefix")
-	if !table.List[prefix].GetDeletable() {
-		response.Error(ctx, "operation not allow")
-		return
-	}
+
+	param := guard.GetDeleteParam(ctx)
 
 	//token := ctx.FormValue("_t")
 	//
@@ -22,8 +20,7 @@ func Delete(ctx *context.Context) {
 	//	return
 	//}
 
-	table.List[ctx.Query("prefix")].
-		DeleteDataFromDatabase(ctx.FormValue("id"))
+	table.List[param.Prefix].DeleteDataFromDatabase(param.Id)
 
 	newToken := auth.TokenHelper.AddToken()
 

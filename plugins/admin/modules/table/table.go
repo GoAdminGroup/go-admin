@@ -5,6 +5,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/form"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/paginator"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	"github.com/chenhg5/go-admin/template/types"
@@ -15,8 +16,14 @@ import (
 
 type Generator func() Table
 
+type GeneratorList map[string]Generator
+
+func (g GeneratorList) Add(key string, gen Generator) {
+	g[key] = gen
+}
+
 var (
-	Generators = map[string]Generator{}
+	Generators = make(GeneratorList, 0)
 	List       = map[string]Table{}
 )
 
@@ -50,8 +57,8 @@ type Table interface {
 	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
-	UpdateDataFromDatabase(dataList map[string][]string)
-	InsertDataFromDatabase(dataList map[string][]string)
+	UpdateDataFromDatabase(dataList form.FormValue)
+	InsertDataFromDatabase(dataList form.FormValue)
 	DeleteDataFromDatabase(id string)
 }
 
@@ -63,6 +70,7 @@ type DefaultTable struct {
 	canAdd           bool
 	editable         bool
 	deletable        bool
+	prefix           string
 }
 
 type PanelInfo struct {
@@ -348,19 +356,19 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 }
 
 // UpdateDataFromDatabase update data.
-func (tb DefaultTable) UpdateDataFromDatabase(dataList map[string][]string) {
+func (tb DefaultTable) UpdateDataFromDatabase(dataList form.FormValue) {
 	_, _ = tb.sql().Table(tb.form.Table).
-		Where("id", "=", dataList["id"][0]).
+		Where("id", "=", dataList.Get("id")).
 		Update(tb.getValues(dataList))
 
 }
 
 // InsertDataFromDatabase insert data.
-func (tb DefaultTable) InsertDataFromDatabase(dataList map[string][]string) {
+func (tb DefaultTable) InsertDataFromDatabase(dataList form.FormValue) {
 	_, _ = tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
 }
 
-func (tb DefaultTable) getValues(dataList map[string][]string) dialect.H {
+func (tb DefaultTable) getValues(dataList form.FormValue) dialect.H {
 	value := make(dialect.H, 0)
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()

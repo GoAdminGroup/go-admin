@@ -23,13 +23,21 @@ func main() {
 	cfg := config.Config{}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	
+	// 增加 generator, 第一个参数是对应的访问路由前缀
+        // 例子:
+        //
+        // "user" => http://localhost:9033/admin/info/user
+        //
+        adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	
 	examplePlugin := example.NewExample()
 	
-	eng.AddConfig(cfg).
+	_ = eng.AddConfig(cfg).
 		AddPlugins(adminPlugin, examplePlugin).  // 加载插件
 		Use(r)
 
-	r.Run(":9033")
+	_ = r.Run(":9033")
 }
 ```
 

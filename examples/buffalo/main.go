@@ -49,6 +49,7 @@ func main() {
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	// you can custom a plugin like:
 

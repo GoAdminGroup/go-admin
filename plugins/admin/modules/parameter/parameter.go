@@ -3,6 +3,7 @@ package parameter
 import (
 	"fmt"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -92,6 +93,10 @@ func (param Parameters) SetPage(page string) Parameters {
 
 func (param Parameters) GetRouteParamStr() string {
 	return "?page=" + param.Page + param.GetFixedParamStr()
+}
+
+func (param Parameters) GetRouteParamStrWithoutId() string {
+	return regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(param.GetRouteParamStr(), "")
 }
 
 func (param Parameters) GetRouteParamStrWithoutPageSize() string {
