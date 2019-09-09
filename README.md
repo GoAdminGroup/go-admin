@@ -78,6 +78,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 func main() {
@@ -106,7 +107,7 @@ func main() {
 		    PATH:   "./uploads", 
 		    PREFIX: "uploads",
 		},
-		LANGUAGE: "en",
+		LANGUAGE: language.EN,
 		// debug mode
 		DEBUG: true,
 		// log file absolute path

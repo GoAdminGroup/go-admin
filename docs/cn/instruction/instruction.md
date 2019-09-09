@@ -18,6 +18,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/examples/datamodel"
+	"github.com/chenhg5/go-admin/modules/language"
 )
 
 func main() {
@@ -47,16 +48,16 @@ func main() {
 		    PATH:   "./uploads",
 		    PREFIX: "uploads",
 		},
-		LANGUAGE: "cn", 
+		LANGUAGE: language.CN, 
 	}
 
     	// Generators： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
         // 增加配置与插件，使用Use方法挂载到Web框架中
-	eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
+	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 
-	r.Run(":9033")
+	_ = r.Run(":9033")
 }
 ```
 
