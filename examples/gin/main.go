@@ -45,7 +45,7 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE:    language.JP,
+		LANGUAGE:    language.CN,
 		INDEX:       "/",
 		DEBUG:       true,
 		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,

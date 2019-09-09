@@ -20,16 +20,16 @@ import (
 // Such as the sqlite driver only use the FILE option which
 // can be ignored when the driver is mysql.
 type Database struct {
-	HOST         string
-	PORT         string
-	USER         string
-	PWD          string
-	NAME         string
-	MAX_IDLE_CON int
-	MAX_OPEN_CON int
-	DRIVER       string
+	HOST         string `json:"host"`
+	PORT         string `json:"port"`
+	USER         string `json:"user"`
+	PWD          string `json:"pwd"`
+	NAME         string `json:"name"`
+	MAX_IDLE_CON int    `json:"max_idle_con"`
+	MAX_OPEN_CON int    `json:"max_open_con"`
+	DRIVER       string `json:"driver"`
 
-	FILE string
+	FILE string `json:"file"`
 }
 
 type DatabaseList map[string]Database
@@ -68,54 +68,54 @@ type Config struct {
 	// An map supports multi database connection. The first
 	// element of DATABASE is the default connection. See the
 	// file connection.go.
-	DATABASE DatabaseList
+	DATABASE DatabaseList `json:"database"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
-	DOMAIN string
+	DOMAIN string `json:"domain"`
 
 	// Used to set as the localize language which show in the
 	// interface.
-	LANGUAGE string
+	LANGUAGE string `json:"language"`
 
 	// The global url prefix.
-	PREFIX string
+	PREFIX string `json:"prefix"`
 
 	// The theme name of template.
-	THEME string
+	THEME string `json:"theme"`
 
 	// The path where files will be stored into.
-	STORE Store
+	STORE Store `json:"store"`
 
 	// The title of web page.
-	TITLE string
+	TITLE string `json:"title"`
 
 	// Logo is the top text in the sidebar.
-	LOGO template.HTML
+	LOGO template.HTML `json:"logo"`
 
 	// Mini-logo is the top text in the sidebar when folding.
-	MINILOGO template.HTML
+	MINILOGO template.HTML `json:"minilogo"`
 
 	// The url redirect to after login
-	INDEX string
+	INDEX string `json:"index"`
 
 	// DEBUG mode
-	DEBUG bool
+	DEBUG bool `json:"debug"`
 
 	// Info log path
-	INFOLOG string
+	INFOLOG string `json:"infolog"`
 
 	// Error log path
-	ERRORLOG string
+	ERRORLOG string `json:"errorlog"`
 
 	// Access log path
-	ACCESSLOG string
+	ACCESSLOG string `json:"accesslog"`
 
 	// Sql operator record log switch
-	SQLLOG bool
+	SQLLOG bool `json:"sqllog"`
 
 	// Color scheme
-	COLORSCHEME string
+	COLORSCHEME string `json:"colorscheme"`
 }
 
 func (c Config) GetIndexUrl() string {
