@@ -173,7 +173,7 @@ var (
 )
 
 func ReadFromJson(path string) {
-	
+
 }
 
 func ReadFromIni(path string) {
