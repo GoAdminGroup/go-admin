@@ -33,11 +33,12 @@
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
+        {{$DeleteUrl := .DeleteUrl}}
         {{range $key1, $info := .InfoList}}
             <tr>
                 {{if eq $Type "data-table"}}
                     <td>
-                        {{if .DeleteUrl}}
+                        {{if $DeleteUrl}}
                         <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
                         {{end}}
                     </td>
@@ -49,6 +50,8 @@
                     <td>
                         {{if $EditUrl}}
                         <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+                        {{end}}
+                        {{if $DeleteUrl}}
                         <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
                         {{end}}
                     </td>

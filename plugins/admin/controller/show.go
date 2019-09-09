@@ -22,9 +22,17 @@ func ShowInfo(ctx *context.Context) {
 
 	params := parameter.GetParam(ctx.Request.URL.Query())
 
-	editUrl := config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
+	editUrl := ""
+	if panel.GetEditable() {
+		editUrl = config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
+	}
+
+	deleteUrl := ""
+	if panel.GetDeletable() {
+		deleteUrl = config.Url("/delete/" + prefix)
+	}
+
 	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
-	deleteUrl := config.Url("/delete/" + prefix)
 
 	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
 
