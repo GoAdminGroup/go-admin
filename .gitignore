@@ -1,5 +1,5 @@
 .idea
-demo/config.go
+demo/config.json
 demo/uploads
 demo/deploy.yml
 demo/hosts

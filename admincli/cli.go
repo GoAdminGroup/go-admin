@@ -10,6 +10,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	_ "github.com/chenhg5/go-admin/modules/db/mysql"
 	_ "github.com/chenhg5/go-admin/modules/db/postgresql"
+	"github.com/go-bindata/go-bindata"
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
@@ -17,6 +18,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -46,15 +48,28 @@ func main() {
 		}
 	}
 
-	app.Command("compile", "compile template file for developing", func(cmd *cli.Cmd) {
-		var (
-			rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/pages/", "compile root path")
-			outputPath = cmd.StringOpt("out", "./template/adminlte/tmpl/template.go", "compile output path")
-		)
+	app.Command("compile", "compile template file for template or component", func(cmd *cli.Cmd) {
+		cmd.Command("tpl", "compile template file for template or component", func(cmd *cli.Cmd) {
+			var (
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/pages/", "compile root path")
+				outputPath = cmd.StringOpt("out", "./template/adminlte/tmpl/template.go", "compile output path")
+			)
 
-		cmd.Action = func() {
-			compileTmpl(*rootPath, *outputPath)
-		}
+			cmd.Action = func() {
+				compileTmpl(*rootPath, *outputPath)
+			}
+		})
+
+		cmd.Command("asset", "compile asset file for template or component", func(cmd *cli.Cmd) {
+			var (
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/", "compile root path")
+				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets.go", "compile output path")
+			)
+
+			cmd.Action = func() {
+				compileAsset(*rootPath, *outputPath)
+			}
+		})
 	})
 
 	app.Command("generate", "generate table model files", func(cmd *cli.Cmd) {
@@ -286,16 +301,45 @@ func checkError(err error) {
 	}
 }
 
+func compileAsset(rootPath, outputPath string) {
+	cfg := bindata.NewConfig()
+	cfg.Output = outputPath
+	cfg.Input = make([]bindata.InputConfig, 0)
+	cfg.Input = append(cfg.Input, parseInput(rootPath))
+	checkError(bindata.Translate(cfg))
+}
+
+func parseInput(path string) bindata.InputConfig {
+	if strings.HasSuffix(path, "/...") {
+		return bindata.InputConfig{
+			Path:      filepath.Clean(path[:len(path)-4]),
+			Recursive: true,
+		}
+	} else {
+		return bindata.InputConfig{
+			Path:      filepath.Clean(path),
+			Recursive: false,
+		}
+	}
+}
+
 func compileTmpl(rootPath, outputPath string) {
 	content := `package tmpl
 
 var List = map[string]string{`
 
-	content = getContentFromDir(content, rootPath, rootPath)
+	content = getContentFromDir(content, fixPath(rootPath), fixPath(rootPath))
 
 	content += `}`
 
 	_ = ioutil.WriteFile(outputPath, []byte(content), 0644)
+}
+
+func fixPath(p string) string {
+	if p[len(p)-1] != '/' {
+		return p + "/"
+	}
+	return p
 }
 
 func getContentFromDir(content, dirPath, rootPath string) string {

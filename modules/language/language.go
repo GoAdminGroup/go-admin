@@ -53,6 +53,11 @@ var Lang = LangMap{
 	language.English.String():            en,
 	language.Japanese.String():           jp,
 	language.TraditionalChinese.String(): tc,
+
+	"cn": cn,
+	"en": en,
+	"jp": jp,
+	"tc": tc,
 }
 
 func (lang LangMap) Get(value string) string {
