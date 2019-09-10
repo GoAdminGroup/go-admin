@@ -379,6 +379,7 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"	
+	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func Get` + strings.Title(table) + `Table() table.Table {
@@ -408,9 +409,9 @@ func Get` + strings.Title(table) + `Table() table.Table {
 
 	for _, model := range columnsModel {
 
-		formType := "text"
+		formType := "form.Text"
 		if model[fieldField].(string) == "id" {
-			formType = "default"
+			formType = "form.Default"
 		}
 
 		content += `{
@@ -419,7 +420,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 			TypeName: "` + GetType(model[typeField].(string)) + `",
 			Default:  "",
 			Editable: true,
-			FormType: "` + formType + `",
+			FormType: ` + formType + `,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
