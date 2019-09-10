@@ -43,14 +43,14 @@ LOCK TABLES `goadmin_menu` WRITE;
 
 INSERT INTO `goadmin_menu` (`id`, `parent_id`, `order`, `title`, `icon`, `uri`, `created_at`, `updated_at`, `type`)
 VALUES
-	(2,0,2,'Admin','fa-tasks','',NULL,NULL,1),
-	(3,2,2,'Users','fa-users','/info/manager',NULL,NULL,1),
-	(4,2,3,'Roles','fa-user','/info/roles',NULL,NULL,1),
-	(5,2,4,'Permission','fa-ban','/info/permission',NULL,NULL,1),
-	(6,2,5,'Menu','fa-bars','/menu',NULL,NULL,1),
-	(7,2,6,'Operation log','fa-history','/info/op',NULL,NULL,1),
-	(12,0,7,'Users','fa-user','/info/user',NULL,NULL,0),
-	(13,0,1,'Dashboard','fa-bar-chart','/','2018-08-03 15:24:42',NULL,1),
+	(2,0,2,'Admin','fa-tasks','','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(3,2,2,'Users','fa-users','/info/manager','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(4,2,3,'Roles','fa-user','/info/roles','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(5,2,4,'Permission','fa-ban','/info/permission','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(6,2,5,'Menu','fa-bars','/menu','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(7,2,6,'Operation log','fa-history','/info/op','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
+	(12,0,7,'Users','fa-user','/info/user','2018-08-03 15:24:42','2018-09-08 08:43:57',0),
+	(13,0,1,'Dashboard','fa-bar-chart','/','2018-08-03 15:24:42','2018-09-08 08:43:57',1),
 	(16,0,8,'Posts','fa-file-powerpoint-o','/info/posts','2018-09-08 08:43:57','2018-09-08 08:43:57',0),
 	(17,0,9,'Authors','fa-users','/info/authors','2018-09-08 08:44:38','2018-09-08 08:44:38',0),
 	(18,0,10,'Example Plugin','fa-plug','/example','2018-09-08 09:06:41','2018-09-08 09:06:41',0);
@@ -278,11 +278,11 @@ LOCK TABLES `goadmin_permissions` WRITE;
 
 INSERT INTO `goadmin_permissions` (`id`, `name`, `slug`, `http_method`, `http_path`, `created_at`, `updated_at`)
 VALUES
-	(1,'All permission','*','','*',NULL,NULL),
-	(2,'Dashboard','dashboard','GET,PUT,POST,DELETE','/',NULL,NULL),
-	(3,'Login','auth.login','','/auth/login\r\n/auth/logout',NULL,NULL),
-	(4,'User setting','auth.setting','GET,PUT','/auth/setting',NULL,NULL),
-	(5,'Auth management','auth.management','','/auth/roles\r\n/auth/permissions\r\n/auth/menu\r\n/auth/logs',NULL,NULL);
+	(1,'All permission','*','','*','2018-09-09 09:05:46','2018-09-09 09:05:46'),
+	(2,'Dashboard','dashboard','GET,PUT,POST,DELETE','/','2018-09-09 09:05:46','2018-09-09 09:05:46'),
+	(3,'Login','auth.login','','/auth/login\r\n/auth/logout','2018-09-09 09:05:46','2018-09-09 09:05:46'),
+	(4,'User setting','auth.setting','GET,PUT','/auth/setting','2018-09-09 09:05:46','2018-09-09 09:05:46'),
+	(5,'Auth management','auth.management','','/auth/roles\r\n/auth/permissions\r\n/auth/menu\r\n/auth/logs','2018-09-09 09:05:46','2018-09-09 09:05:46');
 
 /*!40000 ALTER TABLE `goadmin_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -475,8 +475,8 @@ LOCK TABLES `goadmin_user_permissions` WRITE;
 
 INSERT INTO `goadmin_user_permissions` (`user_id`, `permission_id`, `created_at`, `updated_at`)
 VALUES
-	(1,2,NULL,NULL),
-	(1,3,NULL,NULL),
+	(1,2,'2018-09-09 09:25:24','2018-09-09 09:25:24'),
+	(1,3,'2018-09-09 09:25:24','2018-09-09 09:25:24'),
 	(2,1,'2018-09-09 09:25:24','2018-09-09 09:25:24'),
 	(3,1,'2018-09-09 09:27:06','2018-09-09 09:27:06'),
 	(4,1,'2018-09-09 09:29:15','2018-09-09 09:29:15'),
