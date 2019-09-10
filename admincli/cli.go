@@ -196,7 +196,7 @@ func generating() {
 	fmt.Println()
 	fmt.Println(ansi.Color("generate success~~🍺🍺", "green"))
 	fmt.Println()
-	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/#/introduce/plugins/admin", "blue"))
+	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/en/#/introduce/plugins/admin", "blue"))
 	fmt.Println()
 	fmt.Println()
 }
