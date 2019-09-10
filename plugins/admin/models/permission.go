@@ -45,7 +45,7 @@ func (t PermissionModel) MapToModel(m map[string]interface{}) PermissionModel {
 	}
 
 	t.HttpPath = strings.Split(m["http_path"].(string), "\n")
-	t.CreatedAt = m["created_at"].(string)
-	t.UpdatedAt = m["updated_at"].(string)
+	t.CreatedAt, _ = m["created_at"].(string)
+	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
 }

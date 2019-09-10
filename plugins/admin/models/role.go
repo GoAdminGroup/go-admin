@@ -83,7 +83,7 @@ func (t RoleModel) MapToModel(m map[string]interface{}) RoleModel {
 	t.Id = m["id"].(int64)
 	t.Name = m["name"].(string)
 	t.Slug = m["slug"].(string)
-	t.CreatedAt = m["created_at"].(string)
-	t.UpdatedAt = m["updated_at"].(string)
+	t.CreatedAt, _ = m["created_at"].(string)
+	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
 }

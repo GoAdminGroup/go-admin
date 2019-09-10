@@ -215,7 +215,7 @@ func (t UserModel) MapToModel(m map[string]interface{}) UserModel {
 	t.Password = m["password"].(string)
 	t.Avatar = m["avatar"].(string)
 	t.RememberToken = m["remember_token"].(string)
-	t.CreatedAt = m["created_at"].(string)
-	t.UpdatedAt = m["updated_at"].(string)
+	t.CreatedAt, _ = m["created_at"].(string)
+	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
 }

@@ -54,7 +54,7 @@ func (t OperationLogModel) MapToModel(m map[string]interface{}) OperationLogMode
 	t.Method = m["method"].(string)
 	t.Ip = m["ip"].(string)
 	t.Input = m["input"].(string)
-	t.CreatedAt = m["created_at"].(string)
-	t.UpdatedAt = m["updated_at"].(string)
+	t.CreatedAt, _ = m["created_at"].(string)
+	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
 }

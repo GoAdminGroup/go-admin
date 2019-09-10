@@ -131,7 +131,7 @@ func (t MenuModel) MapToModel(m map[string]interface{}) MenuModel {
 	t.ParentId = m["parent_id"].(string)
 	t.Icon = m["icon"].(string)
 	t.Uri = m["uri"].(string)
-	t.CreatedAt = m["created_at"].(string)
-	t.UpdatedAt = m["updated_at"].(string)
+	t.CreatedAt, _ = m["created_at"].(string)
+	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
 }
