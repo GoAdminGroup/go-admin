@@ -418,7 +418,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 			Field:    "` + model[fieldField].(string) + `",
 			TypeName: "` + GetType(model[typeField].(string)) + `",
 			Default:  "",
-			Editable: false,
+			Editable: true,
 			FormType: "` + formType + `",
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
