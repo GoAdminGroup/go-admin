@@ -209,7 +209,7 @@ func exitWithError(msg string) {
 }
 
 func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
-	key := "Tables_in_" + dbName
+	key := "Tables_in_" + strings.ToLower(dbName)
 	if driver == "postgresql" {
 		key = "tablename"
 	}
