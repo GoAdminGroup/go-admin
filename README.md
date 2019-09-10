@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/chenhg5/go-admin/blob/master/docs/en/index.md">Documentation</a> | 
+    <a href="http://doc.go-admin.cn/en/#/">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
     <a href="http://demo.go-admin.cn/admin">DEMO</a>
 </p>
