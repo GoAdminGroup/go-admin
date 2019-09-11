@@ -2,16 +2,16 @@
     <table class="table table-hover">
         {{if eq .Type "table"}}
             <thead>
-                <tr>
+            <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{index $head "head"}}
-                    {{if eq (index $head "sortable") "1"}}
-                        <a class="fa fa-fw fa-sort" href=""></a>
-                    {{end}}
+                        {{index $head "head"}}
+                        {{if eq (index $head "sortable") "1"}}
+                            <a class="fa fa-fw fa-sort" href=""></a>
+                        {{end}}
                     </th>
                 {{end}}
-                </tr>
+            </tr>
             </thead>
         {{end}}
         <tbody>
@@ -39,7 +39,8 @@
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $DeleteUrl}}
-                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+                            <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}"
+                                   style="position: absolute; opacity: 0;">
                         {{end}}
                     </td>
                 {{end}}
@@ -49,10 +50,11 @@
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $EditUrl}}
-                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+                            <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
                         {{end}}
                         {{if $DeleteUrl}}
-                        <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+                            <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i
+                                        class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
                 {{end}}
@@ -61,74 +63,96 @@
         </tbody>
     </table>
     {{if eq $Type "data-table"}}
-    <script>
-        $('.grid-row-delete').unbind('click').click(function () {
-            DeletePost($(this).data('id'))
-        });
-
-        selectedRows = function () {
-            let selected = [];
-            $('.grid-row-checkbox:checked').each(function(){
-                selected.push($(this).data('id'));
+        <script>
+            $('.grid-row-delete').unbind('click').click(function () {
+                DeletePost($(this).data('id'))
             });
-            return selected;
-        };
 
-        $('.grid-select-all').on('ifChanged', function (event) {
-            if (this.checked) {
-                $('.grid-row-checkbox').iCheck('check');
-            } else {
-                $('.grid-row-checkbox').iCheck('uncheck');
-            }
-        });
-        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+            selectedRows = function () {
+                let selected = [];
+                $('.grid-row-checkbox:checked').each(function () {
+                    selected.push($(this).data('id'));
+                });
+                return selected;
+            };
 
-        $(function () {
-            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+            $('.grid-select-all').on('ifChanged', function (event) {
                 if (this.checked) {
-                    $(this).closest('tr').css('background-color', "#ffffd5");
+                    $('.grid-row-checkbox').iCheck('check');
                 } else {
-                    $(this).closest('tr').css('background-color', '');
+                    $('.grid-row-checkbox').iCheck('uncheck');
                 }
             });
-        });
+            $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
-        $('.grid-batch-0').on('click', function() {
-            DeletePost(selectedRows().join())
-        });
-
-        function DeletePost(id) {
-            swal({
-                title: {{lang "are you sure to delete"}},
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: {{lang "yes"}},
-                closeOnConfirm: false,
-                cancelButtonText: {{lang "cancel"}},
-            },
-            function(){
-                $.ajax({
-                    method: 'post',
-                    url: {{.DeleteUrl}},
-                    data: {
-                        id: id
-                    },
-                    success: function (data) {
-                        $.pjax.reload('#pjax-container');
-                        if(typeof(data) === "string"){
-                        	data = JSON.parse(data);
-                        } 
-                        if (data.code === 200) {
-                            $('#_TOKEN').val(data.data);
-                            swal(data.msg, '', 'success');
-                        } else {
-                            swal(data.msg, '', 'error');
-                        }
+            $(function () {
+                $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                    if (this.checked) {
+                        $(this).closest('tr').css('background-color', "#ffffd5");
+                    } else {
+                        $(this).closest('tr').css('background-color', '');
                     }
                 });
             });
-        }
-    </script>
+
+            $('.grid-batch-0').on('click', function () {
+                DeletePost(selectedRows().join())
+            });
+
+            {{if .ExportUrl}}
+            $('.grid-batch-1').on('click', function () {
+                ExportAll(selectedRows().join())
+            });
+
+            function ExportAll(id) {
+                let form = $("<form>");
+                form.attr("style", "display:none");
+                form.attr("target", "");
+                form.attr("method", "post");
+                form.attr("action",{{.ExportUrl}});
+                let input1 = $("<input>");
+                input1.attr("type", "hidden");
+                input1.attr("name", "id");
+                input1.attr("value", id);
+                $("body").append(form);
+                form.append(input1);
+                form.submit();
+                form.remove()
+            }
+            {{end}}
+
+            function DeletePost(id) {
+                swal({
+                        title: {{lang "are you sure to delete"}},
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: {{lang "yes"}},
+                        closeOnConfirm: false,
+                        cancelButtonText: {{lang "cancel"}},
+                    },
+                    function () {
+                        $.ajax({
+                            method: 'post',
+                            url: {{.DeleteUrl}},
+                            data: {
+                                id: id
+                            },
+                            success: function (data) {
+                                $.pjax.reload('#pjax-container');
+                                if (typeof (data) === "string") {
+                                    data = JSON.parse(data);
+                                }
+                                if (data.code === 200) {
+                                    $('#_TOKEN').val(data.data);
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
+                                }
+                            }
+                        });
+                    });
+            }
+        </script>
     {{end}}
 {{end}}

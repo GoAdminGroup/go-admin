@@ -1,6 +1,6 @@
 package tmpl
 
-var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
+var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <!-- User Account: style can be found in dropdown.less -->
@@ -38,13 +38,13 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </li>
     </ul>
 </div>
-{{end}}`, "components/alert": `{{define "alert"}}
+{{end}}`,"components/alert":`{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4>{{.Title}}</h4>
     {{.Content}}
 </div>
-{{end}}`, "components/area-chart": `{{define "area-chart"}}
+{{end}}`,"components/area-chart":`{{define "area-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -93,7 +93,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     });
 </script>
-{{end}}`, "components/bar-chart": `{{define "bar-chart"}}
+{{end}}`,"components/bar-chart":`{{define "bar-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -136,7 +136,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         datasetFill: false
     })
 </script>
-{{end}}`, "components/box": `{{define "box"}}
+{{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
         {{.Header}}
@@ -150,21 +150,21 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
     {{end}}
 </div>
-{{end}}`, "components/chart-legend": `{{define "chart-legend"}}
+{{end}}`,"components/chart-legend":`{{define "chart-legend"}}
 <ul class="chart-legend clearfix">
     {{range $key, $data := .Data}}
         <li><i class="fa fa-circle-o text-{{index $data "color"}}"></i>{{index $data "label"}}</li>
     {{end}}
 </ul>
-{{end}}`, "components/col": `{{define "col"}}
+{{end}}`,"components/col":`{{define "col"}}
 <div class="{{.Size}}">{{.Content}}</div>
-{{end}}`, "components/description": `{{define "description"}}
+{{end}}`,"components/description":`{{define "description"}}
 <div class="description-block border-{{.Border}}">
     <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{.Percent}}%</span>
     <h5 class="description-header">{{.Number}}</h5>
     <span class="description-text">{{.Title}}</span>
 </div>
-{{end}}`, "components/form/color": `{{define "form_color"}}
+{{end}}`,"components/form/color":`{{define "form_color"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group colorpicker-element">
@@ -175,7 +175,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <script>
         $('.{{.Field}}').parent().colorpicker([]);
     </script>
-{{end}}`, "components/form/currency": `{{define "form_currency"}}
+{{end}}`,"components/form/currency":`{{define "form_currency"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -189,7 +189,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             $('.{{.Field}}').inputmask({"alias": "currency", "radixPoint": ".", "prefix": "", "removeMaskOnSubmit": true});
         });
     </script>
-{{end}}`, "components/form/datetime": `{{define "form_datetime"}}
+{{end}}`,"components/form/datetime":`{{define "form_datetime"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -207,7 +207,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             });
         });
     </script>
-{{end}}`, "components/form/default": `{{define "form_default"}}
+{{end}}`,"components/form/default":`{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
@@ -216,7 +216,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 </div>
-{{end}}`, "components/form/email": `{{define "form_email"}}
+{{end}}`,"components/form/email":`{{define "form_email"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -225,7 +225,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form/file": `{{define "form_file"}}
+{{end}}`,"components/form/file":`{{define "form_file"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
@@ -247,7 +247,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         "allowedFileTypes":["image"]
     });
 </script>
-{{end}}`, "components/form/iconpicker": `{{define "form_iconpicker"}}
+{{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
 <label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
@@ -2492,7 +2492,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
 </div>
 </div>
-{{end}}`, "components/form/ip": `{{define "form_ip"}}
+{{end}}`,"components/form/ip":`{{define "form_ip"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2501,7 +2501,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form/number": `{{define "form_number"}}
+{{end}}`,"components/form/number":`{{define "form_number"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2521,7 +2521,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 });
         })
     </script>
-{{end}}`, "components/form/password": `{{define "form_password"}}
+{{end}}`,"components/form/password":`{{define "form_password"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2535,7 +2535,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
          </div>
     {{end}}
 </div>
-{{end}}`, "components/form/radio": `{{define "form_radio"}}
+{{end}}`,"components/form/radio":`{{define "form_radio"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         {{$field := .Field}}
@@ -2550,7 +2550,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             $('.{{.Field}}').iCheck({radioClass: 'iradio_minimal-blue'});
         });
     </script>
-{{end}}`, "components/form/richtext": `{{define "form_rich_text"}}
+{{end}}`,"components/form/richtext":`{{define "form_rich_text"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div id="{{.Field}}-editor">
@@ -2570,7 +2570,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         editor.$textElem.attr('contenteditable', false);
         {{end}}
     </script>
-{{end}}`, "components/form/select": `{{define "form_select"}}
+{{end}}`,"components/form/select":`{{define "form_select"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]"
@@ -2589,7 +2589,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             allowClear: true
         });
     </script>
-{{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
+{{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2602,7 +2602,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 <script>
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
-{{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
+{{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2620,7 +2620,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         maximumSelectionLength: 1
     });
 </script>
-{{end}}`, "components/form/text": `{{define "form_text"}}
+{{end}}`,"components/form/text":`{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2634,12 +2634,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     {{end}}
 </div>
-{{end}}`, "components/form/textarea": `{{define "form_textarea"}}
+{{end}}`,"components/form/textarea":`{{define "form_textarea"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}" {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
 </div>
-{{end}}`, "components/form/url": `{{define "form_url"}}
+{{end}}`,"components/form/url":`{{define "form_url"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2648,7 +2648,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form": `{{define "form"}}
+{{end}}`,"components/form":`{{define "form"}}
     <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
     <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
     <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
@@ -2743,9 +2743,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </form>
         {{.Footer}}
     </div>
-{{end}}`, "components/image": `{{define "image"}}
+{{end}}`,"components/image":`{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`, "components/infobox": `{{define "infobox"}}
+{{end}}`,"components/infobox":`{{define "infobox"}}
 <div class="info-box">
     <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
     <div class="info-box-content">
@@ -2754,9 +2754,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{.Content}}
     </div>
 </div>
-{{end}}`, "components/label": `{{define "label"}}
+{{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{.Content}}</span>
-{{end}}`, "components/line-chart": `{{define "line-chart"}}
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -2805,7 +2805,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     })
 </script>
-{{end}}`, "components/paginator": `{{define "paginator"}}
+{{end}}`,"components/paginator":`{{define "paginator"}}
 Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
@@ -2863,7 +2863,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </select>
     <small>entries</small>
 </label>
-{{end}}`, "components/pie-chart": `{{define "pie-chart"}}
+{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{.Title}}</strong>
@@ -2901,7 +2901,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         tooltipTemplate      : '<%=value %> <%=label%> users'
     });
 </script>
-{{end}}`, "components/popup": `{{define "popup"}}
+{{end}}`,"components/popup":`{{define "popup"}}
 <div class="modal fade" id="{{.ID}}" tabindex="-1" role="dialog" aria-labelledby="{{.ID}}" aria-hidden="true">
     <div class="modal-dialog modal-{{.Size}}" role="document">
         <div class="modal-content">
@@ -2923,7 +2923,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         </div>
     </div>
 </div>
-{{end}}`, "components/productlist": `{{define "productlist"}}
+{{end}}`,"components/productlist":`{{define "productlist"}}
 <ul class="products-list product-list-in-box">
     {{range $key, $data := .Data}}
     <li class="item">
@@ -2943,7 +2943,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </li>
     {{end}}
 </ul>
-{{end}}`, "components/progress-group": `{{define "progress-group"}}
+{{end}}`,"components/progress-group":`{{define "progress-group"}}
 <div class="progress-group">
     <span class="progress-text">{{.Title}}</span>
     <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
@@ -2952,9 +2952,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
     </div>
 </div>
-{{end}}`, "components/row": `{{define "row"}}
+{{end}}`,"components/row":`{{define "row"}}
 <div class="row">{{.Content}}</div>
-{{end}}`, "components/smallbox": `{{define "smallbox"}}
+{{end}}`,"components/smallbox":`{{define "smallbox"}}
 <div class="small-box bg-{{.Color}}">
     <div class="inner">
         <h3>{{.Value}}</h3>
@@ -2968,114 +2968,143 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <i class="fa fa-arrow-circle-right"></i>
     </a>
 </div>
-{{end}}`, "components/table/box-header": `{{define "box-header"}}
-<div class="pull-right">
+{{end}}`,"components/table/box-header":`{{define "box-header"}}
+    <div class="pull-right">
 
-    <div class="btn-group pull-right" style="margin-right: 10px">
-        <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
-                class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filter"}}</a>
-        <a href="{{.InfoUrl}}" class="btn btn-sm btn-facebook"><i class="fa fa-undo"></i>&nbsp;&nbsp;{{lang "Reset"}}
-        </a>
-    </div>
+        <div class="btn-group pull-right" style="margin-right: 10px">
+            <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
+                        class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filter"}}</a>
+            <a href="{{.InfoUrl}}" class="btn btn-sm btn-facebook"><i
+                        class="fa fa-undo"></i>&nbsp;&nbsp;{{lang "Reset"}}
+            </a>
+        </div>
 
-    <div class="modal fade" id="filter-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">{{lang "Filter"}}</h4>
-                </div>
-                <form action="{{.InfoUrl}}" method="get" pjax-container="">
-                    <div class="modal-body">
-                        <div class="form">
-                            {{range $key, $filter := .Filters}}
-                                <div class="form-group">
-                                    <label>{{index $filter "title"}}</label>
-                                    <div class="input-group">
-                                        <div class="input-group-addon">
-                                            <i class="fa fa-pencil"></i>
+        <div class="modal fade" id="filter-modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                            <span class="sr-only">Close</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">{{lang "Filter"}}</h4>
+                    </div>
+                    <form action="{{.InfoUrl}}" method="get" pjax-container="">
+                        <div class="modal-body">
+                            <div class="form">
+                                {{range $key, $filter := .Filters}}
+                                    <div class="form-group">
+                                        <label>{{index $filter "title"}}</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-pencil"></i>
+                                            </div>
+                                            <input type="text" class="form-control id"
+                                                   placeholder="{{index $filter "title"}}"
+                                                   name="{{index $filter "name"}}" value="">
                                         </div>
-                                        <input type="text" class="form-control id" placeholder="{{index $filter "title"}}"
-                                               name="{{index $filter "name"}}" value="">
                                     </div>
-                                </div>
-                            {{end}}
+                                {{end}}
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" id="filter-btn" class="btn btn-primary submit">{{lang "Submit"}}</button>
-                        <button type="reset" class="btn btn-warning pull-left">{{lang "Reset"}}</button>
-                    </div>
-                </form>
+                        <div class="modal-footer">
+                            <button type="submit" id="filter-btn"
+                                    class="btn btn-primary submit">{{lang "Submit"}}</button>
+                            <button type="reset" class="btn btn-warning pull-left">{{lang "Reset"}}</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        $("#filter-btn").click(function() {
-            $('.modal-backdrop').hide();
-        });
-    </script>
+        <script>
+            $("#filter-btn").click(function () {
+                $('.modal-backdrop').hide();
+            });
+        </script>
 
-    <!--
-    <div class="btn-group pull-right" style="margin-right: 10px">
-        <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
-        <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="/admin/story/word?_export_=all" target="_blank">All</a></li>
-            <li><a href="/admin/story/word?_export_=page%3A1" target="_blank">Current
-                page</a></li>
-            <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank" class="export-selected">Selected rows</a></li>
-        </ul>
-    </div>
-    -->
+        <!--
+        <div class="btn-group pull-right" style="margin-right: 10px">
+            <a class="btn btn-sm btn-twitter"><i class="fa fa-download"></i> Export</a>
+            <button type="button" class="btn btn-sm btn-twitter dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+                <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="/admin/story/word?_export_=all" target="_blank">All</a></li>
+                <li><a href="/admin/story/word?_export_=page%3A1" target="_blank">Current
+                    page</a></li>
+                <li><a href="/admin/story/word?_export_=selected%3A__rows__" target="_blank" class="export-selected">Selected rows</a></li>
+            </ul>
+        </div>
+        -->
 
-    <div class="btn-group pull-right" style="margin-right: 10px">
-        {{if .NewUrl}}
-            <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
-                <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
-            </a>
-        {{end}}
+        <div class="btn-group pull-right" style="margin-right: 10px">
+            {{if .NewUrl}}
+                <a href="{{.NewUrl}}" class="btn btn-sm btn-success">
+                    <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "New"}}
+                </a>
+            {{end}}
+            {{if .ExportUrl}}
+                <a href="javascript:;" class="btn btn-sm btn-success" id="export-btn">
+                    <i class="fa fa-save"></i>&nbsp;&nbsp;{{lang "Export"}}
+                </a>
+
+                <script>
+                    $("#export-btn").click(function () {
+                        let form = $("<form>");
+                        form.attr("style", "display:none");
+                        form.attr("target", "");
+                        form.attr("method", "post");
+                        form.attr("action",{{.ExportUrl}});
+                        let input1 = $("<input>");
+                        input1.attr("type", "hidden");
+                        input1.attr("name", "time");
+                        input1.attr("value", (new Date()).getMilliseconds());
+                        $("body").append(form);
+                        form.append(input1);
+                        form.submit();
+                        form.remove()
+                    });
+                </script>
+            {{end}}
+        </div>
     </div>
-</div>
-<span>
+    <span>
     {{if .DeleteUrl}}
-    <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
-    <div class="btn-group">
-        <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
-        <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
-        <span class="caret"></span>
-        <span class="sr-only">{{lang "Toggle Dropdown"}}</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
-        </ul>
-    </div>
+        <input type="checkbox" class="grid-select-all" style="position: absolute; opacity: 0;">
+        <div class="btn-group">
+            <a class="btn btn-sm btn-default">{{lang "Action"}}</a>
+            <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+            <span class="sr-only">{{lang "Toggle Dropdown"}}</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="grid-batch-0">{{lang "Delete"}}</a></li>
+                {{if .ExportUrl}}
+                    <li><a href="#" class="grid-batch-1">{{lang "Export"}}</a></li>
+                {{end}}
+            </ul>
+        </div>
     {{end}}
     <a class="btn btn-sm btn-primary grid-refresh">
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
-{{end}}`, "components/table": `{{define "table"}}
+{{end}}`,"components/table":`{{define "table"}}
     <table class="table table-hover">
         {{if eq .Type "table"}}
             <thead>
-                <tr>
+            <tr>
                 {{range $key, $head := .Thead}}
                     <th>
-                    {{index $head "head"}}
-                    {{if eq (index $head "sortable") "1"}}
-                        <a class="fa fa-fw fa-sort" href=""></a>
-                    {{end}}
+                        {{index $head "head"}}
+                        {{if eq (index $head "sortable") "1"}}
+                            <a class="fa fa-fw fa-sort" href=""></a>
+                        {{end}}
                     </th>
                 {{end}}
-                </tr>
+            </tr>
             </thead>
         {{end}}
         <tbody>
@@ -3103,7 +3132,8 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $DeleteUrl}}
-                        <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}" style="position: absolute; opacity: 0;">
+                            <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}"
+                                   style="position: absolute; opacity: 0;">
                         {{end}}
                     </td>
                 {{end}}
@@ -3113,10 +3143,11 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $EditUrl}}
-                        <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+                            <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
                         {{end}}
                         {{if $DeleteUrl}}
-                        <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i class="fa fa-trash"></i></a>
+                            <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i
+                                        class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
                 {{end}}
@@ -3125,77 +3156,99 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         </tbody>
     </table>
     {{if eq $Type "data-table"}}
-    <script>
-        $('.grid-row-delete').unbind('click').click(function () {
-            DeletePost($(this).data('id'))
-        });
-
-        selectedRows = function () {
-            let selected = [];
-            $('.grid-row-checkbox:checked').each(function(){
-                selected.push($(this).data('id'));
+        <script>
+            $('.grid-row-delete').unbind('click').click(function () {
+                DeletePost($(this).data('id'))
             });
-            return selected;
-        };
 
-        $('.grid-select-all').on('ifChanged', function (event) {
-            if (this.checked) {
-                $('.grid-row-checkbox').iCheck('check');
-            } else {
-                $('.grid-row-checkbox').iCheck('uncheck');
-            }
-        });
-        $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
+            selectedRows = function () {
+                let selected = [];
+                $('.grid-row-checkbox:checked').each(function () {
+                    selected.push($(this).data('id'));
+                });
+                return selected;
+            };
 
-        $(function () {
-            $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+            $('.grid-select-all').on('ifChanged', function (event) {
                 if (this.checked) {
-                    $(this).closest('tr').css('background-color', "#ffffd5");
+                    $('.grid-row-checkbox').iCheck('check');
                 } else {
-                    $(this).closest('tr').css('background-color', '');
+                    $('.grid-row-checkbox').iCheck('uncheck');
                 }
             });
-        });
+            $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
-        $('.grid-batch-0').on('click', function() {
-            DeletePost(selectedRows().join())
-        });
-
-        function DeletePost(id) {
-            swal({
-                title: {{lang "are you sure to delete"}},
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: {{lang "yes"}},
-                closeOnConfirm: false,
-                cancelButtonText: {{lang "cancel"}},
-            },
-            function(){
-                $.ajax({
-                    method: 'post',
-                    url: {{.DeleteUrl}},
-                    data: {
-                        id: id
-                    },
-                    success: function (data) {
-                        $.pjax.reload('#pjax-container');
-                        if(typeof(data) === "string"){
-                        	data = JSON.parse(data);
-                        } 
-                        if (data.code === 200) {
-                            $('#_TOKEN').val(data.data);
-                            swal(data.msg, '', 'success');
-                        } else {
-                            swal(data.msg, '', 'error');
-                        }
+            $(function () {
+                $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                    if (this.checked) {
+                        $(this).closest('tr').css('background-color', "#ffffd5");
+                    } else {
+                        $(this).closest('tr').css('background-color', '');
                     }
                 });
             });
-        }
-    </script>
+
+            $('.grid-batch-0').on('click', function () {
+                DeletePost(selectedRows().join())
+            });
+
+            {{if .ExportUrl}}
+            $('.grid-batch-1').on('click', function () {
+                ExportAll(selectedRows().join())
+            });
+
+            function ExportAll(id) {
+                let form = $("<form>");
+                form.attr("style", "display:none");
+                form.attr("target", "");
+                form.attr("method", "post");
+                form.attr("action",{{.ExportUrl}});
+                let input1 = $("<input>");
+                input1.attr("type", "hidden");
+                input1.attr("name", "id");
+                input1.attr("value", id);
+                $("body").append(form);
+                form.append(input1);
+                form.submit();
+                form.remove()
+            }
+            {{end}}
+
+            function DeletePost(id) {
+                swal({
+                        title: {{lang "are you sure to delete"}},
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: {{lang "yes"}},
+                        closeOnConfirm: false,
+                        cancelButtonText: {{lang "cancel"}},
+                    },
+                    function () {
+                        $.ajax({
+                            method: 'post',
+                            url: {{.DeleteUrl}},
+                            data: {
+                                id: id
+                            },
+                            success: function (data) {
+                                $.pjax.reload('#pjax-container');
+                                if (typeof (data) === "string") {
+                                    data = JSON.parse(data);
+                                }
+                                if (data.code === 200) {
+                                    $('#_TOKEN').val(data.data);
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
+                                }
+                            }
+                        });
+                    });
+            }
+        </script>
     {{end}}
-{{end}}`, "components/tabs": `{{define "tabs"}}
+{{end}}`,"components/tabs":`{{define "tabs"}}
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         {{range $key, $data := .Data}}
@@ -3220,7 +3273,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{end}}
     </div>
 </div>
-{{end}}`, "components/tree-header": `{{define "tree-header"}}
+{{end}}`,"components/tree-header":`{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
         <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
@@ -3239,7 +3292,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 <div class="btn-group">
 </div>
-{{end}}`, "components/tree": `{{define "tree"}}
+{{end}}`,"components/tree":`{{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
     {{$EditUrl := .EditUrl}}
     <ol class="dd-list">
@@ -3332,7 +3385,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
     });
 </script>
-{{end}}`, "content": `{{define "content"}}
+{{end}}`,"content":`{{define "content"}}
 <script>
     $('.grid-per-pager').on("change", function (e) {
         console.log("changing...");
@@ -3356,7 +3409,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <section class="content">
     {{.Panel.Content}}
 </section>
-{{end}}`, "footer": `{{define "footer"}}
+{{end}}`,"footer":`{{define "footer"}}
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
         <b>Version</b> {{.System.Version}}
@@ -3364,7 +3417,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
     reserved.
 </footer>
-{{end}}`, "head": `{{define "head"}}
+{{end}}`,"head":`{{define "head"}}
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -3415,7 +3468,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <script src="{{.AssertRootUrl}}/assets/input-mask/jquery.inputmask.bundle.min.js"></script>
         <script src="{{.AssertRootUrl}}/assets/number-input/bootstrap-number-input.js"></script>
     </head>
-{{end}}`, "header": `{{define "header"}}
+{{end}}`,"header":`{{define "header"}}
 <header class="main-header">
     <!-- Logo -->
     <a href="/" class="logo">
@@ -3434,7 +3487,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         {{ template "admin_panel" . }}
     </nav>
 </header>
-{{end}}`, "js": `{{define "js"}}
+{{end}}`,"js":`{{define "js"}}
 <script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -3452,7 +3505,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
-{{end}}`, "layout": `{{define "layout"}}
+{{end}}`,"layout":`{{define "layout"}}
 
 <!DOCTYPE html>
 <html>
@@ -3482,7 +3535,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </html>
 
 {{end}}
-`, "menu": `{{define "menu"}}
+`,"menu":`{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
 {{$AssertRootUrl := .AssertRootUrl}}
 {{range $key, $list := .Menu.GlobalMenuList }}
@@ -3516,7 +3569,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     {{end}}
 {{end}}
 </ul>
-{{end}}`, "sidebar": `{{define "sidebar"}}
+{{end}}`,"sidebar":`{{define "sidebar"}}
 <!-- Left side column. contains the logo and sidebar -->
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
@@ -3552,4 +3605,4 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </section>
     <!-- /.sidebar -->
 </aside>
-{{end}}`}
+{{end}}`,}

@@ -54,8 +54,10 @@ type Table interface {
 	GetCanAdd() bool
 	GetEditable() bool
 	GetDeletable() bool
+	GetExportable() bool
 	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
+	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
 	UpdateDataFromDatabase(dataList form.FormValue)
 	InsertDataFromDatabase(dataList form.FormValue)
@@ -70,6 +72,7 @@ type DefaultTable struct {
 	canAdd           bool
 	editable         bool
 	deletable        bool
+	exportable       bool
 	prefix           string
 }
 
@@ -90,6 +93,7 @@ type Config struct {
 	CanAdd     bool
 	Editable   bool
 	Deletable  bool
+	Exportable bool
 }
 
 var DefaultConfig = &Config{
@@ -97,6 +101,7 @@ var DefaultConfig = &Config{
 	CanAdd:     true,
 	Editable:   true,
 	Deletable:  true,
+	Exportable: false,
 	Connection: "default",
 }
 
@@ -107,6 +112,7 @@ func DefaultConfigWithDriver(driver string) *Config {
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
+		Exportable: false,
 	}
 }
 
@@ -117,6 +123,7 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) *Config {
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
+		Exportable: false,
 	}
 }
 
@@ -129,6 +136,7 @@ func NewDefaultTable(cfg *Config) Table {
 		canAdd:           cfg.CanAdd,
 		editable:         cfg.Editable,
 		deletable:        cfg.Deletable,
+		exportable:       cfg.Exportable,
 	}
 	return tb
 }
@@ -151,6 +159,10 @@ func (tb DefaultTable) GetEditable() bool {
 
 func (tb DefaultTable) GetDeletable() bool {
 	return tb.deletable
+}
+
+func (tb DefaultTable) GetExportable() bool {
+	return tb.exportable
 }
 
 func (tb DefaultTable) GetFiltersMap() []map[string]string {
@@ -286,7 +298,115 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		Editable:    tb.editable,
 		Deletable:   tb.deletable,
 	}
+}
 
+// GetDataFromDatabase query the data set.
+func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo {
+
+	const (
+		queryStatement = "select %s from %s where id in (%s) order by %s %s"
+		countStatement = "select count(*) from %s where id in (%s)"
+	)
+
+	thead := make([]map[string]string, 0)
+	fields := ""
+
+	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
+
+	columns := getColumns(columnsModel, tb.connectionDriver)
+
+	var sortable string
+	for i := 0; i < len(tb.info.FieldList); i++ {
+		if tb.info.FieldList[i].Field != "id" && checkInTable(columns, tb.info.FieldList[i].Field) {
+			fields += tb.info.FieldList[i].Field + ","
+		}
+		if tb.info.FieldList[i].Hide {
+			continue
+		}
+		sortable = "0"
+		if tb.info.FieldList[i].Sortable {
+			sortable = "1"
+		}
+		thead = append(thead, map[string]string{
+			"head":     tb.info.FieldList[i].Head,
+			"sortable": sortable,
+			"field":    tb.info.FieldList[i].Field,
+		})
+	}
+
+	fields += "id"
+
+	if !checkInTable(columns, params.SortField) {
+		params.SortField = "id"
+	}
+
+	whereIds := ""
+
+	for _, value := range ids {
+		whereIds += value + ","
+	}
+	whereIds = whereIds[:len(whereIds)-1]
+
+	// TODO: add left join table relations
+
+	res, _ := tb.db().QueryWithConnection(tb.connection,
+		fmt.Sprintf(queryStatement, fields, tb.info.Table, whereIds, params.SortField, params.SortType))
+
+	infoList := make([]map[string]template.HTML, 0)
+
+	for i := 0; i < len(res); i++ {
+
+		// TODO: add object pool
+
+		tempModelData := make(map[string]template.HTML, 0)
+		row := res[i]
+
+		for j := 0; j < len(tb.info.FieldList); j++ {
+			if tb.info.FieldList[j].Hide {
+				continue
+			}
+			if checkInTable(columns, tb.info.FieldList[j].Field) {
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+					ID:    row["id"].(int64),
+					Value: getStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					Row:   row,
+				}).(string))
+			} else {
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+					ID:    row["id"].(int64),
+					Value: "",
+					Row:   row,
+				}).(string))
+			}
+		}
+
+		tempModelData["id"] = template.HTML(getStringFromType("int", res[i]["id"]))
+
+		infoList = append(infoList, tempModelData)
+	}
+
+	// TODO: use the dialect
+
+	total, _ := tb.db().QueryWithConnection(tb.connection, fmt.Sprintf(countStatement, tb.info.Table, whereIds))
+	var size int
+	if tb.connectionDriver == "sqlite" {
+		size = int(total[0]["count(*)"].(int64))
+	} else if tb.connectionDriver == "postgresql" {
+		size = int(total[0]["count"].(int64))
+	} else {
+		size = int(total[0]["count(*)"].(int64))
+	}
+
+	return PanelInfo{
+		Thead:       thead,
+		InfoList:    infoList,
+		Paginator:   paginator.Get(path, params, size),
+		Title:       tb.info.Title,
+		Description: tb.info.Description,
+		CanAdd:      tb.canAdd,
+		Editable:    tb.editable,
+		Deletable:   tb.deletable,
+	}
 }
 
 // GetDataFromDatabaseWithId query the single row of data.

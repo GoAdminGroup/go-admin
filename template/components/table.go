@@ -12,6 +12,7 @@ type TableAttribute struct {
 	Type      string
 	EditUrl   string
 	DeleteUrl string
+	ExportUrl string
 	types.Attribute
 }
 
@@ -39,6 +40,7 @@ type DataTableAttribute struct {
 	EditUrl   string
 	NewUrl    string
 	DeleteUrl string
+	ExportUrl string
 	InfoUrl   string
 	FilterUrl string
 	Filters   []map[string]string
@@ -56,6 +58,11 @@ func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataT
 
 func (compo *DataTableAttribute) SetInfoUrl(value string) types.DataTableAttribute {
 	compo.InfoUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetExportUrl(value string) types.DataTableAttribute {
+	compo.ExportUrl = value
 	return compo
 }
 

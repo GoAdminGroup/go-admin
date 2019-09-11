@@ -8,6 +8,9 @@ import (
 
 func GetUserTable() (userTable table.Table) {
 
+	c := table.DefaultConfig
+	c.Exportable = true
+
 	userTable = table.NewDefaultTable(table.DefaultConfig)
 
 	userTable.GetInfo().FieldList = []types.Field{

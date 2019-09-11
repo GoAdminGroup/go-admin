@@ -50,6 +50,7 @@ func InitRouter(prefix string) *context.App {
 	authRoute.POST("/edit/:prefix", guard.EditForm, controller.EditForm)
 	authRoute.POST("/new/:prefix", guard.NewForm, controller.NewForm)
 	authRoute.POST("/delete/:prefix", guard.Delete, controller.Delete)
+	authRoute.POST("/export/:prefix", guard.Export, controller.Export)
 	authRoute.GET("/info/:prefix", controller.ShowInfo)
 
 	return app

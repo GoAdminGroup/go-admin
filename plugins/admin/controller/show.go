@@ -1,18 +1,24 @@
 package controller
 
 import (
+	"fmt"
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
+	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
 	"path"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func ShowInfo(ctx *context.Context) {
@@ -32,6 +38,11 @@ func ShowInfo(ctx *context.Context) {
 		deleteUrl = config.Url("/delete/" + prefix)
 	}
 
+	exportUrl := ""
+	if panel.GetExportable() {
+		exportUrl = config.Url("/export/" + prefix + params.GetRouteParamStr())
+	}
+
 	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
 
 	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
@@ -42,7 +53,8 @@ func ShowInfo(ctx *context.Context) {
 			SetInfoList(panelInfo.InfoList).
 			SetFilters(panel.GetFiltersMap()).
 			SetInfoUrl(config.Url("/info/" + prefix)).
-			SetThead(panelInfo.Thead)
+			SetThead(panelInfo.Thead).
+			SetExportUrl(exportUrl)
 
 		if panelInfo.CanAdd {
 			dataTable.SetNewUrl(newUrl)
@@ -112,4 +124,57 @@ func Assert(ctx *context.Context) {
 	ctx.Write(http.StatusOK, map[string]string{
 		"content-type": contentType,
 	}, string(data))
+}
+
+func Export(ctx *context.Context) {
+	param := guard.GetExportParam(ctx)
+
+	tableName := "Sheet1"
+	prefix := ctx.Query("prefix")
+	panel := table.List[prefix]
+
+	f := excelize.NewFile()
+	index := f.NewSheet(tableName)
+	f.SetActiveSheet(index)
+
+	// TODO: support any numbers of fields.
+	orders := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+	var (
+		panelInfo table.PanelInfo
+		fileName  = ""
+	)
+
+	if len(param.Id) == 0 {
+		params := parameter.GetParam(ctx.Request.URL.Query())
+		panelInfo = panel.GetDataFromDatabase(ctx.Path(), params)
+		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), params.Page, params.PageSize)
+	} else {
+		panelInfo = panel.GetDataFromDatabaseWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query()), param.Id)
+		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), strings.Join(param.Id, "_"))
+	}
+
+	for key, head := range panelInfo.Thead {
+		_ = f.SetCellValue(tableName, orders[key]+"1", head["head"])
+	}
+
+	count := 2
+	for _, info := range panelInfo.InfoList {
+		for key, head := range panelInfo.Thead {
+			_ = f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["head"]])
+		}
+		count++
+	}
+
+	buf, err := f.WriteToBuffer()
+
+	if err != nil || buf == nil {
+		response.Error(ctx, "export error")
+		return
+	}
+
+	ctx.AddHeader("content-disposition", `attachment; filename=`+fileName)
+	ctx.Data(200, "application/vnd.ms-excel", buf.Bytes())
+	return
 }

@@ -107,6 +107,13 @@ func (ctx *Context) Json(code int, Body map[string]interface{}) {
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewReader(BodyStr))
 }
 
+// Data writes some data into the body stream and updates the HTTP code.
+func (ctx *Context) Data(code int, contentType string, data []byte) {
+	ctx.Response.StatusCode = code
+	ctx.AddHeader("Content-Type", contentType)
+	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+}
+
 // Html output html response.
 func (ctx *Context) Html(code int, body string) {
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -168,6 +175,11 @@ func (ctx *Context) FormValue(key string) string {
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
 	ctx.Response.Header.Add(key, value)
+}
+
+// SetHeader set the key, value pair to the header.
+func (ctx *Context) SetHeader(key, value string) {
+	ctx.Response.Header.Set(key, value)
 }
 
 // User return the current login user.

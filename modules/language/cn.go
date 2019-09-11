@@ -16,6 +16,7 @@ var cn = map[string]string{
 	"filter":    "筛选",
 
 	"new":             "新建",
+	"export":          "导出",
 	"action":          "操作",
 	"toggle dropdown": "下拉",
 	"delete":          "删除",
