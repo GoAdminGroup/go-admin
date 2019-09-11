@@ -210,11 +210,11 @@ func (t UserModel) AddPermission(permissionId string) {
 
 func (t UserModel) MapToModel(m map[string]interface{}) UserModel {
 	t.Id = m["id"].(int64)
-	t.Name = m["name"].(string)
-	t.UserName = m["username"].(string)
+	t.Name, _ = m["name"].(string)
+	t.UserName, _ = m["username"].(string)
 	t.Password = m["password"].(string)
-	t.Avatar = m["avatar"].(string)
-	t.RememberToken = m["remember_token"].(string)
+	t.Avatar, _ = m["avatar"].(string)
+	t.RememberToken, _ = m["remember_token"].(string)
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
