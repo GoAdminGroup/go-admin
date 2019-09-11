@@ -34,17 +34,18 @@ func (t PermissionModel) Find(id interface{}) PermissionModel {
 
 func (t PermissionModel) MapToModel(m map[string]interface{}) PermissionModel {
 	t.Id = m["id"].(int64)
-	t.Name = m["name"].(string)
-	t.Slug = m["slug"].(string)
+	t.Name, _ = m["name"].(string)
+	t.Slug, _ = m["slug"].(string)
 
-	methods := m["http_method"].(string)
+	methods, _ := m["http_method"].(string)
 	if methods != "" {
 		t.HttpMethod = strings.Split(methods, ",")
 	} else {
 		t.HttpMethod = []string{""}
 	}
 
-	t.HttpPath = strings.Split(m["http_path"].(string), "\n")
+	path, _ := m["http_path"].(string)
+	t.HttpPath = strings.Split(path, "\n")
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t

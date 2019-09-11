@@ -50,10 +50,10 @@ func (t OperationLogModel) New(userId int64, path, method, ip, input string) Ope
 func (t OperationLogModel) MapToModel(m map[string]interface{}) OperationLogModel {
 	t.Id = m["id"].(int64)
 	t.UserId = m["user_id"].(int64)
-	t.Path = m["path"].(string)
-	t.Method = m["method"].(string)
-	t.Ip = m["ip"].(string)
-	t.Input = m["input"].(string)
+	t.Path, _ = m["path"].(string)
+	t.Method, _ = m["method"].(string)
+	t.Ip, _ = m["ip"].(string)
+	t.Input, _ = m["input"].(string)
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t

@@ -11,7 +11,7 @@ type MenuModel struct {
 
 	Id        int64
 	Title     string
-	ParentId  string
+	ParentId  int64
 	Icon      string
 	Uri       string
 	CreatedAt string
@@ -127,10 +127,10 @@ func (t MenuModel) AddRole(roleId string) {
 
 func (t MenuModel) MapToModel(m map[string]interface{}) MenuModel {
 	t.Id = m["id"].(int64)
-	t.Title = m["title"].(string)
-	t.ParentId = m["parent_id"].(string)
-	t.Icon = m["icon"].(string)
-	t.Uri = m["uri"].(string)
+	t.Title, _ = m["title"].(string)
+	t.ParentId = m["parent_id"].(int64)
+	t.Icon, _ = m["icon"].(string)
+	t.Uri, _ = m["uri"].(string)
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
