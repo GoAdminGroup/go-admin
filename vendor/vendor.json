@@ -193,6 +193,10 @@
 			"revisionTime": "2019-03-21T05:14:46Z"
 		},
 		{
+			"path": "golang.org/x/text/language",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "LiyXfqOzaeQ8vgYZH3t2hUEdVTw=",
 			"path": "google.golang.org/appengine/cloudsql",
 			"revision": "4a4468ece617fc8205e99368fa2200e9d1fad421",
