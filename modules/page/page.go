@@ -6,9 +6,9 @@ package page
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
@@ -42,6 +42,8 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 		MiniLogo:      globalConfig.MINILOGO,
 		ColorScheme:   globalConfig.COLORSCHEME,
 	})
-	fmt.Println("err", err)
+	if err != nil {
+		logger.Error("SetPageContent", err)
+	}
 	ctx.WriteString(buf.String())
 }

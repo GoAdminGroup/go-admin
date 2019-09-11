@@ -23,10 +23,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 
 	logger.Access(ctx)
 
-	// TODO: sqlite will cause a panic. Database is locked.
-	if config.DATABASE.GetDefault().DRIVER != "sqlite" {
-		RecordOperationLog(ctx)
-	}
+	RecordOperationLog(ctx)
 
 	if err := recover(); err != nil {
 		logger.Error(err)

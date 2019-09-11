@@ -1,7 +1,6 @@
 package parameter
 
 import (
-	"fmt"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -42,8 +41,6 @@ func GetParam(values url.Values) Parameters {
 		}
 	}
 
-	fmt.Println("page", page)
-
 	return Parameters{
 		Page:      page,
 		PageSize:  pageSize,
@@ -56,8 +53,6 @@ func GetParam(values url.Values) Parameters {
 func GetParamFromUrl(value string) Parameters {
 	prevUrlArr := strings.Split(value, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
-
-	fmt.Println("paramArr", paramArr)
 
 	page := "1"
 	pageSize := "10"
