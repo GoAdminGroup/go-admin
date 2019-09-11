@@ -7,6 +7,12 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "ZVGYtogdvNDcijAyutpkqPdQv6k=",
+			"path": "github.com/360EntSecGroup-Skylar/excelize",
+			"revision": "acbabcf8fcf2e27dc466ca17185eb6a9e7397356",
+			"revisionTime": "2019-09-08T13:57:55Z"
+		},
+		{
 			"checksumSHA1": "jWN4w1TKKvoLMMy6nktpz1ELVEw=",
 			"path": "github.com/denisenkom/go-mssqldb",
 			"revision": "eb9f6a1743f30383c8168cc520ca5db1f744d6f4",
@@ -131,6 +137,12 @@
 			"path": "github.com/mitchellh/colorstring",
 			"revision": "d06e56a500db4d08c33db0b79461e7c9beafca2d",
 			"revisionTime": "2019-02-13T21:29:51Z"
+		},
+		{
+			"checksumSHA1": "2jsbDTvwxafPp7FJjJ8IIFlTLjs=",
+			"path": "github.com/mohae/deepcopy",
+			"revision": "c48cc78d482608239f6c4c92a4abd87eb8761c90",
+			"revisionTime": "2017-09-29T03:49:55Z"
 		},
 		{
 			"checksumSHA1": "oOoDJy0YA6rX7qMjWu+KXmTJdPg=",
