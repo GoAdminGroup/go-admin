@@ -84,21 +84,21 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 	sesKey := ctx.GetCookie("go_admin_session")
 
 	if sesKey == "" {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
 	userId, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
 	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
@@ -124,7 +124,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), "/"+globalConfig.PREFIX, "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

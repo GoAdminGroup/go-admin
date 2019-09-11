@@ -31,7 +31,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), "/"+globalConfig.PREFIX, "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

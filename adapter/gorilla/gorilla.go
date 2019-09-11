@@ -103,7 +103,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	sesKey, err := ctx.Cookie("go_admin_session")
 
 	if err != nil || sesKey == nil {
-		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
 		ctx.Response.StatusCode = http.StatusFound
 		return
 	}
@@ -111,7 +111,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
-		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
 		ctx.Response.StatusCode = http.StatusFound
 		return
 	}
@@ -119,7 +119,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
-		ctx.Response.Header.Set("Location", "/"+globalConfig.PREFIX+"/login")
+		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
 		ctx.Response.StatusCode = http.StatusFound
 		return
 	}
@@ -146,7 +146,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.URL.String(), "/"+globalConfig.PREFIX, "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.URL.String(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

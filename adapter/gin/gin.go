@@ -86,7 +86,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	sesKey, err := ctx.Cookie("go_admin_session")
 
 	if err != nil || sesKey == "" {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		ctx.Abort()
 		return
 	}
@@ -94,7 +94,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	userId, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		ctx.Abort()
 		return
 	}
@@ -102,7 +102,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
-		ctx.Redirect(http.StatusFound, "/"+globalConfig.PREFIX+"/login")
+		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		ctx.Abort()
 		return
 	}
@@ -129,7 +129,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), "/"+globalConfig.PREFIX, "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
