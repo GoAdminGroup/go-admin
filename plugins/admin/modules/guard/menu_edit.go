@@ -3,12 +3,13 @@ package guard
 import (
 	"github.com/chenhg5/go-admin/context"
 	"html/template"
+	"strconv"
 )
 
 type MenuEditParam struct {
 	Id       string
 	Title    string
-	ParentId string
+	ParentId int64
 	Icon     string
 	Uri      string
 	Roles    []string
@@ -26,12 +27,14 @@ func MenuEdit(ctx *context.Context) {
 		parentId = "0"
 	}
 
+	parentIdInt, _ := strconv.Atoi(parentId)
+
 	// TODO: check the user permission
 
 	ctx.SetUserValue("edit_menu_param", &MenuEditParam{
 		Id:       ctx.FormValue("id"),
 		Title:    ctx.FormValue("title"),
-		ParentId: parentId,
+		ParentId: int64(parentIdInt),
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
 		Roles:    ctx.Request.Form["roles[]"],

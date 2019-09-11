@@ -180,12 +180,12 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
-		Panel:         panel,
-		AssertRootUrl: config.Prefix(),
-		Title:         config.TITLE,
-		Logo:          config.LOGO,
-		MiniLogo:      config.MINILOGO,
-		ColorScheme:   config.COLORSCHEME,
+		Panel:       panel,
+		UrlPrefix:   config.Prefix(),
+		Title:       config.TITLE,
+		Logo:        config.LOGO,
+		MiniLogo:    config.MINILOGO,
+		ColorScheme: config.COLORSCHEME,
 	})
 	ctx.Response.WriteHeader(http.StatusOK)
 	_, _ = ctx.Response.Write(buf.Bytes())

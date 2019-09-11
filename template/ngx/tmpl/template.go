@@ -7,7 +7,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                 {{if eq .User.Avatar ""}}
-                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
+                    <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
                 {{else}}
                     <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
                 {{end}}
@@ -17,7 +17,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 <!-- User image -->
                 <li class="user-header">
                     {{if eq .User.Avatar ""}}
-                        <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                        <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
                     {{else}}
                         <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
                     {{end}}
@@ -28,10 +28,10 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 </li>
                 <li class="user-footer">
                     <div class="pull-left">
-                        <a href="{{.AssertRootUrl}}/info/manager/edit?id={{.User.Id}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
+                        <a href="{{.UrlPrefix}}/info/manager/edit?id={{.User.Id}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
                     </div>
                     <div class="pull-right">
-                        <a href="{{.AssertRootUrl}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
+                        <a href="{{.UrlPrefix}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
                     </div>
                 </li>
             </ul>
@@ -3196,8 +3196,8 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         toastr.success('{{lang "Refresh succeeded"}} !');
     });
 </script>
-<script src="{{.AssertRootUrl}}/assets/chartjs/chart.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/chartjs/chart.js"></script>
+<script src="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
 <section class="content-header">
     <h1>
         {{lang .Panel.Title}}
@@ -3225,41 +3225,41 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/Ionicons/css/ionicons.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- iCheck -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/minimal/_all.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/futurico/futurico.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/polaris/polaris.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/nprogress/nprogress.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/select2/select2.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/fileinput/fileinput.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/nestable/nestable.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/duallistbox/bootstrap-duallistbox.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/skin-black.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/skins/skin-black.css">
     <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
     <!-- Google Font -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/googleapis/font.css">
 
-    <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/nestable/jquery.nestable.js"></script>
+    <script src="{{.UrlPrefix}}/assets/dist/js/adminlte.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/iCheck/icheck.min.js"></script>
 </head>
 {{end}}`, "header": `{{define "header"}}
 <header class="main-header">
@@ -3281,20 +3281,20 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     </nav>
 </header>
 {{end}}`, "js": `{{define "js"}}
-<script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fastclick/lib/fastclick.js"></script>
-<script src="{{.AssertRootUrl}}/assets/select2/select2.full.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/nprogress/nprogress.js"></script>
-<script src="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-pjax/jquery.pjax.js"></script>
-<script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
+<script src="{{.UrlPrefix}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/fastclick/lib/fastclick.js"></script>
+<script src="{{.UrlPrefix}}/assets/select2/select2.full.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/fileinput/fileinput.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/nprogress/nprogress.js"></script>
+<script src="{{.UrlPrefix}}/assets/toastr/build/toastr.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/jquery-pjax/jquery.pjax.js"></script>
+<script src="{{.UrlPrefix}}/assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/dist/js/info.js"></script>
 {{end}}`, "layout": `{{define "layout"}}
 
 <!DOCTYPE html>
@@ -3327,14 +3327,14 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 {{end}}
 `, "menu": `{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
-{{$AssertRootUrl := .AssertRootUrl}}
+{{$UrlPrefix := .UrlPrefix}}
 {{range $key, $list := .Menu.GlobalMenuList }}
     {{if eq (len $list.ChildrenList) 0}}
         <li class='{{$list.Active}}'>
             {{if eq $list.Url "/"}}
-                <a href='{{$AssertRootUrl}}'>
+                <a href='{{$UrlPrefix}}'>
             {{else}}
-                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+                <a href='{{$UrlPrefix}}{{$list.Url}}'>
             {{end}}
                 <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
                 <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
@@ -3350,7 +3350,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             </a>
             <ul class="treeview-menu">
             {{range $key2, $item := $list.ChildrenList}}
-                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+                <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
             {{end}}
             </ul>
         </li>
@@ -3366,7 +3366,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         <div class="user-panel">
             <div class="pull-left image">
                 {{if eq .User.Avatar ""}}
-                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
                 {{else}}
                     <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
                 {{end}}

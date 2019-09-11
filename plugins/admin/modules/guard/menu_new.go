@@ -3,11 +3,12 @@ package guard
 import (
 	"github.com/chenhg5/go-admin/context"
 	"html/template"
+	"strconv"
 )
 
 type MenuNewParam struct {
 	Title    string
-	ParentId string
+	ParentId int64
 	Icon     string
 	Uri      string
 	Roles    []string
@@ -25,9 +26,11 @@ func MenuNew(ctx *context.Context) {
 		parentId = "0"
 	}
 
+	parentIdInt, _ := strconv.Atoi(parentId)
+
 	ctx.SetUserValue("new_menu_param", &MenuNewParam{
 		Title:    ctx.FormValue("title"),
-		ParentId: parentId,
+		ParentId: int64(parentIdInt),
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
 		Roles:    ctx.Request.Form["roles[]"],

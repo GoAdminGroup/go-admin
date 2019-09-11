@@ -30,8 +30,8 @@ type Page struct {
 	// System contains some system info.
 	System SystemInfo
 
-	// AssertRootUrl is the url of asserts.
-	AssertRootUrl string
+	// UrlPrefix is the prefix of url.
+	UrlPrefix string
 
 	// Title is the title of the web page.
 	Title string

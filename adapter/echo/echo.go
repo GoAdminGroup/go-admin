@@ -129,12 +129,12 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
-		Panel:         panel,
-		AssertRootUrl: globalConfig.Prefix(),
-		Title:         globalConfig.TITLE,
-		Logo:          globalConfig.LOGO,
-		MiniLogo:      globalConfig.MINILOGO,
-		ColorScheme:   globalConfig.COLORSCHEME,
+		Panel:       panel,
+		UrlPrefix:   globalConfig.Prefix(),
+		Title:       globalConfig.TITLE,
+		Logo:        globalConfig.LOGO,
+		MiniLogo:    globalConfig.MINILOGO,
+		ColorScheme: globalConfig.COLORSCHEME,
 	})
 	_ = ctx.String(http.StatusOK, buf.String())
 }

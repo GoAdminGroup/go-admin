@@ -1,13 +1,13 @@
 {{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
-{{$AssertRootUrl := .AssertRootUrl}}
+{{$UrlPrefix := .UrlPrefix}}
 {{range $key, $list := .Menu.GlobalMenuList }}
     {{if eq (len $list.ChildrenList) 0}}
         <li class='{{$list.Active}}'>
             {{if eq $list.Url "/"}}
-                <a href='{{$AssertRootUrl}}'>
+                <a href='{{$UrlPrefix}}'>
             {{else}}
-                <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+                <a href='{{$UrlPrefix}}{{$list.Url}}'>
             {{end}}
                 <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
                 <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
@@ -23,7 +23,7 @@
             </a>
             <ul class="treeview-menu">
             {{range $key2, $item := $list.ChildrenList}}
-                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+                <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
             {{end}}
             </ul>
         </li>

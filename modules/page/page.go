@@ -35,12 +35,12 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
-		Panel:         panel,
-		AssertRootUrl: globalConfig.Prefix(),
-		Title:         globalConfig.TITLE,
-		Logo:          globalConfig.LOGO,
-		MiniLogo:      globalConfig.MINILOGO,
-		ColorScheme:   globalConfig.COLORSCHEME,
+		Panel:       panel,
+		UrlPrefix:   globalConfig.Prefix(),
+		Title:       globalConfig.TITLE,
+		Logo:        globalConfig.LOGO,
+		MiniLogo:    globalConfig.MINILOGO,
+		ColorScheme: globalConfig.COLORSCHEME,
 	})
 	if err != nil {
 		logger.Error("SetPageContent", err)

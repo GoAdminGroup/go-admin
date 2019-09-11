@@ -32,7 +32,7 @@ func (t MenuModel) Find(id interface{}) MenuModel {
 	return t.MapToModel(item)
 }
 
-func (t MenuModel) New(title, parentId, icon, uri string, order int64) MenuModel {
+func (t MenuModel) New(title, icon, uri string, parentId, order int64) MenuModel {
 
 	id, _ := db.Table(t.Table).Insert(dialect.H{
 		"title":     title,
@@ -57,7 +57,7 @@ func (t MenuModel) Delete() {
 		Where("menu_id", "=", t.Id).Delete()
 }
 
-func (t MenuModel) Update(title, parentId, icon, uri string) MenuModel {
+func (t MenuModel) Update(title, icon, uri string, parentId int64) MenuModel {
 
 	_, _ = db.Table(t.Table).
 		Where("id", "=", t.Id).

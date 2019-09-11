@@ -7,7 +7,7 @@
         <div class="user-panel">
             <div class="pull-left image">
                 {{if eq .User.Avatar ""}}
-                    <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
                 {{else}}
                     <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
                 {{end}}

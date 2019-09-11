@@ -93,7 +93,7 @@ type Component interface {
 	// GetAssetList return the assets url suffix used in the component.
 	// example:
 	//
-	// {{.AssertRootUrl}}/assets/login/css/bootstrap.min.css => login/css/bootstrap.min.css
+	// {{.UrlPrefix}}/assets/login/css/bootstrap.min.css => login/css/bootstrap.min.css
 	//
 	// See:
 	// https://github.com/chenhg5/go-admin/blob/master/template/login/theme1.tmpl#L32
@@ -165,12 +165,12 @@ func Execute(tmpl *template.Template,
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
-		Panel:         panel,
-		AssertRootUrl: config.PrefixFixSlash(),
-		Title:         config.TITLE,
-		Logo:          config.LOGO,
-		MiniLogo:      config.MINILOGO,
-		ColorScheme:   config.COLORSCHEME,
+		Panel:       panel,
+		UrlPrefix:   config.PrefixFixSlash(),
+		Title:       config.TITLE,
+		Logo:        config.LOGO,
+		MiniLogo:    config.MINILOGO,
+		ColorScheme: config.COLORSCHEME,
 	})
 	return buf
 }

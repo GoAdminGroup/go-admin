@@ -72,7 +72,7 @@ func EditMenu(ctx *context.Context) {
 		menuModel.AddRole(roleId)
 	}
 
-	menuModel.Update(param.Title, param.ParentId, param.Icon, param.Uri)
+	menuModel.Update(param.Title, param.Icon, param.Uri, param.ParentId)
 
 	menu.SetGlobalMenu(auth.Auth(ctx))
 
@@ -94,7 +94,7 @@ func NewMenu(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	menuModel := models.Menu().New(param.Title, param.ParentId, param.Icon, param.Uri, (menu.GetGlobalMenu(user)).MaxOrder+1)
+	menuModel := models.Menu().New(param.Title, param.Icon, param.Uri, param.ParentId, (menu.GetGlobalMenu(user)).MaxOrder+1)
 
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)

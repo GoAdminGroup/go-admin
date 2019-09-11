@@ -41,7 +41,7 @@ func ShowLogin(ctx *context.Context) {
 	tmpl, name := template.GetComp("login").GetTemplate()
 	buf := new(bytes.Buffer)
 	if err := tmpl.ExecuteTemplate(buf, name, struct {
-		AssertRootUrl string
+		UrlPrefix string
 	}{config.Prefix()}); err == nil {
 		ctx.Html(http.StatusOK, buf.String())
 	} else {

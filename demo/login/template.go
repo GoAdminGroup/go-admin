@@ -31,15 +31,15 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
 
     <link href='https://fonts.proxy.ustclug.org/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/animate.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/style.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/animate.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/style.css">
 
     <!-- Modernizr JS -->
-    <script src="{{.AssertRootUrl}}/assets/login/js/modernizr-2.6.2.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/login/js/modernizr-2.6.2.min.js"></script>
     <!-- FOR IE9 below -->
     <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/login/js/respond.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/login/js/respond.min.js"></script>
     <![endif]-->
 
 </head>
@@ -53,7 +53,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
 
 
             <!-- Start Sign In Form -->
-            <form action="{{.AssertRootUrl}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
+            <form action="{{.UrlPrefix}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
                   data-animate-effect="fadeIn">
                 <h2>GoAdmin</h2>
                 <div class="form-group">
@@ -94,17 +94,17 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
 </div>
 
 <!-- jQuery -->
-<script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-<!-- <script src="{{.AssertRootUrl}}/assets/login/js/jquery.min.js"></script> -->
+<script src="{{.UrlPrefix}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- <script src="{{.UrlPrefix}}/assets/login/js/jquery.min.js"></script> -->
 <!-- Bootstrap -->
-<script src="{{.AssertRootUrl}}/assets/login/js/bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/bootstrap.min.js"></script>
 <!-- Placeholder -->
-<script src="{{.AssertRootUrl}}/assets/login/js/jquery.placeholder.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/jquery.placeholder.min.js"></script>
 <!-- Waypoints -->
-<script src="{{.AssertRootUrl}}/assets/login/js/jquery.waypoints.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/jquery.waypoints.min.js"></script>
 <!-- Main JS -->
-<script src="{{.AssertRootUrl}}/assets/login/js/main.js"></script>
-<script src="{{.AssertRootUrl}}/assets/particles/particles.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/main.js"></script>
+<script src="{{.UrlPrefix}}/assets/particles/particles.js"></script>
 
 <style type="text/css">
     #particles-js {
@@ -129,7 +129,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
         $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: '{{.AssertRootUrl}}/signin',
+            url: '{{.UrlPrefix}}/signin',
             async: 'true',
             data: {
                 'username': $("#username").val(),

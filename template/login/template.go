@@ -58,39 +58,39 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/bootstrap/dist/css/bootstrap.min.css">
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/font-awesome/css/font-awesome.min.css">
     <!-- Ionicons -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/Ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/Ionicons/css/ionicons.min.css">
     <!-- DataTables -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/datatables.net-bs/css/dataTables.bootstrap.min.css">
     <!-- iCheck -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/minimal/_all.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/futurico/futurico.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/iCheck/polaris/polaris.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nprogress/nprogress.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/select2/select2.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/nestable/nestable.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/duallistbox/bootstrap-duallistbox.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/minimal/_all.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/futurico/futurico.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/iCheck/polaris/polaris.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/toastr/build/toastr.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/nprogress/nprogress.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/select2/select2.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/sweetalert/dist/sweetalert.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/fileinput/fileinput.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/nestable/nestable.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/duallistbox/bootstrap-duallistbox.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/css/fontawesome-iconpicker.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/dist/css/skins/skin-black.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/skins/skin-black.css">
     <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/respond/1.4.2/respond.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
     <!-- Google Font -->
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/googleapis/font.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/googleapis/font.css">
 
-    <script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/nestable/jquery.nestable.js"></script>
-    <script src="{{.AssertRootUrl}}/assets/dist/js/adminlte.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/nestable/jquery.nestable.js"></script>
+    <script src="{{.UrlPrefix}}/assets/dist/js/adminlte.min.js"></script>
 </head>
 {{end}}`, "header": `{{define "header"}}
 <header class="main-header">
@@ -112,22 +112,22 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </nav>
 </header>
 {{end}}`, "js": `{{define "js"}}
-<script src="{{.AssertRootUrl}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fastclick/lib/fastclick.js"></script>
-<script src="{{.AssertRootUrl}}/assets/select2/select2.full.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fileinput/fileinput.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/iCheck/icheck.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/nprogress/nprogress.js"></script>
-<script src="{{.AssertRootUrl}}/assets/toastr/build/toastr.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/jquery-pjax/jquery.pjax.js"></script>
-<script src="{{.AssertRootUrl}}/assets/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-<script src="{{.AssertRootUrl}}/assets/dist/js/info.js"></script>
+<script src="{{.UrlPrefix}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/jquery-slimscroll/jquery.slimscroll.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/fastclick/lib/fastclick.js"></script>
+<script src="{{.UrlPrefix}}/assets/select2/select2.full.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/fileinput/fileinput.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/iCheck/icheck.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/nprogress/nprogress.js"></script>
+<script src="{{.UrlPrefix}}/assets/toastr/build/toastr.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/jquery-pjax/jquery.pjax.js"></script>
+<script src="{{.UrlPrefix}}/assets/sweetalert/dist/sweetalert.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/dist/js/info.js"></script>
 {{end}}`, "layout": `{{define "layout"}}
 
 <!DOCTYPE html>
@@ -160,11 +160,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}
 `, "menu": `{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
-{{$AssertRootUrl := .AssertRootUrl}}
+{{$UrlPrefix := .UrlPrefix}}
 {{range $key, $list := .Menu.GlobalMenuList }}
     {{if eq (len $list.ChildrenList) 0}}
         <li class='{{$list.Active}}'>
-            <a href='{{$AssertRootUrl}}{{$list.Url}}'>
+            <a href='{{$UrlPrefix}}{{$list.Url}}'>
                 <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
                 <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
             </a>
@@ -179,7 +179,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </a>
             <ul class="treeview-menu">
             {{range $key2, $item := $list.ChildrenList}}
-                <li><a href="{{$AssertRootUrl}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+                <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
             {{end}}
             </ul>
         </li>
@@ -194,7 +194,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <!-- Sidebar user panel -->
         <div class="user-panel">
             <div class="pull-left image">
-                <img src="{{.AssertRootUrl}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
             </div>
             <div class="pull-left info">
                 admin
@@ -2977,15 +2977,15 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
     <link href='https://fonts.proxy.ustclug.org/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
 
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/animate.css">
-    <link rel="stylesheet" href="{{.AssertRootUrl}}/assets/login/css/style.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/animate.css">
+    <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/css/style.css">
 
     <!-- Modernizr JS -->
-    <script src="{{.AssertRootUrl}}/assets/login/js/modernizr-2.6.2.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/login/js/modernizr-2.6.2.min.js"></script>
     <!-- FOR IE9 below -->
     <!--[if lt IE 9]>
-    <script src="{{.AssertRootUrl}}/assets/login/js/respond.min.js"></script>
+    <script src="{{.UrlPrefix}}/assets/login/js/respond.min.js"></script>
     <![endif]-->
 
 </head>
@@ -2999,7 +2999,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
 
             <!-- Start Sign In Form -->
-            <form action="{{.AssertRootUrl}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
+            <form action="{{.UrlPrefix}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
                   data-animate-effect="fadeIn">
                 <h2>GoAdmin</h2>
                 <div class="form-group">
@@ -3040,17 +3040,17 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 </div>
 
 <!-- jQuery -->
-<script src="{{.AssertRootUrl}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
-<!-- <script src="{{.AssertRootUrl}}/assets/login/js/jquery.min.js"></script> -->
+<script src="{{.UrlPrefix}}/assets/jQuery/jQuery-2.1.4.min.js"></script>
+<!-- <script src="{{.UrlPrefix}}/assets/login/js/jquery.min.js"></script> -->
 <!-- Bootstrap -->
-<script src="{{.AssertRootUrl}}/assets/login/js/bootstrap.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/bootstrap.min.js"></script>
 <!-- Placeholder -->
-<script src="{{.AssertRootUrl}}/assets/login/js/jquery.placeholder.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/jquery.placeholder.min.js"></script>
 <!-- Waypoints -->
-<script src="{{.AssertRootUrl}}/assets/login/js/jquery.waypoints.min.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/jquery.waypoints.min.js"></script>
 <!-- Main JS -->
-<script src="{{.AssertRootUrl}}/assets/login/js/main.js"></script>
-<script src="{{.AssertRootUrl}}/assets/particles/particles.js"></script>
+<script src="{{.UrlPrefix}}/assets/login/js/main.js"></script>
+<script src="{{.UrlPrefix}}/assets/particles/particles.js"></script>
 
 <style type="text/css">
     #particles-js {
@@ -3075,7 +3075,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
         $.ajax({
             dataType: 'json',
             type: 'POST',
-            url: '{{.AssertRootUrl}}/signin',
+            url: '{{.UrlPrefix}}/signin',
             async: 'true',
             data: {
                 'username': $("#username").val(),
