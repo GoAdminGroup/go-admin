@@ -31,7 +31,7 @@ func main() {
 	r.Static("/uploads", "./uploads")
 
 	// custom page endpoint
-	r.GET("/"+cfg.PREFIX+"/custom", func(ctx *gin.Context) {
+	r.GET(cfg.Url("/custom"), func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

@@ -175,7 +175,7 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 			Version: "0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: "/" + globalConfig.PREFIX,
+		AssertRootUrl: globalConfig.Prefix(),
 		Title:         globalConfig.TITLE,
 		Logo:          globalConfig.LOGO,
 		MiniLogo:      globalConfig.MINILOGO,

@@ -181,7 +181,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 			Version: "0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: "/" + config.PREFIX,
+		AssertRootUrl: config.Prefix(),
 		Title:         config.TITLE,
 		Logo:          config.LOGO,
 		MiniLogo:      config.MINILOGO,

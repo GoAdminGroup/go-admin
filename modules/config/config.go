@@ -116,6 +116,8 @@ type Config struct {
 
 	// Color scheme
 	COLORSCHEME string `json:"colorscheme"`
+
+	prefix string
 }
 
 func (c Config) GetIndexUrl() string {
@@ -127,11 +129,10 @@ func (c Config) GetIndexUrl() string {
 }
 
 func (c Config) Url(suffix string) string {
-	prefix := c.Prefix()
-	if prefix == "/" {
+	if c.prefix == "/" {
 		return suffix
 	}
-	return prefix + suffix
+	return c.prefix + suffix
 }
 
 func (c Config) UrlRemovePrefix(u string) string {
@@ -149,13 +150,7 @@ func (c Config) Index() string {
 }
 
 func (c Config) Prefix() string {
-	if c.PREFIX == "" {
-		return "/"
-	}
-	if c.PREFIX[0] != '/' {
-		return "/" + c.PREFIX
-	}
-	return c.PREFIX
+	return c.prefix
 }
 
 func (c Config) PrefixFixSlash() string {
@@ -202,6 +197,14 @@ func Set(cfg Config) {
 	globalCfg.INDEX = setDefault(globalCfg.INDEX, "", "/info/manager")
 	globalCfg.INDEX = setDefault(globalCfg.INDEX, "/", "")
 	globalCfg.COLORSCHEME = setDefault(globalCfg.COLORSCHEME, "", "skin-black")
+
+	if globalCfg.PREFIX == "" {
+		globalCfg.prefix = "/"
+	} else if globalCfg.PREFIX[0] != '/' {
+		globalCfg.prefix = "/" + globalCfg.PREFIX
+	} else {
+		globalCfg.prefix = globalCfg.PREFIX
+	}
 
 	if cfg.INFOLOG != "" {
 		logger.SetInfoLogger(cfg.INFOLOG, cfg.DEBUG)

@@ -36,7 +36,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 			Version: "0.0.1",
 		},
 		Panel:         panel,
-		AssertRootUrl: "/" + globalConfig.PREFIX,
+		AssertRootUrl: globalConfig.Prefix(),
 		Title:         globalConfig.TITLE,
 		Logo:          globalConfig.LOGO,
 		MiniLogo:      globalConfig.MINILOGO,

@@ -25,10 +25,10 @@ var Middleware = DefaultInvoker().Middleware()
 
 func DefaultInvoker() *Invoker {
 	return &Invoker{
-		prefix: "/" + config.Get().PREFIX,
+		prefix: config.Get().Prefix(),
 		authFailCallback: func(ctx *context.Context) {
 			ctx.Write(302, map[string]string{
-				"Location": "/" + config.Get().PREFIX + "/login",
+				"Location": config.Get().Url("/login"),
 			}, ``)
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
@@ -133,7 +133,7 @@ func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 
 func CheckPermissions(user models.UserModel, path string, method string) bool {
 
-	prefix := "/" + config.Get().PREFIX
+	prefix := config.Get().Prefix()
 
 	if path == prefix+"/logout" {
 		return true

@@ -47,7 +47,7 @@ func main() {
 		panic(err)
 	}
 
-	router.GET("/"+cfg.PREFIX+"/custom", func(ctx *fasthttp.RequestCtx) {
+	router.GET(cfg.Url("/custom"), func(ctx *fasthttp.RequestCtx) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

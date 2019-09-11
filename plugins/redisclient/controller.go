@@ -8,7 +8,6 @@ import (
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
-	"strings"
 )
 
 func Show(ctx *context.Context) {
@@ -18,7 +17,7 @@ func Show(ctx *context.Context) {
 		newUrl := config.Url("/info/" + config.Prefix() + "/new")
 		deleteUrl := config.Url("/delete/" + config.Prefix())
 
-		menu.GlobalMenu.SetActiveClass(strings.Replace(ctx.Path(), config.PREFIX, "", 1))
+		menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
 
 		label := template2.Get(config.THEME).Label().SetContent("list").GetContent()
 
