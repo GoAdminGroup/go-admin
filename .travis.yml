@@ -1,0 +1,12 @@
+language: go
+sudo: false
+
+go:
+  - 1.12.x
+
+env:
+  - GO111MODULE=on
+
+script:
+  - go get -v -t ./modules/language
+  - go test ./modules/language
