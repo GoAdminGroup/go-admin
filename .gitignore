@@ -1,5 +1,6 @@
 .idea
 demo/config.json
+demo/config
 demo/uploads
 demo/deploy.yml
 demo/hosts

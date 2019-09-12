@@ -195,7 +195,7 @@ var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
         <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
             <input style="width: 160px" type="text" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}"
-                   class="form-control {{.Field}}" placeholder="输入 {{.Head}}">
+                   class="form-control {{.Field}}" placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
     <script>

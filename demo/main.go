@@ -3,6 +3,7 @@ package main
 import (
 	_ "github.com/chenhg5/go-admin/adapter/gin"
 	"github.com/chenhg5/go-admin/demo/login"
+	"github.com/chenhg5/go-admin/demo/pages"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
@@ -43,6 +44,12 @@ func main() {
 	r.GET("/admin/custom", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
+		})
+	})
+
+	r.GET("/admin/form1", func(ctx *gin.Context) {
+		engine.Content(ctx, func() types.Panel {
+			return pages.GetForm1Content()
 		})
 	})
 
