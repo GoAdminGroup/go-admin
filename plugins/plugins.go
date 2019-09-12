@@ -5,7 +5,11 @@
 package plugins
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/context"
+	"os"
+	"plugin"
+	"reflect"
 )
 
 // Plugin as one of the key components of goAdmin has three
@@ -30,4 +34,29 @@ func GetHandler(url, method string, app *context.App) context.Handlers {
 	}
 
 	return handler
+}
+
+func LoadFromPlugin(mod string) Plugin {
+
+	plug, err := plugin.Open(mod)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	symPlugin, err := plug.Lookup("Plugin")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	fmt.Println(reflect.TypeOf(symPlugin))
+
+	var p Plugin
+	p, ok := symPlugin.(Plugin)
+	if !ok {
+		fmt.Println("unexpected type from module symbol")
+		os.Exit(1)
+	}
+
+	return p
 }

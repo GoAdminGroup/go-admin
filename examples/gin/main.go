@@ -58,11 +58,12 @@ func main() {
 	//
 	// "user" => http://localhost:9033/admin/info/user
 	//
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	//adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	// customize a plugin
 
 	examplePlugin := example.NewExample()
+	//examplePlugin := plugins.LoadFromPlugin("./plugin.so")
 
 	// customize the login page
 	// template.AddComp("login", datamodel.LoginPage)
@@ -77,7 +78,7 @@ func main() {
 
 	// customize your pages
 
-	r.GET(cfg.Url("/custom"), func(ctx *gin.Context) {
+	r.GET("/admin/custom", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

@@ -63,7 +63,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	bu.GET(cfg.Url("/custom"), func(ctx buffalo.Context) error {
+	bu.GET("/admin/custom", func(ctx buffalo.Context) error {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

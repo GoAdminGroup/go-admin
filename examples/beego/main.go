@@ -52,7 +52,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	app.Handlers.Get(cfg.Url("/custom"), func(ctx *context.Context) {
+	app.Handlers.Get("/admin/custom", func(ctx *context.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

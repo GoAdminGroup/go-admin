@@ -35,7 +35,7 @@ func main() {
 
 	// 这样子去自定义一个页面：
 
-	r.GET(cfg.Url("/custom"), func(ctx *gin.Context) {
+	r.GET("/admin/custom", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})
