@@ -14,6 +14,7 @@ type MenuModel struct {
 	ParentId  int64
 	Icon      string
 	Uri       string
+	Header    string
 	CreatedAt string
 	UpdatedAt string
 }
@@ -32,7 +33,7 @@ func (t MenuModel) Find(id interface{}) MenuModel {
 	return t.MapToModel(item)
 }
 
-func (t MenuModel) New(title, icon, uri string, parentId, order int64) MenuModel {
+func (t MenuModel) New(title, icon, uri, header string, parentId, order int64) MenuModel {
 
 	id, _ := db.Table(t.Table).Insert(dialect.H{
 		"title":     title,
@@ -40,6 +41,7 @@ func (t MenuModel) New(title, icon, uri string, parentId, order int64) MenuModel
 		"icon":      icon,
 		"uri":       uri,
 		"order":     order,
+		"header":    header,
 	})
 
 	t.Id = id
@@ -47,6 +49,7 @@ func (t MenuModel) New(title, icon, uri string, parentId, order int64) MenuModel
 	t.ParentId = parentId
 	t.Icon = icon
 	t.Uri = uri
+	t.Header = header
 
 	return t
 }
@@ -57,7 +60,7 @@ func (t MenuModel) Delete() {
 		Where("menu_id", "=", t.Id).Delete()
 }
 
-func (t MenuModel) Update(title, icon, uri string, parentId int64) MenuModel {
+func (t MenuModel) Update(title, icon, uri, header string, parentId int64) MenuModel {
 
 	_, _ = db.Table(t.Table).
 		Where("id", "=", t.Id).
@@ -66,12 +69,14 @@ func (t MenuModel) Update(title, icon, uri string, parentId int64) MenuModel {
 			"parent_id": parentId,
 			"icon":      icon,
 			"uri":       uri,
+			"header":    header,
 		})
 
 	t.Title = title
 	t.ParentId = parentId
 	t.Icon = icon
 	t.Uri = uri
+	t.Header = header
 
 	return t
 }
@@ -131,6 +136,7 @@ func (t MenuModel) MapToModel(m map[string]interface{}) MenuModel {
 	t.ParentId = m["parent_id"].(int64)
 	t.Icon, _ = m["icon"].(string)
 	t.Uri, _ = m["uri"].(string)
+	t.Header, _ = m["header"].(string)
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t

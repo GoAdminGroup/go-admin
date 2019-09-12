@@ -746,6 +746,15 @@ func GetMenuTable() (MenuTable Table) {
 			},
 		},
 		{
+			Head:     language.Get("header"),
+			Field:    "header",
+			TypeName: "varchar",
+			Sortable: false,
+			FilterFn: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
+		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
 			TypeName: "timestamp",
@@ -825,6 +834,16 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("menu name"),
 			Field:    "title",
+			TypeName: "varchar",
+			Default:  "",
+			Editable: true,
+			FormType: form.Text,
+			FilterFn: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		}, {
+			Head:     language.Get("header"),
+			Field:    "header",
 			TypeName: "varchar",
 			Default:  "",
 			Editable: true,

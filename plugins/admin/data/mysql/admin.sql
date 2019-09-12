@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
 # Database: godmin
-# Generation Time: 2019-09-10 11:59:54 +0000
+# Generation Time: 2019-09-12 04:16:47 +0000
 # ************************************************************
 
 
@@ -33,6 +33,7 @@ CREATE TABLE `goadmin_menu` (
   `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `uri` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `header` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -41,15 +42,15 @@ CREATE TABLE `goadmin_menu` (
 LOCK TABLES `goadmin_menu` WRITE;
 /*!40000 ALTER TABLE `goadmin_menu` DISABLE KEYS */;
 
-INSERT INTO `goadmin_menu` (`id`, `parent_id`, `type`, `order`, `title`, `icon`, `uri`, `created_at`, `updated_at`)
+INSERT INTO `goadmin_menu` (`id`, `parent_id`, `type`, `order`, `title`, `icon`, `uri`, `header`, `created_at`, `updated_at`)
 VALUES
-	(1,0,1,2,'Admin','fa-tasks','','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(2,1,1,2,'Users','fa-users','/info/manager','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(3,1,1,3,'Roles','fa-user','/info/roles','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(4,1,1,4,'Permission','fa-ban','/info/permission','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(5,1,1,5,'Menu','fa-bars','/menu','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(6,1,1,6,'Operation log','fa-history','/info/op','2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(7,0,1,1,'Dashboard','fa-bar-chart','/','2019-09-10 00:00:00','2019-09-10 00:00:00');
+	(1,0,1,2,'Admin','fa-tasks','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,1,1,2,'Users','fa-users','/info/manager',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(3,1,1,3,'Roles','fa-user','/info/roles',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(4,1,1,4,'Permission','fa-ban','/info/permission',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(5,1,1,5,'Menu','fa-bars','/menu',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(6,1,1,6,'Operation log','fa-history','/info/op',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(7,0,1,1,'Dashboard','fa-bar-chart','/',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
 
 /*!40000 ALTER TABLE `goadmin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -124,7 +125,9 @@ INSERT INTO `goadmin_role_menu` (`role_id`, `menu_id`, `created_at`, `updated_at
 VALUES
 	(1,1,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
 	(1,7,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
-	(2,7,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+	(2,7,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(1,8,'2019-09-11 10:20:55','2019-09-11 10:20:55'),
+	(2,8,'2019-09-11 10:20:55','2019-09-11 10:20:55');
 
 /*!40000 ALTER TABLE `goadmin_role_menu` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -272,7 +275,7 @@ LOCK TABLES `goadmin_users` WRITE;
 
 INSERT INTO `goadmin_users` (`id`, `username`, `password`, `name`, `avatar`, `remember_token`, `created_at`, `updated_at`)
 VALUES
-	(1,'admin','$2a$10$337scQn24ot0RGGJ.MuQc.quVZ/2e/pSwuOQrK6N7K2hs11r2FLlO','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(1,'admin','$2a$10$U3F/NSaf2kaVbyXTBp7ppOn0jZFyRqXRnYXB.AMioCjXl3Ciaj4oy','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2019-09-10 00:00:00','2019-09-10 00:00:00'),
 	(2,'operator','$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.','Operator','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
 
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;

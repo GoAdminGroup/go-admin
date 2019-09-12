@@ -135,11 +135,14 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 				title = menus[j]["title"].(string)
 			}
 
+			header, _ := menus[j]["header"].(string)
+
 			child := Item{
 				Name:         title,
 				ID:           strconv.FormatInt(menus[j]["id"].(int64), 10),
 				Url:          menus[j]["uri"].(string),
 				Icon:         menus[j]["icon"].(string),
+				Header:       header,
 				Active:       "",
 				ChildrenList: childList,
 			}
@@ -154,11 +157,14 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 func GetMenuItemById(id string) Item {
 	menu, _ := db.Table("goadmin_menu").Find(id)
 
+	header, _ := menu["header"].(string)
+
 	return Item{
 		Name:         menu["title"].(string),
 		ID:           strconv.FormatInt(menu["id"].(int64), 10),
 		Url:          menu["uri"].(string),
 		Icon:         menu["icon"].(string),
+		Header:       header,
 		Active:       "",
 		ChildrenList: []Item{},
 	}
@@ -194,6 +200,7 @@ type Item struct {
 	ID           string
 	Url          string
 	Icon         string
+	Header       string
 	Active       string
 	ChildrenList []Item
 }

@@ -8,6 +8,7 @@ import (
 
 type MenuNewParam struct {
 	Title    string
+	Header   string
 	ParentId int64
 	Icon     string
 	Uri      string
@@ -30,6 +31,7 @@ func MenuNew(ctx *context.Context) {
 
 	ctx.SetUserValue("new_menu_param", &MenuNewParam{
 		Title:    ctx.FormValue("title"),
+		Header:   ctx.FormValue("header"),
 		ParentId: int64(parentIdInt),
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),

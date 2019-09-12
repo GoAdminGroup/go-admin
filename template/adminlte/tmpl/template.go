@@ -3540,6 +3540,9 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 {{$UrlPrefix := .UrlPrefix}}
 {{range $key, $list := .Menu.GlobalMenuList }}
     {{if eq (len $list.ChildrenList) 0}}
+        {{if $list.Header}}
+            <li class="header" data-rel="external">{{$list.Header}}</li>
+        {{end}}
         <li class='{{$list.Active}}'>
             {{if eq $list.Url "/"}}
                 <a href='{{$UrlPrefix}}'>

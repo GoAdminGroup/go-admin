@@ -9,6 +9,7 @@ import (
 type MenuEditParam struct {
 	Id       string
 	Title    string
+	Header   string
 	ParentId int64
 	Icon     string
 	Uri      string
@@ -34,6 +35,7 @@ func MenuEdit(ctx *context.Context) {
 	ctx.SetUserValue("edit_menu_param", &MenuEditParam{
 		Id:       ctx.FormValue("id"),
 		Title:    ctx.FormValue("title"),
+		Header:   ctx.FormValue("header"),
 		ParentId: int64(parentIdInt),
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
