@@ -161,7 +161,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 `, "menu": `{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
 {{$UrlPrefix := .UrlPrefix}}
-{{range $key, $list := .Menu.GlobalMenuList }}
+{{range $key, $list := .Menu.List }}
     {{if eq (len $list.ChildrenList) 0}}
         <li class='{{$list.Active}}'>
             <a href='{{$UrlPrefix}}{{$list.Url}}'>

@@ -11,29 +11,67 @@ import (
 	"strconv"
 )
 
-type Menu struct {
-	GlobalMenuList   []Item
-	GlobalMenuOption []map[string]string
-	MaxOrder         int64
+type Item struct {
+	Name         string
+	ID           string
+	Url          string
+	Icon         string
+	Header       string
+	Active       string
+	ChildrenList []Item
 }
 
-var GlobalMenu = &Menu{
-	GlobalMenuList:   []Item{},
-	GlobalMenuOption: []map[string]string{},
-	MaxOrder:         0,
+type Menu struct {
+	List     []Item
+	Options  []map[string]string
+	MaxOrder int64
+}
+
+func (menu *Menu) SexMaxOrder(order int64) {
+	menu.MaxOrder = order
+}
+
+func (menu *Menu) AddMaxOrder() {
+	menu.MaxOrder += 1
+}
+
+func (menu *Menu) SetActiveClass(path string) *Menu {
+
+	for i := 0; i < len((*menu).List); i++ {
+		(*menu).List[i].Active = ""
+	}
+
+	for i := 0; i < len((*menu).List); i++ {
+		if (*menu).List[i].Url == path {
+			(*menu).List[i].Active = "active"
+			return menu
+		} else {
+			for j := 0; j < len((*menu).List[i].ChildrenList); j++ {
+				if (*menu).List[i].ChildrenList[j].Url == path {
+					(*menu).List[i].Active = "active"
+					return menu
+				} else {
+					(*menu).List[i].Active = ""
+				}
+			}
+		}
+	}
+
+	return menu
+}
+
+func (menu *Menu) GetEditMenuList() []Item {
+	return (*menu).List
 }
 
 func GetGlobalMenu(user models.UserModel) *Menu {
-	SetGlobalMenu(user.WithRoles().WithMenus())
-	return GlobalMenu
-}
-
-func SetGlobalMenu(user models.UserModel) {
 
 	var (
 		menus      []map[string]interface{}
 		menuOption = make([]map[string]string, 0)
 	)
+
+	user.WithRoles().WithMenus()
 
 	if user.IsSuperAdmin() {
 		menus, _ = db.Table("goadmin_menu").
@@ -68,22 +106,16 @@ func SetGlobalMenu(user models.UserModel) {
 		})
 	}
 
-	menuList := ConstructMenuTree(menus, 0)
+	menuList := constructMenuTree(menus, 0)
 
-	GlobalMenu.GlobalMenuOption = menuOption
-	GlobalMenu.GlobalMenuList = menuList
-	GlobalMenu.MaxOrder = menus[len(menus)-1]["parent_id"].(int64)
+	return &Menu{
+		List:     menuList,
+		Options:  menuOption,
+		MaxOrder: menus[len(menus)-1]["parent_id"].(int64),
+	}
 }
 
-func (menu *Menu) SexMaxOrder(order int64) {
-	menu.MaxOrder = order
-}
-
-func (menu *Menu) AddMaxOrder() {
-	menu.MaxOrder += 1
-}
-
-func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
+func constructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 
 	branch := make([]Item, 0)
 
@@ -91,7 +123,7 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 	for j := 0; j < len(menus); j++ {
 		if parentId == menus[j]["parent_id"].(int64) {
 
-			childList := ConstructMenuTree(menus, menus[j]["id"].(int64))
+			childList := constructMenuTree(menus, menus[j]["id"].(int64))
 
 			if menus[j]["type"].(int64) == 1 {
 				title = language.Get(menus[j]["title"].(string))
@@ -116,43 +148,4 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 	}
 
 	return branch
-}
-
-func (menu *Menu) SetActiveClass(path string) *Menu {
-
-	for i := 0; i < len((*menu).GlobalMenuList); i++ {
-		(*menu).GlobalMenuList[i].Active = ""
-	}
-
-	for i := 0; i < len((*menu).GlobalMenuList); i++ {
-		if (*menu).GlobalMenuList[i].Url == path {
-			(*menu).GlobalMenuList[i].Active = "active"
-			return menu
-		} else {
-			for j := 0; j < len((*menu).GlobalMenuList[i].ChildrenList); j++ {
-				if (*menu).GlobalMenuList[i].ChildrenList[j].Url == path {
-					(*menu).GlobalMenuList[i].Active = "active"
-					return menu
-				} else {
-					(*menu).GlobalMenuList[i].Active = ""
-				}
-			}
-		}
-	}
-
-	return menu
-}
-
-type Item struct {
-	Name         string
-	ID           string
-	Url          string
-	Icon         string
-	Header       string
-	Active       string
-	ChildrenList []Item
-}
-
-func (menu *Menu) GetEditMenuList() []Item {
-	return (*menu).GlobalMenuList
 }

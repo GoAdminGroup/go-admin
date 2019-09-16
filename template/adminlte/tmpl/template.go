@@ -3538,7 +3538,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 `, "menu": `{{define "menu"}}
 <ul class="sidebar-menu" data-widget="tree">
 {{$UrlPrefix := .UrlPrefix}}
-{{range $key, $list := .Menu.GlobalMenuList }}
+{{range $key, $list := .Menu.List }}
     {{if eq (len $list.ChildrenList) 0}}
         {{if $list.Header}}
             <li class="header" data-rel="external">{{$list.Header}}</li>

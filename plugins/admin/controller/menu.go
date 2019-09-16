@@ -50,7 +50,6 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 func DeleteMenu(ctx *context.Context) {
 
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).Delete()
-	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 	table.RefreshTableList()
 	response.Ok(ctx)
 }
@@ -75,8 +74,6 @@ func EditMenu(ctx *context.Context) {
 	table.RefreshTableList()
 
 	menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
-
-	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 
 	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -116,7 +113,6 @@ func MenuOrder(ctx *context.Context) {
 	_ = json.Unmarshal([]byte(ctx.FormValue("_order")), &data)
 
 	models.Menu().ResetOrder(data)
-	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 
 	response.Ok(ctx)
 	return
@@ -125,14 +121,12 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
-	menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
-
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")
 	orderUrl := config.Url("/menu/order")
 
 	tree := aTree().
-		SetTree((menu.GetGlobalMenu(user)).GlobalMenuList).
+		SetTree((menu.GetGlobalMenu(user)).List).
 		SetEditUrl(editUrl).
 		SetDeleteUrl(deleteUrl).
 		SetOrderUrl(orderUrl).
@@ -153,8 +147,6 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
 	row := aRow().SetContent(col1 + col2).GetContent()
-
-	menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{

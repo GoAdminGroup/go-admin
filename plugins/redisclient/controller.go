@@ -3,7 +3,6 @@ package redisclient
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/modules/page"
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
@@ -16,8 +15,6 @@ func Show(ctx *context.Context) {
 		editUrl := config.Url("/info/" + config.Prefix() + "/edit")
 		newUrl := config.Url("/info/" + config.Prefix() + "/new")
 		deleteUrl := config.Url("/delete/" + config.Prefix())
-
-		menu.GlobalMenu.SetActiveClass(config.UrlRemovePrefix(ctx.Path()))
 
 		label := template2.Get(config.THEME).Label().SetContent("list").GetContent()
 
