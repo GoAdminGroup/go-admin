@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"github.com/chenhg5/go-admin/template"
 	"net/http"
@@ -18,8 +17,6 @@ func Auth(ctx *context.Context) {
 	if user, ok := auth.Check(password, username); ok {
 
 		auth.SetCookie(ctx, user)
-
-		menu.Unlock()
 
 		response.OkWithData(ctx, map[string]interface{}{
 			"url": config.GetIndexUrl(),

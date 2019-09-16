@@ -96,7 +96,7 @@ func (t UserModel) WithMenus() UserModel {
 
 	menuIdsModel, _ := db.Table("goadmin_role_menu").
 		LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
-		Where("goadmin_role_menu.role_id", "=", t.Id).
+		Where("goadmin_role_menu.role_id", "=", t.Role.Id).
 		Select("menu_id", "parent_id").
 		All()
 

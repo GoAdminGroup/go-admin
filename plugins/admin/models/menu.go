@@ -130,6 +130,12 @@ func (t MenuModel) AddRole(roleId string) {
 	}
 }
 
+func (t MenuModel) DeleteRoles() {
+	_ = db.Table("goadmin_role_menu").
+		Where("menu_id", "=", t.Id).
+		Delete()
+}
+
 func (t MenuModel) MapToModel(m map[string]interface{}) MenuModel {
 	t.Id = m["id"].(int64)
 	t.Title, _ = m["title"].(string)

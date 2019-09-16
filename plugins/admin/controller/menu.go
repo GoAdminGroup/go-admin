@@ -68,13 +68,15 @@ func EditMenu(ctx *context.Context) {
 
 	menuModel := models.MenuWithId(param.Id)
 
+	menuModel.DeleteRoles()
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
+	table.RefreshTableList()
 
 	menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
-	menu.SetGlobalMenu(auth.Auth(ctx))
+	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 
 	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -100,7 +102,7 @@ func NewMenu(ctx *context.Context) {
 		menuModel.AddRole(roleId)
 	}
 
-	menu.GetGlobalMenu(user.WithRoles().WithMenus()).AddMaxOrder()
+	menu.GetGlobalMenu(user).AddMaxOrder()
 	table.RefreshTableList()
 
 	getMenuInfoPanel(ctx, "")
@@ -114,7 +116,7 @@ func MenuOrder(ctx *context.Context) {
 	_ = json.Unmarshal([]byte(ctx.FormValue("_order")), &data)
 
 	models.Menu().ResetOrder(data)
-	menu.SetGlobalMenu(auth.Auth(ctx))
+	menu.SetGlobalMenu(auth.Auth(ctx).WithRoles().WithMenus())
 
 	response.Ok(ctx)
 	return

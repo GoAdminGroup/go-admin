@@ -9,8 +9,6 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"strconv"
-	"sync"
-	"sync/atomic"
 )
 
 type Menu struct {
@@ -25,43 +23,9 @@ var GlobalMenu = &Menu{
 	MaxOrder:         0,
 }
 
-var InitMenuOnce = &Once{
-	done: 0,
-}
-
-type Once struct {
-	m    sync.Mutex
-	done uint32
-}
-
-func (o *Once) Do(f func()) {
-	if atomic.LoadUint32(&o.done) == 1 {
-		return
-	}
-	// Slow-path.
-	o.m.Lock()
-	defer o.m.Unlock()
-	if o.done == 0 {
-		defer atomic.StoreUint32(&o.done, 1)
-		f()
-	}
-}
-
-func (o *Once) unlock() {
-	atomic.StoreUint32(&o.done, 0)
-}
-
-func InitMenu(user models.UserModel) {
-	SetGlobalMenu(user)
-}
-
 func GetGlobalMenu(user models.UserModel) *Menu {
-	InitMenu(user)
+	SetGlobalMenu(user.WithRoles().WithMenus())
 	return GlobalMenu
-}
-
-func Unlock() {
-	InitMenuOnce.unlock()
 }
 
 func SetGlobalMenu(user models.UserModel) {
@@ -152,22 +116,6 @@ func ConstructMenuTree(menus []map[string]interface{}, parentId int64) []Item {
 	}
 
 	return branch
-}
-
-func GetMenuItemById(id string) Item {
-	menu, _ := db.Table("goadmin_menu").Find(id)
-
-	header, _ := menu["header"].(string)
-
-	return Item{
-		Name:         menu["title"].(string),
-		ID:           strconv.FormatInt(menu["id"].(int64), 10),
-		Url:          menu["uri"].(string),
-		Icon:         menu["icon"].(string),
-		Header:       header,
-		Active:       "",
-		ChildrenList: []Item{},
-	}
 }
 
 func (menu *Menu) SetActiveClass(path string) *Menu {
