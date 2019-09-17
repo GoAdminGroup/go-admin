@@ -39,14 +39,33 @@ func main() {
 		LANGUAGE: language.CN,
 	}
 
-	// you can custom a plugin like:
+	adminPlugin := admin.NewAdmin(datamodel.Generators)
+
+	// add generator, first parameter is the url prefix of table when visit.
+	// example:
+	//
+	// "user" => http://localhost:9087/admin/info/user
+	//
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+
+	// customize a plugin
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfig(cfg).AddPlugins(admin.
-		NewAdmin(datamodel.Generators).
-		AddGenerator("user", datamodel.GetUserTable), examplePlugin).
-		Use(app); err != nil {
+	// load from golang.Plugin
+	//
+	// examplePlugin := plugins.LoadFromPlugin("../datamodel/example.so")
+
+	// customize the login page
+	// example: https://github.com/chenhg5/go-admin/blob/master/demo/main.go#L30
+	//
+	// template.AddComp("login", datamodel.LoginPage)
+
+	// load config from json file
+	//
+	// eng.AddConfigFromJson("../datamodel/config.json")
+
+	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}
 

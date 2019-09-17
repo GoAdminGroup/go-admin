@@ -40,13 +40,13 @@ func LoadFromPlugin(mod string) Plugin {
 
 	plug, err := plugin.Open(mod)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("LoadFromPlugin err 1", err)
 		os.Exit(1)
 	}
 
 	symPlugin, err := plug.Lookup("Plugin")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("LoadFromPlugin err 2", err)
 		os.Exit(1)
 	}
 	fmt.Println(reflect.TypeOf(symPlugin))

@@ -44,7 +44,22 @@ func main() {
 		LANGUAGE: language.EN,
 	}
 
+	// customize a plugin
+
 	examplePlugin := example.NewExample()
+
+	// load from golang.Plugin
+	//
+	// examplePlugin := plugins.LoadFromPlugin("../datamodel/example.so")
+
+	// customize the login page
+	// example: https://github.com/chenhg5/go-admin/blob/master/demo/main.go#L30
+	//
+	// template.AddComp("login", datamodel.LoginPage)
+
+	// load config from json file
+	//
+	// eng.AddConfigFromJson("../datamodel/config.json")
 
 	if err := eng.AddConfig(cfg).AddPlugins(admin.
 		NewAdmin(datamodel.Generators).

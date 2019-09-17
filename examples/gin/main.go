@@ -58,15 +58,24 @@ func main() {
 	//
 	// "user" => http://localhost:9033/admin/info/user
 	//
-	//adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	// customize a plugin
 
 	examplePlugin := example.NewExample()
-	//examplePlugin := plugins.LoadFromPlugin("./plugin.so")
+
+	// load from golang.Plugin
+	//
+	// examplePlugin := plugins.LoadFromPlugin("../datamodel/example.so")
 
 	// customize the login page
+	// example: https://github.com/chenhg5/go-admin/blob/master/demo/main.go#L30
+	//
 	// template.AddComp("login", datamodel.LoginPage)
+
+	// load config from json file
+	//
+	// eng.AddConfigFromJson("../datamodel/config.json")
 
 	if err := eng.AddConfig(cfg).
 		AddPlugins(adminPlugin, examplePlugin).

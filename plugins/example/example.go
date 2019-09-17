@@ -10,17 +10,21 @@ type Example struct {
 	app *context.App
 }
 
+func NewExample() *Example {
+	return Plug
+}
+
 var Plug = new(Example)
 
 var config c.Config
 
+func SetConfig(cfg c.Config) {
+	config = cfg
+}
+
 func (example *Example) InitPlugin() {
 	config = c.Get()
 	Plug.app = InitRouter(config.Prefix())
-}
-
-func NewExample() *Example {
-	return Plug
 }
 
 func (example *Example) GetRequest() []context.Path {
