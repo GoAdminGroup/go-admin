@@ -111,11 +111,11 @@ func main() {
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	
 	// 增加 generator, 第一个参数是对应的访问路由前缀
-        	// 例子:
-        	//
-        	// "user" => http://localhost:9033/admin/info/user
-        	//
-        	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	// 例子:
+	//
+	// "user" => http://localhost:9033/admin/info/user
+	//
+	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 
