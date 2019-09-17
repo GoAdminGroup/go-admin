@@ -156,13 +156,13 @@ func Export(ctx *context.Context) {
 	}
 
 	for key, head := range panelInfo.Thead {
-		_ = f.SetCellValue(tableName, orders[key]+"1", head["head"])
+		f.SetCellValue(tableName, orders[key]+"1", head["head"])
 	}
 
 	count := 2
 	for _, info := range panelInfo.InfoList {
 		for key, head := range panelInfo.Thead {
-			_ = f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["head"]])
+			f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["head"]])
 		}
 		count++
 	}
