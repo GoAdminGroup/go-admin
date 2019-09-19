@@ -39,7 +39,7 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 
 ## 使用
 
-详见 [文档说明](http://doc.go-admin.cn)
+详见 [文档说明](http://www.go-admin.cn)
 
 ### 安装
 

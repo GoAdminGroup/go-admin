@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="http://doc.go-admin.cn/en/#/">Documentation</a> | 
+    <a href="http://www.go-admin.cn/en">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
     <a href="http://demo.go-admin.cn/admin">DEMO</a>
 </p>
@@ -48,7 +48,7 @@ account: admin  password: admin
 
 ## How to
 
-see the [docs](http://doc.go-admin.cn/en/#/) for detail
+see the [docs](http://www.go-admin.cn/en) for detail
 
 ### install
 
