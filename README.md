@@ -32,7 +32,7 @@
 
 goAdmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
-<strong>Now is the beta version. v0.1.0 will be released about October 8th.</strong>
+<strong>Now is the beta version. It means that you may meet some unpredictable bugs. The v1.0 will be released about October 8th.</strong>
 
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 account: admin  password: admin
@@ -42,7 +42,7 @@ account: admin  password: admin
 ## Feature
 
 - beautiful admin interface builder powerd by adminlte
-- many plugins to use
+- many plugins to use(working on it)
 - powerful auth manage system
 - support most of the go web framework
 
@@ -53,7 +53,7 @@ see the [docs](http://doc.go-admin.cn/en/#/) for detail
 ### install
 
 ```
-$ go get -v -u github.com/chenhg5/go-admin
+$ go get github.com/chenhg5/go-admin@latest
 ```
 
 ### import sql

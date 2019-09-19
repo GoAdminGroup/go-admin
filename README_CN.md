@@ -33,7 +33,7 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 ## 特征
 
 - 使用adminlte构建的漂亮的管理界面
-- 大量插件供使用
+- 大量插件供使用（开发中）
 - 完善的认证系统
 - 支持多个web框架：gin, beego, echo...
 
@@ -44,7 +44,7 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 ### 安装
 
 ```
-$ go get -v -u github.com/chenhg5/go-admin
+$ go get github.com/chenhg5/go-admin@latest
 ```
 
 ### 导入 sql
