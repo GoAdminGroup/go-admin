@@ -26,6 +26,8 @@ goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 账号：admin  密码：admin
 
+<strong>现在是beta版本，可能存在一些未知的bug。 正式的1.0版本将会在10月8号左右发布</strong>
+
 ![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## 特征
