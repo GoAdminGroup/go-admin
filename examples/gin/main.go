@@ -18,7 +18,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
 
 	eng := engine.Default()
@@ -45,9 +45,9 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE: language.CN,
-		INDEX:    "/",
-		DEBUG:    true,
+		LANGUAGE:    language.CN,
+		INDEX:       "/",
+		DEBUG:       true,
 		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
 	}
 
