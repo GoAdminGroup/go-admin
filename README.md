@@ -37,6 +37,8 @@ goAdmin is a toolkit help you to build a data visualization and manage platform 
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 account: admin  password: admin
 
+demo source code: https://github.com/GoAdminGroup/demo
+
 ![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## Feature
