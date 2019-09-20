@@ -3,6 +3,7 @@ package gorilla
 import (
 	"bytes"
 	"errors"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	template2 "html/template"
 	"net/http"
@@ -88,45 +89,47 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+type Context struct {
+	Request  *http.Request
+	Response http.ResponseWriter
+}
+
 func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
-		ctx *http.Request
+		ctx Context
 		ok  bool
 	)
-	if ctx, ok = contextInterface.(*http.Request); !ok {
+	if ctx, ok = contextInterface.(Context); !ok {
 		panic("wrong parameter")
 	}
 
 	globalConfig := config.Get()
 
-	sesKey, err := ctx.Cookie("go_admin_session")
+	sesKey, err := ctx.Request.Cookie("go_admin_session")
 
 	if err != nil || sesKey == nil {
-		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
-		ctx.Response.StatusCode = http.StatusFound
+		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
 	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
-		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
-		ctx.Response.StatusCode = http.StatusFound
+		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
 	user, ok := auth.GetCurUserById(int64(userId.(float64)))
 
 	if !ok {
-		ctx.Response.Header.Set("Location", globalConfig.Url("/login"))
-		ctx.Response.StatusCode = http.StatusFound
+		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
 	var panel types.Panel
 
-	if !auth.CheckPermissions(user, ctx.RequestURI, ctx.Method) {
+	if !auth.CheckPermissions(user, ctx.Request.RequestURI, ctx.Request.Method) {
 		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template2.HTML("Permission Denied")).GetContent()
 
@@ -139,14 +142,14 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Header.Get(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
 
-	ctx.Header.Set("Content-Type", "text/html; charset=utf-8")
+	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.URL.String(), globalConfig.Prefix(), "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URL.String(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},
@@ -157,4 +160,9 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		MiniLogo:    globalConfig.MINILOGO,
 		ColorScheme: globalConfig.COLORSCHEME,
 	})
+	if err != nil {
+		logger.Error("Gorilla Content", err)
+	}
+	ctx.Response.WriteHeader(http.StatusOK)
+	_, _ = ctx.Response.Write(buf.Bytes())
 }

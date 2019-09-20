@@ -107,11 +107,11 @@ type PaginatorAttribute interface {
 }
 
 type InfoBoxAttribute interface {
-	SetIcon(value string) InfoBoxAttribute
+	SetIcon(value template.HTML) InfoBoxAttribute
 	SetText(value string) InfoBoxAttribute
 	SetNumber(value template.HTML) InfoBoxAttribute
 	SetContent(value string) InfoBoxAttribute
-	SetColor(value string) InfoBoxAttribute
+	SetColor(value template.HTML) InfoBoxAttribute
 	GetContent() template.HTML
 }
 

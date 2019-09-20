@@ -6,6 +6,7 @@ package template
 
 import (
 	"bytes"
+	"fmt"
 	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
@@ -53,7 +54,7 @@ type Template interface {
 
 // The templateMap contains templates registered.
 var templateMap = map[string]Template{
-	"adminlte": adminlte.GetAdminlte(),
+	"adminlte": adminlte.Get(),
 }
 
 // Get the template interface by theme name. If the
@@ -159,7 +160,7 @@ func Execute(tmpl *template.Template,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
-	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *globalMenu,
 		System: types.SystemInfo{
@@ -172,5 +173,8 @@ func Execute(tmpl *template.Template,
 		MiniLogo:    config.MINILOGO,
 		ColorScheme: config.COLORSCHEME,
 	})
+	if err != nil {
+		fmt.Println("Execute err", err)
+	}
 	return buf
 }

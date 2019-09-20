@@ -18,7 +18,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
 
 	eng := engine.Default()
@@ -30,7 +30,7 @@ func main() {
 				PORT:         "3306",
 				USER:         "root",
 				PWD:          "root",
-				NAME:         "godmin",
+				NAME:         "go_admin_demo", // "godmin",
 				MAX_IDLE_CON: 50,
 				MAX_OPEN_CON: 150,
 				DRIVER:       db.DriverMysql,
@@ -45,9 +45,9 @@ func main() {
 			PATH:   "./uploads",
 			PREFIX: "uploads",
 		},
-		LANGUAGE:    language.CN,
-		INDEX:       "/",
-		DEBUG:       true,
+		LANGUAGE: language.CN,
+		INDEX:    "/",
+		DEBUG:    true,
 		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
 	}
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "github.com/chenhg5/go-admin/adapter/gin"
+	"github.com/chenhg5/go-admin/demo/ecommerce"
 	"github.com/chenhg5/go-admin/demo/login"
 	"github.com/chenhg5/go-admin/demo/pages"
 	"github.com/chenhg5/go-admin/engine"
@@ -33,11 +34,14 @@ func main() {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfigFromJson("/data/www/go-admin/config.json").AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
+	rootPath := "/data/www/go-admin"
+	rootPath = "."
+
+	if err := eng.AddConfigFromJson(rootPath+"/config.json").AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
 		panic(err)
 	}
 
-	r.Static("/uploads", "/data/www/go-admin/uploads")
+	r.Static("/uploads", rootPath+"/uploads")
 
 	// you can custom your pages like:
 
@@ -50,6 +54,12 @@ func main() {
 	r.GET("/admin/form1", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return pages.GetForm1Content()
+		})
+	})
+
+	r.GET("/admin/e-commerce", func(ctx *gin.Context) {
+		engine.Content(ctx, func() types.Panel {
+			return ecommerce.GetContent()
 		})
 	})
 

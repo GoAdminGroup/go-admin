@@ -40,7 +40,7 @@ func MenuEdit(ctx *context.Context) {
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
 		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    checkEmpty(ctx, "id", "title", "icon", "uri"),
+		Alert:    checkEmpty(ctx, "id", "title", "icon"),
 	})
 	ctx.Next()
 	return

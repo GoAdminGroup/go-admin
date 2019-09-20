@@ -1,6 +1,16 @@
 {{define "infobox"}}
 <div class="info-box">
-    <span class="info-box-icon bg-{{.Color}}"><i class="fa {{.Icon}}"></i></span>
+    {{if .IsHexColor}}
+        <span class="info-box-icon" style="background-color: {{.Color}} !important;">
+    {{else}}
+        <span class="info-box-icon bg-{{.Color}}">
+    {{end}}
+    {{if .IsSvg}}
+        {{.Icon}}
+    {{else}}
+        <i class="fa {{.Icon}}"></i>
+    {{end}}
+    </span>
     <div class="info-box-content">
         <span class="info-box-text">{{.Text}}</span>
         <span class="info-box-number">{{.Number}}</span>

@@ -11,6 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
@@ -128,7 +129,7 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	_ = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request().URL.String(), globalConfig.Prefix(), "", 1))),
 		System: types.SystemInfo{
@@ -141,5 +142,8 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		MiniLogo:    globalConfig.MINILOGO,
 		ColorScheme: globalConfig.COLORSCHEME,
 	})
+	if err != nil {
+		logger.Error("Iris Content", err)
+	}
 	_, _ = ctx.WriteString(buf.String())
 }

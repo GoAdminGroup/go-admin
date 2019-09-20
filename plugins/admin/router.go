@@ -3,6 +3,7 @@ package admin
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/plugins/admin/controller"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/template"
@@ -21,12 +22,12 @@ func InitRouter(prefix string) *context.App {
 	route.GET("/install", controller.ShowInstall)
 	route.POST("/install/database/check", controller.CheckDatabase)
 
-	for _, path := range template.Get("adminlte").GetAssetList() {
-		route.GET("/assets"+path, controller.Assert)
+	for _, path := range template.Get(config.Get().THEME).GetAssetList() {
+		route.GET("/assets"+path, controller.Assets)
 	}
 
 	for _, path := range template.GetComp("login").GetAssetList() {
-		route.GET("/assets"+path, controller.Assert)
+		route.GET("/assets"+path, controller.Assets)
 	}
 
 	authRoute := route.Group("/", auth.Middleware)

@@ -36,7 +36,7 @@ func MenuNew(ctx *context.Context) {
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
 		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    checkEmpty(ctx, "title", "icon", "uri"),
+		Alert:    checkEmpty(ctx, "title", "icon"),
 	})
 	ctx.Next()
 	return

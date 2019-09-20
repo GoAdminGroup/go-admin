@@ -98,11 +98,13 @@ func ShowInfo(ctx *context.Context) {
 	ctx.Html(http.StatusOK, buf.String())
 }
 
-func Assert(ctx *context.Context) {
+func Assets(ctx *context.Context) {
 	filepath := config.UrlRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
+	fmt.Println("filepath 1", filepath)
 	if err != nil {
+		fmt.Println("filepath", filepath, "err", err)
 		data, err = loginComponent().GetAsset(filepath)
 		if err != nil {
 			logger.Error("asset err", err)
