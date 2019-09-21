@@ -3,6 +3,21 @@ package tmpl
 var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
+        <li>
+            <a href="javascript:void(0);"  class="fullpage-btn">
+                <i class="fa fa-arrows-alt"></i>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);"  class="exit-fullpage-btn" style="display: none;">
+                <i class="fa fa-arrows-alt"></i>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" class="container-refresh">
+                <i class="fa fa-refresh"></i>
+            </a>
+        </li>
         <!-- User Account: style can be found in dropdown.less -->
         <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -3521,6 +3536,23 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 <html>
 
 {{ template "head" . }}
+
+<style>
+    .full-page-content {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        z-index: 9999;
+    }
+    .full-page-wrapper {
+        background-color: #ecf0f4;
+    }
+    #toast-container {
+        top: 90%;
+    }
+</style>
 
 <body class="hold-transition {{.ColorScheme}} sidebar-mini">
 <div class="wrapper">
