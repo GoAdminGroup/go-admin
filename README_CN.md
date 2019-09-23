@@ -137,9 +137,13 @@ func main() {
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 
-QQ群: 756664859，记得备注加群来意
+<strong>QQ群</strong>：756664859，记得备注加群来意
 
 这里是[开发计划](https://github.com/chenhg5/go-admin/projects)
+
+<strong>微信群</strong>：
+
+![微信群二维码](http://www.go-admin.cn/assets/imgs/qrcode.jpg)
 
 ## 十分感谢
 
