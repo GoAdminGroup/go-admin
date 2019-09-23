@@ -148,7 +148,7 @@ func Export(ctx *context.Context) {
 		fileName  = ""
 	)
 
-	if len(param.Id) == 0 {
+	if len(param.Id) == 1 {
 		params := parameter.GetParam(ctx.Request.URL.Query())
 		panelInfo = panel.GetDataFromDatabase(ctx.Path(), params)
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), params.Page, params.PageSize)
