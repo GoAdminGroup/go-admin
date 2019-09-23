@@ -143,7 +143,7 @@ func main() {
 
 <strong>微信群</strong>：
 
-![微信群二维码](http://www.go-admin.cn/assets/imgs/qrcode.jpg)
+<img src="http://www.go-admin.cn/assets/imgs/qrcode.jpg" width="180">
 
 ## 十分感谢
 
