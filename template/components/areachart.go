@@ -7,7 +7,7 @@ import (
 
 type AreaChartAttribute struct {
 	Name   string
-	Title  string
+	Title  template.HTML
 	Data   string
 	ID     string
 	Height int
@@ -19,7 +19,7 @@ func (compo *AreaChartAttribute) SetID(value string) types.AreaChartAttribute {
 	return compo
 }
 
-func (compo *AreaChartAttribute) SetTitle(value string) types.AreaChartAttribute {
+func (compo *AreaChartAttribute) SetTitle(value template.HTML) types.AreaChartAttribute {
 	compo.Title = value
 	return compo
 }

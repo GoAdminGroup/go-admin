@@ -7,20 +7,20 @@ import (
 
 type ProgressGroupAttribute struct {
 	Name        string
-	Title       string
+	Title       template.HTML
 	Molecular   int
 	Denominator int
-	Color       string
+	Color       template.HTML
 	Percent     int
 	types.Attribute
 }
 
-func (compo *ProgressGroupAttribute) SetTitle(value string) types.ProgressGroupAttribute {
+func (compo *ProgressGroupAttribute) SetTitle(value template.HTML) types.ProgressGroupAttribute {
 	compo.Title = value
 	return compo
 }
 
-func (compo *ProgressGroupAttribute) SetColor(value string) types.ProgressGroupAttribute {
+func (compo *ProgressGroupAttribute) SetColor(value template.HTML) types.ProgressGroupAttribute {
 	compo.Color = value
 	return compo
 }

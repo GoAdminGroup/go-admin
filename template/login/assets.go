@@ -389,19 +389,19 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"template/login/assets/login/css/animate.css": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssAnimateCss,
-	"template/login/assets/login/css/bootstrap.min.css": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssBootstrapMinCss,
-	"template/login/assets/login/css/style.css": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssStyleCss,
-	"template/login/assets/login/images/bg_2.jpg": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesBg_2Jpg,
-	"template/login/assets/login/images/geometry2.png": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesGeometry2Png,
-	"template/login/assets/login/js/.DS_Store": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsDs_store,
-	"template/login/assets/login/js/bootstrap.min.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsBootstrapMinJs,
-	"template/login/assets/login/js/jquery.min.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryMinJs,
+	"template/login/assets/login/css/animate.css":              usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssAnimateCss,
+	"template/login/assets/login/css/bootstrap.min.css":        usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssBootstrapMinCss,
+	"template/login/assets/login/css/style.css":                usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssStyleCss,
+	"template/login/assets/login/images/bg_2.jpg":              usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesBg_2Jpg,
+	"template/login/assets/login/images/geometry2.png":         usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesGeometry2Png,
+	"template/login/assets/login/js/.DS_Store":                 usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsDs_store,
+	"template/login/assets/login/js/bootstrap.min.js":          usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsBootstrapMinJs,
+	"template/login/assets/login/js/jquery.min.js":             usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryMinJs,
 	"template/login/assets/login/js/jquery.placeholder.min.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryPlaceholderMinJs,
-	"template/login/assets/login/js/jquery.waypoints.min.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryWaypointsMinJs,
-	"template/login/assets/login/js/main.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsMainJs,
-	"template/login/assets/login/js/modernizr-2.6.2.min.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsModernizr262MinJs,
-	"template/login/assets/login/js/particles.js": usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsParticlesJs,
+	"template/login/assets/login/js/jquery.waypoints.min.js":   usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryWaypointsMinJs,
+	"template/login/assets/login/js/main.js":                   usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsMainJs,
+	"template/login/assets/login/js/modernizr-2.6.2.min.js":    usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsModernizr262MinJs,
+	"template/login/assets/login/js/particles.js":              usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsParticlesJs,
 }
 
 // AssetDir returns the file names below a certain
@@ -443,6 +443,7 @@ type bintree struct {
 	Func     func() (*asset, error)
 	Children map[string]*bintree
 }
+
 var _bintree = &bintree{nil, map[string]*bintree{
 	"Users": &bintree{nil, map[string]*bintree{
 		"chenhg5": &bintree{nil, map[string]*bintree{
@@ -456,23 +457,23 @@ var _bintree = &bintree{nil, map[string]*bintree{
 										"assets": &bintree{nil, map[string]*bintree{
 											"login": &bintree{nil, map[string]*bintree{
 												"css": &bintree{nil, map[string]*bintree{
-													"animate.css": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssAnimateCss, map[string]*bintree{}},
+													"animate.css":       &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssAnimateCss, map[string]*bintree{}},
 													"bootstrap.min.css": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssBootstrapMinCss, map[string]*bintree{}},
-													"style.css": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssStyleCss, map[string]*bintree{}},
+													"style.css":         &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginCssStyleCss, map[string]*bintree{}},
 												}},
 												"images": &bintree{nil, map[string]*bintree{
-													"bg_2.jpg": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesBg_2Jpg, map[string]*bintree{}},
+													"bg_2.jpg":      &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesBg_2Jpg, map[string]*bintree{}},
 													"geometry2.png": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginImagesGeometry2Png, map[string]*bintree{}},
 												}},
 												"js": &bintree{nil, map[string]*bintree{
-													".DS_Store": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsDs_store, map[string]*bintree{}},
-													"bootstrap.min.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsBootstrapMinJs, map[string]*bintree{}},
-													"jquery.min.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryMinJs, map[string]*bintree{}},
+													".DS_Store":                 &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsDs_store, map[string]*bintree{}},
+													"bootstrap.min.js":          &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsBootstrapMinJs, map[string]*bintree{}},
+													"jquery.min.js":             &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryMinJs, map[string]*bintree{}},
 													"jquery.placeholder.min.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryPlaceholderMinJs, map[string]*bintree{}},
-													"jquery.waypoints.min.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryWaypointsMinJs, map[string]*bintree{}},
-													"main.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsMainJs, map[string]*bintree{}},
-													"modernizr-2.6.2.min.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsModernizr262MinJs, map[string]*bintree{}},
-													"particles.js": &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsParticlesJs, map[string]*bintree{}},
+													"jquery.waypoints.min.js":   &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsJqueryWaypointsMinJs, map[string]*bintree{}},
+													"main.js":                   &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsMainJs, map[string]*bintree{}},
+													"modernizr-2.6.2.min.js":    &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsModernizr262MinJs, map[string]*bintree{}},
+													"particles.js":              &bintree{usersChenhg5GoSrcGithubComChenhg5GoAdminTemplateLoginAssetsLoginJsParticlesJs, map[string]*bintree{}},
 												}},
 											}},
 										}},
@@ -533,4 +534,3 @@ func _filePath(dir, name string) string {
 	cannonicalName := strings.Replace(name, "\\", "/", -1)
 	return filepath.Join(append([]string{dir}, strings.Split(cannonicalName, "/")...)...)
 }
-

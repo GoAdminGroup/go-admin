@@ -7,7 +7,7 @@ import (
 
 type BarChartAttribute struct {
 	Name  string
-	Title string
+	Title template.HTML
 	Data  string
 	ID    string
 	Width int
@@ -19,7 +19,7 @@ func (compo *BarChartAttribute) SetID(value string) types.BarChartAttribute {
 	return compo
 }
 
-func (compo *BarChartAttribute) SetTitle(value string) types.BarChartAttribute {
+func (compo *BarChartAttribute) SetTitle(value template.HTML) types.BarChartAttribute {
 	compo.Title = value
 	return compo
 }

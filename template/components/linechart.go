@@ -7,7 +7,7 @@ import (
 
 type LineChartAttribute struct {
 	Name   string
-	Title  string
+	Title  template.HTML
 	Data   string
 	ID     string
 	Height int
@@ -19,7 +19,7 @@ func (compo *LineChartAttribute) SetID(value string) types.LineChartAttribute {
 	return compo
 }
 
-func (compo *LineChartAttribute) SetTitle(value string) types.LineChartAttribute {
+func (compo *LineChartAttribute) SetTitle(value template.HTML) types.LineChartAttribute {
 	compo.Title = value
 	return compo
 }

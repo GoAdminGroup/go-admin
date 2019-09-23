@@ -116,8 +116,8 @@ type InfoBoxAttribute interface {
 }
 
 type ProgressGroupAttribute interface {
-	SetTitle(value string) ProgressGroupAttribute
-	SetColor(value string) ProgressGroupAttribute
+	SetTitle(value template.HTML) ProgressGroupAttribute
+	SetColor(value template.HTML) ProgressGroupAttribute
 	SetPercent(value int) ProgressGroupAttribute
 	SetDenominator(value int) ProgressGroupAttribute
 	SetMolecular(value int) ProgressGroupAttribute
@@ -128,7 +128,7 @@ type ProgressAttribute interface{}
 
 type LineChartAttribute interface {
 	SetID(value string) LineChartAttribute
-	SetTitle(value string) LineChartAttribute
+	SetTitle(value template.HTML) LineChartAttribute
 	SetHeight(value int) LineChartAttribute
 	SetData(value string) LineChartAttribute
 	GetContent() template.HTML
@@ -136,7 +136,7 @@ type LineChartAttribute interface {
 
 type BarChartAttribute interface {
 	SetID(value string) BarChartAttribute
-	SetTitle(value string) BarChartAttribute
+	SetTitle(value template.HTML) BarChartAttribute
 	SetWidth(value int) BarChartAttribute
 	SetData(value string) BarChartAttribute
 	GetContent() template.HTML
@@ -145,7 +145,7 @@ type BarChartAttribute interface {
 type PieChartAttribute interface {
 	SetID(value string) PieChartAttribute
 	SetData(value string) PieChartAttribute
-	SetTitle(value string) PieChartAttribute
+	SetTitle(value template.HTML) PieChartAttribute
 	SetHeight(value int) PieChartAttribute
 	GetContent() template.HTML
 }
@@ -157,16 +157,16 @@ type ChartLegendAttribute interface {
 
 type DescriptionAttribute interface {
 	SetNumber(value string) DescriptionAttribute
-	SetTitle(value string) DescriptionAttribute
+	SetTitle(value template.HTML) DescriptionAttribute
 	SetArrow(value string) DescriptionAttribute
 	SetPercent(value string) DescriptionAttribute
 	SetBorder(value string) DescriptionAttribute
-	SetColor(value string) DescriptionAttribute
+	SetColor(value template.HTML) DescriptionAttribute
 	GetContent() template.HTML
 }
 
 type AreaChartAttribute interface {
-	SetTitle(value string) AreaChartAttribute
+	SetTitle(value template.HTML) AreaChartAttribute
 	SetID(value string) AreaChartAttribute
 	SetData(value string) AreaChartAttribute
 	SetHeight(value int) AreaChartAttribute
@@ -192,7 +192,7 @@ type AlertAttribute interface {
 
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
-	SetTitle(value string) PopupAttribute
+	SetTitle(value template.HTML) PopupAttribute
 	SetFooter(value string) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute

@@ -1,7 +1,6 @@
 package login
 
 import (
-	"fmt"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"html/template"
 )
@@ -29,6 +28,5 @@ func (*Login) GetAssetList() []string {
 
 func (*Login) GetAsset(name string) ([]byte, error) {
 	name = "template/login" + name
-	fmt.Println("name", name)
 	return Asset(name)
 }

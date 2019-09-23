@@ -9,9 +9,9 @@ type DescriptionAttribute struct {
 	Name    string
 	Border  string
 	Number  string
-	Title   string
+	Title   template.HTML
 	Arrow   string
-	Color   string
+	Color   template.HTML
 	Percent string
 	types.Attribute
 }
@@ -21,7 +21,7 @@ func (compo *DescriptionAttribute) SetNumber(value string) types.DescriptionAttr
 	return compo
 }
 
-func (compo *DescriptionAttribute) SetTitle(value string) types.DescriptionAttribute {
+func (compo *DescriptionAttribute) SetTitle(value template.HTML) types.DescriptionAttribute {
 	compo.Title = value
 	return compo
 }
@@ -36,7 +36,7 @@ func (compo *DescriptionAttribute) SetPercent(value string) types.DescriptionAtt
 	return compo
 }
 
-func (compo *DescriptionAttribute) SetColor(value string) types.DescriptionAttribute {
+func (compo *DescriptionAttribute) SetColor(value template.HTML) types.DescriptionAttribute {
 	compo.Color = value
 	return compo
 }
