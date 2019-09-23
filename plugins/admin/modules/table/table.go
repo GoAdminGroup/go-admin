@@ -343,7 +343,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	whereIds := ""
 
 	for _, value := range ids {
-		whereIds += value + ","
+		if value != "" {
+			whereIds += value + ","
+		}			
 	}
 	whereIds = whereIds[:len(whereIds)-1]
 
