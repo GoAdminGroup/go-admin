@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/chenhg5/go-admin">
-    <img width="50%" alt="go-admin" src="https://ws2.sinaimg.cn/large/006tNc79ly1ftvqf8qeddj31bz07e40e.jpg">
+    <img width="50%" alt="go-admin" src="http://www.go-admin.cn/assets/imgs/goadmin_logo.jpg">
   </a>
 </p>
 
@@ -39,7 +39,7 @@ account: admin  password: admin
 
 demo source code: https://github.com/GoAdminGroup/demo
 
-![](http://www.go-admin.cn/assets/imgs/goadmin_logo.jpg)
+![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## Feature
 

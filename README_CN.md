@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/chenhg5/go-admin">
-    <img width="50%" alt="go-admin" src="https://ws2.sinaimg.cn/large/006tNc79ly1ftvqf8qeddj31bz07e40e.jpg">
+    <img width="50%" alt="go-admin" src="http://www.go-admin.cn/assets/imgs/goadmin_logo.jpg">
   </a>
 </p>
 <p align="center">
@@ -30,7 +30,7 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 <strong>现在是beta版本，可能存在一些未知的bug。 正式的1.0版本将会在10月8号左右发布</strong>
 
-![](http://www.go-admin.cn/assets/imgs/goadmin_logo.jpg)
+![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
 
 ## 特征
 
