@@ -16,6 +16,10 @@ fmt:
 	go fmt ./plugins/...
 	go fmt ./template/...
 
+deps:
+	go get github.com/kardianos/govendor
+	govendor sync
+
 test:
 	mysql -uroot -proot go-admin-test < ./examples/datamodel/admin.sql
 	gotest -v ./tests/gin/...

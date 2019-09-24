@@ -4,9 +4,16 @@ sudo: false
 go:
   - 1.12.x
 
-env:
-  - GO111MODULE=on
+service:
+  - mysql
+
+before_install:
+  - mysql -e 'create database go-admin-test;'
+
+before_script:
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - git clone --depth=50 --branch=master https://github.com/chenhg5/go-admin.git  /home/travis/gopath/src/go-admin
 
 script:
-  - go get -v -t ./modules/language
-  - go test ./modules/language
+  - cd /home/travis/gopath/src/go-admin && make deps
+  - make test
