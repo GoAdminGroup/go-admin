@@ -4,7 +4,7 @@ sudo: false
 go:
   - 1.12.x
 
-service:
+services:
   - mysql
 
 before_install:
