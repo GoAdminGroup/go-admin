@@ -53,6 +53,9 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 ### Gin 例子
 
+<details><summary>main.go</summary>
+<p>
+
 ```go
 package main
 
@@ -116,6 +119,9 @@ func main() {
 	_ = r.Run(":9033")
 }
 ```
+
+</p>
+</details>
 
 其他例子: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 

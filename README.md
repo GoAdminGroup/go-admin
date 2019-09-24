@@ -60,6 +60,9 @@ see the [docs](http://www.go-admin.cn/en) for detail
 
 ### create main.go
 
+<details><summary>main.go</summary>
+<p>
+
 ```go
 package main
 
@@ -123,6 +126,10 @@ func main() {
 	_ = r.Run(":9033")
 }
 ```
+
+</p>
+</details>
+
 
 More Examples: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 
