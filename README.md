@@ -52,6 +52,8 @@ demo source code: https://github.com/GoAdminGroup/demo
 
 see the [docs](http://www.go-admin.cn/en) for detail
 
+[a super simple example here](https://github.com/GoAdminGroup/example)
+
 ### install
 
 ```

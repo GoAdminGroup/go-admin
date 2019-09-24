@@ -43,6 +43,8 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 详见 [文档说明](http://www.go-admin.cn)
 
+[一个超级简单的例子](https://github.com/GoAdminGroup/example)
+
 ### 安装
 
 ```
