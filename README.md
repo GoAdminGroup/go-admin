@@ -62,15 +62,7 @@ $ go get github.com/chenhg5/go-admin@latest
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
 
-### generate the data model use cli tool
-
-```
-$ go install github.com/chenhg5/go-admin/admincli
-
-$ admincli generate
-```
-
-### gin example
+### create main.go
 
 ```go
 package main
@@ -137,6 +129,14 @@ func main() {
 ```
 
 More Examples: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
+
+### run
+
+NOTICE: set ```GOMODULE=on``` first
+
+```golang
+go run main.go
+```
 
 ## Powerd by
 

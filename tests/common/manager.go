@@ -122,7 +122,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	}).Expect().Status(200).JSON().Equal(map[string]interface{}{
 		"code": 200,
 		"data": map[string]interface{}{
-			"url": config.Get().Url(""),
+			"url": "/" + config.Get().UrlPrefix,
 		},
 		"msg": "ok",
 	})

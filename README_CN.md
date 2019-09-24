@@ -53,14 +53,6 @@ $ go get github.com/chenhg5/go-admin@latest
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
 
-### 利用命令行工具导出数据模型文件
-
-```
-$ go install github.com/chenhg5/go-admin/admincli
-
-$ admincli generate
-```
-
 ### Gin 例子
 
 ```go
@@ -119,7 +111,7 @@ func main() {
 	//
 	// "user" => http://localhost:9033/admin/info/user
 	//
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	// adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 
@@ -128,6 +120,14 @@ func main() {
 ```
 
 其他例子: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
+
+### 运行
+
+注意：先设置环境变量 ```GOMODULE=on```
+
+```golang
+go run main.go
+```
 
 ## 技术支持
 

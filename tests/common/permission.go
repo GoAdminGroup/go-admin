@@ -86,6 +86,33 @@ func PermissionTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
 	res.Body().Contains("tester").Contains("GET,POST")
 
-	printlnWithColor("delete", "green")
+	// show new form
+
+	printlnWithColor("show new form", "green")
+	formBody = e.GET(config.Get().Url("/info/permission/new")).
+		WithCookie(sesId.Name, sesId.Value).
+		Expect().Status(200).Body()
+
+	token = reg.FindStringSubmatch(formBody.Raw())
+
+	// new tester2
+
+	printlnWithColor("new tester2", "green")
+	e.POST(config.Get().Url("/new/permission")).
+		WithCookie(sesId.Name, sesId.Value).
+		WithMultipart().
+		WithFormField("http_method[]", "GET").
+		WithForm(map[string]interface{}{
+			"name": "tester2",
+			"slug": "tester2",
+			"http_path": `/
+/admin/info/op`,
+			"_previous_": config.Get().Url("/info/permission?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_t":         token[1],
+		}).Expect().Status(200)
+
+	// delete tester2
+
+	printlnWithColor("delete permission tester2", "green")
 	e.GET("/pong").Expect().Status(404)
 }
