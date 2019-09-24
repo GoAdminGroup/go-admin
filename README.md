@@ -39,7 +39,7 @@ account: admin  password: admin
 
 demo source code: https://github.com/GoAdminGroup/demo
 
-![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
+![](http://www.go-admin.cn/assets/imgs/interface.jpg)
 
 ## Feature
 

@@ -30,7 +30,7 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 <strong>现在是beta版本，可能存在一些未知的bug。 正式的1.0版本将会在10月8号左右发布</strong>
 
-![](https://ws1.sinaimg.cn/large/0069RVTdly1fv5jpbug82j31ap0pngrr.jpg)
+![](http://www.go-admin.cn/assets/imgs/interface.jpg)
 
 ## 特征
 
