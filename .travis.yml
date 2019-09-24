@@ -13,6 +13,10 @@ before_install:
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - go get -u github.com/rakyll/gotest
+  - go get cloud.google.com/go/civil
+  - go get github.com/NebulousLabs/fastrand
+  - go get github.com/gin-gonic/gin
+  - go get golang.org/x/text/language
 
 script:
   - cd /home/travis/gopath/src/github.com/chenhg5/go-admin && make deps

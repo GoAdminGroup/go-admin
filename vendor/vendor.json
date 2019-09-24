@@ -13,6 +13,12 @@
 			"revisionTime": "2019-09-08T13:57:55Z"
 		},
 		{
+			"checksumSHA1": "TutUi6ni5EAQp5Gez9Vlb2wv0ww=",
+			"path": "github.com/NebulousLabs/fastrand",
+			"revision": "6fb6489aac4eae79e3f8112c21708191a7a90dd7",
+			"revisionTime": "2018-12-03T15:59:48Z"
+		},
+		{
 			"checksumSHA1": "jWN4w1TKKvoLMMy6nktpz1ELVEw=",
 			"path": "github.com/denisenkom/go-mssqldb",
 			"revision": "eb9f6a1743f30383c8168cc520ca5db1f744d6f4",
@@ -161,6 +167,10 @@
 			"path": "golang.org/x/crypto/bcrypt",
 			"revision": "eb0de9b17e854e9b1ccd9963efafc79862359959",
 			"revisionTime": "2018-11-27T08:28:20Z"
+		},
+		{
+			"path": "golang.org/x/crypto/blake2b",
+			"revision": ""
 		},
 		{
 			"checksumSHA1": "oVPHWesOmZ02vLq2fglGvf+AMgk=",
