@@ -45,13 +45,9 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 [一个超级简单的例子](https://github.com/GoAdminGroup/example)
 
-### 安装
-
-```
-$ go get github.com/chenhg5/go-admin@latest
-```
-
 ### 导入 sql
+
+以mysql为例：
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
 
@@ -125,10 +121,8 @@ func main() {
 
 ### 运行
 
-注意：先设置环境变量 ```GOMODULE=on```
-
-```golang
-go run main.go
+```shell
+GO111MODULE=on go run main.go
 ```
 
 ## 技术支持

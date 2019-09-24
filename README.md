@@ -54,12 +54,6 @@ see the [docs](http://www.go-admin.cn/en) for detail
 
 [a super simple example here](https://github.com/GoAdminGroup/example)
 
-### install
-
-```
-$ go get github.com/chenhg5/go-admin@latest
-```
-
 ### import sql
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
@@ -134,13 +128,11 @@ More Examples: [https://github.com/chenhg5/go-admin/tree/master/examples](https:
 
 ### run
 
-NOTICE: set ```GOMODULE=on``` first
-
-```golang
-go run main.go
+```shell
+GO111MODULE=on go run main.go
 ```
 
-## Powerd by
+## Powered by
 
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
 
