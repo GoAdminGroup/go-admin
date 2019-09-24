@@ -59,8 +59,8 @@ type Table interface {
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
-	UpdateDataFromDatabase(dataList form.FormValue)
-	InsertDataFromDatabase(dataList form.FormValue)
+	UpdateDataFromDatabase(dataList form.Values)
+	InsertDataFromDatabase(dataList form.Values)
 	DeleteDataFromDatabase(id string)
 }
 
@@ -343,7 +343,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	whereIds := ""
 
 	for _, value := range ids {
-		whereIds += value + ","
+		if value != "" {
+			whereIds += value + ","
+		}
 	}
 	whereIds = whereIds[:len(whereIds)-1]
 
@@ -476,7 +478,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 }
 
 // UpdateDataFromDatabase update data.
-func (tb DefaultTable) UpdateDataFromDatabase(dataList form.FormValue) {
+func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) {
 	_, _ = tb.sql().Table(tb.form.Table).
 		Where("id", "=", dataList.Get("id")).
 		Update(tb.getValues(dataList))
@@ -484,11 +486,11 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.FormValue) {
 }
 
 // InsertDataFromDatabase insert data.
-func (tb DefaultTable) InsertDataFromDatabase(dataList form.FormValue) {
+func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) {
 	_, _ = tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
 }
 
-func (tb DefaultTable) getValues(dataList form.FormValue) dialect.H {
+func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 	value := make(dialect.H, 0)
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
@@ -500,31 +502,28 @@ func (tb DefaultTable) getValues(dataList form.FormValue) dialect.H {
 	}
 
 	columns := getColumns(columnsModel, tb.connectionDriver)
-	var fun types.FieldFilterFn
+	var fun types.PostFieldFilterFn
 	for k, v := range dataList {
+		k = strings.Replace(k, "[]", "", -1)
 		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
+			delimiter := ","
 			for i := 0; i < len(tb.form.FormList); i++ {
 				if k == tb.form.FormList[i].Field {
-					fun = tb.form.FormList[i].PostFun
+					fun = tb.form.FormList[i].PostFilterFn
+					delimiter = modules.SetDefault(tb.form.FormList[i].DefaultOptionDelimiter, ",")
 				}
 			}
-			if len(v) > 0 {
-				if fun != nil {
-					value[strings.Replace(k, "[]", "", -1)] = fun(types.RowModel{
-						ID:    id,
-						Value: strings.Join(modules.RemoveBlankFromArray(v), ","),
-					})
-				} else {
-					value[strings.Replace(k, "[]", "", -1)] = strings.Join(modules.RemoveBlankFromArray(v), ",")
-				}
+			vv := modules.RemoveBlankFromArray(v)
+			if fun != nil {
+				value[k] = fun(types.PostRowModel{
+					ID:    id,
+					Value: vv,
+				})
 			} else {
-				if fun != nil {
-					value[strings.Replace(k, "[]", "", -1)] = fun(types.RowModel{
-						ID:    id,
-						Value: v[0],
-					})
+				if len(vv) > 1 {
+					value[k] = strings.Join(vv, delimiter)
 				} else {
-					value[strings.Replace(k, "[]", "", -1)] = v[0]
+					value[k] = vv[0]
 				}
 			}
 		}

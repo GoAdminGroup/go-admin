@@ -58,8 +58,8 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 
 			u := &url.URL{
 				Scheme: "mssql",
-				User:   url.UserPassword(cfg.USER, cfg.PWD),
-				Host:   fmt.Sprintf("%s:%s", cfg.HOST, cfg.PORT),
+				User:   url.UserPassword(cfg.User, cfg.Pwd),
+				Host:   fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
 			}
 
 			SqlDB, err = sql.Open("mssql", u.String())
@@ -73,8 +73,8 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 				panic(err.Error())
 			} else {
 				// 设置数据库最大连接 减少timewait 正式环境调大
-				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON) // 连接池连接数 = mysql最大连接数/2
-				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON) // 最大打开连接 = mysql最大连接数
+				SqlDB.SetMaxIdleConns(cfg.MaxIdleCon) // 连接池连接数 = mysql最大连接数/2
+				SqlDB.SetMaxOpenConns(cfg.MaxOpenCon) // 最大打开连接 = mysql最大连接数
 
 				db.DbList[conn] = SqlDB
 			}

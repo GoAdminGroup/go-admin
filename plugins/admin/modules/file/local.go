@@ -11,7 +11,7 @@ type LocalFileUploader struct {
 
 func GetLocalFileUploader() *LocalFileUploader {
 	return &LocalFileUploader{
-		config.Get().STORE.PATH,
+		config.Get().Store.Path,
 	}
 }
 

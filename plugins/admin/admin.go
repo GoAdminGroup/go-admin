@@ -19,7 +19,7 @@ func (admin *Admin) InitPlugin() {
 	cfg := config.Get()
 
 	// Init database
-	for driver, databaseCfg := range cfg.DATABASE.GroupByDriver() {
+	for driver, databaseCfg := range cfg.Databases.GroupByDriver() {
 		db.GetConnectionByDriver(driver).InitDB(databaseCfg)
 	}
 

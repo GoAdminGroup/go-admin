@@ -12,7 +12,7 @@ import (
 func TestHandler(ctx *context.Context) {
 	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
-		components := template2.Get(config.THEME)
+		components := template2.Get(config.Theme)
 		colComp := components.Col()
 
 		/**************************

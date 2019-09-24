@@ -72,7 +72,7 @@ type EditFormParam struct {
 	Alert        template2.HTML
 }
 
-func (e EditFormParam) Value() form.FormValue {
+func (e EditFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 
@@ -172,7 +172,7 @@ func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string) {
 }
 
 func getAlert(msg string) template2.HTML {
-	return template.Get(config.Get().THEME).Alert().
+	return template.Get(config.Get().Theme).Alert().
 		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 		SetTheme("warning").
 		SetContent(template2.HTML(msg)).

@@ -168,10 +168,10 @@ func Execute(tmpl *template.Template,
 		},
 		Panel:       panel,
 		UrlPrefix:   config.PrefixFixSlash(),
-		Title:       config.TITLE,
-		Logo:        config.LOGO,
-		MiniLogo:    config.MINILOGO,
-		ColorScheme: config.COLORSCHEME,
+		Title:       config.Title,
+		Logo:        config.Logo,
+		MiniLogo:    config.MiniLogo,
+		ColorScheme: config.ColorScheme,
 	})
 	if err != nil {
 		fmt.Println("Execute err", err)

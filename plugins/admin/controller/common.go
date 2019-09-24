@@ -47,7 +47,7 @@ func aBox() types.BoxAttribute {
 }
 
 func aTemplate() template.Template {
-	return template.Get(config.THEME)
+	return template.Get(config.Theme)
 }
 
 func loginComponent() template.Component {

@@ -9,7 +9,7 @@ import (
 
 func GetContent() types.Panel {
 
-	components := template2.Get(config.Get().THEME)
+	components := template2.Get(config.Get().Theme)
 	colComp := components.Col()
 
 	/**************************

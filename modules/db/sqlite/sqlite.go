@@ -49,7 +49,7 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 		)
 
 		for conn, cfg := range cfgList {
-			sqlDB, err = sql.Open("sqlite3", cfg.FILE)
+			sqlDB, err = sql.Open("sqlite3", cfg.File)
 
 			if err != nil {
 				panic(err)

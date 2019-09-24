@@ -102,9 +102,7 @@ func Assets(ctx *context.Context) {
 	filepath := config.UrlRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
-	fmt.Println("filepath 1", filepath)
 	if err != nil {
-		fmt.Println("filepath", filepath, "err", err)
 		data, err = loginComponent().GetAsset(filepath)
 		if err != nil {
 			logger.Error("asset err", err)
@@ -148,7 +146,7 @@ func Export(ctx *context.Context) {
 		fileName  = ""
 	)
 
-	if len(param.Id) == 0 {
+	if len(param.Id) == 1 {
 		params := parameter.GetParam(ctx.Request.URL.Query())
 		panelInfo = panel.GetDataFromDatabase(ctx.Path(), params)
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), params.Page, params.PageSize)

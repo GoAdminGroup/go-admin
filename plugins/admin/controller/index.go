@@ -12,7 +12,7 @@ import (
 func ShowDashboard(ctx *context.Context) {
 	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
 
-		components := template2.Get(config.THEME)
+		components := template2.Get(config.Theme)
 		colComp := components.Col()
 
 		/**************************
@@ -275,7 +275,7 @@ func ShowDashboard(ctx *context.Context) {
 
 func ShowErrorPage(ctx *context.Context, errorMsg string) {
 	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
-		alert := template2.Get(config.THEME).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template2.Get(config.Theme).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template.HTML(errorMsg)).GetContent()
 
 		return types.Panel{

@@ -20,7 +20,10 @@ var (
 		"error":  logrus.New(),
 		"access": logrus.New(),
 	}
-	sqlLogOpen = false
+	sqlLogOpen   = false
+	accessLogOff = false
+	infoLogOff   = false
+	errorLogOff  = false
 )
 
 func init() {
@@ -29,16 +32,25 @@ func init() {
 	}
 }
 
-func SetInfoLogger(path string, debug bool) {
-	SetLogger("info", path, debug)
+func SetInfoLogger(path string, debug, isInfoLogOn bool) {
+	if path != "" {
+		SetLogger("info", path, debug)
+	}
+	infoLogOff = isInfoLogOn
 }
 
-func SetErrorLogger(path string, debug bool) {
-	SetLogger("error", path, debug)
+func SetErrorLogger(path string, debug, isErrorLogOn bool) {
+	if path != "" {
+		SetLogger("error", path, debug)
+	}
+	errorLogOff = isErrorLogOn
 }
 
-func SetAccessLogger(path string, debug bool) {
-	SetLogger("access", path, debug)
+func SetAccessLogger(path string, debug, isAccessLogOn bool) {
+	if path != "" {
+		SetLogger("access", path, debug)
+	}
+	accessLogOff = isAccessLogOn
 }
 
 func SetLogger(kind, path string, debug bool) {
@@ -62,11 +74,15 @@ func OpenSqlLog() {
 }
 
 func Error(err ...interface{}) {
-	manager["error"].Errorln(err...)
+	if !errorLogOff {
+		manager["error"].Errorln(err...)
+	}
 }
 
 func Info(info ...interface{}) {
-	manager["info"].Infoln(info...)
+	if !infoLogOff {
+		manager["info"].Infoln(info...)
+	}
 }
 
 func Warn(info ...interface{}) {
@@ -74,10 +90,12 @@ func Warn(info ...interface{}) {
 }
 
 func Access(ctx *context.Context) {
-	manager["access"].Println("["+constant.Title+"]",
-		ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-		ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-		ctx.Path())
+	if !accessLogOff {
+		manager["access"].Println("["+constant.Title+"]",
+			ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
+			ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+			ctx.Path())
+	}
 }
 
 func LogSql(info ...interface{}) {

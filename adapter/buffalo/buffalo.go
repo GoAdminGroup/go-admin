@@ -152,7 +152,7 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 	var panel types.Panel
 
 	if !auth.CheckPermissions(user, ctx.Request().URL.Path, ctx.Request().Method) {
-		alert := template.Get(globalConfig.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
 
 		panel = types.Panel{
@@ -164,7 +164,7 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Request().Header.Get(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.Request().Header.Get(constant.PjaxHeader) == "true")
 
 	ctx.Response().Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -177,10 +177,10 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 		},
 		Panel:       panel,
 		UrlPrefix:   globalConfig.Prefix(),
-		Title:       globalConfig.TITLE,
-		Logo:        globalConfig.LOGO,
-		MiniLogo:    globalConfig.MINILOGO,
-		ColorScheme: globalConfig.COLORSCHEME,
+		Title:       globalConfig.Title,
+		Logo:        globalConfig.Logo,
+		MiniLogo:    globalConfig.MiniLogo,
+		ColorScheme: globalConfig.ColorScheme,
 	})
 	if err != nil {
 		logger.Error("Buffalo Content", err)

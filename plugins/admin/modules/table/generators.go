@@ -12,7 +12,7 @@ import (
 )
 
 func GetManagerTable() (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	ManagerTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -211,7 +211,7 @@ func GetManagerTable() (ManagerTable Table) {
 }
 
 func GetPermissionTable() (PermissionTable Table) {
-	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	PermissionTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -255,7 +255,16 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: "varchar",
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
+				pathArr := strings.Split(model.Value, "\n")
+				res := ""
+				for i := 0; i < len(pathArr); i++ {
+					if i == len(pathArr)-1 {
+						res += string(template.Get(config.Get().Theme).Label().SetContent(pathArr[i]).GetContent())
+					} else {
+						res += string(template.Get(config.Get().Theme).Label().SetContent(pathArr[i]).GetContent()) + "<br><br>"
+					}
+				}
+				return res
 			},
 		},
 		{
@@ -332,6 +341,9 @@ func GetPermissionTable() (PermissionTable Table) {
 			FilterFn: func(model types.RowModel) interface{} {
 				return strings.Split(model.Value, ",")
 			},
+			PostFilterFn: func(model types.PostRowModel) interface{} {
+				return strings.Join(model.Value, ",")
+			},
 		}, {
 			Head:     language.Get("path"),
 			Field:    "http_path",
@@ -373,7 +385,7 @@ func GetPermissionTable() (PermissionTable Table) {
 }
 
 func GetRolesTable() (RolesTable Table) {
-	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	var permissions []map[string]string
 	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
 
@@ -517,7 +529,7 @@ func GetRolesTable() (RolesTable Table) {
 }
 
 func GetOpTable() (OpTable Table) {
-	OpTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	OpTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
@@ -689,7 +701,7 @@ func GetOpTable() (OpTable Table) {
 }
 
 func GetMenuTable() (MenuTable Table) {
-	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().DATABASE.GetDefault().DRIVER))
+	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	MenuTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",

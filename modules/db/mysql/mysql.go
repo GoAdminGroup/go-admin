@@ -44,8 +44,8 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 		)
 
 		for conn, cfg := range cfgs {
-			SqlDB, err = sql.Open("mysql", cfg.USER+
-				":"+cfg.PWD+"@tcp("+cfg.HOST+":"+cfg.PORT+")/"+cfg.NAME+"?charset=utf8mb4")
+			SqlDB, err = sql.Open("mysql", cfg.User+
+				":"+cfg.Pwd+"@tcp("+cfg.Host+":"+cfg.Port+")/"+cfg.Name+"?charset=utf8mb4")
 
 			if err != nil {
 				if SqlDB != nil {
@@ -54,8 +54,8 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 				panic(err.Error())
 			} else {
 				// Largest set up the database connection reduce time wait
-				SqlDB.SetMaxIdleConns(cfg.MAX_IDLE_CON)
-				SqlDB.SetMaxOpenConns(cfg.MAX_OPEN_CON)
+				SqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+				SqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
 				db.DbList[conn] = SqlDB
 			}

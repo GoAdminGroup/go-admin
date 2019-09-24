@@ -22,7 +22,7 @@ func InitRouter(prefix string) *context.App {
 	route.GET("/install", controller.ShowInstall)
 	route.POST("/install/database/check", controller.CheckDatabase)
 
-	for _, path := range template.Get(config.Get().THEME).GetAssetList() {
+	for _, path := range template.Get(config.Get().Theme).GetAssetList() {
 		route.GET("/assets"+path, controller.Assets)
 	}
 

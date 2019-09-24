@@ -6,6 +6,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"html/template"
@@ -17,19 +18,18 @@ import (
 // Database is a type of database connection config.
 // Because a little difference of different database driver.
 // The Config has multiple options but may be not used.
-// Such as the sqlite driver only use the FILE option which
+// Such as the sqlite driver only use the File option which
 // can be ignored when the driver is mysql.
 type Database struct {
-	HOST         string `json:"host"`
-	PORT         string `json:"port"`
-	USER         string `json:"user"`
-	PWD          string `json:"pwd"`
-	NAME         string `json:"name"`
-	MAX_IDLE_CON int    `json:"max_idle_con"`
-	MAX_OPEN_CON int    `json:"max_open_con"`
-	DRIVER       string `json:"driver"`
-
-	FILE string `json:"file"`
+	Host       string `json:"host"`
+	Port       string `json:"port"`
+	User       string `json:"user"`
+	Pwd        string `json:"pwd"`
+	Name       string `json:"name"`
+	MaxIdleCon int    `json:"max_idle_con"`
+	MaxOpenCon int    `json:"max_open_con"`
+	Driver     string `json:"driver"`
+	File       string `json:"file"`
 }
 
 type DatabaseList map[string]Database
@@ -45,77 +45,90 @@ func (d DatabaseList) Add(key string, db Database) {
 func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
 	drivers := make(map[string]DatabaseList, 0)
 	for key, item := range d {
-		if driverList, ok := drivers[item.DRIVER]; ok {
+		if driverList, ok := drivers[item.Driver]; ok {
 			driverList.Add(key, item)
 		} else {
-			drivers[item.DRIVER] = make(DatabaseList, 0)
-			drivers[item.DRIVER].Add(key, item)
+			drivers[item.Driver] = make(DatabaseList, 0)
+			drivers[item.Driver].Add(key, item)
 		}
 	}
 	return drivers
 }
 
+const (
+	EnvTest  = "test"
+	EnvLocal = "local"
+	EnvProd  = "prod"
+)
+
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {
-	PATH   string
-	PREFIX string
+	Path   string
+	Prefix string
 }
 
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
 type Config struct {
 	// An map supports multi database connection. The first
-	// element of DATABASE is the default connection. See the
+	// element of Databases is the default connection. See the
 	// file connection.go.
-	DATABASE DatabaseList `json:"database"`
+	Databases DatabaseList `json:"database"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
-	DOMAIN string `json:"domain"`
+	Domain string `json:"domain"`
 
 	// Used to set as the localize language which show in the
 	// interface.
-	LANGUAGE string `json:"language"`
+	Language string `json:"language"`
 
 	// The global url prefix.
-	PREFIX string `json:"prefix"`
+	UrlPrefix string `json:"prefix"`
 
 	// The theme name of template.
-	THEME string `json:"theme"`
+	Theme string `json:"theme"`
 
 	// The path where files will be stored into.
-	STORE Store `json:"store"`
+	Store Store `json:"store"`
 
 	// The title of web page.
-	TITLE string `json:"title"`
+	Title string `json:"title"`
 
 	// Logo is the top text in the sidebar.
-	LOGO template.HTML `json:"logo"`
+	Logo template.HTML `json:"logo"`
 
 	// Mini-logo is the top text in the sidebar when folding.
-	MINILOGO template.HTML `json:"minilogo"`
+	MiniLogo template.HTML `json:"mini_logo"`
 
 	// The url redirect to after login
-	INDEX string `json:"index"`
+	IndexUrl string `json:"index"`
 
-	// DEBUG mode
-	DEBUG bool `json:"debug"`
+	// Debug mode
+	Debug bool `json:"debug"`
+
+	// Env is the environment, which maybe local, test, prod.
+	Env string
 
 	// Info log path
-	INFOLOG string `json:"infolog"`
+	InfoLogPath string `json:"info_log"`
 
 	// Error log path
-	ERRORLOG string `json:"errorlog"`
+	ErrorLogPath string `json:"error_log"`
 
 	// Access log path
-	ACCESSLOG string `json:"accesslog"`
+	AccessLogPath string `json:"access_log"`
 
 	// Sql operator record log switch
-	SQLLOG bool `json:"sqllog"`
+	SqlLog bool `json:"sql_log"`
+
+	AccessLogOff bool
+	InfoLogOff   bool
+	ErrorLogOff  bool
 
 	// Color scheme
-	COLORSCHEME string `json:"colorscheme"`
+	ColorScheme string `json:"color_scheme"`
 
 	prefix string
 }
@@ -135,18 +148,30 @@ func (c Config) Url(suffix string) string {
 	return c.prefix + suffix
 }
 
+func (c Config) IsTestEnvironment() bool {
+	return c.Env == EnvTest
+}
+
+func (c Config) IsLocalEnvironment() bool {
+	return c.Env == EnvLocal
+}
+
+func (c Config) IsProductionEnvironment() bool {
+	return c.Env == EnvProd
+}
+
 func (c Config) UrlRemovePrefix(u string) string {
 	return strings.Replace(u, c.Prefix(), "", 1)
 }
 
 func (c Config) Index() string {
-	if c.INDEX == "" {
+	if c.IndexUrl == "" {
 		return "/"
 	}
-	if c.INDEX[0] != '/' {
-		return "/" + c.INDEX
+	if c.IndexUrl[0] != '/' {
+		return "/" + c.IndexUrl
 	}
-	return c.INDEX
+	return c.IndexUrl
 }
 
 func (c Config) Prefix() string {
@@ -154,13 +179,13 @@ func (c Config) Prefix() string {
 }
 
 func (c Config) PrefixFixSlash() string {
-	if c.PREFIX == "/" {
+	if c.UrlPrefix == "/" {
 		return ""
 	}
-	if c.PREFIX[0] != '/' {
-		return "/" + c.PREFIX
+	if c.UrlPrefix[0] != '/' {
+		return "/" + c.UrlPrefix
 	}
-	return c.PREFIX
+	return c.UrlPrefix
 }
 
 var (
@@ -190,44 +215,36 @@ func Set(cfg Config) {
 	mutex.Lock()
 	globalCfg = cfg
 
-	globalCfg.TITLE = setDefault(globalCfg.TITLE, "", constant.Title)
-	globalCfg.LOGO = template.HTML(setDefault(string(globalCfg.LOGO), "", "<b>Go</b>Admin"))
-	globalCfg.MINILOGO = template.HTML(setDefault(string(globalCfg.MINILOGO), "", "<b>G</b>A"))
-	globalCfg.THEME = setDefault(globalCfg.THEME, "", "adminlte")
-	globalCfg.INDEX = setDefault(globalCfg.INDEX, "", "/info/manager")
-	globalCfg.INDEX = setDefault(globalCfg.INDEX, "/", "")
-	globalCfg.COLORSCHEME = setDefault(globalCfg.COLORSCHEME, "", "skin-black")
+	globalCfg.Title = setDefault(globalCfg.Title, "", constant.Title)
+	globalCfg.Logo = template.HTML(setDefault(string(globalCfg.Logo), "", "<b>Go</b>Admin"))
+	globalCfg.MiniLogo = template.HTML(setDefault(string(globalCfg.MiniLogo), "", "<b>G</b>A"))
+	globalCfg.Theme = setDefault(globalCfg.Theme, "", "adminlte")
+	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "", "/info/manager")
+	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "/", "")
+	globalCfg.ColorScheme = setDefault(globalCfg.ColorScheme, "", "skin-black")
+	globalCfg.Env = setDefault(globalCfg.Env, "", EnvProd)
 
-	if globalCfg.PREFIX == "" {
+	if globalCfg.UrlPrefix == "" {
 		globalCfg.prefix = "/"
-	} else if globalCfg.PREFIX[0] != '/' {
-		globalCfg.prefix = "/" + globalCfg.PREFIX
+	} else if globalCfg.UrlPrefix[0] != '/' {
+		globalCfg.prefix = "/" + globalCfg.UrlPrefix
 	} else {
-		globalCfg.prefix = globalCfg.PREFIX
+		globalCfg.prefix = globalCfg.UrlPrefix
 	}
 
-	if cfg.INFOLOG != "" {
-		logger.SetInfoLogger(cfg.INFOLOG, cfg.DEBUG)
-	}
+	logger.SetInfoLogger(cfg.InfoLogPath, cfg.Debug, cfg.InfoLogOff)
+	logger.SetErrorLogger(cfg.ErrorLogPath, cfg.Debug, cfg.ErrorLogOff)
+	logger.SetAccessLogger(cfg.AccessLogPath, cfg.Debug, cfg.AccessLogOff)
 
-	if cfg.ERRORLOG != "" {
-		logger.SetErrorLogger(cfg.ERRORLOG, cfg.DEBUG)
-	}
-
-	if cfg.ACCESSLOG != "" {
-		logger.SetAccessLogger(cfg.ACCESSLOG, cfg.DEBUG)
-	}
-
-	if cfg.SQLLOG {
+	if cfg.SqlLog {
 		logger.OpenSqlLog()
 	}
 
-	if cfg.DEBUG {
+	if cfg.Debug {
 		declare.Do(func() {
-			logger.Info(`go-admin is now running.
-Running in "debug" mode. Switch to "release" mode in production.
-
-`)
+			fmt.Println(`GoAdmin is now running.
+Running in "debug" mode. Switch to "release" mode in production.`)
+			fmt.Println()
 		})
 	}
 

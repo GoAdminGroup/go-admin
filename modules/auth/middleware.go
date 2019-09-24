@@ -33,7 +33,7 @@ func DefaultInvoker() *Invoker {
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
 			page.SetPageContent(ctx, Auth(ctx), func() types.Panel {
-				alert := template2.Get(config.Get().THEME).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+				alert := template2.Get(config.Get().Theme).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 					SetTheme("warning").SetContent(template.HTML("permission denied")).GetContent()
 
 				return types.Panel{
@@ -118,10 +118,10 @@ func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 		return
 	}
 
-	if user.Avatar == "" || config.Get().STORE.PREFIX == "" {
+	if user.Avatar == "" || config.Get().Store.Prefix == "" {
 		user.Avatar = ""
 	} else {
-		user.Avatar = "/" + config.Get().STORE.PREFIX + "/" + user.Avatar
+		user.Avatar = "/" + config.Get().Store.Prefix + "/" + user.Avatar
 	}
 
 	user = user.WithRoles().WithPermissions().WithMenus()

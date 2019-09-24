@@ -1,12 +1,12 @@
 package form
 
-type FormValue map[string][]string
+type Values map[string][]string
 
-func (f FormValue) Get(key string) string {
+func (f Values) Get(key string) string {
 	return f[key][0]
 }
 
-func (f FormValue) IsEmpty(key ...string) bool {
+func (f Values) IsEmpty(key ...string) bool {
 	for _, k := range key {
 		if f.Get(k) == "" {
 			return true

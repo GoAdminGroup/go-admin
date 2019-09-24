@@ -61,7 +61,7 @@ type NewFormParam struct {
 	Alert        template.HTML
 }
 
-func (e NewFormParam) Value() form.FormValue {
+func (e NewFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 

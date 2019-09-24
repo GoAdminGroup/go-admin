@@ -83,32 +83,32 @@ func main() {
 
 	// global config
 	cfg := config.Config{
-		DATABASE: config.DatabaseList{
+		Databases: config.DatabaseList{
 		    "default": {
-			HOST:         "127.0.0.1",
-			PORT:         "3306",
-			USER:         "root",
-			PWD:          "root",
-			NAME:         "godmin",
-			MAX_IDLE_CON: 50,
-			MAX_OPEN_CON: 150,
-			DRIVER:       "mysql",
+			Host:         "127.0.0.1",
+			Port:         "3306",
+			User:         "root",
+			Pwd:          "root",
+			Name:         "godmin",
+			MaxIdleCon: 50,
+			MaxOpenCon: 150,
+			Driver:       "mysql",
 		    },
         	},
-		DOMAIN: "localhost", // 是cookie相关的，访问网站的域名
-		PREFIX: "admin",
+		Domain: "localhost", // 是cookie相关的，访问网站的域名
+		UrlPrefix: "admin",
 		// STORE 必须设置且保证有写权限，否则增加不了新的管理员用户
-		STORE: config.Store{
-		    PATH:   "./uploads",
-		    PREFIX: "uploads",
+		Store: config.Store{
+		    Path:   "./uploads",
+		    Prefix: "uploads",
 		},
-		LANGUAGE: language.CN, 
+		Language: language.CN, 
 		// 开发模式
-                DEBUG: true,
+                Debug: true,
                 // 日志文件位置，需为绝对路径
-                INFOLOG: "/var/logs/info.log",
-                ACCESSLOG: "/var/logs/access.log",
-                ERRORLOG: "/var/logs/error.log",
+                InfoLogPath: "/var/logs/info.log",
+                AccessLogPath: "/var/logs/access.log",
+                ErrorLogPath: "/var/logs/error.log",
 	}
 
     	// Generators： 详见 https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go

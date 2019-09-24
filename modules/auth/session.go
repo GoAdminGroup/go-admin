@@ -60,7 +60,7 @@ func (ses *Session) Set(key string, value interface{}) {
 	cookie := http.Cookie{
 		Name:     ses.Cookie,
 		Value:    ses.Sid,
-		Domain:   config.Get().DOMAIN,
+		Domain:   config.Get().Domain,
 		Expires:  time.Now().Add(ses.Expires),
 		HttpOnly: false,
 	}

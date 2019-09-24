@@ -63,16 +63,17 @@ type GetPanel func() Panel
 
 // Form is the form field with different options.
 type Form struct {
-	Field    string
-	TypeName string
-	Head     string
-	Default  string
-	Editable bool
-	FormType string
-	Value    string
-	Options  []map[string]string
-	FilterFn FieldFilterFn
-	PostFun  FieldFilterFn
+	Field                  string
+	TypeName               string
+	Head                   string
+	Default                string
+	Editable               bool
+	FormType               string
+	Value                  string
+	Options                []map[string]string
+	DefaultOptionDelimiter string
+	FilterFn               FieldFilterFn
+	PostFilterFn           PostFieldFilterFn
 }
 
 // RowModel contains ID and value of the single query result.
@@ -82,8 +83,28 @@ type RowModel struct {
 	Row   map[string]interface{}
 }
 
+// PostRowModel contains ID and value of the single query result.
+type PostRowModel struct {
+	ID    int64
+	Value RowModelValue
+	Row   map[string]interface{}
+}
+
+type RowModelValue []string
+
+func (r RowModelValue) Value() string {
+	return r.First()
+}
+
+func (r RowModelValue) First() string {
+	return r[0]
+}
+
 // FieldFilterFn is filter function of data.
 type FieldFilterFn func(value RowModel) interface{}
+
+// PostFieldFilterFn is filter function of data.
+type PostFieldFilterFn func(value PostRowModel) interface{}
 
 // Field is the table field.
 type Field struct {

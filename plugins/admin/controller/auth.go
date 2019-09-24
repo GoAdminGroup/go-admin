@@ -14,6 +14,11 @@ func Auth(ctx *context.Context) {
 	password := ctx.FormValue("password")
 	username := ctx.FormValue("username")
 
+	if password == "" || username == "" {
+		response.BadRequest(ctx, "fail")
+		return
+	}
+
 	if user, ok := auth.Check(password, username); ok {
 
 		auth.SetCookie(ctx, user)

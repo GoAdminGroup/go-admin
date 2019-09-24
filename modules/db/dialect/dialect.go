@@ -29,7 +29,7 @@ type Dialect interface {
 }
 
 func GetDialect() Dialect {
-	return GetDialectByDriver(config.Get().DATABASE.GetDefault().DRIVER)
+	return GetDialectByDriver(config.Get().Databases.GetDefault().Driver)
 }
 
 func GetDialectByDriver(driver string) Dialect {

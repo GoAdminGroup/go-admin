@@ -20,28 +20,28 @@ func main() {
 	eng := engine.Default()
 
 	cfg := config.Config{
-		DATABASE: config.DatabaseList{
+		Databases: config.DatabaseList{
 			"default": {
-				HOST:         "127.0.0.1",
-				PORT:         "3306",
-				USER:         "root",
-				PWD:          "root",
-				NAME:         "godmin",
-				MAX_IDLE_CON: 50,
-				MAX_OPEN_CON: 150,
-				DRIVER:       db.DriverMysql,
+				Host:       "127.0.0.1",
+				Port:       "3306",
+				User:       "root",
+				Pwd:        "root",
+				Name:       "godmin",
+				MaxIdleCon: 50,
+				MaxOpenCon: 150,
+				Driver:     db.DriverMysql,
 			},
 		},
-		DOMAIN: "localhost",
-		PREFIX: "admin",
-		STORE: config.Store{
-			PATH:   "./uploads",
-			PREFIX: "uploads",
+		Domain:    "localhost",
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
 		},
-		LANGUAGE:    language.EN,
-		INDEX:       "/",
-		DEBUG:       true,
-		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.COLORSCHEME_SKIN_BLACK,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)

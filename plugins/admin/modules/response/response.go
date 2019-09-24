@@ -38,13 +38,13 @@ func BadRequest(ctx *context.Context, msg string) {
 func Alert(ctx *context.Context, config config.Config, desc, title, msg string) {
 	user := auth.Auth(ctx)
 
-	alert := template.Get(config.THEME).Alert().
+	alert := template.Get(config.Theme).Alert().
 		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 		SetTheme("warning").
 		SetContent(template2.HTML(msg)).
 		GetContent()
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     alert,
 		Description: desc,

@@ -158,7 +158,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 	var panel types.Panel
 
 	if !auth.CheckPermissions(user, ctx.Request.URL.Path, ctx.Request.Method) {
-		alert := template.Get(config.THEME).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template.Get(config.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
 
 		panel = types.Panel{
@@ -170,7 +170,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		panel = c()
 	}
 
-	tmpl, tmplName := template.Get(config.THEME).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
 
 	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 
@@ -183,10 +183,10 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		},
 		Panel:       panel,
 		UrlPrefix:   config.Prefix(),
-		Title:       config.TITLE,
-		Logo:        config.LOGO,
-		MiniLogo:    config.MINILOGO,
-		ColorScheme: config.COLORSCHEME,
+		Title:       config.Title,
+		Logo:        config.Logo,
+		MiniLogo:    config.MiniLogo,
+		ColorScheme: config.ColorScheme,
 	})
 	if err != nil {
 		logger.Error("Chi Content", err)

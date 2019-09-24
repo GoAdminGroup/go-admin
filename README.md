@@ -92,32 +92,32 @@ func main() {
 
 	// global config
 	cfg := config.Config{
-		DATABASE: config.DatabaseList{
+		Databases: config.DatabaseList{
 			"default": {
-				HOST:         "127.0.0.1",
-				PORT:         "3306",
-				USER:         "root",
-				PWD:          "root",
-				NAME:         "godmin",
-				MAX_IDLE_CON: 50,
-				MAX_OPEN_CON: 150,
-				DRIVER:       "mysql",
+				Host:         "127.0.0.1",
+				Port:         "3306",
+				User:         "root",
+				Pwd:          "root",
+				Name:         "godmin",
+				MaxIdleCon: 50,
+				MaxOpenCon: 150,
+				Driver:       "mysql",
 			},
         	},
-		DOMAIN: "localhost", // the domain of cookie which be used when visiting your site.
-		PREFIX: "admin",
+		Domain: "localhost", // the domain of cookie which be used when visiting your site.
+		UrlPrefix: "admin",
 		// STORE is important. And the directory should has permission to write.
-		STORE: config.Store{
-		    PATH:   "./uploads", 
-		    PREFIX: "uploads",
+		Store: config.Store{
+		    Path:   "./uploads", 
+		    Prefix: "uploads",
 		},
-		LANGUAGE: language.EN,
+		Language: language.EN,
 		// debug mode
-		DEBUG: true,
+		Debug: true,
 		// log file absolute path
-		INFOLOG: "/var/logs/info.log",
-		ACCESSLOG: "/var/logs/access.log",
-		ERRORLOG: "/var/logs/error.log",
+		InfoLogPath: "/var/logs/info.log",
+		AccessLogPath: "/var/logs/access.log",
+		ErrorLogPath: "/var/logs/error.log",
 	}
 
     	// Generators: see https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/tables.go 

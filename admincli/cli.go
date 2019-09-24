@@ -125,15 +125,15 @@ func generating() {
 		}
 		cfg = map[string]config.Database{
 			"default": {
-				HOST:         host,
-				PORT:         port,
-				USER:         user,
-				PWD:          password,
-				NAME:         name,
-				MAX_IDLE_CON: 50,
-				MAX_OPEN_CON: 150,
-				DRIVER:       driver,
-				FILE:         "",
+				Host:       host,
+				Port:       port,
+				User:       user,
+				Pwd:        password,
+				Name:       name,
+				MaxIdleCon: 50,
+				MaxOpenCon: 150,
+				Driver:     driver,
+				File:       "",
 			},
 		}
 	} else {
@@ -147,8 +147,8 @@ func generating() {
 		}
 		cfg = map[string]config.Database{
 			"default": {
-				DRIVER: driver,
-				FILE:   file,
+				Driver: driver,
+				File:   file,
 			},
 		}
 	}
@@ -457,7 +457,7 @@ import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
 //
-// http://{{config.DOMAIN}}:{{PORT}}/{{config.PREFIX}}/info/{{key}}
+// http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
 //
 // example:
 //

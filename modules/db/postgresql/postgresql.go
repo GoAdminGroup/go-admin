@@ -64,7 +64,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 
 		for conn, cfg := range cfgList {
 			connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-				cfg.HOST, cfg.PORT, cfg.USER, cfg.PWD, cfg.NAME)
+				cfg.Host, cfg.Port, cfg.User, cfg.Pwd, cfg.Name)
 
 			sqlDB, err = sql.Open("postgres", connStr)
 			if err != nil {

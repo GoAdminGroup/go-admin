@@ -76,7 +76,7 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	case "TEXT":
 		var s sql.NullString
 		(*colVar)[i] = &s
-	case "NAME":
+	case "Name":
 		var s sql.NullString
 		(*colVar)[i] = &s
 	case "UUID":
@@ -248,7 +248,7 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 		} else {
 			(*result)[index] = nil
 		}
-	case "NAME":
+	case "Name":
 		temp := *(colVar.(*sql.NullString))
 		if temp.Valid {
 			(*result)[index] = temp.String

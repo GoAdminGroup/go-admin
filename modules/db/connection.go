@@ -45,7 +45,7 @@ func GetConnectionByDriver(driver string) Connection {
 }
 
 func GetConnection() Connection {
-	return GetConnectionByDriver(config.Get().DATABASE.GetDefault().DRIVER)
+	return GetConnectionByDriver(config.Get().Databases.GetDefault().Driver)
 }
 
 func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {

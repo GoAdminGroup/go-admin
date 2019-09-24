@@ -24,7 +24,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 
 	globalConfig := config.Get()
 
-	tmpl, tmplName := template.Get(globalConfig.THEME).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
@@ -37,10 +37,10 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 		},
 		Panel:       panel,
 		UrlPrefix:   globalConfig.Prefix(),
-		Title:       globalConfig.TITLE,
-		Logo:        globalConfig.LOGO,
-		MiniLogo:    globalConfig.MINILOGO,
-		ColorScheme: globalConfig.COLORSCHEME,
+		Title:       globalConfig.Title,
+		Logo:        globalConfig.Logo,
+		MiniLogo:    globalConfig.MiniLogo,
+		ColorScheme: globalConfig.ColorScheme,
 	})
 	if err != nil {
 		logger.Error("SetPageContent", err)

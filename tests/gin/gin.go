@@ -11,40 +11,45 @@ import (
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/gin-gonic/gin"
+	"io/ioutil"
 	"net/http"
 )
 
 func NewHandler() http.Handler {
 	r := gin.Default()
 
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
+
 	eng := engine.Default()
 
 	cfg := config.Config{
-		DATABASE: config.DatabaseList{
+		Databases: config.DatabaseList{
 			"default": {
-				HOST:         "127.0.0.1",
-				PORT:         "3306",
-				USER:         "root",
-				PWD:          "root",
-				NAME:         "godmin",
-				MAX_IDLE_CON: 50,
-				MAX_OPEN_CON: 150,
-				DRIVER:       db.DriverMysql,
+				Host:       "127.0.0.1",
+				Port:       "3306",
+				User:       "root",
+				Pwd:        "root",
+				Name:       "go-admin-test",
+				MaxIdleCon: 50,
+				MaxOpenCon: 150,
+				Driver:     db.DriverMysql,
 
-				//DRIVER: db.DriverSqlite,
-				//FILE:   "../datamodel/admin.db",
+				//Driver: db.DriverSqlite,
+				//File:   "../datamodel/admin.db",
 			},
 		},
-		DOMAIN: "localhost",
-		PREFIX: "admin",
-		STORE: config.Store{
-			PATH:   "./uploads",
-			PREFIX: "uploads",
+		Domain:    "localhost",
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
 		},
-		LANGUAGE:    language.CN,
-		INDEX:       "/",
-		DEBUG:       true,
-		COLORSCHEME: adminlte.COLORSCHEME_SKIN_BLACK,
+		Language:     language.EN,
+		IndexUrl:     "/",
+		Debug:        false,
+		ColorScheme:  adminlte.COLORSCHEME_SKIN_BLACK,
+		AccessLogOff: true,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)

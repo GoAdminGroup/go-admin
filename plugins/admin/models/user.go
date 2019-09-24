@@ -139,18 +139,28 @@ func (t UserModel) New(username, password, name, avatar string) UserModel {
 
 func (t UserModel) Update(username, password, name, avatar string) UserModel {
 
-	_, _ = db.Table(t.Table).
-		Where("id", "=", t.Id).
-		Update(dialect.H{
-			"username": username,
-			"password": password,
-			"name":     name,
-			"avatar":   avatar,
-		})
+	if avatar == "" {
+		_, _ = db.Table(t.Table).
+			Where("id", "=", t.Id).
+			Update(dialect.H{
+				"username": username,
+				"password": password,
+				"name":     name,
+			})
+	} else {
+		_, _ = db.Table(t.Table).
+			Where("id", "=", t.Id).
+			Update(dialect.H{
+				"username": username,
+				"password": password,
+				"name":     name,
+				"avatar":   avatar,
+			})
+		t.Avatar = avatar
+	}
 
 	t.UserName = username
 	t.Password = password
-	t.Avatar = avatar
 	t.Name = name
 
 	return t

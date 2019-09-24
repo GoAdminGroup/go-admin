@@ -6,7 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/form"
 )
 
-func newManager(dataList form.FormValue) {
+func newManager(dataList form.Values) {
 
 	if dataList.IsEmpty("name", "username", "password") {
 		panic("username and password can not be empty")
@@ -27,7 +27,7 @@ func newManager(dataList form.FormValue) {
 
 }
 
-func editManager(dataList form.FormValue) {
+func editManager(dataList form.Values) {
 
 	if dataList.IsEmpty("name", "username", "password") {
 		panic("username and password can not be empty")
@@ -50,7 +50,7 @@ func editManager(dataList form.FormValue) {
 
 }
 
-func newRole(dataList form.FormValue) {
+func newRole(dataList form.Values) {
 
 	role := models.Role().New(dataList.Get("name"), dataList.Get("slug"))
 
@@ -59,7 +59,7 @@ func newRole(dataList form.FormValue) {
 	}
 }
 
-func editRole(dataList form.FormValue) {
+func editRole(dataList form.Values) {
 
 	role := models.RoleWithId(dataList.Get("id"))
 
