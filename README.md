@@ -147,3 +147,7 @@ very welcome to pr
 ## Special thanks
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
+
+## Buy me a coffee
+
+<img src="http://www.go-admin.cn/assets/imgs/shoukuan.jpg" width="250" />

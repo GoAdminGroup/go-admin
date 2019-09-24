@@ -144,3 +144,7 @@ GO111MODULE=on go run main.go
 ## 十分感谢
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
+
+## 打赏
+
+<img src="http://www.go-admin.cn/assets/imgs/shoukuan.jpg" width="250" />
