@@ -45,13 +45,13 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 [一个超级简单的例子](https://github.com/GoAdminGroup/example)
 
-### 导入 sql
+### 第一步：导入 sql
 
 以mysql为例：
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
 
-### Gin 例子
+### 第二步：创建 main.go
 
 <details><summary>main.go</summary>
 <p>
@@ -125,7 +125,7 @@ func main() {
 
 其他例子: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 
-### 运行
+### 第三步：运行
 
 ```shell
 GO111MODULE=on go run main.go

@@ -54,11 +54,11 @@ see the [docs](http://www.go-admin.cn/en) for detail
 
 [a super simple example here](https://github.com/GoAdminGroup/example)
 
-### import sql
+### Step 1: import sql
 
 [https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
 
-### create main.go
+### Step 2: create main.go
 
 <details><summary>main.go</summary>
 <p>
@@ -133,7 +133,7 @@ func main() {
 
 More Examples: [https://github.com/chenhg5/go-admin/tree/master/examples](https://github.com/chenhg5/go-admin/tree/master/examples)
 
-### run
+### Step 3: run
 
 ```shell
 GO111MODULE=on go run main.go
