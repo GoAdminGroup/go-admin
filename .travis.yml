@@ -12,7 +12,6 @@ before_install:
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-  - mkdir -p /home/travis/gopath/src/github.com/chenhg5
   - git clone https://github.com/chenhg5/go-admin.git  /home/travis/gopath/src/github.com/chenhg5/go-admin
 
 script:
