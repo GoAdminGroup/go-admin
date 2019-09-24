@@ -14,7 +14,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
-	"strings"
 )
 
 // SetPageContent set and return the panel of page content.
@@ -31,7 +30,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Path(), globalConfig.Prefix(), "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Path()))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

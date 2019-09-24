@@ -191,7 +191,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(ctx.Request.URI().String(), globalConfig.Prefix(), "", 1))),
+		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URI().String()))),
 		System: types.SystemInfo{
 			Version: "0.0.1",
 		},

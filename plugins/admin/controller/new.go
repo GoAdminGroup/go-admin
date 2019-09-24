@@ -12,7 +12,6 @@ import (
 	"github.com/chenhg5/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
-	"strings"
 )
 
 func ShowNewForm(ctx *context.Context) {
@@ -23,6 +22,8 @@ func ShowNewForm(ctx *context.Context) {
 func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, url, infoUrl string) {
 
 	user := auth.Auth(ctx)
+
+	table.RefreshTableList()
 
 	formList := table.GetNewFormList(panel.GetForm().FormList)
 	for i := 0; i < len(formList); i++ {
@@ -93,7 +94,7 @@ func NewForm(ctx *context.Context) {
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(strings.Replace(param.PreviousPath, config.Prefix(), "", 1)))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(param.PreviousPath)))
 
 	ctx.Html(http.StatusOK, buffer.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
