@@ -161,7 +161,9 @@ func generating() {
 
 	tables := getTablesFromSqlResult(tableModels, driver, name)
 	if len(tables) == 0 {
-		exitWithError("no tables")
+		exitWithError(`no tables, you should build a table of your own business first.
+
+see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	}
 
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
