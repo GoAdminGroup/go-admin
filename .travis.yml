@@ -12,9 +12,9 @@ before_install:
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-  - go get -u -v github.com/chenhg5/go-admin
+  - mkdir -p /home/travis/gopath/src/github.com/chenhg5
+  - go get https://github.com/chenhg5/go-admin.git  /home/travis/gopath/src/github.com/chenhg5/go-admin
 
 script:
-  - ls /home/travis/gopath/pkg/mod
   - cd /home/travis/gopath/src/github.com/chenhg5/go-admin && make deps
   - make test
