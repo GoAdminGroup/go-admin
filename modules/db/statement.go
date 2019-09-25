@@ -106,8 +106,17 @@ func (sql *Sql) Select(fields ...string) *Sql {
 	return sql
 }
 
-func (sql *Sql) OrderBy(filed string, order string) *Sql {
-	sql.Order = "`" + filed + "` " + order
+func (sql *Sql) OrderBy(fields ...string) *Sql {
+	if len(fields) == 0 {
+		panic("wrong order field")
+	}
+	for i := 0; i < len(fields); i++ {
+		if i == len(fields)-2 {
+			sql.Order += " " + fields[i] + " " + fields[i+1]
+			return sql
+		}
+		sql.Order += " " + fields[i] + " and "
+	}
 	return sql
 }
 

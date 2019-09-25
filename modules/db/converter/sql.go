@@ -76,6 +76,9 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	case "TEXT":
 		var s sql.NullString
 		(*colVar)[i] = &s
+	case "JSON":
+		var s sql.NullString
+		(*colVar)[i] = &s
 	case "Name":
 		var s sql.NullString
 		(*colVar)[i] = &s
@@ -207,6 +210,13 @@ func SetResultValue(result *map[string]interface{}, index string, colVar interfa
 			(*result)[index] = nil
 		}
 	case "VARCHAR":
+		temp := *(colVar.(*sql.NullString))
+		if temp.Valid {
+			(*result)[index] = temp.String
+		} else {
+			(*result)[index] = nil
+		}
+	case "JSON":
 		temp := *(colVar.(*sql.NullString))
 		if temp.Valid {
 			(*result)[index] = temp.String
