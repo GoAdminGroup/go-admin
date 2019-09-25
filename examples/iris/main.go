@@ -30,7 +30,6 @@ func main() {
 				Driver:     db.DriverMysql,
 			},
 		},
-		Domain:    "localhost",
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 		Debug:     true,

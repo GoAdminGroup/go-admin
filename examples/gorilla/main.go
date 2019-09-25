@@ -37,7 +37,6 @@ func main() {
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Domain:    "localhost",
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 		Debug:     true,

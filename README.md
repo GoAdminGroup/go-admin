@@ -95,7 +95,6 @@ func main() {
 				Driver:       "mysql",
 			},
         	},
-		Domain: "localhost", // the domain of cookie which be used when visiting your site.
 		UrlPrefix: "admin",
 		// STORE is important. And the directory should has permission to write.
 		Store: config.Store{

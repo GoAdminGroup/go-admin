@@ -39,7 +39,6 @@ func main() {
 				//File:   "../datamodel/admin.db",
 			},
 		},
-		Domain:    "localhost",
 		UrlPrefix: "admin",
 		Store: config.Store{
 			Path:   "./uploads",

@@ -32,7 +32,6 @@ func main() {
 				Driver:     db.DriverMysql,
 			},
 		},
-		Domain:    "localhost",
 		UrlPrefix: "admin",
 		Store: config.Store{
 			Path:   "./uploads",

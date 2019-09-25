@@ -60,9 +60,13 @@ func (ses *Session) Set(key string, value interface{}) {
 	cookie := http.Cookie{
 		Name:     ses.Cookie,
 		Value:    ses.Sid,
-		Domain:   config.Get().Domain,
+		MaxAge:   7200,
 		Expires:  time.Now().Add(ses.Expires),
-		HttpOnly: false,
+		HttpOnly: true,
+		Path:     "/",
+	}
+	if config.Get().Domain != "" {
+		cookie.Domain = config.Get().Domain
 	}
 	ses.Context.SetCookie(&cookie)
 }

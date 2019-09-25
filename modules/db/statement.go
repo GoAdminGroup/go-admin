@@ -112,10 +112,10 @@ func (sql *Sql) OrderBy(fields ...string) *Sql {
 	}
 	for i := 0; i < len(fields); i++ {
 		if i == len(fields)-2 {
-			sql.Order += " " + fields[i] + " " + fields[i+1]
+			sql.Order += " `" + fields[i] + "` " + fields[i+1]
 			return sql
 		}
-		sql.Order += " " + fields[i] + " and "
+		sql.Order += " `" + fields[i] + "` and "
 	}
 	return sql
 }
