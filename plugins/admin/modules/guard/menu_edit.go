@@ -2,6 +2,7 @@ package guard
 
 import (
 	"github.com/chenhg5/go-admin/context"
+	"github.com/chenhg5/go-admin/modules/auth"
 	"html/template"
 	"strconv"
 )
@@ -28,7 +29,19 @@ func MenuEdit(ctx *context.Context) {
 		parentId = "0"
 	}
 
-	parentIdInt, _ := strconv.Atoi(parentId)
+	var (
+		parentIdInt, _ = strconv.Atoi(parentId)
+		token          = ctx.FormValue("_t")
+		alert          template.HTML
+	)
+
+	if !auth.TokenHelper.CheckToken(token) {
+		alert = getAlert("edit fail, wrong token")
+	}
+
+	if alert == "" {
+		alert = checkEmpty(ctx, "id", "title", "icon")
+	}
 
 	// TODO: check the user permission
 
@@ -40,7 +53,7 @@ func MenuEdit(ctx *context.Context) {
 		Icon:     ctx.FormValue("icon"),
 		Uri:      ctx.FormValue("uri"),
 		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    checkEmpty(ctx, "id", "title", "icon"),
+		Alert:    alert,
 	})
 	ctx.Next()
 	return

@@ -8,7 +8,7 @@ import (
 
 func GetUserTable() (userTable table.Table) {
 
-	userTable = table.NewDefaultTable(&table.Config{
+	userTable = table.NewDefaultTable(table.Config{
 		Driver:     "mysql",
 		CanAdd:     true,
 		Editable:   true,

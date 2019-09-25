@@ -74,9 +74,9 @@ func (token *CSRFToken) AddToken() string {
 	return tokenStr
 }
 
-func (token *CSRFToken) CheckToken(tocheck string) bool {
+func (token *CSRFToken) CheckToken(toCheckToken string) bool {
 	for i := 0; i < len(*token); i++ {
-		if (*token)[i] == tocheck {
+		if (*token)[i] == toCheckToken {
 			*token = append((*token)[0:i], (*token)[i:len(*token)]...)
 			return true
 		}

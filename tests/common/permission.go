@@ -60,7 +60,7 @@ func PermissionTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/info/permission/edit")).
-		WithQuery("id", "1").
+		WithQuery("id", "3").
 		WithCookie(sesId.Name, sesId.Value).
 		Expect().Status(200).Body()
 
@@ -114,5 +114,11 @@ func PermissionTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	// delete tester2
 
 	printlnWithColor("delete permission tester2", "green")
-	e.GET("/pong").Expect().Status(404)
+	e.POST(config.Get().Url("/delete/permission")).
+		WithCookie(sesId.Name, sesId.Value).
+		WithMultipart().
+		WithFormField("id", "4").
+		Expect().Status(200).JSON().Object().
+		ValueEqual("code", 200).
+		ValueEqual("msg", "ok")
 }

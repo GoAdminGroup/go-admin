@@ -16,6 +16,7 @@ func Test(e *httpexpect.Expect) {
 	PermissionTest(e, cookie)
 	RoleTest(e, cookie)
 	ManagerTest(e, cookie)
+	MenuTest(e, cookie)
 	OperationLogTest(e, cookie)
 	UserTest(e, cookie)
 }

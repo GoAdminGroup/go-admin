@@ -23,6 +23,17 @@ func ShowMenu(ctx *context.Context) {
 
 func ShowEditMenu(ctx *context.Context) {
 
+	if ctx.Query("id") == "" {
+		getMenuInfoPanel(ctx, template.Get(config.Theme).Alert().
+			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML("wrong id")).
+			GetContent())
+		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+		ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
+		return
+	}
+
 	formData, title, description := table.List["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
 
 	user := auth.Auth(ctx)
@@ -121,6 +132,8 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
+	table.RefreshTableList()
+
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")
 	orderUrl := config.Url("/menu/order")
@@ -139,6 +152,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
+		SetToken(auth.TokenHelper.AddToken()).
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
 		SetContent(table.GetNewFormList(table.List["menu"].GetForm().FormList)).

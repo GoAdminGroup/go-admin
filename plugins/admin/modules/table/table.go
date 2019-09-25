@@ -96,7 +96,7 @@ type Config struct {
 	Exportable bool
 }
 
-var DefaultConfig = &Config{
+var DefaultConfig = Config{
 	Driver:     "mysql",
 	CanAdd:     true,
 	Editable:   true,
@@ -105,8 +105,8 @@ var DefaultConfig = &Config{
 	Connection: "default",
 }
 
-func DefaultConfigWithDriver(driver string) *Config {
-	return &Config{
+func DefaultConfigWithDriver(driver string) Config {
+	return Config{
 		Driver:     driver,
 		Connection: "default",
 		CanAdd:     true,
@@ -116,8 +116,8 @@ func DefaultConfigWithDriver(driver string) *Config {
 	}
 }
 
-func DefaultConfigWithDriverAndConnection(driver, conn string) *Config {
-	return &Config{
+func DefaultConfigWithDriverAndConnection(driver, conn string) Config {
+	return Config{
 		Driver:     driver,
 		Connection: conn,
 		CanAdd:     true,
@@ -127,8 +127,8 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) *Config {
 	}
 }
 
-func NewDefaultTable(cfg *Config) Table {
-	tb := &DefaultTable{
+func NewDefaultTable(cfg Config) Table {
+	return DefaultTable{
 		info:             &types.InfoPanel{},
 		form:             &types.FormPanel{},
 		connectionDriver: cfg.Driver,
@@ -138,7 +138,6 @@ func NewDefaultTable(cfg *Config) Table {
 		deletable:        cfg.Deletable,
 		exportable:       cfg.Exportable,
 	}
-	return tb
 }
 
 func (tb DefaultTable) GetInfo() *types.InfoPanel {

@@ -529,7 +529,14 @@ func GetRolesTable() (RolesTable Table) {
 }
 
 func GetOpTable() (OpTable Table) {
-	OpTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	OpTable = NewDefaultTable(Config{
+		Driver:     config.Get().Databases.GetDefault().Driver,
+		CanAdd:     false,
+		Editable:   false,
+		Deletable:  false,
+		Exportable: false,
+		Connection: "default",
+	})
 	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
