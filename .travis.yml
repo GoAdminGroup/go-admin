@@ -17,6 +17,7 @@ before_script:
   - go get github.com/NebulousLabs/fastrand
   - go get github.com/gin-gonic/gin
   - go get golang.org/x/text/language
+  - git clone --depth=50 --branch=master https://github.com/moul/http2curl.git /home/travis/gopath/src/moul.io/http2curl
   - go get moul.io/http2curl
   - go get github.com/gavv/httpexpect
 
