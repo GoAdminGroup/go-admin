@@ -156,4 +156,6 @@ inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 
 ## Buy me a coffee
 
+leave your github account name and we will put it on the [donation list](DONATION.md).
+
 <img src="http://www.go-admin.cn/assets/imgs/shoukuan.jpg" width="650" />
