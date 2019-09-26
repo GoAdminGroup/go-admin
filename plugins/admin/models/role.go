@@ -67,6 +67,12 @@ func (t RoleModel) CheckPermission(permissionId string) bool {
 	return checkPermission != nil
 }
 
+func (t RoleModel) DeletePermissions() {
+	_ = db.Table("goadmin_role_permissions").
+		Where("role_id", "=", t.Id).
+		Delete()
+}
+
 func (t RoleModel) AddPermission(permissionId string) {
 	if permissionId != "" {
 		if !t.CheckPermission(permissionId) {

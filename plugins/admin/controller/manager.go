@@ -40,6 +40,7 @@ func editManager(dataList form.Values) {
 		dataList.Get("name"),
 		dataList.Get("avatar"))
 
+	user.DeleteRoles()
 	for i := 0; i < len(dataList["role_id[]"]); i++ {
 		user.AddRole(dataList["role_id[]"][i])
 	}
@@ -65,6 +66,7 @@ func editRole(dataList form.Values) {
 
 	role.Update(dataList.Get("name"), dataList.Get("slug"))
 
+	role.DeletePermissions()
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		role.AddPermission(dataList["permission_id[]"][i])
 	}

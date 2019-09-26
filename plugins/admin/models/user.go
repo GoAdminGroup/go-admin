@@ -186,6 +186,12 @@ func (t UserModel) CheckRole(roleId string) bool {
 	return checkRole != nil
 }
 
+func (t UserModel) DeleteRoles() {
+	_ = db.Table("goadmin_role_users").
+		Where("user_id", "=", t.Id).
+		Delete()
+}
+
 func (t UserModel) AddRole(roleId string) {
 	if roleId != "" {
 		if !t.CheckRole(roleId) {
