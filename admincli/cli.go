@@ -446,10 +446,13 @@ func Get` + strings.Title(table) + `Table() table.Table {
 func generateTables(outputPath string, tables []string, packageName string) {
 
 	tableStr := ""
+	commentStr := ""
 
 	for i := 0; i < len(tables); i++ {
 		tableStr += `
 	"` + tables[i] + `": Get` + strings.Title(tables[i]) + `Table,`
+		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
+`
 	}
 
 	content := `package ` + packageName + `
@@ -463,9 +466,7 @@ import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 //
 // example:
 //
-// "posts"   => http://localhost:9033/admin/info/posts
-// "authors" => http://localhost:9033/admin/info/authors
-//
+` + commentStr + `//
 var Generators = map[string]table.Generator{` + tableStr + `
 }
 `
