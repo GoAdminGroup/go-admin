@@ -7,19 +7,19 @@ import (
 
 type SmallBoxAttribute struct {
 	Name  string
-	Title string
-	Value string
+	Title template.HTML
+	Value template.HTML
 	Url   string
 	Color string
 	types.Attribute
 }
 
-func (compo *SmallBoxAttribute) SetTitle(value string) types.SmallBoxAttribute {
+func (compo *SmallBoxAttribute) SetTitle(value template.HTML) types.SmallBoxAttribute {
 	compo.Title = value
 	return compo
 }
 
-func (compo *SmallBoxAttribute) SetValue(value string) types.SmallBoxAttribute {
+func (compo *SmallBoxAttribute) SetValue(value template.HTML) types.SmallBoxAttribute {
 	compo.Value = value
 	return compo
 }

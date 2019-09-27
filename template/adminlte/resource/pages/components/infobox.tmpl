@@ -12,9 +12,9 @@
     {{end}}
     </span>
     <div class="info-box-content">
-        <span class="info-box-text">{{.Text}}</span>
-        <span class="info-box-number">{{.Number}}</span>
-        {{.Content}}
+        <span class="info-box-text">{{langHtml .Text}}</span>
+        <span class="info-box-number">{{langHtml .Number}}</span>
+        {{langHtml .Content}}
     </div>
 </div>
 {{end}}

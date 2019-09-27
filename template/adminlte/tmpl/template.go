@@ -56,13 +56,13 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/alert": `{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-    <h4>{{.Title}}</h4>
-    {{.Content}}
+    <h4>{{langHtml .Title}}</h4>
+    {{langHtml .Content}}
 </div>
 {{end}}`, "components/area-chart": `{{define "area-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
-    <strong>{{.Title}}</strong>
+    <strong>{{langHtml .Title}}</strong>
 </p>
 {{end}}
 <div class="chart">
@@ -111,7 +111,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/bar-chart": `{{define "bar-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
-    <strong>{{.Title}}</strong>
+    <strong>{{langHtml .Title}}</strong>
 </p>
 {{end}}
 <div class="chart">
@@ -154,14 +154,14 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/box": `{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
-        {{.Header}}
+        {{langHtml .Header}}
     </div>
     <div class="box-body">
-        {{.Body}}
+        {{langHtml .Body}}
     </div>
     {{if ne .Footer ""}}
     <div class="box-footer clearfix">
-        {{.Footer}}
+        {{langHtml .Footer}}
     </div>
     {{end}}
 </div>
@@ -172,12 +172,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     {{end}}
 </ul>
 {{end}}`, "components/col": `{{define "col"}}
-<div class="{{.Size}}">{{.Content}}</div>
+<div class="{{.Size}}">{{langHtml .Content}}</div>
 {{end}}`, "components/description": `{{define "description"}}
 <div class="description-block border-{{.Border}}">
-    <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{.Percent}}%</span>
-    <h5 class="description-header">{{.Number}}</h5>
-    <span class="description-text">{{.Title}}</span>
+    <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{langHtml .Percent}}%</span>
+    <h5 class="description-header">{{langHtml .Number}}</h5>
+    <span class="description-text">{{langHtml .Title}}</span>
 </div>
 {{end}}`, "components/form/color": `{{define "form_color"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
@@ -2670,7 +2670,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <script src="{{.Prefix}}/assets/wang-editor/wangEditor.min.js"></script>
     <div class="box box-info">
         <div class="box-header with-border">
-            <h3 class="box-title">{{lang .Title}}</h3>
+            <h3 class="box-title">{{langHtml .Title}}</h3>
             <div class="box-tools">
                 <!-- <div class="btn-group pull-right" style="margin-right: 10px">
                 <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
@@ -2774,17 +2774,17 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     {{end}}
     </span>
     <div class="info-box-content">
-        <span class="info-box-text">{{.Text}}</span>
-        <span class="info-box-number">{{.Number}}</span>
-        {{.Content}}
+        <span class="info-box-text">{{langHtml .Text}}</span>
+        <span class="info-box-number">{{langHtml .Number}}</span>
+        {{langHtml .Content}}
     </div>
 </div>
 {{end}}`, "components/label": `{{define "label"}}
-<span class="label label-{{.Color}}">{{.Content}}</span>
+<span class="label label-{{.Color}}">{{langHtml .Content}}</span>
 {{end}}`, "components/line-chart": `{{define "line-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
-    <strong>{{.Title}}</strong>
+    <strong>{{langHtml .Title}}</strong>
 </p>
 {{end}}
 <div class="chart">
@@ -2831,7 +2831,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     })
 </script>
 {{end}}`, "components/paginator": `{{define "paginator"}}
-Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
+{{lang "showing"}} <b>{{.CurPageStartIndex}}</b> {{lang "to"}} <b>{{.CurPageEndIndex}}</b> {{lang "of"}} <b>{{.Total}}</b> {{lang "entries"}}
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
     <li class="page-item {{.PreviousClass}}">
@@ -2868,7 +2868,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
 <label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
 
-    <small>Show</small>&nbsp;
+    <small>{{lang "show"}}</small>&nbsp;
     <select class="input-sm grid-per-pager" name="per-page">
         <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
             10
@@ -2886,12 +2886,12 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             100
         </option>
     </select>
-    <small>entries</small>
+    <small>{{lang "entries"}}</small>
 </label>
 {{end}}`, "components/pie-chart": `{{define "pie-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
-    <strong>{{.Title}}</strong>
+    <strong>{{langHtml .Title}}</strong>
 </p>
 {{end}}
 <div class="chart-responsive">
@@ -2931,18 +2931,18 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     <div class="modal-dialog modal-{{.Size}}" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="{{.ID}}Title">{{.Title}}</h5>
+                <h5 class="modal-title" id="{{.ID}}Title">{{langHtml .Title}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                {{.Body}}
+                {{langHtml .Body}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{lang "Close"}}</button>
                 {{if .Footer}}
-                <button type="button" class="btn btn-primary">{{.Footer}}</button>
+                <button type="button" class="btn btn-primary">{{langHtml .Footer}}</button>
                 {{end}}
             </div>
         </div>
@@ -2969,27 +2969,27 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
     {{end}}
 </ul>
 {{end}}`, "components/progress-group": `{{define "progress-group"}}
-<div class="progress-group">
-    <span class="progress-text">{{.Title}}</span>
-    <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
+    <div class="progress-group">
+        <span class="progress-text">{{langHtml .Title}}</span>
+        <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
 
-    <div class="progress sm">
-        <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+        <div class="progress sm">
+            <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+        </div>
     </div>
-</div>
 {{end}}`, "components/row": `{{define "row"}}
-<div class="row">{{.Content}}</div>
+<div class="row">{{langHtml .Content}}</div>
 {{end}}`, "components/smallbox": `{{define "smallbox"}}
 <div class="small-box bg-{{.Color}}">
     <div class="inner">
-        <h3>{{.Value}}</h3>
-        <p>{{.Title}}</p>
+        <h3>{{langHtml .Value}}</h3>
+        <p>{{langHtml .Title}}</p>
     </div>
     <div class="icon">
         <i class="fa fa-users"></i>
     </div>
     <a href="{{.Url}}" class="small-box-footer">
-        More&nbsp;
+        {{lang "more"}}
         <i class="fa fa-arrow-circle-right"></i>
     </a>
 </div>

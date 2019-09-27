@@ -5,14 +5,17 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/page"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	template2 "github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
 	"regexp"
+	"strings"
 )
 
 type Invoker struct {
@@ -33,7 +36,8 @@ func DefaultInvoker() *Invoker {
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
 			page.SetPageContent(ctx, Auth(ctx), func() types.Panel {
-				alert := template2.Get(config.Get().Theme).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+				alert := template2.Get(config.Get().Theme).Alert().
+					SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 					SetTheme("warning").SetContent(template.HTML("permission denied")).GetContent()
 
 				return types.Panel{
@@ -133,9 +137,7 @@ func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 
 func CheckPermissions(user models.UserModel, path string, method string) bool {
 
-	prefix := config.Get().Prefix()
-
-	if path == prefix+"/logout" {
+	if path == config.Get().Url("/logout") {
 		return true
 	}
 
@@ -149,13 +151,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 			for i := 0; i < len(v.HttpPath); i++ {
 
-				matchPath := ""
-
-				if v.HttpPath[i] == "/" {
-					matchPath = prefix
-				} else {
-					matchPath = prefix + v.HttpPath[i]
-				}
+				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
 
 				if matchPath == path {
 					return true
@@ -164,6 +160,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 				reg, err := regexp.Compile(matchPath)
 
 				if err != nil {
+					fmt.Println("err", err)
 					continue
 				}
 
@@ -179,7 +176,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 func InMethodArr(arr []string, str string) bool {
 	for i := 0; i < len(arr); i++ {
-		if arr[i] == str {
+		if strings.ToUpper(arr[i]) == strings.ToUpper(str) {
 			return true
 		}
 	}

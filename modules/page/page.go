@@ -10,6 +10,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
@@ -32,7 +33,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Path()))),
 		System: types.SystemInfo{
-			Version: "0.0.1",
+			Version: system.Version,
 		},
 		Panel:       panel,
 		UrlPrefix:   globalConfig.Prefix(),

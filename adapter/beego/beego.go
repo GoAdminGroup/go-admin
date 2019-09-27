@@ -15,6 +15,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
@@ -127,7 +128,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))),
 		System: types.SystemInfo{
-			Version: "0.0.1",
+			Version: system.Version,
 		},
 		Panel:       panel,
 		UrlPrefix:   globalConfig.Prefix(),

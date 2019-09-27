@@ -145,6 +145,9 @@ func (c Config) Url(suffix string) string {
 	if c.prefix == "/" {
 		return suffix
 	}
+	if suffix == "/" {
+		return c.prefix
+	}
 	return c.prefix + suffix
 }
 

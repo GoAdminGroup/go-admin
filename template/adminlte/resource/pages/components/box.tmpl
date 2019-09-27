@@ -1,14 +1,14 @@
 {{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
-        {{.Header}}
+        {{langHtml .Header}}
     </div>
     <div class="box-body">
-        {{.Body}}
+        {{langHtml .Body}}
     </div>
     {{if ne .Footer ""}}
     <div class="box-footer clearfix">
-        {{.Footer}}
+        {{langHtml .Footer}}
     </div>
     {{end}}
 </div>

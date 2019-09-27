@@ -1,5 +1,5 @@
 {{define "paginator"}}
-Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.Total}}</b> entries
+{{lang "showing"}} <b>{{.CurPageStartIndex}}</b> {{lang "to"}} <b>{{.CurPageEndIndex}}</b> {{lang "of"}} <b>{{.Total}}</b> {{lang "entries"}}
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
     <li class="page-item {{.PreviousClass}}">
@@ -36,7 +36,7 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
 
 <label class="control-label pull-right" style="margin-right: 10px; font-weight: 100;">
 
-    <small>Show</small>&nbsp;
+    <small>{{lang "show"}}</small>&nbsp;
     <select class="input-sm grid-per-pager" name="per-page">
         <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
             10
@@ -54,6 +54,6 @@ Showing <b>{{.CurPageStartIndex}}</b> to <b>{{.CurPageEndIndex}}</b> of <b>{{.To
             100
         </option>
     </select>
-    <small>entries</small>
+    <small>{{lang "entries"}}</small>
 </label>
 {{end}}

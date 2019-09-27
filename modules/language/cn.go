@@ -40,6 +40,9 @@ var cn = map[string]string{
 	"operation":         "操作",
 	"menu name":         "菜单名",
 
+	"permission denied": "没有权限",
+	"error":             "错误",
+
 	"are you sure to delete": "你确定要删除吗",
 	"yes":                    "确定",
 	"cancel":                 "取消",

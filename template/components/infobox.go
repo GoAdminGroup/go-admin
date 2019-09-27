@@ -9,9 +9,9 @@ import (
 type InfoBoxAttribute struct {
 	Name       string
 	Icon       template.HTML
-	Text       string
+	Text       template.HTML
 	Number     template.HTML
-	Content    string
+	Content    template.HTML
 	Color      template.HTML
 	IsHexColor bool
 	IsSvg      bool
@@ -26,7 +26,7 @@ func (compo *InfoBoxAttribute) SetIcon(value template.HTML) types.InfoBoxAttribu
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetText(value string) types.InfoBoxAttribute {
+func (compo *InfoBoxAttribute) SetText(value template.HTML) types.InfoBoxAttribute {
 	compo.Text = value
 	return compo
 }
@@ -36,7 +36,7 @@ func (compo *InfoBoxAttribute) SetNumber(value template.HTML) types.InfoBoxAttri
 	return compo
 }
 
-func (compo *InfoBoxAttribute) SetContent(value string) types.InfoBoxAttribute {
+func (compo *InfoBoxAttribute) SetContent(value template.HTML) types.InfoBoxAttribute {
 	compo.Content = value
 	return compo
 }

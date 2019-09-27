@@ -9,6 +9,7 @@ import (
 	"fmt"
 	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/chenhg5/go-admin/template/login"
@@ -164,7 +165,7 @@ func Execute(tmpl *template.Template,
 		User: user,
 		Menu: *globalMenu,
 		System: types.SystemInfo{
-			Version: "0.0.1",
+			Version: system.Version,
 		},
 		Panel:       panel,
 		UrlPrefix:   config.PrefixFixSlash(),

@@ -7,6 +7,7 @@ import (
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
+	template2 "html/template"
 	"strconv"
 	"strings"
 )
@@ -53,7 +54,7 @@ func GetManagerTable() (ManagerTable Table) {
 					Where("user_id", "=", model.ID).
 					First()
 
-				return string(template.Get("adminlte").Label().SetContent(labelModel["name"].(string)).GetContent())
+				return string(template.Get("adminlte").Label().SetContent(template2.HTML(labelModel["name"].(string))).GetContent())
 			},
 		},
 		{
@@ -259,9 +260,9 @@ func GetPermissionTable() (PermissionTable Table) {
 				res := ""
 				for i := 0; i < len(pathArr); i++ {
 					if i == len(pathArr)-1 {
-						res += string(template.Get(config.Get().Theme).Label().SetContent(pathArr[i]).GetContent())
+						res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent())
 					} else {
-						res += string(template.Get(config.Get().Theme).Label().SetContent(pathArr[i]).GetContent()) + "<br><br>"
+						res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent()) + "<br><br>"
 					}
 				}
 				return res

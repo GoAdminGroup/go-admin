@@ -90,7 +90,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
-			SetTitle(strings.Title(kind)).
+			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/"+kind+"/"+prefix)).
 			SetToken(auth.TokenHelper.AddToken()).

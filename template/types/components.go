@@ -17,7 +17,7 @@ type FormAttribute interface {
 	SetUrl(value string) FormAttribute
 	SetInfoUrl(value string) FormAttribute
 	SetMethod(value string) FormAttribute
-	SetTitle(value string) FormAttribute
+	SetTitle(value template.HTML) FormAttribute
 	SetToken(value string) FormAttribute
 	GetContent() template.HTML
 }
@@ -46,14 +46,14 @@ type ImgAttribute interface {
 }
 
 type SmallBoxAttribute interface {
-	SetTitle(value string) SmallBoxAttribute
-	SetValue(value string) SmallBoxAttribute
+	SetTitle(value template.HTML) SmallBoxAttribute
+	SetValue(value template.HTML) SmallBoxAttribute
 	SetUrl(value string) SmallBoxAttribute
 	GetContent() template.HTML
 }
 
 type LabelAttribute interface {
-	SetContent(value string) LabelAttribute
+	SetContent(value template.HTML) LabelAttribute
 	GetContent() template.HTML
 }
 
@@ -108,9 +108,9 @@ type PaginatorAttribute interface {
 
 type InfoBoxAttribute interface {
 	SetIcon(value template.HTML) InfoBoxAttribute
-	SetText(value string) InfoBoxAttribute
+	SetText(value template.HTML) InfoBoxAttribute
 	SetNumber(value template.HTML) InfoBoxAttribute
-	SetContent(value string) InfoBoxAttribute
+	SetContent(value template.HTML) InfoBoxAttribute
 	SetColor(value template.HTML) InfoBoxAttribute
 	GetContent() template.HTML
 }
@@ -156,10 +156,10 @@ type ChartLegendAttribute interface {
 }
 
 type DescriptionAttribute interface {
-	SetNumber(value string) DescriptionAttribute
+	SetNumber(value template.HTML) DescriptionAttribute
 	SetTitle(value template.HTML) DescriptionAttribute
 	SetArrow(value string) DescriptionAttribute
-	SetPercent(value string) DescriptionAttribute
+	SetPercent(value template.HTML) DescriptionAttribute
 	SetBorder(value string) DescriptionAttribute
 	SetColor(value template.HTML) DescriptionAttribute
 	GetContent() template.HTML
@@ -193,7 +193,7 @@ type AlertAttribute interface {
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
-	SetFooter(value string) PopupAttribute
+	SetFooter(value template.HTML) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute
 	GetContent() template.HTML

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"github.com/chenhg5/go-admin/modules/logger"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	template2 "html/template"
 	"net/http"
@@ -151,7 +152,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		User: user,
 		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))),
 		System: types.SystemInfo{
-			Version: "0.0.1",
+			Version: system.Version,
 		},
 		Panel:       panel,
 		UrlPrefix:   globalConfig.Prefix(),

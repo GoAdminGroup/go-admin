@@ -8,15 +8,15 @@ import (
 type DescriptionAttribute struct {
 	Name    string
 	Border  string
-	Number  string
+	Number  template.HTML
 	Title   template.HTML
 	Arrow   string
 	Color   template.HTML
-	Percent string
+	Percent template.HTML
 	types.Attribute
 }
 
-func (compo *DescriptionAttribute) SetNumber(value string) types.DescriptionAttribute {
+func (compo *DescriptionAttribute) SetNumber(value template.HTML) types.DescriptionAttribute {
 	compo.Number = value
 	return compo
 }
@@ -31,7 +31,7 @@ func (compo *DescriptionAttribute) SetArrow(value string) types.DescriptionAttri
 	return compo
 }
 
-func (compo *DescriptionAttribute) SetPercent(value string) types.DescriptionAttribute {
+func (compo *DescriptionAttribute) SetPercent(value template.HTML) types.DescriptionAttribute {
 	compo.Percent = value
 	return compo
 }

@@ -14,7 +14,7 @@ type FormAttribute struct {
 	Method    string
 	InfoUrl   string
 	CSRFToken string
-	Title     string
+	Title     template.HTML
 	Prefix    string
 	types.Attribute
 }
@@ -54,7 +54,7 @@ func (compo *FormAttribute) SetMethod(value string) types.FormAttribute {
 	return compo
 }
 
-func (compo *FormAttribute) SetTitle(value string) types.FormAttribute {
+func (compo *FormAttribute) SetTitle(value template.HTML) types.FormAttribute {
 	compo.Title = value
 	return compo
 }

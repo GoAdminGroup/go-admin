@@ -9,7 +9,7 @@ type PopupAttribute struct {
 	Name   string
 	ID     string
 	Body   template.HTML
-	Footer string
+	Footer template.HTML
 	Title  template.HTML
 	Size   string
 	types.Attribute
@@ -25,7 +25,7 @@ func (compo *PopupAttribute) SetTitle(value template.HTML) types.PopupAttribute 
 	return compo
 }
 
-func (compo *PopupAttribute) SetFooter(value string) types.PopupAttribute {
+func (compo *PopupAttribute) SetFooter(value template.HTML) types.PopupAttribute {
 	compo.Footer = value
 	return compo
 }

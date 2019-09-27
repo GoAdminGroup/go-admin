@@ -34,16 +34,20 @@ func GetWithScope(value string, scopes ...string) string {
 	}
 }
 
-func GetFromHtml(value template.HTML) template.HTML {
+func GetFromHtml(value template.HTML, scopes ...string) template.HTML {
 	if config.Get().Language == "" {
 		return value
 	}
 
-	if locale, ok := Lang[config.Get().Language][strings.ToLower(string(value))]; ok {
+	if locale, ok := Lang[config.Get().Language][joinScopes(scopes)+strings.ToLower(string(value))]; ok {
 		return template.HTML(locale)
 	} else {
 		return value
 	}
+}
+
+func WithScopes(value string, scopes ...string) string {
+	return joinScopes(scopes) + strings.ToLower(value)
 }
 
 type LangMap map[string]map[string]string
