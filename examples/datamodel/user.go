@@ -10,12 +10,12 @@ import (
 func GetUserTable() (userTable table.Table) {
 
 	userTable = table.NewDefaultTable(table.Config{
-		Driver:     "mysql",
+		Driver:     db.DriverMysql,
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
 		Exportable: true,
-		Connection: "default",
+		Connection: table.DefaultConnectionName,
 		PrimaryKey: table.PrimaryKey{
 			Type: db.Int,
 			Name: table.DefaultPrimaryKeyName,

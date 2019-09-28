@@ -70,7 +70,10 @@ type PrimaryKey struct {
 	Name string
 }
 
-const DefaultPrimaryKeyName = "id"
+const (
+	DefaultPrimaryKeyName = "id"
+	DefaultConnectionName = "default"
+)
 
 type DefaultTable struct {
 	info             *types.InfoPanel
@@ -107,12 +110,12 @@ type Config struct {
 }
 
 var DefaultConfig = Config{
-	Driver:     "mysql",
+	Driver:     db.DriverMysql,
 	CanAdd:     true,
 	Editable:   true,
 	Deletable:  true,
 	Exportable: false,
-	Connection: "default",
+	Connection: DefaultConnectionName,
 	PrimaryKey: PrimaryKey{
 		Type: db.Int,
 		Name: DefaultPrimaryKeyName,
@@ -124,10 +127,35 @@ func (config Config) SetPrimaryKeyType(typ string) Config {
 	return config
 }
 
+func (config Config) SetCanAdd(canAdd bool) Config {
+	config.CanAdd = canAdd
+	return config
+}
+
+func (config Config) SetEditable(editable bool) Config {
+	config.Editable = editable
+	return config
+}
+
+func (config Config) SetDeletable(deletable bool) Config {
+	config.Deletable = deletable
+	return config
+}
+
+func (config Config) SetExportable(exportable bool) Config {
+	config.Exportable = exportable
+	return config
+}
+
+func (config Config) SetConnection(connection string) Config {
+	config.Connection = connection
+	return config
+}
+
 func DefaultConfigWithDriver(driver string) Config {
 	return Config{
 		Driver:     driver,
-		Connection: "default",
+		Connection: DefaultConnectionName,
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
