@@ -44,7 +44,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "Gender",
 			Field:    "gender",
-			TypeName: db.TinyInt,
+			TypeName: db.Tinyint,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				if model.Value == "1" {
@@ -114,7 +114,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Gender",
 			Field:    "gender",
-			TypeName: db.TinyInt,
+			TypeName: db.Tinyint,
 			Default:  "",
 			Editable: true,
 			Options: []map[string]string{

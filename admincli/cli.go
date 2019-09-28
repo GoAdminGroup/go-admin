@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
-	_ "github.com/chenhg5/go-admin/modules/db/mysql"
-	_ "github.com/chenhg5/go-admin/modules/db/postgresql"
 	"github.com/go-bindata/go-bindata"
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"
@@ -422,7 +420,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 		content += `{
 			Head:     "` + strings.Title(model[fieldField].(string)) + `",
 			Field:    "` + model[fieldField].(string) + `",
-			TypeName: db."` + GetType(model[typeField].(string)) + `",
+			TypeName: db.` + GetType(model[typeField].(string)) + `,
 			Default:  "",
 			Editable: true,
 			FormType: ` + formType + `,

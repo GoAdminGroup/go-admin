@@ -13,18 +13,18 @@ const (
 	// =================================
 
 	Int       DatabaseType = "INT"
-	TinyInt   DatabaseType = "TINYINT"
-	MediumInt DatabaseType = "MEDIUMINT"
-	SmallInt  DatabaseType = "SMALLINT"
+	Tinyint   DatabaseType = "TINYINT"
+	Mediumint DatabaseType = "MEDIUMINT"
+	Smallint  DatabaseType = "SMALLINT"
 	Bigint    DatabaseType = "BIGINT"
 	Bit       DatabaseType = "BIT"
 	Int4      DatabaseType = "INT4"
 
 	Integer     DatabaseType = "INTEGER"
 	Numeric     DatabaseType = "NUMERIC"
-	SmallSerial DatabaseType = "SMALLSERIAL"
+	Smallserial DatabaseType = "SMALLSERIAL"
 	Serial      DatabaseType = "SERIAL"
-	BigSerial   DatabaseType = "BIGSERIAL"
+	Bigserial   DatabaseType = "BIGSERIAL"
 	Money       DatabaseType = "MONEY"
 
 	// =================================
@@ -36,7 +36,7 @@ const (
 	Double  DatabaseType = "DOUBLE"
 	Decimal DatabaseType = "DECIMAL"
 
-	DoublePrecision DatabaseType = "DOUBLEPRECISION"
+	Doubleprecision DatabaseType = "DOUBLEPRECISION"
 
 	// =================================
 	// string
@@ -49,18 +49,18 @@ const (
 	Timestamp DatabaseType = "TIMESTAMP"
 
 	Text       DatabaseType = "TEXT"
-	LongText   DatabaseType = "LONGTEXT"
-	MediumText DatabaseType = "MEDIUMTEXT"
-	TinyText   DatabaseType = "TINYTEXT"
+	Longtext   DatabaseType = "LONGTEXT"
+	Mediumtext DatabaseType = "MEDIUMTEXT"
+	Tinytext   DatabaseType = "TINYTEXT"
 
 	Varchar DatabaseType = "VARCHAR"
 	Char    DatabaseType = "CHAR"
 	Json    DatabaseType = "JSON"
 
 	Blob       DatabaseType = "BLOB"
-	TinyBlob   DatabaseType = "TINYBLOB"
-	MediumBlob DatabaseType = "MEDIUMBLOB"
-	LongBlob   DatabaseType = "LONGBLOB"
+	Tinyblob   DatabaseType = "TINYBLOB"
+	Mediumblob DatabaseType = "MEDIUMBLOB"
+	Longblob   DatabaseType = "LONGBLOB"
 
 	Interval DatabaseType = "INTERVAL"
 	Boolean  DatabaseType = "BOOLEAN"
@@ -79,9 +79,9 @@ const (
 	Macaddr DatabaseType = "MACADDR"
 
 	Character        DatabaseType = "CHARACTER"
-	VaryingCharacter DatabaseType = "VARYINGCHARACTER"
+	Varyingcharacter DatabaseType = "VARYINGCHARACTER"
 	Nchar            DatabaseType = "NCHAR"
-	NativeCharacter  DatabaseType = "NATIVECHARACTER"
+	Nativecharacter  DatabaseType = "NATIVECHARACTER"
 	Nvarchar         DatabaseType = "NVARCHAR"
 	Clob             DatabaseType = "CLOB"
 
@@ -122,23 +122,23 @@ func GetDTAndCheck(s string) DatabaseType {
 
 var (
 	StringTypeList = []DatabaseType{Date, Time, Year, Datetime, Timestamptz, Timestamp,
-		Varchar, Char, MediumText, LongText, TinyText,
-		Text, Json, Blob, TinyBlob, MediumBlob, LongBlob,
+		Varchar, Char, Mediumtext, Longtext, Tinytext,
+		Text, Json, Blob, Tinyblob, Mediumblob, Longblob,
 		Interval, Point,
-		Line, Lseg, Box, Path, Polygon, Circle, Cidr, Inet, Macaddr, Character, VaryingCharacter,
-		Nchar, NativeCharacter, Nvarchar, Clob, Binary, VarBinary, Enum, Set, Geometry, Multilinestring,
+		Line, Lseg, Box, Path, Polygon, Circle, Cidr, Inet, Macaddr, Character, Varyingcharacter,
+		Nchar, Nativecharacter, Nvarchar, Clob, Binary, VarBinary, Enum, Set, Geometry, Multilinestring,
 		Multipolygon, Linestring, Multipoint, Geometrycollection, Name, Uuid, Timestamptz,
 		Name, Uuid, Inet}
 	BoolTypeList = []DatabaseType{Bool, Boolean}
 	IntTypeList  = []DatabaseType{Int4,
 		Int,
-		TinyInt,
-		MediumInt,
-		SmallInt,
-		Numeric, SmallSerial, Serial, BigSerial, Money,
+		Tinyint,
+		Mediumint,
+		Smallint,
+		Numeric, Smallserial, Serial, Bigserial, Money,
 		Integer,
 		Bigint}
-	FloatTypeList = []DatabaseType{Float, Double, Real, DoublePrecision}
+	FloatTypeList = []DatabaseType{Float, Double, Real, Doubleprecision}
 	UintTypeList  = []DatabaseType{Decimal, Bit}
 )
 
