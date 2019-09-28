@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/template/types/form"
 	"github.com/go-bindata/go-bindata"
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"
@@ -370,12 +371,9 @@ func getContentFromDir(content, dirPath, rootPath string) string {
 	return content
 }
 
-// TODO: scan which driver used
 func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, driver, outputPath string) {
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
-
-	// TODO: scan the primaryKey
 
 	content := `package ` + packageName + `
 
@@ -414,15 +412,13 @@ func Get` + strings.Title(table) + `Table() table.Table {
 
 	for _, model := range columnsModel {
 
-		formType := "form.Text"
-		if model[fieldField].(string) == "id" {
-			formType = "form.Default"
-		}
+		typeName := GetType(model[typeField].(string))
+		formType := form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string))
 
 		content += `{
 			Head:     "` + strings.Title(model[fieldField].(string)) + `",
 			Field:    "` + model[fieldField].(string) + `",
-			TypeName: db.` + GetType(model[typeField].(string)) + `,
+			TypeName: db.` + typeName + `,
 			Default:  "",
 			Editable: true,
 			FormType: ` + formType + `,
