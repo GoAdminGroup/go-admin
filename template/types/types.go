@@ -79,7 +79,7 @@ type Form struct {
 
 // RowModel contains ID and value of the single query result.
 type RowModel struct {
-	ID    int64
+	ID    string
 	Value string
 	Row   map[string]interface{}
 }
