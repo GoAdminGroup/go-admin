@@ -410,6 +410,8 @@ func Get` + strings.Title(table) + `Table() table.Table {
 
 	` + table + `Table.GetForm().FormList = []types.Form{`
 
+	// TODO: identify the form type from filed type
+
 	for _, model := range columnsModel {
 
 		formType := "form.Text"
