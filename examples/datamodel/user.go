@@ -16,6 +16,10 @@ func GetUserTable() (userTable table.Table) {
 		Deletable:  true,
 		Exportable: true,
 		Connection: "default",
+		PrimaryKey: table.PrimaryKey{
+			Type: db.Int,
+			Name: table.DefaultPrimaryKeyName,
+		},
 	})
 
 	userTable.GetInfo().FieldList = []types.Field{
