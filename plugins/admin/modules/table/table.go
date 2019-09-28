@@ -55,6 +55,7 @@ type Table interface {
 	GetEditable() bool
 	GetDeletable() bool
 	GetExportable() bool
+	GetPrimaryKey() PrimaryKey
 	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
@@ -63,6 +64,13 @@ type Table interface {
 	InsertDataFromDatabase(dataList form.Values)
 	DeleteDataFromDatabase(id string)
 }
+
+type PrimaryKey struct {
+	Type db.DatabaseType
+	Name string
+}
+
+const DefaultPrimaryKeyName = "id"
 
 type DefaultTable struct {
 	info             *types.InfoPanel
@@ -74,6 +82,7 @@ type DefaultTable struct {
 	deletable        bool
 	exportable       bool
 	prefix           string
+	primaryKey       PrimaryKey
 }
 
 type PanelInfo struct {
@@ -94,6 +103,7 @@ type Config struct {
 	Editable   bool
 	Deletable  bool
 	Exportable bool
+	PrimaryKey PrimaryKey
 }
 
 var DefaultConfig = Config{
@@ -103,6 +113,15 @@ var DefaultConfig = Config{
 	Deletable:  true,
 	Exportable: false,
 	Connection: "default",
+	PrimaryKey: PrimaryKey{
+		Type: db.Int,
+		Name: DefaultPrimaryKeyName,
+	},
+}
+
+func (config Config) SetPrimaryKeyType(typ string) Config {
+	config.PrimaryKey.Type = db.GetTypeFromString(typ)
+	return config
 }
 
 func DefaultConfigWithDriver(driver string) Config {
@@ -137,6 +156,7 @@ func NewDefaultTable(cfg Config) Table {
 		editable:         cfg.Editable,
 		deletable:        cfg.Deletable,
 		exportable:       cfg.Exportable,
+		primaryKey:       cfg.PrimaryKey,
 	}
 }
 
@@ -150,6 +170,10 @@ func (tb DefaultTable) GetForm() *types.FormPanel {
 
 func (tb DefaultTable) GetCanAdd() bool {
 	return tb.canAdd
+}
+
+func (tb DefaultTable) GetPrimaryKey() PrimaryKey {
+	return tb.primaryKey
 }
 
 func (tb DefaultTable) GetEditable() bool {
