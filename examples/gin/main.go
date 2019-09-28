@@ -48,7 +48,6 @@ func main() {
 		IndexUrl:    "/",
 		Debug:       true,
 		ColorScheme: adminlte.COLORSCHEME_SKIN_BLACK,
-		SqlLog:      true,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
