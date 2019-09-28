@@ -48,44 +48,31 @@ func ShowInfo(ctx *context.Context) {
 	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
 
 	var box template2.HTML
-	if prefix != "op" {
-		dataTable := aDataTable().
-			SetInfoList(panelInfo.InfoList).
-			SetFilters(panel.GetFiltersMap()).
-			SetInfoUrl(config.Url("/info/" + prefix)).
-			SetThead(panelInfo.Thead).
-			SetExportUrl(exportUrl)
 
-		if panelInfo.CanAdd {
-			dataTable.SetNewUrl(newUrl)
-		}
-		if panelInfo.Editable {
-			dataTable.SetEditUrl(editUrl)
-		}
-		if panelInfo.Deletable {
-			dataTable.SetDeleteUrl(deleteUrl)
-		}
+	dataTable := aDataTable().
+		SetInfoList(panelInfo.InfoList).
+		SetFilters(panel.GetFiltersMap()).
+		SetInfoUrl(config.Url("/info/" + prefix)).
+		SetPrimaryKey(panel.GetPrimaryKey().Name).
+		SetThead(panelInfo.Thead).
+		SetExportUrl(exportUrl)
 
-		box = aBox().
-			SetBody(dataTable.GetContent()).
-			SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
-			WithHeadBorder(false).
-			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
-			GetContent()
-	} else {
-		dataTable := aTemplate().
-			Table().
-			SetType("table").
-			SetThead(panelInfo.Thead).
-			SetInfoList(panelInfo.InfoList)
-
-		box = aBox().
-			SetBody(dataTable.GetContent()).
-			WithHeadBorder(false).
-			SetHeader(panel.GetInfo().HeaderHtml).
-			SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
-			GetContent()
+	if panelInfo.CanAdd {
+		dataTable.SetNewUrl(newUrl)
 	}
+	if panelInfo.Editable {
+		dataTable.SetEditUrl(editUrl)
+	}
+	if panelInfo.Deletable {
+		dataTable.SetDeleteUrl(deleteUrl)
+	}
+
+	box = aBox().
+		SetBody(dataTable.GetContent()).
+		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
+		WithHeadBorder(false).
+		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
+		GetContent()
 
 	user := auth.Auth(ctx)
 

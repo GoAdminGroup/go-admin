@@ -25,7 +25,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 
 	table.RefreshTableList()
 
-	formList := table.GetNewFormList(panel.GetForm().FormList)
+	formList := table.GetNewFormList(panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 	for i := 0; i < len(formList); i++ {
 		formList[i].Editable = true
 	}
@@ -35,6 +35,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
 			SetUrl(url).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetTitle("New").
 			SetInfoUrl(infoUrl).
@@ -76,6 +77,7 @@ func NewForm(ctx *context.Context) {
 	dataTable := aDataTable().
 		SetInfoList(panelInfo.InfoList).
 		SetThead(panelInfo.Thead).
+		SetPrimaryKey(param.Panel.GetPrimaryKey().Name).
 		SetEditUrl(param.GetEditUrl()).
 		SetNewUrl(param.GetNewUrl()).
 		SetDeleteUrl(param.GetDeleteUrl())

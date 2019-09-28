@@ -7,10 +7,6 @@ package db
 import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/mssql"
-	"github.com/chenhg5/go-admin/modules/db/mysql"
-	"github.com/chenhg5/go-admin/modules/db/postgresql"
-	"github.com/chenhg5/go-admin/modules/db/sqlite"
 )
 
 const (
@@ -32,13 +28,13 @@ type Connection interface {
 func GetConnectionByDriver(driver string) Connection {
 	switch driver {
 	case "mysql":
-		return mysql.GetMysqlDB()
+		return GetMysqlDB()
 	case "mssql":
-		return mssql.GetMssqlDB()
+		return GetMssqlDB()
 	case "sqlite":
-		return sqlite.GetSqliteDB()
+		return GetSqliteDB()
 	case "postgresql":
-		return postgresql.GetPostgresqlDB()
+		return GetPostgresqlDB()
 	default:
 		panic("driver not found!")
 	}

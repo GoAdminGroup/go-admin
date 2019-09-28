@@ -1,6 +1,7 @@
 package datamodel
 
 import (
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
@@ -21,7 +22,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -30,7 +31,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "Name",
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -39,7 +40,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "Gender",
 			Field:    "gender",
-			TypeName: "tinyint",
+			TypeName: db.TinyInt,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				if model.Value == "1" {
@@ -54,7 +55,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "Phone",
 			Field:    "phone",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -63,7 +64,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "City",
 			Field:    "city",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -79,7 +80,7 @@ func GetUserTable() (userTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -89,7 +90,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Ip",
 			Field:    "ip",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -99,7 +100,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Name",
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -109,7 +110,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Gender",
 			Field:    "gender",
-			TypeName: "tinyint",
+			TypeName: db.TinyInt,
 			Default:  "",
 			Editable: true,
 			Options: []map[string]string{
@@ -132,7 +133,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Phone",
 			Field:    "phone",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -142,7 +143,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "City",
 			Field:    "city",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -152,7 +153,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Created at",
 			Field:    "created_at",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "2017-01-05 23:01:17",
 			Editable: true,
 			FormType: form.Datetime,
@@ -162,7 +163,7 @@ func GetUserTable() (userTable table.Table) {
 		}, {
 			Head:     "Updated at",
 			Field:    "updated_at",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "2017-01-05 23:01:17",
 			Editable: true,
 			FormType: form.Datetime,

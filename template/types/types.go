@@ -5,6 +5,7 @@
 package types
 
 import (
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"html/template"
@@ -64,7 +65,7 @@ type GetPanel func() Panel
 // Form is the form field with different options.
 type Form struct {
 	Field                  string
-	TypeName               string
+	TypeName               db.DatabaseType
 	Head                   string
 	Default                string
 	Editable               bool
@@ -110,7 +111,7 @@ type PostFieldFilterFn func(value PostRowModel) interface{}
 type Field struct {
 	FilterFn  FieldFilterFn
 	Field     string
-	TypeName  string
+	TypeName  db.DatabaseType
 	Head      string
 	JoinTable []Join
 	Sortable  bool

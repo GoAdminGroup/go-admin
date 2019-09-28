@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package postgresql
+package db
 
 import (
 	"database/sql"
@@ -12,7 +12,6 @@ import (
 	"sync"
 
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/lib/pq"
 )
 
@@ -22,7 +21,7 @@ type Postgresql struct {
 }
 
 func GetPostgresqlDB() *Postgresql {
-	return &DB
+	return &PostgresqlDB
 }
 
 func (db *Postgresql) GetName() string {
@@ -30,19 +29,19 @@ func (db *Postgresql) GetName() string {
 }
 
 func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList[con], filterQuery(query), args...)
+	return CommonQuery(db.DbList[con], filterQuery(query), args...)
 }
 
 func (db *Postgresql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList[con], filterQuery(query), args...)
+	return CommonExec(db.DbList[con], filterQuery(query), args...)
 }
 
 func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList["default"], filterQuery(query), args...)
+	return CommonQuery(db.DbList["default"], filterQuery(query), args...)
 }
 
 func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList["default"], filterQuery(query), args...)
+	return CommonExec(db.DbList["default"], filterQuery(query), args...)
 }
 
 func filterQuery(query string) string {
@@ -76,6 +75,6 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 	})
 }
 
-var DB = Postgresql{
+var PostgresqlDB = Postgresql{
 	DbList: map[string]*sql.DB{},
 }

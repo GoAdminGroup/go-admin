@@ -120,7 +120,7 @@ var DefaultConfig = Config{
 }
 
 func (config Config) SetPrimaryKeyType(typ string) Config {
-	config.PrimaryKey.Type = db.GetTypeFromString(typ)
+	config.PrimaryKey.Type = db.GetDTAndCheck(typ)
 	return config
 }
 
@@ -132,6 +132,10 @@ func DefaultConfigWithDriver(driver string) Config {
 		Editable:   true,
 		Deletable:  true,
 		Exportable: false,
+		PrimaryKey: PrimaryKey{
+			Type: db.Int,
+			Name: DefaultPrimaryKeyName,
+		},
 	}
 }
 
@@ -143,6 +147,10 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) Config {
 		Editable:   true,
 		Deletable:  true,
 		Exportable: false,
+		PrimaryKey: PrimaryKey{
+			Type: db.Int,
+			Name: DefaultPrimaryKeyName,
+		},
 	}
 }
 
@@ -201,7 +209,7 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 	if len(filters) == 0 {
 		filters = append(filters, map[string]string{
 			"title": "ID",
-			"name":  "id",
+			"name":  tb.primaryKey.Name,
 		})
 	}
 	return filters
@@ -224,7 +232,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != "id" && checkInTable(columns, tb.info.FieldList[i].Field) {
+		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
 			fields += tb.info.FieldList[i].Field + ","
 		}
 		if tb.info.FieldList[i].Hide {
@@ -241,10 +249,10 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		})
 	}
 
-	fields += "id"
+	fields += tb.primaryKey.Name
 
 	if !checkInTable(columns, params.SortField) {
-		params.SortField = "id"
+		params.SortField = tb.primaryKey.Name
 	}
 
 	wheres := " where "
@@ -275,26 +283,28 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		tempModelData := make(map[string]template.HTML, 0)
 		row := res[i]
 
+		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
+
 		for j := 0; j < len(tb.info.FieldList); j++ {
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
 			if checkInTable(columns, tb.info.FieldList[j].Field) {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
-					ID:    row["id"].(int64),
-					Value: getStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					ID:    primaryKeyValue.ToInt64(),
+					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
 					Row:   row,
 				}).(string))
 			} else {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
-					ID:    row["id"].(int64),
+					ID:    primaryKeyValue.ToInt64(),
 					Value: "",
 					Row:   row,
 				}).(string))
 			}
 		}
 
-		tempModelData["id"] = template.HTML(getStringFromType("int", res[i]["id"]))
+		tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
 
 		infoList = append(infoList, tempModelData)
 	}
@@ -340,7 +350,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != "id" && checkInTable(columns, tb.info.FieldList[i].Field) {
+		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
 			fields += tb.info.FieldList[i].Field + ","
 		}
 		if tb.info.FieldList[i].Hide {
@@ -357,10 +367,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		})
 	}
 
-	fields += "id"
+	fields += tb.primaryKey.Name
 
 	if !checkInTable(columns, params.SortField) {
-		params.SortField = "id"
+		params.SortField = tb.primaryKey.Name
 	}
 
 	whereIds := ""
@@ -386,26 +396,28 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		tempModelData := make(map[string]template.HTML, 0)
 		row := res[i]
 
+		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
+
 		for j := 0; j < len(tb.info.FieldList); j++ {
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
 			if checkInTable(columns, tb.info.FieldList[j].Field) {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
-					ID:    row["id"].(int64),
-					Value: getStringFromType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]),
+					ID:    primaryKeyValue.ToInt64(),
+					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
 					Row:   row,
 				}).(string))
 			} else {
 				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
-					ID:    row["id"].(int64),
+					ID:    primaryKeyValue.ToInt64(),
 					Value: "",
 					Row:   row,
 				}).(string))
 			}
 		}
 
-		tempModelData["id"] = template.HTML(getStringFromType("int", res[i]["id"]))
+		tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
 
 		infoList = append(infoList, tempModelData)
 	}
@@ -450,7 +462,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 	res, _ := tb.sql().
 		Table(tb.form.Table).Select(fields...).
-		Where("id", "=", id).
+		Where(tb.primaryKey.Name, "=", id).
 		First()
 
 	idInt64, _ := strconv.ParseInt(id, 10, 64)
@@ -460,7 +472,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
 				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
-					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
 					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
@@ -471,7 +483,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			} else {
 				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
-					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
 					Row:   res,
 				}).(string)
 			}
@@ -479,7 +491,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
 				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    idInt64,
-					Value: getStringFromType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]),
+					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
 					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
@@ -503,7 +515,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) {
 	_, _ = tb.sql().Table(tb.form.Table).
-		Where("id", "=", dataList.Get("id")).
+		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getValues(dataList))
 
 }
@@ -519,7 +531,7 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 
 	var id = int64(0)
-	if idArr, ok := dataList["id"]; ok {
+	if idArr, ok := dataList[tb.primaryKey.Name]; ok {
 		idInt, _ := strconv.Atoi(idArr[0])
 		id = int64(idInt)
 	}
@@ -528,7 +540,7 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 	var fun types.PostFieldFilterFn
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
-		if k != "id" && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
+		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
 			delimiter := ","
 			for i := 0; i < len(tb.form.FormList); i++ {
 				if k == tb.form.FormList[i].Field {
@@ -558,7 +570,7 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 func (tb DefaultTable) DeleteDataFromDatabase(id string) {
 	idArr := strings.Split(id, ",")
 	for _, id := range idArr {
-		tb.delete(tb.form.Table, "id", id)
+		tb.delete(tb.form.Table, tb.primaryKey.Name, id)
 	}
 	if tb.form.Table == "goadmin_roles" {
 		tb.delete("goadmin_role_users", "role_id", id)
@@ -594,11 +606,11 @@ func (tb DefaultTable) sql() *db.Sql {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
-func GetNewFormList(old []types.Form) []types.Form {
+func GetNewFormList(old []types.Form, primaryKey string) []types.Form {
 	var newForm []types.Form
 	for _, v := range old {
 		v.Value = ""
-		if v.Field != "id" && v.Field != "created_at" && v.Field != "updated_at" {
+		if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
 			newForm = append(newForm, v)
 		}
 	}
@@ -642,52 +654,4 @@ func checkInTable(columns []string, find string) bool {
 		}
 	}
 	return false
-}
-
-// getStringFromType get the value from sql raw type.
-func getStringFromType(typeName string, value interface{}) string {
-	typeName = strings.ToUpper(typeName)
-	if value == nil {
-		return ""
-	}
-	switch typeName {
-	case "INT":
-		return strconv.FormatInt(value.(int64), 10)
-	case "TINYINT":
-		return strconv.FormatInt(value.(int64), 10)
-	case "MEDIUMINT":
-		return strconv.FormatInt(value.(int64), 10)
-	case "SMALLINT":
-		return strconv.FormatInt(value.(int64), 10)
-	case "BIGINT":
-		return strconv.FormatInt(value.(int64), 10)
-	case "FLOAT":
-		return strconv.FormatFloat(value.(float64), 'g', 5, 32)
-	case "DOUBLE":
-		return strconv.FormatFloat(value.(float64), 'g', 5, 32)
-	case "DECIMAL":
-		return string(value.([]uint8))
-	case "DATE":
-		return value.(string)
-	case "TIME":
-		return value.(string)
-	case "YEAR":
-		return value.(string)
-	case "DATETIME":
-		return value.(string)
-	case "TIMESTAMP":
-		return value.(string)
-	case "VARCHAR":
-		return value.(string)
-	case "MEDIUMTEXT":
-		return value.(string)
-	case "LONGTEXT":
-		return value.(string)
-	case "TINYTEXT":
-		return value.(string)
-	case "TEXT":
-		return value.(string)
-	default:
-		return ""
-	}
 }

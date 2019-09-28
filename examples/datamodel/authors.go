@@ -1,6 +1,7 @@
 package datamodel
 
 import (
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
@@ -17,7 +18,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -26,7 +27,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "First Name",
 			Field:    "first_name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -35,7 +36,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "Last Name",
 			Field:    "last_name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -44,7 +45,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "Email",
 			Field:    "email",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -53,7 +54,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "Birthdate",
 			Field:    "birthdate",
-			TypeName: "date",
+			TypeName: db.Date,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -62,7 +63,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "Added",
 			Field:    "added",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -78,7 +79,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -88,7 +89,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "First Name",
 			Field:    "first_name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -98,7 +99,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "Name",
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -108,7 +109,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "Description",
 			Field:    "description",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -118,7 +119,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "Email",
 			Field:    "email",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -128,7 +129,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "Birthdate",
 			Field:    "birthdate",
-			TypeName: "date",
+			TypeName: db.Date,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -138,7 +139,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 		}, {
 			Head:     "Added",
 			Field:    "added",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,

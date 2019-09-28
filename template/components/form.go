@@ -6,21 +6,27 @@ import (
 )
 
 type FormAttribute struct {
-	Name      string
-	Header    template.HTML
-	Content   []types.Form
-	Footer    template.HTML
-	Url       string
-	Method    string
-	InfoUrl   string
-	CSRFToken string
-	Title     template.HTML
-	Prefix    string
+	Name       string
+	Header     template.HTML
+	Content    []types.Form
+	Footer     template.HTML
+	Url        string
+	Method     string
+	PrimaryKey string
+	InfoUrl    string
+	CSRFToken  string
+	Title      template.HTML
+	Prefix     string
 	types.Attribute
 }
 
 func (compo *FormAttribute) SetHeader(value template.HTML) types.FormAttribute {
 	compo.Header = value
+	return compo
+}
+
+func (compo *FormAttribute) SetPrimaryKey(value string) types.FormAttribute {
+	compo.PrimaryKey = value
 	return compo
 }
 

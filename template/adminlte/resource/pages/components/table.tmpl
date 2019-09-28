@@ -34,12 +34,13 @@
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
         {{$DeleteUrl := .DeleteUrl}}
+        {{$PrimaryKey := .PrimaryKey}}
         {{range $key1, $info := .InfoList}}
             <tr>
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $DeleteUrl}}
-                            <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info "id"}}"
+                            <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info $PrimaryKey}}"
                                    style="position: absolute; opacity: 0;">
                         {{end}}
                     </td>
@@ -50,10 +51,10 @@
                 {{if eq $Type "data-table"}}
                     <td>
                         {{if $EditUrl}}
-                            <a href='{{$EditUrl}}&id={{index $info "id"}}'><i class="fa fa-edit"></i></a>
+                            <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
                         {{end}}
                         {{if $DeleteUrl}}
-                            <a href="javascript:void(0);" data-id='{{index $info "id"}}' class="grid-row-delete"><i
+                            <a href="javascript:void(0);" data-id='{{index $info $PrimaryKey}}' class="grid-row-delete"><i
                                         class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
@@ -112,7 +113,7 @@
                 form.attr("action",{{.ExportUrl}});
                 let input1 = $("<input>");
                 input1.attr("type", "hidden");
-                input1.attr("name", "id");
+                input1.attr("name",{{.PrimaryKey}});
                 input1.attr("value", id);
                 $("body").append(form);
                 form.append(input1);

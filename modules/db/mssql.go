@@ -2,13 +2,12 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package mssql
+package db
 
 import (
 	"database/sql"
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/denisenkom/go-mssqldb"
 	"net/url"
 	"sync"
@@ -19,12 +18,12 @@ type Mssql struct {
 	Once   sync.Once
 }
 
-var DB = Mssql{
+var MssqlDB = Mssql{
 	DbList: map[string]*sql.DB{},
 }
 
 func GetMssqlDB() *Mssql {
-	return &DB
+	return &MssqlDB
 }
 
 func (db *Mssql) GetName() string {
@@ -32,19 +31,19 @@ func (db *Mssql) GetName() string {
 }
 
 func (db *Mssql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList[con], query, args...)
+	return CommonQuery(db.DbList[con], query, args...)
 }
 
 func (db *Mssql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList[con], query, args...)
+	return CommonExec(db.DbList[con], query, args...)
 }
 
 func (db *Mssql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList["default"], query, args...)
+	return CommonQuery(db.DbList["default"], query, args...)
 }
 
 func (db *Mssql) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList["default"], query, args...)
+	return CommonExec(db.DbList["default"], query, args...)
 }
 
 func (db *Mssql) InitDB(cfglist map[string]config.Database) {

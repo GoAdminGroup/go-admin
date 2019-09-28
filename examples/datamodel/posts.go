@@ -1,6 +1,7 @@
 package datamodel
 
 import (
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
@@ -14,7 +15,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -23,7 +24,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "Title",
 			Field:    "title",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -32,7 +33,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "Description",
 			Field:    "description",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -41,7 +42,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "Content",
 			Field:    "content",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -50,7 +51,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "Date",
 			Field:    "date",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -66,7 +67,7 @@ func GetPostsTable() (postsTable table.Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -76,7 +77,7 @@ func GetPostsTable() (postsTable table.Table) {
 		}, {
 			Head:     "Title",
 			Field:    "title",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -86,7 +87,7 @@ func GetPostsTable() (postsTable table.Table) {
 		}, {
 			Head:     "Name",
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -96,7 +97,7 @@ func GetPostsTable() (postsTable table.Table) {
 		}, {
 			Head:     "Description",
 			Field:    "description",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -106,7 +107,7 @@ func GetPostsTable() (postsTable table.Table) {
 		}, {
 			Head:     "Content",
 			Field:    "content",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.RichText,
@@ -116,7 +117,7 @@ func GetPostsTable() (postsTable table.Table) {
 		}, {
 			Head:     "Date",
 			Field:    "date",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Datetime,

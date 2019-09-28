@@ -15,6 +15,7 @@ type FormAttribute interface {
 	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
+	SetPrimaryKey(value string) FormAttribute
 	SetInfoUrl(value string) FormAttribute
 	SetMethod(value string) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
@@ -76,6 +77,7 @@ type DataTableAttribute interface {
 	SetEditUrl(value string) DataTableAttribute
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
+	SetPrimaryKey(value string) DataTableAttribute
 	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute

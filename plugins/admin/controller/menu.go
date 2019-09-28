@@ -47,6 +47,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: aForm().
 			SetContent(formData).
 			SetPrefix(config.PrefixFixSlash()).
+			SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(config.Url("/menu")).
@@ -152,10 +153,11 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
+		SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
 		SetToken(auth.TokenHelper.AddToken()).
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
-		SetContent(table.GetNewFormList(table.List["menu"].GetForm().FormList)).
+		SetContent(table.GetNewFormList(table.List["menu"].GetForm().FormList, table.List["menu"].GetPrimaryKey().Name)).
 		GetContent()
 
 	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()

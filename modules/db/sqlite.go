@@ -2,12 +2,11 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package sqlite
+package db
 
 import (
 	"database/sql"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/mattn/go-sqlite3"
 	"sync"
 )
@@ -26,19 +25,19 @@ func (db *Sqlite) GetName() string {
 }
 
 func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList[con], query, args...)
+	return CommonQuery(db.DbList[con], query, args...)
 }
 
 func (db *Sqlite) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList[con], query, args...)
+	return CommonExec(db.DbList[con], query, args...)
 }
 
 func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList["default"], query, args...)
+	return CommonQuery(db.DbList["default"], query, args...)
 }
 
 func (db *Sqlite) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList["default"], query, args...)
+	return CommonExec(db.DbList["default"], query, args...)
 }
 
 func (db *Sqlite) InitDB(cfgList map[string]config.Database) {

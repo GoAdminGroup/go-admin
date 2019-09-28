@@ -31,6 +31,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 		Content: alert + aForm().
 			SetContent(formData).
 			SetPrefix(config.PrefixFixSlash()).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(url).
 			SetToken(auth.TokenHelper.AddToken()).
 			SetInfoUrl(infoUrl).
@@ -72,6 +73,7 @@ func EditForm(ctx *context.Context) {
 
 	dataTable := aDataTable().
 		SetInfoList(panelInfo.InfoList).
+		SetPrimaryKey(param.Panel.GetPrimaryKey().Name).
 		SetThead(panelInfo.Thead).
 		SetNewUrl(param.GetNewUrl())
 

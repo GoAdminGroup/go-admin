@@ -59,7 +59,6 @@ func GlobalDeferHandler(ctx *context.Context) {
 }
 
 func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
-	prefix := ctx.Query("prefix")
 
 	alert := aAlert().
 		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
@@ -70,14 +69,14 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	var (
 		formData           []types.Form
 		title, description string
+		prefix             = ctx.Query("prefix")
+		panel              = table.List[prefix]
 	)
 
 	if kind == "edit" {
 		formData, title, description = table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
 	} else {
-		prefix := ctx.Query("prefix")
-		panel := table.List[prefix]
-		formData = table.GetNewFormList(panel.GetForm().FormList)
+		formData = table.GetNewFormList(panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 		title = panel.GetForm().Title
 		description = panel.GetForm().Description
 	}
@@ -91,10 +90,11 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		Content: alert + aForm().
 			SetContent(formData).
 			SetTitle(template2.HTML(strings.Title(kind))).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(config.PrefixFixSlash()).
-			SetUrl(config.Url("/"+kind+"/"+prefix)).
+			SetUrl(config.Url("/" + kind + "/" + prefix)).
 			SetToken(auth.TokenHelper.AddToken()).
-			SetInfoUrl(config.Url("/info/"+prefix+queryParam)).
+			SetInfoUrl(config.Url("/info/" + prefix + queryParam)).
 			GetContent(),
 		Description: description,
 		Title:       title,

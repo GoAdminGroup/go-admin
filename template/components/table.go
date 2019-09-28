@@ -6,13 +6,14 @@ import (
 )
 
 type TableAttribute struct {
-	Name      string
-	Thead     []map[string]string
-	InfoList  []map[string]template.HTML
-	Type      string
-	EditUrl   string
-	DeleteUrl string
-	ExportUrl string
+	Name       string
+	Thead      []map[string]string
+	InfoList   []map[string]template.HTML
+	Type       string
+	PrimaryKey string
+	EditUrl    string
+	DeleteUrl  string
+	ExportUrl  string
 	types.Attribute
 }
 
@@ -37,13 +38,14 @@ func (compo *TableAttribute) GetContent() template.HTML {
 
 type DataTableAttribute struct {
 	TableAttribute
-	EditUrl   string
-	NewUrl    string
-	DeleteUrl string
-	ExportUrl string
-	InfoUrl   string
-	FilterUrl string
-	Filters   []map[string]string
+	EditUrl    string
+	NewUrl     string
+	DeleteUrl  string
+	PrimaryKey string
+	ExportUrl  string
+	InfoUrl    string
+	FilterUrl  string
+	Filters    []map[string]string
 	types.Attribute
 }
 
@@ -68,6 +70,11 @@ func (compo *DataTableAttribute) SetExportUrl(value string) types.DataTableAttri
 
 func (compo *DataTableAttribute) SetFilterUrl(value string) types.DataTableAttribute {
 	compo.FilterUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetPrimaryKey(value string) types.DataTableAttribute {
+	compo.PrimaryKey = value
 	return compo
 }
 

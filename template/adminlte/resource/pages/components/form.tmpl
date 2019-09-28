@@ -84,9 +84,10 @@
             </div>
 
             <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
+            {{$PrimaryKey := .PrimaryKey}}
             {{range $key, $data := .Content}}
-                {{if eq $data.Field "id"}}
-                    <input type="hidden" name="id" value='{{$data.Value}}' class="_previous_">
+                {{if eq $data.Field $PrimaryKey}}
+                    <input type="hidden" name="{{$PrimaryKey}}" value='{{$data.Value}}' class="_previous_">
                 {{end}}
             {{end}}
             <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">

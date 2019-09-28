@@ -372,9 +372,12 @@ func getContentFromDir(content, dirPath, rootPath string) string {
 	return content
 }
 
+// TODO: scan which driver used
 func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, driver, outputPath string) {
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
+
+	// TODO: scan the primaryKey
 
 	content := `package ` + packageName + `
 
@@ -419,7 +422,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 		content += `{
 			Head:     "` + strings.Title(model[fieldField].(string)) + `",
 			Field:    "` + model[fieldField].(string) + `",
-			TypeName: "` + GetType(model[typeField].(string)) + `",
+			TypeName: db."` + GetType(model[typeField].(string)) + `",
 			Default:  "",
 			Editable: true,
 			FormType: ` + formType + `,
@@ -477,5 +480,5 @@ var Generators = map[string]table.Generator{` + tableStr + `
 func GetType(typeName string) string {
 	r, _ := regexp.Compile("\\(.*\\)")
 	typeName = r.ReplaceAllString(typeName, "")
-	return strings.ToLower(strings.Replace(typeName, " unsigned", "", -1))
+	return strings.Title(strings.Replace(typeName, " unsigned", "", -1))
 }

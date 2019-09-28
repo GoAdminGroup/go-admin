@@ -2,15 +2,13 @@
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
-package mysql
+package db
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db/converter"
-	"github.com/chenhg5/go-admin/modules/db/performer"
 	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )
@@ -24,12 +22,12 @@ type Mysql struct {
 	Once   sync.Once
 }
 
-var DB = Mysql{
+var MysqlDB = Mysql{
 	DbList: map[string]*sql.DB{},
 }
 
 func GetMysqlDB() *Mysql {
-	return &DB
+	return &MysqlDB
 }
 
 func (db *Mysql) GetName() string {
@@ -64,19 +62,19 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 }
 
 func (db *Mysql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList[con], query, args...)
+	return CommonQuery(db.DbList[con], query, args...)
 }
 
 func (db *Mysql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList[con], query, args...)
+	return CommonExec(db.DbList[con], query, args...)
 }
 
 func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
-	return performer.Query(db.DbList["default"], query, args...)
+	return CommonQuery(db.DbList["default"], query, args...)
 }
 
 func (db *Mysql) Exec(query string, args ...interface{}) sql.Result {
-	return performer.Exec(db.DbList["default"], query, args...)
+	return CommonExec(db.DbList["default"], query, args...)
 }
 
 func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTxStruct {
@@ -150,7 +148,7 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 	for rs.Next() {
 		var colVar = make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {
-			converter.SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
+			SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
@@ -160,7 +158,7 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 			panic(scanErr)
 		}
 		for j := 0; j < len(col); j++ {
-			converter.SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
+			SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
 		}
 		results = append(results, result)
 	}

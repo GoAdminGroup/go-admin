@@ -18,7 +18,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -27,7 +27,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     language.Get("Name"),
 			Field:    "username",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -36,7 +36,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     language.Get("Nickname"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -45,7 +45,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     language.Get("role"),
 			Field:    "roles",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				labelModel, _ := db.Table("goadmin_role_users").
@@ -60,7 +60,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -69,7 +69,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -102,7 +102,7 @@ func GetManagerTable() (ManagerTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -112,7 +112,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("Name"),
 			Field:    "username",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -122,7 +122,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("Nickname"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -132,7 +132,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("Avatar"),
 			Field:    "avatar",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.File,
@@ -142,7 +142,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("password"),
 			Field:    "password",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Password,
@@ -152,7 +152,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("role"),
 			Field:    "role_id",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Select,
@@ -168,7 +168,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("permission"),
 			Field:    "permission_id",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Select,
@@ -184,7 +184,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -194,7 +194,7 @@ func GetManagerTable() (ManagerTable Table) {
 		}, {
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -217,7 +217,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -226,7 +226,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("permission"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -235,7 +235,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("slug"),
 			Field:    "slug",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -244,7 +244,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("method"),
 			Field:    "http_method",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -253,7 +253,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("path"),
 			Field:    "http_path",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				pathArr := strings.Split(model.Value, "\n")
@@ -271,7 +271,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -280,7 +280,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -296,7 +296,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -306,7 +306,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("permission"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -316,7 +316,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("slug"),
 			Field:    "slug",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -326,7 +326,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("method"),
 			Field:    "http_method",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Select,
@@ -348,7 +348,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("path"),
 			Field:    "http_path",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: "textarea",
@@ -358,7 +358,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -368,7 +368,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		}, {
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -401,7 +401,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -410,7 +410,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     language.Get("role"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -419,7 +419,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     language.Get("slug"),
 			Field:    "slug",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -428,7 +428,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -437,7 +437,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -453,7 +453,7 @@ func GetRolesTable() (RolesTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -463,7 +463,7 @@ func GetRolesTable() (RolesTable Table) {
 		}, {
 			Head:     language.Get("role"),
 			Field:    "name",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -473,7 +473,7 @@ func GetRolesTable() (RolesTable Table) {
 		}, {
 			Head:     language.Get("slug"),
 			Field:    "slug",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -483,7 +483,7 @@ func GetRolesTable() (RolesTable Table) {
 		}, {
 			Head:     language.Get("permission"),
 			Field:    "permission_id",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.SelectBox,
@@ -502,7 +502,7 @@ func GetRolesTable() (RolesTable Table) {
 		}, {
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -512,7 +512,7 @@ func GetRolesTable() (RolesTable Table) {
 		}, {
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -537,12 +537,16 @@ func GetOpTable() (OpTable Table) {
 		Deletable:  false,
 		Exportable: false,
 		Connection: "default",
+		PrimaryKey: PrimaryKey{
+			Type: db.Int,
+			Name: DefaultPrimaryKeyName,
+		},
 	})
 	OpTable.GetInfo().FieldList = []types.Field{
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -551,7 +555,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("userID"),
 			Field:    "user_id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -560,7 +564,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("path"),
 			Field:    "path",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -569,7 +573,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("method"),
 			Field:    "method",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -578,7 +582,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     "ip",
 			Field:    "ip",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -587,7 +591,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("content"),
 			Field:    "input",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -596,7 +600,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -605,7 +609,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -621,7 +625,7 @@ func GetOpTable() (OpTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -631,7 +635,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("userID"),
 			Field:    "user_id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -641,7 +645,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("path"),
 			Field:    "path",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -651,7 +655,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("method"),
 			Field:    "method",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -661,7 +665,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     "ip",
 			Field:    "ip",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -671,7 +675,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("content"),
 			Field:    "input",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -681,7 +685,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -691,7 +695,7 @@ func GetOpTable() (OpTable Table) {
 		}, {
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -714,7 +718,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -723,7 +727,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("parent"),
 			Field:    "parent_id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -732,7 +736,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("menu name"),
 			Field:    "title",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -741,7 +745,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("icon"),
 			Field:    "icon",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -750,7 +754,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("uri"),
 			Field:    "uri",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -759,7 +763,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("role"),
 			Field:    "roles",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -768,7 +772,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("header"),
 			Field:    "header",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -777,7 +781,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -786,7 +790,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -829,7 +833,7 @@ func GetMenuTable() (MenuTable Table) {
 		{
 			Head:     "ID",
 			Field:    "id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: false,
 			FormType: form.Default,
@@ -839,7 +843,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("parent"),
 			Field:    "parent_id",
-			TypeName: "int",
+			TypeName: db.Int,
 			Default:  "",
 			Editable: true,
 			FormType: form.SelectSingle,
@@ -854,7 +858,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("menu name"),
 			Field:    "title",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -864,7 +868,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("header"),
 			Field:    "header",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -874,7 +878,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("icon"),
 			Field:    "icon",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.IconPicker,
@@ -884,7 +888,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("uri"),
 			Field:    "uri",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Text,
@@ -894,7 +898,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("role"),
 			Field:    "roles",
-			TypeName: "varchar",
+			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
 			FormType: form.Select,
@@ -913,7 +917,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("updatedAt"),
 			Field:    "updated_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,
@@ -923,7 +927,7 @@ func GetMenuTable() (MenuTable Table) {
 		}, {
 			Head:     language.Get("createdAt"),
 			Field:    "created_at",
-			TypeName: "timestamp",
+			TypeName: db.Timestamp,
 			Default:  "",
 			Editable: true,
 			FormType: form.Default,

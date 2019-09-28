@@ -3,33 +3,153 @@ package db
 import (
 	"fmt"
 	"strconv"
-	"strings"
 )
 
-type DatabaseType uint8
+type DatabaseType string
 
 const (
-	Varchar DatabaseType = iota
-	Text
-	LongText
-	Json
-	Int
-	LongInt
-	Float
-	Double
-	Decimal
-	Date
-	Time
-	Year
-	Datetime
-	Timestamp
-	MediumText
-	TinyText
-	Tinyint
-	Mediumint
-	Smallint
-	Bigint
+	// =================================
+	// integer
+	// =================================
+
+	Int       DatabaseType = "INT"
+	TinyInt   DatabaseType = "TINYINT"
+	MediumInt DatabaseType = "MEDIUMINT"
+	SmallInt  DatabaseType = "SMALLINT"
+	Bigint    DatabaseType = "BIGINT"
+	Bit       DatabaseType = "BIT"
+	Int4      DatabaseType = "INT4"
+
+	Integer     DatabaseType = "INTEGER"
+	Numeric     DatabaseType = "NUMERIC"
+	SmallSerial DatabaseType = "SMALLSERIAL"
+	Serial      DatabaseType = "SERIAL"
+	BigSerial   DatabaseType = "BIGSERIAL"
+	Money       DatabaseType = "MONEY"
+
+	// =================================
+	// float
+	// =================================
+
+	Real    DatabaseType = "REAL"
+	Float   DatabaseType = "FLOAT"
+	Double  DatabaseType = "DOUBLE"
+	Decimal DatabaseType = "DECIMAL"
+
+	DoublePrecision DatabaseType = "DOUBLEPRECISION"
+
+	// =================================
+	// string
+	// =================================
+
+	Date      DatabaseType = "DATE"
+	Time      DatabaseType = "TIME"
+	Year      DatabaseType = "YEAR"
+	Datetime  DatabaseType = "DATETIME"
+	Timestamp DatabaseType = "TIMESTAMP"
+
+	Text       DatabaseType = "TEXT"
+	LongText   DatabaseType = "LONGTEXT"
+	MediumText DatabaseType = "MEDIUMTEXT"
+	TinyText   DatabaseType = "TINYTEXT"
+
+	Varchar DatabaseType = "VARCHAR"
+	Char    DatabaseType = "CHAR"
+	Json    DatabaseType = "JSON"
+
+	Blob       DatabaseType = "BLOB"
+	TinyBlob   DatabaseType = "TINYBLOB"
+	MediumBlob DatabaseType = "MEDIUMBLOB"
+	LongBlob   DatabaseType = "LONGBLOB"
+
+	Interval DatabaseType = "INTERVAL"
+	Boolean  DatabaseType = "BOOLEAN"
+	Bool     DatabaseType = "Bool"
+
+	Point   DatabaseType = "POINT"
+	Line    DatabaseType = "LINE"
+	Lseg    DatabaseType = "LSEG"
+	Box     DatabaseType = "BOX"
+	Path    DatabaseType = "PATH"
+	Polygon DatabaseType = "POLYGON"
+	Circle  DatabaseType = "CIRCLE"
+
+	Cidr    DatabaseType = "CIDR"
+	Inet    DatabaseType = "INET"
+	Macaddr DatabaseType = "MACADDR"
+
+	Character        DatabaseType = "CHARACTER"
+	VaryingCharacter DatabaseType = "VARYINGCHARACTER"
+	Nchar            DatabaseType = "NCHAR"
+	NativeCharacter  DatabaseType = "NATIVECHARACTER"
+	Nvarchar         DatabaseType = "NVARCHAR"
+	Clob             DatabaseType = "CLOB"
+
+	Binary    DatabaseType = "BINARY"
+	VarBinary DatabaseType = "VARBINARY"
+	Enum      DatabaseType = "ENUM"
+	Set       DatabaseType = "SET"
+
+	Geometry DatabaseType = "GEOMETRY"
+
+	Multilinestring    DatabaseType = "MULTILINESTRING"
+	Multipolygon       DatabaseType = "MULTIPOLYGON"
+	Linestring         DatabaseType = "LINESTRING"
+	Multipoint         DatabaseType = "MULTIPOINT"
+	Geometrycollection DatabaseType = "GEOMETRYCOLLECTION"
+
+	Name DatabaseType = "NAME"
+	Uuid DatabaseType = "UUID"
+
+	Timestamptz DatabaseType = "TIMESTAMPTZ"
 )
+
+func DT(s string) DatabaseType {
+	return DatabaseType(s)
+}
+
+func GetDTAndCheck(s string) DatabaseType {
+	ss := DatabaseType(s)
+	if !Contains(ss, BoolTypeList) &&
+		!Contains(ss, IntTypeList) &&
+		!Contains(ss, FloatTypeList) &&
+		!Contains(ss, UintTypeList) &&
+		!Contains(ss, StringTypeList) {
+		panic("wrong type")
+	}
+	return ss
+}
+
+var (
+	StringTypeList = []DatabaseType{Date, Time, Year, Datetime, Timestamptz, Timestamp,
+		Varchar, Char, MediumText, LongText, TinyText,
+		Text, Json, Blob, TinyBlob, MediumBlob, LongBlob,
+		Interval, Point,
+		Line, Lseg, Box, Path, Polygon, Circle, Cidr, Inet, Macaddr, Character, VaryingCharacter,
+		Nchar, NativeCharacter, Nvarchar, Clob, Binary, VarBinary, Enum, Set, Geometry, Multilinestring,
+		Multipolygon, Linestring, Multipoint, Geometrycollection, Name, Uuid, Timestamptz,
+		Name, Uuid, Inet}
+	BoolTypeList = []DatabaseType{Bool, Boolean}
+	IntTypeList  = []DatabaseType{Int4,
+		Int,
+		TinyInt,
+		MediumInt,
+		SmallInt,
+		Numeric, SmallSerial, Serial, BigSerial, Money,
+		Integer,
+		Bigint}
+	FloatTypeList = []DatabaseType{Float, Double, Real, DoublePrecision}
+	UintTypeList  = []DatabaseType{Decimal, Bit}
+)
+
+func Contains(v DatabaseType, a []DatabaseType) bool {
+	for _, i := range a {
+		if i == v {
+			return true
+		}
+	}
+	return false
+}
 
 type Value string
 
@@ -41,58 +161,36 @@ func (v Value) ToInt64() int64 {
 	return value
 }
 
-func GetValueFromDatabaseType(value interface{}, typ DatabaseType) Value {
-	switch typ {
-	case Varchar, LongText, Json, Text:
-		return Value(value.(string))
-	case Int, LongInt:
-		return Value(fmt.Sprintf("%d", value.(int64)))
-	case Float, Double:
-		return Value(fmt.Sprintf("%d", value.(float64)))
-	}
-	panic("wrong type")
+func (v Value) String() string {
+	return string(v)
 }
 
-func GetTypeFromString(typeName string) DatabaseType {
-	typeName = strings.ToUpper(typeName)
-	switch typeName {
-	case "INT":
-		return Int
-	case "TINYINT":
-		return Tinyint
-	case "MEDIUMINT":
-		return Mediumint
-	case "SMALLINT":
-		return Smallint
-	case "BIGINT":
-		return Bigint
-	case "FLOAT":
-		return Float
-	case "DOUBLE":
-		return Double
-	case "DECIMAL":
-		return Decimal
-	case "DATE":
-		return Date
-	case "TIME":
-		return Time
-	case "YEAR":
-		return Year
-	case "DATETIME":
-		return Datetime
-	case "TIMESTAMP":
-		return Timestamp
-	case "VARCHAR":
-		return Varchar
-	case "MEDIUMTEXT":
-		return MediumText
-	case "LONGTEXT":
-		return LongText
-	case "TINYTEXT":
-		return TinyText
-	case "TEXT":
-		return Text
-	default:
-		panic("wrong type name")
+func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
+	switch {
+	case Contains(typ, StringTypeList):
+		if v, ok := value.(string); ok {
+			return Value(v)
+		}
+		return ""
+	case Contains(typ, BoolTypeList):
+		if v, ok := value.(bool); ok {
+			if v {
+				return "true"
+			} else {
+				return "false"
+			}
+		}
+		return "false"
+	case Contains(typ, IntTypeList):
+		if v, ok := value.(int64); ok {
+			return Value(fmt.Sprintf("%d", v))
+		}
+		return "0"
+	case Contains(typ, FloatTypeList):
+		if v, ok := value.(float64); ok {
+			return Value(fmt.Sprintf("%f", v))
+		}
+		return "0"
 	}
+	panic("wrong type")
 }
