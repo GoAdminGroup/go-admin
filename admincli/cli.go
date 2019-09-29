@@ -392,7 +392,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 		content += `{
 			Head:     "` + strings.Title(model[fieldField].(string)) + `",
 			Field:    "` + model[fieldField].(string) + `",
-			TypeName: "` + GetType(model[typeField].(string)) + `",
+			TypeName: db.` + GetType(model[typeField].(string)) + `,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
