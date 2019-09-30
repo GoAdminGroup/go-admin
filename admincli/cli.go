@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/template/types/form"
 	"github.com/go-bindata/go-bindata"
 	cli "github.com/jawher/mow.cli"
@@ -15,12 +16,14 @@ import (
 	"github.com/schollz/progressbar"
 	"gopkg.in/AlecAivazis/survey.v1"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -85,7 +88,8 @@ func main() {
 func generating() {
 
 	clear(runtime.GOOS)
-	fmt.Println("GoAdmin CLI v1.0.0")
+	fmt.Println("GoAdmin CLI " + system.Version + compareVersion(system.Version))
+	fmt.Println()
 
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
 
@@ -409,7 +413,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 		content += `{
 			Head:     "` + strings.Title(model[fieldField].(string)) + `",
 			Field:    "` + model[fieldField].(string) + `",
-			TypeName: db.` + GetType(model[typeField].(string)) + `,
+			TypeName: db.` + getType(model[typeField].(string)) + `,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
@@ -429,7 +433,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 
 	for _, model := range columnsModel {
 
-		typeName := GetType(model[typeField].(string))
+		typeName := getType(model[typeField].(string))
 		formType := form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string))
 
 		content += `{
@@ -490,8 +494,68 @@ var Generators = map[string]table.Generator{` + tableStr + `
 	checkError(err)
 }
 
-func GetType(typeName string) string {
+func getType(typeName string) string {
 	r, _ := regexp.Compile("\\(.*\\)")
 	typeName = r.ReplaceAllString(typeName, "")
 	return strings.Title(strings.Replace(typeName, " unsigned", "", -1))
+}
+
+func getLatestVersion() string {
+	res, err := http.Get("https://goproxy.cn/github.com/chenhg5/go-admin/@v/list")
+
+	if err != nil || res.Body == nil {
+		return ""
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil || body == nil {
+		return ""
+	}
+
+	versionsArr := strings.Split(string(body), "\n")
+
+	return versionsArr[len(versionsArr)-1]
+}
+
+func isRequireUpdate(srcVersion, toCompareVersion string) bool {
+	if toCompareVersion == "" {
+		return false
+	}
+
+	srcVersionArr := strings.Split(strings.Replace(srcVersion, "v", "", -1), ".")
+	toCompareVersionArr := strings.Split(strings.Replace(toCompareVersion, "v", "", -1), ".")
+
+	for i := len(srcVersionArr) - 1; i > -1; i-- {
+		v, err := strconv.Atoi(srcVersionArr[i])
+		if err != nil {
+			return false
+		}
+		vv, err := strconv.Atoi(toCompareVersionArr[i])
+		if err != nil {
+			return false
+		}
+		if v < vv {
+			return true
+		} else if v > vv {
+			return false
+		} else {
+			continue
+		}
+	}
+
+	return false
+}
+
+func compareVersion(srcVersion string) string {
+	toCompareVersion := getLatestVersion()
+	if isRequireUpdate(srcVersion, toCompareVersion) {
+		return ", the latest version is " + toCompareVersion + " now."
+	} else {
+		return ""
+	}
 }
