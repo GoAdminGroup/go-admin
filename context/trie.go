@@ -94,7 +94,7 @@ func stringToArr(path string) []string {
 		paths      = make([]string, 0)
 		start      = 0
 		end        int
-		iswildcard = false
+		isWildcard = false
 	)
 	for i := 0; i < len(path); i++ {
 		if i == 0 && path[0] == '/' {
@@ -102,11 +102,11 @@ func stringToArr(path string) []string {
 			continue
 		}
 		if path[i] == ':' {
-			iswildcard = true
+			isWildcard = true
 		}
 		if i == len(path)-1 {
 			end = i + 1
-			if iswildcard {
+			if isWildcard {
 				paths = append(paths, "*")
 			} else {
 				paths = append(paths, path[start:end])
@@ -114,13 +114,13 @@ func stringToArr(path string) []string {
 		}
 		if path[i] == '/' {
 			end = i
-			if iswildcard {
+			if isWildcard {
 				paths = append(paths, "*")
 			} else {
 				paths = append(paths, path[start:end])
 			}
 			start = i + 1
-			iswildcard = false
+			isWildcard = false
 		}
 	}
 	return paths
