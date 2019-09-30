@@ -7,22 +7,22 @@ import (
 )
 
 type UserModel struct {
-	Base
+	Base `json:"-"`
 
-	Id            int64
-	Name          string
-	UserName      string
-	Password      string
-	Avatar        string
-	RememberToken string
-	Permissions   []PermissionModel
-	MenuIds       []int64
-	Role          RoleModel
-	Level         string
-	LevelName     string
+	Id            int64             `json:"id"`
+	Name          string            `json:"name"`
+	UserName      string            `json:"user_name"`
+	Password      string            `json:"password"`
+	Avatar        string            `json:"avatar"`
+	RememberToken string            `json:"remember_token"`
+	Permissions   []PermissionModel `json:"permissions"`
+	MenuIds       []int64           `json:"menu_ids"`
+	Role          RoleModel         `json:"role"`
+	Level         string            `json:"level"`
+	LevelName     string            `json:"level_name"`
 
-	CreatedAt string
-	UpdatedAt string
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 func User() UserModel {

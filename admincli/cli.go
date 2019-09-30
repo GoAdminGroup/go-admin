@@ -16,9 +16,11 @@ import (
 	"gopkg.in/AlecAivazis/survey.v1"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -82,7 +84,7 @@ func main() {
 
 func generating() {
 
-	print("\033[H\033[2J")
+	clear(runtime.GOOS)
 	fmt.Println("GoAdmin CLI v1.0.0")
 
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
@@ -200,6 +202,21 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	fmt.Println("see the docs: " + ansi.Color("http://doc.go-admin.cn/en/#/introduce/plugins/admin", "blue"))
 	fmt.Println()
 	fmt.Println()
+}
+
+func clear(osName string) {
+
+	if osName == "linux" || osName == "darwin" {
+		cmd := exec.Command("clear") //Linux example, its tested
+		cmd.Stdout = os.Stdout
+		_ = cmd.Run()
+	}
+
+	if osName == "windows" {
+		cmd := exec.Command("cmd", "/c", "cls") //Windows example, its tested
+		cmd.Stdout = os.Stdout
+		_ = cmd.Run()
+	}
 }
 
 func exitWithError(msg string) {
