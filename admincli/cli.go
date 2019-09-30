@@ -36,6 +36,7 @@ func main() {
 				fmt.Println()
 				if runtime.GOOS == "windows" && errs.Error() == "Incorrect function." {
 					fmt.Println(ansi.Color("go-admin cli error: cli has not supported MINGW64 for now, please use cmd terminal instead.", "red"))
+					fmt.Println("know more here: http://forum.go-admin.cn/threads/2")
 				} else {
 					fmt.Println(ansi.Color("go-admin cli error: "+errs.Error(), "red"))
 				}
