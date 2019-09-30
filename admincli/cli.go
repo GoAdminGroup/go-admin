@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AlecAivazis/survey"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/system"
@@ -14,7 +15,6 @@ import (
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
-	"gopkg.in/AlecAivazis/survey.v1"
 	"io/ioutil"
 	"net/http"
 	"os"
