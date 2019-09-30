@@ -29,7 +29,6 @@ func Auth(ctx *context.Context) {
 		return
 	}
 	response.BadRequest(ctx, "fail")
-	return
 }
 
 func Logout(ctx *context.Context) {

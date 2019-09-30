@@ -21,7 +21,7 @@ func GetParam(values url.Values) Parameters {
 	sortField := GetDefault(values, "sort", "id")
 	sortType := GetDefault(values, "sort_type", "desc")
 
-	fields := make(map[string]string, 0)
+	fields := make(map[string]string)
 
 	for key, value := range values {
 		if key != "page" &&

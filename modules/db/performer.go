@@ -42,7 +42,7 @@ func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]in
 	// tell the drive to reduce the performance loss
 	results := make([]map[string]interface{}, 0)
 
-	r, _ := regexp.Compile("\\((.*)\\)")
+	r, _ := regexp.Compile(`\\((.*)\\)`)
 	for rs.Next() {
 		var colVar = make([]interface{}, len(col))
 		for i := 0; i < len(col); i++ {

@@ -24,7 +24,6 @@ func MenuDelete(ctx *context.Context) {
 		Id: id,
 	})
 	ctx.Next()
-	return
 }
 
 func GetMenuDeleteParam(ctx *context.Context) *MenuDeleteParam {

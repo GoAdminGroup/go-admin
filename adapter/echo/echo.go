@@ -41,8 +41,7 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	}
 
 	for _, plug := range plugin {
-		var plugCopy plugins.Plugin
-		plugCopy = plug
+		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			eng.Add(strings.ToUpper(req.Method), req.URL, func(c echo.Context) error {
 				ctx := context.NewContext(c.Request())

@@ -34,7 +34,6 @@ func Delete(ctx *context.Context) {
 		Prefix: prefix,
 	})
 	ctx.Next()
-	return
 }
 
 func GetDeleteParam(ctx *context.Context) *DeleteParam {

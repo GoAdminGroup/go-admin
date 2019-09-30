@@ -103,7 +103,7 @@ func InitSession(ctx *context.Context) *Session {
 	})
 
 	sessions.UseDatabase(&Driver)
-	sessions.Values = make(map[string]interface{}, 0)
+	sessions.Values = make(map[string]interface{})
 
 	return sessions.StartCtx(ctx)
 }

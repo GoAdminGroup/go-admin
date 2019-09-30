@@ -28,7 +28,6 @@ func Export(ctx *context.Context) {
 		Prefix: prefix,
 	})
 	ctx.Next()
-	return
 }
 
 func GetExportParam(ctx *context.Context) *ExportParam {

@@ -66,5 +66,4 @@ func CheckDatabase(ctx *context.Context) {
 	response.OkWithData(ctx, map[string]interface{}{
 		"list": list,
 	})
-	return
 }

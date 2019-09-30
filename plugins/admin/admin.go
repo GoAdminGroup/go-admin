@@ -40,7 +40,7 @@ func (admin *Admin) InitPlugin() {
 }
 
 var App = &Admin{
-	tableCfg: make(table.GeneratorList, 0),
+	tableCfg: make(table.GeneratorList),
 }
 
 func NewAdmin(tableCfg table.GeneratorList) *Admin {

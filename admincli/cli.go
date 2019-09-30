@@ -109,7 +109,7 @@ func generating() {
 		},
 	}
 
-	var result = make(map[string]interface{}, 0)
+	var result = make(map[string]interface{})
 
 	err := survey.Ask(qs, &result)
 	checkError(err)
@@ -266,7 +266,7 @@ func prompt(label string) string {
 		},
 	}
 
-	var result = make(map[string]interface{}, 0)
+	var result = make(map[string]interface{})
 
 	err := survey.Ask(qs, &result)
 
@@ -285,7 +285,7 @@ func promptWithDefault(label string, defaultValue string) string {
 		},
 	}
 
-	var result = make(map[string]interface{}, 0)
+	var result = make(map[string]interface{})
 
 	err := survey.Ask(qs, &result)
 
@@ -500,7 +500,7 @@ var Generators = map[string]table.Generator{` + tableStr + `
 }
 
 func getType(typeName string) string {
-	r, _ := regexp.Compile("\\(.*\\)")
+	r, _ := regexp.Compile(`\\(.*\\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	return strings.Title(strings.Replace(typeName, " unsigned", "", -1))
 }

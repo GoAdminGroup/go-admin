@@ -18,7 +18,6 @@ import (
 
 func ShowMenu(ctx *context.Context) {
 	getMenuInfoPanel(ctx, "")
-	return
 }
 
 func ShowEditMenu(ctx *context.Context) {
@@ -127,7 +126,6 @@ func MenuOrder(ctx *context.Context) {
 	models.Menu().ResetOrder(data)
 
 	response.Ok(ctx)
-	return
 }
 
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {

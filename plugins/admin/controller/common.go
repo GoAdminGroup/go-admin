@@ -38,10 +38,6 @@ func aDataTable() types.DataTableAttribute {
 	return aTemplate().DataTable()
 }
 
-func aTable() types.TableAttribute {
-	return aTemplate().Table()
-}
-
 func aBox() types.BoxAttribute {
 	return aTemplate().Box()
 }

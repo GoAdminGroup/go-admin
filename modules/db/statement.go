@@ -13,24 +13,6 @@ import (
 	"sync"
 )
 
-type Where struct {
-	operation string
-	field     string
-	qmark     string
-}
-
-type Join struct {
-	table     string
-	fieldA    string
-	operation string
-	fieldB    string
-}
-
-type RawUpdate struct {
-	expression string
-	args       []interface{}
-}
-
 type Sql struct {
 	dialect.SqlComponent
 	diver   Connection
@@ -309,15 +291,6 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 	}
 
 	return res.LastInsertId()
-}
-
-func (sql *Sql) empty() *Sql {
-	sql.Fields = make([]string, 0)
-	sql.Args = make([]interface{}, 0)
-	sql.TableName = ""
-	sql.Wheres = make([]dialect.Where, 0)
-	sql.Leftjoins = make([]dialect.Join, 0)
-	return sql
 }
 
 func RecycleSql(sql *Sql) {

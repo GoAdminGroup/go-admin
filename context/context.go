@@ -77,10 +77,10 @@ func NewContext(req *http.Request) *Context {
 
 	return &Context{
 		Request:   req,
-		UserValue: make(map[string]interface{}, 0),
+		UserValue: make(map[string]interface{}),
 		Response: &http.Response{
 			StatusCode: 200,
-			Header:     make(http.Header, 0),
+			Header:     make(http.Header),
 		},
 		index: -1,
 	}

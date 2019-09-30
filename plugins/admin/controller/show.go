@@ -101,7 +101,7 @@ func Assets(ctx *context.Context) {
 	fileSuffix := path.Ext(filepath)
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
 
-	var contentType = ""
+	var contentType string
 	if fileSuffix == "css" || fileSuffix == "js" {
 		contentType = "text/" + fileSuffix + "; charset=utf-8"
 	} else {
@@ -130,7 +130,7 @@ func Export(ctx *context.Context) {
 
 	var (
 		panelInfo table.PanelInfo
-		fileName  = ""
+		fileName  string
 	)
 
 	if len(param.Id) == 1 {
@@ -163,5 +163,4 @@ func Export(ctx *context.Context) {
 
 	ctx.AddHeader("content-disposition", `attachment; filename=`+fileName)
 	ctx.Data(200, "application/vnd.ms-excel", buf.Bytes())
-	return
 }

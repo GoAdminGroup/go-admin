@@ -21,3 +21,9 @@ func TestJoin(t *testing.T) {
 	assert.Equal(t, "/abc", join(slash("abc/"), slash("/")))
 	assert.Equal(t, "/abc", join(slash("/abc/"), slash("/")))
 }
+
+func TestTree(t *testing.T) {
+	tree := Tree()
+	tree.addPath([]string{}, "GET", []Handler{})
+	tree.printChildren()
+}

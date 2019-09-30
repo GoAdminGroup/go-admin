@@ -60,5 +60,4 @@ func InitRouter(prefix string) *context.App {
 func globalErrorHandler(ctx *context.Context) {
 	defer controller.GlobalDeferHandler(ctx)
 	ctx.Next()
-	return
 }

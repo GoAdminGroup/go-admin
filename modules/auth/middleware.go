@@ -176,7 +176,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 func InMethodArr(arr []string, str string) bool {
 	for i := 0; i < len(arr); i++ {
-		if strings.ToUpper(arr[i]) == strings.ToUpper(str) {
+		if strings.EqualFold(arr[i], str) {
 			return true
 		}
 	}

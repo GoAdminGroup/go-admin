@@ -53,7 +53,6 @@ func ShowForm(ctx *context.Context) {
 		Param:  parameter.GetParam(ctx.Request.URL.Query()),
 	})
 	ctx.Next()
-	return
 }
 
 func GetShowFormParam(ctx *context.Context) *ShowFormParam {
@@ -156,7 +155,6 @@ func EditForm(ctx *context.Context) {
 		PreviousPath: config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId()),
 	})
 	ctx.Next()
-	return
 }
 
 func GetEditFormParam(ctx *context.Context) *EditFormParam {

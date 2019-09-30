@@ -93,7 +93,7 @@ func stringToArr(path string) []string {
 	var (
 		paths      = make([]string, 0)
 		start      = 0
-		end        = 0
+		end        int
 		iswildcard = false
 	)
 	for i := 0; i < len(path); i++ {

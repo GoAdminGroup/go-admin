@@ -23,3 +23,6 @@ deps:
 test:
 	mysql -uroot -proot go-admin-test < ./examples/datamodel/admin.sql
 	gotest -v ./tests/gin/...
+
+lint:
+	golangci-lint run

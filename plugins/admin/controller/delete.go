@@ -27,5 +27,4 @@ func Delete(ctx *context.Context) {
 	response.OkWithData(ctx, map[string]interface{}{
 		"token": newToken,
 	})
-	return
 }

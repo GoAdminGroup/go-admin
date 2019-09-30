@@ -53,7 +53,6 @@ func MenuNew(ctx *context.Context) {
 		Alert:    alert,
 	})
 	ctx.Next()
-	return
 }
 
 func GetMenuNewParam(ctx *context.Context) *MenuNewParam {

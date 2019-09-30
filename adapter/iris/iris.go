@@ -41,8 +41,7 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 	}
 
 	for _, plug := range plugin {
-		var plugCopy plugins.Plugin
-		plugCopy = plug
+		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c iris.Context) {
 				ctx := context.NewContext(c.Request())

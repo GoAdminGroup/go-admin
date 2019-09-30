@@ -43,12 +43,12 @@ func (d DatabaseList) Add(key string, db Database) {
 }
 
 func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
-	drivers := make(map[string]DatabaseList, 0)
+	drivers := make(map[string]DatabaseList)
 	for key, item := range d {
 		if driverList, ok := drivers[item.Driver]; ok {
 			driverList.Add(key, item)
 		} else {
-			drivers[item.Driver] = make(DatabaseList, 0)
+			drivers[item.Driver] = make(DatabaseList)
 			drivers[item.Driver].Add(key, item)
 		}
 	}

@@ -44,14 +44,13 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 	}
 
 	for _, plug := range plugin {
-		var plugCopy plugins.Plugin
-		plugCopy = plug
+		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
 				httpreq := Convertor(c)
 				ctx := context.NewContext(httpreq)
 
-				var params = make(map[string]string, 0)
+				var params = make(map[string]string)
 				c.VisitUserValues(func(i []byte, i2 interface{}) {
 					if value, ok := i2.(string); ok {
 						params[string(i)] = value

@@ -42,7 +42,6 @@ func ShowNewForm(ctx *context.Context) {
 		Param:  parameter.GetParam(ctx.Request.URL.Query()),
 	})
 	ctx.Next()
-	return
 }
 
 func GetShowNewFormParam(ctx *context.Context) *ShowNewFormParam {
@@ -131,7 +130,6 @@ func NewForm(ctx *context.Context) {
 		PreviousPath: config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId()),
 	})
 	ctx.Next()
-	return
 }
 
 func GetNewFormParam(ctx *context.Context) *NewFormParam {

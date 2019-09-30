@@ -42,8 +42,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	}
 
 	for _, plug := range plugin {
-		var plugCopy plugins.Plugin
-		plugCopy = plug
+		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			eng.Handlers.AddMethod(req.Method, req.URL, func(c *context.Context) {
 				for key, value := range c.Input.Params() {

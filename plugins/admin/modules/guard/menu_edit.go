@@ -56,7 +56,6 @@ func MenuEdit(ctx *context.Context) {
 		Alert:    alert,
 	})
 	ctx.Next()
-	return
 }
 
 func GetMenuEditParam(ctx *context.Context) *MenuEditParam {

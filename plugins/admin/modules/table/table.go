@@ -23,7 +23,7 @@ func (g GeneratorList) Add(key string, gen Generator) {
 }
 
 var (
-	Generators = make(GeneratorList, 0)
+	Generators = make(GeneratorList)
 	List       = map[string]Table{}
 )
 
@@ -84,7 +84,6 @@ type DefaultTable struct {
 	editable         bool
 	deletable        bool
 	exportable       bool
-	prefix           string
 	primaryKey       PrimaryKey
 }
 
@@ -308,7 +307,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 		// TODO: add object pool
 
-		tempModelData := make(map[string]template.HTML, 0)
+		tempModelData := make(map[string]template.HTML)
 		row := res[i]
 
 		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
@@ -421,7 +420,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 		// TODO: add object pool
 
-		tempModelData := make(map[string]template.HTML, 0)
+		tempModelData := make(map[string]template.HTML)
 		row := res[i]
 
 		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
@@ -552,7 +551,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) {
 }
 
 func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
-	value := make(dialect.H, 0)
+	value := make(dialect.H)
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 

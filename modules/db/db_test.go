@@ -42,7 +42,7 @@ func TestGetTypeFromString(t *testing.T) {
 }
 
 func getType(typeName string) string {
-	r, _ := regexp.Compile("\\(.*\\)")
+	r, _ := regexp.Compile(`\\(.*\\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	return strings.ToLower(strings.Replace(typeName, " unsigned", "", -1))
 }

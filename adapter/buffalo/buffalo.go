@@ -48,8 +48,7 @@ func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
 	reg2 := regexp.MustCompile(":(.*?)$")
 
 	for _, plug := range plugin {
-		var plugCopy plugins.Plugin
-		plugCopy = plug
+		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 
 			url := req.URL
