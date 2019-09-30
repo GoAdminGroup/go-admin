@@ -131,12 +131,17 @@ func AddComp(name string, comp Component) {
 	if comp == nil {
 		panic("component is nil")
 	}
-	if name != "login" {
-		if _, dup := compMap[name]; dup {
-			panic("add component twice " + name)
-		}
+	if _, dup := compMap[name]; dup {
+		panic("add component twice " + name)
 	}
 	compMap[name] = comp
+}
+
+// AddLoginComp add the specified login component.
+func AddLoginComp(comp Component) {
+	compMu.Lock()
+	defer compMu.Unlock()
+	compMap["login"] = comp
 }
 
 // SetComp makes a component available by the provided name.
