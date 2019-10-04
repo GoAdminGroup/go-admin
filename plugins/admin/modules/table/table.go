@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/form"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/paginator"
@@ -276,7 +277,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		})
 	}
 
-	fields += tb.primaryKey.Name
+	fields += "`" + tb.primaryKey.Name + "`"
 
 	if !checkInTable(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
@@ -285,7 +286,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	wheres := " where "
 	whereArgs := make([]interface{}, 0)
 	if len(params.Fields) == 0 {
-		wheres += "id > 0"
+		wheres = ""
 	} else {
 		for key, value := range params.Fields {
 			wheres += "`" + key + "` = ? and "
@@ -297,9 +298,11 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().QueryWithConnection(tb.connection,
-		fmt.Sprintf(queryStatement, fields, tb.info.Table, wheres, params.SortField, params.SortType),
-		args...)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, wheres, params.SortField, params.SortType)
+
+	logger.LogSql(queryCmd, args)
+
+	res, _ := tb.db().QueryWithConnection(tb.connection, queryCmd, args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -338,7 +341,12 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	// TODO: use the dialect
 
-	total, _ := tb.db().QueryWithConnection(tb.connection, fmt.Sprintf(countStatement, tb.info.Table, wheres), whereArgs...)
+	countCmd := fmt.Sprintf(countStatement, tb.info.Table, wheres)
+
+	total, _ := tb.db().QueryWithConnection(tb.connection, countCmd, whereArgs...)
+
+	logger.LogSql(countCmd, whereArgs)
+
 	var size int
 	if tb.connectionDriver == "sqlite" {
 		size = int(total[0]["count(*)"].(int64))
@@ -363,9 +371,9 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 // GetDataFromDatabase query the data set.
 func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo {
 
-	const (
-		queryStatement = "select %s from %s where id in (%s) order by `%s` %s"
-		countStatement = "select count(*) from `%s` where id in (%s)"
+	var (
+		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by `%s` %s"
+		countStatement = "select count(*) from `%s` where " + tb.primaryKey.Name + " in (%s)"
 	)
 
 	thead := make([]map[string]string, 0)
@@ -411,8 +419,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	// TODO: add left join table relations
 
-	res, _ := tb.db().QueryWithConnection(tb.connection,
-		fmt.Sprintf(queryStatement, fields, tb.info.Table, whereIds, params.SortField, params.SortType))
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, whereIds, params.SortField, params.SortType)
+
+	res, _ := tb.db().QueryWithConnection(tb.connection, queryCmd)
+
+	logger.LogSql(queryCmd, nil)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -451,7 +462,12 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	// TODO: use the dialect
 
-	total, _ := tb.db().QueryWithConnection(tb.connection, fmt.Sprintf(countStatement, tb.info.Table, whereIds))
+	countCmd := fmt.Sprintf(countStatement, tb.info.Table, whereIds)
+
+	total, _ := tb.db().QueryWithConnection(tb.connection, countCmd)
+
+	logger.LogSql(countCmd, nil)
+
 	var size int
 	if tb.connectionDriver == "sqlite" {
 		size = int(total[0]["count(*)"].(int64))

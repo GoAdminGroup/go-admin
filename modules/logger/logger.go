@@ -98,8 +98,8 @@ func Access(ctx *context.Context) {
 	}
 }
 
-func LogSql(info ...interface{}) {
-	if sqlLogOpen {
-		manager["info"].Infoln(info...)
+func LogSql(statement string, args []interface{}) {
+	if sqlLogOpen && statement != "" {
+		manager["info"].Infoln("["+constant.Title+"]", "statement", statement, "args", args)
 	}
 }

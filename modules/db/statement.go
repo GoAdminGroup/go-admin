@@ -295,7 +295,7 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 
 func RecycleSql(sql *Sql) {
 
-	logger.LogSql("statement", sql.Statement, "args", sql.Args)
+	logger.LogSql(sql.Statement, sql.Args)
 
 	sql.Fields = make([]string, 0)
 	sql.TableName = ""
