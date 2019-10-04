@@ -4,12 +4,17 @@ sudo: false
 go:
   - 1.12.x
 
+env:
+  - GO111MODULE=on
+  - PGPASSWORD=root
+
 services:
   - mysql
   - postgresql
 
 before_install:
   - mysql -e 'create database `go-admin-test`;'
+  - psql -c 'create database go-admin-test;' -U postgres
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
 
 before_script:

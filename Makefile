@@ -45,25 +45,21 @@ import-mysql:
 	mysql -uroot -proot go-admin-test < ./examples/datamodel/admin.sql
 
 import-postgresql:
+	dropdb -U postgres go-admin-test
 	createdb -U postgres go-admin-test
 	psql -d go-admin-test -U postgres -f ./examples/datamodel/admin.pgsql
 
 pg-test:
 	make import-postgresql
 	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PQ_PATH)
-	dropdb -U postgres go-admin-test
 	make import-postgresql
 	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PQ_PATH)
-	dropdb -U postgres go-admin-test
 	make import-postgresql
 	gotest -v ./tests/buffalo/... -args $(TEST_CONFIG_PQ_PATH)
-	dropdb -U postgres go-admin-test
 	make import-postgresql
 	gotest -v ./tests/chi/... -args $(TEST_CONFIG_PQ_PATH)
-	dropdb -U postgres go-admin-test
 	make import-postgresql
 	gotest -v ./tests/echo/... -args $(TEST_CONFIG_PQ_PATH)
-	dropdb -U postgres go-admin-test
 	make import-postgresql
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PQ_PATH)
 
