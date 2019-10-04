@@ -1,0 +1,88 @@
+#firstnav {
+    height: 50px;
+    border-bottom: 1px solid transparent;
+    box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+    position: relative;
+}
+
+#firstnav .nav-addtabs {
+    position: absolute;
+    left: 45px;
+    z-index: 98;
+    height: 100%;
+    border: none;
+}
+
+#firstnav .navbar-custom-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 99;
+    background: transparent;
+}
+
+.nav-addtabs > li .close-tab {
+    font-size: 10px;
+    position: absolute;
+    right: 3px;
+    top: 53%;
+    margin-top: -8px;
+    z-index: 100;
+    cursor: pointer;
+    color: #909090;
+    display: none;
+}
+
+.nav-addtabs > li.active > a {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    background: #f1f4f6;
+    color: #2c3e50;
+    overflow: hidden;
+}
+
+.nav-addtabs > li > a {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 15px;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    margin: 0;
+    color: #95a5a6;
+}
+
+.content-header > .breadcrumb {
+    float: right;
+    background: transparent;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    padding: 7px 5px;
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    border-radius: 2px;
+}
+
+.breadcrumb {
+    padding: 8px 15px;
+    margin-bottom: 20px;
+    list-style: none;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.breadcrumb > li {
+    display: inline-block;
+}
+
+.content-header > .breadcrumb > li > a {
+    color: #444;
+    text-decoration: none;
+    display: inline-block;
+}

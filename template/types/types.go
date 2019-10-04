@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -45,6 +45,9 @@ type Page struct {
 
 	// ColorScheme is the color scheme of the template.
 	ColorScheme string
+
+	// IndexUrl is the home page url of the site.
+	IndexUrl string
 }
 
 // SystemInfo contains basic info of system.

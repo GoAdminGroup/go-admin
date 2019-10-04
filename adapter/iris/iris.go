@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -141,6 +141,7 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		Logo:        globalConfig.Logo,
 		MiniLogo:    globalConfig.MiniLogo,
 		ColorScheme: globalConfig.ColorScheme,
+		IndexUrl:    globalConfig.GetIndexUrl(),
 	})
 	if err != nil {
 		logger.Error("Iris Content", err)

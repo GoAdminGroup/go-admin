@@ -1,20 +1,24 @@
 {{define "header"}}
-<header class="main-header">
-    <!-- Logo -->
-    <a href="{{.UrlPrefix}}" class="logo">
-        <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini">{{.MiniLogo}}</span>
-        <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">{{.Logo}}</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-        <!-- Sidebar toggle button-->
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">Toggle navigation</span>
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="{{.UrlPrefix}}" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">{{.MiniLogo}}</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">{{.Logo}}</span>
         </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <div id="firstnav">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
 
-        {{ template "admin_panel" . }}
-    </nav>
-</header>
+                <ul class="nav nav-tabs nav-addtabs" style="max-width: 60%">
+                </ul>
+
+                {{ template "admin_panel" . }}
+            </div>
+        </nav>
+    </header>
 {{end}}

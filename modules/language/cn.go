@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -30,6 +30,7 @@ var cn = map[string]string{
 	"online":          "在线",
 	"setting":         "设置",
 	"sign out":        "登出",
+	"home":            "首页",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",

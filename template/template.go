@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -178,6 +178,7 @@ func Execute(tmpl *template.Template,
 		Logo:        config.Logo,
 		MiniLogo:    config.MiniLogo,
 		ColorScheme: config.ColorScheme,
+		IndexUrl:    config.GetIndexUrl(),
 	})
 	if err != nil {
 		fmt.Println("Execute err", err)

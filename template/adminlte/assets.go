@@ -35,6 +35,7 @@ var asserts = []string{
 	"/datatables.net-bs/js/dataTables.bootstrap.min.js",
 	"/dist/css/AdminLTE.css",
 	"/dist/css/AdminLTE.min.css",
+	"/dist/css/all.css",
 	"/dist/css/adminlte.css.map",
 	"/dist/css/adminlte.min.css.map",
 	"/dist/css/alt/AdminLTE-bootstrap-social.css",

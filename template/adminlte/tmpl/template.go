@@ -3413,29 +3413,35 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     });
 </script>
 {{end}}`, "content": `{{define "content"}}
-<script>
-    $('.grid-per-pager').on("change", function (e) {
-        console.log("changing...");
-        $.pjax({url: this.value, container: '#pjax-container'});
-    });
-    $('.grid-refresh').on('click', function () {
-        $.pjax.reload('#pjax-container');
-        toastr.success('{{lang "Refresh succeeded"}} !');
-    });
-</script>
-<script src="{{.UrlPrefix}}/assets/chartjs/chart.js"></script>
-<script src="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
-<section class="content-header">
-    <h1>
-        {{lang .Panel.Title}}
-        <small>{{lang .Panel.Description}}</small>
-    </h1>
-</section>
+    <script>
+        $('.grid-per-pager').on("change", function (e) {
+            console.log("changing...");
+            $.pjax({url: this.value, container: '#pjax-container'});
+        });
+        $('.grid-refresh').on('click', function () {
+            $.pjax.reload('#pjax-container');
+            toastr.success('{{lang "Refresh succeeded"}} !');
+        });
+    </script>
+    <script src="{{.UrlPrefix}}/assets/chartjs/chart.js"></script>
+    <script src="{{.UrlPrefix}}/assets/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.min.js"></script>
+    {{if lang .Panel.Title}}
+        <section class="content-header">
+            <h1>
+                {{lang .Panel.Title}}
+                <small>{{lang .Panel.Description}}</small>
+            </h1>
+            <ol class="breadcrumb" style="margin-right: 30px;">
+                <li><a href="{{.IndexUrl}}"><i class="fa fa-dashboard"></i> {{lang "home"}}</a></li>
+                {{.Menu.FormatPath}}
+            </ol>
+        </section>
+    {{end}}
 
-<!-- Main content -->
-<section class="content">
-    {{.Panel.Content}}
-</section>
+    <!-- Main content -->
+    <section class="content">
+        {{.Panel.Content}}
+    </section>
 {{end}}`, "footer": `{{define "footer"}}
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
@@ -3470,6 +3476,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <link rel="stylesheet" href="{{.UrlPrefix}}/assets/fileinput/fileinput.min.css">
         <link rel="stylesheet" href="{{.UrlPrefix}}/assets/colorpicker/bootstrap-colorpicker.min.css">
         <link rel="stylesheet" href="{{.UrlPrefix}}/assets/nestable/nestable.css">
+        <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/all.css">
         <link rel="stylesheet"
               href="{{.UrlPrefix}}/assets/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css">
         <link rel="stylesheet" href="{{.UrlPrefix}}/assets/duallistbox/bootstrap-duallistbox.min.css">
@@ -3496,24 +3503,28 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <script src="{{.UrlPrefix}}/assets/number-input/bootstrap-number-input.js"></script>
     </head>
 {{end}}`, "header": `{{define "header"}}
-<header class="main-header">
-    <!-- Logo -->
-    <a href="{{.UrlPrefix}}" class="logo">
-        <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini">{{.MiniLogo}}</span>
-        <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">{{.Logo}}</span>
-    </a>
-    <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-        <!-- Sidebar toggle button-->
-        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-            <span class="sr-only">Toggle navigation</span>
+    <header class="main-header">
+        <!-- Logo -->
+        <a href="{{.UrlPrefix}}" class="logo">
+            <!-- mini logo for sidebar mini 50x50 pixels -->
+            <span class="logo-mini">{{.MiniLogo}}</span>
+            <!-- logo for regular state and mobile devices -->
+            <span class="logo-lg">{{.Logo}}</span>
         </a>
+        <!-- Header Navbar: style can be found in header.less -->
+        <nav class="navbar navbar-static-top">
+            <div id="firstnav">
+                <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
 
-        {{ template "admin_panel" . }}
-    </nav>
-</header>
+                <ul class="nav nav-tabs nav-addtabs" style="max-width: 60%">
+                </ul>
+
+                {{ template "admin_panel" . }}
+            </div>
+        </nav>
+    </header>
 {{end}}`, "js": `{{define "js"}}
 <script src="{{.UrlPrefix}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="{{.UrlPrefix}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>

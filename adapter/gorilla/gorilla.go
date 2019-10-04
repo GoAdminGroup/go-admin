@@ -159,6 +159,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		Logo:        globalConfig.Logo,
 		MiniLogo:    globalConfig.MiniLogo,
 		ColorScheme: globalConfig.ColorScheme,
+		IndexUrl:    globalConfig.GetIndexUrl(),
 	})
 	if err != nil {
 		logger.Error("Gorilla Content", err)

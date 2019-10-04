@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -164,6 +164,9 @@ func (c Config) IsProductionEnvironment() bool {
 }
 
 func (c Config) UrlRemovePrefix(u string) string {
+	if u == c.prefix {
+		return "/"
+	}
 	return strings.Replace(u, c.Prefix(), "", 1)
 }
 

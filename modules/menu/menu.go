@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"html/template"
 	"strconv"
 )
 
@@ -37,21 +38,23 @@ func (menu *Menu) AddMaxOrder() {
 
 func (menu *Menu) SetActiveClass(path string) *Menu {
 
-	for i := 0; i < len((*menu).List); i++ {
-		(*menu).List[i].Active = ""
+	for i := 0; i < len(menu.List); i++ {
+		menu.List[i].Active = ""
 	}
 
-	for i := 0; i < len((*menu).List); i++ {
-		if (*menu).List[i].Url == path {
-			(*menu).List[i].Active = "active"
+	for i := 0; i < len(menu.List); i++ {
+		if menu.List[i].Url == path && len(menu.List[i].ChildrenList) == 0 {
+			menu.List[i].Active = "active"
 			return menu
 		} else {
-			for j := 0; j < len((*menu).List[i].ChildrenList); j++ {
-				if (*menu).List[i].ChildrenList[j].Url == path {
-					(*menu).List[i].Active = "active"
+			for j := 0; j < len(menu.List[i].ChildrenList); j++ {
+				if menu.List[i].ChildrenList[j].Url == path {
+					menu.List[i].Active = "active"
+					menu.List[i].ChildrenList[j].Active = "active"
 					return menu
 				} else {
-					(*menu).List[i].Active = ""
+					menu.List[i].Active = ""
+					menu.List[i].ChildrenList[j].Active = ""
 				}
 			}
 		}
@@ -60,8 +63,30 @@ func (menu *Menu) SetActiveClass(path string) *Menu {
 	return menu
 }
 
+func (menu Menu) FormatPath() template.HTML {
+	res := template.HTML(``)
+	for i := 0; i < len(menu.List); i++ {
+		if menu.List[i].Active != "" {
+			if menu.List[i].Url != "#" && menu.List[i].Url != "" && len(menu.List[i].ChildrenList) > 0 {
+				res += template.HTML(`<li><a href="` + menu.List[i].Url + `">` + menu.List[i].Name + `</a></li>`)
+			} else {
+				res += template.HTML(`<li>` + menu.List[i].Name + `</li>`)
+				if len(menu.List[i].ChildrenList) == 0 {
+					return res
+				}
+			}
+			for j := 0; j < len(menu.List[i].ChildrenList); j++ {
+				if menu.List[i].ChildrenList[j].Active != "" {
+					return res + template.HTML(`<li>`+menu.List[i].ChildrenList[j].Name+`</li>`)
+				}
+			}
+		}
+	}
+	return res
+}
+
 func (menu *Menu) GetEditMenuList() []Item {
-	return (*menu).List
+	return menu.List
 }
 
 func GetGlobalMenu(user models.UserModel) *Menu {

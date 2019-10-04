@@ -1,4 +1,4 @@
-// Copyright 2018 cg33.  All rights reserved.
+// Copyright 2019 cg33.  All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
 
@@ -6,6 +6,7 @@ package page
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/logger"
@@ -28,6 +29,8 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
+	fmt.Println("globalConfig.IndexUrl", globalConfig.IndexUrl)
+
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
 		User: user,
@@ -41,6 +44,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func() types.
 		Logo:        globalConfig.Logo,
 		MiniLogo:    globalConfig.MiniLogo,
 		ColorScheme: globalConfig.ColorScheme,
+		IndexUrl:    globalConfig.GetIndexUrl(),
 	})
 	if err != nil {
 		logger.Error("SetPageContent", err)
