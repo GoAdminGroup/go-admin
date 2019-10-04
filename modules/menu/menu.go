@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"html/template"
+	"regexp"
 	"strconv"
 )
 
@@ -37,6 +38,9 @@ func (menu *Menu) AddMaxOrder() {
 }
 
 func (menu *Menu) SetActiveClass(path string) *Menu {
+
+	reg, _ := regexp.Compile("\\?(.*)")
+	path = reg.ReplaceAllString(path, "")
 
 	for i := 0; i < len(menu.List); i++ {
 		menu.List[i].Active = ""
