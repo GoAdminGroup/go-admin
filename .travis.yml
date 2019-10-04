@@ -18,7 +18,7 @@ before_install:
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
+  - go get -u github.com/rakyll/gotest
 
 script:
-  - cd /home/travis/gopath/src/github.com/chenhg5/go-admin && make deps
-  - make test
+  - cd /home/travis/gopath/src/github.com/chenhg5/go-admin && make test
