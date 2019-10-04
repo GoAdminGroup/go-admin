@@ -144,7 +144,7 @@ GO111MODULE=on go run main.go
 
 <strong>微信群</strong>：
 
-<img src="http://www.go-admin.cn/assets/imgs/qrcode.jpg" width="180">
+<img src="http://www.go-admin.cn/assets/imgs/qrcode.jpg" width="181">
 
 ## 十分感谢
 
