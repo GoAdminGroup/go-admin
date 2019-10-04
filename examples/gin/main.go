@@ -27,13 +27,13 @@ func main() {
 		Databases: config.DatabaseList{
 			"default": {
 				Host:       "127.0.0.1",
-				Port:       "5432",
+				Port:       "3306",
 				User:       "root",
 				Pwd:        "root",
 				Name:       "godmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     db.DriverPostgresql,
+				Driver:     db.DriverMysql,
 
 				//Driver: db.DriverSqlite,
 				//File:   "../datamodel/admin.db",
