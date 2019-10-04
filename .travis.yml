@@ -14,7 +14,7 @@ services:
 
 before_install:
   - mysql -e 'create database `go-admin-test`;'
-  - psql -c 'create database go-admin-test;' -U postgres
+  - psql -c "create database 'go-admin-test';" -U postgres
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
 
 before_script:
