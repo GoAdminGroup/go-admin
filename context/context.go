@@ -223,7 +223,7 @@ type Handlers []Handler
 func (app *App) AppendReqAndResp(url, method string, handler []Handler) {
 
 	app.Requests = append(app.Requests, Path{
-		URL:    app.Prefix + url,
+		URL:    join(app.Prefix, url),
 		Method: method,
 	})
 
@@ -304,7 +304,7 @@ type RouterGroup struct {
 func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 
 	g.app.Requests = append(g.app.Requests, Path{
-		URL:    g.Prefix + url,
+		URL:    join(g.Prefix, url),
 		Method: method,
 	})
 

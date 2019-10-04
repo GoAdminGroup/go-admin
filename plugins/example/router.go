@@ -8,8 +8,9 @@ import (
 func InitRouter(prefix string) *context.App {
 
 	app := context.NewApp()
-	app.GET(prefix+"/example", auth.Middleware, TestHandler)
-	app.GET(prefix, auth.Middleware, TestHandler)
+	route := app.Group(prefix)
+	route.GET("/example", auth.Middleware, TestHandler)
+	route.GET("/", auth.Middleware, TestHandler)
 
 	return app
 }

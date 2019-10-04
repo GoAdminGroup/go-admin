@@ -28,6 +28,10 @@ func (db *Postgresql) GetName() string {
 	return "postgresql"
 }
 
+func (db *Postgresql) GetDelimiter() string {
+	return `"`
+}
+
 func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	return CommonQuery(db.DbList[con], filterQuery(query), args...)
 }

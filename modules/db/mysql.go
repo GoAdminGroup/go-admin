@@ -30,6 +30,10 @@ func GetMysqlDB() *Mysql {
 	return &MysqlDB
 }
 
+func (db *Mysql) GetDelimiter() string {
+	return "`"
+}
+
 func (db *Mysql) GetName() string {
 	return "mysql"
 }

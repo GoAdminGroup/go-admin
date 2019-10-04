@@ -34,15 +34,13 @@ func AuthTest(e *httpexpect.Expect) *http.Cookie {
 
 	printlnWithColor("logout: without login", "green")
 	e.GET(config.Get().Url("/logout")).Expect().
-		Status(200).
-		Body().Contains("login")
+		Status(200)
 
 	// logout
 
 	printlnWithColor("logout", "green")
 	e.GET(config.Get().Url("/logout")).WithCookie("go_admin_session", sesId.Value).Expect().
-		Status(200).
-		Body().Contains("login")
+		Status(200)
 
 	// login again
 

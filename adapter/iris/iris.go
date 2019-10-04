@@ -63,12 +63,12 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 				for key, head := range ctx.Response.Header {
 					c.Header(key, head[0])
 				}
+				c.StatusCode(ctx.Response.StatusCode)
 				if ctx.Response.Body != nil {
 					buf := new(bytes.Buffer)
 					_, _ = buf.ReadFrom(ctx.Response.Body)
 					_, _ = c.WriteString(buf.String())
 				}
-				c.StatusCode(ctx.Response.StatusCode)
 			})
 		}
 	}

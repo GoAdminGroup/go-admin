@@ -246,10 +246,15 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 // GetDataFromDatabase query the data set.
 func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo {
 
-	const (
+	var (
 		queryStatement = "select %s from `%s`%s order by `%s` %s LIMIT ? OFFSET ?"
 		countStatement = "select count(*) from `%s`%s"
 	)
+
+	if tb.connectionDriver == db.DriverPostgresql {
+		queryStatement = "select %s from %s%s order by %s %s LIMIT ? OFFSET ?"
+		countStatement = "select count(*) from %s%s"
+	}
 
 	thead := make([]map[string]string, 0)
 	fields := ""
@@ -261,7 +266,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
 		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
-			fields += "`" + tb.info.FieldList[i].Field + "`,"
+			fields += filterFiled(tb.connectionDriver, tb.info.FieldList[i].Field) + ","
 		}
 		if tb.info.FieldList[i].Hide {
 			continue
@@ -277,7 +282,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		})
 	}
 
-	fields += "`" + tb.primaryKey.Name + "`"
+	fields += filterFiled(tb.connectionDriver, tb.primaryKey.Name)
 
 	if !checkInTable(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
@@ -289,7 +294,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		wheres = ""
 	} else {
 		for key, value := range params.Fields {
-			wheres += "`" + key + "` = ? and "
+			wheres += filterFiled(tb.connectionDriver, key) + " = ? and "
 			whereArgs = append(whereArgs, value)
 		}
 		wheres = wheres[:len(wheres)-4]
@@ -375,6 +380,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by `%s` %s"
 		countStatement = "select count(*) from `%s` where " + tb.primaryKey.Name + " in (%s)"
 	)
+
+	if tb.connectionDriver == db.DriverPostgresql {
+		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by %s %s"
+		countStatement = "select count(*) from %s where " + tb.primaryKey.Name + " in (%s)"
+	}
 
 	thead := make([]map[string]string, 0)
 	fields := ""
@@ -660,6 +670,13 @@ func GetNewFormList(old []types.Form, primaryKey string) []types.Form {
 // ***************************************
 // helper function for database operation
 // ***************************************
+
+func filterFiled(driver, filed string) string {
+	if driver != db.DriverPostgresql {
+		return "`" + filed + "`"
+	}
+	return filed
+}
 
 type Columns []string
 

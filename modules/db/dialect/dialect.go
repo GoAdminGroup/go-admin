@@ -26,6 +26,8 @@ type Dialect interface {
 
 	// Select
 	Select(comp *SqlComponent) string
+
+	GetDelimiter() string
 }
 
 func GetDialect() Dialect {
@@ -35,15 +37,23 @@ func GetDialect() Dialect {
 func GetDialectByDriver(driver string) Dialect {
 	switch driver {
 	case "mysql":
-		return mysql{}
+		return mysql{
+			commonDialect: commonDialect{delimiter: "`"},
+		}
 	case "mssql":
-		return mssql{}
+		return mssql{
+			commonDialect: commonDialect{delimiter: "`"},
+		}
 	case "postgresql":
-		return postgresql{}
+		return postgresql{
+			commonDialect: commonDialect{delimiter: `"`},
+		}
 	case "sqlite":
-		return sqlite{}
+		return sqlite{
+			commonDialect: commonDialect{delimiter: "`"},
+		}
 	default:
-		return commonDialect{}
+		return commonDialect{delimiter: "`"}
 	}
 }
 
@@ -107,18 +117,18 @@ func (sql *SqlComponent) getOrderBy() string {
 	return " order by " + sql.Order + " "
 }
 
-func (sql *SqlComponent) getJoins() string {
+func (sql *SqlComponent) getJoins(delimiter string) string {
 	if len(sql.Leftjoins) == 0 {
 		return ""
 	}
 	joins := ""
 	for _, join := range sql.Leftjoins {
-		joins += " left join " + join.Table + " on " + join.FieldA + " " + join.Operation + " " + join.FieldB + " "
+		joins += " left join " + delimiter + join.Table + delimiter + " on " + join.FieldA + " " + join.Operation + " " + join.FieldB + " "
 	}
 	return joins
 }
 
-func (sql *SqlComponent) getFields() string {
+func (sql *SqlComponent) getFields(delimiter string) string {
 	if len(sql.Fields) == 0 {
 		return "*"
 	}
@@ -128,22 +138,22 @@ func (sql *SqlComponent) getFields() string {
 	fields := ""
 	if len(sql.Leftjoins) == 0 {
 		for _, field := range sql.Fields {
-			fields += "`" + field + "`,"
+			fields += delimiter + field + delimiter + ","
 		}
 	} else {
 		for _, field := range sql.Fields {
 			arr := strings.Split(field, ".")
 			if len(arr) > 1 {
-				fields += arr[0] + ".`" + arr[1] + "`,"
+				fields += arr[0] + "." + delimiter + arr[1] + delimiter + ","
 			} else {
-				fields += "`" + field + "`,"
+				fields += delimiter + field + delimiter + ","
 			}
 		}
 	}
 	return fields[:len(fields)-1]
 }
 
-func (sql *SqlComponent) getWheres() string {
+func (sql *SqlComponent) getWheres(delimiter string) string {
 	if len(sql.Wheres) == 0 {
 		if sql.WhereRaws != "" {
 			return " where " + sql.WhereRaws
@@ -155,9 +165,9 @@ func (sql *SqlComponent) getWheres() string {
 	for _, where := range sql.Wheres {
 		arr = strings.Split(where.Field, ".")
 		if len(arr) > 1 {
-			wheres += arr[0] + ".`" + arr[1] + "` " + where.Operation + " " + where.Qmark + " and "
+			wheres += arr[0] + "." + delimiter + arr[1] + delimiter + " " + where.Operation + " " + where.Qmark + " and "
 		} else {
-			wheres += "`" + where.Field + "` " + where.Operation + " " + where.Qmark + " and "
+			wheres += delimiter + where.Field + delimiter + " " + where.Operation + " " + where.Qmark + " and "
 		}
 	}
 
@@ -168,14 +178,14 @@ func (sql *SqlComponent) getWheres() string {
 	}
 }
 
-func (sql *SqlComponent) prepareUpdate() {
+func (sql *SqlComponent) prepareUpdate(delimiter string) {
 	fields := ""
 	args := make([]interface{}, 0)
 
 	if len(sql.Values) != 0 {
 
 		for key, value := range sql.Values {
-			fields += "`" + key + "` = ?, "
+			fields += delimiter + key + delimiter + " = ?, "
 			args = append(args, value)
 		}
 
@@ -209,15 +219,15 @@ func (sql *SqlComponent) prepareUpdate() {
 		sql.Args = append(args, sql.Args...)
 	}
 
-	sql.Statement = "update " + sql.TableName + " set " + fields + sql.getWheres()
+	sql.Statement = "update " + sql.TableName + " set " + fields + sql.getWheres(delimiter)
 }
 
-func (sql *SqlComponent) prepareInsert() {
+func (sql *SqlComponent) prepareInsert(delimiter string) {
 	fields := " ("
 	quesMark := "("
 
 	for key, value := range sql.Values {
-		fields += "`" + key + "`,"
+		fields += delimiter + key + delimiter + ","
 		quesMark += "?,"
 		sql.Args = append(sql.Args, value)
 	}

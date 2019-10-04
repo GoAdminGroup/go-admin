@@ -24,6 +24,10 @@ func (db *Sqlite) GetName() string {
 	return "sqlite"
 }
 
+func (db *Sqlite) GetDelimiter() string {
+	return "`"
+}
+
 func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
 	return CommonQuery(db.DbList[con], query, args...)
 }

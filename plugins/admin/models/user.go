@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
 	"strconv"
@@ -127,6 +128,8 @@ func (t UserModel) New(username, password, name, avatar string) UserModel {
 		"name":     name,
 		"avatar":   avatar,
 	})
+
+	fmt.Println("UserModel new id", id)
 
 	t.Id = id
 	t.UserName = username

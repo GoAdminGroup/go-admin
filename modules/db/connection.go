@@ -23,6 +23,7 @@ type Connection interface {
 	ExecWithConnection(conn, query string, args ...interface{}) sql.Result
 	InitDB(cfg map[string]config.Database)
 	GetName() string
+	GetDelimiter() string
 }
 
 func GetConnectionByDriver(driver string) Connection {

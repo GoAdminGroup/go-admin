@@ -94,10 +94,10 @@ func (sql *Sql) OrderBy(fields ...string) *Sql {
 	}
 	for i := 0; i < len(fields); i++ {
 		if i == len(fields)-2 {
-			sql.Order += " `" + fields[i] + "` " + fields[i+1]
+			sql.Order += " " + sql.filed(fields[i]) + " " + fields[i+1]
 			return sql
 		}
-		sql.Order += " `" + fields[i] + "` and "
+		sql.Order += " " + sql.filed(fields[i]) + " and "
 	}
 	return sql
 }
@@ -284,6 +284,19 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 
 	sql.dialect.Insert(&sql.SqlComponent)
 
+	if sql.diver.GetName() == DriverPostgresql {
+		if sql.TableName == "goadmin_menu" ||
+			sql.TableName == "goadmin_permissions" ||
+			sql.TableName == "goadmin_roles" ||
+			sql.TableName == "goadmin_users" {
+			res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
+			if len(res) == 0 {
+				return 0, errors.New("no affect row")
+			}
+			return res[0]["id"].(int64), nil
+		}
+	}
+
 	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
@@ -291,6 +304,10 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 	}
 
 	return res.LastInsertId()
+}
+
+func (sql *Sql) filed(filed string) string {
+	return sql.diver.GetDelimiter() + filed + sql.diver.GetDelimiter()
 }
 
 func RecycleSql(sql *Sql) {

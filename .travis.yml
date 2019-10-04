@@ -6,9 +6,11 @@ go:
 
 services:
   - mysql
+  - postgresql
 
 before_install:
   - mysql -e 'create database `go-admin-test`;'
+  - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
@@ -16,6 +18,12 @@ before_script:
   - go get cloud.google.com/go/civil
   - go get github.com/NebulousLabs/fastrand
   - go get github.com/gin-gonic/gin
+  - go get github.com/astaxie/beego
+  - go get github.com/gobuffalo/buffalo
+  - go get github.com/go-chi/chi
+  - go get github.com/labstack/echo
+  - go get github.com/gorilla/mux
+  - go get github.com/kataras/iris
   - go get golang.org/x/text/language
   - git clone --depth=50 --branch=master https://github.com/moul/http2curl.git /home/travis/gopath/src/moul.io/http2curl
   - go get moul.io/http2curl

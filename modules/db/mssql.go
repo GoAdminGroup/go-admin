@@ -26,6 +26,10 @@ func GetMssqlDB() *Mssql {
 	return &MssqlDB
 }
 
+func (db *Mssql) GetDelimiter() string {
+	return "`"
+}
+
 func (db *Mssql) GetName() string {
 	return "mssql"
 }

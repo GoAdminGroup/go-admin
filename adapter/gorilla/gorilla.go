@@ -73,6 +73,8 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 					return
 				}
 
+				w.WriteHeader(ctx.Response.StatusCode)
+
 				buf := new(bytes.Buffer)
 				_, _ = buf.ReadFrom(ctx.Response.Body)
 
@@ -81,7 +83,6 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 					w.WriteHeader(http.StatusInternalServerError)
 					return
 				}
-				w.WriteHeader(ctx.Response.StatusCode)
 			}).Methods(strings.ToUpper(req.Method))
 		}
 	}
