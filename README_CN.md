@@ -142,9 +142,7 @@ GO111MODULE=on go run main.go
 
 这里是[开发计划](https://github.com/chenhg5/go-admin/projects)
 
-<strong>微信群</strong>：
-
-<img src="http://www.go-admin.cn/assets/imgs/qrcode.jpg" width="181">
+<strong>[点击这里加微信群](http://www.go-admin.cn/assets/imgs/qrcode.jpg)</strong>
 
 ## 十分感谢
 
