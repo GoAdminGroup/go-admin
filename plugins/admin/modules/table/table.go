@@ -226,7 +226,7 @@ func (tb DefaultTable) GetExportable() bool {
 func (tb DefaultTable) GetFiltersMap() []map[string]string {
 	var filters = make([]map[string]string, 0)
 	for _, value := range tb.info.FieldList {
-		if value.Filter {
+		if value.Filterable {
 			filters = append(filters, map[string]string{
 				"title": value.Head,
 				"name":  value.Field,
@@ -246,8 +246,8 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo {
 
 	const (
-		queryStatement = "select %s from %s%s order by %s %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from %s%s"
+		queryStatement = "select %s from `%s`%s order by `%s` %s LIMIT ? OFFSET ?"
+		countStatement = "select count(*) from `%s`%s"
 	)
 
 	thead := make([]map[string]string, 0)
@@ -260,7 +260,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
 		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
-			fields += tb.info.FieldList[i].Field + ","
+			fields += "`" + tb.info.FieldList[i].Field + "`,"
 		}
 		if tb.info.FieldList[i].Hide {
 			continue
@@ -288,7 +288,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		wheres += "id > 0"
 	} else {
 		for key, value := range params.Fields {
-			wheres += key + " = ? and "
+			wheres += "`" + key + "` = ? and "
 			whereArgs = append(whereArgs, value)
 		}
 		wheres = wheres[:len(wheres)-4]
@@ -364,8 +364,8 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo {
 
 	const (
-		queryStatement = "select %s from %s where id in (%s) order by %s %s"
-		countStatement = "select count(*) from %s where id in (%s)"
+		queryStatement = "select %s from %s where id in (%s) order by `%s` %s"
+		countStatement = "select count(*) from `%s` where id in (%s)"
 	)
 
 	thead := make([]map[string]string, 0)
@@ -542,7 +542,6 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) {
 	_, _ = tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getValues(dataList))
-
 }
 
 // InsertDataFromDatabase insert data.

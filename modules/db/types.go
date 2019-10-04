@@ -86,7 +86,7 @@ const (
 	Clob             DatabaseType = "CLOB"
 
 	Binary    DatabaseType = "BINARY"
-	VarBinary DatabaseType = "VARBINARY"
+	Varbinary DatabaseType = "VARBINARY"
 	Enum      DatabaseType = "ENUM"
 	Set       DatabaseType = "SET"
 
@@ -126,7 +126,7 @@ var (
 		Text, Json, Blob, Tinyblob, Mediumblob, Longblob,
 		Interval, Point,
 		Line, Lseg, Box, Path, Polygon, Circle, Cidr, Inet, Macaddr, Character, Varyingcharacter,
-		Nchar, Nativecharacter, Nvarchar, Clob, Binary, VarBinary, Enum, Set, Geometry, Multilinestring,
+		Nchar, Nativecharacter, Nvarchar, Clob, Binary, Varbinary, Enum, Set, Geometry, Multilinestring,
 		Multipolygon, Linestring, Multipoint, Geometrycollection, Name, Uuid, Timestamptz,
 		Name, Uuid, Inet}
 	BoolTypeList = []DatabaseType{Bool, Boolean}

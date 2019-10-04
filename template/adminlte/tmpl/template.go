@@ -2615,7 +2615,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <input type="hidden" name="{{.Field}}[]" />
 </div>
 <script>
-    $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
+    $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filterable"});
 </script>
 {{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
@@ -2999,7 +2999,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 
         <div class="btn-group pull-right" style="margin-right: 10px">
             <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
-                        class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filter"}}</a>
+                        class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filterable"}}</a>
             <a href="{{.InfoUrl}}" class="btn btn-sm btn-facebook"><i
                         class="fa fa-undo"></i>&nbsp;&nbsp;{{lang "Reset"}}
             </a>
@@ -3013,7 +3013,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                             <span aria-hidden="true">×</span>
                             <span class="sr-only">Close</span>
                         </button>
-                        <h4 class="modal-title" id="myModalLabel">{{lang "Filter"}}</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{lang "Filterable"}}</h4>
                     </div>
                     <form action="{{.InfoUrl}}" method="get" pjax-container="">
                         <div class="modal-body">

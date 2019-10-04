@@ -112,14 +112,14 @@ type PostFieldFilterFn func(value PostRowModel) interface{}
 
 // Field is the table field.
 type Field struct {
-	FilterFn  FieldFilterFn
-	Field     string
-	TypeName  db.DatabaseType
-	Head      string
-	JoinTable []Join
-	Sortable  bool
-	Filter    bool
-	Hide      bool
+	FilterFn   FieldFilterFn
+	Field      string
+	TypeName   db.DatabaseType
+	Head       string
+	JoinTable  []Join
+	Sortable   bool
+	Filterable bool
+	Hide       bool
 }
 
 type Join struct {

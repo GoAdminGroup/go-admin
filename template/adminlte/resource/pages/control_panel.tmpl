@@ -1,0 +1,199 @@
+{{define "control_panel"}}
+    <div class="control-sidebar-bg" style="position: fixed; height: auto;"></div>
+    <aside class="control-sidebar control-sidebar-dark control-sidebar-open"
+           style="position: fixed; max-height: 100%; overflow: auto;">
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li class="active"><a href="#control-sidebar-setting-tab" data-toggle="tab" aria-expanded="true"><i
+                            class="fa fa-wrench"></i></a></li>
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="control-sidebar-setting-tab">
+                <h4 class="control-sidebar-heading">{{lang "layout"}}</h4>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="fixed"
+                                                                                         class="pull-right"
+                                                                                         checked="checked"> 固定布局</label>
+                    <p>盒子模型和固定布局不能同时启作用</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="layout-boxed"
+                                                                                         class="pull-right">
+                        盒子布局</label>
+                    <p>盒子布局最大宽度将被限定为1250px</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="sidebar-collapse"
+                                                                                         class="pull-right">
+                        切换菜单栏</label>
+                    <p>切换菜单栏的展示或收起</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-enable="expandOnHover"
+                                                                                         class="pull-right">
+                        菜单栏自动展开</label>
+                    <p>鼠标移到菜单栏自动展开</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-menu="show-submenu"
+                                                                                         class="pull-right">
+                        显示菜单栏子菜单</label>
+                    <p>菜单栏子菜单将始终显示</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-menu="disable-top-badge"
+                                                                                         class="pull-right"
+                                                                                         checked="checked">
+                        禁用顶部彩色小角标</label>
+                    <p>左边菜单栏的彩色小角标不受影响</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-controlsidebar="control-sidebar-open"
+                                                                                         class="pull-right">
+                        切换右侧操作栏</label>
+                    <p>切换右侧操作栏覆盖或独占</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-sidebarskin="toggle"
+                                                                                         class="pull-right">
+                        切换右侧操作栏背景</label>
+                    <p>将右侧操作栏背景亮色或深色切换</p></div>
+                <h4 class="control-sidebar-heading">{{lang "skin"}}</h4>
+                <ul class="list-unstyled clearfix skin-list">
+                    <li><a href="javascript:;" data-skin="skin-blue" style="" class="clearfix full-opacity-hover">
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span
+                                        class="bg-light-blue"
+                                        style="display:block; width: 80%; float: left; height: 7px;"></span></div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Blue</p></li>
+                    <li><a href="javascript:;" data-skin="skin-white" class="clearfix full-opacity-hover">
+                            <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span
+                                        style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">White</p></li>
+                    <li><a href="javascript:;" data-skin="skin-purple" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-purple-active"></span><span class="bg-purple"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Purple</p></li>
+                    <li><a href="javascript:;" data-skin="skin-green" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-green-active"></span><span class="bg-green"
+                                                                            style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Green</p></li>
+                    <li><a href="javascript:;" data-skin="skin-red" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-red-active"></span><span class="bg-red"
+                                                                          style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Red</p></li>
+                    <li><a href="javascript:;" data-skin="skin-yellow" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-yellow-active"></span><span class="bg-yellow"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Yellow</p></li>
+                    <li><a href="javascript:;" data-skin="skin-blue-light" class="clearfix full-opacity-hover">
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span
+                                        class="bg-light-blue"
+                                        style="display:block; width: 80%; float: left; height: 7px;"></span></div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Blue Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-white-light" class="clearfix full-opacity-hover">
+                            <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span
+                                        style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">White Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-purple-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-purple-active"></span><span class="bg-purple"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Purple Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-green-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-green-active"></span><span class="bg-green"
+                                                                            style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Green Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-red-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-red-active"></span><span class="bg-red"
+                                                                          style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Red Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-yellow-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-yellow-active"></span><span class="bg-yellow"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px;">Yellow Light</p></li>
+                </ul>
+            </div>
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h4 class="control-sidebar-heading">{{lang "home"}}</h4>
+            </div>
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <h4 class="control-sidebar-heading">{{lang "config"}}</h4>
+            </div>
+        </div>
+    </aside>
+{{end}}
