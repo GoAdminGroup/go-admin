@@ -177,6 +177,11 @@ func GetUserTable() (userTable table.Table) {
 		},
 	}
 
+	userTable.GetForm().Group = map[string][]string{
+		"profile1": {"id", "ip", "name"},
+		"profile2": {"gender", "phone", "city", "created_at", "updated_at"},
+	}
+
 	userTable.GetForm().Table = "users"
 	userTable.GetForm().Title = "Users"
 	userTable.GetForm().Description = "Users"

@@ -25,15 +25,14 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 
 	table.RefreshTableList()
 
-	formList := table.GetNewFormList(panel.GetForm().FormList, panel.GetPrimaryKey().Name)
-	for i := 0; i < len(formList); i++ {
-		formList[i].Editable = true
-	}
+	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().Group, panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
+			SetGroupContent(groupFormList).
+			SetGroupHeaders(groupHeaders).
 			SetUrl(url).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetToken(auth.TokenHelper.AddToken()).

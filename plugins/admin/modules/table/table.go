@@ -60,7 +60,7 @@ type Table interface {
 	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
-	GetDataFromDatabaseWithId(id string) ([]types.Form, string, string)
+	GetDataFromDatabaseWithId(id string) ([]types.Form, [][]types.Form, []string, string, string)
 	UpdateDataFromDatabase(dataList form.Values)
 	InsertDataFromDatabase(dataList form.Values)
 	DeleteDataFromDatabase(id string)
@@ -246,15 +246,13 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 // GetDataFromDatabase query the data set.
 func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo {
 
-	var (
-		queryStatement = "select %s from `%s`%s order by `%s` %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from `%s`%s"
-	)
+	connection := tb.db()
 
-	if tb.connectionDriver == db.DriverPostgresql {
-		queryStatement = "select %s from %s%s order by %s %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from %s%s"
-	}
+	var (
+		queryStatement = "select %s from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
+			"%s order by " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + " %s LIMIT ? OFFSET ?"
+		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + "%s"
+	)
 
 	thead := make([]map[string]string, 0)
 	fields := ""
@@ -266,7 +264,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	var sortable string
 	for i := 0; i < len(tb.info.FieldList); i++ {
 		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
-			fields += filterFiled(tb.connectionDriver, tb.info.FieldList[i].Field) + ","
+			fields += filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
 		}
 		if tb.info.FieldList[i].Hide {
 			continue
@@ -282,7 +280,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		})
 	}
 
-	fields += filterFiled(tb.connectionDriver, tb.primaryKey.Name)
+	fields += filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
 
 	if !checkInTable(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
@@ -294,7 +292,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		wheres = ""
 	} else {
 		for key, value := range params.Fields {
-			wheres += filterFiled(tb.connectionDriver, key) + " = ? and "
+			wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
 			whereArgs = append(whereArgs, value)
 		}
 		wheres = wheres[:len(wheres)-4]
@@ -307,7 +305,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	logger.LogSql(queryCmd, args)
 
-	res, _ := tb.db().QueryWithConnection(tb.connection, queryCmd, args...)
+	res, _ := connection.QueryWithConnection(tb.connection, queryCmd, args...)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -354,7 +352,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	countCmd := fmt.Sprintf(countStatement, tb.info.Table, wheres)
 
-	total, _ := tb.db().QueryWithConnection(tb.connection, countCmd, whereArgs...)
+	total, _ := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
 
 	logger.LogSql(countCmd, whereArgs)
 
@@ -379,18 +377,17 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	}
 }
 
-// GetDataFromDatabase query the data set.
+// GetDataFromDatabaseWithIds query the data set.
 func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo {
 
-	var (
-		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by `%s` %s"
-		countStatement = "select count(*) from `%s` where " + tb.primaryKey.Name + " in (%s)"
-	)
+	connection := tb.db()
 
-	if tb.connectionDriver == db.DriverPostgresql {
-		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by %s %s"
-		countStatement = "select count(*) from %s where " + tb.primaryKey.Name + " in (%s)"
-	}
+	var (
+		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by " + connection.GetDelimiter() +
+			"%s" + connection.GetDelimiter() + " %s"
+		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
+			" where " + tb.primaryKey.Name + " in (%s)"
+	)
 
 	thead := make([]map[string]string, 0)
 	fields := ""
@@ -437,7 +434,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, whereIds, params.SortField, params.SortType)
 
-	res, _ := tb.db().QueryWithConnection(tb.connection, queryCmd)
+	res, _ := connection.QueryWithConnection(tb.connection, queryCmd)
 
 	logger.LogSql(queryCmd, nil)
 
@@ -487,7 +484,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	countCmd := fmt.Sprintf(countStatement, tb.info.Table, whereIds)
 
-	total, _ := tb.db().QueryWithConnection(tb.connection, countCmd)
+	total, _ := connection.QueryWithConnection(tb.connection, countCmd)
 
 	logger.LogSql(countCmd, nil)
 
@@ -513,7 +510,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, string, string) {
+func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]types.Form, []string, string, string) {
 
 	fields := make([]string, 0)
 
@@ -530,6 +527,68 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 		Table(tb.form.Table).Select(fields...).
 		Where(tb.primaryKey.Name, "=", id).
 		First()
+
+	var (
+		groupFormList = make([][]types.Form, 0)
+		groupHeaders  = make([]string, 0)
+	)
+
+	if len(tb.form.Group) > 0 {
+		for title, value := range tb.form.Group {
+			list := make([]types.Form, len(value))
+			for j := 0; j < len(value); j++ {
+				for i := 0; i < len(tb.form.FormList); i++ {
+					if value[j] == tb.form.FormList[i].Field {
+						if checkInTable(columns, tb.form.FormList[i].Field) {
+							if tb.form.FormList[i].FormType.IsSelect() {
+								valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+									Row:   res,
+								}).([]string)
+								for _, v := range tb.form.FormList[i].Options {
+									if modules.InArray(valueArr, v["value"]) {
+										v["selected"] = "selected"
+									}
+								}
+							} else {
+								tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+									Row:   res,
+								}).(string)
+							}
+						} else {
+							if tb.form.FormList[i].FormType.IsSelect() {
+								valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: "",
+									Row:   res,
+								}).([]string)
+								for _, v := range tb.form.FormList[i].Options {
+									if modules.InArray(valueArr, v["value"]) {
+										v["selected"] = "selected"
+									}
+								}
+							} else {
+								tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: "",
+									Row:   res,
+								}).(string)
+							}
+						}
+						list[j] = tb.form.FormList[i]
+						break
+					}
+				}
+			}
+
+			groupFormList = append(groupFormList, list)
+			groupHeaders = append(groupHeaders, title)
+		}
+		return tb.form.FormList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
+	}
 
 	for i := 0; i < len(tb.form.FormList); i++ {
 		if checkInTable(columns, tb.form.FormList[i].Field) {
@@ -555,7 +614,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			if tb.form.FormList[i].FormType.IsSelect() {
 				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    id,
-					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+					Value: "",
 					Row:   res,
 				}).([]string)
 				for _, v := range tb.form.FormList[i].Options {
@@ -566,14 +625,14 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 			} else {
 				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    id,
-					Value: tb.form.FormList[i].Field,
+					Value: "",
 					Row:   res,
 				}).(string)
 			}
 		}
 	}
 
-	return tb.form.FormList, tb.form.Title, tb.form.Description
+	return tb.form.FormList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
 }
 
 // UpdateDataFromDatabase update data.
@@ -669,26 +728,52 @@ func (tb DefaultTable) sql() *db.Sql {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
-func GetNewFormList(old []types.Form, primaryKey string) []types.Form {
-	var newForm []types.Form
-	for _, v := range old {
-		v.Value = ""
-		if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
-			newForm = append(newForm, v)
+func GetNewFormList(group map[string][]string, old []types.Form, primaryKey string) ([]types.Form, [][]types.Form, []string) {
+
+	if len(group) == 0 {
+		var newForm []types.Form
+		for _, v := range old {
+			v.Value = ""
+			if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
+				newForm = append(newForm, v)
+			}
 		}
+		return newForm, [][]types.Form{}, []string{}
 	}
-	return newForm
+
+	var (
+		newForm = make([][]types.Form, 0)
+		headers = make([]string, 0)
+	)
+
+	for title, value := range group {
+		list := make([]types.Form, 0)
+
+		for i := 0; i < len(value); i++ {
+			for _, v := range old {
+				if v.Field == value[i] {
+					v.Value = ""
+					if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
+						list = append(list, v)
+						break
+					}
+				}
+			}
+		}
+
+		newForm = append(newForm, list)
+		headers = append(headers, title)
+	}
+
+	return []types.Form{}, newForm, headers
 }
 
 // ***************************************
 // helper function for database operation
 // ***************************************
 
-func filterFiled(driver, filed string) string {
-	if driver != db.DriverPostgresql {
-		return "`" + filed + "`"
-	}
-	return filed
+func filterFiled(filed, delimiter string) string {
+	return delimiter + filed + delimiter
 }
 
 type Columns []string

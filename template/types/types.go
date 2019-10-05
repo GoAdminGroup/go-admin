@@ -144,6 +144,7 @@ type InfoPanel struct {
 // FormPanel
 type FormPanel struct {
 	FormList    []Form
+	Group       map[string][]string
 	Table       string
 	Title       string
 	Description string

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
@@ -21,7 +22,9 @@ func ShowForm(ctx *context.Context) {
 
 func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id string, url, infoUrl string) {
 
-	formData, title, description := panel.GetDataFromDatabaseWithId(id)
+	formData, groupFormData, groupHeaders, title, description := panel.GetDataFromDatabaseWithId(id)
+
+	fmt.Println("groupHeaders", groupHeaders)
 
 	user := auth.Auth(ctx)
 
@@ -29,6 +32,8 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
+			SetGroupContent(groupFormData).
+			SetGroupHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(url).

@@ -33,7 +33,7 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formData, title, description := table.List["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
+	formData, groupFormData, groupHeaders, title, description := table.List["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
 
 	user := auth.Auth(ctx)
 
@@ -45,6 +45,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
+			SetGroupContent(groupFormData).
+			SetGroupHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
@@ -148,6 +150,11 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
+	list := table.List["menu"]
+
+	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().Group,
+		list.GetForm().FormList, list.GetPrimaryKey().Name)
+
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
@@ -155,7 +162,9 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		SetToken(auth.TokenHelper.AddToken()).
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
-		SetContent(table.GetNewFormList(table.List["menu"].GetForm().FormList, table.List["menu"].GetPrimaryKey().Name)).
+		SetContent(formList).
+		SetGroupContent(groupFormList).
+		SetGroupHeaders(groupHeaders).
 		GetContent()
 
 	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()

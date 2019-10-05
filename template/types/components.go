@@ -12,6 +12,8 @@ import (
 type FormAttribute interface {
 	SetHeader(value template.HTML) FormAttribute
 	SetContent(value []Form) FormAttribute
+	SetGroupContent(value [][]Form) FormAttribute
+	SetGroupHeaders(value []string) FormAttribute
 	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute

@@ -6,17 +6,19 @@ import (
 )
 
 type FormAttribute struct {
-	Name       string
-	Header     template.HTML
-	Content    []types.Form
-	Footer     template.HTML
-	Url        string
-	Method     string
-	PrimaryKey string
-	InfoUrl    string
-	CSRFToken  string
-	Title      template.HTML
-	Prefix     string
+	Name         string
+	Header       template.HTML
+	Content      []types.Form
+	GroupContent [][]types.Form
+	GroupHeaders []string
+	Footer       template.HTML
+	Url          string
+	Method       string
+	PrimaryKey   string
+	InfoUrl      string
+	CSRFToken    string
+	Title        template.HTML
+	Prefix       string
 	types.Attribute
 }
 
@@ -32,6 +34,16 @@ func (compo *FormAttribute) SetPrimaryKey(value string) types.FormAttribute {
 
 func (compo *FormAttribute) SetContent(value []types.Form) types.FormAttribute {
 	compo.Content = value
+	return compo
+}
+
+func (compo *FormAttribute) SetGroupContent(value [][]types.Form) types.FormAttribute {
+	compo.GroupContent = value
+	return compo
+}
+
+func (compo *FormAttribute) SetGroupHeaders(value []string) types.FormAttribute {
+	compo.GroupHeaders = value
 	return compo
 }
 
@@ -76,5 +88,5 @@ func (compo *FormAttribute) GetContent() template.HTML {
 		"form/selectbox", "form/text", "form/radio",
 		"form/password", "form/select", "form/singleselect",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number",
-		"form/email", "form/url", "form/ip", "form/color", "form/currency")
+		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components")
 }

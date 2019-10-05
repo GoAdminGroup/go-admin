@@ -19,49 +19,42 @@
         {{.Header}}
         <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
             <div class="box-body">
-                <div class="fields-group">
-                    {{range $key, $data := .Content}}
-                        <div class="form-group">
-                            {{if eq $data.FormType.String "default"}}
-                                {{ template "form_default" $data }}
-                            {{else if eq $data.FormType.String "text"}}
-                                {{ template "form_text" $data }}
-                            {{else if eq $data.FormType.String "file"}}
-                                {{ template "form_file" $data }}
-                            {{else if eq $data.FormType.String "password"}}
-                                {{ template "form_password" $data }}
-                            {{else if eq $data.FormType.String "selectbox"}}
-                                {{ template "form_selectbox" $data }}
-                            {{else if eq $data.FormType.String "select"}}
-                                {{ template "form_select" $data }}
-                            {{else if eq $data.FormType.String "select_single"}}
-                                {{ template "form_select_single" $data }}
-                            {{else if eq $data.FormType.String "textarea"}}
-                                {{ template "form_textarea" $data }}
-                            {{else if eq $data.FormType.String "iconpicker"}}
-                                {{ template "form_iconpicker" $data }}
-                            {{else if eq $data.FormType.String "richtext"}}
-                                {{ template "form_rich_text" $data }}
-                            {{else if eq $data.FormType.String "datetime"}}
-                                {{ template "form_datetime" $data }}
-                            {{else if eq $data.FormType.String "radio"}}
-                                {{ template "form_radio" $data }}
-                            {{else if eq $data.FormType.String "email"}}
-                                {{ template "form_email" $data }}
-                            {{else if eq $data.FormType.String "url"}}
-                                {{ template "form_url" $data }}
-                            {{else if eq $data.FormType.String "ip"}}
-                                {{ template "form_ip" $data }}
-                            {{else if eq $data.FormType.String "color"}}
-                                {{ template "form_color" $data }}
-                            {{else if eq $data.FormType.String "currency"}}
-                                {{ template "form_currency" $data }}
-                            {{else if eq $data.FormType.String "number"}}
-                                {{ template "form_number" $data }}
+                {{if eq (len .GroupHeaders) 0}}
+                    <div class="fields-group">
+                        {{ template "form_components" .Content }}
+                    </div>
+                {{else}}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                            {{range $key, $data := .GroupHeaders}}
+                                {{if eq $key 0}}
+                                    <li class="active">
+                                {{else}}
+                                    <li class="">
+                                {{end}}
+                                <a href="#tab-form-{{$key}}" data-toggle="tab" aria-expanded="true">
+                                    {{$data}} <i class="fa fa-exclamation-circle text-red hide"></i>
+                                </a>
+                            </li>
                             {{end}}
+                        </ul>
+                        <div class="tab-content fields-group">
+
+                            {{range $key, $data := .GroupContent}}
+
+                            {{if eq $key 0}}
+                                <div class="tab-pane active" id="tab-form-{{$key}}">
+                            {{else}}
+                                <div class="tab-pane" id="tab-form-{{$key}}">
+                            {{end}}
+                                {{ template "form_components" $data}}
+                            </div>
+
+                            {{end}}
+
                         </div>
-                    {{end}}
-                </div>
+                    </div>
+                {{end}}
             </div>
             <div class="box-footer">
                 <div class="col-md-2">

@@ -68,15 +68,17 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 
 	var (
 		formData           []types.Form
+		groupFormData      [][]types.Form
+		groupHeaders       []string
 		title, description string
 		prefix             = ctx.Query("prefix")
 		panel              = table.List[prefix]
 	)
 
 	if kind == "edit" {
-		formData, title, description = table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
+		formData, groupFormData, groupHeaders, title, description = table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
 	} else {
-		formData = table.GetNewFormList(panel.GetForm().FormList, panel.GetPrimaryKey().Name)
+		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().Group, panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 		title = panel.GetForm().Title
 		description = panel.GetForm().Description
 	}
@@ -89,6 +91,8 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
+			SetGroupContent(groupFormData).
+			SetGroupHeaders(groupHeaders).
 			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(config.PrefixFixSlash()).

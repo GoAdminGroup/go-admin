@@ -1,0 +1,43 @@
+{{define "form_components"}}
+    {{range $key, $data := .}}
+        <div class="form-group">
+            {{if eq $data.FormType.String "default"}}
+                {{ template "form_default" $data }}
+            {{else if eq $data.FormType.String "text"}}
+                {{ template "form_text" $data }}
+            {{else if eq $data.FormType.String "file"}}
+                {{ template "form_file" $data }}
+            {{else if eq $data.FormType.String "password"}}
+                {{ template "form_password" $data }}
+            {{else if eq $data.FormType.String "selectbox"}}
+                {{ template "form_selectbox" $data }}
+            {{else if eq $data.FormType.String "select"}}
+                {{ template "form_select" $data }}
+            {{else if eq $data.FormType.String "select_single"}}
+                {{ template "form_select_single" $data }}
+            {{else if eq $data.FormType.String "textarea"}}
+                {{ template "form_textarea" $data }}
+            {{else if eq $data.FormType.String "iconpicker"}}
+                {{ template "form_iconpicker" $data }}
+            {{else if eq $data.FormType.String "richtext"}}
+                {{ template "form_rich_text" $data }}
+            {{else if eq $data.FormType.String "datetime"}}
+                {{ template "form_datetime" $data }}
+            {{else if eq $data.FormType.String "radio"}}
+                {{ template "form_radio" $data }}
+            {{else if eq $data.FormType.String "email"}}
+                {{ template "form_email" $data }}
+            {{else if eq $data.FormType.String "url"}}
+                {{ template "form_url" $data }}
+            {{else if eq $data.FormType.String "ip"}}
+                {{ template "form_ip" $data }}
+            {{else if eq $data.FormType.String "color"}}
+                {{ template "form_color" $data }}
+            {{else if eq $data.FormType.String "currency"}}
+                {{ template "form_currency" $data }}
+            {{else if eq $data.FormType.String "number"}}
+                {{ template "form_number" $data }}
+            {{end}}
+        </div>
+    {{end}}
+{{end}}
