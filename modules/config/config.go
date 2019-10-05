@@ -59,6 +59,11 @@ const (
 	EnvTest  = "test"
 	EnvLocal = "local"
 	EnvProd  = "prod"
+
+	DriverMysql      = "mysql"
+	DriverSqlite     = "sqlite"
+	DriverPostgresql = "postgresql"
+	DriverMssql      = "mssql"
 )
 
 // Store is the file store config. Path is the local store path.

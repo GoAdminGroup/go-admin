@@ -342,7 +342,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			FilterFn: func(model types.RowModel) interface{} {
 				return strings.Split(model.Value, ",")
 			},
-			PostFilterFn: func(model types.PostRowModel) interface{} {
+			PostFilterFn: func(model types.PostRowModel) string {
 				return strings.Join(model.Value, ",")
 			},
 		}, {
@@ -351,7 +351,7 @@ func GetPermissionTable() (PermissionTable Table) {
 			TypeName: db.Varchar,
 			Default:  "",
 			Editable: true,
-			FormType: "textarea",
+			FormType: form.TextArea,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},

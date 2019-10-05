@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/template/types/form"
 	"html/template"
 )
 
@@ -72,7 +73,7 @@ type Form struct {
 	Head                   string
 	Default                string
 	Editable               bool
-	FormType               string
+	FormType               form.Type
 	Value                  string
 	Options                []map[string]string
 	DefaultOptionDelimiter string
@@ -108,7 +109,7 @@ func (r RowModelValue) First() string {
 type FieldFilterFn func(value RowModel) interface{}
 
 // PostFieldFilterFn is filter function of data.
-type PostFieldFilterFn func(value PostRowModel) interface{}
+type PostFieldFilterFn func(value PostRowModel) string
 
 // Field is the table field.
 type Field struct {

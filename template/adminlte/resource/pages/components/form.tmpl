@@ -22,41 +22,41 @@
                 <div class="fields-group">
                     {{range $key, $data := .Content}}
                         <div class="form-group">
-                            {{if eq $data.FormType "default"}}
+                            {{if eq $data.FormType.String "default"}}
                                 {{ template "form_default" $data }}
-                            {{else if eq $data.FormType "text"}}
+                            {{else if eq $data.FormType.String "text"}}
                                 {{ template "form_text" $data }}
-                            {{else if eq $data.FormType "file"}}
+                            {{else if eq $data.FormType.String "file"}}
                                 {{ template "form_file" $data }}
-                            {{else if eq $data.FormType "password"}}
+                            {{else if eq $data.FormType.String "password"}}
                                 {{ template "form_password" $data }}
-                            {{else if eq $data.FormType "selectbox"}}
+                            {{else if eq $data.FormType.String "selectbox"}}
                                 {{ template "form_selectbox" $data }}
-                            {{else if eq $data.FormType "select"}}
+                            {{else if eq $data.FormType.String "select"}}
                                 {{ template "form_select" $data }}
-                            {{else if eq $data.FormType "select_single"}}
+                            {{else if eq $data.FormType.String "select_single"}}
                                 {{ template "form_select_single" $data }}
-                            {{else if eq $data.FormType "textarea"}}
+                            {{else if eq $data.FormType.String "textarea"}}
                                 {{ template "form_textarea" $data }}
-                            {{else if eq $data.FormType "iconpicker"}}
+                            {{else if eq $data.FormType.String "iconpicker"}}
                                 {{ template "form_iconpicker" $data }}
-                            {{else if eq $data.FormType "richtext"}}
+                            {{else if eq $data.FormType.String "richtext"}}
                                 {{ template "form_rich_text" $data }}
-                            {{else if eq $data.FormType "datetime"}}
+                            {{else if eq $data.FormType.String "datetime"}}
                                 {{ template "form_datetime" $data }}
-                            {{else if eq $data.FormType "radio"}}
+                            {{else if eq $data.FormType.String "radio"}}
                                 {{ template "form_radio" $data }}
-                            {{else if eq $data.FormType "email"}}
+                            {{else if eq $data.FormType.String "email"}}
                                 {{ template "form_email" $data }}
-                            {{else if eq $data.FormType "url"}}
+                            {{else if eq $data.FormType.String "url"}}
                                 {{ template "form_url" $data }}
-                            {{else if eq $data.FormType "ip"}}
+                            {{else if eq $data.FormType.String "ip"}}
                                 {{ template "form_ip" $data }}
-                            {{else if eq $data.FormType "color"}}
+                            {{else if eq $data.FormType.String "color"}}
                                 {{ template "form_color" $data }}
-                            {{else if eq $data.FormType "currency"}}
+                            {{else if eq $data.FormType.String "currency"}}
                                 {{ template "form_currency" $data }}
-                            {{else if eq $data.FormType "number"}}
+                            {{else if eq $data.FormType.String "number"}}
                                 {{ template "form_number" $data }}
                             {{end}}
                         </div>

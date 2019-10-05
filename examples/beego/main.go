@@ -7,7 +7,6 @@ import (
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
@@ -29,7 +28,7 @@ func main() {
 				Name:       "godmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     db.DriverMysql,
+				Driver:     config.DriverMysql,
 			},
 		},
 		UrlPrefix: "admin",

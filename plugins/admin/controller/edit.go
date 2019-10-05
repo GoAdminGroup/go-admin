@@ -10,7 +10,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/types/form"
 	template2 "html/template"
 	"net/http"
 )
@@ -55,7 +54,7 @@ func EditForm(ctx *context.Context) {
 	}
 
 	// process uploading files, only support local storage for now.
-	if len(form.File) > 0 {
+	if len(param.MultiForm.File) > 0 {
 		_, _ = file.GetFileEngine("local").Upload(param.MultiForm)
 	}
 

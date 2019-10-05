@@ -1,6 +1,6 @@
 package tmpl
 
-var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
+var List = map[string]string{"admin_panel":`{{define "admin_panel"}}
 <div class="navbar-custom-menu">
     <ul class="nav navbar-nav">
         <li>
@@ -51,15 +51,18 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 </li>
             </ul>
         </li>
+        <li class="hidden-xs">
+            <a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+        </li>
     </ul>
 </div>
-{{end}}`, "components/alert": `{{define "alert"}}
+{{end}}`,"components/alert":`{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
     <h4>{{langHtml .Title}}</h4>
     {{langHtml .Content}}
 </div>
-{{end}}`, "components/area-chart": `{{define "area-chart"}}
+{{end}}`,"components/area-chart":`{{define "area-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{langHtml .Title}}</strong>
@@ -108,7 +111,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     });
 </script>
-{{end}}`, "components/bar-chart": `{{define "bar-chart"}}
+{{end}}`,"components/bar-chart":`{{define "bar-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{langHtml .Title}}</strong>
@@ -151,7 +154,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         datasetFill: false
     })
 </script>
-{{end}}`, "components/box": `{{define "box"}}
+{{end}}`,"components/box":`{{define "box"}}
 <div class="box box-{{.Theme}}">
     <div class="box-header {{.HeadBorder}}">
         {{langHtml .Header}}
@@ -165,21 +168,21 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
     {{end}}
 </div>
-{{end}}`, "components/chart-legend": `{{define "chart-legend"}}
+{{end}}`,"components/chart-legend":`{{define "chart-legend"}}
 <ul class="chart-legend clearfix">
     {{range $key, $data := .Data}}
         <li><i class="fa fa-circle-o text-{{index $data "color"}}"></i>{{index $data "label"}}</li>
     {{end}}
 </ul>
-{{end}}`, "components/col": `{{define "col"}}
+{{end}}`,"components/col":`{{define "col"}}
 <div class="{{.Size}}">{{langHtml .Content}}</div>
-{{end}}`, "components/description": `{{define "description"}}
+{{end}}`,"components/description":`{{define "description"}}
 <div class="description-block border-{{.Border}}">
     <span class="description-percentage text-{{.Color}}"><i class="fa fa-caret-{{.Arrow}}"></i>{{langHtml .Percent}}%</span>
     <h5 class="description-header">{{langHtml .Number}}</h5>
     <span class="description-text">{{langHtml .Title}}</span>
 </div>
-{{end}}`, "components/form/color": `{{define "form_color"}}
+{{end}}`,"components/form/color":`{{define "form_color"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group colorpicker-element">
@@ -190,7 +193,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <script>
         $('.{{.Field}}').parent().colorpicker([]);
     </script>
-{{end}}`, "components/form/currency": `{{define "form_currency"}}
+{{end}}`,"components/form/currency":`{{define "form_currency"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -204,7 +207,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             $('.{{.Field}}').inputmask({"alias": "currency", "radixPoint": ".", "prefix": "", "removeMaskOnSubmit": true});
         });
     </script>
-{{end}}`, "components/form/datetime": `{{define "form_datetime"}}
+{{end}}`,"components/form/datetime":`{{define "form_datetime"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -222,7 +225,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             });
         });
     </script>
-{{end}}`, "components/form/default": `{{define "form_default"}}
+{{end}}`,"components/form/default":`{{define "form_default"}}
 <label class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="box box-solid box-default no-margin">
@@ -231,7 +234,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 </div>
-{{end}}`, "components/form/email": `{{define "form_email"}}
+{{end}}`,"components/form/email":`{{define "form_email"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -240,7 +243,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form/file": `{{define "form_file"}}
+{{end}}`,"components/form/file":`{{define "form_file"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
@@ -262,7 +265,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         "allowedFileTypes":["image"]
     });
 </script>
-{{end}}`, "components/form/iconpicker": `{{define "form_iconpicker"}}
+{{end}}`,"components/form/iconpicker":`{{define "form_iconpicker"}}
 <label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <div class="input-group iconpicker-container">
@@ -2507,7 +2510,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </div>
 </div>
 </div>
-{{end}}`, "components/form/ip": `{{define "form_ip"}}
+{{end}}`,"components/form/ip":`{{define "form_ip"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2516,7 +2519,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form/number": `{{define "form_number"}}
+{{end}}`,"components/form/number":`{{define "form_number"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2536,7 +2539,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 });
         })
     </script>
-{{end}}`, "components/form/password": `{{define "form_password"}}
+{{end}}`,"components/form/password":`{{define "form_password"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2550,7 +2553,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
          </div>
     {{end}}
 </div>
-{{end}}`, "components/form/radio": `{{define "form_radio"}}
+{{end}}`,"components/form/radio":`{{define "form_radio"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         {{$field := .Field}}
@@ -2565,7 +2568,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             $('.{{.Field}}').iCheck({radioClass: 'iradio_minimal-blue'});
         });
     </script>
-{{end}}`, "components/form/richtext": `{{define "form_rich_text"}}
+{{end}}`,"components/form/richtext":`{{define "form_rich_text"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div id="{{.Field}}-editor">
@@ -2585,7 +2588,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         editor.$textElem.attr('contenteditable', false);
         {{end}}
     </script>
-{{end}}`, "components/form/select": `{{define "form_select"}}
+{{end}}`,"components/form/select":`{{define "form_select"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]"
@@ -2604,7 +2607,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             allowClear: true
         });
     </script>
-{{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
+{{end}}`,"components/form/selectbox":`{{define "form_selectbox"}}
 <label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2615,9 +2618,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <input type="hidden" name="{{.Field}}[]" />
 </div>
 <script>
-    $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filterable"});
+    $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
-{{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
+{{end}}`,"components/form/singleselect":`{{define "form_select_single"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}" multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
@@ -2635,7 +2638,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         maximumSelectionLength: 1
     });
 </script>
-{{end}}`, "components/form/text": `{{define "form_text"}}
+{{end}}`,"components/form/text":`{{define "form_text"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     {{if .Editable}}
@@ -2649,12 +2652,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     {{end}}
 </div>
-{{end}}`, "components/form/textarea": `{{define "form_textarea"}}
+{{end}}`,"components/form/textarea":`{{define "form_textarea"}}
 <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}" {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
 </div>
-{{end}}`, "components/form/url": `{{define "form_url"}}
+{{end}}`,"components/form/url":`{{define "form_url"}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
     <div class="col-sm-8">
         <div class="input-group">
@@ -2663,7 +2666,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                    placeholder="{{lang "Input"}} {{.Head}}">
         </div>
     </div>
-{{end}}`, "components/form": `{{define "form"}}
+{{end}}`,"components/form":`{{define "form"}}
     <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
     <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
     <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
@@ -2687,41 +2690,41 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 <div class="fields-group">
                     {{range $key, $data := .Content}}
                         <div class="form-group">
-                            {{if eq $data.FormType "default"}}
+                            {{if eq $data.FormType.String "default"}}
                                 {{ template "form_default" $data }}
-                            {{else if eq $data.FormType "text"}}
+                            {{else if eq $data.FormType.String "text"}}
                                 {{ template "form_text" $data }}
-                            {{else if eq $data.FormType "file"}}
+                            {{else if eq $data.FormType.String "file"}}
                                 {{ template "form_file" $data }}
-                            {{else if eq $data.FormType "password"}}
+                            {{else if eq $data.FormType.String "password"}}
                                 {{ template "form_password" $data }}
-                            {{else if eq $data.FormType "selectbox"}}
+                            {{else if eq $data.FormType.String "selectbox"}}
                                 {{ template "form_selectbox" $data }}
-                            {{else if eq $data.FormType "select"}}
+                            {{else if eq $data.FormType.String "select"}}
                                 {{ template "form_select" $data }}
-                            {{else if eq $data.FormType "select_single"}}
+                            {{else if eq $data.FormType.String "select_single"}}
                                 {{ template "form_select_single" $data }}
-                            {{else if eq $data.FormType "textarea"}}
+                            {{else if eq $data.FormType.String "textarea"}}
                                 {{ template "form_textarea" $data }}
-                            {{else if eq $data.FormType "iconpicker"}}
+                            {{else if eq $data.FormType.String "iconpicker"}}
                                 {{ template "form_iconpicker" $data }}
-                            {{else if eq $data.FormType "richtext"}}
+                            {{else if eq $data.FormType.String "richtext"}}
                                 {{ template "form_rich_text" $data }}
-                            {{else if eq $data.FormType "datetime"}}
+                            {{else if eq $data.FormType.String "datetime"}}
                                 {{ template "form_datetime" $data }}
-                            {{else if eq $data.FormType "radio"}}
+                            {{else if eq $data.FormType.String "radio"}}
                                 {{ template "form_radio" $data }}
-                            {{else if eq $data.FormType "email"}}
+                            {{else if eq $data.FormType.String "email"}}
                                 {{ template "form_email" $data }}
-                            {{else if eq $data.FormType "url"}}
+                            {{else if eq $data.FormType.String "url"}}
                                 {{ template "form_url" $data }}
-                            {{else if eq $data.FormType "ip"}}
+                            {{else if eq $data.FormType.String "ip"}}
                                 {{ template "form_ip" $data }}
-                            {{else if eq $data.FormType "color"}}
+                            {{else if eq $data.FormType.String "color"}}
                                 {{ template "form_color" $data }}
-                            {{else if eq $data.FormType "currency"}}
+                            {{else if eq $data.FormType.String "currency"}}
                                 {{ template "form_currency" $data }}
-                            {{else if eq $data.FormType "number"}}
+                            {{else if eq $data.FormType.String "number"}}
                                 {{ template "form_number" $data }}
                             {{end}}
                         </div>
@@ -2759,9 +2762,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </form>
         {{.Footer}}
     </div>
-{{end}}`, "components/image": `{{define "image"}}
+{{end}}`,"components/image":`{{define "image"}}
 <img src="{{.Src}}" width="{{.Width}}" height="{{.Height}}">
-{{end}}`, "components/infobox": `{{define "infobox"}}
+{{end}}`,"components/infobox":`{{define "infobox"}}
 <div class="info-box">
     {{if .IsHexColor}}
         <span class="info-box-icon" style="background-color: {{.Color}} !important;">
@@ -2780,9 +2783,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{langHtml .Content}}
     </div>
 </div>
-{{end}}`, "components/label": `{{define "label"}}
+{{end}}`,"components/label":`{{define "label"}}
 <span class="label label-{{.Color}}">{{langHtml .Content}}</span>
-{{end}}`, "components/line-chart": `{{define "line-chart"}}
+{{end}}`,"components/line-chart":`{{define "line-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{langHtml .Title}}</strong>
@@ -2831,7 +2834,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         responsive              : true
     })
 </script>
-{{end}}`, "components/paginator": `{{define "paginator"}}
+{{end}}`,"components/paginator":`{{define "paginator"}}
 {{lang "showing"}} <b>{{.CurPageStartIndex}}</b> {{lang "to"}} <b>{{.CurPageEndIndex}}</b> {{lang "of"}} <b>{{.Total}}</b> {{lang "entries"}}
 <ul class="pagination pagination-sm no-margin pull-right">
     <!-- Previous Page Link -->
@@ -2889,7 +2892,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </select>
     <small>{{lang "entries"}}</small>
 </label>
-{{end}}`, "components/pie-chart": `{{define "pie-chart"}}
+{{end}}`,"components/pie-chart":`{{define "pie-chart"}}
 {{if ne .Title ""}}
 <p class="text-center">
     <strong>{{langHtml .Title}}</strong>
@@ -2927,7 +2930,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         tooltipTemplate      : '<%=value %> <%=label%> users'
     });
 </script>
-{{end}}`, "components/popup": `{{define "popup"}}
+{{end}}`,"components/popup":`{{define "popup"}}
 <div class="modal fade" id="{{.ID}}" tabindex="-1" role="dialog" aria-labelledby="{{.ID}}" aria-hidden="true">
     <div class="modal-dialog modal-{{.Size}}" role="document">
         <div class="modal-content">
@@ -2949,7 +2952,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 </div>
-{{end}}`, "components/productlist": `{{define "productlist"}}
+{{end}}`,"components/productlist":`{{define "productlist"}}
 <ul class="products-list product-list-in-box">
     {{range $key, $data := .Data}}
     <li class="item">
@@ -2969,7 +2972,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </li>
     {{end}}
 </ul>
-{{end}}`, "components/progress-group": `{{define "progress-group"}}
+{{end}}`,"components/progress-group":`{{define "progress-group"}}
     <div class="progress-group">
         <span class="progress-text">{{langHtml .Title}}</span>
         <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
@@ -2978,9 +2981,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
         </div>
     </div>
-{{end}}`, "components/row": `{{define "row"}}
+{{end}}`,"components/row":`{{define "row"}}
 <div class="row">{{langHtml .Content}}</div>
-{{end}}`, "components/smallbox": `{{define "smallbox"}}
+{{end}}`,"components/smallbox":`{{define "smallbox"}}
 <div class="small-box bg-{{.Color}}">
     <div class="inner">
         <h3>{{langHtml .Value}}</h3>
@@ -2994,12 +2997,12 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <i class="fa fa-arrow-circle-right"></i>
     </a>
 </div>
-{{end}}`, "components/table/box-header": `{{define "box-header"}}
+{{end}}`,"components/table/box-header":`{{define "box-header"}}
     <div class="pull-right">
 
         <div class="btn-group pull-right" style="margin-right: 10px">
             <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
-                        class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "Filter"}}</a>
+                        class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "filter"}}</a>
             <a href="{{.InfoUrl}}" class="btn btn-sm btn-facebook"><i
                         class="fa fa-undo"></i>&nbsp;&nbsp;{{lang "Reset"}}
             </a>
@@ -3117,7 +3120,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <i class="fa fa-refresh"></i> {{lang "Refresh"}}
     </a>
 </span>
-{{end}}`, "components/table": `{{define "table"}}
+{{end}}`,"components/table":`{{define "table"}}
     <table class="table table-hover">
         {{if eq .Type "table"}}
             <thead>
@@ -3275,7 +3278,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             }
         </script>
     {{end}}
-{{end}}`, "components/tabs": `{{define "tabs"}}
+{{end}}`,"components/tabs":`{{define "tabs"}}
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs">
         {{range $key, $data := .Data}}
@@ -3300,7 +3303,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{end}}
     </div>
 </div>
-{{end}}`, "components/tree-header": `{{define "tree-header"}}
+{{end}}`,"components/tree-header":`{{define "tree-header"}}
 <div class="btn-group">
     <a class="btn btn-primary btn-sm tree-5b405b7481760-tree-tools" data-action="expand">
         <i class="fa fa-plus-square-o"></i>&nbsp;{{lang "expand"}}
@@ -3319,7 +3322,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 </div>
 <div class="btn-group">
 </div>
-{{end}}`, "components/tree": `{{define "tree"}}
+{{end}}`,"components/tree":`{{define "tree"}}
 <div class="dd" id="tree-5b405b7481760">
     {{$EditUrl := .EditUrl}}
     <ol class="dd-list">
@@ -3412,7 +3415,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         $(".roles").select2({"allowClear": true, "placeholder": "Roles"});
     });
 </script>
-{{end}}`, "content": `{{define "content"}}
+{{end}}`,"content":`{{define "content"}}
     <script>
         $('.grid-per-pager').on("change", function (e) {
             console.log("changing...");
@@ -3442,7 +3445,205 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <section class="content">
         {{.Panel.Content}}
     </section>
-{{end}}`, "footer": `{{define "footer"}}
+{{end}}`,"control_panel":`{{define "control_panel"}}
+    <div class="control-sidebar-bg" style="position: fixed; height: auto;"></div>
+    <aside class="control-sidebar control-sidebar-dark control-sidebar-open"
+           style="position: fixed; max-height: 100%; overflow: auto;">
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li class="active"><a href="#control-sidebar-setting-tab" data-toggle="tab" aria-expanded="true"><i
+                            class="fa fa-wrench"></i></a></li>
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="control-sidebar-setting-tab">
+                <h4 class="control-sidebar-heading">{{lang "layout"}}</h4>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="fixed"
+                                                                                         class="pull-right"
+                                                                                         checked="checked"> 固定布局</label>
+                    <p>盒子模型和固定布局不能同时启作用</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="layout-boxed"
+                                                                                         class="pull-right">
+                        盒子布局</label>
+                    <p>盒子布局最大宽度将被限定为1250px</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-layout="sidebar-collapse"
+                                                                                         class="pull-right">
+                        切换菜单栏</label>
+                    <p>切换菜单栏的展示或收起</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-enable="expandOnHover"
+                                                                                         class="pull-right">
+                        菜单栏自动展开</label>
+                    <p>鼠标移到菜单栏自动展开</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-menu="show-submenu"
+                                                                                         class="pull-right">
+                        显示菜单栏子菜单</label>
+                    <p>菜单栏子菜单将始终显示</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-menu="disable-top-badge"
+                                                                                         class="pull-right"
+                                                                                         checked="checked">
+                        禁用顶部彩色小角标</label>
+                    <p>左边菜单栏的彩色小角标不受影响</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-controlsidebar="control-sidebar-open"
+                                                                                         class="pull-right">
+                        切换右侧操作栏</label>
+                    <p>切换右侧操作栏覆盖或独占</p></div>
+                <div class="form-group"><label class="control-sidebar-subheading"><input type="checkbox"
+                                                                                         data-sidebarskin="toggle"
+                                                                                         class="pull-right">
+                        切换右侧操作栏背景</label>
+                    <p>将右侧操作栏背景亮色或深色切换</p></div>
+                <h4 class="control-sidebar-heading">{{lang "skin"}}</h4>
+                <ul class="list-unstyled clearfix skin-list">
+                    <li><a href="javascript:;" data-skin="skin-blue" style="" class="clearfix full-opacity-hover">
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span
+                                        class="bg-light-blue"
+                                        style="display:block; width: 80%; float: left; height: 7px;"></span></div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Blue</p></li>
+                    <li><a href="javascript:;" data-skin="skin-white" class="clearfix full-opacity-hover">
+                            <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span
+                                        style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">White</p></li>
+                    <li><a href="javascript:;" data-skin="skin-purple" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-purple-active"></span><span class="bg-purple"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Purple</p></li>
+                    <li><a href="javascript:;" data-skin="skin-green" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-green-active"></span><span class="bg-green"
+                                                                            style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Green</p></li>
+                    <li><a href="javascript:;" data-skin="skin-red" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-red-active"></span><span class="bg-red"
+                                                                          style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Red</p></li>
+                    <li><a href="javascript:;" data-skin="skin-yellow" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-yellow-active"></span><span class="bg-yellow"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #222d32;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin">Yellow</p></li>
+                    <li><a href="javascript:;" data-skin="skin-blue-light" class="clearfix full-opacity-hover">
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 7px; background: #367fa9;"></span><span
+                                        class="bg-light-blue"
+                                        style="display:block; width: 80%; float: left; height: 7px;"></span></div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Blue Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-white-light" class="clearfix full-opacity-hover">
+                            <div style="box-shadow: 0 0 2px rgba(0,0,0,0.1)" class="clearfix"><span
+                                        style="display:block; width: 20%; float: left; height: 7px; background: #fefefe;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 7px; background: #fefefe;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">White Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-purple-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-purple-active"></span><span class="bg-purple"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Purple Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-green-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-green-active"></span><span class="bg-green"
+                                                                            style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Green Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-red-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-red-active"></span><span class="bg-red"
+                                                                          style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px">Red Light</p></li>
+                    <li><a href="javascript:;" data-skin="skin-yellow-light" class="clearfix full-opacity-hover">
+                            <div><span style="display:block; width: 20%; float: left; height: 7px;"
+                                       class="bg-yellow-active"></span><span class="bg-yellow"
+                                                                             style="display:block; width: 80%; float: left; height: 7px;"></span>
+                            </div>
+                            <div>
+                                <span style="display:block; width: 20%; float: left; height: 20px; background: #f9fafc;"></span><span
+                                        style="display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;"></span>
+                            </div>
+                        </a>
+                        <p class="text-center no-margin" style="font-size: 12px;">Yellow Light</p></li>
+                </ul>
+            </div>
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h4 class="control-sidebar-heading">{{lang "home"}}</h4>
+            </div>
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <h4 class="control-sidebar-heading">{{lang "config"}}</h4>
+            </div>
+        </div>
+    </aside>
+{{end}}`,"footer":`{{define "footer"}}
 <footer class="main-footer">
     <div class="pull-right hidden-xs">
         <b>Version</b> {{.System.Version}}
@@ -3450,7 +3651,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <strong>Copyright &copy; 2018- <a href="https://github.com/chenhg5/go-admin">GoAdmin</a>.</strong> All rights
     reserved.
 </footer>
-{{end}}`, "head": `{{define "head"}}
+{{end}}`,"head":`{{define "head"}}
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -3502,7 +3703,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <script src="{{.UrlPrefix}}/assets/input-mask/jquery.inputmask.bundle.min.js"></script>
         <script src="{{.UrlPrefix}}/assets/number-input/bootstrap-number-input.js"></script>
     </head>
-{{end}}`, "header": `{{define "header"}}
+{{end}}`,"header":`{{define "header"}}
     <header class="main-header">
         <!-- Logo -->
         <a href="{{.UrlPrefix}}" class="logo">
@@ -3525,7 +3726,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </div>
         </nav>
     </header>
-{{end}}`, "js": `{{define "js"}}
+{{end}}`,"js":`{{define "js"}}
 <script src="{{.UrlPrefix}}/assets/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="{{.UrlPrefix}}/assets/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="{{.UrlPrefix}}/assets/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
@@ -3543,7 +3744,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 <script src="{{.UrlPrefix}}/assets/sweetalert/dist/sweetalert.min.js"></script>
 <script src="{{.UrlPrefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 <script src="{{.UrlPrefix}}/assets/dist/js/info.js"></script>
-{{end}}`, "layout": `{{define "layout"}}
+{{end}}`,"layout":`{{define "layout"}}
 
     <!DOCTYPE html>
     <html>
@@ -3592,77 +3793,78 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </html>
 
 {{end}}
-`, "menu": `{{define "menu"}}
-<ul class="sidebar-menu" data-widget="tree">
-{{$UrlPrefix := .UrlPrefix}}
-{{range $key, $list := .Menu.List }}
-    {{if eq (len $list.ChildrenList) 0}}
-        {{if $list.Header}}
-            <li class="header" data-rel="external">{{$list.Header}}</li>
-        {{end}}
-        <li class='{{$list.Active}}'>
-            {{if eq $list.Url "/"}}
-                <a href='{{$UrlPrefix}}'>
-            {{else if isLinkUrl $list.Url}}
-                <a href='{{$list.Url}}'>
+`,"menu":`{{define "menu"}}
+    <ul class="sidebar-menu" data-widget="tree">
+        {{$UrlPrefix := .UrlPrefix}}
+        {{range $key, $list := .Menu.List }}
+            {{if eq (len $list.ChildrenList) 0}}
+                {{if $list.Header}}
+                    <li class="header" data-rel="external">{{$list.Header}}</li>
+                {{end}}
+                <li class='{{$list.Active}}'>
+                    {{if eq $list.Url "/"}}
+                    <a href='{{$UrlPrefix}}'>
+                    {{else if isLinkUrl $list.Url}}
+                    <a href='{{$list.Url}}'>
+                    {{else}}
+                    <a href='{{$UrlPrefix}}{{$list.Url}}'>
+                    {{end}}
+                        <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
+                        <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
+                    </a>
+                </li>
             {{else}}
-                <a href='{{$UrlPrefix}}{{$list.Url}}'>
-            {{end}}
-                <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
-                <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
-            </a>
-        </li>
-    {{else}}
-        <li class="treeview {{$list.Active}}">
-            <a href="#">
-                <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
-                <span class="pull-right-container">
+                <li class="treeview {{$list.Active}}">
+                    <a href="#">
+                        <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
+                        <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>
-            </a>
-            <ul class="treeview-menu">
-            {{range $key2, $item := $list.ChildrenList}}
-                <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}</a></li>
+                    </a>
+                    <ul class="treeview-menu">
+                        {{range $key2, $item := $list.ChildrenList}}
+                            <li><a href="{{$UrlPrefix}}{{$item.Url}}"><i class="fa {{$item.Icon}}"></i> {{$item.Name}}
+                                </a></li>
+                        {{end}}
+                    </ul>
+                </li>
             {{end}}
-            </ul>
-        </li>
-    {{end}}
-{{end}}
-</ul>
-{{end}}`, "sidebar": `{{define "sidebar"}}
-<!-- Left side column. contains the logo and sidebar -->
-<aside class="main-sidebar">
-    <!-- sidebar: style can be found in sidebar.less -->
-    <section class="sidebar">
-        <!-- Sidebar user panel -->
-        <div class="user-panel">
-            <div class="pull-left image">
-                {{if eq .User.Avatar ""}}
-                    <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
-                {{else}}
-                    <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
-                {{end}}
+        {{end}}
+    </ul>
+{{end}}`,"sidebar":`{{define "sidebar"}}
+    <!-- Left side column. contains the logo and sidebar -->
+    <aside class="main-sidebar">
+        <!-- sidebar: style can be found in sidebar.less -->
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    {{if eq .User.Avatar ""}}
+                        <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                    {{else}}
+                        <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                    {{end}}
+                </div>
+                <div class="pull-left info">
+                    {{.User.Name}}
+                    <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
+                </div>
             </div>
-            <div class="pull-left info">
-                {{.User.Name}}
-                <a href="#"><i class="fa fa-circle text-success"></i> {{lang "online"}}</a>
-            </div>
-        </div>
-        <!-- search form -->
-        <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-                <input type="text" name="q" class="form-control" placeholder="Search...">
-                <span class="input-group-btn">
+            <!-- search form -->
+            <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Search...">
+                    <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
               </span>
-            </div>
-        </form>
-        <!-- /.search form -->
+                </div>
+            </form>
+            <!-- /.search form -->
 
-        {{ template "menu" . }}
+            {{ template "menu" . }}
 
-    </section>
-    <!-- /.sidebar -->
-</aside>
-{{end}}`}
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+{{end}}`,}

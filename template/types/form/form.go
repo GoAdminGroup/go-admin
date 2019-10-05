@@ -4,25 +4,75 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 )
 
+type Type uint8
+
 const (
-	Default      = "default"
-	Text         = "text"
-	SelectSingle = "select_single"
-	Select       = "select"
-	IconPicker   = "iconpicker"
-	SelectBox    = "selectbox"
-	File         = "file"
-	Password     = "password"
-	RichText     = "richtext"
-	Datetime     = "datetime"
-	Radio        = "radio"
-	Email        = "email"
-	Url          = "url"
-	Ip           = "ip"
-	Color        = "color"
-	Currency     = "currency"
-	Number       = "number"
+	Default Type = iota
+	Text
+	SelectSingle
+	Select
+	IconPicker
+	SelectBox
+	File
+	Password
+	RichText
+	Datetime
+	Radio
+	Email
+	Url
+	Ip
+	Color
+	Currency
+	Number
+	TextArea
 )
+
+func (t Type) String() string {
+	switch t {
+	case Default:
+		return "default"
+	case Text:
+		return "text"
+	case SelectSingle:
+		return "select_single"
+	case Select:
+		return "select"
+	case IconPicker:
+		return "iconpicker"
+	case SelectBox:
+		return "selectbox"
+	case File:
+		return "file"
+	case Password:
+		return "password"
+	case RichText:
+		return "richtext"
+	case Datetime:
+		return "datetime"
+	case Radio:
+		return "radio"
+	case Email:
+		return "email"
+	case Url:
+		return "url"
+	case Ip:
+		return "ip"
+	case Color:
+		return "color"
+	case Currency:
+		return "currency"
+	case Number:
+		return "number"
+	case TextArea:
+		return "textArea"
+	default:
+		panic("wrong form type")
+	}
+}
+
+func (t Type) IsSelect() bool {
+	return t == Select || t == SelectSingle || t == SelectBox
+}
 
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {
 

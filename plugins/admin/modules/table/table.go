@@ -324,18 +324,24 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
+			var value interface{}
 			if checkInTable(columns, tb.info.FieldList[j].Field) {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
 					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
 					Row:   row,
-				}).(string))
+				})
 			} else {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
 					Value: "",
 					Row:   row,
-				}).(string))
+				})
+			}
+			if valueStr, ok := value.(string); ok {
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(valueStr)
+			} else {
+				tempModelData[tb.info.FieldList[j].Head] = value.(template.HTML)
 			}
 		}
 
@@ -450,18 +456,25 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
+			var value interface{}
 			if checkInTable(columns, tb.info.FieldList[j].Field) {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
 					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
 					Row:   row,
-				}).(string))
+				})
 			} else {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
 					Value: "",
 					Row:   row,
-				}).(string))
+				})
+			}
+
+			if valueStr, ok := value.(string); ok {
+				tempModelData[tb.info.FieldList[j].Head] = template.HTML(valueStr)
+			} else {
+				tempModelData[tb.info.FieldList[j].Head] = value.(template.HTML)
 			}
 		}
 
@@ -520,7 +533,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 
 	for i := 0; i < len(tb.form.FormList); i++ {
 		if checkInTable(columns, tb.form.FormList[i].Field) {
-			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" || tb.form.FormList[i].FormType == "select_single" {
+			if tb.form.FormList[i].FormType.IsSelect() {
 				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    id,
 					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
@@ -539,7 +552,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, strin
 				}).(string)
 			}
 		} else {
-			if tb.form.FormList[i].FormType == "select" || tb.form.FormList[i].FormType == "selectbox" {
+			if tb.form.FormList[i].FormType.IsSelect() {
 				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
 					ID:    id,
 					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
