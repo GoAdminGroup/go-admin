@@ -25,7 +25,8 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 
 	table.RefreshTableList()
 
-	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().Group, panel.GetForm().FormList, panel.GetPrimaryKey().Name)
+	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().GroupHeaders, panel.GetForm().Group,
+		panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().

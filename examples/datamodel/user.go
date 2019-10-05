@@ -1,6 +1,7 @@
 package datamodel
 
 import (
+	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
@@ -155,6 +156,19 @@ func GetUserTable() (userTable table.Table) {
 				return model.Value
 			},
 		}, {
+			Head:     "Custom Field",
+			Field:    "role",
+			TypeName: db.Varchar,
+			Default:  "",
+			Editable: true,
+			FormType: form.Text,
+			FilterFn: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+			ProcessFn: func(value types.PostRowModel) {
+				fmt.Println("user custom field", value)
+			},
+		}, {
 			Head:     "Created at",
 			Field:    "created_at",
 			TypeName: db.Varchar,
@@ -177,9 +191,12 @@ func GetUserTable() (userTable table.Table) {
 		},
 	}
 
-	userTable.GetForm().Group = map[string][]string{
-		"profile1": {"id", "ip", "name"},
-		"profile2": {"gender", "phone", "city", "created_at", "updated_at"},
+	userTable.GetForm().Group = [][]string{
+		{"id", "ip", "name", "gender", "city"},
+		{"phone", "role", "created_at", "updated_at"},
+	}
+	userTable.GetForm().GroupHeaders = []string{
+		"profile1", "profile2",
 	}
 
 	userTable.GetForm().Table = "users"

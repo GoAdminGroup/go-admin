@@ -11,7 +11,6 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
-	"strconv"
 	"strings"
 )
 
@@ -534,7 +533,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 	)
 
 	if len(tb.form.Group) > 0 {
-		for title, value := range tb.form.Group {
+		for key, value := range tb.form.Group {
 			list := make([]types.Form, len(value))
 			for j := 0; j < len(value); j++ {
 				for i := 0; i < len(tb.form.FormList); i++ {
@@ -585,7 +584,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 			}
 
 			groupFormList = append(groupFormList, list)
-			groupHeaders = append(groupHeaders, title)
+			groupHeaders = append(groupHeaders, tb.form.GroupHeaders[key])
 		}
 		return tb.form.FormList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
 	}
@@ -652,35 +651,39 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 
-	var id = int64(0)
-	if idArr, ok := dataList[tb.primaryKey.Name]; ok {
-		idInt, _ := strconv.Atoi(idArr[0])
-		id = int64(idInt)
-	}
-
 	columns := getColumns(columnsModel, tb.connectionDriver)
 	var fun types.PostFieldFilterFn
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
-		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" && checkInTable(columns, k) {
-			delimiter := ","
-			for i := 0; i < len(tb.form.FormList); i++ {
-				if k == tb.form.FormList[i].Field {
-					fun = tb.form.FormList[i].PostFilterFn
-					delimiter = modules.SetDefault(tb.form.FormList[i].DefaultOptionDelimiter, ",")
+		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" {
+			if checkInTable(columns, k) {
+				delimiter := ","
+				for i := 0; i < len(tb.form.FormList); i++ {
+					if k == tb.form.FormList[i].Field {
+						fun = tb.form.FormList[i].PostFilterFn
+						delimiter = modules.SetDefault(tb.form.FormList[i].DefaultOptionDelimiter, ",")
+					}
 				}
-			}
-			vv := modules.RemoveBlankFromArray(v)
-			if fun != nil {
-				value[k] = fun(types.PostRowModel{
-					ID:    id,
-					Value: vv,
-				})
-			} else {
-				if len(vv) > 1 {
-					value[k] = strings.Join(vv, delimiter)
+				vv := modules.RemoveBlankFromArray(v)
+				if fun != nil {
+					value[k] = fun(types.PostRowModel{
+						ID:    dataList.Get(tb.primaryKey.Name),
+						Value: vv,
+					})
 				} else {
-					value[k] = vv[0]
+					if len(vv) > 1 {
+						value[k] = strings.Join(vv, delimiter)
+					} else {
+						value[k] = vv[0]
+					}
+				}
+			} else {
+				fun := tb.form.FormList.FindByField(k).ProcessFn
+				if fun != nil {
+					fun(types.PostRowModel{
+						ID:    dataList.Get(tb.primaryKey.Name),
+						Value: modules.RemoveBlankFromArray(v),
+					})
 				}
 			}
 		}
@@ -728,7 +731,7 @@ func (tb DefaultTable) sql() *db.Sql {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
-func GetNewFormList(group map[string][]string, old []types.Form, primaryKey string) ([]types.Form, [][]types.Form, []string) {
+func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, primaryKey string) ([]types.Form, [][]types.Form, []string) {
 
 	if len(group) == 0 {
 		var newForm []types.Form
@@ -746,7 +749,7 @@ func GetNewFormList(group map[string][]string, old []types.Form, primaryKey stri
 		headers = make([]string, 0)
 	)
 
-	for title, value := range group {
+	for key, value := range group {
 		list := make([]types.Form, 0)
 
 		for i := 0; i < len(value); i++ {
@@ -762,7 +765,7 @@ func GetNewFormList(group map[string][]string, old []types.Form, primaryKey stri
 		}
 
 		newForm = append(newForm, list)
-		headers = append(headers, title)
+		headers = append(headers, groupHeaders[key])
 	}
 
 	return []types.Form{}, newForm, headers

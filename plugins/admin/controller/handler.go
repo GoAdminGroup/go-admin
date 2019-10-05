@@ -78,7 +78,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	if kind == "edit" {
 		formData, groupFormData, groupHeaders, title, description = table.List[prefix].GetDataFromDatabaseWithId(ctx.Query("id"))
 	} else {
-		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().Group, panel.GetForm().FormList, panel.GetPrimaryKey().Name)
+		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().GroupHeaders, panel.GetForm().Group, panel.GetForm().FormList, panel.GetPrimaryKey().Name)
 		title = panel.GetForm().Title
 		description = panel.GetForm().Description
 	}

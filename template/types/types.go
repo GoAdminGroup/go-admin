@@ -79,6 +79,7 @@ type Form struct {
 	DefaultOptionDelimiter string
 	FilterFn               FieldFilterFn
 	PostFilterFn           PostFieldFilterFn
+	ProcessFn              ProcessFn
 }
 
 // RowModel contains ID and value of the single query result.
@@ -90,7 +91,7 @@ type RowModel struct {
 
 // PostRowModel contains ID and value of the single query result.
 type PostRowModel struct {
-	ID    int64
+	ID    string
 	Value RowModelValue
 	Row   map[string]interface{}
 }
@@ -107,6 +108,9 @@ func (r RowModelValue) First() string {
 
 // FieldFilterFn is filter function of data.
 type FieldFilterFn func(value RowModel) interface{}
+
+// ProcessFn process the data and store into the database.
+type ProcessFn func(value PostRowModel)
 
 // PostFieldFilterFn is filter function of data.
 type PostFieldFilterFn func(value PostRowModel) string
@@ -143,11 +147,23 @@ type InfoPanel struct {
 
 // FormPanel
 type FormPanel struct {
-	FormList    []Form
-	Group       map[string][]string
-	Table       string
-	Title       string
-	Description string
-	HeaderHtml  template.HTML
-	FooterHtml  template.HTML
+	FormList     FormList
+	Group        [][]string
+	GroupHeaders []string
+	Table        string
+	Title        string
+	Description  string
+	HeaderHtml   template.HTML
+	FooterHtml   template.HTML
+}
+
+type FormList []Form
+
+func (f FormList) FindByField(field string) Form {
+	for i := 0; i < len(f); i++ {
+		if f[i].Field == field {
+			return f[i]
+		}
+	}
+	return Form{}
 }

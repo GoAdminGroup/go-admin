@@ -17,3 +17,7 @@ func (f Values) IsEmpty(key ...string) bool {
 	}
 	return false
 }
+
+func (f Values) Delete(key string) {
+	delete(f, key)
+}
