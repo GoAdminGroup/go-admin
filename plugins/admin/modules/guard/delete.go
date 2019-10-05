@@ -13,7 +13,7 @@ type DeleteParam struct {
 
 func Delete(ctx *context.Context) {
 
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 	if !panel.GetDeletable() {
 		alert(ctx, panel, "operation not allow")

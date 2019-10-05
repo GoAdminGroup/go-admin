@@ -272,10 +272,15 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		if tb.info.FieldList[i].Sortable {
 			sortable = "1"
 		}
+		hide := "0"
+		if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[i].Field) {
+			hide = "1"
+		}
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
 			"field":    tb.info.FieldList[i].Field,
+			"hide":     hide,
 		})
 	}
 
@@ -291,8 +296,10 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		wheres = ""
 	} else {
 		for key, value := range params.Fields {
-			wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
-			whereArgs = append(whereArgs, value)
+			if checkInTable(columns, key) {
+				wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
+				whereArgs = append(whereArgs, value)
+			}
 		}
 		wheres = wheres[:len(wheres)-4]
 	}
@@ -319,6 +326,9 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 		for j := 0; j < len(tb.info.FieldList); j++ {
 			if tb.info.FieldList[j].Hide {
+				continue
+			}
+			if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[j].Field) {
 				continue
 			}
 			var value interface{}
@@ -407,10 +417,15 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		if tb.info.FieldList[i].Sortable {
 			sortable = "1"
 		}
+		hide := "0"
+		if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[i].Field) {
+			hide = "1"
+		}
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
 			"field":    tb.info.FieldList[i].Field,
+			"hide":     hide,
 		})
 	}
 
@@ -450,6 +465,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 		for j := 0; j < len(tb.info.FieldList); j++ {
 			if tb.info.FieldList[j].Hide {
+				continue
+			}
+			if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[j].Field) {
 				continue
 			}
 			var value interface{}

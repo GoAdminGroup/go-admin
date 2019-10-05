@@ -11,27 +11,30 @@ type Parameters struct {
 	Page      string
 	PageSize  string
 	SortField string
+	Columns   []string
 	SortType  string
 	Fields    map[string]string
 }
 
 func GetParam(values url.Values) Parameters {
-	page := GetDefault(values, "page", "1")
-	pageSize := GetDefault(values, "pageSize", "10")
-	sortField := GetDefault(values, "sort", "id")
-	sortType := GetDefault(values, "sort_type", "desc")
+	page := GetDefault(values, "__page", "1")
+	pageSize := GetDefault(values, "__pageSize", "10")
+	sortField := GetDefault(values, "__sort", "id")
+	sortType := GetDefault(values, "__sort_type", "desc")
+	columns := GetDefault(values, "__columns", "")
 
 	fields := make(map[string]string)
 
 	for key, value := range values {
-		if key != "page" &&
-			key != "pageSize" &&
-			key != "sort" &&
-			key != "sort_type" &&
-			key != "prefix" &&
+		if key != "__page" &&
+			key != "__pageSize" &&
+			key != "__sort" &&
+			key != "__columns" &&
+			key != "__sort_type" &&
+			key != "__prefix" &&
 			key != "_pjax" &&
 			value[0] != "" {
-			if key == "sort_type" {
+			if key == "__sort_type" {
 				if value[0] != "desc" && value[0] != "asc" {
 					fields[key] = "desc"
 				}
@@ -41,12 +44,18 @@ func GetParam(values url.Values) Parameters {
 		}
 	}
 
+	columnsArr := make([]string, 0)
+	if columns != "" {
+		columnsArr = strings.Split(columns, ",")
+	}
+
 	return Parameters{
 		Page:      page,
 		PageSize:  pageSize,
 		SortField: sortField,
 		SortType:  sortType,
 		Fields:    fields,
+		Columns:   columnsArr,
 	}
 }
 
@@ -54,22 +63,27 @@ func GetParamFromUrl(value string) Parameters {
 	prevUrlArr := strings.Split(value, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
 
-	page := "1"
-	pageSize := "10"
-	sortField := "id"
-	sortType := "desc"
+	var (
+		page      = "1"
+		pageSize  = "10"
+		sortField = "id"
+		sortType  = "desc"
+		columns   = make([]string, 0)
+	)
 
 	for i := 0; i < len(paramArr); i++ {
 		arr := strings.Split(paramArr[i], "=")
 		switch arr[0] {
-		case "pageSize":
+		case "__pageSize":
 			pageSize = arr[1]
-		case "page":
+		case "__page":
 			page = arr[1]
-		case "sort":
+		case "__sort":
 			sortField = arr[1]
-		case "sort_type":
+		case "__sort_type":
 			sortType = arr[1]
+		case "__columns":
+			columns = strings.Split(arr[1], ",")
 		}
 	}
 
@@ -78,6 +92,7 @@ func GetParamFromUrl(value string) Parameters {
 		PageSize:  pageSize,
 		SortField: sortField,
 		SortType:  sortType,
+		Columns:   columns,
 	}
 }
 
@@ -87,7 +102,7 @@ func (param Parameters) SetPage(page string) Parameters {
 }
 
 func (param Parameters) GetRouteParamStr() string {
-	return "?page=" + param.Page + param.GetFixedParamStr()
+	return "?__page=" + param.Page + param.GetFixedParamStr()
 }
 
 func (param Parameters) GetRouteParamStrWithoutId() string {
@@ -95,17 +110,17 @@ func (param Parameters) GetRouteParamStrWithoutId() string {
 }
 
 func (param Parameters) GetRouteParamStrWithoutPageSize() string {
-	return "?page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
+	return "?__page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
 }
 
 func (param Parameters) GetLastPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
-	return "?page=" + strconv.Itoa(pageInt-1) + param.GetFixedParamStr()
+	return "?__page=" + strconv.Itoa(pageInt-1) + param.GetFixedParamStr()
 }
 
 func (param Parameters) GetNextPageRouteParamStr() string {
 	pageInt, _ := strconv.Atoi(param.Page)
-	return "?page=" + strconv.Itoa(pageInt+1) + param.GetFixedParamStr()
+	return "?__page=" + strconv.Itoa(pageInt+1) + param.GetFixedParamStr()
 }
 
 func (param Parameters) GetFixedParamStrWithoutPageSize() string {
@@ -113,7 +128,7 @@ func (param Parameters) GetFixedParamStrWithoutPageSize() string {
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"
 	}
-	return "&sort=" + param.SortField + "&sort_type=" + param.SortType + str[:len(str)-1]
+	return "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
 }
 
 func (param Parameters) GetFixedParamStr() string {
@@ -121,7 +136,7 @@ func (param Parameters) GetFixedParamStr() string {
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"
 	}
-	return "&pageSize=" + param.PageSize + "&sort=" + param.SortField + "&sort_type=" + param.SortType + str[:len(str)-1]
+	return "&__pageSize=" + param.PageSize + "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
 }
 
 func GetDefault(values url.Values, key, def string) string {

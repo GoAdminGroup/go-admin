@@ -41,7 +41,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 		WithForm(map[string]interface{}{
 			"name":       "tester",
 			"slug":       "tester",
-			"_previous_": config.Get().Url("/info/roles?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"_t":         token[1],
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
@@ -75,7 +75,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 		WithForm(map[string]interface{}{
 			"name":       "tester",
 			"slug":       "tester",
-			"_previous_": config.Get().Url("/info/roles?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"_t":         token[1],
 			"id":         "3",
 		}).Expect().Status(200)
@@ -101,7 +101,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 		WithForm(map[string]interface{}{
 			"name":       "tester2",
 			"slug":       "tester2",
-			"_previous_": config.Get().Url("/info/roles?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"_t":         token[1],
 		}).Expect().Status(200)
 

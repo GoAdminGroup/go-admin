@@ -31,7 +31,7 @@ func (e *ShowFormParam) GetInfoUrl() string {
 
 func ShowForm(ctx *context.Context) {
 
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 	if !panel.GetEditable() {
 		alert(ctx, panel, "operation not allow")
@@ -112,7 +112,7 @@ func (e EditFormParam) IsRole() bool {
 }
 
 func EditForm(ctx *context.Context) {
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	previous := ctx.FormValue("_previous_")
 	panel := table.List[prefix]
 	multiForm := ctx.Request.MultipartForm

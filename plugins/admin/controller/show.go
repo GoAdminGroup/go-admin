@@ -23,7 +23,7 @@ import (
 
 func ShowInfo(ctx *context.Context) {
 
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 
 	params := parameter.GetParam(ctx.Request.URL.Query())
@@ -117,7 +117,7 @@ func Export(ctx *context.Context) {
 	param := guard.GetExportParam(ctx)
 
 	tableName := "Sheet1"
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 
 	f := excelize.NewFile()

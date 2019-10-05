@@ -28,7 +28,7 @@ func (e *ShowNewFormParam) GetInfoUrl() string {
 
 func ShowNewForm(ctx *context.Context) {
 
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 	if !panel.GetCanAdd() {
 		alert(ctx, panel, "operation not allow")
@@ -101,7 +101,7 @@ func (e NewFormParam) IsRole() bool {
 }
 
 func NewForm(ctx *context.Context) {
-	prefix := ctx.Query("prefix")
+	prefix := ctx.Query("__prefix")
 	previous := ctx.FormValue("_previous_")
 	panel := table.List[prefix]
 

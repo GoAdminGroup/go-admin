@@ -4,13 +4,15 @@
             <thead>
             <tr>
                 {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
-                        {{end}}
-                    </th>
+                    {{if eq (index $head "hide") "0"}}
+                        <th>
+                            {{index $head "head"}}
+                            {{if eq (index $head "sortable") "1"}}
+                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
+                            {{end}}
+                        </th>
+                    {{end}}
                 {{end}}
             </tr>
             </thead>
@@ -20,13 +22,15 @@
             <tr>
                 <th></th>
                 {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
-                        {{end}}
-                    </th>
+                    {{if eq (index $head "hide") "0"}}
+                        <th>
+                            {{index $head "head"}}
+                            {{if eq (index $head "sortable") "1"}}
+                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
+                            {{end}}
+                        </th>
+                    {{end}}
                 {{end}}
                 <th>{{lang "operation"}}</th>
             </tr>
@@ -48,7 +52,9 @@
                     </td>
                 {{end}}
                 {{range $key2, $head2 := $Thead}}
-                    <td>{{index $info (index $head2 "head")}}</td>
+                    {{if eq (index $head2 "hide") "0"}}
+                        <td>{{index $info (index $head2 "head")}}</td>
+                    {{end}}
                 {{end}}
                 {{if eq $Type "data-table"}}
                     <td>
@@ -89,14 +95,59 @@
             $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
             $(function () {
-                $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-                    if (this.checked) {
-                        $(this).closest('tr').css('background-color', "#ffffd5");
-                    } else {
-                        $(this).closest('tr').css('background-color', '');
+                let items = $('.column-select-item');
+                iCheck(items);
+                iCheck($('.grid-row-checkbox'));
+                let columns = getQueryVariable("__columns");
+                if (columns === "") {
+                    items.iCheck('check');
+                } else {
+                    let columnsArr = columns.split(",");
+                    for (let i = 0; i < columnsArr.length; i++) {
+                        for (let j = 0; j < items.length; j++) {
+                            if (columnsArr[i] === $(items[j]).attr("data-id")) {
+                                $(items[j]).iCheck('check');
+                            }
+                        }
                     }
-                });
+                }
             });
+
+            selectedAllFieldsRows = function () {
+                let selected = [];
+                $('.column-select-item:checked').each(function () {
+                    selected.push($(this).data('id'));
+                });
+                return selected;
+            };
+
+            $('.column-select-all').on('click', function (event) {
+                $('.column-select-item').iCheck('check');
+            });
+
+            $('.column-select-submit').on('click', function () {
+
+                let newUrl = "";
+                if (getQueryVariable('__columns') !== '') {
+                    newUrl = replaceParamVal('__columns', selectedAllFieldsRows().join(","));
+                } else {
+                    if (location.href.indexOf("?") > 0) {
+                        newUrl = location.href + "&__columns=" + selectedAllFieldsRows().join(",");
+                    } else {
+                        newUrl = location.href + "?__columns=" + selectedAllFieldsRows().join(",");
+                    }
+                }
+
+                $.pjax({url: newUrl, container: '#pjax-container'})
+
+                toastr.success('{{lang "reload succeeded"}} !');
+            });
+
+            function replaceParamVal(paramName, replaceWith) {
+                let oUrl = this.location.href.toString();
+                let re = eval('/(' + paramName + '=)([^&]*)/gi');
+                return oUrl.replace(re, paramName + '=' + replaceWith);
+            }
 
             $('.grid-batch-0').on('click', function () {
                 DeletePost(selectedRows().join())
@@ -123,6 +174,16 @@
                 form.remove()
             }
             {{end}}
+
+            function iCheck(el) {
+                el.iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                    if (this.checked) {
+                        $(this).closest('tr').css('background-color', "#ffffd5");
+                    } else {
+                        $(this).closest('tr').css('background-color', '');
+                    }
+                });
+            }
 
             function DeletePost(id) {
                 swal({
@@ -158,20 +219,19 @@
             }
 
             $(function () {
-                let sort = getQueryVariable("sort");
-                let sort_type = getQueryVariable("sort_type");
+                let sort = getQueryVariable("__sort");
+                let sort_type = getQueryVariable("__sort_type");
 
                 if (sort !== "" && sort_type !== "") {
                     let sortFa = $('#sort-' + sort);
                     if (sort_type === 'asc') {
-                        sortFa.attr('href', '?sort=' + sort + "&sort_type=desc")
+                        sortFa.attr('href', '?__sort=' + sort + "&__sort_type=desc")
                     } else {
-                        sortFa.attr('href', '?sort=' + sort + "&sort_type=asc")
+                        sortFa.attr('href', '?__sort=' + sort + "&__sort_type=asc")
                     }
                     sortFa.removeClass('fa-sort');
                     sortFa.addClass('fa-sort-amount-' + sort_type);
                 }
-
             });
 
             function getQueryVariable(variable) {

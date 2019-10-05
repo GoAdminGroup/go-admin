@@ -31,6 +31,7 @@ var cn = map[string]string{
 	"setting":         "设置",
 	"sign out":        "登出",
 	"home":            "首页",
+	"all":             "全部",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",
@@ -40,6 +41,7 @@ var cn = map[string]string{
 	"input":             "输入",
 	"operation":         "操作",
 	"menu name":         "菜单名",
+	"reload succeeded":  "加载成功",
 
 	"permission denied": "没有权限",
 	"error":             "错误",

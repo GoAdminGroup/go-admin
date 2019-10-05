@@ -3035,6 +3035,33 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 {{end}}`, "components/table/box-header": `{{define "box-header"}}
     <div class="pull-right">
 
+        <div class="dropdown pull-right column-selector" style="margin-right: 10px">
+            <button type="button" class="btn btn-sm btn-instagram dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-table"></i>
+                &nbsp;
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="padding: 10px;">
+                <li>
+                    <ul style="padding: 0;">
+                        {{range $key, $head := .Thead}}
+                            <li class="checkbox icheck" style="margin: 0;">
+                                <label style="width: 100%;padding: 3px;">
+                                    <input type="checkbox" class="column-select-item" data-id="{{index $head "field"}}"
+                                           style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;{{index $head "head"}}
+                                </label>
+                            </li>
+                        {{end}}
+                    </ul>
+                </li>
+                <li class="divider">
+                </li><li class="text-right">
+                    <button class="btn btn-sm btn-default column-select-all">{{lang "all"}}</button>&nbsp;&nbsp;
+                    <button class="btn btn-sm btn-primary column-select-submit">{{lang "submit"}}</button>
+                </li>
+            </ul>
+        </div>
+
         <div class="btn-group pull-right" style="margin-right: 10px">
             <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
                         class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "filter"}}</a>
@@ -3161,13 +3188,15 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             <thead>
             <tr>
                 {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
-                        {{end}}
-                    </th>
+                    {{if eq (index $head "hide") "0"}}
+                        <th>
+                            {{index $head "head"}}
+                            {{if eq (index $head "sortable") "1"}}
+                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
+                            {{end}}
+                        </th>
+                    {{end}}
                 {{end}}
             </tr>
             </thead>
@@ -3177,13 +3206,15 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             <tr>
                 <th></th>
                 {{range $key, $head := .Thead}}
-                    <th>
-                        {{index $head "head"}}
-                        {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
-                        {{end}}
-                    </th>
+                    {{if eq (index $head "hide") "0"}}
+                        <th>
+                            {{index $head "head"}}
+                            {{if eq (index $head "sortable") "1"}}
+                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
+                            {{end}}
+                        </th>
+                    {{end}}
                 {{end}}
                 <th>{{lang "operation"}}</th>
             </tr>
@@ -3205,7 +3236,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     </td>
                 {{end}}
                 {{range $key2, $head2 := $Thead}}
-                    <td>{{index $info (index $head2 "head")}}</td>
+                    {{if eq (index $head2 "hide") "0"}}
+                        <td>{{index $info (index $head2 "head")}}</td>
+                    {{end}}
                 {{end}}
                 {{if eq $Type "data-table"}}
                     <td>
@@ -3246,14 +3279,59 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             $('.grid-select-all').iCheck({checkboxClass: 'icheckbox_minimal-blue'});
 
             $(function () {
-                $('.grid-row-checkbox').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
-                    if (this.checked) {
-                        $(this).closest('tr').css('background-color', "#ffffd5");
-                    } else {
-                        $(this).closest('tr').css('background-color', '');
+                let items = $('.column-select-item');
+                iCheck(items);
+                iCheck($('.grid-row-checkbox'));
+                let columns = getQueryVariable("__columns");
+                if (columns === "") {
+                    items.iCheck('check');
+                } else {
+                    let columnsArr = columns.split(",");
+                    for (let i = 0; i < columnsArr.length; i++) {
+                        for (let j = 0; j < items.length; j++) {
+                            if (columnsArr[i] === $(items[j]).attr("data-id")) {
+                                $(items[j]).iCheck('check');
+                            }
+                        }
                     }
-                });
+                }
             });
+
+            selectedAllFieldsRows = function () {
+                let selected = [];
+                $('.column-select-item:checked').each(function () {
+                    selected.push($(this).data('id'));
+                });
+                return selected;
+            };
+
+            $('.column-select-all').on('click', function (event) {
+                $('.column-select-item').iCheck('check');
+            });
+
+            $('.column-select-submit').on('click', function () {
+
+                let newUrl = "";
+                if (getQueryVariable('__columns') !== '') {
+                    newUrl = replaceParamVal('__columns', selectedAllFieldsRows().join(","));
+                } else {
+                    if (location.href.indexOf("?") > 0) {
+                        newUrl = location.href + "&__columns=" + selectedAllFieldsRows().join(",");
+                    } else {
+                        newUrl = location.href + "?__columns=" + selectedAllFieldsRows().join(",");
+                    }
+                }
+
+                $.pjax({url: newUrl, container: '#pjax-container'})
+
+                toastr.success('{{lang "reload succeeded"}} !');
+            });
+
+            function replaceParamVal(paramName, replaceWith) {
+                let oUrl = this.location.href.toString();
+                let re = eval('/(' + paramName + '=)([^&]*)/gi');
+                return oUrl.replace(re, paramName + '=' + replaceWith);
+            }
 
             $('.grid-batch-0').on('click', function () {
                 DeletePost(selectedRows().join())
@@ -3280,6 +3358,16 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 form.remove()
             }
             {{end}}
+
+            function iCheck(el) {
+                el.iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function () {
+                    if (this.checked) {
+                        $(this).closest('tr').css('background-color', "#ffffd5");
+                    } else {
+                        $(this).closest('tr').css('background-color', '');
+                    }
+                });
+            }
 
             function DeletePost(id) {
                 swal({
@@ -3315,20 +3403,19 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             }
 
             $(function () {
-                let sort = getQueryVariable("sort");
-                let sort_type = getQueryVariable("sort_type");
+                let sort = getQueryVariable("__sort");
+                let sort_type = getQueryVariable("__sort_type");
 
                 if (sort !== "" && sort_type !== "") {
                     let sortFa = $('#sort-' + sort);
                     if (sort_type === 'asc') {
-                        sortFa.attr('href', '?sort=' + sort + "&sort_type=desc")
+                        sortFa.attr('href', '?__sort=' + sort + "&__sort_type=desc")
                     } else {
-                        sortFa.attr('href', '?sort=' + sort + "&sort_type=asc")
+                        sortFa.attr('href', '?__sort=' + sort + "&__sort_type=asc")
                     }
                     sortFa.removeClass('fa-sort');
                     sortFa.addClass('fa-sort-amount-' + sort_type);
                 }
-
             });
 
             function getQueryVariable(variable) {

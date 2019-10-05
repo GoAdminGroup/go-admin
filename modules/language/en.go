@@ -29,11 +29,13 @@ var en = map[string]string{
 	"online":          "Online",
 	"setting":         "Setting",
 	"sign out":        "Sign out",
+	"all":             "All",
 
 	"are you sure to delete": "Are you sure to delete",
 	"yes":                    "yes",
 	"cancel":                 "cancel",
 	"refresh succeeded":      "Refresh succeeded",
+	"reload succeeded":       "Reload succeeded",
 
 	"permission manage": "Permission Manage",
 	"menus manage":      "Menus Manage",

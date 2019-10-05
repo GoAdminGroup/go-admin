@@ -14,6 +14,18 @@ func InArray(arr []string, str string) bool {
 	return false
 }
 
+func InArrayWithoutEmpty(arr []string, str string) bool {
+	if len(arr) == 0 {
+		return true
+	}
+	for _, v := range arr {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
 func RemoveBlankFromArray(s []string) []string {
 	var r []string
 	for _, str := range s {

@@ -1,6 +1,33 @@
 {{define "box-header"}}
     <div class="pull-right">
 
+        <div class="dropdown pull-right column-selector" style="margin-right: 10px">
+            <button type="button" class="btn btn-sm btn-instagram dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-table"></i>
+                &nbsp;
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="padding: 10px;">
+                <li>
+                    <ul style="padding: 0;">
+                        {{range $key, $head := .Thead}}
+                            <li class="checkbox icheck" style="margin: 0;">
+                                <label style="width: 100%;padding: 3px;">
+                                    <input type="checkbox" class="column-select-item" data-id="{{index $head "field"}}"
+                                           style="position: absolute; opacity: 0;">&nbsp;&nbsp;&nbsp;{{index $head "head"}}
+                                </label>
+                            </li>
+                        {{end}}
+                    </ul>
+                </li>
+                <li class="divider">
+                </li><li class="text-right">
+                    <button class="btn btn-sm btn-default column-select-all">{{lang "all"}}</button>&nbsp;&nbsp;
+                    <button class="btn btn-sm btn-primary column-select-submit">{{lang "submit"}}</button>
+                </li>
+            </ul>
+        </div>
+
         <div class="btn-group pull-right" style="margin-right: 10px">
             <a href="" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#filter-modal"><i
                         class="fa fa-filter"></i>&nbsp;&nbsp;{{lang "filter"}}</a>

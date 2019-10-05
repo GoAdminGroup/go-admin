@@ -34,7 +34,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 			"password":        "admin",
 			"role_id[]":       1,
 			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"id":              "1",
 			"_t":              "123",
 		}).Expect().Status(200).Body().Contains("edit fail, wrong token")
@@ -69,7 +69,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 			"avatar":          "",
 			"role_id[]":       1,
 			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"id":              "1",
 			"_t":              token[1],
 		}).Expect().Status(200)
@@ -98,7 +98,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 			"avatar":          "",
 			"role_id[]":       1,
 			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?page=1&pageSize=10&sort=id&sort_type=desc"),
+			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"id":              "1",
 			"_t":              token[1],
 		}).Expect().Status(200)

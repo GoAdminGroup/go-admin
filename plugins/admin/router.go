@@ -46,13 +46,13 @@ func InitRouter(prefix string) *context.App {
 	//authRoute.GET("/menu/new", controller.ShowMenu) // TODO: this will cause a bug of the tire
 
 	// add delete modify query
-	authRoute.GET("/info/:prefix/edit", guard.ShowForm, controller.ShowForm)
-	authRoute.GET("/info/:prefix/new", guard.ShowNewForm, controller.ShowNewForm)
-	authRoute.POST("/edit/:prefix", guard.EditForm, controller.EditForm)
-	authRoute.POST("/new/:prefix", guard.NewForm, controller.NewForm)
-	authRoute.POST("/delete/:prefix", guard.Delete, controller.Delete)
-	authRoute.POST("/export/:prefix", guard.Export, controller.Export)
-	authRoute.GET("/info/:prefix", controller.ShowInfo)
+	authRoute.GET("/info/:__prefix/edit", guard.ShowForm, controller.ShowForm)
+	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm, controller.ShowNewForm)
+	authRoute.POST("/edit/:__prefix", guard.EditForm, controller.EditForm)
+	authRoute.POST("/new/:__prefix", guard.NewForm, controller.NewForm)
+	authRoute.POST("/delete/:__prefix", guard.Delete, controller.Delete)
+	authRoute.POST("/export/:__prefix", guard.Export, controller.Export)
+	authRoute.GET("/info/:__prefix", controller.ShowInfo)
 
 	return app
 }
