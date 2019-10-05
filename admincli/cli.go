@@ -7,6 +7,7 @@ package main
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/system"
@@ -113,15 +114,15 @@ func generating() {
 
 	err := survey.Ask(qs, &result)
 	checkError(err)
-	driver := result["driver"].(string)
+	driver := result["driver"].(core.OptionAnswer)
 
 	var (
 		cfg  map[string]config.Database
 		name string
-		conn = db.GetConnectionByDriver(driver)
+		conn = db.GetConnectionByDriver(driver.Value)
 	)
 
-	if driver != "sqlite" {
+	if driver.Value != "sqlite" {
 		host := promptWithDefault("sql address", "127.0.0.1")
 		port := promptWithDefault("sql port", "3306")
 		user := promptWithDefault("sql username", "root")
@@ -142,7 +143,7 @@ func generating() {
 				Name:       name,
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     driver,
+				Driver:     driver.Value,
 				File:       "",
 			},
 		}
@@ -157,7 +158,7 @@ func generating() {
 		}
 		cfg = map[string]config.Database{
 			"default": {
-				Driver: driver,
+				Driver: driver.Value,
 				File:   file,
 			},
 		}
@@ -169,7 +170,7 @@ func generating() {
 	// step 2. show tables
 	tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
 
-	tables := getTablesFromSqlResult(tableModels, driver, name)
+	tables := getTablesFromSqlResult(tableModels, driver.Value, name)
 	if len(tables) == 0 {
 		exitWithError(`no tables, you should build a table of your own business first.
 
@@ -191,7 +192,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 
 	fieldField := "Field"
 	typeField := "Type"
-	if driver == "postgresql" {
+	if driver.Value == "postgresql" {
 		fieldField = "column_name"
 		typeField = "udt_name"
 	}
@@ -200,7 +201,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	for i := 0; i < len(chooseTables); i++ {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
-		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver, outputPath)
+		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver.Value, outputPath)
 	}
 	generateTables(outputPath, chooseTables, packageName)
 
