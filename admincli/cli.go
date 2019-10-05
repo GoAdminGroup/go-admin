@@ -405,6 +405,7 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 	content := `package ` + packageName + `
 
 import (
+	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"	
 	"github.com/chenhg5/go-admin/template/types/form"
@@ -501,7 +502,7 @@ var Generators = map[string]table.Generator{` + tableStr + `
 }
 
 func getType(typeName string) string {
-	r, _ := regexp.Compile(`\\(.*\\)`)
+	r, _ := regexp.Compile(`\(.*?\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	return strings.Title(strings.Replace(typeName, " unsigned", "", -1))
 }

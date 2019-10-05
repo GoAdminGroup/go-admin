@@ -13,3 +13,7 @@ func TestGetLatestVersion(t *testing.T) {
 func TestCompareVersion(t *testing.T) {
 	fmt.Println(isRequireUpdate(system.Version, getLatestVersion()))
 }
+
+func TestGetType(t *testing.T) {
+	fmt.Println(getType("int(3434)"))
+}
