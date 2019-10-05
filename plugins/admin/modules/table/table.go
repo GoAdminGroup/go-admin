@@ -298,7 +298,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	}
 	args := append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 
-	// TODO: add left join table relations
+	// TODO: add left join table relations, FilterFn is inefficient.
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, wheres, params.SortField, params.SortType)
 
