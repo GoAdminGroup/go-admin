@@ -72,7 +72,7 @@ func main() {
 
 		cmd.Command("asset", "compile asset file for template or component", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/", "compile root path")
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/...", "compile root path")
 				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets.go", "compile output path")
 			)
 

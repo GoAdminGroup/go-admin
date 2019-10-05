@@ -77,24 +77,6 @@ function getQueryString(name) {
     return null;
 }
 
-$(function () {
-    let sortType = getQueryString('sort_type');
-    let fafw = $('a.fa.fa-fw');
-    if (sortType != null && fafw.length > 0) {
-        if (sortType === 'asc') {
-            fafw.removeClass('fa-sort-amount-desc');
-            fafw.addClass('fa-sort-amount-asc');
-            let href = fafw.attr('href');
-            fafw.attr("href", href.replace("asc", "desc"));
-        } else {
-            fafw.removeClass('fa-sort-amount-asc');
-            fafw.addClass('fa-sort-amount-desc');
-            let href = fafw.attr('href');
-            fafw.attr('href', href.replace('desc', 'asc'));
-        }
-    }
-});
-
 if ($('.grid-select-all').length > 0) {
     $('.grid-row-delete').unbind('click').click(function () {
         DeletePost($(this).data('id'));
@@ -251,5 +233,5 @@ function removeActive() {
 
 function checkNavLength() {
     return $('#firstnav').width() * 0.6 - $('.nav-addtabs').width() >= 120;
-
 }
+

@@ -3164,7 +3164,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     <th>
                         {{index $head "head"}}
                         {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" href=""></a>
+                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
                         {{end}}
                     </th>
                 {{end}}
@@ -3179,7 +3180,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     <th>
                         {{index $head "head"}}
                         {{if eq (index $head "sortable") "1"}}
-                            <a class="fa fa-fw fa-sort" href=""></a>
+                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                               href="?sort={{index $head "field"}}&sort_type=desc"></a>
                         {{end}}
                     </th>
                 {{end}}
@@ -3311,6 +3313,36 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                         });
                     });
             }
+
+            $(function () {
+                let sort = getQueryVariable("sort");
+                let sort_type = getQueryVariable("sort_type");
+
+                if (sort !== "" && sort_type !== "") {
+                    let sortFa = $('#sort-' + sort);
+                    if (sort_type === 'asc') {
+                        sortFa.attr('href', '?sort=' + sort + "&sort_type=desc")
+                    } else {
+                        sortFa.attr('href', '?sort=' + sort + "&sort_type=asc")
+                    }
+                    sortFa.removeClass('fa-sort');
+                    sortFa.addClass('fa-sort-amount-' + sort_type);
+                }
+
+            });
+
+            function getQueryVariable(variable) {
+                let query = window.location.search.substring(1);
+                let vars = query.split("&");
+                for (let i = 0; i < vars.length; i++) {
+                    let pair = vars[i].split("=");
+                    if (pair[0] === variable) {
+                        return pair[1];
+                    }
+                }
+                return "";
+            }
+
         </script>
     {{end}}
 {{end}}`, "components/tabs": `{{define "tabs"}}
