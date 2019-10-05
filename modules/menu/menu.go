@@ -39,7 +39,7 @@ func (menu *Menu) AddMaxOrder() {
 
 func (menu *Menu) SetActiveClass(path string) *Menu {
 
-	reg, _ := regexp.Compile(`\\?(.*)`)
+	reg, _ := regexp.Compile(`\\\?(.*)`)
 	path = reg.ReplaceAllString(path, "")
 
 	for i := 0; i < len(menu.List); i++ {
