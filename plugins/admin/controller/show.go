@@ -51,25 +51,29 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 	)
 
 	if len(panel.GetInfo().Group) > 0 {
+
+		dataTable = aDataTable().
+			SetThead(panelInfo.Thead).
+			SetExportUrl(exportUrl)
+
 		var (
 			tabsHtml    = make([]map[string]template2.HTML, len(panel.GetInfo().GroupHeaders))
 			infoListArr = panelInfo.InfoList.GroupBy(panel.GetInfo().Group)
 			theadArr    = panelInfo.Thead.GroupBy(panel.GetInfo().Group)
 		)
 		for key, header := range panel.GetInfo().GroupHeaders {
-			dataTable = aDataTable().
-				SetInfoList(infoListArr[key]).
-				SetFilters(panel.GetFiltersMap()).
-				SetInfoUrl(infoUrl).
-				SetPrimaryKey(panel.GetPrimaryKey().Name).
-				SetThead(theadArr[key]).
-				SetExportUrl(exportUrl).
-				SetNewUrl(newUrl).
-				SetEditUrl(editUrl).
-				SetDeleteUrl(deleteUrl)
 			tabsHtml[key] = map[string]template2.HTML{
-				"title":   template2.HTML(header),
-				"content": dataTable.GetContent(),
+				"title": template2.HTML(header),
+				"content": aDataTable().
+					SetInfoList(infoListArr[key]).
+					SetFilters(panel.GetFiltersMap()).
+					SetInfoUrl(infoUrl).
+					SetPrimaryKey(panel.GetPrimaryKey().Name).
+					SetThead(theadArr[key]).
+					SetExportUrl(exportUrl).
+					SetNewUrl(newUrl).
+					SetEditUrl(editUrl).
+					SetDeleteUrl(deleteUrl).GetContent(),
 			}
 		}
 		body = aTab().SetData(tabsHtml).GetContent()
