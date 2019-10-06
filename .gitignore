@@ -14,3 +14,4 @@ logs
 go.sum
 modules/db/go.sum
 admincli/build
+template/adminlte/resource/assets/vendor
