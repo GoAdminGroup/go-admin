@@ -159,7 +159,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <div class="box-header {{.HeadBorder}}">
         {{langHtml .Header}}
     </div>
-    <div class="box-body">
+    <div class="box-body" style="overflow: scroll;">
         {{langHtml .Body}}
     </div>
     {{if ne .Footer ""}}
@@ -3183,7 +3183,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </a>
 </span>
 {{end}}`, "components/table": `{{define "table"}}
-    <table class="table table-hover">
+    <table class="table table-hover" style="min-width: 1000px;">
         {{if eq .Type "table"}}
             <thead>
             <tr>
