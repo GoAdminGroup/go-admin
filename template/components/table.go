@@ -42,6 +42,7 @@ type DataTableAttribute struct {
 	NewUrl     string
 	DeleteUrl  string
 	PrimaryKey string
+	IsTab      bool
 	ExportUrl  string
 	InfoUrl    string
 	FilterUrl  string
@@ -55,6 +56,11 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 
 func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
 	compo.Thead = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetIsTab(value bool) types.DataTableAttribute {
+	compo.IsTab = value
 	return compo
 }
 

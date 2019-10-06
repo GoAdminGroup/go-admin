@@ -80,6 +80,7 @@ type DataTableAttribute interface {
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
 	SetPrimaryKey(value string) DataTableAttribute
+	SetIsTab(value bool) DataTableAttribute
 	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute
