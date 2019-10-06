@@ -69,7 +69,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 					SetInfoList(infoListArr[key]).
 					SetFilters(panel.GetFiltersMap()).
 					SetInfoUrl(infoUrl).
-					SetIsTab(key == 0).
+					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
 					SetThead(theadArr[key]).
 					SetExportUrl(exportUrl).

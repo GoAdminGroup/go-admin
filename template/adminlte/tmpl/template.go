@@ -3204,7 +3204,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <tbody>
         {{if eq .Type "data-table"}}
             <tr>
-                {{if .IsTab}}
+                {{if eq .IsTab false}}
                     <th></th>
                 {{end}}
                 {{range $key, $head := .Thead}}
@@ -3235,7 +3235,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{range $key1, $info := .InfoList}}
             <tr>
                 {{if eq $Type "data-table"}}
-                    {{if $IsTab}}
+                    {{if eq $IsTab false}}
                         <td>
                             {{if $DeleteUrl}}
                                 <input type="checkbox" class="grid-row-checkbox" data-id="{{index $info $PrimaryKey}}"

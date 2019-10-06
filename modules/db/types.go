@@ -134,6 +134,7 @@ var (
 		Int,
 		Tinyint,
 		Mediumint,
+		Decimal,
 		Smallint,
 		Numeric, Smallserial, Serial, Bigserial, Money,
 		Integer,
@@ -191,6 +192,12 @@ func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
 			return Value(fmt.Sprintf("%f", v))
 		}
 		return "0"
+	case Contains(typ, UintTypeList):
+		if v, ok := value.([]uint8); ok {
+			return Value(fmt.Sprintf("%d", v))
+		}
+		return "0"
 	}
+	fmt.Println("typ", typ)
 	panic("wrong type")
 }
