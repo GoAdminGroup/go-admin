@@ -3041,7 +3041,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 &nbsp;
                 <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" role="menu" style="padding: 10px;">
+            <ul class="dropdown-menu" role="menu" style="padding: 10px;max-height: 400px;overflow: scroll;">
                 <li>
                     <ul style="padding: 0;">
                         {{range $key, $head := .Thead}}
@@ -3055,7 +3055,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     </ul>
                 </li>
                 <li class="divider">
-                </li><li class="text-right">
+                </li>
+                <li class="text-right">
                     <button class="btn btn-sm btn-default column-select-all">{{lang "all"}}</button>&nbsp;&nbsp;
                     <button class="btn btn-sm btn-primary column-select-submit">{{lang "submit"}}</button>
                 </li>
