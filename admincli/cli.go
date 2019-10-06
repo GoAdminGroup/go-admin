@@ -197,6 +197,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	}
 
 	packageName := promptWithDefault("set package name", "main")
+	connectionName := promptWithDefault("set connection name", "default")
 	outputPath := promptWithDefault("set file output path", "./")
 
 	fmt.Println(ansi.Color("✔", "green") + " generating: ")
@@ -213,7 +214,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	for i := 0; i < len(chooseTables); i++ {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
-		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, driver.Value, outputPath)
+		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, connectionName, driver.Value, outputPath)
 	}
 	generateTables(outputPath, chooseTables, packageName)
 
@@ -410,9 +411,14 @@ func getContentFromDir(content, dirPath, rootPath string) string {
 	return content
 }
 
-func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, driver, outputPath string) {
+func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, connectionName, driver, outputPath string) {
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
+
+	var newTable = `table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))`
+	if connectionName != "default" {
+		newTable = `table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("` + driver + `", "` + connectionName + `"))`
+	}
 
 	content := `package ` + packageName + `
 
@@ -425,7 +431,7 @@ import (
 
 func Get` + strings.Title(table) + `Table() table.Table {
 
-    ` + table + `Table := table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))
+    ` + table + `Table := ` + newTable + `
 	` + table + `Table.GetInfo().FieldList = []types.Field{`
 
 	for _, model := range columnsModel {
