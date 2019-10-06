@@ -3,11 +3,11 @@ package controller
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
@@ -53,7 +53,21 @@ func GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		response.Error(ctx, errMsg)
+		alert := aAlert().
+			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML(errMsg)).
+			GetContent()
+
+		user := auth.Auth(ctx)
+
+		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+		buf := template.Execute(tmpl, tmplName, user, types.Panel{
+			Content:     alert,
+			Description: "error",
+			Title:       "error",
+		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+		ctx.Html(http.StatusOK, buf.String())
 		return
 	}
 }
@@ -61,7 +75,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
 
 	alert := aAlert().
-		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 		SetTheme("warning").
 		SetContent(template2.HTML(errMsg)).
 		GetContent()
