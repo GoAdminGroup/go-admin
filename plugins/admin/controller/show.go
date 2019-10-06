@@ -54,6 +54,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 
 		dataTable = aDataTable().
 			SetThead(panelInfo.Thead).
+			SetDeleteUrl(deleteUrl).
 			SetExportUrl(exportUrl)
 
 		var (
