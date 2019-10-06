@@ -121,18 +121,22 @@ type Field struct {
 	Field      string
 	TypeName   db.DatabaseType
 	Head       string
-	JoinTable  []Join
+	Join       Join
 	Sortable   bool
 	Filterable bool
 	Hide       bool
 }
 
 type Join struct {
-	Table      string
-	Field      string
-	TableField string
-	HasChild   bool
-	JoinTable  *Join
+	Table     string
+	Field     string
+	JoinField string
+	HasChild  bool
+	JoinTable *Join
+}
+
+func (j Join) Valid() bool {
+	return j.Table != "" && j.Field != "" && j.JoinField != ""
 }
 
 // InfoPanel

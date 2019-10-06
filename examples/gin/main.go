@@ -26,13 +26,13 @@ func main() {
 		Databases: config.DatabaseList{
 			"default": {
 				Host:       "127.0.0.1",
-				Port:       "5433",
-				User:       "postgres",
+				Port:       "3306",
+				User:       "root",
 				Pwd:        "root",
 				Name:       "godmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     config.DriverPostgresql,
+				Driver:     config.DriverMysql,
 
 				//Driver: config.DriverSqlite,
 				//File:   "../datamodel/admin.db",
@@ -47,6 +47,7 @@ func main() {
 		IndexUrl:    "/",
 		Debug:       true,
 		ColorScheme: adminlte.COLORSCHEME_SKIN_BLACK,
+		SqlLog:      true,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)

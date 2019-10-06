@@ -249,7 +249,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	var (
 		queryStatement = "select %s from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
-			"%s order by " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + " %s LIMIT ? OFFSET ?"
+			"%s %s order by " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + " %s LIMIT ? OFFSET ?"
 		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + "%s"
 	)
 
@@ -260,11 +260,27 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
-	var sortable string
+	var (
+		sortable  string
+		joins     string
+		headField string
+	)
 	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
-			fields += filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
+		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
+			!tb.info.FieldList[i].Join.Valid() {
+			fields += tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
 		}
+
+		headField = tb.info.FieldList[i].Field
+
+		if tb.info.FieldList[i].Join.Valid() {
+			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
+			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
+			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
+				tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
+				tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+		}
+
 		if tb.info.FieldList[i].Hide {
 			continue
 		}
@@ -273,18 +289,18 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			sortable = "1"
 		}
 		hide := "0"
-		if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[i].Field) {
+		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
 			hide = "1"
 		}
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
-			"field":    tb.info.FieldList[i].Field,
+			"field":    headField,
 			"hide":     hide,
 		})
 	}
 
-	fields += filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
+	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
 
 	if !checkInTable(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
@@ -307,7 +323,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	// TODO: add left join table relations, FilterFn is inefficient.
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, wheres, params.SortField, params.SortType)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
 	logger.LogSql(queryCmd, args)
 
@@ -325,17 +341,24 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
 
 		for j := 0; j < len(tb.info.FieldList); j++ {
+
+			headField = tb.info.FieldList[j].Field
+
+			if tb.info.FieldList[j].Join.Valid() {
+				headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
+			}
+
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
-			if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[j].Field) {
+			if !modules.InArrayWithoutEmpty(params.Columns, headField) {
 				continue
 			}
 			var value interface{}
-			if checkInTable(columns, tb.info.FieldList[j].Field) {
+			if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
 				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
-					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
+					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
 					Row:   row,
 				})
 			} else {
@@ -392,7 +415,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	connection := tb.db()
 
 	var (
-		queryStatement = "select %s from %s where " + tb.primaryKey.Name + " in (%s) order by " + connection.GetDelimiter() +
+		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) order by " + connection.GetDelimiter() +
 			"%s" + connection.GetDelimiter() + " %s"
 		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
 			" where " + tb.primaryKey.Name + " in (%s)"
@@ -405,11 +428,27 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
-	var sortable string
+	var (
+		sortable  string
+		joins     string
+		headField string
+	)
 	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) {
-			fields += tb.info.FieldList[i].Field + ","
+		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
+			!tb.info.FieldList[i].Join.Valid() {
+			fields += tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
 		}
+
+		headField = tb.info.FieldList[i].Field
+
+		if tb.info.FieldList[i].Join.Valid() {
+			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
+			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
+			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
+				tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
+				tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+		}
+
 		if tb.info.FieldList[i].Hide {
 			continue
 		}
@@ -418,18 +457,27 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			sortable = "1"
 		}
 		hide := "0"
-		if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[i].Field) {
+		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
 			hide = "1"
 		}
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
-			"field":    tb.info.FieldList[i].Field,
+			"field":    headField,
 			"hide":     hide,
 		})
+		if tb.info.FieldList[i].Join.Table != "" &&
+			tb.info.FieldList[i].Join.Field != "" &&
+			tb.info.FieldList[i].Join.JoinField != "" {
+			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
+				filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + "." +
+				filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + "=" +
+				filterFiled(tb.info.Table, connection.GetDelimiter()) + "." +
+				filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+		}
 	}
 
-	fields += tb.primaryKey.Name
+	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
 
 	if !checkInTable(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
@@ -446,7 +494,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	// TODO: add left join table relations
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, whereIds, params.SortField, params.SortType)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, whereIds, params.SortField, params.SortType)
 
 	res, _ := connection.QueryWithConnection(tb.connection, queryCmd)
 
@@ -464,17 +512,24 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
 
 		for j := 0; j < len(tb.info.FieldList); j++ {
+
+			headField = tb.info.FieldList[i].Field
+
+			if tb.info.FieldList[j].Join.Valid() {
+				headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
+			}
+
 			if tb.info.FieldList[j].Hide {
 				continue
 			}
-			if !modules.InArrayWithoutEmpty(params.Columns, tb.info.FieldList[j].Field) {
+			if !modules.InArrayWithoutEmpty(params.Columns, headField) {
 				continue
 			}
 			var value interface{}
-			if checkInTable(columns, tb.info.FieldList[j].Field) {
+			if checkInTable(columns, headField) {
 				value = tb.info.FieldList[j].FilterFn(types.RowModel{
 					ID:    primaryKeyValue.String(),
-					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[tb.info.FieldList[j].Field]).String(),
+					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
 					Row:   row,
 				})
 			} else {

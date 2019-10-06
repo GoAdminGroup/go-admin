@@ -128,7 +128,12 @@ func (param Parameters) GetFixedParamStrWithoutPageSize() string {
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"
 	}
-	return "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	if len(param.Columns) > 0 {
+		return "&__columns=" + strings.Join(param.Columns, ",") + "&__sort=" + param.SortField +
+			"&__sort_type=" + param.SortType + str[:len(str)-1]
+	} else {
+		return "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	}
 }
 
 func (param Parameters) GetFixedParamStr() string {
@@ -136,7 +141,13 @@ func (param Parameters) GetFixedParamStr() string {
 	for key, value := range param.Fields {
 		str += key + "=" + value + "&"
 	}
-	return "&__pageSize=" + param.PageSize + "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	if len(param.Columns) > 0 {
+		return "&__columns=" + strings.Join(param.Columns, ",") + "&__pageSize=" + param.PageSize + "&__sort=" +
+			param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	} else {
+		return "&__pageSize=" + param.PageSize + "&__sort=" +
+			param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	}
 }
 
 func GetDefault(values url.Values, key, def string) string {
