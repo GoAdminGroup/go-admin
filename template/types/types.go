@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/template/types/form"
 	"html/template"
 )
@@ -162,6 +163,18 @@ type FormPanel struct {
 }
 
 type FormList []Form
+
+func (f FormList) Copy() FormList {
+	formList := make(FormList, len(f))
+	copy(formList, f)
+	for i := 0; i < len(formList); i++ {
+		formList[i].Options = make([]map[string]string, len(f[i].Options))
+		for j := 0; j < len(f[i].Options); j++ {
+			formList[i].Options[j] = modules.CopyMap(f[i].Options[j])
+		}
+	}
+	return formList
+}
 
 func (f FormList) FindByField(field string) Form {
 	for i := 0; i < len(f); i++ {

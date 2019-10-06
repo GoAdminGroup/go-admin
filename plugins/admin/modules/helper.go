@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"bytes"
+	"encoding/gob"
 	"github.com/NebulousLabs/fastrand"
 	"strconv"
 )
@@ -76,4 +78,20 @@ func GetPage(page string) (pageInt int) {
 		pageInt, _ = strconv.Atoi(page)
 	}
 	return
+}
+
+func CopyMap(m map[string]string) map[string]string {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	dec := gob.NewDecoder(&buf)
+	err := enc.Encode(m)
+	if err != nil {
+		panic(err)
+	}
+	var cm map[string]string
+	err = dec.Decode(&cm)
+	if err != nil {
+		panic(err)
+	}
+	return cm
 }

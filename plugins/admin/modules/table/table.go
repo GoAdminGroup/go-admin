@@ -589,9 +589,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
+	formList := tb.form.FormList.Copy()
+
 	for i := 0; i < len(tb.form.FormList); i++ {
-		if checkInTable(columns, tb.form.FormList[i].Field) {
-			fields = append(fields, tb.form.FormList[i].Field)
+		if checkInTable(columns, formList[i].Field) {
+			fields = append(fields, formList[i].Field)
 		}
 	}
 
@@ -610,47 +612,47 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 			list := make([]types.Form, len(value))
 			for j := 0; j < len(value); j++ {
 				for i := 0; i < len(tb.form.FormList); i++ {
-					if value[j] == tb.form.FormList[i].Field {
-						if checkInTable(columns, tb.form.FormList[i].Field) {
-							if tb.form.FormList[i].FormType.IsSelect() {
-								valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+					if value[j] == formList[i].Field {
+						if checkInTable(columns, formList[i].Field) {
+							if formList[i].FormType.IsSelect() {
+								valueArr := formList[i].FilterFn(types.RowModel{
 									ID:    id,
-									Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 									Row:   res,
 								}).([]string)
-								for _, v := range tb.form.FormList[i].Options {
+								for _, v := range formList[i].Options {
 									if modules.InArray(valueArr, v["value"]) {
 										v["selected"] = "selected"
 									}
 								}
 							} else {
-								tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+								formList[i].Value = formList[i].FilterFn(types.RowModel{
 									ID:    id,
-									Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 									Row:   res,
 								}).(string)
 							}
 						} else {
-							if tb.form.FormList[i].FormType.IsSelect() {
-								valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+							if formList[i].FormType.IsSelect() {
+								valueArr := formList[i].FilterFn(types.RowModel{
 									ID:    id,
 									Value: "",
 									Row:   res,
 								}).([]string)
-								for _, v := range tb.form.FormList[i].Options {
+								for _, v := range formList[i].Options {
 									if modules.InArray(valueArr, v["value"]) {
 										v["selected"] = "selected"
 									}
 								}
 							} else {
-								tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+								formList[i].Value = formList[i].FilterFn(types.RowModel{
 									ID:    id,
 									Value: "",
 									Row:   res,
 								}).(string)
 							}
 						}
-						list[j] = tb.form.FormList[i]
+						list[j] = formList[i]
 						break
 					}
 				}
@@ -663,39 +665,39 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 	}
 
 	for i := 0; i < len(tb.form.FormList); i++ {
-		if checkInTable(columns, tb.form.FormList[i].Field) {
-			if tb.form.FormList[i].FormType.IsSelect() {
-				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+		if checkInTable(columns, formList[i].Field) {
+			if formList[i].FormType.IsSelect() {
+				valueArr := formList[i].FilterFn(types.RowModel{
 					ID:    id,
-					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
 				}).([]string)
-				for _, v := range tb.form.FormList[i].Options {
+				for _, v := range formList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+				formList[i].Value = formList[i].FilterFn(types.RowModel{
 					ID:    id,
-					Value: db.GetValueFromDatabaseType(tb.form.FormList[i].TypeName, res[tb.form.FormList[i].Field]).String(),
+					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
 				}).(string)
 			}
 		} else {
-			if tb.form.FormList[i].FormType.IsSelect() {
-				valueArr := tb.form.FormList[i].FilterFn(types.RowModel{
+			if formList[i].FormType.IsSelect() {
+				valueArr := formList[i].FilterFn(types.RowModel{
 					ID:    id,
 					Value: "",
 					Row:   res,
 				}).([]string)
-				for _, v := range tb.form.FormList[i].Options {
+				for _, v := range formList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
 					}
 				}
 			} else {
-				tb.form.FormList[i].Value = tb.form.FormList[i].FilterFn(types.RowModel{
+				formList[i].Value = formList[i].FilterFn(types.RowModel{
 					ID:    id,
 					Value: "",
 					Row:   res,
@@ -704,7 +706,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 		}
 	}
 
-	return tb.form.FormList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
+	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
 }
 
 // UpdateDataFromDatabase update data.

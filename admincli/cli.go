@@ -123,9 +123,21 @@ func generating() {
 	)
 
 	if driver.Value != "sqlite" {
+
+		defaultPort := "3306"
+		defaultUser := "root"
+
+		if driver.Value == "postgresql" {
+			defaultPort = "5432"
+			defaultUser = "postgres"
+		} else if driver.Value == "mssql" {
+			defaultPort = "1433"
+			defaultUser = "sa"
+		}
+
 		host := promptWithDefault("sql address", "127.0.0.1")
-		port := promptWithDefault("sql port", "3306")
-		user := promptWithDefault("sql username", "root")
+		port := promptWithDefault("sql port", defaultPort)
+		user := promptWithDefault("sql username", defaultUser)
 		password := promptPassword()
 
 		name = prompt("sql database name")
@@ -508,6 +520,7 @@ func getType(typeName string) string {
 }
 
 func getLatestVersion() string {
+	http.DefaultClient.Timeout = time.Duration(time.Second * 3)
 	res, err := http.Get("https://goproxy.cn/github.com/chenhg5/go-admin/@v/list")
 
 	if err != nil || res.Body == nil {

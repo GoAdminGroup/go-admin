@@ -9,5 +9,5 @@ func (postgresql) GetName() string {
 }
 
 func (postgresql) ShowTables() string {
-	return "select tablename from pg_catalog.pg_tables"
+	return "SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';"
 }

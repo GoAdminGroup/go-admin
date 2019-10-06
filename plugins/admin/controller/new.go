@@ -27,6 +27,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().GroupHeaders, panel.GetForm().Group,
 		panel.GetForm().FormList, panel.GetPrimaryKey().Name)
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
@@ -52,6 +53,8 @@ func NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
+	table.RefreshTableList()
+
 	if param.HasAlert() {
 		showNewForm(ctx, param.Alert, param.Panel, param.GetUrl(), param.GetInfoUrl())
 		return
@@ -69,8 +72,6 @@ func NewForm(ctx *context.Context) {
 	} else {
 		param.Panel.InsertDataFromDatabase(param.Value())
 	}
-
-	table.RefreshTableList()
 
 	panelInfo := param.Panel.GetDataFromDatabase(param.Path, param.Param)
 
