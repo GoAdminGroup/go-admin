@@ -3237,7 +3237,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 {{end}}
                 {{range $key2, $head2 := $Thead}}
                     {{if eq (index $head2 "hide") "0"}}
-                        <td>{{index $info (index $head2 "head")}}</td>
+                        <td>{{index $info (index $head2 "field")}}</td>
                     {{end}}
                 {{end}}
                 {{if eq $Type "data-table"}}

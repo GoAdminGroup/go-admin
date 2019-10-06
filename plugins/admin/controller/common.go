@@ -42,6 +42,10 @@ func aBox() types.BoxAttribute {
 	return aTemplate().Box()
 }
 
+func aTab() types.TabsAttribute {
+	return aTemplate().Tabs()
+}
+
 func aTemplate() template.Template {
 	return template.Get(config.Theme)
 }

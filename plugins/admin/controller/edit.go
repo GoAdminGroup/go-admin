@@ -4,6 +4,7 @@ import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
@@ -70,36 +71,13 @@ func EditForm(ctx *context.Context) {
 
 	table.RefreshTableList()
 
-	panelInfo := param.Panel.GetDataFromDatabase(param.Path, param.Param)
+	editUrl := modules.AorB(param.Panel.GetEditable(), param.GetEditUrl(), "")
+	deleteUrl := modules.AorB(param.Panel.GetDeletable(), param.GetDeleteUrl(), "")
+	exportUrl := modules.AorB(param.Panel.GetExportable(), param.GetExportUrl(), "")
+	newUrl := modules.AorB(param.Panel.GetCanAdd(), param.GetNewUrl(), "")
+	infoUrl := param.GetInfoUrl()
 
-	dataTable := aDataTable().
-		SetInfoList(panelInfo.InfoList).
-		SetPrimaryKey(param.Panel.GetPrimaryKey().Name).
-		SetThead(panelInfo.Thead).
-		SetNewUrl(param.GetNewUrl())
-
-	if panelInfo.Editable {
-		dataTable.SetEditUrl(param.GetEditUrl())
-	}
-	if panelInfo.Deletable {
-		dataTable.SetDeleteUrl(param.GetDeleteUrl())
-	}
-
-	box := aBox().
-		SetBody(dataTable.GetContent()).
-		SetHeader(dataTable.GetDataTableHeader() + param.Panel.GetInfo().HeaderHtml).
-		WithHeadBorder(false).
-		SetFooter(param.Panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
-		GetContent()
-
-	user := auth.Auth(ctx)
-
-	tmpl, tmplName := aTemplate().GetTemplate(true)
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content:     box,
-		Description: panelInfo.Description,
-		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(param.PreviousPath)))
+	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl)
 
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

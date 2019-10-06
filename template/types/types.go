@@ -124,6 +124,7 @@ type Field struct {
 	Head       string
 	Join       Join
 	Sortable   bool
+	Fixed      bool
 	Filterable bool
 	Hide       bool
 }
@@ -142,13 +143,23 @@ func (j Join) Valid() bool {
 
 // InfoPanel
 type InfoPanel struct {
-	FieldList   []Field
-	Table       string
-	Title       string
-	Description string
-	HeaderHtml  template.HTML
-	FooterHtml  template.HTML
+	FieldList    []Field
+	Table        string
+	Title        string
+	Sort         Sort
+	Group        [][]string
+	GroupHeaders []string
+	Description  string
+	HeaderHtml   template.HTML
+	FooterHtml   template.HTML
 }
+
+type Sort uint8
+
+const (
+	SortDesc Sort = iota
+	SortAsc
+)
 
 // FormPanel
 type FormPanel struct {

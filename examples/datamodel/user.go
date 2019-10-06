@@ -75,11 +75,35 @@ func GetUserTable() (userTable table.Table) {
 				return model.Value
 			},
 		},
+		{
+			Head:     "Created At",
+			Field:    "created_at",
+			TypeName: db.Varchar,
+			Sortable: false,
+			FilterFn: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
+		{
+			Head:     "Updated At",
+			Field:    "updated_at",
+			TypeName: db.Varchar,
+			Sortable: false,
+			FilterFn: func(model types.RowModel) interface{} {
+				return model.Value
+			},
+		},
 	}
 
 	userTable.GetInfo().Table = "users"
 	userTable.GetInfo().Title = "Users"
 	userTable.GetInfo().Description = "Users"
+
+	userTable.GetInfo().GroupHeaders = []string{"profile1", "profile2"}
+	userTable.GetInfo().Group = [][]string{
+		{"id", "ip", "name", "gender", "city"},
+		{"id", "phone", "created_at", "updated_at"},
+	}
 
 	userTable.GetForm().FormList = []types.Form{
 		{

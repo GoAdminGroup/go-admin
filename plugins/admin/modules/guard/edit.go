@@ -87,6 +87,10 @@ func (e EditFormParam) GetNewUrl() string {
 	return e.getUrl("new")
 }
 
+func (e EditFormParam) GetExportUrl() string {
+	return config.Get().Url("/export/" + e.Prefix + e.Param.GetRouteParamStr())
+}
+
 func (e EditFormParam) GetDeleteUrl() string {
 	return config.Get().Url("/delete/" + e.Prefix)
 }

@@ -95,3 +95,10 @@ func CopyMap(m map[string]string) map[string]string {
 	}
 	return cm
 }
+
+func AorB(condition bool, a string, b string) string {
+	if condition {
+		return a
+	}
+	return b
+}

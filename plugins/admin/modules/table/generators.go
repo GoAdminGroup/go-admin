@@ -48,13 +48,24 @@ func GetManagerTable() (ManagerTable Table) {
 			TypeName: db.Varchar,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
-				labelModel, _ := db.Table("goadmin_role_users").
+				labelModels, _ := db.Table("goadmin_role_users").
 					Select("goadmin_roles.name").
 					LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
 					Where("user_id", "=", model.ID).
-					First()
+					All()
 
-				return string(template.Get("adminlte").Label().SetContent(template2.HTML(labelModel["name"].(string))).GetContent())
+				labels := template2.HTML("")
+				labelTpl := template.Get("adminlte").Label()
+
+				for key, label := range labelModels {
+					if key == len(labelModels)-1 {
+						labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent()
+					} else {
+						labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent() + "<br><br>"
+					}
+				}
+
+				return string(labels)
 			},
 		},
 		{

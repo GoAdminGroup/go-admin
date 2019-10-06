@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
@@ -28,47 +30,65 @@ func ShowInfo(ctx *context.Context) {
 
 	params := parameter.GetParam(ctx.Request.URL.Query())
 
-	editUrl := ""
-	if panel.GetEditable() {
-		editUrl = config.Url("/info/" + prefix + "/edit" + params.GetRouteParamStr())
+	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
+	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
+	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
+	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+	infoUrl := config.Url("/info/" + prefix)
+
+	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl)
+	ctx.Html(http.StatusOK, buf.String())
+}
+
+func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
+	exportUrl, newUrl, deleteUrl, infoUrl, editUrl string) *bytes.Buffer {
+
+	panelInfo := panel.GetDataFromDatabase(path, params)
+
+	var (
+		body      template2.HTML
+		dataTable types.DataTableAttribute
+	)
+
+	if len(panel.GetInfo().Group) > 0 {
+		var (
+			tabsHtml    = make([]map[string]template2.HTML, len(panel.GetInfo().GroupHeaders))
+			infoListArr = panelInfo.InfoList.GroupBy(panel.GetInfo().Group)
+			theadArr    = panelInfo.Thead.GroupBy(panel.GetInfo().Group)
+		)
+		for key, header := range panel.GetInfo().GroupHeaders {
+			dataTable = aDataTable().
+				SetInfoList(infoListArr[key]).
+				SetFilters(panel.GetFiltersMap()).
+				SetInfoUrl(infoUrl).
+				SetPrimaryKey(panel.GetPrimaryKey().Name).
+				SetThead(theadArr[key]).
+				SetExportUrl(exportUrl).
+				SetNewUrl(newUrl).
+				SetEditUrl(editUrl).
+				SetDeleteUrl(deleteUrl)
+			tabsHtml[key] = map[string]template2.HTML{
+				"title":   template2.HTML(header),
+				"content": dataTable.GetContent(),
+			}
+		}
+		body = aTab().SetData(tabsHtml).GetContent()
+	} else {
+		dataTable = aDataTable().
+			SetInfoList(panelInfo.InfoList).
+			SetFilters(panel.GetFiltersMap()).
+			SetInfoUrl(infoUrl).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
+			SetThead(panelInfo.Thead).
+			SetExportUrl(exportUrl).
+			SetNewUrl(newUrl).
+			SetEditUrl(editUrl).
+			SetDeleteUrl(deleteUrl)
+		body = dataTable.GetContent()
 	}
 
-	deleteUrl := ""
-	if panel.GetDeletable() {
-		deleteUrl = config.Url("/delete/" + prefix)
-	}
-
-	exportUrl := ""
-	if panel.GetExportable() {
-		exportUrl = config.Url("/export/" + prefix + params.GetRouteParamStr())
-	}
-
-	newUrl := config.Url("/info/" + prefix + "/new" + params.GetRouteParamStr())
-
-	panelInfo := panel.GetDataFromDatabase(ctx.Path(), params)
-
-	var box template2.HTML
-
-	dataTable := aDataTable().
-		SetInfoList(panelInfo.InfoList).
-		SetFilters(panel.GetFiltersMap()).
-		SetInfoUrl(config.Url("/info/" + prefix)).
-		SetPrimaryKey(panel.GetPrimaryKey().Name).
-		SetThead(panelInfo.Thead).
-		SetExportUrl(exportUrl)
-
-	if panelInfo.CanAdd {
-		dataTable.SetNewUrl(newUrl)
-	}
-	if panelInfo.Editable {
-		dataTable.SetEditUrl(editUrl)
-	}
-	if panelInfo.Deletable {
-		dataTable.SetDeleteUrl(deleteUrl)
-	}
-
-	box = aBox().
-		SetBody(dataTable.GetContent()).
+	box := aBox().
+		SetBody(body).
 		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder(false).
 		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
@@ -77,12 +97,12 @@ func ShowInfo(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+
+	return template.Execute(tmpl, tmplName, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-	ctx.Html(http.StatusOK, buf.String())
 }
 
 func Assets(ctx *context.Context) {

@@ -88,14 +88,56 @@ type DefaultTable struct {
 }
 
 type PanelInfo struct {
-	Thead       []map[string]string
-	InfoList    []map[string]template.HTML
+	Thead       Thead
+	InfoList    InfoList
 	Paginator   types.PaginatorAttribute
 	Title       string
 	Description string
-	CanAdd      bool
-	Editable    bool
-	Deletable   bool
+}
+
+type Thead []map[string]string
+
+func (t Thead) GroupBy(group [][]string) []Thead {
+	var res = make([]Thead, len(group))
+
+	for key, value := range group {
+		var newThead = make(Thead, len(t))
+
+		for index, info := range t {
+			if modules.InArray(value, info["field"]) {
+				newThead[index] = info
+			}
+		}
+
+		res[key] = newThead
+	}
+
+	return res
+}
+
+type InfoList []map[string]template.HTML
+
+func (i InfoList) GroupBy(group [][]string) []InfoList {
+
+	var res = make([]InfoList, len(group))
+
+	for key, value := range group {
+		var newInfoList = make(InfoList, len(i))
+
+		for index, info := range i {
+			var newRow = make(map[string]template.HTML)
+			for mk, m := range info {
+				if modules.InArray(value, mk) {
+					newRow[mk] = m
+				}
+			}
+			newInfoList[index] = newRow
+		}
+
+		res[key] = newInfoList
+	}
+
+	return res
 }
 
 type Config struct {
@@ -369,9 +411,9 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 				})
 			}
 			if valueStr, ok := value.(string); ok {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(valueStr)
+				tempModelData[headField] = template.HTML(valueStr)
 			} else {
-				tempModelData[tb.info.FieldList[j].Head] = value.(template.HTML)
+				tempModelData[headField] = value.(template.HTML)
 			}
 		}
 
@@ -403,9 +445,6 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		Paginator:   paginator.Get(path, params, size),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
-		CanAdd:      tb.canAdd,
-		Editable:    tb.editable,
-		Deletable:   tb.deletable,
 	}
 }
 
@@ -541,9 +580,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			}
 
 			if valueStr, ok := value.(string); ok {
-				tempModelData[tb.info.FieldList[j].Head] = template.HTML(valueStr)
+				tempModelData[headField] = template.HTML(valueStr)
 			} else {
-				tempModelData[tb.info.FieldList[j].Head] = value.(template.HTML)
+				tempModelData[headField] = value.(template.HTML)
 			}
 		}
 
@@ -575,9 +614,6 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		Paginator:   paginator.Get(path, params, size),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
-		CanAdd:      tb.canAdd,
-		Editable:    tb.editable,
-		Deletable:   tb.deletable,
 	}
 }
 
