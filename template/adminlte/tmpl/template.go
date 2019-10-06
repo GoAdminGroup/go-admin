@@ -3209,12 +3209,16 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 {{end}}
                 {{range $key, $head := .Thead}}
                     {{if eq (index $head "hide") "0"}}
-                        <th>
-                            {{index $head "head"}}
-                            {{if eq (index $head "sortable") "1"}}
-                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
-                            {{end}}
+                        {{if eq (index $head "width") "0"}}
+                            <th>
+                        {{else}}
+                            <th style="width: {{index $head "width"}}px">
+                        {{end}}
+                        {{index $head "head"}}
+                        {{if eq (index $head "sortable") "1"}}
+                            <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
+                               href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
+                        {{end}}
                         </th>
                     {{end}}
                 {{end}}

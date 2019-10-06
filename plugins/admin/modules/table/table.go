@@ -11,6 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
 	"github.com/chenhg5/go-admin/template/types"
 	"html/template"
+	"strconv"
 	"strings"
 )
 
@@ -339,6 +340,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			"sortable": sortable,
 			"field":    headField,
 			"hide":     hide,
+			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 	}
 
@@ -504,6 +506,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			"sortable": sortable,
 			"field":    headField,
 			"hide":     hide,
+			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 		if tb.info.FieldList[i].Join.Table != "" &&
 			tb.info.FieldList[i].Join.Field != "" &&

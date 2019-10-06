@@ -122,6 +122,7 @@ type Field struct {
 	Field      string
 	TypeName   db.DatabaseType
 	Head       string
+	Width      int
 	Join       Join
 	Sortable   bool
 	Fixed      bool
