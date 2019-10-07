@@ -851,7 +851,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 		var newForm []types.Form
 		for _, v := range old {
 			v.Value = ""
-			if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
+			if v.Field != primaryKey {
 				newForm = append(newForm, v)
 			}
 		}
@@ -870,7 +870,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 			for _, v := range old {
 				if v.Field == value[i] {
 					v.Value = ""
-					if v.Field != primaryKey && v.Field != "created_at" && v.Field != "updated_at" {
+					if v.Field != primaryKey {
 						list = append(list, v)
 						break
 					}
