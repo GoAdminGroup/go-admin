@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
