@@ -662,6 +662,21 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 								for _, v := range formList[i].Options {
 									if modules.InArray(valueArr, v["value"]) {
 										v["selected"] = "selected"
+									} else {
+										v["selected"] = ""
+									}
+								}
+							} else if formList[i].FormType.IsRadio() {
+								value := formList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
+									Row:   res,
+								}).(string)
+								for _, v := range formList[i].Options {
+									if value == v["value"] {
+										v["selected"] = "checked"
+									} else {
+										v["selected"] = ""
 									}
 								}
 							} else {
@@ -681,6 +696,21 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 								for _, v := range formList[i].Options {
 									if modules.InArray(valueArr, v["value"]) {
 										v["selected"] = "selected"
+									} else {
+										v["selected"] = ""
+									}
+								}
+							} else if formList[i].FormType.IsRadio() {
+								value := formList[i].FilterFn(types.RowModel{
+									ID:    id,
+									Value: "",
+									Row:   res,
+								}).(string)
+								for _, v := range formList[i].Options {
+									if value == v["value"] {
+										v["selected"] = "checked"
+									} else {
+										v["selected"] = ""
 									}
 								}
 							} else {
@@ -851,7 +881,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 		var newForm []types.Form
 		for _, v := range old {
 			v.Value = ""
-			if v.Field != primaryKey {
+			if v.Field != primaryKey && !v.NotAllowAdd {
 				newForm = append(newForm, v)
 			}
 		}
@@ -870,7 +900,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 			for _, v := range old {
 				if v.Field == value[i] {
 					v.Value = ""
-					if v.Field != primaryKey {
+					if v.Field != primaryKey && !v.NotAllowAdd {
 						list = append(list, v)
 						break
 					}

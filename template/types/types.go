@@ -74,6 +74,7 @@ type Form struct {
 	Head                   string
 	Default                string
 	Editable               bool
+	NotAllowAdd            bool
 	FormType               form.Type
 	Value                  string
 	Options                []map[string]string

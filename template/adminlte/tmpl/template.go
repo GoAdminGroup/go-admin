@@ -2559,7 +2559,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{$field := .Field}}
         {{range $key, $v := .Options }}
             <input type="radio" name="{{index $v "field"}}" value="{{index $v "value"}}"
-                   class="minimal {{$field}}" checked="{{index $v "selected"}}"
+                   class="minimal {{$field}}" {{index $v "selected"}}
                    style="position: absolute; opacity: 0;">&nbsp;{{index $v "label"}}&nbsp;&nbsp;
         {{end}}
     </div>
@@ -2674,7 +2674,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             <div class="box-tools">
                 <!-- <div class="btn-group pull-right" style="margin-right: 10px">
                 <a href='{{.InfoUrl}}' class="btn btn-sm btn-default"><i class="fa fa-list"></i> {{lang "List"}}</a>
-            </div> -->
+                </div> -->
                 <div class="btn-group pull-right" style="margin-right: 10px">
                     <a href='{{.InfoUrl}}' class="btn btn-sm btn-default form-history-back"><i
                                 class="fa fa-arrow-left"></i> {{lang "Back"}}</a>
@@ -2682,12 +2682,19 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </div>
         </div>
         {{.Header}}
+        {{$PrimaryKey := .PrimaryKey}}
         <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
             <div class="box-body">
                 {{if eq (len .GroupHeaders) 0}}
                     <div class="fields-group">
                         {{ template "form_components" .Content }}
                     </div>
+
+                    {{range $key, $data := .Content}}
+                        {{if eq $data.Field $PrimaryKey}}
+                            <input type="hidden" name="{{$PrimaryKey}}" value='{{$data.Value}}'>
+                        {{end}}
+                    {{end}}
                 {{else}}
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
@@ -2713,6 +2720,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                                 <div class="tab-pane" id="tab-form-{{$key}}">
                             {{end}}
                                 {{ template "form_components" $data}}
+                                {{range $key, $d := $data}}
+                                    {{if eq $d.Field $PrimaryKey}}
+                                        <input type="hidden" name="{{$PrimaryKey}}" value='{{$d.Value}}'>
+                                    {{end}}
+                                {{end}}
                             </div>
 
                             {{end}}
@@ -2738,17 +2750,10 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     </div>
 
                 </div>
-
             </div>
 
-            <input type="hidden" name="_previous_" value='{{.InfoUrl}}' class="_previous_">
-            {{$PrimaryKey := .PrimaryKey}}
-            {{range $key, $data := .Content}}
-                {{if eq $data.Field $PrimaryKey}}
-                    <input type="hidden" name="{{$PrimaryKey}}" value='{{$data.Value}}' class="_previous_">
-                {{end}}
-            {{end}}
-            <input type="hidden" name="_t" value='{{.CSRFToken}}' class="_previous_">
+            <input type="hidden" name="_previous_" value='{{.InfoUrl}}'>
+            <input type="hidden" name="_t" value='{{.CSRFToken}}'>
         </form>
         {{.Footer}}
     </div>
@@ -2906,19 +2911,19 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 
     <small>{{lang "show"}}</small>&nbsp;
     <select class="input-sm grid-per-pager" name="per-page">
-        <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
+        <option value="{{.Url}}&__pageSize=10" {{index .Option "10"}}>
             10
         </option>
-        <option value="{{.Url}}&pageSize=20" {{index .Option "20"}}>
+        <option value="{{.Url}}&__pageSize=20" {{index .Option "20"}}>
             20
         </option>
-        <option value="{{.Url}}&pageSize=30" {{index .Option "30"}}>
+        <option value="{{.Url}}&__pageSize=30" {{index .Option "30"}}>
             30
         </option>
-        <option value="{{.Url}}&pageSize=50" {{index .Option "50"}}>
+        <option value="{{.Url}}&__pageSize=50" {{index .Option "50"}}>
             50
         </option>
-        <option value="{{.Url}}&pageSize=100" {{index .Option "100"}}>
+        <option value="{{.Url}}&__pageSize=100" {{index .Option "100"}}>
             100
         </option>
     </select>

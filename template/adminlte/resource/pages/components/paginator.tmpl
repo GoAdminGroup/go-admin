@@ -38,19 +38,19 @@
 
     <small>{{lang "show"}}</small>&nbsp;
     <select class="input-sm grid-per-pager" name="per-page">
-        <option value="{{.Url}}&pageSize=10" {{index .Option "10"}}>
+        <option value="{{.Url}}&__pageSize=10" {{index .Option "10"}}>
             10
         </option>
-        <option value="{{.Url}}&pageSize=20" {{index .Option "20"}}>
+        <option value="{{.Url}}&__pageSize=20" {{index .Option "20"}}>
             20
         </option>
-        <option value="{{.Url}}&pageSize=30" {{index .Option "30"}}>
+        <option value="{{.Url}}&__pageSize=30" {{index .Option "30"}}>
             30
         </option>
-        <option value="{{.Url}}&pageSize=50" {{index .Option "50"}}>
+        <option value="{{.Url}}&__pageSize=50" {{index .Option "50"}}>
             50
         </option>
-        <option value="{{.Url}}&pageSize=100" {{index .Option "100"}}>
+        <option value="{{.Url}}&__pageSize=100" {{index .Option "100"}}>
             100
         </option>
     </select>

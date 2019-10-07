@@ -48,10 +48,10 @@ func GetUserTable() (userTable table.Table) {
 			TypeName: db.Tinyint,
 			Sortable: false,
 			FilterFn: func(model types.RowModel) interface{} {
-				if model.Value == "1" {
-					return "man"
+				if model.Value == "0" {
+					return "men"
 				}
-				if model.Value == "2" {
+				if model.Value == "1" {
 					return "women"
 				}
 				return "unknown"

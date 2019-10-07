@@ -4,7 +4,7 @@
         {{$field := .Field}}
         {{range $key, $v := .Options }}
             <input type="radio" name="{{index $v "field"}}" value="{{index $v "value"}}"
-                   class="minimal {{$field}}" checked="{{index $v "selected"}}"
+                   class="minimal {{$field}}" {{index $v "selected"}}
                    style="position: absolute; opacity: 0;">&nbsp;{{index $v "label"}}&nbsp;&nbsp;
         {{end}}
     </div>

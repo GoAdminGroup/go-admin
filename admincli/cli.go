@@ -428,9 +428,7 @@ func getAllFiles(dirPth string) (files []string, err error) {
 	// 读取子目录下文件
 	for _, table := range dirs {
 		temp, _ := getAllFiles(table)
-		for _, temp1 := range temp {
-			files = append(files, temp1)
-		}
+		files = append(files, temp...)
 	}
 
 	return files, nil

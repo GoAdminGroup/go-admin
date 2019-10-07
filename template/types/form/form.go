@@ -74,6 +74,10 @@ func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox
 }
 
+func (t Type) IsRadio() bool {
+	return t == Radio
+}
+
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {
 
 	if fieldName == "password" {

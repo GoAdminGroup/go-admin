@@ -193,22 +193,24 @@ func GetManagerTable() (ManagerTable Table) {
 				return permissions
 			},
 		}, {
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("updatedAt"),
+			Field:       "updated_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("createdAt"),
+			Field:       "created_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -367,22 +369,24 @@ func GetPermissionTable() (PermissionTable Table) {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("updatedAt"),
+			Field:       "updated_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("createdAt"),
+			Field:       "created_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -511,22 +515,24 @@ func GetRolesTable() (RolesTable Table) {
 				return permissions
 			},
 		}, {
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("updatedAt"),
+			Field:       "updated_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("createdAt"),
+			Field:       "created_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -694,22 +700,24 @@ func GetOpTable() (OpTable Table) {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("updatedAt"),
+			Field:       "updated_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("createdAt"),
+			Field:       "created_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
@@ -926,22 +934,24 @@ func GetMenuTable() (MenuTable Table) {
 				return roles
 			},
 		}, {
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("updatedAt"),
+			Field:       "updated_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
 		}, {
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
+			Head:        language.Get("createdAt"),
+			Field:       "created_at",
+			TypeName:    db.Timestamp,
+			Default:     "",
+			Editable:    true,
+			FormType:    form.Default,
+			NotAllowAdd: true,
 			FilterFn: func(model types.RowModel) interface{} {
 				return model.Value
 			},
