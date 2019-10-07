@@ -190,6 +190,14 @@ function checkNavLength() {
 }
 
 $('.fixed-btn').on('click', function () {
-    $('.main-sidebar').css('position', 'fixed');
-    $('.main-header .logo').css('position', 'fixed');
+    let clicked = $(this).attr('data-click');
+    if (clicked === "false") {
+        $('.main-sidebar').css('position', 'fixed');
+        $('.main-header .logo').css('position', 'fixed');
+        $(this).attr('data-click', 'true')
+    } else {
+        $('.main-sidebar').css('position', '');
+        $('.main-header .logo').css('position', '');
+        $(this).attr('data-click', 'false')
+    }
 });

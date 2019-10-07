@@ -5,7 +5,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <ul class="nav navbar-nav">
 
             <li>
-                <a href="javascript:void(0);" class="fixed-btn">
+                <a href="javascript:void(0);" class="fixed-btn" data-click="false">
                     <i class="fa fa-anchor"></i>
                 </a>
             </li>
@@ -17,7 +17,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </li>
             <li>
                 <a href="javascript:void(0);" class="exit-fullpage-btn" style="display: none;">
-                    <i class="fa fa-arrows-alt"></i>
+                    <i class="fa fa-compress"></i>
                 </a>
             </li>
             <li>
