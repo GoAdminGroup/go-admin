@@ -10,7 +10,7 @@ assets:
 	mkdir ./template/adminlte/resource/assets/dist/js
 	mkdir ./template/adminlte/resource/assets/dist/css
 	cp ./template/adminlte/resource/assets/src/js/*.js ./template/adminlte/resource/assets/dist/js/
-	cp ./template/adminlte/resource/assets/src/css/blue.png ./template/adminlte/resource/assets/dist/css/blue.png
+	cp ./template/adminlte/resource/assets/src/css/*.png ./template/adminlte/resource/assets/dist/css/
 	cp -R ./template/adminlte/resource/assets/src/css/fonts ./template/adminlte/resource/assets/dist/css/
 	cp -R ./template/adminlte/resource/assets/src/img ./template/adminlte/resource/assets/dist/
 	cp -R ./template/adminlte/resource/assets/src/fonts ./template/adminlte/resource/assets/dist/
