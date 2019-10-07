@@ -5,14 +5,19 @@ all: run
 
 assets:
 	find ./ -name ".DS_Store" -depth -exec rm {} \;
-	make combine
-	rm -rf dist/*
+	rm -rf ./template/adminlte/resource/assets/dist
+	mkdir ./template/adminlte/resource/assets/dist
+	mkdir ./template/adminlte/resource/assets/dist/js
+	mkdir ./template/adminlte/resource/assets/dist/css
 	cp ./template/adminlte/resource/assets/src/js/*.js ./template/adminlte/resource/assets/dist/js/
 	cp ./template/adminlte/resource/assets/src/css/blue.png ./template/adminlte/resource/assets/dist/css/blue.png
 	cp -R ./template/adminlte/resource/assets/src/css/fonts ./template/adminlte/resource/assets/dist/css/
 	cp -R ./template/adminlte/resource/assets/src/img ./template/adminlte/resource/assets/dist/
 	cp -R ./template/adminlte/resource/assets/src/fonts ./template/adminlte/resource/assets/dist/
+	make combine
 	admincli compile asset
+	make tmpl
+	make fmt
 
 combine:
 	find ./ -name ".DS_Store" -depth -exec rm {} \;

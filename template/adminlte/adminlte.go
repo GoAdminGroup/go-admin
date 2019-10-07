@@ -82,5 +82,5 @@ func (*Theme) GetAsset(path string) ([]byte, error) {
 }
 
 func (*Theme) GetAssetList() []string {
-	return assets
+	return resource.AssetsList
 }

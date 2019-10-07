@@ -19,3 +19,7 @@ func TestGetType(t *testing.T) {
 	fmt.Println(getType("int(3434)"))
 	fmt.Println(path.Ext("sdafdfs.css"))
 }
+
+func TestGetAllFiles(t *testing.T) {
+	fmt.Println(getAllFiles("."))
+}

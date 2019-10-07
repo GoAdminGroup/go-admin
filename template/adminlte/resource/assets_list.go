@@ -1,6 +1,6 @@
-package adminlte
+package resource
 
-var assets = []string{
+var AssetsList = []string{
 	"/dist/css/all.min.css",
 	"/dist/css/blue.png",
 	"/dist/css/fonts/6xK3dSBYKcSV-LCoeQqfX1RYOo3qOK7g.ttf",
