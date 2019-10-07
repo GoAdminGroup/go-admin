@@ -61,8 +61,8 @@ type Table interface {
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
 	GetDataFromDatabaseWithId(id string) ([]types.Form, [][]types.Form, []string, string, string)
-	UpdateDataFromDatabase(dataList form.Values)
-	InsertDataFromDatabase(dataList form.Values)
+	UpdateDataFromDatabase(dataList form.Values) error
+	InsertDataFromDatabase(dataList form.Values) error
 	DeleteDataFromDatabase(id string)
 }
 
@@ -779,15 +779,51 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 }
 
 // UpdateDataFromDatabase update data.
-func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) {
-	_, _ = tb.sql().Table(tb.form.Table).
+func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
+
+	if tb.form.PostValidator != nil {
+		if err := tb.form.PostValidator(dataList); err != nil {
+			return err
+		}
+	}
+
+	_, err := tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getValues(dataList))
+
+	if err != nil {
+		return err
+	}
+
+	if tb.form.PostHook != nil {
+		go tb.form.PostHook(dataList)
+	}
+
+	return nil
 }
 
 // InsertDataFromDatabase insert data.
-func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) {
-	_, _ = tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
+func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
+
+	if tb.form.PostValidator != nil {
+		if err := tb.form.PostValidator(dataList); err != nil {
+			return err
+		}
+	}
+
+	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
+
+	if err != nil {
+		return err
+	}
+
+	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
+
+	if tb.form.PostHook != nil {
+		go tb.form.PostHook(dataList)
+	}
+
+	return nil
 }
 
 func (tb DefaultTable) getValues(dataList form.Values) dialect.H {

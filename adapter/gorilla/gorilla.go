@@ -3,6 +3,7 @@ package gorilla
 import (
 	"bytes"
 	"errors"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
@@ -131,7 +132,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	var panel types.Panel
 
 	if !auth.CheckPermissions(user, ctx.Request.RequestURI, ctx.Request.Method) {
-		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 			SetTheme("warning").SetContent(template2.HTML("Permission Denied")).GetContent()
 
 		panel = types.Panel{

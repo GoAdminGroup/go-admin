@@ -11,6 +11,7 @@ import (
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/modules/auth"
 	cfg "github.com/chenhg5/go-admin/modules/config"
+	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/modules/system"
@@ -158,7 +159,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 	var panel types.Panel
 
 	if !auth.CheckPermissions(user, ctx.Request.URL.Path, ctx.Request.Method) {
-		alert := template.Get(config.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		alert := template.Get(config.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
 
 		panel = types.Panel{

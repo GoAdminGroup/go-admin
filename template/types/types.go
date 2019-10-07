@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
+	form2 "github.com/chenhg5/go-admin/plugins/admin/modules/form"
 	"github.com/chenhg5/go-admin/template/types/form"
 	"html/template"
 )
@@ -165,15 +166,21 @@ const (
 
 // FormPanel
 type FormPanel struct {
-	FormList     FormList
-	Group        [][]string
-	GroupHeaders []string
-	Table        string
-	Title        string
-	Description  string
-	HeaderHtml   template.HTML
-	FooterHtml   template.HTML
+	FormList      FormList
+	Group         [][]string
+	GroupHeaders  []string
+	Table         string
+	Title         string
+	Description   string
+	PostValidator PostValidator
+	PostHook      PostHookFn
+	HeaderHtml    template.HTML
+	FooterHtml    template.HTML
 }
+
+type PostValidator func(values form2.Values) error
+
+type PostHookFn func(values form2.Values)
 
 type FormList []Form
 

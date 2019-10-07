@@ -9,6 +9,10 @@ func (f Values) Get(key string) string {
 	return ""
 }
 
+func (f Values) Add(key string, value string) {
+	f[key] = []string{value}
+}
+
 func (f Values) IsEmpty(key ...string) bool {
 	for _, k := range key {
 		if f.Get(k) == "" {

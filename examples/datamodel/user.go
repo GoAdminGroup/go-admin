@@ -3,6 +3,7 @@ package datamodel
 import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/db"
+	form2 "github.com/chenhg5/go-admin/plugins/admin/modules/form"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
@@ -226,6 +227,10 @@ func GetUserTable() (userTable table.Table) {
 	userTable.GetForm().Table = "users"
 	userTable.GetForm().Title = "Users"
 	userTable.GetForm().Description = "Users"
+
+	userTable.GetForm().PostHook = func(values form2.Values) {
+		fmt.Println("userTable.GetForm().PostHook", values)
+	}
 
 	return
 }

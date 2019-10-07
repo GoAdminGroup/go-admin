@@ -39,7 +39,7 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string) 
 	user := auth.Auth(ctx)
 
 	alert := template.Get(config.Theme).Alert().
-		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
+		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 		SetTheme("warning").
 		SetContent(template2.HTML(msg)).
 		GetContent()
