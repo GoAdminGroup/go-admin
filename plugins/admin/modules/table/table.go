@@ -787,13 +787,13 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
-	_, err := tb.sql().Table(tb.form.Table).
+	_, _ = tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getValues(dataList))
 
-	if err != nil {
-		return err
-	}
+	//if err != nil {
+	//	return err
+	//}
 
 	if tb.form.PostHook != nil {
 		go tb.form.PostHook(dataList)
@@ -811,11 +811,11 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
-	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
+	id, _ := tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
 
-	if err != nil {
-		return err
-	}
+	//if err != nil {
+	//	return err
+	//}
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 

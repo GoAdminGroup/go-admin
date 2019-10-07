@@ -198,6 +198,5 @@ func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
 		}
 		return "0"
 	}
-	fmt.Println("typ", typ)
-	panic("wrong type")
+	panic("wrong type：" + string(typ))
 }
