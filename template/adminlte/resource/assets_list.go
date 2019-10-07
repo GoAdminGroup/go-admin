@@ -20,8 +20,10 @@ var AssetsList = []string{
 	"/dist/fonts/ionicons.woff",
 	"/dist/img/avatar04.png",
 	"/dist/js/all.min.js",
+	"/dist/js/all_2.min.js",
 	"/dist/js/chart.js",
 	"/dist/js/fontawesome-iconpicker.min.js",
+	"/dist/js/form.min.js",
 	"/dist/js/html5shiv.min.js",
 	"/dist/js/respond.min.js",
 }

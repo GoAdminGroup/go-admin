@@ -26,6 +26,8 @@ require (
 	github.com/schollz/progressbar/v2 v2.13.0 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/smartystreets/goconvey v0.0.0-20190330032615-68dc04aab96a // indirect
+	github.com/tdewolff/minify v2.3.6+incompatible
+	github.com/tdewolff/parse v2.3.4+incompatible // indirect
 	github.com/yudai/pp v2.0.1+incompatible // indirect
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
 	golang.org/x/net v0.0.0-20190909003024-a7b16738d86b // indirect

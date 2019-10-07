@@ -26,6 +26,8 @@ combine:
 
 combine-js:
 	admincli combine js
+	admincli combine js --path=./template/adminlte/resource/assets/src/js/combine2/ --out=./template/adminlte/resource/assets/dist/js/all_2.min.js
+	admincli combine js --path=./template/adminlte/resource/assets/src/js/combine3/ --out=./template/adminlte/resource/assets/dist/js/form.min.js
 
 combine-css:
 	admincli combine css

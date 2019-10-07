@@ -2667,10 +2667,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 {{end}}`, "components/form": `{{define "form"}}
-    <script src="{{.Prefix}}/assets/select2/select2.full.min.js"></script>
-    <script src="{{.Prefix}}/assets/fileinput/fileinput.min.js"></script>
-    <script src="{{.Prefix}}/assets/duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
-    <script src="{{.Prefix}}/assets/wang-editor/wangEditor.min.js"></script>
+    <script src="{{.Prefix}}/assets/dist/js/form.min.js"></script>
     <div class="box box-info">
         <div class="box-header with-border">
             <h3 class="box-title">{{langHtml .Title}}</h3>
@@ -3853,7 +3850,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </nav>
     </header>
 {{end}}`, "js": `{{define "js"}}
-
+    <script src="{{.UrlPrefix}}/assets/dist/js/all_2.min.js"></script>
 {{end}}`, "layout": `{{define "layout"}}
 
     <!DOCTYPE html>
