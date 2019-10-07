@@ -71,6 +71,7 @@ type TableAttribute interface {
 	SetThead(value []map[string]string) TableAttribute
 	SetInfoList(value []map[string]template.HTML) TableAttribute
 	SetType(value string) TableAttribute
+	SetMinWidth(value int) TableAttribute
 	GetContent() template.HTML
 }
 

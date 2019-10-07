@@ -1,5 +1,5 @@
 {{define "table"}}
-    <table class="table table-hover" style="min-width: 1000px;">
+    <table class="table table-hover" style="min-width: {{.MinWidth}}px;">
         {{if eq .Type "table"}}
             <thead>
             <tr>

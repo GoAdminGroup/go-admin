@@ -1,61 +1,69 @@
 package tmpl
 
 var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
-<div class="navbar-custom-menu">
-    <ul class="nav navbar-nav">
-        <li>
-            <a href="javascript:void(0);"  class="fullpage-btn">
-                <i class="fa fa-arrows-alt"></i>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0);"  class="exit-fullpage-btn" style="display: none;">
-                <i class="fa fa-arrows-alt"></i>
-            </a>
-        </li>
-        <li>
-            <a href="javascript:void(0);" class="container-refresh">
-                <i class="fa fa-refresh"></i>
-            </a>
-        </li>
-        <!-- User Account: style can be found in dropdown.less -->
-        <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                {{if eq .User.Avatar ""}}
-                    <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
-                {{else}}
-                    <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
-                {{end}}
-                <span class="hidden-xs">{{.User.Name}}</span>
-            </a>
-            <ul class="dropdown-menu">
-                <!-- User image -->
-                <li class="user-header">
+    <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+
+            <li>
+                <a href="javascript:void(0);" class="fixed-btn">
+                    <i class="fa fa-anchor"></i>
+                </a>
+            </li>
+
+            <li>
+                <a href="javascript:void(0);" class="fullpage-btn">
+                    <i class="fa fa-arrows-alt"></i>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" class="exit-fullpage-btn" style="display: none;">
+                    <i class="fa fa-arrows-alt"></i>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0);" class="container-refresh">
+                    <i class="fa fa-refresh"></i>
+                </a>
+            </li>
+            <!-- User Account: style can be found in dropdown.less -->
+            <li class="dropdown user user-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     {{if eq .User.Avatar ""}}
-                        <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                        <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="user-image" alt="User Image">
                     {{else}}
-                        <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                        <img src="{{.User.Avatar}}" class="user-image" alt="User Image">
                     {{end}}
-                    <p>
-                        {{.User.Name}} -{{.User.Level}}
-                        <small>{{.User.CreatedAt}}</small>
-                    </p>
-                </li>
-                <li class="user-footer">
-                    <div class="pull-left">
-                        <a href="{{.UrlPrefix}}/info/manager/edit?id={{.User.Id}}" class="btn btn-default btn-flat">{{lang "setting"}}</a>
-                    </div>
-                    <div class="pull-right">
-                        <a href="{{.UrlPrefix}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
-                    </div>
-                </li>
-            </ul>
-        </li>
-       <!-- <li class="hidden-xs">
-            <a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-        </li> -->
-    </ul>
-</div>
+                    <span class="hidden-xs">{{.User.Name}}</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <!-- User image -->
+                    <li class="user-header">
+                        {{if eq .User.Avatar ""}}
+                            <img src="{{.UrlPrefix}}/assets/dist/img/avatar04.png" class="img-circle" alt="User Image">
+                        {{else}}
+                            <img src="{{.User.Avatar}}" class="img-circle" alt="User Image">
+                        {{end}}
+                        <p>
+                            {{.User.Name}} -{{.User.Level}}
+                            <small>{{.User.CreatedAt}}</small>
+                        </p>
+                    </li>
+                    <li class="user-footer">
+                        <div class="pull-left">
+                            <a href="{{.UrlPrefix}}/info/manager/edit?id={{.User.Id}}"
+                               class="btn btn-default btn-flat">{{lang "setting"}}</a>
+                        </div>
+                        <div class="pull-right">
+                            <a href="{{.UrlPrefix}}/logout" class="btn btn-default btn-flat">{{lang "sign out"}}</a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li class="hidden-xs">
+                 <a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+             </li> -->
+        </ul>
+    </div>
 {{end}}`, "components/alert": `{{define "alert"}}
 <div class="alert alert-{{.Theme}} alert-dismissible">
     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
@@ -3015,7 +3023,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <span class="progress-number"><b>{{.Molecular}}</b>/{{.Denominator}}</span>
 
         <div class="progress sm">
-            <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+            {{if .IsHexColor}}
+                <div class="progress-bar" style="width: {{.Percent}}%;background-color: {{.Color}} !important;"></div>
+            {{else}}
+                <div class="progress-bar progress-bar-{{.Color}}" style="width: {{.Percent}}%"></div>
+            {{end}}
         </div>
     </div>
 {{end}}`, "components/row": `{{define "row"}}
@@ -3186,7 +3198,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     </a>
 </span>
 {{end}}`, "components/table": `{{define "table"}}
-    <table class="table table-hover" style="min-width: 1000px;">
+    <table class="table table-hover" style="min-width: {{.MinWidth}}px;">
         {{if eq .Type "table"}}
             <thead>
             <tr>

@@ -12,6 +12,7 @@ type TableAttribute struct {
 	Type       string
 	PrimaryKey string
 	EditUrl    string
+	MinWidth   int
 	DeleteUrl  string
 	IsTab      bool
 	ExportUrl  string
@@ -33,7 +34,15 @@ func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 	return compo
 }
 
+func (compo *TableAttribute) SetMinWidth(value int) types.TableAttribute {
+	compo.MinWidth = value
+	return compo
+}
+
 func (compo *TableAttribute) GetContent() template.HTML {
+	if compo.MinWidth == 0 {
+		compo.MinWidth = 1000
+	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")
 }
 
@@ -111,5 +120,8 @@ func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribut
 }
 
 func (compo *DataTableAttribute) GetContent() template.HTML {
+	if compo.MinWidth == 0 {
+		compo.MinWidth = 1000
+	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")
 }

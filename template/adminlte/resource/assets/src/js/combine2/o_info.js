@@ -189,3 +189,7 @@ function checkNavLength() {
     return $('#firstnav').width() * 0.6 - $('.nav-addtabs').width() >= 120;
 }
 
+$('.fixed-btn').on('click', function () {
+    $('.main-sidebar').css('position', 'fixed');
+    $('.main-header .logo').css('position', 'fixed');
+});
