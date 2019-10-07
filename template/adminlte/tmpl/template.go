@@ -3940,7 +3940,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             {{else}}
                 <li class="treeview {{$list.Active}}">
                     <a href="#">
-                        <i class="fa {{$list.Icon}}"></i> <span>{{$list.Name}}</span>
+                        <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
                         <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>

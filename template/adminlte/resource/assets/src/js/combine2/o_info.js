@@ -125,7 +125,7 @@ $('.sidebar-menu a').on('click', function () {
 
         let addElement = $('<li class="active">\n' +
             '<a href="' + link + '">\n' +
-            '<span>' + $(this).html() + '</span>\n' +
+            '<span>' + $(this).html().replace('<i/><span>', '<i/>&nbsp&nbsp&nbsp<span>') + '</span>\n' +
             '</a><i class="close-tab fa fa-remove"></i>\n' +
             '</li>');
 
