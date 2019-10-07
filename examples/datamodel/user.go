@@ -100,12 +100,6 @@ func GetUserTable() (userTable table.Table) {
 	userTable.GetInfo().Title = "Users"
 	userTable.GetInfo().Description = "Users"
 
-	userTable.GetInfo().GroupHeaders = []string{"profile1", "profile2"}
-	userTable.GetInfo().Group = [][]string{
-		{"id", "ip", "name", "gender", "city"},
-		{"id", "phone", "created_at", "updated_at"},
-	}
-
 	userTable.GetForm().FormList = []types.Form{
 		{
 			Head:     "ID",
