@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"_t\" value='(.*?)' class=\"_previous_\">")
+var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"_t\" value='(.*?)'>")
 
 func Test(e *httpexpect.Expect) {
 
