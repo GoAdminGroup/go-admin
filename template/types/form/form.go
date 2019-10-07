@@ -64,7 +64,7 @@ func (t Type) String() string {
 	case Number:
 		return "number"
 	case TextArea:
-		return "textArea"
+		return "textarea"
 	default:
 		panic("wrong form type")
 	}
