@@ -51,9 +51,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 </li>
             </ul>
         </li>
-        <li class="hidden-xs">
+       <!-- <li class="hidden-xs">
             <a href="javascript:;" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-        </li>
+        </li> -->
     </ul>
 </div>
 {{end}}`, "components/alert": `{{define "alert"}}
