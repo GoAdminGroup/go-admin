@@ -61,7 +61,7 @@ func main() {
 	app.Command("combine", "combine assets", func(cmd *cli.Cmd) {
 		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/css/", "css src path")
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/css/combine/", "css src path")
 				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets/dist/css/all.min.css", "css output path")
 			)
 
