@@ -9,8 +9,10 @@ import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
 //
 // example:
 //
-// "counties" => http://localhost:9033/admin/info/counties
+// "posts"   => http://localhost:9033/admin/info/posts
+// "authors" => http://localhost:9033/admin/info/authors
 //
 var Generators = map[string]table.Generator{
-	"counties": GetCountiesTable,
+	"posts":   GetPostsTable,
+	"authors": GetAuthorsTable,
 }

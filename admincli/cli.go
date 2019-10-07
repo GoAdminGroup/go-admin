@@ -116,11 +116,15 @@ func main() {
 	_ = app.Run(os.Args)
 }
 
-func generating() {
-
+func cliInfo() {
 	clear(runtime.GOOS)
 	fmt.Println("GoAdmin CLI " + system.Version + compareVersion(system.Version))
 	fmt.Println()
+}
+
+func generating() {
+
+	cliInfo()
 
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
 
