@@ -51,6 +51,8 @@ type ImgAttribute interface {
 type SmallBoxAttribute interface {
 	SetTitle(value template.HTML) SmallBoxAttribute
 	SetValue(value template.HTML) SmallBoxAttribute
+	SetColor(value template.HTML) SmallBoxAttribute
+	SetIcon(value template.HTML) SmallBoxAttribute
 	SetUrl(value string) SmallBoxAttribute
 	GetContent() template.HTML
 }

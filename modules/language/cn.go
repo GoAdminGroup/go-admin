@@ -32,6 +32,7 @@ var cn = map[string]string{
 	"sign out":        "登出",
 	"home":            "首页",
 	"all":             "全部",
+	"more":            "更多",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",
