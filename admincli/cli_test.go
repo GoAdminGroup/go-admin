@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/chenhg5/go-admin/modules/system"
+	"path"
 	"testing"
 )
 
@@ -16,4 +17,5 @@ func TestCompareVersion(t *testing.T) {
 
 func TestGetType(t *testing.T) {
 	fmt.Println(getType("int(3434)"))
+	fmt.Println(path.Ext("sdafdfs.css"))
 }

@@ -58,6 +58,30 @@ func main() {
 		}
 	}
 
+	app.Command("combine", "combine assets", func(cmd *cli.Cmd) {
+		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {
+			var (
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/css/", "css src path")
+				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets/dist/css/all.min.css", "css output path")
+			)
+
+			cmd.Action = func() {
+				CSS(*rootPath, *outputPath)
+			}
+		})
+
+		cmd.Command("js", "combine js assets", func(cmd *cli.Cmd) {
+			var (
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/js/combine/", "js src path")
+				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets/dist/js/all.min.js", "js output path")
+			)
+
+			cmd.Action = func() {
+				JS(*rootPath, *outputPath)
+			}
+		})
+	})
+
 	app.Command("compile", "compile template file for template or component", func(cmd *cli.Cmd) {
 		cmd.Command("tpl", "compile template file for template or component", func(cmd *cli.Cmd) {
 			var (
@@ -72,7 +96,7 @@ func main() {
 
 		cmd.Command("asset", "compile asset file for template or component", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/...", "compile root path")
+				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/dist/...", "compile root path")
 				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets.go", "compile output path")
 			)
 

@@ -1,4 +1,5 @@
 .idea
+.DS_Store
 demo/config.json
 demo/config
 demo/uploads
@@ -15,3 +16,4 @@ go.sum
 modules/db/go.sum
 admincli/build
 template/adminlte/resource/assets/vendor
+template/adminlte/resource/assets/dist

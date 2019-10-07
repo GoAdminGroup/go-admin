@@ -4,15 +4,9 @@
             <thead>
             <tr>
                 {{range $key, $head := .Thead}}
-                    {{if eq (index $head "hide") "0"}}
-                        <th>
-                            {{index $head "head"}}
-                            {{if eq (index $head "sortable") "1"}}
-                                <a class="fa fa-fw fa-sort" id="sort-{{index $head "field"}}"
-                                   href="?__sort={{index $head "field"}}&__sort_type=desc"></a>
-                            {{end}}
-                        </th>
-                    {{end}}
+                    <th>
+                        {{index $head "head"}}
+                    </th>
                 {{end}}
             </tr>
             </thead>
@@ -60,12 +54,12 @@
                         </td>
                     {{end}}
                 {{end}}
-                {{range $key2, $head2 := $Thead}}
-                    {{if eq (index $head2 "hide") "0"}}
-                        <td>{{index $info (index $head2 "field")}}</td>
-                    {{end}}
-                {{end}}
                 {{if eq $Type "data-table"}}
+                    {{range $key2, $head2 := $Thead}}
+                        {{if eq (index $head2 "hide") "0"}}
+                            <td>{{index $info (index $head2 "field")}}</td>
+                        {{end}}
+                    {{end}}
                     <td>
                         {{if $EditUrl}}
                             <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
@@ -75,6 +69,10 @@
                                         class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
+                {{else}}
+                    {{range $key2, $head2 := $Thead}}
+                        <td>{{index $info (index $head2 "head")}}</td>
+                    {{end}}
                 {{end}}
             </tr>
         {{end}}

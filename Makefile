@@ -4,7 +4,26 @@ TEST_CONFIG_PQ_PATH=./../common/config_pg.json
 all: run
 
 assets:
-	go-bindata -o ./template/adminlte/resource/assets.go ./template/adminlte/resource/assets/...
+	find ./ -name ".DS_Store" -depth -exec rm {} \;
+	make combine
+	rm -rf dist/*
+	cp ./template/adminlte/resource/assets/src/js/*.js ./template/adminlte/resource/assets/dist/js/
+	cp ./template/adminlte/resource/assets/src/css/blue.png ./template/adminlte/resource/assets/dist/css/blue.png
+	cp -R ./template/adminlte/resource/assets/src/css/fonts ./template/adminlte/resource/assets/dist/css/
+	cp -R ./template/adminlte/resource/assets/src/img ./template/adminlte/resource/assets/dist/
+	cp -R ./template/adminlte/resource/assets/src/fonts ./template/adminlte/resource/assets/dist/
+	admincli compile asset
+
+combine:
+	find ./ -name ".DS_Store" -depth -exec rm {} \;
+	make combine-js
+	make combine-css
+
+combine-js:
+	admincli combine js
+
+combine-css:
+	admincli combine css
 
 tmpl:
 	admincli compile tpl

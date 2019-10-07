@@ -13,6 +13,7 @@ type TableAttribute struct {
 	PrimaryKey string
 	EditUrl    string
 	DeleteUrl  string
+	IsTab      bool
 	ExportUrl  string
 	types.Attribute
 }
