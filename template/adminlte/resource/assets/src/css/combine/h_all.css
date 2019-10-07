@@ -86,3 +86,7 @@
     text-decoration: none;
     display: inline-block;
 }
+
+.w-e-toolbar {
+    overflow: scroll;
+}
