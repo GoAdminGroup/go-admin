@@ -164,7 +164,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 </script>
 {{end}}`, "components/box": `{{define "box"}}
 <div class="box box-{{.Theme}}">
-    <div class="box-header {{.HeadBorder}}">
+    {{if eq .HeadColor ""}}
+        <div class="box-header {{.HeadBorder}}">
+    {{else}}
+        <div class="box-header {{.HeadBorder}}" style="background-color: {{.HeadColor}};">
+    {{end}}
         {{langHtml .Header}}
     </div>
     <div class="box-body" style="overflow: scroll;">

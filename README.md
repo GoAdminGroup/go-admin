@@ -154,6 +154,10 @@ very welcome to pr
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/chenhg5/go-admin.svg)](https://starchart.cc/chenhg5/go-admin)
+
 ## Buy me a coffee
 
 leave your github account name and we will put it on the [donation list](DONATION.md).

@@ -13,6 +13,7 @@ type BoxAttribute struct {
 	Title      template.HTML
 	Theme      string
 	HeadBorder string
+	HeadColor  string
 	types.Attribute
 }
 
@@ -38,6 +39,11 @@ func (compo *BoxAttribute) SetFooter(value template.HTML) types.BoxAttribute {
 
 func (compo *BoxAttribute) SetTitle(value template.HTML) types.BoxAttribute {
 	compo.Title = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetHeadColor(value string) types.BoxAttribute {
+	compo.HeadColor = value
 	return compo
 }
 

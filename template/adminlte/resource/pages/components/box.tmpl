@@ -1,6 +1,10 @@
 {{define "box"}}
 <div class="box box-{{.Theme}}">
-    <div class="box-header {{.HeadBorder}}">
+    {{if eq .HeadColor ""}}
+        <div class="box-header {{.HeadBorder}}">
+    {{else}}
+        <div class="box-header {{.HeadBorder}}" style="background-color: {{.HeadColor}};">
+    {{end}}
         {{langHtml .Header}}
     </div>
     <div class="box-body" style="overflow: scroll;">

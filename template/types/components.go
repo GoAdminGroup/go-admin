@@ -31,6 +31,7 @@ type BoxAttribute interface {
 	SetFooter(value template.HTML) BoxAttribute
 	SetTitle(value template.HTML) BoxAttribute
 	WithHeadBorder(has bool) BoxAttribute
+	SetHeadColor(value string) BoxAttribute
 	SetTheme(value string) BoxAttribute
 	GetContent() template.HTML
 }
