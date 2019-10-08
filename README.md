@@ -32,7 +32,7 @@
 
 goAdmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
-demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
+demo: [http://demo.en.go-admin.cn/admin](http://demo.en.go-admin.cn/admin)
 account: admin  password: admin
 
 demo source code: https://github.com/GoAdminGroup/demo
