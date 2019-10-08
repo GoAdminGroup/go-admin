@@ -65,7 +65,7 @@ type CSRFToken []string
 var TokenHelper = new(CSRFToken)
 
 func (token *CSRFToken) AddToken() string {
-	tokenStr := modules.Uuid(35)
+	tokenStr := modules.Uuid()
 	if len(*token) == 1 && (*token)[0] == "" {
 		(*token)[0] = tokenStr
 	} else {

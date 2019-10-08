@@ -107,7 +107,7 @@ type Config struct {
 	// Mini-logo is the top text in the sidebar when folding.
 	MiniLogo template.HTML `json:"mini_logo"`
 
-	// The url redirect to after login
+	// The url redirect to after login.
 	IndexUrl string `json:"index"`
 
 	// Debug mode
@@ -116,26 +116,29 @@ type Config struct {
 	// Env is the environment, which maybe local, test, prod.
 	Env string
 
-	// Info log path
+	// Info log path.
 	InfoLogPath string `json:"info_log"`
 
-	// Error log path
+	// Error log path.
 	ErrorLogPath string `json:"error_log"`
 
-	// Access log path
+	// Access log path.
 	AccessLogPath string `json:"access_log"`
 
-	// Sql operator record log switch
+	// Sql operator record log switch.
 	SqlLog bool `json:"sql_log"`
 
 	AccessLogOff bool
 	InfoLogOff   bool
 	ErrorLogOff  bool
 
-	// Color scheme
+	// Color scheme.
 	ColorScheme string `json:"color_scheme"`
 
 	prefix string
+
+	// SessionLifeTime is session valid time duration, units are seconds.
+	SessionLifeTime int
 }
 
 func (c Config) GetIndexUrl() string {
@@ -234,6 +237,10 @@ func Set(cfg Config) {
 	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "/", "")
 	globalCfg.ColorScheme = setDefault(globalCfg.ColorScheme, "", "skin-black")
 	globalCfg.Env = setDefault(globalCfg.Env, "", EnvProd)
+	if globalCfg.SessionLifeTime == 0 {
+		// default two hours
+		globalCfg.SessionLifeTime = 7200
+	}
 
 	if globalCfg.UrlPrefix == "" {
 		globalCfg.prefix = "/"

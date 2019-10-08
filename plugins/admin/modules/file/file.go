@@ -32,7 +32,7 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 		fileObj := form.File[k][0]
 
 		suffix = path.Ext(fileObj.Filename)
-		filename = modules.Uuid(50) + suffix
+		filename = modules.Uuid() + suffix
 
 		pathStr, err := c(fileObj, filename)
 

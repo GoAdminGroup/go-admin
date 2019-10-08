@@ -97,7 +97,7 @@
     overflow: scroll;
 }
 
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+.navbar-static-top .nav-tabs > li.active > a, navbar-static-top .nav-tabs > li.active > a:focus, navbar-static-top .nav-tabs > li.active > a:hover {
     color: #555;
     cursor: default;
     background-color: #fff;

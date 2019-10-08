@@ -10,8 +10,10 @@ import (
 	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/db/dialect"
+	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -88,7 +90,7 @@ func (ses *Session) StartCtx(ctx *context.Context) *Session {
 			ses.Values = valueFromDriver
 		}
 	} else {
-		ses.Sid = modules.Uuid(15)
+		ses.Sid = modules.Uuid()
 	}
 	ses.Context = ctx
 	return ses
@@ -98,7 +100,7 @@ func InitSession(ctx *context.Context) *Session {
 
 	sessions := new(Session)
 	sessions.UpdateConfig(Config{
-		Expires: time.Hour * 10,
+		Expires: time.Second * time.Duration(config.Get().SessionLifeTime),
 		Cookie:  "go_admin_session",
 	})
 
@@ -122,7 +124,38 @@ func (driver *MysqlDriver) Load(sid string) map[string]interface{} {
 	}
 }
 
+func deleteOverdueSession() {
+
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error(err)
+			panic(err)
+		}
+	}()
+
+	var (
+		duration = strconv.Itoa(config.Get().SessionLifeTime + 1000)
+		driver   = config.Get().Databases.GetDefault().Driver
+		cmd      = ``
+	)
+
+	if db.DriverPostgresql == driver {
+		cmd = `delete from goadmin_session where extract(epoch from now()) - ` + duration + ` > extract(epoch from created_at)`
+	} else if db.DriverMysql == driver {
+		cmd = `delete from goadmin_session where unix_timestamp(created_at) < unix_timestamp() - ` + duration
+	} else if db.DriverSqlite == driver {
+		cmd = `delete from goadmin_session where strftime('%s', created_at) < strftime('%s', 'now') - ` + duration
+	}
+
+	logger.LogSql(cmd, nil)
+
+	db.Query(cmd)
+}
+
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {
+
+	go deleteOverdueSession()
+
 	if sid != "" {
 		if len(values) == 0 {
 			_ = db.Table("goadmin_session").Where("sid", "=", sid).Delete()

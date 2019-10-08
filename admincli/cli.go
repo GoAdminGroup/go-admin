@@ -133,7 +133,7 @@ func generating() {
 			Name: "driver",
 			Prompt: &survey.Select{
 				Message: "choose a driver",
-				Options: []string{"mysql", "mssql", "postgresql", "sqlite"},
+				Options: []string{"mysql", "postgresql", "sqlite"},
 				Default: "mysql",
 			},
 		},
@@ -159,9 +159,6 @@ func generating() {
 		if driver.Value == "postgresql" {
 			defaultPort = "5432"
 			defaultUser = "postgres"
-		} else if driver.Value == "mssql" {
-			defaultPort = "1433"
-			defaultUser = "sa"
 		}
 
 		host := promptWithDefault("sql address", "127.0.0.1")
