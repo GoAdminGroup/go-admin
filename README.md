@@ -32,8 +32,6 @@
 
 goAdmin is a toolkit help you to build a data visualization and manage platform for your golang app.
 
-<strong>Now is the beta version. It means that you may meet some unpredictable bugs. The v1.0 will be released about October 8th.</strong>
-
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 account: admin  password: admin
 

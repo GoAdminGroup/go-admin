@@ -28,8 +28,6 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 
 demo代码： https://github.com/GoAdminGroup/demo
 
-<strong>现在是beta版本，可能存在一些未知的bug。 正式的1.0版本将会在10月8号左右发布</strong>
-
 ![](http://www.go-admin.cn/assets/imgs/interface.jpg)
 
 ## 特征
