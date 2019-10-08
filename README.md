@@ -142,24 +142,15 @@ GO111MODULE=on go run main.go
 
 - [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
 
-## Contribution
+## Backers
 
-very welcome to pr
+ Your support will help me do better! [[Become a backer](https://opencollective.com/go-admin#backer)]
+ <a href="https://opencollective.com/go-admin#backers" target="_blank"><img src="https://opencollective.com/go-admin/backers.svg?width=890"></a>
+
+## Code Contribution
+
+very welcome to pr.
 
 <strong>here to join into the develop team</strong>
 
 [join slack](https://app.slack.com/client/T029RQSE6/CME0MBX38/thread/C3MSAFD40-1565569187.323500)
-
-## Special thanks
-
-inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
-
-## Stargazers over time
-
-[![Stargazers over time](https://starchart.cc/chenhg5/go-admin.svg)](https://starchart.cc/chenhg5/go-admin)
-
-## Buy me a coffee
-
-leave your github account name and we will put it on the [donation list](DONATION.md).
-
-<img src="http://www.go-admin.cn/assets/imgs/shoukuan.jpg" width="650" />
