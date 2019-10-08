@@ -3,7 +3,6 @@ package modules
 import (
 	"bytes"
 	"encoding/gob"
-	"errors"
 	"github.com/satori/go.uuid"
 	"strconv"
 )
@@ -40,8 +39,7 @@ func RemoveBlankFromArray(s []string) []string {
 }
 
 func Uuid() string {
-	u1 := uuid.Must(uuid.NewV4(), errors.New("generate uuid fail"))
-	return u1.String()
+	return uuid.NewV4().String()
 }
 
 func SetDefault(source, def string) string {
