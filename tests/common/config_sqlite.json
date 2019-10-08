@@ -1,0 +1,19 @@
+{
+  "database": {
+    "default": {
+      "driver": "sqlite",
+      "file": "./../common/admin.db"
+    }
+  },
+  "domain": "localhost",
+  "prefix": "admin",
+  "store": {
+    "path": "./uploads",
+    "prefix": "uploads"
+  },
+  "language": "en",
+  "index": "/",
+  "debug": true,
+  "color_scheme": "skin-black",
+  "sql_log": true
+}

@@ -1,5 +1,6 @@
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
+TEST_CONFIG_SQLITE_PATH=./../common/config_sqlite.json
 ASSETS_PATH=./template/adminlte/resource/assets
 
 all: run
@@ -53,6 +54,7 @@ deps:
 test:
 	make mysql-test
 	make pg-test
+	make sqlite-test
 
 mysql-test:
 	make import-mysql
@@ -67,6 +69,25 @@ mysql-test:
 	gotest -v ./tests/echo/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PATH)
+
+sqlite-test:
+	make import-sqlite
+	gotest -v ./tests/gin/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/beego/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/buffalo/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/chi/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/echo/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_SQLITE_PATH)
+
+
+import-sqlite:
+	rm -rf ./tests/common/admin.db
+	cp ./data/admin.db ./tests/common/admin.db
 
 import-mysql:
 	mysql -uroot -proot go-admin-test < ./data/admin.sql
