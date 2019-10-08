@@ -3838,14 +3838,14 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-        <link rel="stylesheet" href="{{.UrlPrefix}}/assets/dist/css/all.min.css">
+        <link rel="stylesheet" href="{{link .CdnUrl .UrlPrefix "/assets/dist/css/all.min.css"}}">
 
         <!--[if lt IE 9]>
-        <script src="{{.UrlPrefix}}/assets/dist/js/html5shiv.min.js"></script>
-        <script src="{{.UrlPrefix}}/assets/dist/js/respond.min.js"></script>
+        <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/html5shiv.min.js"}}"></script>
+        <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/respond.min.js"}}"></script>
         <![endif]-->
 
-        <script src="{{.UrlPrefix}}/assets/dist/js/all.min.js"></script>
+        <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/all.min.js"}}"></script>
     </head>
 {{end}}`, "header": `{{define "header"}}
     <header class="main-header">
@@ -3871,7 +3871,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </nav>
     </header>
 {{end}}`, "js": `{{define "js"}}
-    <script src="{{.UrlPrefix}}/assets/dist/js/all_2.min.js"></script>
+    <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/all_2.min.js"}}"></script>
 {{end}}`, "layout": `{{define "layout"}}
 
     <!DOCTYPE html>
@@ -3937,14 +3937,14 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                     {{else}}
                     <a href='{{$UrlPrefix}}{{$list.Url}}'>
                     {{end}}
-                        <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
+                        <i class="fa {{$list.Icon}}"></i><span> {{$list.Name}}</span>
                         <span class="pull-right-container"><!-- <small class="label pull-right bg-green">new</small> --></span>
                     </a>
                 </li>
             {{else}}
                 <li class="treeview {{$list.Active}}">
                     <a href="#">
-                        <i class="fa {{$list.Icon}}"></i><span>{{$list.Name}}</span>
+                        <i class="fa {{$list.Icon}}"></i><span> {{$list.Name}}</span>
                         <span class="pull-right-container">
                         <i class="fa fa-angle-left pull-right"></i>
                     </span>

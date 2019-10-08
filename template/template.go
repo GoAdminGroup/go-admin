@@ -9,7 +9,6 @@ import (
 	"fmt"
 	c "github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/template/adminlte"
 	"github.com/chenhg5/go-admin/template/login"
@@ -166,20 +165,7 @@ func Execute(tmpl *template.Template,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: *globalMenu,
-		System: types.SystemInfo{
-			Version: system.Version,
-		},
-		Panel:       panel,
-		UrlPrefix:   config.PrefixFixSlash(),
-		Title:       config.Title,
-		Logo:        config.Logo,
-		MiniLogo:    config.MiniLogo,
-		ColorScheme: config.ColorScheme,
-		IndexUrl:    config.GetIndexUrl(),
-	})
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}

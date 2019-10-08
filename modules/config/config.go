@@ -139,6 +139,9 @@ type Config struct {
 
 	// SessionLifeTime is session valid time duration, units are seconds.
 	SessionLifeTime int
+
+	// CdnUrl is the cdn link of assets
+	CdnUrl string
 }
 
 func (c Config) GetIndexUrl() string {

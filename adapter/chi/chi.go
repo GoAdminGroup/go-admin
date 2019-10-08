@@ -14,7 +14,6 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/logger"
 	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	"github.com/chenhg5/go-admin/template"
@@ -176,20 +175,9 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Request.URL.String()))),
-		System: types.SystemInfo{
-			Version: system.Version,
-		},
-		Panel:       panel,
-		UrlPrefix:   config.Prefix(),
-		Title:       config.Title,
-		Logo:        config.Logo,
-		MiniLogo:    config.MiniLogo,
-		ColorScheme: config.ColorScheme,
-		IndexUrl:    config.GetIndexUrl(),
-	})
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
+		*(menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Request.URL.String()))),
+		panel, config))
 	if err != nil {
 		logger.Error("Chi Content", err)
 	}

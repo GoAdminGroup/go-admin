@@ -1,6 +1,6 @@
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
-ASSETS_PATH=$(ASSETS_PATH)
+ASSETS_PATH=./template/adminlte/resource/assets
 
 all: run
 

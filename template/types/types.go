@@ -5,8 +5,10 @@
 package types
 
 import (
+	"github.com/chenhg5/go-admin/modules/config"
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/models"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	form2 "github.com/chenhg5/go-admin/plugins/admin/modules/form"
@@ -51,6 +53,27 @@ type Page struct {
 
 	// IndexUrl is the home page url of the site.
 	IndexUrl string
+
+	// CdnUrl is the cdn link of assets
+	CdnUrl string
+}
+
+func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config) Page {
+	return Page{
+		User:  user,
+		Menu:  menu,
+		Panel: panel,
+		System: SystemInfo{
+			Version: system.Version,
+		},
+		UrlPrefix:   cfg.Prefix(),
+		Title:       cfg.Title,
+		Logo:        cfg.Logo,
+		MiniLogo:    cfg.MiniLogo,
+		ColorScheme: cfg.ColorScheme,
+		IndexUrl:    cfg.GetIndexUrl(),
+		CdnUrl:      cfg.CdnUrl,
+	}
 }
 
 // SystemInfo contains basic info of system.

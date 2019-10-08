@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/logger"
-	"github.com/chenhg5/go-admin/modules/system"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
 	template2 "html/template"
 	"net/http"
@@ -149,20 +148,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.Page{
-		User: user,
-		Menu: *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))),
-		System: types.SystemInfo{
-			Version: system.Version,
-		},
-		Panel:       panel,
-		UrlPrefix:   globalConfig.Prefix(),
-		Title:       globalConfig.Title,
-		Logo:        globalConfig.Logo,
-		MiniLogo:    globalConfig.MiniLogo,
-		ColorScheme: globalConfig.ColorScheme,
-		IndexUrl:    globalConfig.GetIndexUrl(),
-	})
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))), panel, globalConfig))
 	if err != nil {
 		logger.Error("Gorilla Content", err)
 	}
