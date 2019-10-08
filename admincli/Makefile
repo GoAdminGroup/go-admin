@@ -1,8 +1,8 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 BINARY_NAME=admincli
-LASTVERSION=v0.5.1
-VERSION=v0.6.0
+LASTVERSION=v0.6.0
+VERSION=v1.0.0-alpha
 
 all:
 	GO111MODULE=on $(GOBUILD) -o ./build/mac/$(BINARY_NAME)
