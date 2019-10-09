@@ -150,4 +150,4 @@ inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 
 留下您的github/gitee用户名，我们将会展示在[捐赠名单](DONATION.md)中。
 
-<img src="http://www.go-admin.cn/assets/imgs/shoukuan.jpg" width="650" />
+<img src="http://quick.go-admin.cn/official/assets/imgs/shoukuan.jpg" width="650" />
