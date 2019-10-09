@@ -72,6 +72,12 @@ func (*Theme) GetTemplate(isPjax bool) (tmpler *template.Template, name string) 
 		tmpler, err = template.New("content").Funcs(template.FuncMap{
 			"lang":     language.Get,
 			"langHtml": language.GetFromHtml,
+			"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
+				if cdnUrl == "" {
+					return prefixUrl + assetsUrl
+				}
+				return cdnUrl + assetsUrl
+			},
 		}).Parse(tmpl.List["admin_panel"] + tmpl.List["content"])
 	}
 

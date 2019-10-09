@@ -47,6 +47,7 @@ func main() {
 		IndexUrl:    "/",
 		Debug:       true,
 		ColorScheme: adminlte.COLORSCHEME_SKIN_BLACK,
+		CdnUrl:      "http://quick.go-admin.cn/demo",
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
