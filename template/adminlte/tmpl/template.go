@@ -1380,8 +1380,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             toastr.success('{{lang "Refresh succeeded"}} !');
         });
     </script>
-    <script src="{{.UrlPrefix}}/assets/dist/js/chart.js"></script>
-    <script src="{{.UrlPrefix}}/assets/dist/js/fontawesome-iconpicker.min.js"></script>
+    <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/chart.js"}}"></script>
+    <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/fontawesome-iconpicker.min.js"}}"></script>
     {{if lang .Panel.Title}}
         <section class="content-header">
             <h1>
