@@ -11,7 +11,7 @@
 <p align="center">
     <a href="http://www.go-admin.cn/en">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
-    <a href="http://demo.go-admin.cn/admin">DEMO</a>
+    <a href="http://demo.en.go-admin.cn/admin">DEMO</a>
 </p>
 
 <p align="center">
