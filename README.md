@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/chenhg5/go-admin">
-    <img width="50%" alt="go-admin" src="http://www.go-admin.cn/assets/imgs/goadmin_logo.jpg">
+    <img width="50%" alt="go-admin" src="http://file.go-admin.cn/introduction/logo.png">
   </a>
 </p>
 

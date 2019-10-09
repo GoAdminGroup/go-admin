@@ -51,7 +51,7 @@ func Upload(c UploadFun, form *multipart.Form) error {
 		filename string
 	)
 
-	for k := range (*form).File {
+	for k := range form.File {
 		fileObj := form.File[k][0]
 
 		suffix = path.Ext(fileObj.Filename)
@@ -63,7 +63,7 @@ func Upload(c UploadFun, form *multipart.Form) error {
 			return err
 		}
 
-		(*form).Value[k] = []string{pathStr}
+		form.Value[k] = []string{pathStr}
 	}
 
 	return nil
