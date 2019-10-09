@@ -3,11 +3,11 @@ package controller
 import (
 	"github.com/chenhg5/go-admin/context"
 	"github.com/chenhg5/go-admin/modules/auth"
+	"github.com/chenhg5/go-admin/modules/file"
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/modules/menu"
 	"github.com/chenhg5/go-admin/plugins/admin/modules"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/file"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
 	"github.com/chenhg5/go-admin/template"
@@ -64,7 +64,15 @@ func NewForm(ctx *context.Context) {
 
 	// process uploading files, only support local storage
 	if len(param.MultiForm.File) > 0 {
-		_, _ = file.GetFileEngine("local").Upload(param.MultiForm)
+		err := file.GetFileEngine(config.FileUploadEngine.Name).Upload(param.MultiForm)
+		if err != nil {
+			alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+				SetTheme("warning").
+				SetContent(template2.HTML(err.Error())).
+				GetContent()
+			showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl())
+			return
+		}
 	}
 
 	if param.IsManage() { // manager edit

@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/chenhg5/go-admin/adapter/chi"
+	ada "github.com/chenhg5/go-admin/adapter/chi"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/modules/config"
@@ -9,6 +9,7 @@ import (
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
 	"github.com/chenhg5/go-admin/template/adminlte"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/go-chi/chi"
 	"net/http"
 )
@@ -71,6 +72,14 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
 		panic(err)
 	}
+
+	// you can custom your pages like:
+
+	r.Get("/admin", func(writer http.ResponseWriter, request *http.Request) {
+		engine.Content(ada.Context{Request: request, Response: writer}, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	_ = http.ListenAndServe(":3333", r)
 }

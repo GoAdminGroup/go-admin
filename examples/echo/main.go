@@ -8,6 +8,7 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/labstack/echo"
 )
 
@@ -64,6 +65,15 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
 		panic(err)
 	}
+
+	// you can custom your pages like:
+
+	e.GET("/admin", func(context echo.Context) error {
+		engine.Content(context, func() types.Panel {
+			return datamodel.GetContent()
+		})
+		return nil
+	})
 
 	// Start server
 	e.Logger.Fatal(e.Start(":1323"))

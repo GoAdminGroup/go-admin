@@ -138,10 +138,18 @@ type Config struct {
 	prefix string
 
 	// SessionLifeTime is session valid time duration, units are seconds.
-	SessionLifeTime int
+	SessionLifeTime int `json:"session_life_time"`
 
 	// CdnUrl is the cdn link of assets
-	CdnUrl string
+	CdnUrl string `json:"cdn_url"`
+
+	// File upload engine, default "local"
+	FileUploadEngine FileUploadEngine `json:"file_upload_engine"`
+}
+
+type FileUploadEngine struct {
+	Name   string
+	Config map[string]interface{}
 }
 
 func (c Config) GetIndexUrl() string {
@@ -239,6 +247,7 @@ func Set(cfg Config) {
 	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "", "/info/manager")
 	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "/", "")
 	globalCfg.ColorScheme = setDefault(globalCfg.ColorScheme, "", "skin-black")
+	globalCfg.FileUploadEngine.Name = setDefault(globalCfg.FileUploadEngine.Name, "", "local")
 	globalCfg.Env = setDefault(globalCfg.Env, "", EnvProd)
 	if globalCfg.SessionLifeTime == 0 {
 		// default two hours

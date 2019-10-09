@@ -67,7 +67,7 @@ func main() {
 		panic(err)
 	}
 
-	router.GET("/admin/custom", func(ctx *fasthttp.RequestCtx) {
+	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

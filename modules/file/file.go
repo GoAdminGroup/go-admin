@@ -10,19 +10,42 @@ import (
 )
 
 type Uploader interface {
-	Upload(*multipart.Form) (*multipart.Form, error)
+	Upload(*multipart.Form) error
+}
+
+type UploaderGenerator func() Uploader
+
+var uploaderList = map[string]UploaderGenerator{
+	"local": GetLocalFileUploader,
+}
+
+var upMu sync.Mutex
+
+// AddUploader makes a uploader generator available by the provided theme name.
+// If Add is called twice with the same name or if uploader is nil,
+// it panics.
+func AddUploader(name string, up UploaderGenerator) {
+	upMu.Lock()
+	defer upMu.Unlock()
+	if up == nil {
+		panic("uploader generator is nil")
+	}
+	if _, dup := uploaderList[name]; dup {
+		panic("add uploader generator twice " + name)
+	}
+	uploaderList[name] = up
 }
 
 func GetFileEngine(name string) Uploader {
-	if name == "local" {
-		return GetLocalFileUploader()
+	if up, ok := uploaderList[name]; ok {
+		return up()
 	}
-	return nil
+	panic("wrong uploader name")
 }
 
 type UploadFun func(*multipart.FileHeader, string) (string, error)
 
-func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
+func Upload(c UploadFun, form *multipart.Form) error {
 	var (
 		suffix   string
 		filename string
@@ -37,13 +60,13 @@ func Upload(c UploadFun, form *multipart.Form) (*multipart.Form, error) {
 		pathStr, err := c(fileObj, filename)
 
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		(*form).Value[k] = []string{pathStr}
 	}
 
-	return form, nil
+	return nil
 }
 
 func SaveMultipartFile(fh *multipart.FileHeader, path string) (err error) {

@@ -86,7 +86,7 @@ func main() {
 
 	// customize your pages
 
-	r.GET("/admin/custom", func(ctx *gin.Context) {
+	r.GET("/admin", func(ctx *gin.Context) {
 		engine.Content(ctx, func() types.Panel {
 			return datamodel.GetContent()
 		})

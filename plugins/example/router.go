@@ -10,7 +10,6 @@ func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 	route := app.Group(prefix)
 	route.GET("/example", auth.Middleware, TestHandler)
-	route.GET("/", auth.Middleware, TestHandler)
 
 	return app
 }

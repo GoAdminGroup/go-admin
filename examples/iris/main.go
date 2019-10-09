@@ -8,7 +8,9 @@ import (
 	"github.com/chenhg5/go-admin/modules/language"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 )
 
 func main() {
@@ -64,6 +66,14 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}
+
+	// you can custom your pages like:
+
+	app.Get("/admin", func(context context.Context) {
+		engine.Content(context, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	_ = app.Run(iris.Addr(":8099"))
 }
