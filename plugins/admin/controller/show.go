@@ -176,7 +176,7 @@ func Export(ctx *context.Context) {
 	count := 2
 	for _, info := range panelInfo.InfoList {
 		for key, head := range panelInfo.Thead {
-			f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["head"]])
+			f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["field"]])
 		}
 		count++
 	}
