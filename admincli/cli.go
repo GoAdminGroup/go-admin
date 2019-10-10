@@ -506,61 +506,43 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
-	"github.com/chenhg5/go-admin/template/types"	
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
 func Get` + strings.Title(table) + `Table() table.Table {
 
     ` + table + `Table := ` + newTable + `
-	` + table + `Table.GetInfo().FieldList = []types.Field{`
+
+	info := ` + table + `Table.GetInfo()
+	
+	`
 
 	for _, model := range columnsModel {
-		content += `{
-			Head:     "` + strings.Title(model[fieldField].(string)) + `",
-			Field:    "` + model[fieldField].(string) + `",
-			TypeName: db.` + getType(model[typeField].(string)) + `,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},`
+		content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
+			`","` + model[fieldField].(string) +
+			`", db.` + getType(model[typeField].(string)) + `)
+	`
 	}
 
-	content += `}
+	content += `
+	info.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	` + table + `Table.GetInfo().Table = "` + table + `"
-	` + table + `Table.GetInfo().Title = "` + strings.Title(table) + `"
-	` + table + `Table.GetInfo().Description = "` + strings.Title(table) + `"
-
-	` + table + `Table.GetForm().FormList = []types.Form{`
-
-	// TODO: identify the form type from filed type
+	formList := ` + table + `Table.GetForm()
+	
+	`
 
 	for _, model := range columnsModel {
 
 		typeName := getType(model[typeField].(string))
 		formType := form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string))
 
-		content += `{
-			Head:     "` + strings.Title(model[fieldField].(string)) + `",
-			Field:    "` + model[fieldField].(string) + `",
-			TypeName: db.` + typeName + `,
-			Default:  "",
-			Editable: true,
-			FormType: ` + formType + `,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},`
+		content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
+			model[fieldField].(string) + `",db.` + typeName + `,` + formType + `)
+	`
 	}
 
-	content += `	}
-
-	` + table + `Table.GetForm().Table = "` + table + `"
-	` + table + `Table.GetForm().Title = "` + strings.Title(table) + `"
-	` + table + `Table.GetForm().Description = "` + strings.Title(table) + `"
-
+	content += `
+	formList.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
 	return ` + table + `Table
 }`

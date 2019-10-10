@@ -84,6 +84,7 @@ type DataTableAttribute interface {
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
 	SetPrimaryKey(value string) DataTableAttribute
+	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
 	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute

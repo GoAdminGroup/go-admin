@@ -1010,14 +1010,18 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                         </th>
                     {{end}}
                 {{end}}
-                <th>{{lang "operation"}}</th>
+                {{if eq .NoAction false}}
+                    <th>{{lang "operation"}}</th>
+                {{end}}
             </tr>
         {{end}}
 
+        {{$NoAction := .NoAction}}
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
         {{$IsTab := .IsTab}}
+        {{$Action := .Action}}
         {{$DeleteUrl := .DeleteUrl}}
         {{$PrimaryKey := .PrimaryKey}}
         {{range $key1, $info := .InfoList}}
@@ -1038,7 +1042,9 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                             <td>{{index $info (index $head2 "field")}}</td>
                         {{end}}
                     {{end}}
+                    {{if eq $NoAction false}}
                     <td>
+                        {{$Action}}
                         {{if $EditUrl}}
                             <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
                         {{end}}
@@ -1047,6 +1053,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                                         class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
+                    {{end}}
                 {{else}}
                     {{range $key2, $head2 := $Thead}}
                         <td>{{index $info (index $head2 "head")}}</td>
@@ -1621,6 +1628,8 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         <![endif]-->
 
         <script src="{{link .CdnUrl .UrlPrefix "/assets/dist/js/all.min.js"}}"></script>
+
+        {{.CustomHeadHtml}}
     </head>
 {{end}}`, "header": `{{define "header"}}
     <header class="main-header">
@@ -1654,25 +1663,6 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
 
     {{ template "head" . }}
 
-    <style>
-        .full-page-content {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            z-index: 9999;
-        }
-
-        .full-page-wrapper {
-            background-color: #ecf0f4;
-        }
-
-        #toast-container {
-            top: 90%;
-        }
-    </style>
-
     <body class="hold-transition {{.ColorScheme}} sidebar-mini">
     <div class="wrapper">
 
@@ -1693,6 +1683,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     {{ template "js" . }}
 
     </body>
+    {{.CustomFootHtml}}
     </html>
 
 {{end}}

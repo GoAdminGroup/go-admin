@@ -3,834 +3,112 @@ package datamodel
 import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
-func GetAll_typesTable() table.Table {
+func GetAllTypesTable() table.Table {
 
-	all_typesTable := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
-	all_typesTable.GetInfo().FieldList = []types.Field{{
-		Head:     "Id",
-		Field:    "id",
-		TypeName: db.Int,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_1",
-		Field:    "type_1",
-		TypeName: db.Tinyint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_2",
-		Field:    "type_2",
-		TypeName: db.Smallint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_3",
-		Field:    "type_3",
-		TypeName: db.Mediumint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_4",
-		Field:    "type_4",
-		TypeName: db.Bigint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_5",
-		Field:    "type_5",
-		TypeName: db.Float,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_6",
-		Field:    "type_6",
-		TypeName: db.Double,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_7",
-		Field:    "type_7",
-		TypeName: db.Double,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_8",
-		Field:    "type_8",
-		TypeName: db.Double,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_9",
-		Field:    "type_9",
-		TypeName: db.Decimal,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_10",
-		Field:    "type_10",
-		TypeName: db.Bit,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_11",
-		Field:    "type_11",
-		TypeName: db.Tinyint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_12",
-		Field:    "type_12",
-		TypeName: db.Tinyint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_13",
-		Field:    "type_13",
-		TypeName: db.Decimal,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_14",
-		Field:    "type_14",
-		TypeName: db.Decimal,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_15",
-		Field:    "type_15",
-		TypeName: db.Decimal,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_16",
-		Field:    "type_16",
-		TypeName: db.Char,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_17",
-		Field:    "type_17",
-		TypeName: db.Varchar,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_18",
-		Field:    "type_18",
-		TypeName: db.Tinytext,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_19",
-		Field:    "type_19",
-		TypeName: db.Text,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_20",
-		Field:    "type_20",
-		TypeName: db.Mediumtext,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_21",
-		Field:    "type_21",
-		TypeName: db.Longtext,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_22",
-		Field:    "type_22",
-		TypeName: db.Tinyblob,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_23",
-		Field:    "type_23",
-		TypeName: db.Mediumblob,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_24",
-		Field:    "type_24",
-		TypeName: db.Blob,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_25",
-		Field:    "type_25",
-		TypeName: db.Longblob,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_26",
-		Field:    "type_26",
-		TypeName: db.Binary,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_27",
-		Field:    "type_27",
-		TypeName: db.Varbinary,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_28",
-		Field:    "type_28",
-		TypeName: db.Enum,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_29",
-		Field:    "type_29",
-		TypeName: db.Set,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_30",
-		Field:    "type_30",
-		TypeName: db.Date,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_31",
-		Field:    "type_31",
-		TypeName: db.Datetime,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_32",
-		Field:    "type_32",
-		TypeName: db.Timestamp,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_33",
-		Field:    "type_33",
-		TypeName: db.Time,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_34",
-		Field:    "type_34",
-		TypeName: db.Year,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_35",
-		Field:    "type_35",
-		TypeName: db.Geometry,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_36",
-		Field:    "type_36",
-		TypeName: db.Point,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_39",
-		Field:    "type_39",
-		TypeName: db.Multilinestring,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_41",
-		Field:    "type_41",
-		TypeName: db.Multipolygon,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_37",
-		Field:    "type_37",
-		TypeName: db.Linestring,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_38",
-		Field:    "type_38",
-		TypeName: db.Polygon,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_40",
-		Field:    "type_40",
-		TypeName: db.Multipoint,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_42",
-		Field:    "type_42",
-		TypeName: db.Geometrycollection,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_50",
-		Field:    "type_50",
-		TypeName: db.Double,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_51",
-		Field:    "type_51",
-		TypeName: db.Json,
-		Sortable: false,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}}
+	allTypesTable := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
 
-	all_typesTable.GetInfo().Table = "all_types"
-	all_typesTable.GetInfo().Title = "All_types"
-	all_typesTable.GetInfo().Description = "All_types"
+	info := allTypesTable.GetInfo()
 
-	all_typesTable.GetForm().FormList = []types.Form{{
-		Head:     "Id",
-		Field:    "id",
-		TypeName: db.Int,
-		Default:  "",
-		Editable: true,
-		FormType: form.Default,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_1",
-		Field:    "type_1",
-		TypeName: db.Tinyint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_2",
-		Field:    "type_2",
-		TypeName: db.Smallint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_3",
-		Field:    "type_3",
-		TypeName: db.Mediumint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_4",
-		Field:    "type_4",
-		TypeName: db.Bigint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_5",
-		Field:    "type_5",
-		TypeName: db.Float,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_6",
-		Field:    "type_6",
-		TypeName: db.Double,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_7",
-		Field:    "type_7",
-		TypeName: db.Double,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_8",
-		Field:    "type_8",
-		TypeName: db.Double,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_9",
-		Field:    "type_9",
-		TypeName: db.Decimal,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_10",
-		Field:    "type_10",
-		TypeName: db.Bit,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_11",
-		Field:    "type_11",
-		TypeName: db.Tinyint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_12",
-		Field:    "type_12",
-		TypeName: db.Tinyint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Number,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_13",
-		Field:    "type_13",
-		TypeName: db.Decimal,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_14",
-		Field:    "type_14",
-		TypeName: db.Decimal,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_15",
-		Field:    "type_15",
-		TypeName: db.Decimal,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_16",
-		Field:    "type_16",
-		TypeName: db.Char,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_17",
-		Field:    "type_17",
-		TypeName: db.Varchar,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_18",
-		Field:    "type_18",
-		TypeName: db.Tinytext,
-		Default:  "",
-		Editable: true,
-		FormType: form.RichText,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_19",
-		Field:    "type_19",
-		TypeName: db.Text,
-		Default:  "",
-		Editable: true,
-		FormType: form.RichText,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_20",
-		Field:    "type_20",
-		TypeName: db.Mediumtext,
-		Default:  "",
-		Editable: true,
-		FormType: form.RichText,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_21",
-		Field:    "type_21",
-		TypeName: db.Longtext,
-		Default:  "",
-		Editable: true,
-		FormType: form.RichText,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_22",
-		Field:    "type_22",
-		TypeName: db.Tinyblob,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_23",
-		Field:    "type_23",
-		TypeName: db.Mediumblob,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_24",
-		Field:    "type_24",
-		TypeName: db.Blob,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_25",
-		Field:    "type_25",
-		TypeName: db.Longblob,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_26",
-		Field:    "type_26",
-		TypeName: db.Binary,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_27",
-		Field:    "type_27",
-		TypeName: db.Varbinary,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_28",
-		Field:    "type_28",
-		TypeName: db.Enum,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_29",
-		Field:    "type_29",
-		TypeName: db.Set,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_30",
-		Field:    "type_30",
-		TypeName: db.Date,
-		Default:  "",
-		Editable: true,
-		FormType: form.Datetime,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_31",
-		Field:    "type_31",
-		TypeName: db.Datetime,
-		Default:  "",
-		Editable: true,
-		FormType: form.Datetime,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_32",
-		Field:    "type_32",
-		TypeName: db.Timestamp,
-		Default:  "",
-		Editable: true,
-		FormType: form.Datetime,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_33",
-		Field:    "type_33",
-		TypeName: db.Time,
-		Default:  "",
-		Editable: true,
-		FormType: form.Datetime,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_34",
-		Field:    "type_34",
-		TypeName: db.Year,
-		Default:  "",
-		Editable: true,
-		FormType: form.Datetime,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_35",
-		Field:    "type_35",
-		TypeName: db.Geometry,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_36",
-		Field:    "type_36",
-		TypeName: db.Point,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_39",
-		Field:    "type_39",
-		TypeName: db.Multilinestring,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_41",
-		Field:    "type_41",
-		TypeName: db.Multipolygon,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_37",
-		Field:    "type_37",
-		TypeName: db.Linestring,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_38",
-		Field:    "type_38",
-		TypeName: db.Polygon,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_40",
-		Field:    "type_40",
-		TypeName: db.Multipoint,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_42",
-		Field:    "type_42",
-		TypeName: db.Geometrycollection,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_50",
-		Field:    "type_50",
-		TypeName: db.Double,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}, {
-		Head:     "Type_51",
-		Field:    "type_51",
-		TypeName: db.Json,
-		Default:  "",
-		Editable: true,
-		FormType: form.Text,
-		FilterFn: func(model types.RowModel) interface{} {
-			return model.Value
-		},
-	}}
+	info.AddField("Id", "id", db.Int)
+	info.AddField("Type_1", "type_1", db.Tinyint)
+	info.AddField("Type_2", "type_2", db.Smallint)
+	info.AddField("Type_3", "type_3", db.Mediumint)
+	info.AddField("Type_4", "type_4", db.Bigint)
+	info.AddField("Type_5", "type_5", db.Float)
+	info.AddField("Type_6", "type_6", db.Double)
+	info.AddField("Type_7", "type_7", db.Double)
+	info.AddField("Type_8", "type_8", db.Double)
+	info.AddField("Type_9", "type_9", db.Decimal)
+	info.AddField("Type_10", "type_10", db.Bit)
+	info.AddField("Type_11", "type_11", db.Tinyint)
+	info.AddField("Type_12", "type_12", db.Tinyint)
+	info.AddField("Type_13", "type_13", db.Decimal)
+	info.AddField("Type_14", "type_14", db.Decimal)
+	info.AddField("Type_15", "type_15", db.Decimal)
+	info.AddField("Type_16", "type_16", db.Char)
+	info.AddField("Type_17", "type_17", db.Varchar)
+	info.AddField("Type_18", "type_18", db.Tinytext)
+	info.AddField("Type_19", "type_19", db.Text)
+	info.AddField("Type_20", "type_20", db.Mediumtext)
+	info.AddField("Type_21", "type_21", db.Longtext)
+	info.AddField("Type_22", "type_22", db.Tinyblob)
+	info.AddField("Type_23", "type_23", db.Mediumblob)
+	info.AddField("Type_24", "type_24", db.Blob)
+	info.AddField("Type_25", "type_25", db.Longblob)
+	info.AddField("Type_26", "type_26", db.Binary)
+	info.AddField("Type_27", "type_27", db.Varbinary)
+	info.AddField("Type_28", "type_28", db.Enum)
+	info.AddField("Type_29", "type_29", db.Set)
+	info.AddField("Type_30", "type_30", db.Date)
+	info.AddField("Type_31", "type_31", db.Datetime)
+	info.AddField("Type_32", "type_32", db.Timestamp)
+	info.AddField("Type_33", "type_33", db.Time)
+	info.AddField("Type_34", "type_34", db.Year)
+	info.AddField("Type_35", "type_35", db.Geometry)
+	info.AddField("Type_36", "type_36", db.Point)
+	info.AddField("Type_39", "type_39", db.Multilinestring)
+	info.AddField("Type_41", "type_41", db.Multipolygon)
+	info.AddField("Type_37", "type_37", db.Linestring)
+	info.AddField("Type_38", "type_38", db.Polygon)
+	info.AddField("Type_40", "type_40", db.Multipoint)
+	info.AddField("Type_42", "type_42", db.Geometrycollection)
+	info.AddField("Type_50", "type_50", db.Double)
+	info.AddField("Type_51", "type_51", db.Json)
 
-	all_typesTable.GetForm().Table = "all_types"
-	all_typesTable.GetForm().Title = "All Mysql Types"
-	all_typesTable.GetForm().Description = "all mysql types"
+	info.SetTable("all_types").SetTitle("All_types").SetDescription("All_types")
 
-	return all_typesTable
+	formList := allTypesTable.GetForm()
+
+	formList.AddField("Id", "id", db.Int, form.Default)
+	formList.AddField("Type_1", "type_1", db.Tinyint, form.Number)
+	formList.AddField("Type_2", "type_2", db.Smallint, form.Number)
+	formList.AddField("Type_3", "type_3", db.Mediumint, form.Number)
+	formList.AddField("Type_4", "type_4", db.Bigint, form.Number)
+	formList.AddField("Type_5", "type_5", db.Float, form.Text)
+	formList.AddField("Type_6", "type_6", db.Double, form.Text)
+	formList.AddField("Type_7", "type_7", db.Double, form.Text)
+	formList.AddField("Type_8", "type_8", db.Double, form.Text)
+	formList.AddField("Type_9", "type_9", db.Decimal, form.Text)
+	formList.AddField("Type_10", "type_10", db.Bit, form.Text)
+	formList.AddField("Type_11", "type_11", db.Tinyint, form.Number)
+	formList.AddField("Type_12", "type_12", db.Tinyint, form.Number)
+	formList.AddField("Type_13", "type_13", db.Decimal, form.Text)
+	formList.AddField("Type_14", "type_14", db.Decimal, form.Text)
+	formList.AddField("Type_15", "type_15", db.Decimal, form.Text)
+	formList.AddField("Type_16", "type_16", db.Char, form.Text)
+	formList.AddField("Type_17", "type_17", db.Varchar, form.Text)
+	formList.AddField("Type_18", "type_18", db.Tinytext, form.RichText)
+	formList.AddField("Type_19", "type_19", db.Text, form.RichText)
+	formList.AddField("Type_20", "type_20", db.Mediumtext, form.RichText)
+	formList.AddField("Type_21", "type_21", db.Longtext, form.RichText)
+	formList.AddField("Type_22", "type_22", db.Tinyblob, form.Text)
+	formList.AddField("Type_23", "type_23", db.Mediumblob, form.Text)
+	formList.AddField("Type_24", "type_24", db.Blob, form.Text)
+	formList.AddField("Type_25", "type_25", db.Longblob, form.Text)
+	formList.AddField("Type_26", "type_26", db.Binary, form.Text)
+	formList.AddField("Type_27", "type_27", db.Varbinary, form.Text)
+	formList.AddField("Type_28", "type_28", db.Enum, form.Text)
+	formList.AddField("Type_29", "type_29", db.Set, form.Text)
+	formList.AddField("Type_30", "type_30", db.Date, form.Datetime)
+	formList.AddField("Type_31", "type_31", db.Datetime, form.Datetime)
+	formList.AddField("Type_32", "type_32", db.Timestamp, form.Datetime)
+	formList.AddField("Type_33", "type_33", db.Time, form.Datetime)
+	formList.AddField("Type_34", "type_34", db.Year, form.Datetime)
+	formList.AddField("Type_35", "type_35", db.Geometry, form.Text)
+	formList.AddField("Type_36", "type_36", db.Point, form.Text)
+	formList.AddField("Type_39", "type_39", db.Multilinestring, form.Text)
+	formList.AddField("Type_41", "type_41", db.Multipolygon, form.Text)
+	formList.AddField("Type_37", "type_37", db.Linestring, form.Text)
+	formList.AddField("Type_38", "type_38", db.Polygon, form.Text)
+	formList.AddField("Type_40", "type_40", db.Multipoint, form.Text)
+	formList.AddField("Type_42", "type_42", db.Geometrycollection, form.Text)
+	formList.AddField("Type_50", "type_50", db.Double, form.Text)
+	formList.AddField("Type_51", "type_51", db.Json, form.Text)
+
+	formList.SetTable("all_types").SetTitle("All_types").SetDescription("All_types")
+
+	return allTypesTable
 }

@@ -24,207 +24,63 @@ func GetUserTable() (userTable table.Table) {
 		},
 	})
 
-	userTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Name",
-			Field:    "name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: db.Tinyint,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				if model.Value == "0" {
-					return "men"
-				}
-				if model.Value == "1" {
-					return "women"
-				}
-				return "unknown"
-			},
-		},
-		{
-			Head:     "Phone",
-			Field:    "phone",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "City",
-			Field:    "city",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Created At",
-			Field:    "created_at",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Updated At",
-			Field:    "updated_at",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	info := userTable.GetInfo()
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("Name", "name", db.Varchar)
+	info.AddField("Gender", "gender", db.Tinyint).FieldFilterFn(func(model types.RowModel) interface{} {
+		if model.Value == "0" {
+			return "men"
+		}
+		if model.Value == "1" {
+			return "women"
+		}
+		return "unknown"
+	})
+	info.AddField("Phone", "phone", db.Varchar)
+	info.AddField("City", "city", db.Varchar)
+	info.AddField("createdAt", "created_at", db.Timestamp)
+	info.AddField("updatedAt", "updated_at", db.Timestamp)
 
-	userTable.GetInfo().Table = "users"
-	userTable.GetInfo().Title = "Users"
-	userTable.GetInfo().Description = "Users"
+	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
-	userTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
+	formList := userTable.GetForm()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("Ip", "ip", db.Varchar, form.Text)
+	formList.AddField("Name", "name", db.Varchar, form.Text)
+	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
+		FieldOptions([]map[string]string{
+			{
+				"field":    "gender",
+				"label":    "male",
+				"value":    "0",
+				"selected": "true",
+			}, {
+				"field":    "gender",
+				"label":    "female",
+				"value":    "1",
+				"selected": "false",
 			},
-		}, {
-			Head:     "Ip",
-			Field:    "ip",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Name",
-			Field:    "name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Gender",
-			Field:    "gender",
-			TypeName: db.Tinyint,
-			Default:  "",
-			Editable: true,
-			Options: []map[string]string{
-				{
-					"field":    "gender",
-					"label":    "male",
-					"value":    "0",
-					"selected": "true",
-				}, {
-					"field":    "gender",
-					"label":    "female",
-					"value":    "1",
-					"selected": "false",
-				},
-			},
-			FormType: form.Radio,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Phone",
-			Field:    "phone",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "City",
-			Field:    "city",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Custom Field",
-			Field:    "role",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-			ProcessFn: func(value types.PostRowModel) {
-				fmt.Println("user custom field", value)
-			},
-		}, {
-			Head:     "Created at",
-			Field:    "created_at",
-			TypeName: db.Varchar,
-			Default:  "2017-01-05 23:01:17",
-			Editable: true,
-			FormType: form.Datetime,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Updated at",
-			Field:    "updated_at",
-			TypeName: db.Varchar,
-			Default:  "2017-01-05 23:01:17",
-			Editable: true,
-			FormType: form.Datetime,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+		})
+	formList.AddField("Phone", "phone", db.Varchar, form.Text)
+	formList.AddField("City", "city", db.Varchar, form.Text)
+	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
+		FieldProcessFn(func(value types.PostRowModel) {
+			fmt.Println("user custom field", value)
+		})
 
-	userTable.GetForm().Group = [][]string{
+	formList.AddField("updatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField("createdAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	userTable.GetForm().SetGroup([][]string{
 		{"id", "ip", "name", "gender", "city"},
 		{"phone", "role", "created_at", "updated_at"},
-	}
-	userTable.GetForm().GroupHeaders = []string{
-		"profile1", "profile2",
-	}
+	}).SetGroupHeaders("profile1", "profile2")
 
-	userTable.GetForm().Table = "users"
-	userTable.GetForm().Title = "Users"
-	userTable.GetForm().Description = "Users"
+	formList.SetTable("users").SetTitle("Users").SetDescription("Users")
 
-	userTable.GetForm().PostHook = func(values form2.Values) {
+	formList.SetPostHook(func(values form2.Values) {
 		fmt.Println("userTable.GetForm().PostHook", values)
-	}
+	})
 
 	return
 }

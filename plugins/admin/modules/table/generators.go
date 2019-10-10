@@ -14,83 +14,37 @@ import (
 
 func GetManagerTable() (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
-	ManagerTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("Name"),
-			Field:    "username",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("Nickname"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("role"),
-			Field:    "roles",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				labelModels, _ := db.Table("goadmin_role_users").
-					Select("goadmin_roles.name").
-					LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
-					Where("user_id", "=", model.ID).
-					All()
 
-				labels := template2.HTML("")
-				labelTpl := template.Get("adminlte").Label()
+	info := ManagerTable.GetInfo()
 
-				for key, label := range labelModels {
-					if key == len(labelModels)-1 {
-						labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent()
-					} else {
-						labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent() + "<br><br>"
-					}
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField(lg("Name"), "username", db.Varchar)
+	info.AddField(lg("Nickname"), "name", db.Varchar)
+	info.AddField(lg("role"), "roles", db.Varchar).
+		FieldFilterFn(func(model types.RowModel) interface{} {
+			labelModels, _ := db.Table("goadmin_role_users").
+				Select("goadmin_roles.name").
+				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+				Where("user_id", "=", model.ID).
+				All()
+
+			labels := template2.HTML("")
+			labelTpl := template.Get("adminlte").Label()
+
+			for key, label := range labelModels {
+				if key == len(labelModels)-1 {
+					labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent()
+				} else {
+					labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent() + "<br><br>"
 				}
+			}
 
-				return string(labels)
-			},
-		},
-		{
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+			return string(labels)
+		})
+	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
-	ManagerTable.GetInfo().Table = "goadmin_users"
-	ManagerTable.GetInfo().Title = language.Get("Managers")
-	ManagerTable.GetInfo().Description = language.Get("Managers")
+	info.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
 
 	var roles, permissions []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -109,293 +63,99 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 	}
 
-	ManagerTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("Name"),
-			Field:    "username",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("Nickname"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("Avatar"),
-			Field:    "avatar",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.File,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("password"),
-			Field:    "password",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Password,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("role"),
-			Field:    "role_id",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Select,
-			Options:  roles,
-			FilterFn: func(model types.RowModel) interface{} {
-				roleModel, _ := db.Table("goadmin_role_users").Select("role_id").Where("user_id", "=", model.ID).All()
-				var roles []string
-				for _, v := range roleModel {
-					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
-				}
-				return roles
-			},
-		}, {
-			Head:     language.Get("permission"),
-			Field:    "permission_id",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Select,
-			Options:  permissions,
-			FilterFn: func(model types.RowModel) interface{} {
-				permissionModel, _ := db.Table("goadmin_user_permissions").Select("permission_id").Where("user_id", "=", model.ID).All()
-				var permissions []string
-				for _, v := range permissionModel {
-					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
-				}
-				return permissions
-			},
-		}, {
-			Head:        language.Get("updatedAt"),
-			Field:       "updated_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("createdAt"),
-			Field:       "created_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	formList := ManagerTable.GetForm()
 
-	ManagerTable.GetForm().Table = "goadmin_users"
-	ManagerTable.GetForm().Title = language.Get("Managers")
-	ManagerTable.GetForm().Description = language.Get("Managers")
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
+	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text)
+	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
+	formList.AddField(lg("password"), "password", db.Varchar, form.Password)
+	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
+		FieldOptions(roles).FieldFilterFn(func(model types.RowModel) interface{} {
+		roleModel, _ := db.Table("goadmin_role_users").Select("role_id").
+			Where("user_id", "=", model.ID).All()
+		var roles []string
+		for _, v := range roleModel {
+			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
+		}
+		return roles
+	})
+	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
+		FieldOptions(permissions).FieldFilterFn(func(model types.RowModel) interface{} {
+		permissionModel, _ := db.Table("goadmin_user_permissions").
+			Select("permission_id").Where("user_id", "=", model.ID).All()
+		var permissions []string
+		for _, v := range permissionModel {
+			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+		}
+		return permissions
+	})
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
 
 	return
 }
 
 func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
-	PermissionTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("permission"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("slug"),
-			Field:    "slug",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("method"),
-			Field:    "http_method",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("path"),
-			Field:    "http_path",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				pathArr := strings.Split(model.Value, "\n")
-				res := ""
-				for i := 0; i < len(pathArr); i++ {
-					if i == len(pathArr)-1 {
-						res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent())
-					} else {
-						res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent()) + "<br><br>"
-					}
+
+	info := PermissionTable.GetInfo()
+
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField(lg("permission"), "name", db.Varchar)
+	info.AddField(lg("slug"), "slug", db.Varchar)
+	info.AddField(lg("method"), "http_method", db.Varchar)
+	info.AddField(lg("path"), "http_path", db.Varchar).
+		FieldFilterFn(func(model types.RowModel) interface{} {
+			pathArr := strings.Split(model.Value, "\n")
+			res := ""
+			for i := 0; i < len(pathArr); i++ {
+				if i == len(pathArr)-1 {
+					res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent())
+				} else {
+					res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent()) + "<br><br>"
 				}
-				return res
-			},
-		},
-		{
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+			}
+			return res
+		})
+	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
-	PermissionTable.GetInfo().Table = "goadmin_permissions"
-	PermissionTable.GetInfo().Title = language.Get("Permission Manage")
-	PermissionTable.GetInfo().Description = language.Get("Permission Manage")
+	info.SetTable("goadmin_permissions").
+		SetTitle(lg("Permission Manage")).
+		SetDescription(lg("Permission Manage"))
 
-	PermissionTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: true,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("permission"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("slug"),
-			Field:    "slug",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("method"),
-			Field:    "http_method",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Select,
-			Options: []map[string]string{
-				{"value": "GET", "field": "GET"},
-				{"value": "PUT", "field": "PUT"},
-				{"value": "POST", "field": "POST"},
-				{"value": "DELETE", "field": "DELETE"},
-				{"value": "PATCH", "field": "PATCH"},
-				{"value": "OPTIONS", "field": "OPTIONS"},
-				{"value": "HEAD", "field": "HEAD"},
-			},
-			FilterFn: func(model types.RowModel) interface{} {
-				return strings.Split(model.Value, ",")
-			},
-			PostFilterFn: func(model types.PostRowModel) string {
-				return strings.Join(model.Value, ",")
-			},
-		}, {
-			Head:     language.Get("path"),
-			Field:    "http_path",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.TextArea,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("updatedAt"),
-			Field:       "updated_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("createdAt"),
-			Field:       "created_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	formList := PermissionTable.GetForm()
 
-	PermissionTable.GetForm().Table = "goadmin_permissions"
-	PermissionTable.GetForm().Title = language.Get("Permission Manage")
-	PermissionTable.GetForm().Description = language.Get("Permission Manage")
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
+	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
+		FieldOptions([]map[string]string{
+			{"value": "GET", "field": "GET"},
+			{"value": "PUT", "field": "PUT"},
+			{"value": "POST", "field": "POST"},
+			{"value": "DELETE", "field": "DELETE"},
+			{"value": "PATCH", "field": "PATCH"},
+			{"value": "OPTIONS", "field": "OPTIONS"},
+			{"value": "HEAD", "field": "HEAD"},
+		}).
+		FieldFilterFn(func(model types.RowModel) interface{} {
+			return strings.Split(model.Value, ",")
+		}).
+		FieldPostFilterFn(func(model types.PostRowModel) string {
+			return strings.Join(model.Value, ",")
+		})
+
+	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	formList.SetTable("goadmin_permissions").
+		SetTitle(lg("Permission Manage")).
+		SetDescription(lg("Permission Manage"))
 
 	return
 }
@@ -412,136 +172,42 @@ func GetRolesTable() (RolesTable Table) {
 		})
 	}
 
-	RolesTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("role"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("slug"),
-			Field:    "slug",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	info := RolesTable.GetInfo()
 
-	RolesTable.GetInfo().Table = "goadmin_roles"
-	RolesTable.GetInfo().Title = language.Get("Roles Manage")
-	RolesTable.GetInfo().Description = language.Get("Roles Manage")
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField(lg("role"), "name", db.Varchar)
+	info.AddField(lg("slug"), "name", db.Varchar)
+	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
-	RolesTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("role"),
-			Field:    "name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("slug"),
-			Field:    "slug",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("permission"),
-			Field:    "permission_id",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.SelectBox,
-			Options:  permissions,
-			FilterFn: func(model types.RowModel) interface{} {
-				perModel, _ := db.Table("goadmin_role_permissions").
-					Select("permission_id").
-					Where("role_id", "=", model.ID).
-					All()
-				var permissions []string
-				for _, v := range perModel {
-					permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
-				}
-				return permissions
-			},
-		}, {
-			Head:        language.Get("updatedAt"),
-			Field:       "updated_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("createdAt"),
-			Field:       "created_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	info.SetTable("goadmin_roles").
+		SetTitle(lg("Roles Manage")).
+		SetDescription(lg("Roles Manage"))
 
-	RolesTable.GetForm().Table = "goadmin_roles"
-	RolesTable.GetForm().Title = language.Get("Roles Manage")
-	RolesTable.GetForm().Description = language.Get("Roles Manage")
+	formList := RolesTable.GetForm()
+
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
+	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
+		FieldOptions(permissions).FieldFilterFn(func(model types.RowModel) interface{} {
+		perModel, _ := db.Table("goadmin_role_permissions").
+			Select("permission_id").
+			Where("role_id", "=", model.ID).
+			All()
+		var permissions []string
+		for _, v := range perModel {
+			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+		}
+		return permissions
+	})
+
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	formList.SetTable("goadmin_roles").
+		SetTitle(lg("Roles Manage")).
+		SetDescription(lg("Roles Manage"))
 
 	return
 }
@@ -559,267 +225,58 @@ func GetOpTable() (OpTable Table) {
 			Name: DefaultPrimaryKeyName,
 		},
 	})
-	OpTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("userID"),
-			Field:    "user_id",
-			TypeName: db.Int,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("path"),
-			Field:    "path",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("method"),
-			Field:    "method",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "ip",
-			Field:    "ip",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("content"),
-			Field:    "input",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
 
-	OpTable.GetInfo().Table = "goadmin_operation_log"
-	OpTable.GetInfo().Title = language.Get("operation log")
-	OpTable.GetInfo().Description = language.Get("operation log")
+	info := OpTable.GetInfo()
 
-	OpTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("userID"),
-			Field:    "user_id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("path"),
-			Field:    "path",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("method"),
-			Field:    "method",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "ip",
-			Field:    "ip",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("content"),
-			Field:    "input",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("updatedAt"),
-			Field:       "updated_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("createdAt"),
-			Field:       "created_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField(lg("userID"), "user_id", db.Int)
+	info.AddField(lg("path"), "path", db.Varchar)
+	info.AddField(lg("method"), "method", db.Varchar)
+	info.AddField(lg("ip"), "ip", db.Varchar)
+	info.AddField(lg("content"), "input", db.Varchar)
+	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
-	OpTable.GetForm().Table = "goadmin_operation_log"
-	OpTable.GetForm().Title = language.Get("operation log")
-	OpTable.GetForm().Description = language.Get("operation log")
+	info.SetTable("goadmin_operation_log").
+		SetTitle(lg("operation log")).
+		SetDescription(lg("operation log"))
+
+	formList := OpTable.GetForm()
+
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
+	formList.AddField(lg("path"), "path", db.Varchar, form.Text)
+	formList.AddField(lg("method"), "method", db.Varchar, form.Text)
+	formList.AddField(lg("ip"), "ip", db.Varchar, form.Text)
+	formList.AddField(lg("content"), "input", db.Varchar, form.Text)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	formList.SetTable("goadmin_operation_log").
+		SetTitle(lg("operation log")).
+		SetDescription(lg("operation log"))
 
 	return
 }
 
 func GetMenuTable() (MenuTable Table) {
 	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
-	MenuTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("parent"),
-			Field:    "parent_id",
-			TypeName: db.Int,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("menu name"),
-			Field:    "title",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("icon"),
-			Field:    "icon",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("uri"),
-			Field:    "uri",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("role"),
-			Field:    "roles",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("header"),
-			Field:    "header",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("createdAt"),
-			Field:    "created_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     language.Get("updatedAt"),
-			Field:    "updated_at",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
 
-	MenuTable.GetInfo().Table = "goadmin_menu"
-	MenuTable.GetInfo().Title = language.Get("Menus Manage")
-	MenuTable.GetInfo().Description = language.Get("Menus Manage")
+	info := MenuTable.GetInfo()
+
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField(lg("parent"), "parent_id", db.Int)
+	info.AddField(lg("menu name"), "title", db.Varchar)
+	info.AddField(lg("icon"), "icon", db.Varchar)
+	info.AddField(lg("uri"), "uri", db.Varchar)
+	info.AddField(lg("role"), "roles", db.Varchar)
+	info.AddField(lg("header"), "header", db.Varchar)
+	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
+
+	info.SetTable("goadmin_menu").
+		SetTitle(lg("Menus Manage")).
+		SetDescription(lg("Menus Manage"))
 
 	var roles, parents []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -848,119 +305,43 @@ func GetMenuTable() (MenuTable Table) {
 		"value": "0",
 	}}, parents...)
 
-	MenuTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("parent"),
-			Field:    "parent_id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: true,
-			FormType: form.SelectSingle,
-			Options:  parents,
-			FilterFn: func(model types.RowModel) interface{} {
-				menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)
+	formList := MenuTable.GetForm()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
+		FieldOptions(parents).FieldFilterFn(func(model types.RowModel) interface{} {
+		menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)
 
-				var menuItem []string
-				menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
-				return menuItem
-			},
-		}, {
-			Head:     language.Get("menu name"),
-			Field:    "title",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("header"),
-			Field:    "header",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("icon"),
-			Field:    "icon",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.IconPicker,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("uri"),
-			Field:    "uri",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     language.Get("role"),
-			Field:    "roles",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Select,
-			Options:  roles,
-			FilterFn: func(model types.RowModel) interface{} {
-				roleModel, _ := db.Table("goadmin_role_menu").
-					Select("role_id").
-					Where("menu_id", "=", model.ID).
-					All()
-				var roles []string
-				for _, v := range roleModel {
-					roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
-				}
-				return roles
-			},
-		}, {
-			Head:        language.Get("updatedAt"),
-			Field:       "updated_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:        language.Get("createdAt"),
-			Field:       "created_at",
-			TypeName:    db.Timestamp,
-			Default:     "",
-			Editable:    true,
-			FormType:    form.Default,
-			NotAllowAdd: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+		var menuItem []string
+		menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
+		return menuItem
+	})
+	formList.AddField(lg("menu name"), "title", db.Varchar, form.Text)
+	formList.AddField(lg("header"), "header", db.Varchar, form.Text)
+	formList.AddField(lg("icon"), "icon", db.Varchar, form.IconPicker)
+	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)
+	formList.AddField(lg("role"), "roles", db.Int, form.Select).
+		FieldOptions(roles).FieldFilterFn(func(model types.RowModel) interface{} {
+		roleModel, _ := db.Table("goadmin_role_menu").
+			Select("role_id").
+			Where("menu_id", "=", model.ID).
+			All()
+		var roles []string
+		for _, v := range roleModel {
+			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
+		}
+		return roles
+	})
 
-	MenuTable.GetForm().Table = "goadmin_menu"
-	MenuTable.GetForm().Title = language.Get("Menus Manage")
-	MenuTable.GetForm().Description = language.Get("Menus Manage")
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+
+	formList.SetTable("goadmin_menu").
+		SetTitle(lg("Menus Manage")).
+		SetDescription(lg("Menus Manage"))
 
 	return
+}
+
+func lg(v string) string {
+	return language.Get(v)
 }

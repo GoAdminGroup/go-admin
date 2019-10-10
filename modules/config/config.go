@@ -137,14 +137,20 @@ type Config struct {
 
 	prefix string
 
-	// SessionLifeTime is session valid time duration, units are seconds.
+	// Session valid time duration, units are seconds.
 	SessionLifeTime int `json:"session_life_time"`
 
-	// CdnUrl is the cdn link of assets
+	// Cdn link of assets
 	CdnUrl string `json:"cdn_url"`
 
 	// File upload engine, default "local"
 	FileUploadEngine FileUploadEngine `json:"file_upload_engine"`
+
+	// Custom html in the tag head.
+	CustomHeadHtml template.HTML `json:"custom_head_html"`
+
+	// Custom html after body.
+	CustomFootHtml template.HTML `json:"custom_foot_html"`
 }
 
 type FileUploadEngine struct {
@@ -157,6 +163,7 @@ func (c Config) GetIndexUrl() string {
 	if index == "/" {
 		return c.Prefix()
 	}
+
 	return c.Prefix() + index
 }
 

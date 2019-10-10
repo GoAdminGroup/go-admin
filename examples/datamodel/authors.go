@@ -3,7 +3,6 @@ package datamodel
 import (
 	"github.com/chenhg5/go-admin/modules/db"
 	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
-	"github.com/chenhg5/go-admin/template/types"
 	"github.com/chenhg5/go-admin/template/types/form"
 )
 
@@ -14,144 +13,25 @@ func GetAuthorsTable() (authorsTable table.Table) {
 	// connect your custom connection
 	// authorsTable = table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("mysql", "admin"))
 
-	authorsTable.GetInfo().FieldList = []types.Field{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Sortable: true,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "First Name",
-			Field:    "first_name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Last Name",
-			Field:    "last_name",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Email",
-			Field:    "email",
-			TypeName: db.Varchar,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Birthdate",
-			Field:    "birthdate",
-			TypeName: db.Date,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-		{
-			Head:     "Added",
-			Field:    "added",
-			TypeName: db.Timestamp,
-			Sortable: false,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	info := authorsTable.GetInfo()
+	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("First Name", "first_name", db.Varchar)
+	info.AddField("Last Name", "last_name", db.Varchar)
+	info.AddField("Email", "email", db.Varchar)
+	info.AddField("Birthdate", "birthdate", db.Date)
+	info.AddField("Added", "added", db.Timestamp)
 
-	authorsTable.GetInfo().Table = "authors"
-	authorsTable.GetInfo().Title = "Authors"
-	authorsTable.GetInfo().Description = "Authors"
+	info.SetTable("authors").SetTitle("Authors").SetDescription("Authors")
 
-	authorsTable.GetForm().FormList = []types.Form{
-		{
-			Head:     "ID",
-			Field:    "id",
-			TypeName: db.Int,
-			Default:  "",
-			Editable: false,
-			FormType: form.Default,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "First Name",
-			Field:    "first_name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Name",
-			Field:    "name",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Description",
-			Field:    "description",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Email",
-			Field:    "email",
-			TypeName: db.Varchar,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Birthdate",
-			Field:    "birthdate",
-			TypeName: db.Date,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		}, {
-			Head:     "Added",
-			Field:    "added",
-			TypeName: db.Timestamp,
-			Default:  "",
-			Editable: true,
-			FormType: form.Text,
-			FilterFn: func(model types.RowModel) interface{} {
-				return model.Value
-			},
-		},
-	}
+	formList := authorsTable.GetForm()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("First Name", "first_name", db.Varchar, form.Text)
+	formList.AddField("Last Name", "last_name", db.Varchar, form.Text)
+	formList.AddField("Email", "email", db.Varchar, form.Text)
+	formList.AddField("Birthdate", "birthdate", db.Date, form.Text)
+	formList.AddField("Added", "added", db.Timestamp, form.Text)
 
-	authorsTable.GetForm().Table = "authors"
-	authorsTable.GetForm().Title = "Authors"
-	authorsTable.GetForm().Description = "Authors"
+	formList.SetTable("authors").SetTitle("Authors").SetDescription("Authors")
 
 	return
 }

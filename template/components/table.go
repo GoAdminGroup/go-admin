@@ -55,6 +55,8 @@ type DataTableAttribute struct {
 	IsTab      bool
 	ExportUrl  string
 	InfoUrl    string
+	NoAction   bool
+	Action     template.HTML
 	FilterUrl  string
 	Filters    []map[string]string
 	types.Attribute
@@ -76,6 +78,11 @@ func (compo *DataTableAttribute) SetIsTab(value bool) types.DataTableAttribute {
 
 func (compo *DataTableAttribute) SetInfoUrl(value string) types.DataTableAttribute {
 	compo.InfoUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetAction(action template.HTML) types.DataTableAttribute {
+	compo.Action = action
 	return compo
 }
 
@@ -122,6 +129,9 @@ func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribut
 func (compo *DataTableAttribute) GetContent() template.HTML {
 	if compo.MinWidth == 0 {
 		compo.MinWidth = 1000
+	}
+	if compo.EditUrl == "" && compo.DeleteUrl == "" && compo.Action == "" {
+		compo.NoAction = true
 	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")
 }

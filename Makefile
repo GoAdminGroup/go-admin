@@ -1,3 +1,9 @@
+GOCMD=go
+GOBUILD=$(GOCMD) build
+BINARY_NAME=admincli
+LASTVERSION=v1.0.0-alpha.1
+VERSION=v1.0.0-alpha.2
+
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
 TEST_CONFIG_SQLITE_PATH=./../common/config_sqlite.json
@@ -114,3 +120,20 @@ pg-test:
 
 lint:
 	golangci-lint run
+
+cli:
+	GO111MODULE=on $(GOBUILD) -o ./admincli/build/mac/$(BINARY_NAME) ./admincli/...
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o ./admincli/build/linux/x86_64/$(BINARY_NAME) ./admincli/...
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm $(GOBUILD) -o ./admincli/build/linux/armel/$(BINARY_NAME) ./admincli/...
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o ./admincli/build/windows/x86_64/$(BINARY_NAME).exe ./admincli/...
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=386 $(GOBUILD) -o ./admincli/build/windows/i386/$(BINARY_NAME).exe ./admincli/...
+	rm -rf ./admincli/build/linux/armel/admincli_linux_armel_$(LASTVERSION).zip
+	rm -rf ./admincli/build/linux/x86_64/admincli_linux_x86_64_$(LASTVERSION).zip
+	rm -rf ./admincli/build/windows/x86_64/admincli_windows_x86_64_$(LASTVERSION).zip
+	rm -rf ./admincli/build/windows/i386/admincli_windows_i386_$(LASTVERSION).zip
+	rm -rf ./admincli/build/mac/admincli_darwin_x86_64_$(LASTVERSION).zip
+	zip -qj ./admincli/build/linux/armel/admincli_linux_armel_$(VERSION).zip ./admincli/build/linux/armel/admincli
+	zip -qj ./admincli/build/linux/x86_64/admincli_linux_x86_64_$(VERSION).zip ./admincli/build/linux/x86_64/admincli
+	zip -qj ./admincli/build/windows/x86_64/admincli_windows_x86_64_$(VERSION).zip ./admincli/build/windows/x86_64/admincli.exe
+	zip -qj ./admincli/build/windows/i386/admincli_windows_i386_$(VERSION).zip ./admincli/build/windows/i386/admincli.exe
+	zip -qj ./admincli/build/mac/admincli_darwin_x86_64_$(VERSION).zip ./admincli/build/mac/admincli

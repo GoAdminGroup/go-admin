@@ -62,7 +62,6 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 }
 
 func DeleteMenu(ctx *context.Context) {
-
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).Delete()
 	table.RefreshTableList()
 	response.Ok(ctx)

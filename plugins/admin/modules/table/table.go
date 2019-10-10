@@ -226,8 +226,8 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) Config {
 
 func NewDefaultTable(cfg Config) Table {
 	return DefaultTable{
-		info:             &types.InfoPanel{},
-		form:             &types.FormPanel{},
+		info:             types.NewInfoPanel(),
+		form:             types.NewFormPanel(),
 		connectionDriver: cfg.Driver,
 		connection:       cfg.Connection,
 		canAdd:           cfg.CanAdd,

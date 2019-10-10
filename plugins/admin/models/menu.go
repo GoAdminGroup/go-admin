@@ -56,8 +56,18 @@ func (t MenuModel) New(title, icon, uri, header string, parentId, order int64) M
 
 func (t MenuModel) Delete() {
 	_ = db.Table(t.Table).Where("id", "=", t.Id).Delete()
-	_ = db.Table("goadmin_role_menu").
-		Where("menu_id", "=", t.Id).Delete()
+	_ = db.Table("goadmin_role_menu").Where("menu_id", "=", t.Id).Delete()
+	items, _ := db.Table(t.Table).Where("parent_id", "=", t.Id).All()
+
+	if len(items) > 0 {
+		ids := make([]interface{}, len(items))
+		for i := 0; i < len(ids); i++ {
+			ids[i] = items[i]["id"]
+		}
+		_ = db.Table("goadmin_role_menu").WhereIn("menu_id", ids).Delete()
+	}
+
+	_ = db.Table(t.Table).Where("parent_id", "=", t.Id).Delete()
 }
 
 func (t MenuModel) Update(title, icon, uri, header string, parentId int64) MenuModel {

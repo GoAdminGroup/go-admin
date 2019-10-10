@@ -56,6 +56,12 @@ type Page struct {
 
 	// CdnUrl is the cdn link of assets
 	CdnUrl string
+
+	// Custom html in the tag head.
+	CustomHeadHtml template.HTML
+
+	// Custom html after body.
+	CustomFootHtml template.HTML
 }
 
 func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config) Page {
@@ -66,13 +72,15 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		System: SystemInfo{
 			Version: system.Version,
 		},
-		UrlPrefix:   cfg.Prefix(),
-		Title:       cfg.Title,
-		Logo:        cfg.Logo,
-		MiniLogo:    cfg.MiniLogo,
-		ColorScheme: cfg.ColorScheme,
-		IndexUrl:    cfg.GetIndexUrl(),
-		CdnUrl:      cfg.CdnUrl,
+		UrlPrefix:      cfg.Prefix(),
+		Title:          cfg.Title,
+		Logo:           cfg.Logo,
+		MiniLogo:       cfg.MiniLogo,
+		ColorScheme:    cfg.ColorScheme,
+		IndexUrl:       cfg.GetIndexUrl(),
+		CdnUrl:         cfg.CdnUrl,
+		CustomHeadHtml: cfg.CustomHeadHtml,
+		CustomFootHtml: cfg.CustomFootHtml,
 	}
 }
 
@@ -90,23 +98,6 @@ type Panel struct {
 }
 
 type GetPanel func() Panel
-
-// Form is the form field with different options.
-type Form struct {
-	Field                  string
-	TypeName               db.DatabaseType
-	Head                   string
-	Default                string
-	Editable               bool
-	NotAllowAdd            bool
-	FormType               form.Type
-	Value                  string
-	Options                []map[string]string
-	DefaultOptionDelimiter string
-	FilterFn               FieldFilterFn
-	PostFilterFn           PostFieldFilterFn
-	ProcessFn              ProcessFn
-}
 
 // RowModel contains ID and value of the single query result.
 type RowModel struct {
@@ -169,15 +160,115 @@ func (j Join) Valid() bool {
 
 // InfoPanel
 type InfoPanel struct {
-	FieldList    []Field
-	Table        string
-	Title        string
-	Sort         Sort
-	Group        [][]string
-	GroupHeaders []string
-	Description  string
-	HeaderHtml   template.HTML
-	FooterHtml   template.HTML
+	FieldList     []Field
+	curFieldIndex int
+	Table         string
+	Title         string
+	Sort          Sort
+	Group         [][]string
+	GroupHeaders  []string
+	Description   string
+	Action        template.HTML
+	HeaderHtml    template.HTML
+	FooterHtml    template.HTML
+}
+
+func NewInfoPanel() *InfoPanel {
+	return &InfoPanel{curFieldIndex: -1}
+}
+
+func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *InfoPanel {
+	i.FieldList = append(i.FieldList, Field{
+		Head:     head,
+		Field:    field,
+		TypeName: typeName,
+		Sortable: false,
+		FilterFn: func(model RowModel) interface{} {
+			return model.Value
+		},
+	})
+	i.curFieldIndex++
+	return i
+}
+
+func (i *InfoPanel) FieldFilterFn(filter FieldFilterFn) *InfoPanel {
+	i.FieldList[i.curFieldIndex].FilterFn = filter
+	return i
+}
+
+func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Width = width
+	return i
+}
+
+func (i *InfoPanel) FieldSortable(sort bool) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Sortable = sort
+	return i
+}
+
+func (i *InfoPanel) FieldFixed(fixed bool) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Fixed = fixed
+	return i
+}
+
+func (i *InfoPanel) FieldFilterable(filter bool) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Filterable = filter
+	return i
+}
+
+func (i *InfoPanel) FieldHide(hide bool) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Hide = hide
+	return i
+}
+
+func (i *InfoPanel) FieldJoin(join Join) *InfoPanel {
+	i.FieldList[i.curFieldIndex].Join = join
+	return i
+}
+
+func (i *InfoPanel) SetTable(table string) *InfoPanel {
+	i.Table = table
+	return i
+}
+
+func (i *InfoPanel) SetTitle(title string) *InfoPanel {
+	i.Title = title
+	return i
+}
+
+func (i *InfoPanel) SetGroup(group [][]string) *InfoPanel {
+	i.Group = group
+	return i
+}
+
+func (i *InfoPanel) SetGroupHeaders(headers ...string) *InfoPanel {
+	i.GroupHeaders = headers
+	return i
+}
+
+func (i *InfoPanel) SetDescription(desc string) *InfoPanel {
+	i.Description = desc
+	return i
+}
+
+func (i *InfoPanel) SetSort(sort Sort) *InfoPanel {
+	i.Sort = sort
+	return i
+}
+
+func (i *InfoPanel) SetAction(action template.HTML) *InfoPanel {
+	i.Action = action
+	return i
+}
+
+func (i *InfoPanel) SetHeaderHtml(header template.HTML) *InfoPanel {
+	i.HeaderHtml = header
+	return i
+}
+
+func (i *InfoPanel) SetFooterHtml(footer template.HTML) *InfoPanel {
+	i.FooterHtml = footer
+	return i
 }
 
 type Sort uint8
@@ -187,9 +278,27 @@ const (
 	SortAsc
 )
 
+// Form is the form field with different options.
+type Form struct {
+	Field                  string
+	TypeName               db.DatabaseType
+	Head                   string
+	Default                string
+	Editable               bool
+	NotAllowAdd            bool
+	FormType               form.Type
+	Value                  string
+	Options                []map[string]string
+	DefaultOptionDelimiter string
+	FilterFn               FieldFilterFn
+	PostFilterFn           PostFieldFilterFn
+	ProcessFn              ProcessFn
+}
+
 // FormPanel
 type FormPanel struct {
 	FormList      FormList
+	curFieldIndex int
 	Group         [][]string
 	GroupHeaders  []string
 	Table         string
@@ -199,6 +308,115 @@ type FormPanel struct {
 	PostHook      PostHookFn
 	HeaderHtml    template.HTML
 	FooterHtml    template.HTML
+}
+
+func NewFormPanel() *FormPanel {
+	return &FormPanel{curFieldIndex: -1}
+}
+
+func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form.Type) *FormPanel {
+	f.FormList = append(f.FormList, Form{
+		Head:     head,
+		Field:    field,
+		TypeName: filedType,
+		Editable: true,
+		FormType: formType,
+		FilterFn: func(model RowModel) interface{} {
+			return model.Value
+		},
+	})
+	f.curFieldIndex++
+	return f
+}
+
+func (f *FormPanel) FieldFilterFn(filter FieldFilterFn) *FormPanel {
+	f.FormList[f.curFieldIndex].FilterFn = filter
+	return f
+}
+
+func (f *FormPanel) SetTable(table string) *FormPanel {
+	f.Table = table
+	return f
+}
+
+func (f *FormPanel) FieldEditable(edit bool) *FormPanel {
+	f.FormList[f.curFieldIndex].Editable = edit
+	return f
+}
+
+func (f *FormPanel) FieldNotAllowAdd(add bool) *FormPanel {
+	f.FormList[f.curFieldIndex].NotAllowAdd = add
+	return f
+}
+
+func (f *FormPanel) FieldFormType(formType form.Type) *FormPanel {
+	f.FormList[f.curFieldIndex].FormType = formType
+	return f
+}
+
+func (f *FormPanel) FieldValue(value string) *FormPanel {
+	f.FormList[f.curFieldIndex].Value = value
+	return f
+}
+
+func (f *FormPanel) FieldOptions(options []map[string]string) *FormPanel {
+	f.FormList[f.curFieldIndex].Options = options
+	return f
+}
+
+func (f *FormPanel) FieldDefaultOptionDelimiter(delimiter string) *FormPanel {
+	f.FormList[f.curFieldIndex].DefaultOptionDelimiter = delimiter
+	return f
+}
+
+func (f *FormPanel) FieldPostFilterFn(post PostFieldFilterFn) *FormPanel {
+	f.FormList[f.curFieldIndex].PostFilterFn = post
+	return f
+}
+
+func (f *FormPanel) FieldProcessFn(a ProcessFn) *FormPanel {
+	f.FormList[f.curFieldIndex].ProcessFn = a
+	return f
+}
+
+func (f *FormPanel) SetTitle(title string) *FormPanel {
+	f.Title = title
+	return f
+}
+
+func (f *FormPanel) SetGroup(group [][]string) *FormPanel {
+	f.Group = group
+	return f
+}
+
+func (f *FormPanel) SetGroupHeaders(headers ...string) *FormPanel {
+	f.GroupHeaders = headers
+	return f
+}
+
+func (f *FormPanel) SetDescription(desc string) *FormPanel {
+	f.Description = desc
+	return f
+}
+
+func (f *FormPanel) SetHeaderHtml(header template.HTML) *FormPanel {
+	f.HeaderHtml = header
+	return f
+}
+
+func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
+	f.FooterHtml = footer
+	return f
+}
+
+func (f *FormPanel) SetPostValidator(va PostValidator) *FormPanel {
+	f.PostValidator = va
+	return f
+}
+
+func (f *FormPanel) SetPostHook(po PostHookFn) *FormPanel {
+	f.PostHook = po
+	return f
 }
 
 type PostValidator func(values form2.Values) error

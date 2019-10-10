@@ -32,14 +32,18 @@
                         </th>
                     {{end}}
                 {{end}}
-                <th>{{lang "operation"}}</th>
+                {{if eq .NoAction false}}
+                    <th>{{lang "operation"}}</th>
+                {{end}}
             </tr>
         {{end}}
 
+        {{$NoAction := .NoAction}}
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
         {{$IsTab := .IsTab}}
+        {{$Action := .Action}}
         {{$DeleteUrl := .DeleteUrl}}
         {{$PrimaryKey := .PrimaryKey}}
         {{range $key1, $info := .InfoList}}
@@ -60,7 +64,9 @@
                             <td>{{index $info (index $head2 "field")}}</td>
                         {{end}}
                     {{end}}
+                    {{if eq $NoAction false}}
                     <td>
+                        {{$Action}}
                         {{if $EditUrl}}
                             <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
                         {{end}}
@@ -69,6 +75,7 @@
                                         class="fa fa-trash"></i></a>
                         {{end}}
                     </td>
+                    {{end}}
                 {{else}}
                     {{range $key2, $head2 := $Thead}}
                         <td>{{index $info (index $head2 "head")}}</td>

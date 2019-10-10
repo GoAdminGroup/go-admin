@@ -5,25 +5,6 @@
 
     {{ template "head" . }}
 
-    <style>
-        .full-page-content {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            z-index: 9999;
-        }
-
-        .full-page-wrapper {
-            background-color: #ecf0f4;
-        }
-
-        #toast-container {
-            top: 90%;
-        }
-    </style>
-
     <body class="hold-transition {{.ColorScheme}} sidebar-mini">
     <div class="wrapper">
 
@@ -44,6 +25,7 @@
     {{ template "js" . }}
 
     </body>
+    {{.CustomFootHtml}}
     </html>
 
 {{end}}
