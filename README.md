@@ -54,7 +54,9 @@ see the [docs](http://www.go-admin.cn/en) for detail
 
 ### Step 1: import sql
 
-[https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
+[mysql](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.sql)
+[postgresql](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.pgsql)
+[sqlite](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.db)
 
 ### Step 2: create main.go
 

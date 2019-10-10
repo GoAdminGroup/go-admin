@@ -45,9 +45,9 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 ### 第一步：导入 sql
 
-以mysql为例：
-
-[https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql](https://github.com/chenhg5/go-admin/blob/master/examples/datamodel/admin.sql)
+[mysql](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.sql)
+[postgresql](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.pgsql)
+[sqlite](https://raw.githubusercontent.com/chenhg5/go-admin/master/data/admin.db)
 
 ### 第二步：创建 main.go
 
