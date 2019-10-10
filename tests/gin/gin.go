@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -30,6 +31,12 @@ func NewHandler() http.Handler {
 		Use(r); err != nil {
 		panic(err)
 	}
+
+	r.GET("/admin", func(ctx *gin.Context) {
+		engine.Content(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	r.Static("/uploads", "./uploads")
 

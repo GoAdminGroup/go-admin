@@ -6,7 +6,9 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/kataras/iris"
+	"github.com/kataras/iris/context"
 	"net/http"
 	"os"
 )
@@ -24,6 +26,12 @@ func NewIrisHandler() http.Handler {
 		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}
+
+	app.Get("/admin", func(context context.Context) {
+		engine.Content(context, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	return app
 }

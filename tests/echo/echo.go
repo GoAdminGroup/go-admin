@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/labstack/echo"
 	"net/http"
 	"os"
@@ -25,6 +26,13 @@ func NewEchoHandler() http.Handler {
 		AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
 		panic(err)
 	}
+
+	e.GET("/admin", func(context echo.Context) error {
+		engine.Content(context, func() types.Panel {
+			return datamodel.GetContent()
+		})
+		return nil
+	})
 
 	return e
 }

@@ -1,11 +1,12 @@
 package chi
 
 import (
-	_ "github.com/chenhg5/go-admin/adapter/chi"
+	ada "github.com/chenhg5/go-admin/adapter/chi"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/go-chi/chi"
 	"net/http"
 	"os"
@@ -24,6 +25,12 @@ func NewChiHandler() http.Handler {
 		AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
 		panic(err)
 	}
+
+	r.Get("/admin", func(writer http.ResponseWriter, request *http.Request) {
+		engine.Content(ada.Context{Request: request, Response: writer}, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
 
 	return r
 }

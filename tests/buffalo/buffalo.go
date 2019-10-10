@@ -6,6 +6,7 @@ import (
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gobuffalo/buffalo"
 	"net/http"
 	"os"
@@ -28,6 +29,13 @@ func NewBuffaloHandler() http.Handler {
 		AddPlugins(adminPlugin, examplePlugin).Use(bu); err != nil {
 		panic(err)
 	}
+
+	bu.GET("/admin", func(ctx buffalo.Context) error {
+		engine.Content(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+		return nil
+	})
 
 	bu.ServeFiles("/uploads", http.Dir("./uploads"))
 

@@ -45,9 +45,19 @@ func AuthTest(e *httpexpect.Expect) *http.Cookie {
 	// login again
 
 	printlnWithColor("login again", "green")
-	return e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
+	cookie := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
 		"username": "admin",
 		"password": "admin",
 	}).Expect().Status(200).Cookie("go_admin_session").Raw()
+
+	// login success
+
+	printlnWithColor("login success", "green")
+	e.GET(config.Get().Url("/")).
+		WithCookie("go_admin_session", cookie.Value).Expect().
+		Status(200).
+		Body().Contains("Dashboard")
+
+	return cookie
 
 }

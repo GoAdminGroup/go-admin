@@ -2,11 +2,13 @@ package beego
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	_ "github.com/chenhg5/go-admin/adapter/beego"
 	"github.com/chenhg5/go-admin/engine"
 	"github.com/chenhg5/go-admin/examples/datamodel"
 	"github.com/chenhg5/go-admin/plugins/admin"
 	"github.com/chenhg5/go-admin/plugins/example"
+	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
 	"os"
 )
@@ -25,6 +27,13 @@ func NewBeegoHandler() http.Handler {
 		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}
+
+	app.Handlers.Get("/admin", func(ctx *context.Context) {
+		engine.Content(ctx, func() types.Panel {
+			return datamodel.GetContent()
+		})
+	})
+
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087
 
