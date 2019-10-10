@@ -634,6 +634,10 @@ func isRequireUpdate(srcVersion, toCompareVersion string) bool {
 		return false
 	}
 
+	exp, _ := regexp.Compile(`-(.*)`)
+	srcVersion = exp.ReplaceAllString(srcVersion, "")
+	toCompareVersion = exp.ReplaceAllString(toCompareVersion, "")
+
 	srcVersionArr := strings.Split(strings.Replace(srcVersion, "v", "", -1), ".")
 	toCompareVersionArr := strings.Split(strings.Replace(toCompareVersion, "v", "", -1), ".")
 
