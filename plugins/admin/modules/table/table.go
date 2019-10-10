@@ -304,9 +304,10 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	var (
-		sortable  string
-		joins     string
-		headField string
+		sortable   string
+		joins      string
+		headField  string
+		joinTables = make([]string, 0)
 	)
 	for i := 0; i < len(tb.info.FieldList); i++ {
 		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
@@ -319,9 +320,12 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		if tb.info.FieldList[i].Join.Valid() {
 			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
 			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
-			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
-				tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
-				tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+			if !modules.InArray(joinTables, tb.info.FieldList[i].Join.Table) {
+				joinTables = append(joinTables, tb.info.FieldList[i].Join.Table)
+				joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
+					tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
+					tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+			}
 		}
 
 		if tb.info.FieldList[i].Hide {
@@ -470,9 +474,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	var (
-		sortable  string
-		joins     string
-		headField string
+		sortable   string
+		joins      string
+		headField  string
+		joinTables = make([]string, 0)
 	)
 	for i := 0; i < len(tb.info.FieldList); i++ {
 		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
@@ -485,9 +490,12 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		if tb.info.FieldList[i].Join.Valid() {
 			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
 			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
-			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
-				tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
-				tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+			if !modules.InArray(joinTables, tb.info.FieldList[i].Join.Table) {
+				joinTables = append(joinTables, tb.info.FieldList[i].Join.Table)
+				joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
+					tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
+					tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+			}
 		}
 
 		if tb.info.FieldList[i].Hide {
@@ -508,15 +516,6 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			"hide":     hide,
 			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
-		if tb.info.FieldList[i].Join.Table != "" &&
-			tb.info.FieldList[i].Join.Field != "" &&
-			tb.info.FieldList[i].Join.JoinField != "" {
-			joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
-				filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + "." +
-				filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + "=" +
-				filterFiled(tb.info.Table, connection.GetDelimiter()) + "." +
-				filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
-		}
 	}
 
 	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
