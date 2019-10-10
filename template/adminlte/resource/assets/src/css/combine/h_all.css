@@ -48,7 +48,7 @@
     border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.skin-black .main-header .navbar .nav>li>a:hover, .skin-black .main-header .navbar .nav>li>a:active, .skin-black .main-header .navbar .nav>li>a:focus, .skin-black .main-header .navbar .nav .open>a, .skin-black .main-header .navbar .nav .open>a:hover, .skin-black .main-header .navbar .nav .open>a:focus, .skin-black .main-header .navbar .nav>.active>a {
+.skin-black .main-header .navbar .nav > li > a:hover, .skin-black .main-header .navbar .nav > li > a:active, .skin-black .main-header .navbar .nav > li > a:focus, .skin-black .main-header .navbar .nav .open > a, .skin-black .main-header .navbar .nav .open > a:hover, .skin-black .main-header .navbar .nav .open > a:focus, .skin-black .main-header .navbar .nav > .active > a {
     background-color: #f7f7f7 !important;
 }
 
@@ -103,4 +103,9 @@
     background-color: #fff;
     border: none !important;
     border-bottom-color: transparent;
+}
+
+.form-group > label.asterisk:before {
+    content: " *";
+    color: red;
 }

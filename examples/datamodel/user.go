@@ -62,7 +62,7 @@ func GetUserTable() (userTable table.Table) {
 			},
 		})
 	formList.AddField("Phone", "phone", db.Varchar, form.Text)
-	formList.AddField("City", "city", db.Varchar, form.Text)
+	formList.AddField("City", "city", db.Varchar, form.Text).FieldMust(true)
 	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
 		FieldProcessFn(func(value types.PostRowModel) {
 			fmt.Println("user custom field", value)

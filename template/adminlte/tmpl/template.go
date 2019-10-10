@@ -195,7 +195,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     <span class="description-text">{{langHtml .Title}}</span>
 </div>
 {{end}}`, "components/form/color": `{{define "form_color"}}
+    {{if eq .Must true}}
+    <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
     <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group colorpicker-element">
             <span class="input-group-addon"><i style="background-color: rgb(0, 0, 0);"></i></span>
@@ -206,7 +210,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         $('.{{.Field}}').parent().colorpicker([]);
     </script>
 {{end}}`, "components/form/currency": `{{define "form_currency"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <span class="input-group-addon">$</span>
@@ -220,7 +228,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         });
     </script>
 {{end}}`, "components/form/datetime": `{{define "form_datetime"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-calendar fa-fw"></i></span>
@@ -238,16 +250,24 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         });
     </script>
 {{end}}`, "components/form/default": `{{define "form_default"}}
-<label class="col-sm-2 control-label">{{.Head}}</label>
-<div class="col-sm-8">
-    <div class="box box-solid box-default no-margin">
-        <div class="box-body">
-            {{.Value}}
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
+    <div class="col-sm-8">
+        <div class="box box-solid box-default no-margin">
+            <div class="box-body">
+                {{.Value}}
+            </div>
         </div>
     </div>
-</div>
 {{end}}`, "components/form/email": `{{define "form_email"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-envelope fa-fw"></i></span>
@@ -256,7 +276,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 {{end}}`, "components/form/file": `{{define "form_file"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+{{if eq .Must true}}
+    <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+{{else}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+{{end}}
 <div class="col-sm-8">
     <input type="file" class="{{.Field}}" name="{{.Field}}" data-initial-preview="" data-initial-caption="{{.Value}}">
 </div>
@@ -278,7 +302,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     });
 </script>
 {{end}}`, "components/form/iconpicker": `{{define "form_iconpicker"}}
-<label for="icon" class="col-sm-2 control-label">{{.Head}}</label>
+{{if eq .Must true}}
+    <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+{{else}}
+    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+{{end}}
 <div class="col-sm-8">
     <div class="input-group">
         <span class="input-group-addon"><i class="fa"></i></span>
@@ -297,7 +325,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     $('.iconpicker-input').iconpicker({placement:'bottomLeft'});
 </script>
 {{end}}`, "components/form/ip": `{{define "form_ip"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-laptop fa-fw"></i></span>
@@ -306,7 +338,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         </div>
     </div>
 {{end}}`, "components/form/number": `{{define "form_number"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <input style="width: 100px; text-align: center;" type="text" id="{{.Field}}" name="{{.Field}}"
@@ -326,7 +362,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         })
     </script>
 {{end}}`, "components/form/password": `{{define "form_password"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
 <div class="col-sm-8">
     {{if .Editable}}
         <div class="input-group">
@@ -340,7 +380,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     {{end}}
 </div>
 {{end}}`, "components/form/radio": `{{define "form_radio"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         {{$field := .Field}}
         {{range $key, $v := .Options }}
@@ -355,7 +399,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         });
     </script>
 {{end}}`, "components/form/richtext": `{{define "form_rich_text"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div id="{{.Field}}-editor">
             <p>欢迎使用 <b>wangEditor</b> 富文本编辑器</p>
@@ -375,7 +423,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{end}}
     </script>
 {{end}}`, "components/form/select": `{{define "form_select"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}[]"
                 multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true"
@@ -394,7 +446,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         });
     </script>
 {{end}}`, "components/form/selectbox": `{{define "form_selectbox"}}
-<label for="{{.Field}}" class="col-sm-2  control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
 <div class="col-sm-8">
     <select class="form-control {{.Field}}" style="width: 100%;" name="{{.Field}}[]" multiple="multiple" data-placeholder="Input {{.Head}}"  {{if not .Editable}}disabled="disabled"{{end}}>
         {{range  $key, $v := .Options }}
@@ -407,7 +463,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     $(".{{.Field}}").bootstrapDualListbox({"infoText":"Showing all {0}","infoTextEmpty":"Empty list","infoTextFiltered":"{0} \/ {1}","filterTextClear":"Show all","filterPlaceHolder":"Filter"});
 </script>
 {{end}}`, "components/form/singleselect": `{{define "form_select_single"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
 <div class="col-sm-8">
     <select class="form-control {{.Field}} select2-hidden-accessible" style="width: 100%;" name="{{.Field}}"
             multiple="" data-placeholder="{{lang "Input"}} {{.Head}}" tabindex="-1" aria-hidden="true" {{if not .Editable}}disabled="disabled"{{end}}>
@@ -426,7 +486,11 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     });
 </script>
 {{end}}`, "components/form/text": `{{define "form_text"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
 <div class="col-sm-8">
     {{if .Editable}}
         <div class="input-group">
@@ -440,12 +504,20 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
     {{end}}
 </div>
 {{end}}`, "components/form/textarea": `{{define "form_textarea"}}
-<label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
 <div class="col-sm-8">
     <textarea name="{{.Field}}" class="form-control" rows="5" placeholder="{{lang "Input"}} {{.Head}}" {{if not .Editable}}disabled="disabled"{{end}}>{{.Value}}</textarea>
 </div>
 {{end}}`, "components/form/url": `{{define "form_url"}}
-    <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{if eq .Must true}}
+        <label for="{{.Field}}" class="col-sm-2 asterisk control-label">{{.Head}}</label>
+    {{else}}
+        <label for="{{.Field}}" class="col-sm-2 control-label">{{.Head}}</label>
+    {{end}}
     <div class="col-sm-8">
         <div class="input-group">
             <span class="input-group-addon"><i class="fa fa-internet-explorer fa-fw"></i></span>
@@ -1016,12 +1088,13 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
             </tr>
         {{end}}
 
+
         {{$NoAction := .NoAction}}
+        {{$Action := .Action}}
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
         {{$IsTab := .IsTab}}
-        {{$Action := .Action}}
         {{$DeleteUrl := .DeleteUrl}}
         {{$PrimaryKey := .PrimaryKey}}
         {{range $key1, $info := .InfoList}}
@@ -1043,16 +1116,17 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                         {{end}}
                     {{end}}
                     {{if eq $NoAction false}}
-                    <td>
-                        {{$Action}}
-                        {{if $EditUrl}}
-                            <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
-                        {{end}}
-                        {{if $DeleteUrl}}
-                            <a href="javascript:void(0);" data-id='{{index $info $PrimaryKey}}' class="grid-row-delete"><i
-                                        class="fa fa-trash"></i></a>
-                        {{end}}
-                    </td>
+                        <td>
+                            {{$Action}}
+                            {{if $EditUrl}}
+                                <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
+                            {{end}}
+                            {{if $DeleteUrl}}
+                                <a href="javascript:void(0);" data-id='{{index $info $PrimaryKey}}'
+                                   class="grid-row-delete"><i
+                                            class="fa fa-trash"></i></a>
+                            {{end}}
+                        </td>
                     {{end}}
                 {{else}}
                     {{range $key2, $head2 := $Thead}}

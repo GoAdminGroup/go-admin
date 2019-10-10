@@ -38,12 +38,13 @@
             </tr>
         {{end}}
 
+
         {{$NoAction := .NoAction}}
+        {{$Action := .Action}}
         {{$Thead := .Thead}}
         {{$Type := .Type}}
         {{$EditUrl := .EditUrl}}
         {{$IsTab := .IsTab}}
-        {{$Action := .Action}}
         {{$DeleteUrl := .DeleteUrl}}
         {{$PrimaryKey := .PrimaryKey}}
         {{range $key1, $info := .InfoList}}
@@ -65,16 +66,17 @@
                         {{end}}
                     {{end}}
                     {{if eq $NoAction false}}
-                    <td>
-                        {{$Action}}
-                        {{if $EditUrl}}
-                            <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
-                        {{end}}
-                        {{if $DeleteUrl}}
-                            <a href="javascript:void(0);" data-id='{{index $info $PrimaryKey}}' class="grid-row-delete"><i
-                                        class="fa fa-trash"></i></a>
-                        {{end}}
-                    </td>
+                        <td>
+                            {{$Action}}
+                            {{if $EditUrl}}
+                                <a href='{{$EditUrl}}&id={{index $info $PrimaryKey}}'><i class="fa fa-edit"></i></a>
+                            {{end}}
+                            {{if $DeleteUrl}}
+                                <a href="javascript:void(0);" data-id='{{index $info $PrimaryKey}}'
+                                   class="grid-row-delete"><i
+                                            class="fa fa-trash"></i></a>
+                            {{end}}
+                        </td>
                     {{end}}
                 {{else}}
                     {{range $key2, $head2 := $Thead}}

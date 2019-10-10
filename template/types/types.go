@@ -286,6 +286,7 @@ type Form struct {
 	Default                string
 	Editable               bool
 	NotAllowAdd            bool
+	Must                   bool
 	FormType               form.Type
 	Value                  string
 	Options                []map[string]string
@@ -336,6 +337,11 @@ func (f *FormPanel) FieldFilterFn(filter FieldFilterFn) *FormPanel {
 
 func (f *FormPanel) SetTable(table string) *FormPanel {
 	f.Table = table
+	return f
+}
+
+func (f *FormPanel) FieldMust(must bool) *FormPanel {
+	f.FormList[f.curFieldIndex].Must = must
 	return f
 }
 

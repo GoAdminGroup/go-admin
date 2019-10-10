@@ -11,6 +11,8 @@ type TableAttribute struct {
 	InfoList   []map[string]template.HTML
 	Type       string
 	PrimaryKey string
+	NoAction   bool
+	Action     template.HTML
 	EditUrl    string
 	MinWidth   int
 	DeleteUrl  string

@@ -3,6 +3,7 @@ GOBUILD=$(GOCMD) build
 BINARY_NAME=admincli
 LASTVERSION=v1.0.0-alpha.1
 VERSION=v1.0.0-alpha.2
+CLI=admincli
 
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
@@ -23,7 +24,7 @@ assets:
 	cp -R $(ASSETS_PATH)/src/img $(ASSETS_PATH)/dist/
 	cp -R $(ASSETS_PATH)/src/fonts $(ASSETS_PATH)/dist/
 	make combine
-	admincli compile asset
+	$(CLI) compile asset
 	make tmpl
 	make fmt
 
@@ -33,15 +34,15 @@ combine:
 	make combine-css
 
 combine-js:
-	admincli combine js
-	admincli combine js --path=$(ASSETS_PATH)/src/js/combine2/ --out=$(ASSETS_PATH)/dist/js/all_2.min.js
-	admincli combine js --path=$(ASSETS_PATH)/src/js/combine3/ --out=$(ASSETS_PATH)/dist/js/form.min.js
+	$(CLI) combine js
+	$(CLI) combine js --path=$(ASSETS_PATH)/src/js/combine2/ --out=$(ASSETS_PATH)/dist/js/all_2.min.js
+	$(CLI) combine js --path=$(ASSETS_PATH)/src/js/combine3/ --out=$(ASSETS_PATH)/dist/js/form.min.js
 
 combine-css:
-	admincli combine css
+	$(CLI) combine css
 
 tmpl:
-	admincli compile tpl
+	$(CLI) compile tpl
 
 fmt:
 	go fmt ./adapter/...
