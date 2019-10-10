@@ -19,7 +19,6 @@ import (
 	"github.com/chenhg5/go-admin/template"
 	"github.com/chenhg5/go-admin/template/types"
 	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/buffalo/render"
 	template2 "html/template"
 	"net/http"
 	neturl "net/url"
@@ -173,5 +172,5 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 	if err != nil {
 		logger.Error("Buffalo Content", err)
 	}
-	_ = ctx.Render(http.StatusOK, render.String(buf.String()))
+	_, _ = ctx.Response().Write(buf.Bytes())
 }
