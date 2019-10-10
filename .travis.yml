@@ -14,7 +14,8 @@ services:
 before_install:
   - mysql -e 'create database `go-admin-test`;'
   - createdb -U postgres go-admin-test
-  - go get github.com/chenhg5/go-admin@master
+  - mkdir -p /home/travis/gopath/pkg/mod/github.com/chenhg5
+  - cp -R /home/travis/gopath/src/github.com/chenhg5/go-admin /home/travis/gopath/pkg/mod/github.com/chenhg5/go-admin@1.0.0
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
