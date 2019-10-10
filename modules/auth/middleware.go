@@ -35,7 +35,7 @@ func DefaultInvoker() *Invoker {
 			}, ``)
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
-			page.SetPageContent(ctx, Auth(ctx), func() types.Panel {
+			page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
 				alert := template2.Get(config.Get().Theme).Alert().
 					SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 					SetTheme("warning").SetContent(template.HTML("permission denied")).GetContent()
@@ -44,7 +44,7 @@ func DefaultInvoker() *Invoker {
 					Content:     alert,
 					Description: "Error",
 					Title:       "Error",
-				}
+				}, nil
 			})
 		},
 	}

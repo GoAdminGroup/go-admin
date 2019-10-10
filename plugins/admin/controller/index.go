@@ -10,7 +10,7 @@ import (
 )
 
 func ShowDashboard(ctx *context.Context) {
-	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
 
 		components := template2.Get(config.Theme)
 		colComp := components.Col()
@@ -269,12 +269,12 @@ func ShowDashboard(ctx *context.Context) {
 			Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3) + template.HTML(row4),
 			Title:       "Dashboard",
 			Description: "Dashboard",
-		}
+		}, nil
 	})
 }
 
 func ShowErrorPage(ctx *context.Context, errorMsg string) {
-	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
 		alert := template2.Get(config.Theme).Alert().SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> Error!`)).
 			SetTheme("warning").SetContent(template.HTML(errorMsg)).GetContent()
 
@@ -282,6 +282,6 @@ func ShowErrorPage(ctx *context.Context, errorMsg string) {
 			Content:     alert,
 			Description: "Error",
 			Title:       "Error",
-		}
+		}, nil
 	})
 }

@@ -81,7 +81,7 @@ func main() {
 	// you can custom your pages like:
 
 	bu.GET("/admin", func(ctx buffalo.Context) error {
-		engine.Content(ctx, func() types.Panel {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 		return nil

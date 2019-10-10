@@ -28,7 +28,7 @@ func NewEchoHandler() http.Handler {
 	}
 
 	e.GET("/admin", func(context echo.Context) error {
-		engine.Content(context, func() types.Panel {
+		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 		return nil

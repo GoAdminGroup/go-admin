@@ -109,7 +109,10 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	var panel types.Panel
+	var (
+		panel types.Panel
+		err   error
+	)
 
 	if !auth.CheckPermissions(user, ctx.Path(), ctx.Method()) {
 		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
@@ -117,11 +120,22 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 
 		panel = types.Panel{
 			Content:     alert,
-			Description: "Error",
-			Title:       "Error",
+			Description: language.Get("error"),
+			Title:       language.Get("error"),
 		}
 	} else {
-		panel = c()
+		panel, err = c(ctx)
+		if err != nil {
+			alert := template.Get(globalConfig.Theme).
+				Alert().
+				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
+			panel = types.Panel{
+				Content:     alert,
+				Description: language.Get("error"),
+				Title:       language.Get("error"),
+			}
+		}
 	}
 
 	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.GetHeader(constant.PjaxHeader) == "true")
@@ -129,7 +143,9 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))), panel, globalConfig))
+	err = tmpl.ExecuteTemplate(buf, tmplName,
+		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))),
+			panel, globalConfig))
 	if err != nil {
 		logger.Error("Iris Content", err)
 	}

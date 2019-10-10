@@ -10,7 +10,7 @@ import (
 )
 
 func TestHandler(ctx *context.Context) {
-	page.SetPageContent(ctx, auth.Auth(ctx), func() types.Panel {
+	page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
 
 		components := template2.Get(config.Theme)
 		colComp := components.Col()
@@ -285,6 +285,6 @@ func TestHandler(ctx *context.Context) {
 			Content:     template.HTML(row1) + template.HTML(row2) + template.HTML(row3) + template.HTML(row4),
 			Title:       "Dashboard",
 			Description: "this is a example",
-		}
+		}, nil
 	})
 }

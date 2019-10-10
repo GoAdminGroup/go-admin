@@ -97,7 +97,7 @@ type Panel struct {
 	Url         string
 }
 
-type GetPanel func() Panel
+type GetPanel func(ctx interface{}) (Panel, error)
 
 // RowModel contains ID and value of the single query result.
 type RowModel struct {

@@ -29,7 +29,7 @@ func NewBeegoHandler() http.Handler {
 	}
 
 	app.Handlers.Get("/admin", func(ctx *context.Context) {
-		engine.Content(ctx, func() types.Panel {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

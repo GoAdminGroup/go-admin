@@ -66,7 +66,7 @@ func main() {
 	}
 
 	app.Handle("/admin", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		engine.Content(ada.Context{Request: request, Response: writer}, func() types.Panel {
+		engine.Content(ada.Context{Request: request, Response: writer}, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})).Methods("get")
