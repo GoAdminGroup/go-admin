@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-    the missing golang data admin builder tool.
+    the missing golang data admin panel builder tool.
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@
 
 ## Preface
 
-goAdmin is a toolkit help you to build a data visualization and manage platform for your golang app.
+GoAdmin is a toolkit help you to build a data visualization admin panel for your golang app.
 
 demo: [http://demo.en.go-admin.cn/admin](http://demo.en.go-admin.cn/admin)
 account: admin  password: admin
