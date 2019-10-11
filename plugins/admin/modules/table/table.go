@@ -915,7 +915,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 	if len(group) == 0 {
 		var newForm []types.Form
 		for _, v := range old {
-			v.Value = ""
+			v.Value = v.Default
 			if v.Field != primaryKey && !v.NotAllowAdd {
 				newForm = append(newForm, v)
 			}
@@ -934,7 +934,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 		for i := 0; i < len(value); i++ {
 			for _, v := range old {
 				if v.Field == value[i] {
-					v.Value = ""
+					v.Value = v.Default
 					if v.Field != primaryKey && !v.NotAllowAdd {
 						list = append(list, v)
 						break

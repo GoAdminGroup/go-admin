@@ -226,7 +226,7 @@ var (
 	declare   sync.Once
 )
 
-func ReadFromJson(path string) {
+func ReadFromJson(path string) Config {
 	jsonByte, err := ioutil.ReadFile(path)
 
 	if err != nil {
@@ -240,6 +240,8 @@ func ReadFromJson(path string) {
 	}
 
 	Set(globalCfg)
+
+	return globalCfg
 }
 
 // Set sets the config.
