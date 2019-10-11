@@ -47,7 +47,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 		Content: aForm().
 			SetContent(formData).
 			SetGroupContent(groupFormData).
-			SetGroupHeaders(groupHeaders).
+			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
@@ -152,8 +152,8 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	list := table.List["menu"]
 
-	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().GroupHeaders, list.GetForm().Group,
-		list.GetForm().FormList, list.GetPrimaryKey().Name)
+	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
+		list.GetForm().FieldList, list.GetPrimaryKey().Name)
 
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).
@@ -164,7 +164,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		SetTitle("New").
 		SetContent(formList).
 		SetGroupContent(groupFormList).
-		SetGroupHeaders(groupHeaders).
+		SetTabHeaders(groupHeaders).
 		GetContent()
 
 	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()

@@ -21,7 +21,7 @@ func GetManagerTable() (ManagerTable Table) {
 	info.AddField(lg("Name"), "username", db.Varchar)
 	info.AddField(lg("Nickname"), "name", db.Varchar)
 	info.AddField(lg("role"), "roles", db.Varchar).
-		FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 			labelModels, _ := db.Table("goadmin_role_users").
 				Select("goadmin_roles.name").
 				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
@@ -71,7 +71,7 @@ func GetManagerTable() (ManagerTable Table) {
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
-		FieldOptions(roles).FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldOptions(roles).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		roleModel, _ := db.Table("goadmin_role_users").Select("role_id").
 			Where("user_id", "=", model.ID).All()
 		var roles []string
@@ -81,7 +81,7 @@ func GetManagerTable() (ManagerTable Table) {
 		return roles
 	})
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
-		FieldOptions(permissions).FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		permissionModel, _ := db.Table("goadmin_user_permissions").
 			Select("permission_id").Where("user_id", "=", model.ID).All()
 		var permissions []string
@@ -108,7 +108,7 @@ func GetPermissionTable() (PermissionTable Table) {
 	info.AddField(lg("slug"), "slug", db.Varchar)
 	info.AddField(lg("method"), "http_method", db.Varchar)
 	info.AddField(lg("path"), "http_path", db.Varchar).
-		FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 			pathArr := strings.Split(model.Value, "\n")
 			res := ""
 			for i := 0; i < len(pathArr); i++ {
@@ -142,10 +142,10 @@ func GetPermissionTable() (PermissionTable Table) {
 			{"value": "OPTIONS", "field": "OPTIONS"},
 			{"value": "HEAD", "field": "HEAD"},
 		}).
-		FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 			return strings.Split(model.Value, ",")
 		}).
-		FieldPostFilterFn(func(model types.PostRowModel) string {
+		FieldPostFilterFn(func(model types.PostFieldModel) string {
 			return strings.Join(model.Value, ",")
 		})
 
@@ -190,7 +190,7 @@ func GetRolesTable() (RolesTable Table) {
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
-		FieldOptions(permissions).FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		perModel, _ := db.Table("goadmin_role_permissions").
 			Select("permission_id").
 			Where("role_id", "=", model.ID).
@@ -308,7 +308,7 @@ func GetMenuTable() (MenuTable Table) {
 	formList := MenuTable.GetForm()
 	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
-		FieldOptions(parents).FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldOptions(parents).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)
 
 		var menuItem []string
@@ -320,7 +320,7 @@ func GetMenuTable() (MenuTable Table) {
 	formList.AddField(lg("icon"), "icon", db.Varchar, form.IconPicker)
 	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)
 	formList.AddField(lg("role"), "roles", db.Int, form.Select).
-		FieldOptions(roles).FieldFilterFn(func(model types.RowModel) interface{} {
+		FieldOptions(roles).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		roleModel, _ := db.Table("goadmin_role_menu").
 			Select("role_id").
 			Where("menu_id", "=", model.ID).

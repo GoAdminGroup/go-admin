@@ -60,7 +60,7 @@ type Table interface {
 	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
-	GetDataFromDatabaseWithId(id string) ([]types.Form, [][]types.Form, []string, string, string)
+	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error
 	DeleteDataFromDatabase(id string)
@@ -118,11 +118,11 @@ func (t Thead) GroupBy(group [][]string) []Thead {
 
 type InfoList []map[string]template.HTML
 
-func (i InfoList) GroupBy(group [][]string) []InfoList {
+func (i InfoList) GroupBy(groups types.TabGroups) []InfoList {
 
-	var res = make([]InfoList, len(group))
+	var res = make([]InfoList, len(groups))
 
-	for key, value := range group {
+	for key, value := range groups {
 		var newInfoList = make(InfoList, len(i))
 
 		for index, info := range i {
@@ -369,7 +369,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	}
 	args := append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 
-	// TODO: add left join table relations, FilterFn is inefficient.
+	// TODO: add left join table relations, Display is inefficient.
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
@@ -404,13 +404,13 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			}
 			var value interface{}
 			if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
-				value = tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
 					ID:    primaryKeyValue.String(),
 					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
 					Row:   row,
 				})
 			} else {
-				value = tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
 					ID:    primaryKeyValue.String(),
 					Value: "",
 					Row:   row,
@@ -568,13 +568,13 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			}
 			var value interface{}
 			if checkInTable(columns, headField) {
-				value = tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
 					ID:    primaryKeyValue.String(),
 					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
 					Row:   row,
 				})
 			} else {
-				value = tb.info.FieldList[j].FilterFn(types.RowModel{
+				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
 					ID:    primaryKeyValue.String(),
 					Value: "",
 					Row:   row,
@@ -620,16 +620,16 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]types.Form, []string, string, string) {
+func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string) {
 
 	fields := make([]string, 0)
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
-	formList := tb.form.FormList.Copy()
+	formList := tb.form.FieldList.Copy()
 
-	for i := 0; i < len(tb.form.FormList); i++ {
+	for i := 0; i < len(tb.form.FieldList); i++ {
 		if checkInTable(columns, formList[i].Field) {
 			fields = append(fields, formList[i].Field)
 		}
@@ -641,19 +641,19 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 		First()
 
 	var (
-		groupFormList = make([][]types.Form, 0)
+		groupFormList = make([][]types.FormField, 0)
 		groupHeaders  = make([]string, 0)
 	)
 
-	if len(tb.form.Group) > 0 {
-		for key, value := range tb.form.Group {
-			list := make([]types.Form, len(value))
+	if len(tb.form.TabGroups) > 0 {
+		for key, value := range tb.form.TabGroups {
+			list := make([]types.FormField, len(value))
 			for j := 0; j < len(value); j++ {
-				for i := 0; i < len(tb.form.FormList); i++ {
+				for i := 0; i < len(tb.form.FieldList); i++ {
 					if value[j] == formList[i].Field {
 						if checkInTable(columns, formList[i].Field) {
 							if formList[i].FormType.IsSelect() {
-								valueArr := formList[i].FilterFn(types.RowModel{
+								valueArr := formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 									Row:   res,
@@ -666,7 +666,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 									}
 								}
 							} else if formList[i].FormType.IsRadio() {
-								value := formList[i].FilterFn(types.RowModel{
+								value := formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 									Row:   res,
@@ -679,7 +679,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 									}
 								}
 							} else {
-								formList[i].Value = formList[i].FilterFn(types.RowModel{
+								formList[i].Value = formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 									Row:   res,
@@ -687,7 +687,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 							}
 						} else {
 							if formList[i].FormType.IsSelect() {
-								valueArr := formList[i].FilterFn(types.RowModel{
+								valueArr := formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: "",
 									Row:   res,
@@ -700,7 +700,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 									}
 								}
 							} else if formList[i].FormType.IsRadio() {
-								value := formList[i].FilterFn(types.RowModel{
+								value := formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: "",
 									Row:   res,
@@ -713,7 +713,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 									}
 								}
 							} else {
-								formList[i].Value = formList[i].FilterFn(types.RowModel{
+								formList[i].Value = formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
 									Value: "",
 									Row:   res,
@@ -727,15 +727,15 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 			}
 
 			groupFormList = append(groupFormList, list)
-			groupHeaders = append(groupHeaders, tb.form.GroupHeaders[key])
+			groupHeaders = append(groupHeaders, tb.form.TabHeaders[key])
 		}
-		return tb.form.FormList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
+		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
 	}
 
-	for i := 0; i < len(tb.form.FormList); i++ {
+	for i := 0; i < len(tb.form.FieldList); i++ {
 		if checkInTable(columns, formList[i].Field) {
 			if formList[i].FormType.IsSelect() {
-				valueArr := formList[i].FilterFn(types.RowModel{
+				valueArr := formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
 					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
@@ -746,7 +746,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 					}
 				}
 			} else {
-				formList[i].Value = formList[i].FilterFn(types.RowModel{
+				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
 					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
@@ -754,7 +754,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 			}
 		} else {
 			if formList[i].FormType.IsSelect() {
-				valueArr := formList[i].FilterFn(types.RowModel{
+				valueArr := formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
 					Value: "",
 					Row:   res,
@@ -765,7 +765,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 					}
 				}
 			} else {
-				formList[i].Value = formList[i].FilterFn(types.RowModel{
+				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
 					Value: "",
 					Row:   res,
@@ -780,8 +780,8 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.Form, [][]t
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
-	if tb.form.PostValidator != nil {
-		if err := tb.form.PostValidator(dataList); err != nil {
+	if tb.form.Validator != nil {
+		if err := tb.form.Validator(dataList); err != nil {
 			return err
 		}
 	}
@@ -804,8 +804,8 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
-	if tb.form.PostValidator != nil {
-		if err := tb.form.PostValidator(dataList); err != nil {
+	if tb.form.Validator != nil {
+		if err := tb.form.Validator(dataList); err != nil {
 			return err
 		}
 	}
@@ -837,15 +837,15 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" {
 			if checkInTable(columns, k) {
 				delimiter := ","
-				for i := 0; i < len(tb.form.FormList); i++ {
-					if k == tb.form.FormList[i].Field {
-						fun = tb.form.FormList[i].PostFilterFn
-						delimiter = modules.SetDefault(tb.form.FormList[i].DefaultOptionDelimiter, ",")
+				for i := 0; i < len(tb.form.FieldList); i++ {
+					if k == tb.form.FieldList[i].Field {
+						fun = tb.form.FieldList[i].PostFilterFn
+						delimiter = modules.SetDefault(tb.form.FieldList[i].DefaultOptionDelimiter, ",")
 					}
 				}
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
-					value[k] = fun(types.PostRowModel{
+					value[k] = fun(types.PostFieldModel{
 						ID:    dataList.Get(tb.primaryKey.Name),
 						Value: vv,
 					})
@@ -857,9 +857,9 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 					}
 				}
 			} else {
-				fun := tb.form.FormList.FindByField(k).ProcessFn
+				fun := tb.form.FieldList.FindByFieldName(k).PostFilterFn
 				if fun != nil {
-					fun(types.PostRowModel{
+					fun(types.PostFieldModel{
 						ID:    dataList.Get(tb.primaryKey.Name),
 						Value: modules.RemoveBlankFromArray(v),
 					})
@@ -910,26 +910,26 @@ func (tb DefaultTable) sql() *db.Sql {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
-func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, primaryKey string) ([]types.Form, [][]types.Form, []string) {
+func GetNewFormList(groupHeaders []string, group [][]string, old []types.FormField, primaryKey string) ([]types.FormField, [][]types.FormField, []string) {
 
 	if len(group) == 0 {
-		var newForm []types.Form
+		var newForm []types.FormField
 		for _, v := range old {
 			v.Value = v.Default
 			if v.Field != primaryKey && !v.NotAllowAdd {
 				newForm = append(newForm, v)
 			}
 		}
-		return newForm, [][]types.Form{}, []string{}
+		return newForm, [][]types.FormField{}, []string{}
 	}
 
 	var (
-		newForm = make([][]types.Form, 0)
+		newForm = make([][]types.FormField, 0)
 		headers = make([]string, 0)
 	)
 
 	for key, value := range group {
-		list := make([]types.Form, 0)
+		list := make([]types.FormField, 0)
 
 		for i := 0; i < len(value); i++ {
 			for _, v := range old {
@@ -947,7 +947,7 @@ func GetNewFormList(groupHeaders []string, group [][]string, old []types.Form, p
 		headers = append(headers, groupHeaders[key])
 	}
 
-	return []types.Form{}, newForm, headers
+	return []types.FormField{}, newForm, headers
 }
 
 // ***************************************

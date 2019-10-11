@@ -50,7 +50,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		dataTable types.DataTableAttribute
 	)
 
-	if len(panel.GetInfo().Group) > 0 {
+	if panel.GetInfo().TabGroups.Valid() {
 
 		dataTable = aDataTable().
 			SetThead(panelInfo.Thead).
@@ -59,11 +59,11 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetExportUrl(exportUrl)
 
 		var (
-			tabsHtml    = make([]map[string]template2.HTML, len(panel.GetInfo().GroupHeaders))
-			infoListArr = panelInfo.InfoList.GroupBy(panel.GetInfo().Group)
-			theadArr    = panelInfo.Thead.GroupBy(panel.GetInfo().Group)
+			tabsHtml    = make([]map[string]template2.HTML, len(panel.GetInfo().TabHeaders))
+			infoListArr = panelInfo.InfoList.GroupBy(panel.GetInfo().TabGroups)
+			theadArr    = panelInfo.Thead.GroupBy(panel.GetInfo().TabGroups)
 		)
-		for key, header := range panel.GetInfo().GroupHeaders {
+		for key, header := range panel.GetInfo().TabHeaders {
 			tabsHtml[key] = map[string]template2.HTML{
 				"title": template2.HTML(header),
 				"content": aDataTable().

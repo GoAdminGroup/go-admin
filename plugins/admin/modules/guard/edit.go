@@ -136,7 +136,7 @@ func EditForm(ctx *context.Context) {
 	}
 
 	if prefix != "manager" && prefix != "roles" {
-		for _, f := range panel.GetForm().FormList {
+		for _, f := range panel.GetForm().FieldList {
 			if f.Editable {
 				continue
 			}

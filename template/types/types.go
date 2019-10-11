@@ -1,5 +1,5 @@
-// Copyright 2019 cg33.  All rights reserved.
-// Use of this source code is governed by a MIT style
+// Copyright 2019 GoAdmin.  All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
 package types
@@ -14,6 +14,7 @@ import (
 	form2 "github.com/chenhg5/go-admin/plugins/admin/modules/form"
 	"github.com/chenhg5/go-admin/template/types/form"
 	"html/template"
+	"strings"
 )
 
 // Attribute is the component interface of template. Every component of
@@ -99,82 +100,183 @@ type Panel struct {
 
 type GetPanel func(ctx interface{}) (Panel, error)
 
-// RowModel contains ID and value of the single query result.
-type RowModel struct {
-	ID    string
+// FieldModel is the single query result.
+type FieldModel struct {
+	// The primaryKey of the table.
+	ID string
+
+	// The value of the single query result.
 	Value string
-	Row   map[string]interface{}
+
+	// The current row data.
+	Row map[string]interface{}
 }
 
-// PostRowModel contains ID and value of the single query result.
-type PostRowModel struct {
+// PostFieldModel contains ID and value of the single query result and the current row data.
+type PostFieldModel struct {
 	ID    string
-	Value RowModelValue
+	Value FieldModelValue
 	Row   map[string]interface{}
 }
 
-type RowModelValue []string
+type FieldModelValue []string
 
-func (r RowModelValue) Value() string {
+func (r FieldModelValue) Value() string {
 	return r.First()
 }
 
-func (r RowModelValue) First() string {
+func (r FieldModelValue) First() string {
 	return r[0]
 }
 
-// FieldFilterFn is filter function of data.
-type FieldFilterFn func(value RowModel) interface{}
-
-// ProcessFn process the data and store into the database.
-type ProcessFn func(value PostRowModel)
+// FieldDisplay is filter function of data.
+type FieldFilterFn func(value FieldModel, chains DisplayProcessFnChains) interface{}
 
 // PostFieldFilterFn is filter function of data.
-type PostFieldFilterFn func(value PostRowModel) string
+type PostFieldFilterFn func(value PostFieldModel) string
+
+type DisplayProcessFn func(string) string
+
+type DisplayProcessFnChains []DisplayProcessFn
+
+func (d DisplayProcessFnChains) Valid() bool {
+	return len(d) > 0
+}
+
+func (d DisplayProcessFnChains) Add(f DisplayProcessFn) DisplayProcessFnChains {
+	return append(d, f)
+}
+
+type FieldDisplay struct {
+	Display              FieldFilterFn
+	DisplayProcessChains DisplayProcessFnChains
+}
+
+func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
+	return f.Display(value, f.DisplayProcessChains)
+}
+
+func (f FieldDisplay) AddLimit(limit int) DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		if limit > len(value) {
+			return value
+		} else if limit < 0 {
+			return ""
+		} else {
+			return value[:limit]
+		}
+	})
+}
+
+func (f FieldDisplay) AddTrimSpace() DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		return strings.TrimSpace(value)
+	})
+}
+
+func (f FieldDisplay) AddSubstr(start int, end int) DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		if start > end || start > len(value) || end < 0 {
+			return ""
+		}
+		if start < 0 {
+			start = 0
+		}
+		if end > len(value) {
+			end = len(value)
+		}
+		return value[start:end]
+	})
+}
+
+func (f FieldDisplay) AddToTitle() DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		return strings.Title(value)
+	})
+}
+
+func (f FieldDisplay) AddToUpper() DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		return strings.ToUpper(value)
+	})
+}
+
+func (f FieldDisplay) AddToLower() DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value string) string {
+		return strings.ToLower(value)
+	})
+}
 
 // Field is the table field.
 type Field struct {
-	FilterFn   FieldFilterFn
-	Field      string
-	TypeName   db.DatabaseType
-	Head       string
+	Head     string
+	Field    string
+	TypeName db.DatabaseType
+
+	Join Join
+
 	Width      int
-	Join       Join
 	Sortable   bool
 	Fixed      bool
 	Filterable bool
 	Hide       bool
+
+	FieldDisplay
 }
 
 type Join struct {
 	Table     string
 	Field     string
 	JoinField string
-	HasChild  bool
-	JoinTable *Join
 }
 
 func (j Join) Valid() bool {
 	return j.Table != "" && j.Field != "" && j.JoinField != ""
 }
 
+type TabGroups [][]string
+
+func (t TabGroups) Valid() bool {
+	return len(t) > 0
+}
+
+func NewTabGroups(items ...string) TabGroups {
+	var t = make(TabGroups, 0)
+	return append(t, items)
+}
+
+func (t TabGroups) AddGroup(items ...string) TabGroups {
+	return append(t, items)
+}
+
+type TabHeaders []string
+
+func (t TabHeaders) Add(header string) TabHeaders {
+	return append(t, header)
+}
+
 // InfoPanel
 type InfoPanel struct {
-	FieldList     []Field
-	curFieldIndex int
-	Table         string
-	Title         string
-	Sort          Sort
-	Group         [][]string
-	GroupHeaders  []string
-	Description   string
-	Action        template.HTML
-	HeaderHtml    template.HTML
-	FooterHtml    template.HTML
+	FieldList         []Field
+	curFieldListIndex int
+
+	Table       string
+	Title       string
+	Description string
+
+	// Warn: may be deprecated future.
+	TabGroups  TabGroups
+	TabHeaders TabHeaders
+
+	Sort Sort
+
+	Action     template.HTML
+	HeaderHtml template.HTML
+	FooterHtml template.HTML
 }
 
 func NewInfoPanel() *InfoPanel {
-	return &InfoPanel{curFieldIndex: -1}
+	return &InfoPanel{curFieldListIndex: -1}
 }
 
 func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *InfoPanel {
@@ -183,48 +285,94 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 		Field:    field,
 		TypeName: typeName,
 		Sortable: false,
-		FilterFn: func(model RowModel) interface{} {
-			return model.Value
+		FieldDisplay: FieldDisplay{
+			Display: func(value FieldModel, chains DisplayProcessFnChains) interface{} {
+				if chains.Valid() {
+					val := value.Value
+					for _, process := range chains {
+						val = process(value.Value)
+					}
+					return val
+				}
+				return value.Value
+			},
+			DisplayProcessChains: make(DisplayProcessFnChains, 0),
 		},
 	})
-	i.curFieldIndex++
+	i.curFieldListIndex++
 	return i
 }
 
-func (i *InfoPanel) FieldFilterFn(filter FieldFilterFn) *InfoPanel {
-	i.FieldList[i.curFieldIndex].FilterFn = filter
+// Field attribute setting functions
+// ====================================================
+
+func (i *InfoPanel) FieldDisplay(filter FieldFilterFn) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = filter
 	return i
 }
 
 func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Width = width
+	i.FieldList[i.curFieldListIndex].Width = width
 	return i
 }
 
 func (i *InfoPanel) FieldSortable(sort bool) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Sortable = sort
+	i.FieldList[i.curFieldListIndex].Sortable = sort
 	return i
 }
 
 func (i *InfoPanel) FieldFixed(fixed bool) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Fixed = fixed
+	i.FieldList[i.curFieldListIndex].Fixed = fixed
 	return i
 }
 
 func (i *InfoPanel) FieldFilterable(filter bool) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Filterable = filter
+	i.FieldList[i.curFieldListIndex].Filterable = filter
 	return i
 }
 
 func (i *InfoPanel) FieldHide(hide bool) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Hide = hide
+	i.FieldList[i.curFieldListIndex].Hide = hide
 	return i
 }
 
 func (i *InfoPanel) FieldJoin(join Join) *InfoPanel {
-	i.FieldList[i.curFieldIndex].Join = join
+	i.FieldList[i.curFieldListIndex].Join = join
 	return i
 }
+
+func (i *InfoPanel) FieldLimit(limit int) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddLimit(limit)
+	return i
+}
+
+func (i *InfoPanel) FieldTrimSpace() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddTrimSpace()
+	return i
+}
+
+func (i *InfoPanel) FieldSubstr(start int, end int) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddSubstr(start, end)
+	return i
+}
+
+func (i *InfoPanel) FieldToTitle() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToTitle()
+	return i
+}
+
+func (i *InfoPanel) FieldToUpper() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToUpper()
+	return i
+}
+
+func (i *InfoPanel) FieldToLower() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToLower()
+	return i
+}
+
+// InfoPanel attribute setting functions
+// ====================================================
 
 func (i *InfoPanel) SetTable(table string) *InfoPanel {
 	i.Table = table
@@ -236,13 +384,13 @@ func (i *InfoPanel) SetTitle(title string) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) SetGroup(group [][]string) *InfoPanel {
-	i.Group = group
+func (i *InfoPanel) SetTabGroups(groups TabGroups) *InfoPanel {
+	i.TabGroups = groups
 	return i
 }
 
-func (i *InfoPanel) SetGroupHeaders(headers ...string) *InfoPanel {
-	i.GroupHeaders = headers
+func (i *InfoPanel) SetTabHeaders(headers ...string) *InfoPanel {
+	i.TabHeaders = headers
 	return i
 }
 
@@ -278,60 +426,80 @@ const (
 	SortAsc
 )
 
-// Form is the form field with different options.
-type Form struct {
-	Field                  string
-	TypeName               db.DatabaseType
-	Head                   string
+// FormField is the form field with different options.
+type FormField struct {
+	Field    string
+	TypeName db.DatabaseType
+	Head     string
+	FormType form.Type
+
 	Default                string
-	Editable               bool
-	NotAllowAdd            bool
-	Must                   bool
-	FormType               form.Type
 	Value                  string
 	Options                []map[string]string
 	DefaultOptionDelimiter string
-	FilterFn               FieldFilterFn
-	PostFilterFn           PostFieldFilterFn
-	ProcessFn              ProcessFn
+
+	Editable    bool
+	NotAllowAdd bool
+	Must        bool
+
+	FieldDisplay
+	PostFilterFn PostFieldFilterFn
 }
 
 // FormPanel
 type FormPanel struct {
-	FormList      FormList
-	curFieldIndex int
-	Group         [][]string
-	GroupHeaders  []string
-	Table         string
-	Title         string
-	Description   string
-	PostValidator PostValidator
-	PostHook      PostHookFn
-	HeaderHtml    template.HTML
-	FooterHtml    template.HTML
+	FieldList         FormFields
+	curFieldListIndex int
+
+	// Warn: may be deprecated future.
+	TabGroups  TabGroups
+	TabHeaders TabHeaders
+
+	Table       string
+	Title       string
+	Description string
+
+	Validator FormValidator
+	PostHook  FormPostHookFn
+
+	HeaderHtml template.HTML
+	FooterHtml template.HTML
 }
 
 func NewFormPanel() *FormPanel {
-	return &FormPanel{curFieldIndex: -1}
+	return &FormPanel{curFieldListIndex: -1}
 }
 
 func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form.Type) *FormPanel {
-	f.FormList = append(f.FormList, Form{
+	f.FieldList = append(f.FieldList, FormField{
 		Head:     head,
 		Field:    field,
 		TypeName: filedType,
 		Editable: true,
 		FormType: formType,
-		FilterFn: func(model RowModel) interface{} {
-			return model.Value
+		FieldDisplay: FieldDisplay{
+			Display: func(value FieldModel, chains DisplayProcessFnChains) interface{} {
+				if chains.Valid() {
+					val := value.Value
+					for _, process := range chains {
+						val = process(value.Value)
+					}
+					return val
+				}
+				return value.Value
+			},
+			DisplayProcessChains: make(DisplayProcessFnChains, 0),
 		},
 	})
-	f.curFieldIndex++
+	f.curFieldListIndex++
 	return f
 }
 
-func (f *FormPanel) FieldFilterFn(filter FieldFilterFn) *FormPanel {
-	f.FormList[f.curFieldIndex].FilterFn = filter
+// Field attribute setting functions
+// ====================================================
+
+func (f *FormPanel) FieldDisplay(filter FieldFilterFn) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Display = filter
 	return f
 }
 
@@ -341,62 +509,90 @@ func (f *FormPanel) SetTable(table string) *FormPanel {
 }
 
 func (f *FormPanel) FieldMust(must bool) *FormPanel {
-	f.FormList[f.curFieldIndex].Must = must
+	f.FieldList[f.curFieldListIndex].Must = must
 	return f
 }
 
 func (f *FormPanel) FieldEditable(edit bool) *FormPanel {
-	f.FormList[f.curFieldIndex].Editable = edit
+	f.FieldList[f.curFieldListIndex].Editable = edit
 	return f
 }
 
 func (f *FormPanel) FieldNotAllowAdd(add bool) *FormPanel {
-	f.FormList[f.curFieldIndex].NotAllowAdd = add
+	f.FieldList[f.curFieldListIndex].NotAllowAdd = add
 	return f
 }
 
 func (f *FormPanel) FieldFormType(formType form.Type) *FormPanel {
-	f.FormList[f.curFieldIndex].FormType = formType
+	f.FieldList[f.curFieldListIndex].FormType = formType
 	return f
 }
 
 func (f *FormPanel) FieldValue(value string) *FormPanel {
-	f.FormList[f.curFieldIndex].Value = value
+	f.FieldList[f.curFieldListIndex].Value = value
 	return f
 }
 
 func (f *FormPanel) FieldOptions(options []map[string]string) *FormPanel {
-	f.FormList[f.curFieldIndex].Options = options
+	f.FieldList[f.curFieldListIndex].Options = options
 	return f
 }
 
 func (f *FormPanel) FieldDefaultOptionDelimiter(delimiter string) *FormPanel {
-	f.FormList[f.curFieldIndex].DefaultOptionDelimiter = delimiter
+	f.FieldList[f.curFieldListIndex].DefaultOptionDelimiter = delimiter
 	return f
 }
 
 func (f *FormPanel) FieldPostFilterFn(post PostFieldFilterFn) *FormPanel {
-	f.FormList[f.curFieldIndex].PostFilterFn = post
+	f.FieldList[f.curFieldListIndex].PostFilterFn = post
 	return f
 }
 
-func (f *FormPanel) FieldProcessFn(a ProcessFn) *FormPanel {
-	f.FormList[f.curFieldIndex].ProcessFn = a
+func (f *FormPanel) FieldLimit(limit int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddLimit(limit)
 	return f
 }
+
+func (f *FormPanel) FieldTrimSpace() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddTrimSpace()
+	return f
+}
+
+func (f *FormPanel) FieldSubstr(start int, end int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddSubstr(start, end)
+	return f
+}
+
+func (f *FormPanel) FieldToTitle() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToTitle()
+	return f
+}
+
+func (f *FormPanel) FieldToUpper() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToUpper()
+	return f
+}
+
+func (f *FormPanel) FieldToLower() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToLower()
+	return f
+}
+
+// FormPanel attribute setting functions
+// ====================================================
 
 func (f *FormPanel) SetTitle(title string) *FormPanel {
 	f.Title = title
 	return f
 }
 
-func (f *FormPanel) SetGroup(group [][]string) *FormPanel {
-	f.Group = group
+func (f *FormPanel) SetTabGroups(groups TabGroups) *FormPanel {
+	f.TabGroups = groups
 	return f
 }
 
-func (f *FormPanel) SetGroupHeaders(headers ...string) *FormPanel {
-	f.GroupHeaders = headers
+func (f *FormPanel) SetTabHeaders(headers ...string) *FormPanel {
+	f.TabHeaders = headers
 	return f
 }
 
@@ -415,24 +611,24 @@ func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) SetPostValidator(va PostValidator) *FormPanel {
-	f.PostValidator = va
+func (f *FormPanel) SetPostValidator(va FormValidator) *FormPanel {
+	f.Validator = va
 	return f
 }
 
-func (f *FormPanel) SetPostHook(po PostHookFn) *FormPanel {
+func (f *FormPanel) SetPostHook(po FormPostHookFn) *FormPanel {
 	f.PostHook = po
 	return f
 }
 
-type PostValidator func(values form2.Values) error
+type FormValidator func(values form2.Values) error
 
-type PostHookFn func(values form2.Values)
+type FormPostHookFn func(values form2.Values)
 
-type FormList []Form
+type FormFields []FormField
 
-func (f FormList) Copy() FormList {
-	formList := make(FormList, len(f))
+func (f FormFields) Copy() FormFields {
+	formList := make(FormFields, len(f))
 	copy(formList, f)
 	for i := 0; i < len(formList); i++ {
 		formList[i].Options = make([]map[string]string, len(f[i].Options))
@@ -443,11 +639,11 @@ func (f FormList) Copy() FormList {
 	return formList
 }
 
-func (f FormList) FindByField(field string) Form {
+func (f FormFields) FindByFieldName(field string) FormField {
 	for i := 0; i < len(f); i++ {
 		if f[i].Field == field {
 			return f[i]
 		}
 	}
-	return Form{}
+	return FormField{}
 }

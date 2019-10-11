@@ -1,5 +1,5 @@
-// Copyright 2019 cg33.  All rights reserved.
-// Use of this source code is governed by a MIT style
+// Copyright 2019 GoAdmin.  All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
 package config

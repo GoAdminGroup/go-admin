@@ -27,7 +27,7 @@ func GetUserTable() (userTable table.Table) {
 	info := userTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable(true)
 	info.AddField("Name", "name", db.Varchar)
-	info.AddField("Gender", "gender", db.Tinyint).FieldFilterFn(func(model types.RowModel) interface{} {
+	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel, chains types.DisplayProcessFnChains) interface{} {
 		if model.Value == "0" {
 			return "men"
 		}
@@ -64,17 +64,18 @@ func GetUserTable() (userTable table.Table) {
 	formList.AddField("Phone", "phone", db.Varchar, form.Text)
 	formList.AddField("City", "city", db.Varchar, form.Text)
 	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
-		FieldProcessFn(func(value types.PostRowModel) {
+		FieldPostFilterFn(func(value types.PostFieldModel) string {
 			fmt.Println("user custom field", value)
+			return ""
 		})
 
 	formList.AddField("updatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
 	formList.AddField("createdAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
 
-	userTable.GetForm().SetGroup([][]string{
-		{"id", "ip", "name", "gender", "city"},
-		{"phone", "role", "created_at", "updated_at"},
-	}).SetGroupHeaders("profile1", "profile2")
+	userTable.GetForm().SetTabGroups(types.
+		NewTabGroups("id", "ip", "name", "gender", "city").
+		AddGroup("phone", "role", "created_at", "updated_at")).
+		SetTabHeaders("profile1", "profile2")
 
 	formList.SetTable("users").SetTitle("Users").SetDescription("Users")
 

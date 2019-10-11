@@ -32,7 +32,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 		Content: alert + aForm().
 			SetContent(formData).
 			SetGroupContent(groupFormData).
-			SetGroupHeaders(groupHeaders).
+			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(url).

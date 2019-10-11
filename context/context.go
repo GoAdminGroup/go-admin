@@ -1,5 +1,5 @@
-// Copyright 2019 cg33.  All rights reserved.
-// Use of this source code is governed by a MIT style
+// Copyright 2019 GoAdmin.  All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
 package context
@@ -276,7 +276,7 @@ func (app *App) ANY(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
-// Group add middlewares and prefix for App.
+// TabGroups add middlewares and prefix for App.
 func (app *App) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         app,
@@ -352,7 +352,7 @@ func (g *RouterGroup) ANY(url string, handler ...Handler) {
 	g.AppendReqAndResp(url, "head", handler)
 }
 
-// Group add middlewares and prefix for App.
+// TabGroups add middlewares and prefix for App.
 func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         g.app,

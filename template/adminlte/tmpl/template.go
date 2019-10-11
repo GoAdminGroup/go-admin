@@ -544,7 +544,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
         {{$PrimaryKey := .PrimaryKey}}
         <form action='{{.Url}}' method="{{.Method}}" accept-charset="UTF-8" class="form-horizontal" pjax-container>
             <div class="box-body">
-                {{if eq (len .GroupHeaders) 0}}
+                {{if eq (len .TabHeaders) 0}}
                     <div class="fields-group">
                         {{ template "form_components" .Content }}
                     </div>
@@ -557,7 +557,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                 {{else}}
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs">
-                            {{range $key, $data := .GroupHeaders}}
+                            {{range $key, $data := .TabHeaders}}
                                 {{if eq $key 0}}
                                     <li class="active">
                                 {{else}}

@@ -1,5 +1,5 @@
-// Copyright 2019 cg33.  All rights reserved.
-// Use of this source code is governed by a MIT style
+// Copyright 2019 GoAdmin.  All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
 package types
@@ -11,9 +11,9 @@ import (
 
 type FormAttribute interface {
 	SetHeader(value template.HTML) FormAttribute
-	SetContent(value []Form) FormAttribute
-	SetGroupContent(value [][]Form) FormAttribute
-	SetGroupHeaders(value []string) FormAttribute
+	SetContent(value []FormField) FormAttribute
+	SetGroupContent(value [][]FormField) FormAttribute
+	SetTabHeaders(value []string) FormAttribute
 	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute

@@ -34,7 +34,7 @@ func (b Base) Col() types.ColAttribute {
 func (b Base) Form() types.FormAttribute {
 	return &FormAttribute{
 		Name:      "form",
-		Content:   []types.Form{},
+		Content:   []types.FormField{},
 		Url:       "/",
 		Method:    "post",
 		InfoUrl:   "",
