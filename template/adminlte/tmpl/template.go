@@ -571,7 +571,7 @@ var List = map[string]string{"admin_panel": `{{define "admin_panel"}}
                         </ul>
                         <div class="tab-content fields-group">
 
-                            {{range $key, $data := .GroupContent}}
+                            {{range $key, $data := .TabContents}}
 
                             {{if eq $key 0}}
                                 <div class="tab-pane active" id="tab-form-{{$key}}">

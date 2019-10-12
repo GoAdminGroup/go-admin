@@ -105,7 +105,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
-			SetGroupContent(groupFormData).
+			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).

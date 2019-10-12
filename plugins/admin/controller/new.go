@@ -35,7 +35,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 		Content: alert + aForm().
 			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
-			SetGroupContent(groupFormList).
+			SetTabContents(groupFormList).
 			SetTabHeaders(groupHeaders).
 			SetUrl(url).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).

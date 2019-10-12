@@ -6,19 +6,19 @@ import (
 )
 
 type FormAttribute struct {
-	Name         string
-	Header       template.HTML
-	Content      []types.FormField
-	GroupContent [][]types.FormField
-	TabHeaders   []string
-	Footer       template.HTML
-	Url          string
-	Method       string
-	PrimaryKey   string
-	InfoUrl      string
-	CSRFToken    string
-	Title        template.HTML
-	Prefix       string
+	Name        string
+	Header      template.HTML
+	Content     []types.FormField
+	TabContents [][]types.FormField
+	TabHeaders  []string
+	Footer      template.HTML
+	Url         string
+	Method      string
+	PrimaryKey  string
+	InfoUrl     string
+	CSRFToken   string
+	Title       template.HTML
+	Prefix      string
 	types.Attribute
 }
 
@@ -37,8 +37,8 @@ func (compo *FormAttribute) SetContent(value []types.FormField) types.FormAttrib
 	return compo
 }
 
-func (compo *FormAttribute) SetGroupContent(value [][]types.FormField) types.FormAttribute {
-	compo.GroupContent = value
+func (compo *FormAttribute) SetTabContents(value [][]types.FormField) types.FormAttribute {
+	compo.TabContents = value
 	return compo
 }
 

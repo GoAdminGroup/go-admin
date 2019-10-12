@@ -46,7 +46,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: aForm().
 			SetContent(formData).
-			SetGroupContent(groupFormData).
+			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
@@ -163,7 +163,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
 		SetContent(formList).
-		SetGroupContent(groupFormList).
+		SetTabContents(groupFormList).
 		SetTabHeaders(groupHeaders).
 		GetContent()
 

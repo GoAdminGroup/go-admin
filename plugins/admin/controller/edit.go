@@ -31,7 +31,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
 			SetContent(formData).
-			SetGroupContent(groupFormData).
+			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
