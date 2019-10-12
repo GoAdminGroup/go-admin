@@ -1,12 +1,12 @@
 package guard
 
 import (
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/form"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"html/template"
 	"mime/multipart"
 	"strings"

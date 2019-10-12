@@ -1,7 +1,7 @@
 package dialect
 
 import (
-	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"strings"
 )
 

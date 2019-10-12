@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 )
 
 func newManager(dataList form.Values) {

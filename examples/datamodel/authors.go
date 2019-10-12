@@ -1,9 +1,9 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
-	"github.com/chenhg5/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 func GetAuthorsTable() (authorsTable table.Table) {

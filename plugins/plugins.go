@@ -6,7 +6,7 @@ package plugins
 
 import (
 	"fmt"
-	"github.com/chenhg5/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/context"
 	"os"
 	"plugin"
 	"reflect"

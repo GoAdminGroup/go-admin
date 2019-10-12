@@ -1,14 +1,15 @@
 package beego
 
 import (
+	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/examples/datamodel"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	_ "github.com/chenhg5/go-admin/adapter/beego"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/examples/datamodel"
-	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/plugins/example"
-	"github.com/chenhg5/go-admin/template/types"
 	"net/http"
 	"os"
 )

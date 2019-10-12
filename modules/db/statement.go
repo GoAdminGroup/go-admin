@@ -6,8 +6,8 @@ package db
 
 import (
 	"errors"
-	"github.com/chenhg5/go-admin/modules/db/dialect"
-	"github.com/chenhg5/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"strconv"
 	"strings"
 	"sync"

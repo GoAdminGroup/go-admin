@@ -3,24 +3,22 @@ package gorilla
 import (
 	"bytes"
 	"errors"
-	"github.com/chenhg5/go-admin/modules/language"
-	"github.com/chenhg5/go-admin/modules/logger"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/gorilla/mux"
 	template2 "html/template"
 	"net/http"
 	"regexp"
 	"strings"
-
-	"github.com/gorilla/mux"
-
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/plugins"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
 )
 
 type Gorilla struct {

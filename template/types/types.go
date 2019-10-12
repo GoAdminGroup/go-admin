@@ -5,14 +5,14 @@
 package types
 
 import (
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/modules/system"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/plugins/admin/modules"
-	form2 "github.com/chenhg5/go-admin/plugins/admin/modules/form"
-	"github.com/chenhg5/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 	"strings"
 )

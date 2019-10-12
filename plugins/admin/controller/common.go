@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/context"
-	c "github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/constant"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/context"
+	c "github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 var config c.Config

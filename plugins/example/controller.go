@@ -1,11 +1,11 @@
 package example
 
 import (
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/page"
-	template2 "github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/page"
+	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
 

@@ -1,12 +1,12 @@
 package admin
 
 import (
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/plugins/admin/controller"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
-	"github.com/chenhg5/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/template"
 )
 
 func InitRouter(prefix string) *context.App {

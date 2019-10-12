@@ -2,9 +2,9 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 
-	"github.com/chenhg5/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 func RecordOperationLog(ctx *context.Context) {

@@ -3,7 +3,7 @@ package components
 import (
 	"bytes"
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"html/template"
 	"strings"
 )

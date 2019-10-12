@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/system"
 	"path"
 	"testing"
 )

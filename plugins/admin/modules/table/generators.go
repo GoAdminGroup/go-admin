@@ -1,12 +1,12 @@
 package table
 
 import (
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/language"
-	"github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
-	"github.com/chenhg5/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
 	"strconv"
 	"strings"
@@ -29,7 +29,7 @@ func GetManagerTable() (ManagerTable Table) {
 				All()
 
 			labels := template2.HTML("")
-			labelTpl := template.Get("adminlte").Label()
+			labelTpl := template.Get(config.Get().Theme).Label()
 
 			for key, label := range labelModels {
 				if key == len(labelModels)-1 {

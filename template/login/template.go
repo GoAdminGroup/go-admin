@@ -46,7 +46,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
 <body>
 
 <div class="container">
-    <div class="copyrights">Collect from <a href="https://github.com/chenhg5/go-admin" title="GoAdmin">Go Admin</a>
+    <div class="copyrights">Collect from <a href="https://github.com/GoAdminGroup/go-admin" title="GoAdmin">Go Admin</a>
     </div>
     <div class="row" style="margin-top: 80px;">
         <div class="col-md-4 col-md-offset-4">

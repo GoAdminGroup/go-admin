@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"regexp"
 	"strings"
 	"testing"

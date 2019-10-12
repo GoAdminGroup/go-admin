@@ -8,7 +8,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/chenhg5/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )

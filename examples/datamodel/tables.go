@@ -1,6 +1,6 @@
 package datamodel
 
-import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
+import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.

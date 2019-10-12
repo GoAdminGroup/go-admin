@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/core"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/system"
-	"github.com/chenhg5/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/go-bindata/go-bindata"
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"
@@ -504,9 +504,9 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 	content := `package ` + packageName + `
 
 import (
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
-	"github.com/chenhg5/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 func Get` + strings.Title(table) + `Table() table.Table {
@@ -565,7 +565,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 
 	content := `package ` + packageName + `
 
-import "github.com/chenhg5/go-admin/plugins/admin/modules/table"
+import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
@@ -590,7 +590,7 @@ func getType(typeName string) string {
 
 func getLatestVersion() string {
 	http.DefaultClient.Timeout = time.Duration(time.Second * 3)
-	res, err := http.Get("https://goproxy.cn/github.com/chenhg5/go-admin/@v/list")
+	res, err := http.Get("https://goproxy.cn/github.com/GoAdminGroup/go-admin/@v/list")
 
 	if err != nil || res.Body == nil {
 		return ""

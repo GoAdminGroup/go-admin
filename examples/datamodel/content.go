@@ -1,9 +1,9 @@
 package datamodel
 
 import (
-	"github.com/chenhg5/go-admin/modules/config"
-	template2 "github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
 

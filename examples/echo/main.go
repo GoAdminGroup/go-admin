@@ -1,14 +1,15 @@
 package main
 
 import (
-	_ "github.com/chenhg5/go-admin/adapter/echo"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/examples/datamodel"
-	"github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/language"
-	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/plugins/example"
-	"github.com/chenhg5/go-admin/template/types"
+	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/examples/datamodel"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 	"github.com/labstack/echo"
 )
 
@@ -54,7 +55,7 @@ func main() {
 	// examplePlugin := plugins.LoadFromPlugin("../datamodel/example.so")
 
 	// customize the login page
-	// example: https://github.com/chenhg5/go-admin/blob/master/demo/main.go#L30
+	// example: https://github.com/GoAdminGroup/go-admin/blob/master/demo/main.go#L30
 	//
 	// template.AddComp("login", datamodel.LoginPage)
 

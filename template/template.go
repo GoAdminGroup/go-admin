@@ -7,12 +7,11 @@ package template
 import (
 	"bytes"
 	"fmt"
-	c "github.com/chenhg5/go-admin/modules/config"
-	"github.com/chenhg5/go-admin/modules/menu"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
-	"github.com/chenhg5/go-admin/template/adminlte"
-	"github.com/chenhg5/go-admin/template/login"
-	"github.com/chenhg5/go-admin/template/types"
+	c "github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/template/login"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"sync"
 )
@@ -53,9 +52,7 @@ type Template interface {
 }
 
 // The templateMap contains templates registered.
-var templateMap = map[string]Template{
-	"adminlte": adminlte.Get(),
-}
+var templateMap = make(map[string]Template, 0)
 
 // Get the template interface by theme name. If the
 // name is not found, it panics.
@@ -97,8 +94,8 @@ type Component interface {
 	// {{.UrlPrefix}}/assets/login/css/bootstrap.min.css => login/css/bootstrap.min.css
 	//
 	// See:
-	// https://github.com/chenhg5/go-admin/blob/master/template/login/theme1.tmpl#L32
-	// https://github.com/chenhg5/go-admin/blob/master/template/login/list.go
+	// https://github.com/GoAdminGroup/go-admin/blob/master/template/login/theme1.tmpl#L32
+	// https://github.com/GoAdminGroup/go-admin/blob/master/template/login/list.go
 	GetAssetList() []string
 
 	// GetAsset return the asset content according to the corresponding url suffix.

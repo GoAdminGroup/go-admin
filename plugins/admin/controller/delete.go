@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/guard"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 )
 
 func Delete(ctx *context.Context) {

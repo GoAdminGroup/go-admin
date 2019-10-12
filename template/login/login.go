@@ -1,7 +1,7 @@
 package login
 
 import (
-	"github.com/chenhg5/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"html/template"
 )
 

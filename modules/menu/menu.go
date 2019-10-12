@@ -5,9 +5,9 @@
 package menu
 
 import (
-	"github.com/chenhg5/go-admin/modules/db"
-	"github.com/chenhg5/go-admin/modules/language"
-	"github.com/chenhg5/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"html/template"
 	"regexp"
 	"strconv"

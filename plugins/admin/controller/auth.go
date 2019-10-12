@@ -2,10 +2,10 @@ package controller
 
 import (
 	"bytes"
-	"github.com/chenhg5/go-admin/context"
-	"github.com/chenhg5/go-admin/modules/auth"
-	"github.com/chenhg5/go-admin/plugins/admin/modules/response"
-	"github.com/chenhg5/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
+	"github.com/GoAdminGroup/go-admin/template"
 	"net/http"
 )
 

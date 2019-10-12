@@ -5,7 +5,7 @@
 package types
 
 import (
-	"github.com/chenhg5/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"html/template"
 )
 

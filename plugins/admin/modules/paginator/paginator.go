@@ -1,10 +1,10 @@
 package paginator
 
 import (
-	"github.com/chenhg5/go-admin/plugins/admin/modules/parameter"
-	template2 "github.com/chenhg5/go-admin/template"
-	"github.com/chenhg5/go-admin/template/components"
-	"github.com/chenhg5/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
+	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/components"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"math"
 	"strconv"

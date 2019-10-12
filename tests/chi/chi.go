@@ -1,12 +1,13 @@
 package chi
 
 import (
-	ada "github.com/chenhg5/go-admin/adapter/chi"
-	"github.com/chenhg5/go-admin/engine"
-	"github.com/chenhg5/go-admin/examples/datamodel"
-	"github.com/chenhg5/go-admin/plugins/admin"
-	"github.com/chenhg5/go-admin/plugins/example"
-	"github.com/chenhg5/go-admin/template/types"
+	ada "github.com/GoAdminGroup/go-admin/adapter/chi"
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/examples/datamodel"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 	"github.com/go-chi/chi"
 	"net/http"
 	"os"
