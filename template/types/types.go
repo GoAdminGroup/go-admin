@@ -130,7 +130,7 @@ func (r FieldModelValue) First() string {
 }
 
 // FieldDisplay is filter function of data.
-type FieldFilterFn func(value FieldModel, chains DisplayProcessFnChains) interface{}
+type FieldFilterFn func(value FieldModel) interface{}
 
 // PostFieldFilterFn is filter function of data.
 type PostFieldFilterFn func(value PostFieldModel) string
@@ -153,7 +153,16 @@ type FieldDisplay struct {
 }
 
 func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
-	return f.Display(value, f.DisplayProcessChains)
+	val := f.Display(value)
+
+	if valStr, ok := val.(string); ok {
+		for _, process := range f.DisplayProcessChains {
+			valStr = process(valStr)
+		}
+		return valStr
+	}
+
+	return val
 }
 
 func (f FieldDisplay) AddLimit(limit int) DisplayProcessFnChains {
@@ -286,14 +295,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 		TypeName: typeName,
 		Sortable: false,
 		FieldDisplay: FieldDisplay{
-			Display: func(value FieldModel, chains DisplayProcessFnChains) interface{} {
-				if chains.Valid() {
-					val := value.Value
-					for _, process := range chains {
-						val = process(value.Value)
-					}
-					return val
-				}
+			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
 			DisplayProcessChains: make(DisplayProcessFnChains, 0),
@@ -478,14 +480,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 		Editable: true,
 		FormType: formType,
 		FieldDisplay: FieldDisplay{
-			Display: func(value FieldModel, chains DisplayProcessFnChains) interface{} {
-				if chains.Valid() {
-					val := value.Value
-					for _, process := range chains {
-						val = process(value.Value)
-					}
-					return val
-				}
+			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
 			DisplayProcessChains: make(DisplayProcessFnChains, 0),
