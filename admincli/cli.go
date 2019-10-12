@@ -590,7 +590,7 @@ func getType(typeName string) string {
 
 func getLatestVersion() string {
 	http.DefaultClient.Timeout = time.Duration(time.Second * 3)
-	res, err := http.Get("https://goproxy.cn/github.com/GoAdminGroup/go-admin/@v/list")
+	res, err := http.Get("https://goproxy.cn/github.com/!go!admin!group/go-admin/@v/list")
 
 	if err != nil || res.Body == nil {
 		return ""
