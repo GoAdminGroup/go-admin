@@ -55,7 +55,7 @@ type Page struct {
 	// IndexUrl is the home page url of the site.
 	IndexUrl string
 
-	// CdnUrl is the cdn link of assets
+	// AssetUrl is the cdn link of assets
 	CdnUrl string
 
 	// Custom html in the tag head.
@@ -79,7 +79,7 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		MiniLogo:       cfg.MiniLogo,
 		ColorScheme:    cfg.ColorScheme,
 		IndexUrl:       cfg.GetIndexUrl(),
-		CdnUrl:         cfg.CdnUrl,
+		CdnUrl:         cfg.AssetUrl,
 		CustomHeadHtml: cfg.CustomHeadHtml,
 		CustomFootHtml: cfg.CustomFootHtml,
 	}

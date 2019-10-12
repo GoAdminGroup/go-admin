@@ -114,7 +114,7 @@ type Config struct {
 	Debug bool `json:"debug"`
 
 	// Env is the environment, which maybe local, test, prod.
-	Env string
+	Env string `json:"env"`
 
 	// Info log path.
 	InfoLogPath string `json:"info_log"`
@@ -140,8 +140,8 @@ type Config struct {
 	// Session valid time duration, units are seconds.
 	SessionLifeTime int `json:"session_life_time"`
 
-	// Cdn link of assets
-	CdnUrl string `json:"cdn_url"`
+	// Assets visit link.
+	AssetUrl string `json:"asset_url"`
 
 	// File upload engine, default "local"
 	FileUploadEngine FileUploadEngine `json:"file_upload_engine"`
@@ -254,7 +254,6 @@ func Set(cfg Config) {
 	globalCfg.MiniLogo = template.HTML(setDefault(string(globalCfg.MiniLogo), "", "<b>G</b>A"))
 	globalCfg.Theme = setDefault(globalCfg.Theme, "", "adminlte")
 	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "", "/info/manager")
-	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "/", "")
 	globalCfg.ColorScheme = setDefault(globalCfg.ColorScheme, "", "skin-black")
 	globalCfg.FileUploadEngine.Name = setDefault(globalCfg.FileUploadEngine.Name, "", "local")
 	globalCfg.Env = setDefault(globalCfg.Env, "", EnvProd)
