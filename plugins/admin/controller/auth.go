@@ -4,8 +4,12 @@ import (
 	"bytes"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	template2 "html/template"
 	"net/http"
 )
 
@@ -43,9 +47,22 @@ func ShowLogin(ctx *context.Context) {
 	buf := new(bytes.Buffer)
 	if err := tmpl.ExecuteTemplate(buf, name, struct {
 		UrlPrefix string
-	}{config.Prefix()}); err == nil {
+		Title     string
+		Logo      template2.HTML
+		CdnUrl    string
+		System    types.SystemInfo
+	}{
+		UrlPrefix: config.Prefix(),
+		Title:     config.LoginTitle,
+		Logo:      config.LoginLogo,
+		System: types.SystemInfo{
+			Version: system.Version,
+		},
+		CdnUrl: config.AssetUrl,
+	}); err == nil {
 		ctx.Html(http.StatusOK, buf.String())
 	} else {
-		ctx.Html(http.StatusOK, "resolve template error (；′⌒`)")
+		logger.Error(err)
+		ctx.Html(http.StatusOK, "parse template error (；′⌒`)")
 	}
 }

@@ -151,6 +151,12 @@ type Config struct {
 
 	// Custom html after body.
 	CustomFootHtml template.HTML `json:"custom_foot_html"`
+
+	// Login page title
+	LoginTitle string
+
+	// Login page logo
+	LoginLogo template.HTML
 }
 
 type FileUploadEngine struct {
@@ -250,6 +256,7 @@ func Set(cfg Config) {
 	globalCfg = cfg
 
 	globalCfg.Title = setDefault(globalCfg.Title, "", constant.Title)
+	globalCfg.LoginTitle = setDefault(globalCfg.LoginTitle, "", constant.Title)
 	globalCfg.Logo = template.HTML(setDefault(string(globalCfg.Logo), "", "<b>Go</b>Admin"))
 	globalCfg.MiniLogo = template.HTML(setDefault(string(globalCfg.MiniLogo), "", "<b>G</b>A"))
 	globalCfg.Theme = setDefault(globalCfg.Theme, "", "adminlte")
