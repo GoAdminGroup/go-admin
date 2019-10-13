@@ -46,7 +46,7 @@ func main() {
 		}
 	}()
 
-	app := cli.App("go-admin cli tool", "cli tool for developing and generating")
+	app := cli.App("admincli", "GoAdmin cli tool for developing and generating")
 
 	app.Spec = "[-v]"
 
@@ -61,8 +61,8 @@ func main() {
 	app.Command("combine", "combine assets", func(cmd *cli.Cmd) {
 		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/css/combine/", "css src path")
-				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets/dist/css/all.min.css", "css output path")
+				rootPath   = cmd.StringOpt("path", "./resource/assets/src/css/combine/", "css src path")
+				outputPath = cmd.StringOpt("out", "./resource/assets/dist/css/all.min.css", "css output path")
 			)
 
 			cmd.Action = func() {
@@ -72,8 +72,8 @@ func main() {
 
 		cmd.Command("js", "combine js assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/assets/src/js/combine/", "js src path")
-				outputPath = cmd.StringOpt("out", "./template/adminlte/resource/assets/dist/js/all.min.js", "js output path")
+				rootPath   = cmd.StringOpt("path", "./resource/assets/src/js/combine/", "js src path")
+				outputPath = cmd.StringOpt("out", "./resource/assets/dist/js/all.min.js", "js output path")
 			)
 
 			cmd.Action = func() {
@@ -85,8 +85,8 @@ func main() {
 	app.Command("compile", "compile template file for template or component", func(cmd *cli.Cmd) {
 		cmd.Command("tpl", "compile template file for template or component", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("path", "./template/adminlte/resource/pages/", "compile root path")
-				outputPath = cmd.StringOpt("out", "./template/adminlte/tmpl/template.go", "compile output path")
+				rootPath   = cmd.StringOpt("path", "./resource/pages/", "compile root path")
+				outputPath = cmd.StringOpt("out", "./tmpl/template.go", "compile output path")
 			)
 
 			cmd.Action = func() {
@@ -96,8 +96,8 @@ func main() {
 
 		cmd.Command("asset", "compile asset file for template or component", func(cmd *cli.Cmd) {
 			var (
-				rootPath    = cmd.StringOpt("path", "./template/adminlte/resource/assets/dist/", "compile root path")
-				outputPath  = cmd.StringOpt("out", "./template/adminlte/resource/", "compile output path")
+				rootPath    = cmd.StringOpt("path", "./resource/assets/dist/", "compile root path")
+				outputPath  = cmd.StringOpt("out", "./resource/", "compile output path")
 				packageName = cmd.StringOpt("pa", "resource", "output file package name")
 			)
 
@@ -599,6 +599,10 @@ func getLatestVersion() string {
 	defer func() {
 		_ = res.Body.Close()
 	}()
+
+	if res.StatusCode != http.StatusOK {
+		return ""
+	}
 
 	body, err := ioutil.ReadAll(res.Body)
 

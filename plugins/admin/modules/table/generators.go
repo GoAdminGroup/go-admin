@@ -176,7 +176,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	info.AddField("ID", "id", db.Int).FieldSortable(true)
 	info.AddField(lg("role"), "name", db.Varchar)
-	info.AddField(lg("slug"), "name", db.Varchar)
+	info.AddField(lg("slug"), "slug", db.Varchar)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 

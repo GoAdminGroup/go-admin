@@ -72,6 +72,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 )
@@ -108,6 +109,7 @@ func main() {
 		InfoLogPath: "/var/logs/info.log",
 		AccessLogPath: "/var/logs/access.log",
 		ErrorLogPath: "/var/logs/error.log",
+		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
     	// Generators: see https://github.com/GoAdminGroup/go-admin/blob/master/examples/datamodel/tables.go 

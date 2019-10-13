@@ -62,6 +62,7 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -99,6 +100,7 @@ func main() {
                 InfoLogPath: "/var/logs/info.log",
                 AccessLogPath: "/var/logs/access.log",
                 ErrorLogPath: "/var/logs/error.log",
+                ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
     	// Generators： 详见 https://github.com/GoAdminGroup/go-admin/blob/master/examples/datamodel/tables.go
