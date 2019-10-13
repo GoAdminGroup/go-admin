@@ -53,7 +53,7 @@ type Template interface {
 }
 
 // The templateMap contains templates registered.
-var templateMap = make(map[string]Template, 0)
+var templateMap = make(map[string]Template)
 
 // Get the template interface by theme name. If the
 // name is not found, it panics.
