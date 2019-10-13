@@ -64,6 +64,9 @@ var cn = map[string]string{
 	"icon":       "图标",
 	"uri":        "路径",
 
+	"login":      "登录",
+	"login fail": "登录失败",
+
 	"admin":     "管理",
 	"users":     "用户",
 	"roles":     "角色",

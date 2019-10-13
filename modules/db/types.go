@@ -134,7 +134,6 @@ var (
 		Int,
 		Tinyint,
 		Mediumint,
-		Decimal,
 		Smallint,
 		Numeric, Smallserial, Serial, Bigserial, Money,
 		Integer,

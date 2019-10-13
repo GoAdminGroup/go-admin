@@ -585,7 +585,8 @@ var Generators = map[string]table.Generator{` + tableStr + `
 func getType(typeName string) string {
 	r, _ := regexp.Compile(`\(.*?\)`)
 	typeName = r.ReplaceAllString(typeName, "")
-	return strings.Title(strings.Replace(typeName, " unsigned", "", -1))
+	r2, _ := regexp.Compile(`unsigned(.*)`)
+	return strings.TrimSpace(strings.Title(r2.ReplaceAllString(typeName, "")))
 }
 
 func getLatestVersion() string {
