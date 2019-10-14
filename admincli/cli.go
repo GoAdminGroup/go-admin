@@ -219,7 +219,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 
 	chooseTables := selects(tables)
 	if len(chooseTables) == 0 {
-		exitWithError("no choosing tables")
+		exitWithError("no table is selected")
 	}
 
 	packageName := promptWithDefault("set package name", "main")
