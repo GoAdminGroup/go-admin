@@ -128,14 +128,12 @@ type Config struct {
 	// Sql operator record log switch.
 	SqlLog bool `json:"sql_log"`
 
-	AccessLogOff bool
-	InfoLogOff   bool
-	ErrorLogOff  bool
+	AccessLogOff bool `json:"access_log_off"`
+	InfoLogOff   bool `json:"info_log_off"`
+	ErrorLogOff  bool `json:"error_log_off"`
 
 	// Color scheme.
 	ColorScheme string `json:"color_scheme"`
-
-	prefix string
 
 	// Session valid time duration, units are seconds.
 	SessionLifeTime int `json:"session_life_time"`
@@ -157,6 +155,8 @@ type Config struct {
 
 	// Login page logo
 	LoginLogo template.HTML `json:"login_logo"`
+
+	prefix string
 }
 
 type FileUploadEngine struct {
