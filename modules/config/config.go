@@ -153,10 +153,10 @@ type Config struct {
 	CustomFootHtml template.HTML `json:"custom_foot_html"`
 
 	// Login page title
-	LoginTitle string
+	LoginTitle string `json:"login_title"`
 
 	// Login page logo
-	LoginLogo template.HTML
+	LoginLogo template.HTML `json:"login_logo"`
 }
 
 type FileUploadEngine struct {
