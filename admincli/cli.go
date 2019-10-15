@@ -45,7 +45,7 @@ func main() {
 	app.Command("combine", "combine assets", func(cmd *cli.Cmd) {
 		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("p path", "./resource/assets/src/css/combine/", "css src path")
+				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/css/combine/", "css src path")
 				outputPath = cmd.StringOpt("o out", "./resource/assets/dist/css/all.min.css", "css output path")
 			)
 
@@ -56,7 +56,7 @@ func main() {
 
 		cmd.Command("js", "combine js assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("p path", "./resource/assets/src/js/combine/", "js src path")
+				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/js/combine/", "js src path")
 				outputPath = cmd.StringOpt("o out", "./resource/assets/dist/js/all.min.js", "js output path")
 			)
 
@@ -69,7 +69,7 @@ func main() {
 	app.Command("compile", "compile template files or assets to one go file", func(cmd *cli.Cmd) {
 		cmd.Command("tpl", "compile template files", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("p path", "./resource/pages/", "template files src path")
+				rootPath   = cmd.StringOpt("s src", "./resource/pages/", "template files src path")
 				outputPath = cmd.StringOpt("o out", "./tmpl/template.go", "compile file output path")
 			)
 
@@ -80,7 +80,7 @@ func main() {
 
 		cmd.Command("asset", "compile assets", func(cmd *cli.Cmd) {
 			var (
-				rootPath    = cmd.StringOpt("p path", "./resource/assets/dist/", "assets root path")
+				rootPath    = cmd.StringOpt("s src", "./resource/assets/dist/", "assets root path")
 				outputPath  = cmd.StringOpt("o out", "./resource/", "compile file output path")
 				packageName = cmd.StringOpt("pa package", "resource", "package name of the output golang file")
 			)
