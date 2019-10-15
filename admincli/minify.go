@@ -75,7 +75,6 @@ func JS(inputDir, outputFile string) {
 		fmt.Println("filepath", filepath)
 
 		m := minify.New()
-		m.AddFunc("text/css", css.Minify)
 		m.AddFunc("text/javascript", js.Minify)
 
 		minifiedString, err := m.Bytes("text/javascript", fileTxt)
@@ -91,7 +90,7 @@ func JS(inputDir, outputFile string) {
 
 	err = writeOutputFile(b.String(), outputFile)
 	if err != nil {
-		log.Panicln("writeOutputFileError", err)
+		checkError(err)
 		return
 	}
 }
