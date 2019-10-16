@@ -42,8 +42,8 @@ demo source code: https://github.com/GoAdminGroup/demo
 ## Features
 
 - 🚀 **Fast**: build a production admin panel app in **ten** minutes.
-- 🎨 **Theming**: beautiful ui themes supported(default adminlte, more themes is coming.)
-- 🔢 **Plugins**: many plugins to use(more useful and powerful plugins is coming.)
+- 🎨 **Theming**: beautiful ui themes supported(default adminlte, more themes are coming.)
+- 🔢 **Plugins**: many plugins to use(more useful and powerful plugins are coming.)
 - ✅ **Rbac**: out of box rbac auth system.
 - ⚙️ **Frameworks**: support most of the go web frameworks.
 
