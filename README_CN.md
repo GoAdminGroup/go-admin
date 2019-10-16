@@ -21,9 +21,7 @@
 
 ## 前言
 
-goAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
-
-跟其他的项目为了star不一样，GoAdmin是真的为了你的生产效率。10分钟解决问题，部署你的二进制可执行文件到生产环境实现别的框架两周至三周的工作量。谁用谁知道。
+GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
 
 demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 账号：admin  密码：admin
