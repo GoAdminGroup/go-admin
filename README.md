@@ -49,9 +49,7 @@ demo source code: https://github.com/GoAdminGroup/demo
 
 ## How to
 
-see the [docs](http://www.go-admin.cn/en) for detail
-
-[a super simple example here](https://github.com/GoAdminGroup/example)
+Following three steps to run it.
 
 ### Step 1: import sql
 
@@ -132,7 +130,6 @@ func main() {
 </p>
 </details>
 
-
 More Examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
 
 ### Step 3: run
@@ -140,6 +137,12 @@ More Examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](h
 ```shell
 GO111MODULE=on go run main.go
 ```
+
+visit: [http://localhost:9033/admin](http://localhost:9033/admin)
+
+[A super simple example here](https://github.com/GoAdminGroup/example)
+
+See the [docs](http://go-admin.cn/en/docs/#/README) for more details.
 
 ## Backers
 

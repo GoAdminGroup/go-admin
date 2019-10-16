@@ -42,9 +42,7 @@ demo代码： https://github.com/GoAdminGroup/demo
 
 ## 使用
 
-详见 [文档说明](http://www.go-admin.cn)
-
-[一个超级简单的例子](https://github.com/GoAdminGroup/example)
+通过以下三步运行：
 
 ### 第一步：导入 sql
 
@@ -125,13 +123,19 @@ func main() {
 </p>
 </details>
 
-其他例子: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
+其他框架的例子: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
 
 ### 第三步：运行
 
 ```shell
 GO111MODULE=on go run main.go
 ```
+
+访问：[http://localhost:9033/admin](http://localhost:9033/admin)
+
+更多细节详见 [文档说明](http://www.go-admin.cn/docs/#/README)
+
+[这里一个超级简单上手的例子](https://github.com/GoAdminGroup/example)
 
 ## 贡献
 
