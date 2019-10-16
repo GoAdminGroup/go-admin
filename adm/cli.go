@@ -36,7 +36,7 @@ func main() {
 		}
 	}()
 
-	app := cli.App("admincli", "GoAdmin cli tool for developing and generating")
+	app := cli.App("adm", "GoAdmin cli tool for developing and generating")
 
 	app.Spec = "[-v]"
 

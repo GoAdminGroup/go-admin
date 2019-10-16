@@ -14,5 +14,5 @@ vendor/**
 logs
 go.sum
 modules/db/go.sum
-admincli/build
+adm/build
 template/login/assets/login
