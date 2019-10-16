@@ -30,10 +30,14 @@ func ShowInfo(ctx *context.Context) {
 
 	params := parameter.GetParam(ctx.Request.URL.Query())
 
-	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
-	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
-	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
-	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+	editUrl := modules.AorB(panel.GetEditable() && !panel.GetInfo().IsHideEditButton,
+		config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
+	deleteUrl := modules.AorB(panel.GetDeletable() && !panel.GetInfo().IsHideDeleteButton,
+		config.Url("/delete/"+prefix), "")
+	exportUrl := modules.AorB(panel.GetExportable() && !panel.GetInfo().IsHideExportButton,
+		config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
+	newUrl := modules.AorB(panel.GetCanAdd() && !panel.GetInfo().IsHideNewButton,
+		config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
 	infoUrl := config.Url("/info/" + prefix)
 
 	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl)

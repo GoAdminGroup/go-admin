@@ -144,7 +144,7 @@ GO111MODULE=on go run main.go
 
 ## 贡献
 
-[这里有一份贡献指南](CONTRIBUTING.md)
+[这里有一份贡献指南](CONTRIBUTING_CN.md)
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 

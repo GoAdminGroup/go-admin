@@ -279,6 +279,14 @@ type InfoPanel struct {
 
 	Sort Sort
 
+	IsHideNewButton    bool
+	IsHideExportButton bool
+	IsHideEditButton   bool
+	IsHideDeleteButton bool
+	IsHideFilterButton bool
+	IsHideRowSelector  bool
+	IsHidePagination   bool
+
 	Action     template.HTML
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
@@ -418,6 +426,41 @@ func (i *InfoPanel) SetHeaderHtml(header template.HTML) *InfoPanel {
 
 func (i *InfoPanel) SetFooterHtml(footer template.HTML) *InfoPanel {
 	i.FooterHtml = footer
+	return i
+}
+
+func (i *InfoPanel) HideNewButton() *InfoPanel {
+	i.IsHideNewButton = true
+	return i
+}
+
+func (i *InfoPanel) HideExportButton() *InfoPanel {
+	i.IsHideExportButton = true
+	return i
+}
+
+func (i *InfoPanel) HideFilterButton() *InfoPanel {
+	i.IsHideFilterButton = true
+	return i
+}
+
+func (i *InfoPanel) HideRowSelector() *InfoPanel {
+	i.IsHideRowSelector = true
+	return i
+}
+
+func (i *InfoPanel) HidePagination() *InfoPanel {
+	i.IsHidePagination = true
+	return i
+}
+
+func (i *InfoPanel) HideEditButton() *InfoPanel {
+	i.IsHideEditButton = true
+	return i
+}
+
+func (i *InfoPanel) HideDeleteButton() *InfoPanel {
+	i.IsHideDeleteButton = true
 	return i
 }
 
