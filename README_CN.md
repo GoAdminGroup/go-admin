@@ -28,7 +28,7 @@ demo: [http://demo.go-admin.cn/admin](http://demo.go-admin.cn/admin)
 
 demo代码： https://github.com/GoAdminGroup/demo
 
-![](http://file.go-admin.cn/introduction/interface.png)
+![](http://file.go-admin.cn/introduction/interface_2.png)
 
 ## 特征
 
@@ -130,11 +130,9 @@ func main() {
 GO111MODULE=on go run main.go
 ```
 
-## 技术支持
-
-- [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
-
 ## 贡献
+
+[这里有一份贡献指南](CONTRIBUTING.md)
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 

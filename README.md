@@ -37,7 +37,7 @@ account: admin  password: admin
 
 demo source code: https://github.com/GoAdminGroup/demo
 
-![](http://file.go-admin.cn/introduction/interface_en.png)
+![interface](http://file.go-admin.cn/introduction/interface_en_2.png)
 
 ## Feature
 
@@ -140,18 +140,14 @@ More Examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](h
 GO111MODULE=on go run main.go
 ```
 
-## Powered by
-
-- [adminlte](https://adminlte.io/themes/AdminLTE/index2.html)
-
 ## Backers
 
  Your support will help me do better! [[Become a backer](https://opencollective.com/go-admin#backer)]
  <a href="https://opencollective.com/go-admin#backers" target="_blank"><img src="https://opencollective.com/go-admin/backers.svg?width=890"></a>
 
-## Code Contribution
+## Contribution
 
-very welcome to pr.
+[here for contribution guide](CONTRIBUTING.md)
 
 <strong>here to join into the develop team</strong>
 
