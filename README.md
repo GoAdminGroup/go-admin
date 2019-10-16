@@ -30,7 +30,7 @@
 
 ## Preface
 
-GoAdmin is a toolkit help you to build a data visualization admin panel for your golang app.
+GoAdmin is a toolkit help you to build a data visualization admin panel for your golang app. Not for stars like some other projects, but for your production efficiency really. Build a production app in ten minutes.
 
 demo: [http://demo.en.go-admin.cn/admin](http://demo.en.go-admin.cn/admin)
 account: admin  password: admin
@@ -39,12 +39,13 @@ demo source code: https://github.com/GoAdminGroup/demo
 
 ![interface](http://file.go-admin.cn/introduction/interface_en_2.png)
 
-## Feature
+## Features
 
-- beautiful admin interface builder powerd by adminlte
-- many plugins to use(working on it)
-- powerful auth manage system
-- support most of the go web framework
+- 🚀 **Fast**: build a production admin panel app in **ten** minutes.
+- 🎨 **Theming**: beautiful ui themes supported(default adminlte, more themes is coming.)
+- 🔢 **Plugins**: many plugins to use(more useful and powerful plugins is coming.)
+- ✅ **Rbac**: out of box rbac auth system.
+- ⚙️ **Frameworks**: support most of the go web frameworks.
 
 ## How to
 
