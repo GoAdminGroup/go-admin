@@ -41,6 +41,13 @@ func main() {
 	app.Spec = "[-v]"
 
 	verbose = app.BoolOpt("v verbose", false, "debug info output")
+	// quiet
+
+	app.Command("-V version", "display this application version", func(cmd *cli.Cmd) {
+		cmd.Action = func() {
+			cliInfo()
+		}
+	})
 
 	app.Command("combine", "combine assets", func(cmd *cli.Cmd) {
 		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {

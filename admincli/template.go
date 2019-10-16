@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -40,52 +39,74 @@ func getThemeTemplate(moduleName, themeName string) {
 
 	checkError(err)
 
-	unzipDir("tmp.zip", ".")
+	checkError(unzipDir("tmp.zip", "."))
 
-	checkError(os.Rename("./template", "./"+themeName))
+	checkError(os.Rename("./QiAtztVk83CwCh", "./"+themeName))
 
 	replaceContents("./"+themeName, moduleName, themeName)
 
-	if runtime.GOOS == "darwin" {
-		checkError(os.Remove("__MACOSX"))
-	}
-
 	fmt.Println()
-	fmt.Println()
-	fmt.Println("generate Template Theme success!")
+	fmt.Println("generate theme template success!!🍺🍺")
 	fmt.Println()
 }
 
-func unzipDir(zipFile, dir string) {
-
-	r, err := zip.OpenReader(zipFile)
+func unzipDir(src, dest string) error {
+	r, err := zip.OpenReader(src)
 	if err != nil {
-		checkError(err)
+		return err
 	}
 	defer func() {
-		_ = r.Close()
+		if err := r.Close(); err != nil {
+			panic(err)
+		}
 	}()
 
-	for _, f := range r.File {
-		func() {
-			path := dir + string(filepath.Separator) + f.Name
-			checkError(os.MkdirAll(filepath.Dir(path), 0755))
-			fDest, err := os.Create(path)
-			checkError(err)
-			defer func() {
-				_ = fDest.Close()
-			}()
+	checkError(os.MkdirAll(dest, 0755))
 
-			fSrc, err := f.Open()
-			checkError(err)
-			defer func() {
-				_ = fSrc.Close()
-			}()
-
-			_, err = io.Copy(fDest, fSrc)
-			checkError(err)
+	// Closure to address file descriptors issue with all the deferred .Close() methods
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := rc.Close(); err != nil {
+				panic(err)
+			}
 		}()
+
+		path := filepath.Join(dest, f.Name)
+
+		if f.FileInfo().IsDir() {
+			checkError(os.MkdirAll(path, f.Mode()))
+		} else {
+			checkError(os.MkdirAll(filepath.Dir(path), f.Mode()))
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return err
+			}
+			defer func() {
+				if err := f.Close(); err != nil {
+					panic(err)
+				}
+			}()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func replaceContents(fileDir, moduleName, themeName string) {
@@ -93,14 +114,16 @@ func replaceContents(fileDir, moduleName, themeName string) {
 	checkError(err)
 	for _, file := range files {
 		path := fileDir + "/" + file.Name()
-		buf, err := ioutil.ReadFile(path)
-		checkError(err)
-		content := string(buf)
+		if !file.IsDir() {
+			buf, err := ioutil.ReadFile(path)
+			checkError(err)
+			content := string(buf)
 
-		newContent := strings.Replace(content, "github.com/GoAdminGroup/themes/adminlte", moduleName, -1)
-		newContent = strings.Replace(newContent, "adminlte", themeName, -1)
-		newContent = strings.Replace(newContent, "Adminlte", strings.Title(themeName), -1)
+			newContent := strings.Replace(content, "github.com/GoAdminGroup/themes/adminlte", moduleName, -1)
+			newContent = strings.Replace(newContent, "adminlte", themeName, -1)
+			newContent = strings.Replace(newContent, "Adminlte", strings.Title(themeName), -1)
 
-		checkError(ioutil.WriteFile(path, []byte(newContent), 0))
+			checkError(ioutil.WriteFile(path, []byte(newContent), 0))
+		}
 	}
 }

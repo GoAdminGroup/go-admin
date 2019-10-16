@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -16,7 +15,6 @@ import (
 )
 
 func cliInfo() {
-	clear(runtime.GOOS)
 	fmt.Println("GoAdmin CLI " + system.Version + compareVersion(system.Version))
 	fmt.Println()
 }
