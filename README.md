@@ -47,6 +47,9 @@ demo source code: https://github.com/GoAdminGroup/demo
 - ✅ **Rbac**: out of box rbac auth system.
 - ⚙️ **Frameworks**: support most of the go web frameworks.
 
+## Translation
+We need your help: [https://github.com/GoAdminGroup/docs/issues/1](https://github.com/GoAdminGroup/docs/issues/1)
+
 ## How to
 
 Following three steps to run it.
