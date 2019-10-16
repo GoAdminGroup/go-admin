@@ -43,6 +43,10 @@ demo代码： https://github.com/GoAdminGroup/demo
 ## 翻译
 我们需要您的帮忙： [https://github.com/GoAdminGroup/docs/issues/1](https://github.com/GoAdminGroup/docs/issues/1)
 
+## 谁在使用GoAdmin
+
+[评论这个issue告诉我们](https://github.com/GoAdminGroup/go-admin/issues/71).
+
 ## 使用
 
 通过以下三步运行：

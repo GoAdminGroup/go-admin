@@ -50,6 +50,10 @@ demo source code: https://github.com/GoAdminGroup/demo
 ## Translation
 We need your help: [https://github.com/GoAdminGroup/docs/issues/1](https://github.com/GoAdminGroup/docs/issues/1)
 
+## Who is using
+
+[Comment the issue to tell us](https://github.com/GoAdminGroup/go-admin/issues/71).
+
 ## How to
 
 Following three steps to run it.
