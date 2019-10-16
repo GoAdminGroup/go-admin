@@ -508,6 +508,11 @@ func (f *FormPanel) FieldMust(must bool) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldDefault(def string) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Default = def
+	return f
+}
+
 func (f *FormPanel) FieldEditable(edit bool) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = edit
 	return f
