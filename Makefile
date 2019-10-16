@@ -1,8 +1,8 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 BINARY_NAME=admincli
-LASTVERSION=v1.0.0-rc
-VERSION=v1.0.0
+LASTVERSION=v1.0.0
+VERSION=v1.0.1
 CLI=admincli
 
 TEST_CONFIG_PATH=./../common/config.json
