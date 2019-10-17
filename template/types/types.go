@@ -326,23 +326,23 @@ func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldSortable(sort bool) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Sortable = sort
+func (i *InfoPanel) FieldSortable() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Sortable = true
 	return i
 }
 
-func (i *InfoPanel) FieldFixed(fixed bool) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Fixed = fixed
+func (i *InfoPanel) FieldFixed() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Fixed = true
 	return i
 }
 
-func (i *InfoPanel) FieldFilterable(filter bool) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Filterable = filter
+func (i *InfoPanel) FieldFilterable() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Filterable = true
 	return i
 }
 
-func (i *InfoPanel) FieldHide(hide bool) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Hide = hide
+func (i *InfoPanel) FieldHide() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Hide = true
 	return i
 }
 
@@ -546,8 +546,8 @@ func (f *FormPanel) SetTable(table string) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldMust(must bool) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Must = must
+func (f *FormPanel) FieldMust() *FormPanel {
+	f.FieldList[f.curFieldListIndex].Must = true
 	return f
 }
 
@@ -556,13 +556,13 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldEditable(edit bool) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Editable = edit
+func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
+	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
 
-func (f *FormPanel) FieldNotAllowAdd(add bool) *FormPanel {
-	f.FieldList[f.curFieldListIndex].NotAllowAdd = add
+func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
+	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f
 }
 

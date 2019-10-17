@@ -14,7 +14,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 	// authorsTable = table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("mysql", "admin"))
 
 	info := authorsTable.GetInfo()
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("First Name", "first_name", db.Varchar)
 	info.AddField("Last Name", "last_name", db.Varchar)
 	info.AddField("Email", "email", db.Varchar)
@@ -24,7 +24,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 	info.SetTable("authors").SetTitle("Authors").SetDescription("Authors")
 
 	formList := authorsTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField("First Name", "first_name", db.Varchar, form.Text)
 	formList.AddField("Last Name", "last_name", db.Varchar, form.Text)
 	formList.AddField("Email", "email", db.Varchar, form.Text)

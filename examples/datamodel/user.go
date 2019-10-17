@@ -25,7 +25,7 @@ func GetUserTable() (userTable table.Table) {
 	})
 
 	info := userTable.GetInfo()
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Name", "name", db.Varchar)
 	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel) interface{} {
 		if model.Value == "0" {
@@ -44,7 +44,7 @@ func GetUserTable() (userTable table.Table) {
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
 	formList := userTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField("Ip", "ip", db.Varchar, form.Text)
 	formList.AddField("Name", "name", db.Varchar, form.Text)
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
@@ -69,8 +69,8 @@ func GetUserTable() (userTable table.Table) {
 			return ""
 		})
 
-	formList.AddField("updatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField("createdAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField("updatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField("createdAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	userTable.GetForm().SetTabGroups(types.
 		NewTabGroups("id", "ip", "name", "gender", "city").

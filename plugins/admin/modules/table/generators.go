@@ -17,7 +17,7 @@ func GetManagerTable() (ManagerTable Table) {
 
 	info := ManagerTable.GetInfo()
 
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar)
 	info.AddField(lg("Nickname"), "name", db.Varchar)
 	info.AddField(lg("role"), "roles", db.Varchar).
@@ -65,7 +65,7 @@ func GetManagerTable() (ManagerTable Table) {
 
 	formList := ManagerTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
@@ -90,8 +90,8 @@ func GetManagerTable() (ManagerTable Table) {
 		}
 		return permissions
 	})
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
 
@@ -103,7 +103,7 @@ func GetPermissionTable() (PermissionTable Table) {
 
 	info := PermissionTable.GetInfo()
 
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("permission"), "name", db.Varchar)
 	info.AddField(lg("slug"), "slug", db.Varchar)
 	info.AddField(lg("method"), "http_method", db.Varchar)
@@ -129,7 +129,7 @@ func GetPermissionTable() (PermissionTable Table) {
 
 	formList := PermissionTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
@@ -150,8 +150,8 @@ func GetPermissionTable() (PermissionTable Table) {
 		})
 
 	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea)
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_permissions").
 		SetTitle(lg("Permission Manage")).
@@ -174,7 +174,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	info := RolesTable.GetInfo()
 
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("role"), "name", db.Varchar)
 	info.AddField(lg("slug"), "slug", db.Varchar)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
@@ -186,7 +186,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	formList := RolesTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
@@ -202,8 +202,8 @@ func GetRolesTable() (RolesTable Table) {
 		return permissions
 	})
 
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_roles").
 		SetTitle(lg("Roles Manage")).
@@ -228,7 +228,7 @@ func GetOpTable() (OpTable Table) {
 
 	info := OpTable.GetInfo()
 
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("userID"), "user_id", db.Int)
 	info.AddField(lg("path"), "path", db.Varchar)
 	info.AddField(lg("method"), "method", db.Varchar)
@@ -243,14 +243,14 @@ func GetOpTable() (OpTable Table) {
 
 	formList := OpTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
 	formList.AddField(lg("path"), "path", db.Varchar, form.Text)
 	formList.AddField(lg("method"), "method", db.Varchar, form.Text)
 	formList.AddField(lg("ip"), "ip", db.Varchar, form.Text)
 	formList.AddField(lg("content"), "input", db.Varchar, form.Text)
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_operation_log").
 		SetTitle(lg("operation log")).
@@ -264,7 +264,7 @@ func GetMenuTable() (MenuTable Table) {
 
 	info := MenuTable.GetInfo()
 
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("parent"), "parent_id", db.Int)
 	info.AddField(lg("menu name"), "title", db.Varchar)
 	info.AddField(lg("icon"), "icon", db.Varchar)
@@ -306,7 +306,7 @@ func GetMenuTable() (MenuTable Table) {
 	}}, parents...)
 
 	formList := MenuTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptions(parents).FieldDisplay(func(model types.FieldModel) interface{} {
 		menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)
@@ -332,8 +332,8 @@ func GetMenuTable() (MenuTable Table) {
 		return roles
 	})
 
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd(true)
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_menu").
 		SetTitle(lg("Menus Manage")).

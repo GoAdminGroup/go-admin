@@ -11,7 +11,7 @@ func GetPostsTable() (postsTable table.Table) {
 	postsTable = table.NewDefaultTable(table.DefaultConfig)
 
 	info := postsTable.GetInfo()
-	info.AddField("ID", "id", db.Int).FieldSortable(true)
+	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Title", "title", db.Varchar)
 	info.AddField("Description", "description", db.Varchar)
 	info.AddField("Content", "content", db.Varchar)
@@ -20,7 +20,7 @@ func GetPostsTable() (postsTable table.Table) {
 	info.SetTable("posts").SetTitle("Posts").SetDescription("Posts")
 
 	formList := postsTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldEditable(false)
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
 	formList.AddField("Title", "title", db.Varchar, form.Text)
 	formList.AddField("Description", "description", db.Varchar, form.Text)
 	formList.AddField("Content", "content", db.Varchar, form.Text)
