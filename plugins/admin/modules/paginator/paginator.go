@@ -1,6 +1,7 @@
 package paginator
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/components"
@@ -12,7 +13,7 @@ import (
 
 func Get(path string, params parameter.Parameters, size int) types.PaginatorAttribute {
 
-	paginator := template2.Get("adminlte").Paginator().(*components.PaginatorAttribute)
+	paginator := template2.Get(config.Get().Theme).Paginator().(*components.PaginatorAttribute)
 
 	pageInt, _ := strconv.Atoi(params.Page)
 	pageSizeInt, _ := strconv.Atoi(params.PageSize)

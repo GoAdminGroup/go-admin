@@ -40,7 +40,7 @@ func main() {
 
 	app.Spec = "[-v]"
 
-	verbose = app.BoolOpt("v verbose", false, "debug info output")
+	verbose = app.BoolOpt("v verbose", false, "debug infd distput")
 	// quiet
 
 	app.Command("-V version", "display this application version", func(cmd *cli.Cmd) {
@@ -53,7 +53,7 @@ func main() {
 		cmd.Command("css", "combine css assets", func(cmd *cli.Cmd) {
 			var (
 				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/css/combine/", "css src path")
-				outputPath = cmd.StringOpt("o out", "./resource/assets/dist/css/all.min.css", "css output path")
+				outputPath = cmd.StringOpt("d dist", "./resource/assets/dist/css/all.min.css", "css output path")
 			)
 
 			cmd.Action = func() {
@@ -64,7 +64,7 @@ func main() {
 		cmd.Command("js", "combine js assets", func(cmd *cli.Cmd) {
 			var (
 				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/js/combine/", "js src path")
-				outputPath = cmd.StringOpt("o out", "./resource/assets/dist/js/all.min.js", "js output path")
+				outputPath = cmd.StringOpt("d dist", "./resource/assets/dist/js/all.min.js", "js output path")
 			)
 
 			cmd.Action = func() {
@@ -77,7 +77,7 @@ func main() {
 		cmd.Command("tpl", "compile template files", func(cmd *cli.Cmd) {
 			var (
 				rootPath   = cmd.StringOpt("s src", "./resource/pages/", "template files src path")
-				outputPath = cmd.StringOpt("o out", "./tmpl/template.go", "compile file output path")
+				outputPath = cmd.StringOpt("d dist", "./tmpl/template.go", "compile file output path")
 			)
 
 			cmd.Action = func() {
@@ -88,7 +88,7 @@ func main() {
 		cmd.Command("asset", "compile assets", func(cmd *cli.Cmd) {
 			var (
 				rootPath    = cmd.StringOpt("s src", "./resource/assets/dist/", "assets root path")
-				outputPath  = cmd.StringOpt("o out", "./resource/", "compile file output path")
+				outputPath  = cmd.StringOpt("d dist", "./resource/", "compile file output path")
 				packageName = cmd.StringOpt("pa package", "resource", "package name of the output golang file")
 			)
 
