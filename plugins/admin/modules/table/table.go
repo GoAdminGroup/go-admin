@@ -305,6 +305,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	var (
 		sortable   string
+		hide       string
 		joins      string
 		headField  string
 		joinTables = make([]string, 0)
@@ -331,14 +332,8 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		if tb.info.FieldList[i].Hide {
 			continue
 		}
-		sortable = "0"
-		if tb.info.FieldList[i].Sortable {
-			sortable = "1"
-		}
-		hide := "0"
-		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-			hide = "1"
-		}
+		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
+		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
@@ -368,8 +363,6 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		wheres = wheres[:len(wheres)-4]
 	}
 	args := append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
-
-	// TODO: add left join table relations, Display is inefficient.
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
@@ -437,9 +430,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	logger.LogSql(countCmd, whereArgs)
 
 	var size int
-	if tb.connectionDriver == "sqlite" {
-		size = int(total[0]["count(*)"].(int64))
-	} else if tb.connectionDriver == "postgresql" {
+	if tb.connectionDriver == "postgresql" {
 		size = int(total[0]["count"].(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
@@ -475,6 +466,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	var (
 		sortable   string
+		hide       string
 		joins      string
 		headField  string
 		joinTables = make([]string, 0)
@@ -501,14 +493,8 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		if tb.info.FieldList[i].Hide {
 			continue
 		}
-		sortable = "0"
-		if tb.info.FieldList[i].Sortable {
-			sortable = "1"
-		}
-		hide := "0"
-		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-			hide = "1"
-		}
+		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
+		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
@@ -532,8 +518,6 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		}
 	}
 	whereIds = whereIds[:len(whereIds)-1]
-
-	// TODO: add left join table relations
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, whereIds, params.SortField, params.SortType)
 
@@ -602,9 +586,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	logger.LogSql(countCmd, nil)
 
 	var size int
-	if tb.connectionDriver == "sqlite" {
-		size = int(total[0]["count(*)"].(int64))
-	} else if tb.connectionDriver == "postgresql" {
+	if tb.connectionDriver == "postgresql" {
 		size = int(total[0]["count"].(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
@@ -910,7 +892,10 @@ func (tb DefaultTable) sql() *db.Sql {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 
-func GetNewFormList(groupHeaders []string, group [][]string, old []types.FormField, primaryKey string) ([]types.FormField, [][]types.FormField, []string) {
+func GetNewFormList(groupHeaders []string,
+	group [][]string,
+	old []types.FormField,
+	primaryKey string) ([]types.FormField, [][]types.FormField, []string) {
 
 	if len(group) == 0 {
 		var newForm []types.FormField
