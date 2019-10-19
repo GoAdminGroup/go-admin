@@ -26,7 +26,7 @@ func InitRouter(prefix string) *context.App {
 		route.GET("/assets"+path, controller.Assets)
 	}
 
-	for _, path := range template.GetComp("login").GetAssetList() {
+	for _, path := range template.GetAssetLists() {
 		route.GET("/assets"+path, controller.Assets)
 	}
 

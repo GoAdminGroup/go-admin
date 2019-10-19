@@ -104,6 +104,8 @@ type Component interface {
 	//
 	// See: http://github.com/jteeuwen/go-bindata
 	GetAsset(string) ([]byte, error)
+
+	GetContent() template.HTML
 }
 
 var compMap = map[string]Component{
@@ -117,6 +119,14 @@ func GetComp(name string) Component {
 		return comp
 	}
 	panic("wrong component name")
+}
+
+func GetAssetLists() []string {
+	assets := make([]string, 0)
+	for _, comp := range compMap {
+		assets = append(assets, comp.GetAssetList()...)
+	}
+	return assets
 }
 
 // AddComp makes a component available by the provided name.
@@ -184,4 +194,15 @@ func DefaultFuncMap() template.FuncMap {
 			return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
 		},
 	}
+}
+
+type BaseComponent struct {
+}
+
+func (b BaseComponent) GetAssetList() []string {
+	return make([]string, 0)
+}
+
+func (b BaseComponent) GetAsset(name string) ([]byte, error) {
+	return nil, nil
 }

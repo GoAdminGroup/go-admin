@@ -1,6 +1,8 @@
 package login
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"html/template"
@@ -13,7 +15,7 @@ func GetLoginComponent() *Login {
 	return new(Login)
 }
 
-func (*Login) GetTemplate() (*template.Template, string) {
+func (l *Login) GetTemplate() (*template.Template, string) {
 	tmpl, err := template.New("login_theme1").
 		Funcs(template.FuncMap{
 			"lang":     language.Get,
@@ -37,10 +39,20 @@ func (*Login) GetTemplate() (*template.Template, string) {
 	return tmpl, "login_theme1"
 }
 
-func (*Login) GetAssetList() []string {
+func (l *Login) GetAssetList() []string {
 	return AssetsList
 }
 
-func (*Login) GetAsset(name string) ([]byte, error) {
+func (l *Login) GetAsset(name string) ([]byte, error) {
 	return Asset(name[1:])
+}
+
+func (l *Login) GetContent() template.HTML {
+	buffer := new(bytes.Buffer)
+	tmpl, defineName := l.GetTemplate()
+	err := tmpl.ExecuteTemplate(buffer, defineName, l)
+	if err != nil {
+		fmt.Println("ComposeHtml Error:", err)
+	}
+	return template.HTML(buffer.String())
 }
