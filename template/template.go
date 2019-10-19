@@ -14,6 +14,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
+	"os"
+	"plugin"
+	"strings"
 	"sync"
 )
 
@@ -82,6 +85,30 @@ func Add(name string, temp Template) {
 		panic("add template twice " + name)
 	}
 	templateMap[name] = temp
+}
+
+func AddFromPlugin(name string, mod string) {
+
+	plug, err := plugin.Open(mod)
+	if err != nil {
+		fmt.Println("AddFromPlugin err 1", err)
+		os.Exit(1)
+	}
+
+	tempPlugin, err := plug.Lookup(strings.Title(name))
+	if err != nil {
+		fmt.Println("AddFromPlugin err 2", err)
+		os.Exit(1)
+	}
+
+	var temp Template
+	temp, ok := tempPlugin.(Template)
+	if !ok {
+		fmt.Println("unexpected type from module symbol")
+		os.Exit(1)
+	}
+
+	Add(name, temp)
 }
 
 // Component is the interface which stand for a ui component.

@@ -9,7 +9,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"os"
 	"plugin"
-	"reflect"
 )
 
 // Plugin as one of the key components of goAdmin has three
@@ -49,7 +48,6 @@ func LoadFromPlugin(mod string) Plugin {
 		fmt.Println("LoadFromPlugin err 2", err)
 		os.Exit(1)
 	}
-	fmt.Println(reflect.TypeOf(symPlugin))
 
 	var p Plugin
 	p, ok := symPlugin.(Plugin)
