@@ -10,7 +10,7 @@ import (
 func compileTmpl(rootPath, outputPath, packageName string) {
 	content := `package ` + packageName + `
 
-var templateList = map[string]string{`
+var TemplateList = map[string]string{`
 
 	content = getContentFromDir(content, fixPath(rootPath), fixPath(rootPath))
 
