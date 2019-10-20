@@ -76,12 +76,13 @@ func main() {
 	app.Command("compile", "compile template files or assets to one go file", func(cmd *cli.Cmd) {
 		cmd.Command("tpl", "compile template files", func(cmd *cli.Cmd) {
 			var (
-				rootPath   = cmd.StringOpt("s src", "./resource/pages/", "template files src path")
-				outputPath = cmd.StringOpt("d dist", "./tmpl/template.go", "compile file output path")
+				rootPath    = cmd.StringOpt("s src", "./resource/pages/", "template files src path")
+				outputPath  = cmd.StringOpt("d dist", "./template.go", "compile file output path")
+				packageName = cmd.StringOpt("p package", "newTmplTheme", "the package name")
 			)
 
 			cmd.Action = func() {
-				compileTmpl(*rootPath, *outputPath)
+				compileTmpl(*rootPath, *outputPath, *packageName)
 			}
 		})
 
@@ -102,7 +103,7 @@ func main() {
 		cmd.Command("tpl", "generate a theme project from a remote template", func(cmd *cli.Cmd) {
 			var (
 				moduleName = cmd.StringOpt("m module", "github.com/GoAdminGroup/themes/newTmpl", "the module name of your theme")
-				themeName  = cmd.StringOpt("n name", "newTmpl", "the name of your theme")
+				themeName  = cmd.StringOpt("n name", "newTmplTheme", "the name of your theme")
 			)
 
 			cmd.Action = func() {

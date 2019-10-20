@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-func compileTmpl(rootPath, outputPath string) {
-	content := `package tmpl
+func compileTmpl(rootPath, outputPath, packageName string) {
+	content := `package ` + packageName + `
 
-var List = map[string]string{`
+var templateList = map[string]string{`
 
 	content = getContentFromDir(content, fixPath(rootPath), fixPath(rootPath))
 

@@ -45,6 +45,8 @@ func getThemeTemplate(moduleName, themeName string) {
 
 	replaceContents("./"+themeName, moduleName, themeName)
 
+	checkError(os.Rename("./"+themeName+"/template.go", "./"+themeName+"/"+themeName+".go"))
+
 	fmt.Println()
 	fmt.Println("generate theme template success!!🍺🍺")
 	fmt.Println()
