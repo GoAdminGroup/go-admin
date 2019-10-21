@@ -6,15 +6,16 @@ package template
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
-	"os"
 	"plugin"
 	"strings"
 	"sync"
@@ -23,17 +24,21 @@ import (
 // Template is the interface which contains methods of ui components.
 // It will be used in the plugins for custom the ui.
 type Template interface {
-	// Components
-	Form() types.FormAttribute
-	Box() types.BoxAttribute
+	// Components must
 	Col() types.ColAttribute
-	Image() types.ImgAttribute
-	SmallBox() types.SmallBoxAttribute
-	Label() types.LabelAttribute
 	Row() types.RowAttribute
+	Form() types.FormAttribute
 	Table() types.TableAttribute
 	DataTable() types.DataTableAttribute
 	Tree() types.TreeAttribute
+	Label() types.LabelAttribute
+	Tabs() types.TabsAttribute
+	Alert() types.AlertAttribute
+
+	// Components
+	Box() types.BoxAttribute
+	Image() types.ImgAttribute
+	SmallBox() types.SmallBoxAttribute
 	InfoBox() types.InfoBoxAttribute
 	Paginator() types.PaginatorAttribute
 	AreaChart() types.AreaChartAttribute
@@ -42,10 +47,8 @@ type Template interface {
 	BarChart() types.BarChartAttribute
 	ProductList() types.ProductListAttribute
 	Description() types.DescriptionAttribute
-	Alert() types.AlertAttribute
 	PieChart() types.PieChartAttribute
 	ChartLegend() types.ChartLegendAttribute
-	Tabs() types.TabsAttribute
 	Popup() types.PopupAttribute
 
 	// Builder methods
@@ -62,6 +65,15 @@ var templateMap = make(map[string]Template)
 // name is not found, it panics.
 func Get(theme string) Template {
 	if temp, ok := templateMap[theme]; ok {
+		return temp
+	}
+	panic("wrong theme name")
+}
+
+// Get the default template with the theme name set with the global config.
+// If the name is not found, it panics.
+func Default() Template {
+	if temp, ok := templateMap[c.Get().Theme]; ok {
 		return temp
 	}
 	panic("wrong theme name")
@@ -91,21 +103,21 @@ func AddFromPlugin(name string, mod string) {
 
 	plug, err := plugin.Open(mod)
 	if err != nil {
-		fmt.Println("AddFromPlugin err 1", err)
-		os.Exit(1)
+		logger.Error("AddFromPlugin err", err)
+		panic(err)
 	}
 
 	tempPlugin, err := plug.Lookup(strings.Title(name))
 	if err != nil {
-		fmt.Println("AddFromPlugin err 2", err)
-		os.Exit(1)
+		logger.Error("AddFromPlugin err", err)
+		panic(err)
 	}
 
 	var temp Template
 	temp, ok := tempPlugin.(Template)
 	if !ok {
-		fmt.Println("unexpected type from module symbol")
-		os.Exit(1)
+		logger.Error("AddFromPlugin err: unexpected type from module symbol")
+		panic(errors.New("AddFromPlugin err: unexpected type from module symbol"))
 	}
 
 	Add(name, temp)

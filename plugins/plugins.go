@@ -5,9 +5,9 @@
 package plugins
 
 import (
-	"fmt"
+	"errors"
 	"github.com/GoAdminGroup/go-admin/context"
-	"os"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"plugin"
 )
 
@@ -39,21 +39,21 @@ func LoadFromPlugin(mod string) Plugin {
 
 	plug, err := plugin.Open(mod)
 	if err != nil {
-		fmt.Println("LoadFromPlugin err 1", err)
-		os.Exit(1)
+		logger.Error("LoadFromPlugin err", err)
+		panic(err)
 	}
 
 	symPlugin, err := plug.Lookup("Plugin")
 	if err != nil {
-		fmt.Println("LoadFromPlugin err 2", err)
-		os.Exit(1)
+		logger.Error("LoadFromPlugin err", err)
+		panic(err)
 	}
 
 	var p Plugin
 	p, ok := symPlugin.(Plugin)
 	if !ok {
-		fmt.Println("unexpected type from module symbol")
-		os.Exit(1)
+		logger.Error("LoadFromPlugin err: unexpected type from module symbol")
+		panic(errors.New("LoadFromPlugin err: unexpected type from module symbol"))
 	}
 
 	return p

@@ -39,6 +39,7 @@ type BoxAttribute interface {
 type ColAttribute interface {
 	SetSize(value map[string]string) ColAttribute
 	SetContent(value template.HTML) ColAttribute
+	AddContent(value template.HTML) ColAttribute
 	GetContent() template.HTML
 }
 
@@ -65,6 +66,7 @@ type LabelAttribute interface {
 
 type RowAttribute interface {
 	SetContent(value template.HTML) RowAttribute
+	AddContent(value template.HTML) RowAttribute
 	GetContent() template.HTML
 }
 

@@ -17,6 +17,11 @@ func (compo *ColAttribute) SetContent(value template.HTML) types.ColAttribute {
 	return compo
 }
 
+func (compo *ColAttribute) AddContent(value template.HTML) types.ColAttribute {
+	compo.Content += value
+	return compo
+}
+
 func (compo *ColAttribute) SetSize(value map[string]string) types.ColAttribute {
 	compo.Size = ""
 	for key, size := range value {

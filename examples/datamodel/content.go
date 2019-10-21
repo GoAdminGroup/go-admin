@@ -1,7 +1,6 @@
 package datamodel
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
@@ -9,7 +8,7 @@ import (
 
 func GetContent() (types.Panel, error) {
 
-	components := template2.Get(config.Get().Theme)
+	components := template2.Default()
 	colComp := components.Col()
 
 	/**************************
