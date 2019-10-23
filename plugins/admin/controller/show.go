@@ -6,6 +6,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -47,7 +48,21 @@ func ShowInfo(ctx *context.Context) {
 func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
 	exportUrl, newUrl, deleteUrl, infoUrl, editUrl string) *bytes.Buffer {
 
-	panelInfo := panel.GetDataFromDatabase(path, params)
+	panelInfo, err := panel.GetDataFromDatabase(path, params)
+
+	if err != nil {
+		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+		user := auth.Auth(ctx)
+		alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+		return template.Execute(tmpl, tmplName, user, types.Panel{
+			Content:     alert,
+			Description: language.Get("error"),
+			Title:       language.Get("error"),
+		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}
 
 	var (
 		body      template2.HTML
@@ -164,15 +179,21 @@ func Export(ctx *context.Context) {
 	var (
 		panelInfo table.PanelInfo
 		fileName  string
+		err       error
 	)
 
 	if len(param.Id) == 1 {
 		params := parameter.GetParam(ctx.Request.URL.Query())
-		panelInfo = panel.GetDataFromDatabase(ctx.Path(), params)
+		panelInfo, err = panel.GetDataFromDatabase(ctx.Path(), params)
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), params.Page, params.PageSize)
 	} else {
-		panelInfo = panel.GetDataFromDatabaseWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query()), param.Id)
+		panelInfo, err = panel.GetDataFromDatabaseWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query()), param.Id)
 		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), strings.Join(param.Id, "_"))
+	}
+
+	if err != nil {
+		response.Error(ctx, "export error")
+		return
 	}
 
 	for key, head := range panelInfo.Thead {

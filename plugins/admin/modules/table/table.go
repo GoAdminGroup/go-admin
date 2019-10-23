@@ -58,9 +58,9 @@ type Table interface {
 	GetExportable() bool
 	GetPrimaryKey() PrimaryKey
 	GetFiltersMap() []map[string]string
-	GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo
-	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo
-	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string)
+	GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error)
+	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
+	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error
 	DeleteDataFromDatabase(id string)
@@ -286,7 +286,7 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 }
 
 // GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) PanelInfo {
+func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
 
 	connection := tb.db()
 
@@ -368,7 +368,11 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	logger.LogSql(queryCmd, args)
 
-	res, _ := connection.QueryWithConnection(tb.connection, queryCmd, args...)
+	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -425,7 +429,11 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	countCmd := fmt.Sprintf(countStatement, tb.info.Table, wheres)
 
-	total, _ := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
+	total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
 
 	logger.LogSql(countCmd, whereArgs)
 
@@ -442,11 +450,11 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		Paginator:   paginator.Get(path, params, size),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
-	}
+	}, nil
 }
 
 // GetDataFromDatabaseWithIds query the data set.
-func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) PanelInfo {
+func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
 
 	connection := tb.db()
 
@@ -521,7 +529,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, whereIds, params.SortField, params.SortType)
 
-	res, _ := connection.QueryWithConnection(tb.connection, queryCmd)
+	res, err := connection.QueryWithConnection(tb.connection, queryCmd)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
 
 	logger.LogSql(queryCmd, nil)
 
@@ -581,7 +593,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	countCmd := fmt.Sprintf(countStatement, tb.info.Table, whereIds)
 
-	total, _ := connection.QueryWithConnection(tb.connection, countCmd)
+	total, err := connection.QueryWithConnection(tb.connection, countCmd)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
 
 	logger.LogSql(countCmd, nil)
 
@@ -598,15 +614,20 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		Paginator:   paginator.Get(path, params, size),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
-	}
+	}, nil
 }
 
 // GetDataFromDatabaseWithId query the single row of data.
-func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string) {
+func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
 
 	fields := make([]string, 0)
 
-	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
+	columnsModel, err := tb.sql().Table(tb.form.Table).ShowColumns()
+
+	if err != nil {
+		return nil, nil, nil, "", "", err
+	}
+
 	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	formList := tb.form.FieldList.Copy()
@@ -617,10 +638,14 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		}
 	}
 
-	res, _ := tb.sql().
+	res, err := tb.sql().
 		Table(tb.form.Table).Select(fields...).
 		Where(tb.primaryKey.Name, "=", id).
 		First()
+
+	if err != nil {
+		return nil, nil, nil, "", "", err
+	}
 
 	var (
 		groupFormList = make([][]types.FormField, 0)
@@ -711,7 +736,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 			groupFormList = append(groupFormList, list)
 			groupHeaders = append(groupHeaders, tb.form.TabHeaders[key])
 		}
-		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
+		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
 	}
 
 	for i := 0; i < len(tb.form.FieldList); i++ {
@@ -756,7 +781,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		}
 	}
 
-	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description
+	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
 }
 
 // UpdateDataFromDatabase update data.

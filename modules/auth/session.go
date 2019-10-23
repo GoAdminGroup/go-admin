@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -149,7 +149,7 @@ func deleteOverdueSession() {
 
 	logger.LogSql(cmd, nil)
 
-	db.Query(cmd)
+	_, _ = db.Query(cmd)
 }
 
 func (driver *MysqlDriver) Update(sid string, values map[string]interface{}) {

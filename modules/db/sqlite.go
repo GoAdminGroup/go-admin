@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -28,19 +28,19 @@ func (db *Sqlite) GetDelimiter() string {
 	return "`"
 }
 
-func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)
 }
 
-func (db *Sqlite) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+func (db *Sqlite) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], query, args...)
 }
 
-func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Sqlite) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], query, args...)
 }
 
-func (db *Sqlite) Exec(query string, args ...interface{}) sql.Result {
+func (db *Sqlite) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -13,7 +13,7 @@ import (
 	"sync"
 )
 
-type SqlTxStruct struct {
+type SqlTx struct {
 	Tx *sql.Tx
 }
 
@@ -65,52 +65,52 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 	})
 }
 
-func (db *Mysql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Mysql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)
 }
 
-func (db *Mysql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+func (db *Mysql) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], query, args...)
 }
 
-func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], query, args...)
 }
 
-func (db *Mysql) Exec(query string, args ...interface{}) sql.Result {
+func (db *Mysql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
-func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTxStruct {
+func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTx {
 	return db.BeginTransactionsWithLevel(sql.LevelReadUncommitted)
 }
 
-func (db *Mysql) BeginTransactionsWithReadCommitted() *SqlTxStruct {
+func (db *Mysql) BeginTransactionsWithReadCommitted() *SqlTx {
 	return db.BeginTransactionsWithLevel(sql.LevelReadCommitted)
 }
 
-func (db *Mysql) BeginTransactionsWithRepeatableRead() *SqlTxStruct {
+func (db *Mysql) BeginTransactionsWithRepeatableRead() *SqlTx {
 	return db.BeginTransactionsWithLevel(sql.LevelRepeatableRead)
 }
 
-func (db *Mysql) BeginTransactions() *SqlTxStruct {
+func (db *Mysql) BeginTransactions() *SqlTx {
 	return db.BeginTransactionsWithLevel(sql.LevelDefault)
 }
 
-func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SqlTxStruct {
+func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SqlTx {
 	tx, err := db.DbList["default"].BeginTx(context.Background(),
 		&sql.TxOptions{Isolation: level})
 	if err != nil {
 		panic(err)
 	}
 
-	SqlTx := new(SqlTxStruct)
+	SqlTx := new(SqlTx)
 
 	(*SqlTx).Tx = tx
 	return SqlTx
 }
 
-func (SqlTx *SqlTxStruct) Exec(query string, args ...interface{}) (sql.Result, error) {
+func (SqlTx *SqlTx) Exec(query string, args ...interface{}) (sql.Result, error) {
 	rs, err := SqlTx.Tx.Exec(query, args...)
 	if err != nil {
 		return nil, err
@@ -123,7 +123,7 @@ func (SqlTx *SqlTxStruct) Exec(query string, args ...interface{}) (sql.Result, e
 	return rs, nil
 }
 
-func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
+func (SqlTx *SqlTx) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	rs, err := SqlTx.Tx.Query(query, args...)
 
 	if err != nil {
@@ -175,7 +175,7 @@ func (SqlTx *SqlTxStruct) Query(query string, args ...interface{}) ([]map[string
 	return results, nil
 }
 
-type TxFn func(*SqlTxStruct) (error, map[string]interface{})
+type TxFn func(*SqlTx) (error, map[string]interface{})
 
 func (db *Mysql) WithTransaction(fn TxFn) (err error, res map[string]interface{}) {
 

@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -17,10 +17,10 @@ const (
 )
 
 type Connection interface {
-	Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
-	Exec(query string, args ...interface{}) sql.Result
-	QueryWithConnection(conn, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows)
-	ExecWithConnection(conn, query string, args ...interface{}) sql.Result
+	Query(query string, args ...interface{}) ([]map[string]interface{}, error)
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	QueryWithConnection(conn, query string, args ...interface{}) ([]map[string]interface{}, error)
+	ExecWithConnection(conn, query string, args ...interface{}) (sql.Result, error)
 	InitDB(cfg map[string]config.Database)
 	GetName() string
 	GetDelimiter() string
@@ -45,10 +45,10 @@ func GetConnection() Connection {
 	return GetConnectionByDriver(config.Get().Databases.GetDefault().Driver)
 }
 
-func Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return GetConnection().Query(query, args...)
 }
 
-func Exec(query string, args ...interface{}) sql.Result {
+func Exec(query string, args ...interface{}) (sql.Result, error) {
 	return GetConnection().Exec(query, args...)
 }

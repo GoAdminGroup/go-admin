@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -10,32 +10,29 @@ import (
 	"strings"
 )
 
-func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]interface{}, error) {
 
 	rs, err := db.Query(query, args...)
 
 	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
 		if rs != nil {
 			_ = rs.Close()
 		}
-		panic(err)
-	}
+	}()
 
 	col, colErr := rs.Columns()
 
 	if colErr != nil {
-		if rs != nil {
-			_ = rs.Close()
-		}
-		panic(colErr)
+		return nil, colErr
 	}
 
 	typeVal, err := rs.ColumnTypes()
 	if err != nil {
-		if rs != nil {
-			_ = rs.Close()
-		}
-		panic(err)
+		return nil, err
 	}
 
 	// TODO: regular expressions for sqlite, use the dialect module
@@ -51,8 +48,7 @@ func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]in
 		}
 		result := make(map[string]interface{})
 		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			_ = rs.Close()
-			panic(scanErr)
+			return nil, scanErr
 		}
 		for j := 0; j < len(col); j++ {
 			typeName := strings.ToUpper(r.ReplaceAllString(typeVal[j].DatabaseTypeName(), ""))
@@ -61,20 +57,16 @@ func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]in
 		results = append(results, result)
 	}
 	if err := rs.Err(); err != nil {
-		if rs != nil {
-			_ = rs.Close()
-		}
-		panic(err)
+		return nil, err
 	}
-	_ = rs.Close()
-	return results, rs
+	return results, nil
 }
 
-func CommonExec(db *sql.DB, query string, args ...interface{}) sql.Result {
+func CommonExec(db *sql.DB, query string, args ...interface{}) (sql.Result, error) {
 
 	rs, err := db.Exec(query, args...)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
-	return rs
+	return rs, nil
 }

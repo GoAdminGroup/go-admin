@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -32,19 +32,19 @@ func (db *Postgresql) GetDelimiter() string {
 	return `"`
 }
 
-func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], filterQuery(query), args...)
 }
 
-func (db *Postgresql) ExecWithConnection(con string, query string, args ...interface{}) sql.Result {
+func (db *Postgresql) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], filterQuery(query), args...)
 }
 
-func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, *sql.Rows) {
+func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], filterQuery(query), args...)
 }
 
-func (db *Postgresql) Exec(query string, args ...interface{}) sql.Result {
+func (db *Postgresql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], filterQuery(query), args...)
 }
 

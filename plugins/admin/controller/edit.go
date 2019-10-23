@@ -23,7 +23,14 @@ func ShowForm(ctx *context.Context) {
 
 func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id string, url, infoUrl string) {
 
-	formData, groupFormData, groupHeaders, title, description := panel.GetDataFromDatabaseWithId(id)
+	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataFromDatabaseWithId(id)
+
+	if err != nil && alert == "" {
+		alert = aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+	}
 
 	user := auth.Auth(ctx)
 

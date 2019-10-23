@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -199,7 +199,11 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
+	res, err := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
+
+	if err != nil {
+		return nil, err
+	}
 
 	if len(res) < 1 {
 		return nil, errors.New("out of index")
@@ -212,25 +216,19 @@ func (sql *Sql) All() ([]map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SqlComponent)
 
-	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
-
-	return res, nil
+	return sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 }
 
 func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumns(sql.TableName))
-
-	return res, nil
+	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumns(sql.TableName))
 }
 
 func (sql *Sql) ShowTables() ([]map[string]interface{}, error) {
 	defer RecycleSql(sql)
 
-	res, _ := sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
-
-	return res, nil
+	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
 }
 
 func (sql *Sql) Update(values dialect.H) (int64, error) {
@@ -240,7 +238,11 @@ func (sql *Sql) Update(values dialect.H) (int64, error) {
 
 	sql.dialect.Update(&sql.SqlComponent)
 
-	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+
+	if err != nil {
+		return 0, err
+	}
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -254,7 +256,11 @@ func (sql *Sql) Delete() error {
 
 	sql.dialect.Delete(&sql.SqlComponent)
 
-	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+
+	if err != nil {
+		return err
+	}
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return errors.New("no affect row")
@@ -268,7 +274,11 @@ func (sql *Sql) Exec() (int64, error) {
 
 	sql.dialect.Update(&sql.SqlComponent)
 
-	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+
+	if err != nil {
+		return 0, err
+	}
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
@@ -289,7 +299,12 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 			sql.TableName == "goadmin_permissions" ||
 			sql.TableName == "goadmin_roles" ||
 			sql.TableName == "goadmin_users" {
-			res, _ := sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
+			res, err := sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
+
+			if err != nil {
+				return 0, err
+			}
+
 			if len(res) == 0 {
 				return 0, errors.New("no affect row")
 			}
@@ -297,7 +312,11 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 		}
 	}
 
-	res := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+
+	if err != nil {
+		return 0, err
+	}
 
 	if affectRow, _ := res.RowsAffected(); affectRow < 1 {
 		return 0, errors.New("no affect row")
