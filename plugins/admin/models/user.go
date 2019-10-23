@@ -212,6 +212,12 @@ func (t UserModel) CheckPermission(permissionId string) bool {
 	return checkPermission != nil
 }
 
+func (t UserModel) DeletePermissions() {
+	_ = db.Table("goadmin_user_permissions").
+		Where("user_id", "=", t.Id).
+		Delete()
+}
+
 func (t UserModel) AddPermission(permissionId string) {
 	if permissionId != "" {
 		if !t.CheckPermission(permissionId) {

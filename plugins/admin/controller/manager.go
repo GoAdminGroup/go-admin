@@ -45,6 +45,7 @@ func editManager(dataList form.Values) {
 		user.AddRole(dataList["role_id[]"][i])
 	}
 
+	user.DeletePermissions()
 	for i := 0; i < len(dataList["permission_id[]"]); i++ {
 		user.AddPermission(dataList["permission_id[]"][i])
 	}
