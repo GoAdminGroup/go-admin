@@ -152,7 +152,7 @@ func EditForm(ctx *context.Context) {
 
 	ctx.SetUserValue("edit_form_param", &EditFormParam{
 		Panel:        panel,
-		Id:           "",
+		Id:           multiForm.Value[panel.GetPrimaryKey().Name][0],
 		Prefix:       prefix,
 		Param:        param,
 		Path:         strings.Split(previous, "?")[0],

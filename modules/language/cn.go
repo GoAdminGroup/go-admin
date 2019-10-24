@@ -53,6 +53,7 @@ var cn = map[string]string{
 	"refresh succeeded":      "刷新成功",
 	"edit fail":              "编辑失败",
 	"create fail":            "新增失败",
+	"confirm password":       "确认密码",
 
 	"avatar":     "头像",
 	"password":   "密码",

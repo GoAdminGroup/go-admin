@@ -38,6 +38,11 @@ func editManager(dataList form.Values) {
 	password := dataList.Get("password")
 
 	if password != "" {
+
+		if password != dataList.Get("password_again") {
+			panic("password does not match")
+		}
+
 		password = auth.EncodePassword([]byte(dataList.Get("password")))
 	}
 
