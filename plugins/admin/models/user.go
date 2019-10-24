@@ -139,25 +139,24 @@ func (t UserModel) New(username, password, name, avatar string) UserModel {
 
 func (t UserModel) Update(username, password, name, avatar string) UserModel {
 
-	if avatar == "" {
-		_, _ = db.Table(t.Table).
-			Where("id", "=", t.Id).
-			Update(dialect.H{
-				"username": username,
-				"password": password,
-				"name":     name,
-			})
-	} else {
-		_, _ = db.Table(t.Table).
-			Where("id", "=", t.Id).
-			Update(dialect.H{
-				"username": username,
-				"password": password,
-				"name":     name,
-				"avatar":   avatar,
-			})
+	fieldValues := dialect.H{
+		"username": username,
+		"name":     name,
+	}
+
+	if avatar != "" {
+		fieldValues["avatar"] = avatar
 		t.Avatar = avatar
 	}
+
+	if password != "" {
+		fieldValues["password"] = password
+		t.Avatar = avatar
+	}
+
+	_, _ = db.Table(t.Table).
+		Where("id", "=", t.Id).
+		Update(fieldValues)
 
 	t.UserName = username
 	t.Password = password

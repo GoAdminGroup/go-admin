@@ -29,16 +29,19 @@ func newManager(dataList form.Values) {
 
 func editManager(dataList form.Values) {
 
-	if dataList.IsEmpty("name", "username", "password") {
+	if dataList.IsEmpty("name", "username") {
 		panic("username and password can not be empty")
 	}
 
 	user := models.UserWithId(dataList.Get("id"))
 
-	user.Update(dataList.Get("username"),
-		auth.EncodePassword([]byte(dataList.Get("password"))),
-		dataList.Get("name"),
-		dataList.Get("avatar"))
+	password := dataList.Get("password")
+
+	if password != "" {
+		password = auth.EncodePassword([]byte(dataList.Get("password")))
+	}
+
+	user.Update(dataList.Get("username"), password, dataList.Get("name"), dataList.Get("avatar"))
 
 	user.DeleteRoles()
 	for i := 0; i < len(dataList["role_id[]"]); i++ {

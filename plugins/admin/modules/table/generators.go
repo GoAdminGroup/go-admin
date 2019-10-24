@@ -69,7 +69,9 @@ func GetManagerTable() (ManagerTable Table) {
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
-	formList.AddField(lg("password"), "password", db.Varchar, form.Password)
+	formList.AddField(lg("password"), "password", db.Varchar, form.Password).FieldDisplay(func(value types.FieldModel) interface{} {
+		return ""
+	})
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
 		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
 		roleModel, _ := db.Table("goadmin_role_users").Select("role_id").
