@@ -90,7 +90,7 @@ func main() {
 			var (
 				rootPath    = cmd.StringOpt("s src", "./resource/assets/dist/", "assets root path")
 				outputPath  = cmd.StringOpt("d dist", "./resource/", "compile file output path")
-				packageName = cmd.StringOpt("pa package", "resource", "package name of the output golang file")
+				packageName = cmd.StringOpt("p package", "resource", "package name of the output golang file")
 			)
 
 			cmd.Action = func() {

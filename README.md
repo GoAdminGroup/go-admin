@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-    <a href="http://www.go-admin.cn/en">Documentation</a> | 
+    <a href="http://www.go-admin.com/docs">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
-    <a href="http://demo.en.go-admin.cn/admin">DEMO</a>
+    <a href="http://demo.go-admin.com/admin">DEMO</a>
 </p>
 
 <p align="center">
@@ -32,7 +32,7 @@
 
 GoAdmin is a toolkit help you to build a data visualization admin panel for your golang app.
 
-demo: [http://demo.en.go-admin.cn/admin](http://demo.en.go-admin.cn/admin)
+demo: [http://demo.go-admin.com/admin](http://demo.go-admin.com/admin)
 account: admin  password: admin
 
 demo source code: https://github.com/GoAdminGroup/demo
@@ -149,7 +149,7 @@ visit: [http://localhost:9033/admin](http://localhost:9033/admin)
 
 [A super simple example here](https://github.com/GoAdminGroup/example)
 
-See the [docs](http://go-admin.cn/en/docs/#/README) for more details.
+See the [docs](http://www.go-admin.com/docs) for more details.
 
 ## Backers
 
