@@ -2,6 +2,7 @@ package chi
 
 import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	ada "github.com/GoAdminGroup/go-admin/adapter/chi"
