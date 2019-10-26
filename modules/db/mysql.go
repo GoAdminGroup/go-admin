@@ -9,7 +9,6 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	_ "github.com/go-sql-driver/mysql"
 	"sync"
 )
 

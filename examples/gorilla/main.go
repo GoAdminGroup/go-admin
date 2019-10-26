@@ -1,6 +1,9 @@
 package main
 
 import (
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
+
 	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -9,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	_ "github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"

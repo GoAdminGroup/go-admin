@@ -12,7 +12,6 @@ import (
 	"sync"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	_ "github.com/lib/pq"
 )
 
 type Postgresql struct {

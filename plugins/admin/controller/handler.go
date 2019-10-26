@@ -11,7 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/go-sql-driver/mysql"
 	template2 "html/template"
 	"net/http"
 	"regexp"
@@ -30,18 +29,19 @@ func GlobalDeferHandler(ctx *context.Context) {
 		logger.Error(string(debug.Stack()[:]))
 
 		var (
-			errMsg     string
-			mysqlError *mysql.MySQLError
-			ok         bool
-			e          error
+			errMsg string
+			ok     bool
+			e      error
 		)
 
 		if errMsg, ok = err.(string); !ok {
-			if mysqlError, ok = err.(*mysql.MySQLError); ok {
-				errMsg = mysqlError.Error()
-			} else if e, ok = err.(error); ok {
+			if e, ok = err.(error); ok {
 				errMsg = e.Error()
 			}
+		}
+
+		if errMsg == "" {
+			errMsg = "system error"
 		}
 
 		if ok, _ = regexp.MatchString("/edit(.*)", ctx.Path()); ok {

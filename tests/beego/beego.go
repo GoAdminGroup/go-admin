@@ -2,12 +2,14 @@ package beego
 
 import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
+
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	_ "github.com/GoAdminGroup/themes/adminlte"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
 	"net/http"

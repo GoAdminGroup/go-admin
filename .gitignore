@@ -12,7 +12,5 @@ examples/gin/uploads/
 vendor/**
 !vendor/vendor.json
 logs
-go.sum
-modules/db/go.sum
 adm/build
 template/login/assets/login

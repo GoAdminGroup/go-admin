@@ -8,7 +8,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	_ "github.com/denisenkom/go-mssqldb"
 	"net/url"
 	"sync"
 )
