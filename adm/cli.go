@@ -6,11 +6,17 @@ package main
 
 import (
 	"fmt"
-	cli "github.com/jawher/mow.cli"
-	"github.com/mgutz/ansi"
 	"os"
 	"runtime"
 	"runtime/debug"
+
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+
+	cli "github.com/jawher/mow.cli"
+	"github.com/mgutz/ansi"
 )
 
 func main() {
