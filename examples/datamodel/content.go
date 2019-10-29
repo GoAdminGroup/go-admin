@@ -2,7 +2,14 @@ package datamodel
 
 import (
 	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/themes/adminlte/components/chart_legend"
+	"github.com/GoAdminGroup/themes/adminlte/components/description"
+	"github.com/GoAdminGroup/themes/adminlte/components/infobox"
+	"github.com/GoAdminGroup/themes/adminlte/components/productlist"
+	"github.com/GoAdminGroup/themes/adminlte/components/progress_group"
+	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
 	"html/template"
 )
 
@@ -15,28 +22,28 @@ func GetContent() (types.Panel, error) {
 	 * Info Box
 	/**************************/
 
-	infobox := components.InfoBox().
+	infobox1 := infobox.New().
 		SetText("CPU TRAFFIC").
 		SetColor("#3583af").
 		SetNumber("100").
 		SetIcon(`<svg t="1568904058859" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2216" width="48" height="48"><path d="M864 64l-704 0C142.336 64 128 78.336 128 96l0 832C128 945.664 142.336 960 160 960l704 0c17.664 0 32-14.336 32-32l0-832C896 78.336 881.664 64 864 64zM832 896 192 896 192 128l640 0L832 896z" fill="#e6e6e6" p-id="2217"></path><path d="M353.92 320c17.6 0 32-14.336 32-32S371.584 256 353.92 256L353.28 256C335.616 256 321.6 270.336 321.6 288S336.256 320 353.92 320z" fill="#e6e6e6" p-id="2218"></path><path d="M353.92 512c17.6 0 32-14.336 32-32S371.584 448 353.92 448L353.28 448C335.616 448 321.6 462.336 321.6 480S336.256 512 353.92 512z" fill="#e6e6e6" p-id="2219"></path><path d="M353.92 704c17.6 0 32-14.336 32-32S371.584 640 353.92 640L353.28 640c-17.6 0-31.616 14.336-31.616 32S336.256 704 353.92 704z" fill="#e6e6e6" p-id="2220"></path><path d="M480 320l192 0C689.664 320 704 305.664 704 288S689.664 256 672 256l-192 0C462.336 256 448 270.336 448 288S462.336 320 480 320z" fill="#e6e6e6" p-id="2221"></path><path d="M480 512l192 0C689.664 512 704 497.664 704 480S689.664 448 672 448l-192 0C462.336 448 448 462.336 448 480S462.336 512 480 512z" fill="#e6e6e6" p-id="2222"></path><path d="M480 704l192 0c17.664 0 32-14.336 32-32S689.664 640 672 640l-192 0C462.336 640 448 654.336 448 672S462.336 704 480 704z" fill="#e6e6e6" p-id="2223"></path></svg>`).
 		GetContent()
 
-	infobox2 := components.InfoBox().
+	infobox2 := infobox.New().
 		SetText("Likes").
 		SetColor("#6a7c86").
 		SetNumber("1030.00<small>$</small>").
 		SetIcon(`<svg t="1570468923385" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1124" width="48" height="48"><path d="M508.416 104.96c-225.28 0-408.064 182.784-408.064 408.064s182.784 408.064 408.064 408.064 408.064-182.784 408.064-408.064c0-108.032-43.008-211.968-119.808-288.768-76.288-76.288-180.224-119.296-288.256-119.296z m120.32 460.8c16.384 0 30.208 13.312 30.208 30.208 0 16.384-13.312 30.208-30.208 30.208h-90.624V716.8c0 16.384-13.312 30.208-30.208 30.208-16.384 0-30.208-13.312-30.208-30.208v-91.136H387.584c-16.384 0-30.208-13.312-30.208-30.208 0-16.384 13.312-30.208 30.208-30.208h90.624V495.104H387.584c-16.384 0-30.208-13.312-30.208-30.208 0-16.384 13.312-30.208 30.208-30.208h77.312L387.584 356.864c-9.216-11.776-8.192-28.672 2.56-39.424 10.752-10.752 27.648-11.776 39.424-2.56l78.848 78.848 77.312-77.312c11.264-11.264 29.696-11.264 41.472 0 11.264 11.264 11.264 29.696 0 41.472L548.864 435.2h79.36c16.384 0 30.208 13.312 30.208 30.208 0 16.384-13.312 30.208-30.208 30.208h-90.112v70.144h90.624z m0 0" fill="#ffffff" p-id="1125"></path></svg>`).
 		GetContent()
 
-	infobox3 := components.InfoBox().
+	infobox3 := infobox.New().
 		SetText("Sales").
 		SetColor("#d8cd68").
 		SetNumber("760").
 		SetIcon(`<svg t="1570469111431" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3801" width="48" height="48"><path d="M298.666667 128v768h426.666666V128H298.666667zM256 85.333333h512v853.333334H256V85.333333zM170.666667 128H85.333333V85.333333h128v853.333334H85.333333v-42.666667h85.333334V128z m768 768v42.666667h-128V85.333333h128v42.666667h-85.333334v768h85.333334z" p-id="3802" fill="#ffffff"></path></svg>`).
 		GetContent()
 
-	infobox4 := components.InfoBox().
+	infobox4 := infobox.New().
 		SetText("New Members").
 		SetColor("#6cad6e").
 		SetNumber("2,349").
@@ -44,7 +51,7 @@ func GetContent() (types.Panel, error) {
 		GetContent()
 
 	var size = map[string]string{"md": "3", "sm": "6", "xs": "12"}
-	infoboxCol1 := colComp.SetSize(size).SetContent(infobox).GetContent()
+	infoboxCol1 := colComp.SetSize(size).SetContent(infobox1).GetContent()
 	infoboxCol2 := colComp.SetSize(size).SetContent(infobox2).GetContent()
 	infoboxCol3 := colComp.SetSize(size).SetContent(infobox3).GetContent()
 	infoboxCol4 := colComp.SetSize(size).SetContent(infobox4).GetContent()
@@ -101,7 +108,7 @@ func GetContent() (types.Panel, error) {
 	 * Product List
 	/**************************/
 
-	productList := components.ProductList().SetData([]map[string]string{
+	productList := productlist.New().SetData([]map[string]string{
 		{
 			"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
 			"title":       "GoAdmin",
@@ -139,15 +146,25 @@ func GetContent() (types.Panel, error) {
 	 * Box
 	/**************************/
 
-	chartdata := `{"datasets":[{"data":[65,59,80,81,56,55,40],"fillColor":"rgb(210, 214, 222)","label":"Electronics","pointColor":"rgb(210, 214, 222)","pointHighlightFill":"#fff","pointHighlightStroke":"rgb(220,220,220)","pointStrokeColor":"#c1c7d1","strokeColor":"rgb(152, 156, 165)"},{"data":[28,48,40,19,86,27,90],"fillColor":"rgba(160, 185, 234, 0.9)","label":"Digital Goods","pointColor":"#3b8bba","pointHighlightFill":"#fff","pointHighlightStroke":"rgba(60,141,188,1)","pointStrokeColor":"rgba(60,141,188,1)","strokeColor":"rgba(60,141,188,0.8)"}],"labels":["January","February","March","April","May","June","July"]}`
-
-	lineChart := components.AreaChart().SetID("salechart").
-		SetData(chartdata).
+	lineChart := chartjs.Line().
+		SetID("salechart").
 		SetHeight(180).
-		SetTitle("Sales: 1 Jan, 2019 - 30 Jul, 2019").GetContent()
+		SetTitle("Sales: 1 Jan, 2019 - 30 Jul, 2019").
+		SetLabels([]string{"January", "February", "March", "April", "May", "June", "July"}).
+		AddDataSet("Electronics").
+		DSData([]float64{65, 59, 80, 81, 56, 55, 40}).
+		DSFill(false).
+		DSBorderColor("rgb(210, 214, 222)").
+		DSLineTension(0.1).
+		AddDataSet("Digital Goods").
+		DSData([]float64{28, 48, 40, 19, 86, 27, 90}).
+		DSFill(false).
+		DSBorderColor("rgba(60,141,188,1)").
+		DSLineTension(0.1).
+		GetContent()
 
 	title := `<p class="text-center"><strong>Goal Completion</strong></p>`
-	progressGroup := components.ProgressGroup().
+	progressGroup := progress_group.New().
 		SetTitle("Add Products to Cart").
 		SetColor("#76b2d4").
 		SetDenominator(200).
@@ -155,7 +172,7 @@ func GetContent() (types.Panel, error) {
 		SetPercent(80).
 		GetContent()
 
-	progressGroup1 := components.ProgressGroup().
+	progressGroup1 := progress_group.New().
 		SetTitle("Complete Purchase").
 		SetColor("#f17c6e").
 		SetDenominator(400).
@@ -163,7 +180,7 @@ func GetContent() (types.Panel, error) {
 		SetPercent(80).
 		GetContent()
 
-	progressGroup2 := components.ProgressGroup().
+	progressGroup2 := progress_group.New().
 		SetTitle("Visit Premium Page").
 		SetColor("#ace0ae").
 		SetDenominator(800).
@@ -171,7 +188,7 @@ func GetContent() (types.Panel, error) {
 		SetPercent(80).
 		GetContent()
 
-	progressGroup3 := components.ProgressGroup().
+	progressGroup3 := progress_group.New().
 		SetTitle("Send Inquiries").
 		SetColor("#fdd698").
 		SetDenominator(500).
@@ -187,7 +204,8 @@ func GetContent() (types.Panel, error) {
 
 	boxInternalRow := components.Row().SetContent(boxInternalCol1 + boxInternalCol2).GetContent()
 
-	description1 := components.Description().SetPercent("17").
+	description1 := description.New().
+		SetPercent("17").
 		SetNumber("¥140,100").
 		SetTitle("TOTAL REVENUE").
 		SetArrow("up").
@@ -195,7 +213,7 @@ func GetContent() (types.Panel, error) {
 		SetBorder("right").
 		GetContent()
 
-	description2 := components.Description().
+	description2 := description.New().
 		SetPercent("2").
 		SetNumber("440,560").
 		SetTitle("TOTAL REVENUE").
@@ -204,7 +222,7 @@ func GetContent() (types.Panel, error) {
 		SetBorder("right").
 		GetContent()
 
-	description3 := components.Description().
+	description3 := description.New().
 		SetPercent("12").
 		SetNumber("¥140,050").
 		SetTitle("TOTAL REVENUE").
@@ -213,7 +231,7 @@ func GetContent() (types.Panel, error) {
 		SetBorder("right").
 		GetContent()
 
-	description4 := components.Description().
+	description4 := description.New().
 		SetPercent("1").
 		SetNumber("30943").
 		SetTitle("TOTAL REVENUE").
@@ -241,15 +259,15 @@ func GetContent() (types.Panel, error) {
 	 * Small Box
 	/**************************/
 
-	smallbox := components.SmallBox().SetColor("blue").SetIcon("ion-ios-gear-outline").SetUrl("/").SetTitle("new users").SetValue("345￥").GetContent()
-	smallbox1 := components.SmallBox().SetColor("yellow").SetIcon("ion-ios-cart-outline").SetUrl("/").SetTitle("new users").SetValue("80%").GetContent()
-	smallbox2 := components.SmallBox().SetColor("red").SetIcon("fa-user").SetUrl("/").SetTitle("new users").SetValue("645￥").GetContent()
-	smallbox3 := components.SmallBox().SetColor("green").SetIcon("ion-ios-cart-outline").SetUrl("/").SetTitle("new users").SetValue("889￥").GetContent()
+	smallbox1 := smallbox.New().SetColor("blue").SetIcon("ion-ios-gear-outline").SetUrl("/").SetTitle("new users").SetValue("345￥").GetContent()
+	smallbox2 := smallbox.New().SetColor("yellow").SetIcon("ion-ios-cart-outline").SetUrl("/").SetTitle("new users").SetValue("80%").GetContent()
+	smallbox3 := smallbox.New().SetColor("red").SetIcon("fa-user").SetUrl("/").SetTitle("new users").SetValue("645￥").GetContent()
+	smallbox4 := smallbox.New().SetColor("green").SetIcon("ion-ios-cart-outline").SetUrl("/").SetTitle("new users").SetValue("889￥").GetContent()
 
-	col1 := colComp.SetSize(size).SetContent(smallbox).GetContent()
-	col2 := colComp.SetSize(size).SetContent(smallbox1).GetContent()
-	col3 := colComp.SetSize(size).SetContent(smallbox2).GetContent()
-	col4 := colComp.SetSize(size).SetContent(smallbox3).GetContent()
+	col1 := colComp.SetSize(size).SetContent(smallbox1).GetContent()
+	col2 := colComp.SetSize(size).SetContent(smallbox2).GetContent()
+	col3 := colComp.SetSize(size).SetContent(smallbox3).GetContent()
+	col4 := colComp.SetSize(size).SetContent(smallbox4).GetContent()
 
 	row3 := components.Row().SetContent(col1 + col2 + col3 + col4).GetContent()
 
@@ -257,9 +275,18 @@ func GetContent() (types.Panel, error) {
 	 * Pie Chart
 	/**************************/
 
-	pieData := `[{"value":700,"color":"#f56954","highlight":"#f56954","label":"Chrome"},{"value":500,"color":"#00a65a","highlight":"#00a65a","label":"IE"},{"value":400,"color":"#f39c12","highlight":"#f39c12","label":"FireFox"},{"value":600,"color":"#00c0ef","highlight":"#00c0ef","label":"Safari"},{"value":300,"color":"#3c8dbc","highlight":"#3c8dbc","label":"Opera"},{"value":100,"color":"#d2d6de","highlight":"#d2d6de","label":"Navigator"}]`
-	pie := components.PieChart().SetHeight(170).SetData(pieData).SetID("pieChart").GetContent()
-	legend := components.ChartLegend().SetData([]map[string]string{
+	pie := chartjs.Pie().
+		SetHeight(170).
+		SetLabels([]string{"Navigator", "Opera", "Safari", "FireFox", "IE", "Chrome"}).
+		SetID("pieChart").
+		AddDataSet("Chrome").
+		DSData([]float64{100, 300, 600, 400, 500, 700}).
+		DSBackgroundColor([]chartjs.Color{
+			"rgb(255, 205, 86)", "rgb(54, 162, 235)", "rgb(255, 99, 132)", "rgb(255, 205, 86)", "rgb(54, 162, 235)", "rgb(255, 99, 132)",
+		}).
+		GetContent()
+
+	legend := chart_legend.New().SetData([]map[string]string{
 		{
 			"label": " Chrome",
 			"color": "red",

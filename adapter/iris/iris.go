@@ -145,7 +145,7 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName,
 		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))),
-			panel, globalConfig))
+			panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Iris Content", err)
 	}

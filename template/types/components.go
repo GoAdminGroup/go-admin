@@ -50,15 +50,6 @@ type ImgAttribute interface {
 	GetContent() template.HTML
 }
 
-type SmallBoxAttribute interface {
-	SetTitle(value template.HTML) SmallBoxAttribute
-	SetValue(value template.HTML) SmallBoxAttribute
-	SetColor(value template.HTML) SmallBoxAttribute
-	SetIcon(value template.HTML) SmallBoxAttribute
-	SetUrl(value string) SmallBoxAttribute
-	GetContent() template.HTML
-}
-
 type LabelAttribute interface {
 	SetContent(value template.HTML) LabelAttribute
 	GetContent() template.HTML
@@ -115,78 +106,6 @@ type PaginatorAttribute interface {
 	SetNextUrl(value string) PaginatorAttribute
 	SetOption(value map[string]template.HTML) PaginatorAttribute
 	SetUrl(value string) PaginatorAttribute
-	GetContent() template.HTML
-}
-
-type InfoBoxAttribute interface {
-	SetIcon(value template.HTML) InfoBoxAttribute
-	SetText(value template.HTML) InfoBoxAttribute
-	SetNumber(value template.HTML) InfoBoxAttribute
-	SetContent(value template.HTML) InfoBoxAttribute
-	SetColor(value template.HTML) InfoBoxAttribute
-	GetContent() template.HTML
-}
-
-type ProgressGroupAttribute interface {
-	SetTitle(value template.HTML) ProgressGroupAttribute
-	SetColor(value template.HTML) ProgressGroupAttribute
-	SetPercent(value int) ProgressGroupAttribute
-	SetDenominator(value int) ProgressGroupAttribute
-	SetMolecular(value int) ProgressGroupAttribute
-	GetContent() template.HTML
-}
-
-type ProgressAttribute interface{}
-
-type LineChartAttribute interface {
-	SetID(value string) LineChartAttribute
-	SetTitle(value template.HTML) LineChartAttribute
-	SetHeight(value int) LineChartAttribute
-	SetData(value string) LineChartAttribute
-	GetContent() template.HTML
-}
-
-type BarChartAttribute interface {
-	SetID(value string) BarChartAttribute
-	SetTitle(value template.HTML) BarChartAttribute
-	SetWidth(value int) BarChartAttribute
-	SetData(value string) BarChartAttribute
-	GetContent() template.HTML
-}
-
-type PieChartAttribute interface {
-	SetID(value string) PieChartAttribute
-	SetData(value string) PieChartAttribute
-	SetTitle(value template.HTML) PieChartAttribute
-	SetHeight(value int) PieChartAttribute
-	GetContent() template.HTML
-}
-
-type ChartLegendAttribute interface {
-	SetData(value []map[string]string) ChartLegendAttribute
-	GetContent() template.HTML
-}
-
-type DescriptionAttribute interface {
-	SetNumber(value template.HTML) DescriptionAttribute
-	SetTitle(value template.HTML) DescriptionAttribute
-	SetArrow(value string) DescriptionAttribute
-	SetPercent(value template.HTML) DescriptionAttribute
-	SetBorder(value string) DescriptionAttribute
-	SetColor(value template.HTML) DescriptionAttribute
-	GetContent() template.HTML
-}
-
-type AreaChartAttribute interface {
-	SetTitle(value template.HTML) AreaChartAttribute
-	SetID(value string) AreaChartAttribute
-	SetData(value string) AreaChartAttribute
-	SetHeight(value int) AreaChartAttribute
-	GetContent() template.HTML
-}
-
-type ProductListAttribute interface {
-	SetData(value []map[string]string) ProductListAttribute
 	GetContent() template.HTML
 }
 

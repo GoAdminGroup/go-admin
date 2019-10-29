@@ -138,7 +138,7 @@ func Assets(ctx *context.Context) {
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
-		data, err = loginComponent().GetAsset(filepath)
+		data, err = template.GetAsset(filepath)
 		if err != nil {
 			logger.Error("asset err", err)
 			ctx.Write(http.StatusNotFound, map[string]string{}, "")

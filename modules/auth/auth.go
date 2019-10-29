@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"golang.org/x/crypto/bcrypt"
+	"sync"
 )
 
 func Auth(ctx *context.Context) models.UserModel {
@@ -62,22 +63,23 @@ func DelCookie(ctx *context.Context) bool {
 
 type CSRFToken []string
 
-var TokenHelper = new(CSRFToken)
+var (
+	TokenHelper   = new(CSRFToken)
+	CsrfTokenLock sync.Mutex
+)
 
-func (token *CSRFToken) AddToken() string {
+func (csrf *CSRFToken) AddToken() string {
+	CsrfTokenLock.Lock()
+	defer CsrfTokenLock.Unlock()
 	tokenStr := modules.Uuid()
-	if len(*token) == 1 && (*token)[0] == "" {
-		(*token)[0] = tokenStr
-	} else {
-		*token = append(*token, tokenStr)
-	}
+	*csrf = append(*csrf, tokenStr)
 	return tokenStr
 }
 
-func (token *CSRFToken) CheckToken(toCheckToken string) bool {
-	for i := 0; i < len(*token); i++ {
-		if (*token)[i] == toCheckToken {
-			*token = append((*token)[0:i], (*token)[i:len(*token)]...)
+func (csrf *CSRFToken) CheckToken(toCheckToken string) bool {
+	for i := 0; i < len(*csrf); i++ {
+		if (*csrf)[i] == toCheckToken {
+			*csrf = append((*csrf)[:i], (*csrf)[i+1:]...)
 			return true
 		}
 	}

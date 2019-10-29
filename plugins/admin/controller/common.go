@@ -50,10 +50,6 @@ func aTemplate() template.Template {
 	return template.Get(config.Theme)
 }
 
-func loginComponent() template.Component {
-	return template.GetComp("login")
-}
-
 func isPjax(ctx *context.Context) bool {
 	return ctx.Headers(constant.PjaxHeader) == "true"
 }

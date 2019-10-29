@@ -5,6 +5,10 @@
 package main
 
 import (
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+
 	"fmt"
 	cli "github.com/jawher/mow.cli"
 	"github.com/mgutz/ansi"

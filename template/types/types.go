@@ -63,9 +63,12 @@ type Page struct {
 
 	// Custom html after body.
 	CustomFootHtml template.HTML
+
+	// Components assets
+	AssetsList template.HTML
 }
 
-func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config) Page {
+func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML) Page {
 	return Page{
 		User:  user,
 		Menu:  menu,
@@ -82,6 +85,7 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		CdnUrl:         cfg.AssetUrl,
 		CustomHeadHtml: cfg.CustomHeadHtml,
 		CustomFootHtml: cfg.CustomFootHtml,
+		AssetsList:     assetsList,
 	}
 }
 
@@ -483,6 +487,10 @@ type FormField struct {
 	Options                []map[string]string
 	DefaultOptionDelimiter string
 
+	CustomContent template.HTML
+	CustomJs      template.JS
+	CustomCss     template.CSS
+
 	Editable    bool
 	NotAllowAdd bool
 	Must        bool
@@ -618,6 +626,21 @@ func (f *FormPanel) FieldToUpper() *FormPanel {
 
 func (f *FormPanel) FieldToLower() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToLower()
+	return f
+}
+
+func (f *FormPanel) FieldCustomContent(content template.HTML) *FormPanel {
+	f.FieldList[f.curFieldListIndex].CustomContent = content
+	return f
+}
+
+func (f *FormPanel) FieldCustomJs(js template.JS) *FormPanel {
+	f.FieldList[f.curFieldListIndex].CustomJs = js
+	return f
+}
+
+func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
+	f.FieldList[f.curFieldListIndex].CustomCss = css
 	return f
 }
 

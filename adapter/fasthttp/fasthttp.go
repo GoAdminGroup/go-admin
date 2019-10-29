@@ -205,7 +205,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName,
 		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URI().String()))),
-			panel, globalConfig))
+			panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Fasthttp Content", err)
 	}

@@ -47,6 +47,10 @@ func (l *Login) GetAsset(name string) ([]byte, error) {
 	return Asset(name[1:])
 }
 
+func (l *Login) IsAPage() bool {
+	return true
+}
+
 func (l *Login) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := l.GetTemplate()

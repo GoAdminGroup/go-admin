@@ -8,6 +8,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"html/template"
+	"path"
+	"plugin"
+	"strings"
+	"sync"
+
 	c "github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -15,41 +21,31 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"plugin"
-	"strings"
-	"sync"
 )
 
 // Template is the interface which contains methods of ui components.
 // It will be used in the plugins for custom the ui.
 type Template interface {
-	// Components must
+	// Components
+
+	// layout
 	Col() types.ColAttribute
 	Row() types.RowAttribute
+
+	// form and table
 	Form() types.FormAttribute
 	Table() types.TableAttribute
 	DataTable() types.DataTableAttribute
+
 	Tree() types.TreeAttribute
-	Label() types.LabelAttribute
 	Tabs() types.TabsAttribute
 	Alert() types.AlertAttribute
-
-	// Components
-	Box() types.BoxAttribute
-	Image() types.ImgAttribute
-	SmallBox() types.SmallBoxAttribute
-	InfoBox() types.InfoBoxAttribute
 	Paginator() types.PaginatorAttribute
-	AreaChart() types.AreaChartAttribute
-	ProgressGroup() types.ProgressGroupAttribute
-	LineChart() types.LineChartAttribute
-	BarChart() types.BarChartAttribute
-	ProductList() types.ProductListAttribute
-	Description() types.DescriptionAttribute
-	PieChart() types.PieChartAttribute
-	ChartLegend() types.ChartLegendAttribute
 	Popup() types.PopupAttribute
+	Box() types.BoxAttribute
+
+	Label() types.LabelAttribute
+	Image() types.ImgAttribute
 
 	// Builder methods
 	GetTmplList() map[string]string
@@ -145,6 +141,8 @@ type Component interface {
 	GetAsset(string) ([]byte, error)
 
 	GetContent() template.HTML
+
+	IsAPage() bool
 }
 
 var compMap = map[string]Component{
@@ -160,12 +158,53 @@ func GetComp(name string) Component {
 	panic("wrong component name")
 }
 
-func GetAssetLists() []string {
+func GetComponentAssetLists() []string {
 	assets := make([]string, 0)
 	for _, comp := range compMap {
 		assets = append(assets, comp.GetAssetList()...)
 	}
 	return assets
+}
+
+func GetComponentAssetListsWithinPage() []string {
+	assets := make([]string, 0)
+	for _, comp := range compMap {
+		if !comp.IsAPage() {
+			assets = append(assets, comp.GetAssetList()...)
+		}
+	}
+	return assets
+}
+
+func GetComponentAssetListsHTML() (res template.HTML) {
+	assets := GetComponentAssetListsWithinPage()
+	for i := 0; i < len(assets); i++ {
+		res += getHTMLFromAssetUrl(assets[i])
+	}
+	return
+}
+
+func getHTMLFromAssetUrl(s string) template.HTML {
+	fileSuffix := path.Ext(s)
+	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
+
+	if fileSuffix == "css" {
+		return template.HTML(`<link rel="stylesheet" href="` + c.Get().AssetUrl + c.Get().Url("/assets"+s) + `">`)
+	}
+	if fileSuffix == "js" {
+		return template.HTML(`<script src="` + c.Get().AssetUrl + c.Get().Url("/assets"+s) + `"></script>`)
+	}
+	return ""
+}
+
+func GetAsset(path string) ([]byte, error) {
+	for _, comp := range compMap {
+		res, err := comp.GetAsset(path)
+		if err == nil {
+			return res, err
+		}
+	}
+	return nil, errors.New(path + " not found")
 }
 
 // AddComp makes a component available by the provided name.
@@ -212,7 +251,7 @@ func Execute(tmpl *template.Template,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config))
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config, GetComponentAssetListsHTML()))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}

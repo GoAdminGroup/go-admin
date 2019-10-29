@@ -135,7 +135,9 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 	ctx.Response().Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))), panel, globalConfig))
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
+		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))),
+		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Echo Content", err)
 	}

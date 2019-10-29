@@ -84,7 +84,7 @@ func (compo *FormAttribute) SetToken(value string) types.FormAttribute {
 
 func (compo *FormAttribute) GetContent() template.HTML {
 	return ComposeHtml(compo.TemplateList, *compo, "form",
-		"form/default", "form/file", "form/textarea",
+		"form/default", "form/file", "form/textarea", "form/custom",
 		"form/selectbox", "form/text", "form/radio",
 		"form/password", "form/select", "form/singleselect",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number",

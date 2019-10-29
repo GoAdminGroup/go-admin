@@ -167,12 +167,18 @@ func clear(osName string) {
 }
 
 func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
-	key := "Tables_in_" + strings.ToLower(dbName)
+	key := "Tables_in_" + dbName
 	if driver == "postgresql" {
 		key = "tablename"
 	}
 
 	tables := make([]string, 0)
+
+	if driver != "postgresql" && len(models) > 0 {
+		if _, ok := models[0][key].(string); !ok {
+			key = "Tables_in_" + strings.ToLower(dbName)
+		}
+	}
 
 	for i := 0; i < len(models); i++ {
 		if models[i][key].(string) != "goadmin_menu" && models[i][key].(string) != "goadmin_operation_log" &&

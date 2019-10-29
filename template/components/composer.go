@@ -14,9 +14,18 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 		text += temList["components/"+v]
 	}
 
-	tmpla, err := template.New("comp").Funcs(template.FuncMap{
+	tmpl, err := template.New("comp").Funcs(template.FuncMap{
 		"lang":     language.Get,
 		"langHtml": language.GetFromHtml,
+		"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
+			if cdnUrl == "" {
+				return prefixUrl + assetsUrl
+			}
+			return cdnUrl + assetsUrl
+		},
+		"isLinkUrl": func(s string) bool {
+			return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
+		},
 	}).Parse(text)
 	if err != nil {
 		panic("ComposeHtml Error:" + err.Error())
@@ -26,7 +35,7 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 	defineName := strings.Replace(templateName[0], "table/", "", -1)
 	defineName = strings.Replace(defineName, "form/", "", -1)
 
-	err = tmpla.ExecuteTemplate(buffer, defineName, compo)
+	err = tmpl.ExecuteTemplate(buffer, defineName, compo)
 	if err != nil {
 		fmt.Println("ComposeHtml Error:", err)
 	}

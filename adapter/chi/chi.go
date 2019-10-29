@@ -188,7 +188,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
 		*(menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Request.URL.String()))),
-		panel, config))
+		panel, config, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Chi Content", err)
 	}
