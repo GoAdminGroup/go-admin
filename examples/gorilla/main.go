@@ -2,6 +2,8 @@ package main
 
 import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
@@ -47,6 +49,8 @@ func main() {
 	// customize a plugin
 
 	examplePlugin := example.NewExample()
+
+	template.AddComp(chartjs.NewChart())
 
 	// load from golang.Plugin
 	//

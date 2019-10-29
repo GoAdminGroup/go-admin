@@ -3,6 +3,8 @@ package main
 import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -49,6 +51,8 @@ func main() {
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+
+	template.AddComp(chartjs.NewChart())
 
 	// add generator, first parameter is the url prefix of table when visit.
 	// example:

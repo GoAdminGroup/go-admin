@@ -213,6 +213,10 @@ func (c Chart) IsAPage() bool {
 	return false
 }
 
+func (c Chart) GetName() string {
+	return "chartjs"
+}
+
 func (c Chart) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := c.GetTemplate()

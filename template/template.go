@@ -143,6 +143,8 @@ type Component interface {
 	GetContent() template.HTML
 
 	IsAPage() bool
+
+	GetName() string
 }
 
 var compMap = map[string]Component{
@@ -210,16 +212,16 @@ func GetAsset(path string) ([]byte, error) {
 // AddComp makes a component available by the provided name.
 // If Add is called twice with the same name or if component is nil,
 // it panics.
-func AddComp(name string, comp Component) {
+func AddComp(comp Component) {
 	compMu.Lock()
 	defer compMu.Unlock()
 	if comp == nil {
 		panic("component is nil")
 	}
-	if _, dup := compMap[name]; dup {
-		panic("add component twice " + name)
+	if _, dup := compMap[comp.GetName()]; dup {
+		panic("add component twice " + comp.GetName())
 	}
-	compMap[name] = comp
+	compMap[comp.GetName()] = comp
 }
 
 // AddLoginComp add the specified login component.

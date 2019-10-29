@@ -5,6 +5,8 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -22,6 +24,7 @@ func NewGorillaHandler() http.Handler {
 	eng := engine.Default()
 
 	examplePlugin := example.NewExample()
+	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJson(os.Args[len(os.Args)-1]).
 		AddPlugins(admin.NewAdmin(datamodel.Generators).

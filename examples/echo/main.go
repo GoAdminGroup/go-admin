@@ -3,6 +3,8 @@ package main
 import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -47,6 +49,8 @@ func main() {
 	// "user" => http://localhost:1323/admin/info/user
 	//
 	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+
+	template.AddComp(chartjs.NewChart())
 
 	// customize a plugin
 

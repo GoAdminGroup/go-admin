@@ -5,6 +5,8 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -24,6 +26,7 @@ func NewEchoHandler() http.Handler {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	template.AddComp(chartjs.NewChart())
 
 	examplePlugin := example.NewExample()
 

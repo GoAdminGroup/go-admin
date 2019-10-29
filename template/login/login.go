@@ -9,10 +9,13 @@ import (
 )
 
 type Login struct {
+	Name string
 }
 
 func GetLoginComponent() *Login {
-	return new(Login)
+	return &Login{
+		Name: "login",
+	}
 }
 
 func (l *Login) GetTemplate() (*template.Template, string) {
@@ -49,6 +52,10 @@ func (l *Login) GetAsset(name string) ([]byte, error) {
 
 func (l *Login) IsAPage() bool {
 	return true
+}
+
+func (l *Login) GetName() string {
+	return "login"
 }
 
 func (l *Login) GetContent() template.HTML {

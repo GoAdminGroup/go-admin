@@ -9,6 +9,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/go-chi/chi"
@@ -45,6 +47,8 @@ func main() {
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+
+	template.AddComp(chartjs.NewChart())
 
 	// add generator, first parameter is the url prefix of table when visit.
 	// example:

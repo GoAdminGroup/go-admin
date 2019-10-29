@@ -3,6 +3,8 @@ package main
 import (
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -41,6 +43,8 @@ func main() {
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
+
+	template.AddComp(chartjs.NewChart())
 
 	// add generator, first parameter is the url prefix of table when visit.
 	// example:

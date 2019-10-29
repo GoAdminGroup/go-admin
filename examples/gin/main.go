@@ -55,7 +55,7 @@ func main() {
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 
-	template.AddComp("chartjs", chartjs.NewChart())
+	template.AddComp(chartjs.NewChart())
 
 	// add generator, first parameter is the url prefix of table when visit.
 	// example:
