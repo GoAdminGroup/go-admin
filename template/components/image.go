@@ -9,7 +9,7 @@ type ImgAttribute struct {
 	Name   string
 	Width  string
 	Height string
-	Src    string
+	Src    template.HTML
 	types.Attribute
 }
 
@@ -23,7 +23,7 @@ func (compo *ImgAttribute) SetHeight(value string) types.ImgAttribute {
 	return compo
 }
 
-func (compo *ImgAttribute) SetSrc(value string) types.ImgAttribute {
+func (compo *ImgAttribute) SetSrc(value template.HTML) types.ImgAttribute {
 	compo.Src = value
 	return compo
 }
