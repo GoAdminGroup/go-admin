@@ -132,3 +132,9 @@ cli:
 	zip -qj ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/windows/x86_64/adm.exe
 	zip -qj ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/windows/i386/adm.exe
 	zip -qj ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/mac/adm
+	rm -rf ./adm/build/zip/*
+	cp ./adm/build/linux/armel/adm_linux_armel_$(VERSION).zip ./adm/build/zip/
+	cp ./adm/build/linux/x86_64/adm_linux_x86_64_$(VERSION).zip ./adm/build/zip/
+	cp ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/zip/
+	cp ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/zip/
+	cp ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/zip/
