@@ -153,7 +153,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	list := table.List["menu"]
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
-		list.GetForm().FieldList, list.GetPrimaryKey().Name)
+		list.GetForm().FieldList)
 
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).

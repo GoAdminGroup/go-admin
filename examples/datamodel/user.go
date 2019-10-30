@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
@@ -38,13 +39,18 @@ func GetUserTable() (userTable table.Table) {
 	})
 	info.AddField("Phone", "phone", db.Varchar)
 	info.AddField("City", "city", db.Varchar)
+	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
+		return template.Default().Image().
+			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
+			SetHeight("120").SetWidth("120").GetContent()
+	})
 	info.AddField("createdAt", "created_at", db.Timestamp)
 	info.AddField("updatedAt", "updated_at", db.Timestamp)
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
 	formList := userTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField("Ip", "ip", db.Varchar, form.Text)
 	formList.AddField("Name", "name", db.Varchar, form.Text)
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).

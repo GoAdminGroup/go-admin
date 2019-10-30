@@ -96,7 +96,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		}
 		formData, groupFormData, groupHeaders, title, description, _ = table.List[prefix].GetDataFromDatabaseWithId(id)
 	} else {
-		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups, panel.GetForm().FieldList, panel.GetPrimaryKey().Name)
+		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups, panel.GetForm().FieldList)
 		title = panel.GetForm().Title
 		description = panel.GetForm().Description
 	}

@@ -71,6 +71,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/template"
+    	"github.com/GoAdminGroup/go-admin/template/chartjs"
+    	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 )
@@ -113,12 +116,23 @@ func main() {
     	// Generators： 详见 https://github.com/GoAdminGroup/go-admin/blob/master/examples/datamodel/tables.go
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	
+	// 增加 chartjs 组件
+	template.AddComp(chartjs.NewChart())
+	
 	// 增加 generator, 第一个参数是对应的访问路由前缀
 	// 例子:
 	//
 	// "user" => http://localhost:9033/admin/info/user
 	//
 	// adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	
+	// 自定义首页
+        
+        	r.GET("/admin", func(ctx *gin.Context) {
+        		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+        			return datamodel.GetContent()
+        		})
+        	})
 
 	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 

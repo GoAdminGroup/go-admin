@@ -24,7 +24,7 @@ func GetAuthorsTable() (authorsTable table.Table) {
 	info.SetTable("authors").SetTitle("Authors").SetDescription("Authors")
 
 	formList := authorsTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField("First Name", "first_name", db.Varchar, form.Text)
 	formList.AddField("Last Name", "last_name", db.Varchar, form.Text)
 	formList.AddField("Email", "email", db.Varchar, form.Text)

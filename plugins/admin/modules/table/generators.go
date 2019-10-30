@@ -65,7 +65,7 @@ func GetManagerTable() (ManagerTable Table) {
 
 	formList := ManagerTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
@@ -132,7 +132,7 @@ func GetPermissionTable() (PermissionTable Table) {
 
 	formList := PermissionTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
@@ -189,7 +189,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	formList := RolesTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
@@ -246,7 +246,7 @@ func GetOpTable() (OpTable Table) {
 
 	formList := OpTable.GetForm()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
 	formList.AddField(lg("path"), "path", db.Varchar, form.Text)
 	formList.AddField(lg("method"), "method", db.Varchar, form.Text)
@@ -309,7 +309,7 @@ func GetMenuTable() (MenuTable Table) {
 	}}, parents...)
 
 	formList := MenuTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptions(parents).FieldDisplay(func(model types.FieldModel) interface{} {
 		menuModel, _ := db.Table("goadmin_menu").Select("parent_id").Find(model.ID)

@@ -20,7 +20,7 @@ func GetPostsTable() (postsTable table.Table) {
 	info.SetTable("posts").SetTitle("Posts").SetDescription("Posts")
 
 	formList := postsTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField("Title", "title", db.Varchar, form.Text)
 	formList.AddField("Description", "description", db.Varchar, form.Text)
 	formList.AddField("Content", "content", db.Varchar, form.Text)

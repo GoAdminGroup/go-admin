@@ -919,14 +919,14 @@ func (tb DefaultTable) sql() *db.Sql {
 
 func GetNewFormList(groupHeaders []string,
 	group [][]string,
-	old []types.FormField,
-	primaryKey string) ([]types.FormField, [][]types.FormField, []string) {
+	old []types.FormField) ([]types.FormField, [][]types.FormField, []string) {
 
 	if len(group) == 0 {
 		var newForm []types.FormField
 		for _, v := range old {
 			v.Value = v.Default
-			if v.Field != primaryKey && !v.NotAllowAdd {
+			if !v.NotAllowAdd {
+				v.Editable = true
 				newForm = append(newForm, v)
 			}
 		}
@@ -945,7 +945,8 @@ func GetNewFormList(groupHeaders []string,
 			for _, v := range old {
 				if v.Field == value[i] {
 					v.Value = v.Default
-					if v.Field != primaryKey && !v.NotAllowAdd {
+					if !v.NotAllowAdd {
+						v.Editable = true
 						list = append(list, v)
 						break
 					}

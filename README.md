@@ -80,6 +80,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 )
@@ -122,12 +125,23 @@ func main() {
     	// Generators: see https://github.com/GoAdminGroup/go-admin/blob/master/examples/datamodel/tables.go 
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	
+	// add component chartjs
+	template.AddComp(chartjs.NewChart())
+	
 	// add generator, first parameter is the url prefix of table when visit.
     	// example:
     	//
     	// "user" => http://localhost:9033/admin/info/user
     	//
     	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	
+	// customize your pages
+    
+    	r.GET("/admin", func(ctx *gin.Context) {
+    		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+    			return datamodel.GetContent()
+    		})
+    	})
 
 	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
 
