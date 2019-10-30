@@ -3,9 +3,8 @@ package modules
 import (
 	"bytes"
 	"encoding/gob"
+	"github.com/satori/go.uuid"
 	"strconv"
-
-	uuid "github.com/satori/go.uuid"
 )
 
 func InArray(arr []string, str string) bool {
@@ -40,8 +39,7 @@ func RemoveBlankFromArray(s []string) []string {
 }
 
 func Uuid() string {
-	uid, _ := uuid.NewV4()
-	return uid.String()
+	return uuid.NewV4().String()
 }
 
 func SetDefault(source, def string) string {
