@@ -29,7 +29,7 @@ type Menu struct {
 	MaxOrder int64
 }
 
-func (menu *Menu) SexMaxOrder(order int64) {
+func (menu *Menu) SetMaxOrder(order int64) {
 	menu.MaxOrder = order
 }
 

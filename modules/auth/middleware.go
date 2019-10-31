@@ -141,6 +141,10 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 		return true
 	}
 
+	if path != "/" && path[len(path)-1] == '/' {
+		path = path[:len(path)-1]
+	}
+
 	for _, v := range user.Permissions {
 
 		if v.HttpMethod[0] == "" || InMethodArr(v.HttpMethod, method) {
