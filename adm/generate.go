@@ -19,6 +19,19 @@ import (
 	"github.com/schollz/progressbar"
 )
 
+var systemGoAdminTables = []string{
+	"goadmin_menu",
+	"goadmin_operation_log",
+	"goadmin_permissions",
+	"goadmin_role_menu",
+	"goadmin_roles",
+	"goadmin_session",
+	"goadmin_users",
+	"goadmin_role_permissions",
+	"goadmin_role_users",
+	"goadmin_user_permissions",
+}
+
 func generating() {
 
 	clear(runtime.GOOS)
@@ -167,30 +180,44 @@ func clear(osName string) {
 }
 
 func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
-	key := "Tables_in_" + dbName
-	if driver == "postgresql" {
-		key = "tablename"
+	tables := make([]string, 0)
+	if len(models) == 0 {
+		return tables
 	}
 
-	tables := make([]string, 0)
-
-	if driver != "postgresql" && len(models) > 0 {
+	key := "Tables_in_" + dbName
+	if driver == "postgresql" || driver == "sqlite" {
+		key = "tablename"
+	} else {
 		if _, ok := models[0][key].(string); !ok {
 			key = "Tables_in_" + strings.ToLower(dbName)
 		}
 	}
 
 	for i := 0; i < len(models); i++ {
-		if models[i][key].(string) != "goadmin_menu" && models[i][key].(string) != "goadmin_operation_log" &&
-			models[i][key].(string) != "goadmin_permissions" && models[i][key].(string) != "goadmin_role_menu" &&
-			models[i][key].(string) != "goadmin_roles" && models[i][key].(string) != "goadmin_session" &&
-			models[i][key].(string) != "goadmin_users" && models[i][key].(string) != "goadmin_role_permissions" &&
-			models[i][key].(string) != "goadmin_role_users" && models[i][key].(string) != "goadmin_user_permissions" {
-			tables = append(tables, models[i][key].(string))
+		// skip sqlite system tables
+		if driver == "sqlite" && models[i][key].(string) == "sqlite_sequence" {
+			continue
 		}
+
+		// skip goadmin system tables
+		if isSystemTable(models[i][key].(string)) {
+			continue
+		}
+		tables = append(tables, models[i][key].(string))
 	}
 
 	return tables
+}
+
+func isSystemTable(name string) bool {
+	for _, v := range systemGoAdminTables {
+		if name == v {
+			return true
+		}
+	}
+
+	return false
 }
 
 func prompt(label string) string {
