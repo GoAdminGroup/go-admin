@@ -146,6 +146,10 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 		fieldField = "column_name"
 		typeField = "udt_name"
 	}
+	if driver.Value == "sqlite" {
+		fieldField = "name"
+		typeField = "type"
+	}
 
 	bar := progressbar.New(len(chooseTables))
 	for i := 0; i < len(chooseTables); i++ {
