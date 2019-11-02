@@ -8,7 +8,7 @@ import (
 )
 
 type LineChart struct {
-	Chart
+	*Chart
 
 	JsContent LineJsContent
 }
@@ -258,7 +258,7 @@ func (l *LineDataSet) SetYAxisID(yAxisID string) *LineDataSet {
 
 func Line() *LineChart {
 	return &LineChart{
-		Chart: Chart{
+		Chart: &Chart{
 			dataSetIndex: -1,
 		},
 		JsContent: LineJsContent{
@@ -492,6 +492,11 @@ func (l *LineChart) DSYAxisID(yAxisID string) *LineChart {
 func (l *LineChart) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := l.GetTemplate()
+
+	if l.JsContentOptions != nil {
+		fmt.Println("sfafadffasa")
+		l.JsContent.Options = l.JsContentOptions
+	}
 
 	jsonByte, _ := json.Marshal(l.JsContent)
 	l.Js = template.JS(string(jsonByte))

@@ -8,7 +8,7 @@ import (
 )
 
 type BarChart struct {
-	Chart
+	*Chart
 
 	JsContent BarJsContent
 }
@@ -123,7 +123,7 @@ func (l *BarDataSet) SetYAxisID(yAxisID string) *BarDataSet {
 
 func Bar() *BarChart {
 	return &BarChart{
-		Chart: Chart{
+		Chart: &Chart{
 			dataSetIndex: -1,
 		},
 		JsContent: BarJsContent{
@@ -242,6 +242,10 @@ func (l *BarChart) DSYAxisID(yAxisID string) *BarChart {
 func (l *BarChart) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := l.GetTemplate()
+
+	if l.JsContentOptions != nil {
+		l.JsContent.Options = l.JsContentOptions
+	}
 
 	jsonByte, _ := json.Marshal(l.JsContent)
 	l.Js = template.JS(string(jsonByte))

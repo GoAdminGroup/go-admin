@@ -8,7 +8,7 @@ import (
 )
 
 type PieChart struct {
-	Chart
+	*Chart
 
 	JsContent PieJsContent
 }
@@ -105,7 +105,7 @@ func (l *PieDataSet) SetHoverBorderWidth(hoverBorderWidth float64) *PieDataSet {
 
 func Pie() *PieChart {
 	return &PieChart{
-		Chart: Chart{
+		Chart: &Chart{
 			dataSetIndex: -1,
 		},
 		JsContent: PieJsContent{
@@ -204,6 +204,10 @@ func (l *PieChart) DSHoverBorderWidth(hoverBorderWidth float64) *PieChart {
 func (l *PieChart) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := l.GetTemplate()
+
+	if l.JsContentOptions != nil {
+		l.JsContent.Options = l.JsContentOptions
+	}
 
 	jsonByte, _ := json.Marshal(l.JsContent)
 	l.Js = template.JS(string(jsonByte))

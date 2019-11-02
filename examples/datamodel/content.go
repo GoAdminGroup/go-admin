@@ -146,7 +146,9 @@ func GetContent() (types.Panel, error) {
 	 * Box
 	/**************************/
 
-	lineChart := chartjs.Line().
+	line := chartjs.Line()
+
+	lineChart := line.
 		SetID("salechart").
 		SetHeight(180).
 		SetTitle("Sales: 1 Jan, 2019 - 30 Jul, 2019").
