@@ -2,6 +2,10 @@ package table
 
 import (
 	"fmt"
+	"html/template"
+	"strconv"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -10,9 +14,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"strconv"
-	"strings"
 )
 
 type Generator func() Table
@@ -753,11 +754,27 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 					}
 				}
 			} else {
-				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-					Row:   res,
-				}).(string)
+				// data bind for radio.
+				if formList[i].FormType.IsRadio() {
+					valueArr := formList[i].ToDisplay(types.FieldModel{
+						ID:    id,
+						Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
+						Row:   res,
+					}).(string)
+
+					for _, v := range formList[i].Options {
+						if valueArr == v["value"] {
+							v["selected"] = "checked"
+						}
+					}
+				} else {
+
+					formList[i].Value = formList[i].ToDisplay(types.FieldModel{
+						ID:    id,
+						Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
+						Row:   res,
+					}).(string)
+				}
 			}
 		} else {
 			if formList[i].FormType.IsSelect() {
