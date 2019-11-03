@@ -168,6 +168,19 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	fmt.Println()
 }
 
+func camelcase(s string) string {
+	arr := strings.Split(s, "_")
+	var res = ""
+	for i := 0; i < len(arr); i++ {
+		if i == 0 {
+			res += arr[i]
+		} else {
+			res += strings.Title(arr[i])
+		}
+	}
+	return res
+}
+
 func clear(osName string) {
 
 	if osName == "linux" || osName == "darwin" {
@@ -294,6 +307,8 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
+	tableCamel := camelcase(table)
+
 	var newTable = `table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))`
 	if connectionName != "default" {
 		newTable = `table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("` + driver + `", "` + connectionName + `"))`
@@ -307,11 +322,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func Get` + strings.Title(table) + `Table() table.Table {
+func Get` + strings.Title(tableCamel) + `Table() table.Table {
 
-    ` + table + `Table := ` + newTable + `
+    ` + tableCamel + `Table := ` + newTable + `
 
-	info := ` + table + `Table.GetInfo()
+	info := ` + tableCamel + `Table.GetInfo()
 	
 	`
 
@@ -325,7 +340,7 @@ func Get` + strings.Title(table) + `Table() table.Table {
 	content += `
 	info.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	formList := ` + table + `Table.GetForm()
+	formList := ` + tableCamel + `Table.GetForm()
 	
 	`
 
@@ -334,15 +349,21 @@ func Get` + strings.Title(table) + `Table() table.Table {
 		typeName := getType(model[typeField].(string))
 		formType := form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string))
 
-		content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
-			model[fieldField].(string) + `",db.` + typeName + `,` + formType + `)
+		if model[fieldField].(string) == "id" {
+			content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
+				model[fieldField].(string) + `",db.` + typeName + `,` + formType + `).FieldNotAllowAdd()
 	`
+		} else {
+			content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
+				model[fieldField].(string) + `",db.` + typeName + `,` + formType + `)
+	`
+		}
 	}
 
 	content += `
 	formList.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	return ` + table + `Table
+	return ` + tableCamel + `Table
 }`
 
 	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
@@ -356,7 +377,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 
 	for i := 0; i < len(tables); i++ {
 		tableStr += `
-	"` + tables[i] + `": Get` + strings.Title(tables[i]) + `Table,`
+	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
 		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
 `
 	}

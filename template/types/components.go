@@ -90,6 +90,7 @@ type TreeAttribute interface {
 	SetTree(value []menu.Item) TreeAttribute
 	SetEditUrl(value string) TreeAttribute
 	SetOrderUrl(value string) TreeAttribute
+	SetUrlPrefix(value string) TreeAttribute
 	SetDeleteUrl(value string) TreeAttribute
 	GetContent() template.HTML
 	GetTreeHeader() template.HTML

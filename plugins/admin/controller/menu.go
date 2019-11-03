@@ -142,6 +142,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	tree := aTree().
 		SetTree((menu.GetGlobalMenu(user)).List).
 		SetEditUrl(editUrl).
+		SetUrlPrefix(config.Prefix()).
 		SetDeleteUrl(deleteUrl).
 		SetOrderUrl(orderUrl).
 		GetContent()
