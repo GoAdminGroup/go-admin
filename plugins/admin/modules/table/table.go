@@ -859,8 +859,10 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 				} else {
 					if len(vv) > 1 {
 						value[k] = strings.Join(vv, delimiter)
-					} else {
+					} else if len(vv) > 0 {
 						value[k] = vv[0]
+					} else {
+						value[k] = ""
 					}
 				}
 			} else {
