@@ -13,6 +13,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"html"
 	"html/template"
 	"strings"
 )
@@ -385,6 +386,14 @@ func (i *InfoPanel) FieldToLower() *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) FieldXssFilter() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].DisplayProcessChains.
+		Add(func(s string) string {
+			return html.EscapeString(s)
+		})
+	return i
+}
+
 // InfoPanel attribute setting functions
 // ====================================================
 
@@ -626,6 +635,14 @@ func (f *FormPanel) FieldToUpper() *FormPanel {
 
 func (f *FormPanel) FieldToLower() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToLower()
+	return f
+}
+
+func (f *FormPanel) FieldXssFilter() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].DisplayProcessChains.
+		Add(func(s string) string {
+			return html.EscapeString(s)
+		})
 	return f
 }
 
