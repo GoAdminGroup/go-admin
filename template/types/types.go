@@ -152,6 +152,94 @@ func (d DisplayProcessFnChains) Add(f DisplayProcessFn) DisplayProcessFnChains {
 	return append(d, f)
 }
 
+func (d DisplayProcessFnChains) Copy() DisplayProcessFnChains {
+	if len(d) == 0 {
+		return make(DisplayProcessFnChains, 0)
+	} else {
+		var newDisplayProcessFnChains = make(DisplayProcessFnChains, len(d))
+		copy(newDisplayProcessFnChains, d)
+		return newDisplayProcessFnChains
+	}
+}
+
+var globalDisplayProcessChains = make(DisplayProcessFnChains, 0)
+
+func AddGlobalDisplayProcessFn(f DisplayProcessFn) {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(f)
+}
+
+func AddLimit(limit int) DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		if limit > len(value) {
+			return value
+		} else if limit < 0 {
+			return ""
+		} else {
+			return value[:limit]
+		}
+	})
+	return globalDisplayProcessChains
+}
+
+func AddTrimSpace() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		return strings.TrimSpace(value)
+	})
+	return globalDisplayProcessChains
+}
+
+func AddSubstr(start int, end int) DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		if start > end || start > len(value) || end < 0 {
+			return ""
+		}
+		if start < 0 {
+			start = 0
+		}
+		if end > len(value) {
+			end = len(value)
+		}
+		return value[start:end]
+	})
+	return globalDisplayProcessChains
+}
+
+func AddToTitle() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		return strings.Title(value)
+	})
+	return globalDisplayProcessChains
+}
+
+func AddToUpper() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		return strings.ToUpper(value)
+	})
+	return globalDisplayProcessChains
+}
+
+func AddToLower() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		return strings.ToLower(value)
+	})
+	return globalDisplayProcessChains
+}
+
+func AddXssFilter() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		return html.EscapeString(value)
+	})
+	return globalDisplayProcessChains
+}
+
+func AddXssJsFilter() DisplayProcessFnChains {
+	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+		s := strings.Replace(value, "<script>", "&lt;script&gt;", -1)
+		return strings.Replace(s, "</script>", "&lt;/script&gt;", -1)
+	})
+	return globalDisplayProcessChains
+}
+
 type FieldDisplay struct {
 	Display              FieldFilterFn
 	DisplayProcessChains DisplayProcessFnChains
@@ -311,7 +399,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
-			DisplayProcessChains: make(DisplayProcessFnChains, 0),
+			DisplayProcessChains: globalDisplayProcessChains.Copy(),
 		},
 	})
 	i.curFieldListIndex++
@@ -543,7 +631,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
-			DisplayProcessChains: make(DisplayProcessFnChains, 0),
+			DisplayProcessChains: globalDisplayProcessChains.Copy(),
 		},
 	})
 	f.curFieldListIndex++

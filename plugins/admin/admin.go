@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type Admin struct {
@@ -59,4 +60,49 @@ func (admin *Admin) GetRequest() []context.Path {
 
 func (admin *Admin) GetHandler(url, method string) context.Handlers {
 	return plugins.GetHandler(url, method, admin.app)
+}
+
+func (admin *Admin) AddGlobalDisplayProcessFn(f types.DisplayProcessFn) *Admin {
+	types.AddGlobalDisplayProcessFn(f)
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterLimit(limit int) *Admin {
+	types.AddLimit(limit)
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterTrimSpace() *Admin {
+	types.AddTrimSpace()
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterSubstr(start int, end int) *Admin {
+	types.AddSubstr(start, end)
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterToTitle() *Admin {
+	types.AddToTitle()
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterToUpper() *Admin {
+	types.AddToUpper()
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterToLower() *Admin {
+	types.AddToUpper()
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterXssFilter() *Admin {
+	types.AddXssFilter()
+	return admin
+}
+
+func (admin *Admin) AddDisplayFilterXssJsFilter() *Admin {
+	types.AddXssJsFilter()
+	return admin
 }

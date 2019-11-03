@@ -50,7 +50,7 @@ func main() {
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
 
 	template.AddComp(chartjs.NewChart())
 

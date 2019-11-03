@@ -67,7 +67,8 @@ func main() {
 
 	if err := eng.AddConfig(cfg).AddPlugins(admin.
 		NewAdmin(datamodel.Generators).
-		AddGenerator("user", datamodel.GetUserTable), examplePlugin).
+		AddGenerator("user", datamodel.GetUserTable).
+		AddDisplayFilterXssJsFilter(), examplePlugin).
 		Use(app); err != nil {
 		panic(err)
 	}

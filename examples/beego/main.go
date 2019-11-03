@@ -42,7 +42,7 @@ func main() {
 		Language:  language.CN,
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
+	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
 
 	template.AddComp(chartjs.NewChart())
 
