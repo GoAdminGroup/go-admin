@@ -700,6 +700,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 									Value: "",
 									Row:   res,
 								}).([]string)
+
 								for _, v := range formList[i].Options {
 									if modules.InArray(valueArr, v["value"]) {
 										v["selected"] = "selected"
@@ -713,6 +714,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 									Value: "",
 									Row:   res,
 								}).(string)
+
 								for _, v := range formList[i].Options {
 									if value == v["value"] {
 										v["selected"] = "checked"
@@ -748,33 +750,34 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
 				}).([]string)
+
 				for _, v := range formList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
+					} else {
+						v["selected"] = ""
+					}
+				}
+			} else if formList[i].FormType.IsRadio() {
+				value := formList[i].ToDisplay(types.FieldModel{
+					ID:    id,
+					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
+					Row:   res,
+				}).(string)
+
+				for _, v := range formList[i].Options {
+					if value == v["value"] {
+						v["selected"] = "checked"
+					} else {
+						v["selected"] = ""
 					}
 				}
 			} else {
-				// data bind for radio.
-				if formList[i].FormType.IsRadio() {
-					valueArr := formList[i].ToDisplay(types.FieldModel{
-						ID:    id,
-						Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-						Row:   res,
-					}).(string)
-
-					for _, v := range formList[i].Options {
-						if valueArr == v["value"] {
-							v["selected"] = "checked"
-						}
-					}
-				} else {
-
-					formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-						ID:    id,
-						Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-						Row:   res,
-					}).(string)
-				}
+				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
+					ID:    id,
+					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
+					Row:   res,
+				}).(string)
 			}
 		} else {
 			if formList[i].FormType.IsSelect() {
@@ -786,6 +789,22 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 				for _, v := range formList[i].Options {
 					if modules.InArray(valueArr, v["value"]) {
 						v["selected"] = "selected"
+					} else {
+						v["selected"] = ""
+					}
+				}
+			} else if formList[i].FormType.IsRadio() {
+				value := formList[i].ToDisplay(types.FieldModel{
+					ID:    id,
+					Value: "",
+					Row:   res,
+				}).(string)
+
+				for _, v := range formList[i].Options {
+					if value == v["value"] {
+						v["selected"] = "checked"
+					} else {
+						v["selected"] = ""
 					}
 				}
 			} else {
