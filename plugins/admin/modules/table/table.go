@@ -745,17 +745,28 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 	for i := 0; i < len(tb.form.FieldList); i++ {
 		if checkInTable(columns, formList[i].Field) {
 			if formList[i].FormType.IsSelect() {
-				valueArr := formList[i].ToDisplay(types.FieldModel{
+				valueRet := formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
 					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
 					Row:   res,
-				}).([]string)
+				})
 
-				for _, v := range formList[i].Options {
-					if modules.InArray(valueArr, v["value"]) {
-						v["selected"] = "selected"
-					} else {
-						v["selected"] = ""
+				if _, ok := valueRet.(string); ok {
+					for _, v := range formList[i].Options {
+						if v["value"] == valueRet {
+							v["selected"] = "selected"
+						} else {
+							v["selected"] = ""
+						}
+					}
+				} else {
+					valueArr := valueRet.([]string)
+					for _, v := range formList[i].Options {
+						if modules.InArray(valueArr, v["value"]) {
+							v["selected"] = "selected"
+						} else {
+							v["selected"] = ""
+						}
 					}
 				}
 			} else if formList[i].FormType.IsRadio() {
