@@ -51,7 +51,8 @@ func ShowForm(ctx *context.Context) {
 		Panel:  panel,
 		Id:     id,
 		Prefix: prefix,
-		Param:  parameter.GetParam(ctx.Request.URL.Query()),
+		Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+			panel.GetInfo().GetSort()),
 	})
 	ctx.Next()
 }

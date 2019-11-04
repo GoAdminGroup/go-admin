@@ -29,7 +29,8 @@ func ShowInfo(ctx *context.Context) {
 	prefix := ctx.Query("__prefix")
 	panel := table.List[prefix]
 
-	params := parameter.GetParam(ctx.Request.URL.Query())
+	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+		panel.GetInfo().GetSort())
 
 	editUrl := modules.AorB(panel.GetEditable() && !panel.GetInfo().IsHideEditButton,
 		config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
@@ -183,11 +184,14 @@ func Export(ctx *context.Context) {
 	)
 
 	if len(param.Id) == 1 {
-		params := parameter.GetParam(ctx.Request.URL.Query())
+		params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+			panel.GetInfo().GetSort())
 		panelInfo, err = panel.GetDataFromDatabase(ctx.Path(), params)
-		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), params.Page, params.PageSize)
+		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(),
+			params.Page, params.PageSize)
 	} else {
-		panelInfo, err = panel.GetDataFromDatabaseWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query()), param.Id)
+		panelInfo, err = panel.GetDataFromDatabaseWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query(),
+			panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort()), param.Id)
 		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), strings.Join(param.Id, "_"))
 	}
 

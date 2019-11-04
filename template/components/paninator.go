@@ -15,6 +15,7 @@ type PaginatorAttribute struct {
 	Pages             []map[string]string
 	NextClass         string
 	NextUrl           string
+	PageSizeList      []string
 	Option            map[string]template.HTML
 	Url               string
 	types.Attribute
@@ -47,6 +48,11 @@ func (compo *PaginatorAttribute) SetPreviousUrl(value string) types.PaginatorAtt
 
 func (compo *PaginatorAttribute) SetPages(value []map[string]string) types.PaginatorAttribute {
 	compo.Pages = value
+	return compo
+}
+
+func (compo *PaginatorAttribute) SetPageSizeList(value []string) types.PaginatorAttribute {
+	compo.PageSizeList = value
 	return compo
 }
 

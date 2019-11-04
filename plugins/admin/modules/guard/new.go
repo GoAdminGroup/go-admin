@@ -39,7 +39,8 @@ func ShowNewForm(ctx *context.Context) {
 	ctx.SetUserValue("show_new_form_param", &ShowNewFormParam{
 		Panel:  panel,
 		Prefix: prefix,
-		Param:  parameter.GetParam(ctx.Request.URL.Query()),
+		Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+			panel.GetInfo().GetSort()),
 	})
 	ctx.Next()
 }

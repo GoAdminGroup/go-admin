@@ -40,6 +40,7 @@ type Template interface {
 	Tree() types.TreeAttribute
 	Tabs() types.TabsAttribute
 	Alert() types.AlertAttribute
+
 	Paginator() types.PaginatorAttribute
 	Popup() types.PopupAttribute
 	Box() types.BoxAttribute

@@ -448,7 +448,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	return PanelInfo{
 		Thead:       thead,
 		InfoList:    infoList,
-		Paginator:   paginator.Get(path, params, size),
+		Paginator:   paginator.Get(path, params, size, tb.info.GetPageSizeList()),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
 	}, nil
@@ -612,7 +612,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 	return PanelInfo{
 		Thead:       thead,
 		InfoList:    infoList,
-		Paginator:   paginator.Get(path, params, size),
+		Paginator:   paginator.Get(path, params, size, tb.info.GetPageSizeList()),
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
 	}, nil

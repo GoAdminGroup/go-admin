@@ -1,7 +1,6 @@
 package paginator
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/components"
@@ -11,9 +10,9 @@ import (
 	"strconv"
 )
 
-func Get(path string, params parameter.Parameters, size int) types.PaginatorAttribute {
+func Get(path string, params parameter.Parameters, size int, pageSizeList []string) types.PaginatorAttribute {
 
-	paginator := template2.Get(config.Get().Theme).Paginator().(*components.PaginatorAttribute)
+	paginator := template2.Default().Paginator().(*components.PaginatorAttribute)
 
 	pageInt, _ := strconv.Atoi(params.Page)
 	pageSizeInt, _ := strconv.Atoi(params.PageSize)
@@ -38,13 +37,12 @@ func Get(path string, params parameter.Parameters, size int) types.PaginatorAttr
 	paginator.CurPageEndIndex = strconv.Itoa((pageInt) * pageSizeInt)
 	paginator.CurPageStartIndex = strconv.Itoa((pageInt - 1) * pageSizeInt)
 	paginator.Total = strconv.Itoa(size)
-	paginator.Option = map[string]template.HTML{
-		"10":  template.HTML(""),
-		"20":  template.HTML(""),
-		"30":  template.HTML(""),
-		"50":  template.HTML(""),
-		"100": template.HTML(""),
+
+	paginator.Option = make(map[string]template.HTML, len(pageSizeList))
+	for i := 0; i < len(pageSizeList); i++ {
+		paginator.Option[pageSizeList[i]] = template.HTML("")
 	}
+
 	paginator.Option[params.PageSize] = template.HTML("selected")
 
 	paginator.Pages = []map[string]string{}
@@ -188,5 +186,5 @@ func Get(path string, params parameter.Parameters, size int) types.PaginatorAttr
 		paginator.Pages = pagesArr
 	}
 
-	return paginator
+	return paginator.SetPageSizeList(pageSizeList)
 }

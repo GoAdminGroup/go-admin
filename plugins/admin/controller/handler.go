@@ -96,12 +96,14 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		}
 		formData, groupFormData, groupHeaders, title, description, _ = table.List[prefix].GetDataFromDatabaseWithId(id)
 	} else {
-		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups, panel.GetForm().FieldList)
+		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
+			panel.GetForm().FieldList)
 		title = panel.GetForm().Title
 		description = panel.GetForm().Description
 	}
 
-	queryParam := parameter.GetParam(ctx.Request.URL.Query()).GetRouteParamStr()
+	queryParam := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize,
+		panel.GetPrimaryKey().Name, panel.GetInfo().GetSort()).GetRouteParamStr()
 
 	user := auth.Auth(ctx)
 

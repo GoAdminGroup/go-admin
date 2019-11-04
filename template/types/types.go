@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html"
 	"html/template"
+	"strconv"
 	"strings"
 )
 
@@ -372,6 +373,9 @@ type InfoPanel struct {
 
 	Sort Sort
 
+	PageSizeList    []int
+	DefaultPageSize int
+
 	IsHideNewButton    bool
 	IsHideExportButton bool
 	IsHideEditButton   bool
@@ -385,8 +389,16 @@ type InfoPanel struct {
 	FooterHtml template.HTML
 }
 
+var DefaultPageSizeList = []int{10, 20, 30, 50, 100}
+
+const DefaultPageSize = 10
+
 func NewInfoPanel() *InfoPanel {
-	return &InfoPanel{curFieldListIndex: -1}
+	return &InfoPanel{
+		curFieldListIndex: -1,
+		PageSizeList:      DefaultPageSizeList,
+		DefaultPageSize:   DefaultPageSize,
+	}
 }
 
 func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *InfoPanel {
@@ -490,6 +502,33 @@ func (i *InfoPanel) SetTable(table string) *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) SetPageSizeList(pageSizeList []int) *InfoPanel {
+	i.PageSizeList = pageSizeList
+	return i
+}
+
+func (i *InfoPanel) SetDefaultPageSize(defaultPageSize int) *InfoPanel {
+	i.DefaultPageSize = defaultPageSize
+	return i
+}
+
+func (i *InfoPanel) GetPageSizeList() []string {
+	var pageSizeList = make([]string, len(i.PageSizeList))
+	for j := 0; j < len(i.PageSizeList); j++ {
+		pageSizeList[j] = strconv.Itoa(i.PageSizeList[j])
+	}
+	return pageSizeList
+}
+
+func (i *InfoPanel) GetSort() string {
+	switch i.Sort {
+	case SortAsc:
+		return "asc"
+	default:
+		return "desc"
+	}
+}
+
 func (i *InfoPanel) SetTitle(title string) *InfoPanel {
 	i.Title = title
 	return i
@@ -510,8 +549,13 @@ func (i *InfoPanel) SetDescription(desc string) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) SetSort(sort Sort) *InfoPanel {
-	i.Sort = sort
+func (i *InfoPanel) SetSortAsc() *InfoPanel {
+	i.Sort = SortAsc
+	return i
+}
+
+func (i *InfoPanel) SetSortDesc() *InfoPanel {
+	i.Sort = SortDesc
 	return i
 }
 
@@ -601,7 +645,7 @@ type FormPanel struct {
 	FieldList         FormFields
 	curFieldListIndex int
 
-	// Warn: may be deprecated future.
+	// Warn: may be deprecated in the future.
 	TabGroups  TabGroups
 	TabHeaders TabHeaders
 

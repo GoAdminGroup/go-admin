@@ -16,11 +16,11 @@ type Parameters struct {
 	Fields    map[string]string
 }
 
-func GetParam(values url.Values) Parameters {
+func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
 	page := GetDefault(values, "__page", "1")
-	pageSize := GetDefault(values, "__pageSize", "10")
-	sortField := GetDefault(values, "__sort", "id")
-	sortType := GetDefault(values, "__sort_type", "desc")
+	pageSize := GetDefault(values, "__pageSize", strconv.Itoa(defaultPageSize))
+	sortField := GetDefault(values, "__sort", primaryKey)
+	sortType := GetDefault(values, "__sort_type", defaultSort)
 	columns := GetDefault(values, "__columns", "")
 
 	fields := make(map[string]string)

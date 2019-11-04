@@ -494,7 +494,6 @@ func (l *LineChart) GetContent() template.HTML {
 	tmpl, defineName := l.GetTemplate()
 
 	if l.JsContentOptions != nil {
-		fmt.Println("sfafadffasa")
 		l.JsContent.Options = l.JsContentOptions
 	}
 

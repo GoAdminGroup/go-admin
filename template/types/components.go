@@ -103,6 +103,7 @@ type PaginatorAttribute interface {
 	SetPreviousClass(value string) PaginatorAttribute
 	SetPreviousUrl(value string) PaginatorAttribute
 	SetPages(value []map[string]string) PaginatorAttribute
+	SetPageSizeList(value []string) PaginatorAttribute
 	SetNextClass(value string) PaginatorAttribute
 	SetNextUrl(value string) PaginatorAttribute
 	SetOption(value map[string]template.HTML) PaginatorAttribute
