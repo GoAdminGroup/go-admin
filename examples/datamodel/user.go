@@ -27,7 +27,7 @@ func GetUserTable() (userTable table.Table) {
 
 	info := userTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField("Name", "name", db.Varchar)
+	info.AddField("Name", "name", db.Varchar).FieldEditAble()
 	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel) interface{} {
 		if model.Value == "0" {
 			return "men"

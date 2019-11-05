@@ -320,6 +320,7 @@ type Field struct {
 
 	Width      int
 	Sortable   bool
+	EditAble   bool
 	Fixed      bool
 	Filterable bool
 	Hide       bool
@@ -407,6 +408,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 		Field:    field,
 		TypeName: typeName,
 		Sortable: false,
+		EditAble: false,
 		FieldDisplay: FieldDisplay{
 			Display: func(value FieldModel) interface{} {
 				return value.Value
@@ -433,6 +435,11 @@ func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
 
 func (i *InfoPanel) FieldSortable() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Sortable = true
+	return i
+}
+
+func (i *InfoPanel) FieldEditAble() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].EditAble = true
 	return i
 }
 

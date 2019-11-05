@@ -73,6 +73,10 @@ func (e NewFormParam) GetNewUrl() string {
 	return e.getUrl("new")
 }
 
+func (e NewFormParam) GetUpdateUrl() string {
+	return config.Get().Url("/update/" + e.Prefix)
+}
+
 func (e NewFormParam) GetDeleteUrl() string {
 	return config.Get().Url("/delete/" + e.Prefix)
 }
@@ -123,7 +127,7 @@ func NewForm(ctx *context.Context) {
 		return
 	}
 
-	param := parameter.GetParamFromUrl(previous)
+	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 
 	ctx.SetUserValue("new_form_param", &NewFormParam{
 		Panel:        panel,

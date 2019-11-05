@@ -306,6 +306,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	var (
 		sortable   string
+		editable   string
 		hide       string
 		joins      string
 		headField  string
@@ -334,12 +335,14 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			continue
 		}
 		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
+		editable = modules.AorB(tb.info.FieldList[i].EditAble, "true", "false")
 		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
 			"field":    headField,
 			"hide":     hide,
+			"editable": editable,
 			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 	}
@@ -475,6 +478,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 
 	var (
 		sortable   string
+		editable   string
 		hide       string
 		joins      string
 		headField  string
@@ -503,12 +507,14 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			continue
 		}
 		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
+		editable = modules.AorB(tb.info.FieldList[i].EditAble, "true", "false")
 		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
 		thead = append(thead, map[string]string{
 			"head":     tb.info.FieldList[i].Head,
 			"sortable": sortable,
 			"field":    headField,
 			"hide":     hide,
+			"editable": editable,
 			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 	}

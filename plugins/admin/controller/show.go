@@ -41,13 +41,14 @@ func ShowInfo(ctx *context.Context) {
 	newUrl := modules.AorB(panel.GetCanAdd() && !panel.GetInfo().IsHideNewButton,
 		config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
 	infoUrl := config.Url("/info/" + prefix)
+	updateUrl := config.Url("/update/" + prefix)
 
-	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl)
+	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 	ctx.Html(http.StatusOK, buf.String())
 }
 
 func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
-	exportUrl, newUrl, deleteUrl, infoUrl, editUrl string) *bytes.Buffer {
+	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl string) *bytes.Buffer {
 
 	panelInfo, err := panel.GetDataFromDatabase(path, params)
 
@@ -97,6 +98,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 					SetExportUrl(exportUrl).
 					SetNewUrl(newUrl).
 					SetEditUrl(editUrl).
+					SetUpdateUrl(updateUrl).
 					SetDeleteUrl(deleteUrl).GetContent(),
 			}
 		}
@@ -112,6 +114,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetExportUrl(exportUrl).
 			SetNewUrl(newUrl).
 			SetEditUrl(editUrl).
+			SetUpdateUrl(updateUrl).
 			SetDeleteUrl(deleteUrl)
 		body = dataTable.GetContent()
 	}

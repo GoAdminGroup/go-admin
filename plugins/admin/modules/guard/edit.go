@@ -40,9 +40,9 @@ func ShowForm(ctx *context.Context) {
 		return
 	}
 
-	id := ctx.Query("id")
+	id := ctx.Query(panel.GetPrimaryKey().Name)
 	if id == "" {
-		alert(ctx, panel, "wrong id")
+		alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name)
 		ctx.Abort()
 		return
 	}
@@ -79,6 +79,10 @@ func (e EditFormParam) Value() form.Values {
 
 func (e EditFormParam) GetEditUrl() string {
 	return e.getUrl("edit")
+}
+
+func (e EditFormParam) GetUpdateUrl() string {
+	return config.Get().Url("/update/" + e.Prefix)
 }
 
 func (e EditFormParam) HasAlert() bool {
@@ -149,7 +153,7 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	param := parameter.GetParamFromUrl(previous)
+	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 
 	ctx.SetUserValue("edit_form_param", &EditFormParam{
 		Panel:        panel,

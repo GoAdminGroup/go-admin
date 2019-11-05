@@ -96,8 +96,9 @@ func NewForm(ctx *context.Context) {
 	exportUrl := modules.AorB(param.Panel.GetExportable(), param.GetExportUrl(), "")
 	newUrl := modules.AorB(param.Panel.GetCanAdd(), param.GetNewUrl(), "")
 	infoUrl := param.GetInfoUrl()
+	updateUrl := modules.AorB(param.Panel.GetEditable(), param.GetUpdateUrl(), "")
 
-	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl)
+	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 
 	ctx.Html(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

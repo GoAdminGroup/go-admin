@@ -82,6 +82,7 @@ type DataTableAttribute interface {
 	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute
+	SetUpdateUrl(value string) DataTableAttribute
 	SetFilters(value []map[string]string) DataTableAttribute
 	GetContent() template.HTML
 }

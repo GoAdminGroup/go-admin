@@ -59,15 +59,15 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 	}
 }
 
-func GetParamFromUrl(value string) Parameters {
+func GetParamFromUrl(value string, defaultPageSize int, primaryKey, defaultSort string) Parameters {
 	prevUrlArr := strings.Split(value, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
 
 	var (
 		page      = "1"
-		pageSize  = "10"
-		sortField = "id"
-		sortType  = "desc"
+		pageSize  = strconv.Itoa(defaultPageSize)
+		sortField = primaryKey
+		sortType  = defaultSort
 		columns   = make([]string, 0)
 	)
 

@@ -54,6 +54,8 @@ func InitRouter(prefix string) *context.App {
 	authRoute.POST("/export/:__prefix", guard.Export, controller.Export)
 	authRoute.GET("/info/:__prefix", controller.ShowInfo)
 
+	authRoute.POST("/update/:__prefix", guard.Update, controller.Update)
+
 	return app
 }
 
