@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	table2 "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
 func GetUserTable() (userTable table.Table) {
@@ -44,8 +45,8 @@ func GetUserTable() (userTable table.Table) {
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").GetContent()
 	})
-	info.AddField("createdAt", "created_at", db.Timestamp)
-	info.AddField("updatedAt", "updated_at", db.Timestamp)
+	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(table2.Datetime)
+	info.AddField("updatedAt", "updated_at", db.Timestamp).FieldEditAble(table2.Datetime)
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

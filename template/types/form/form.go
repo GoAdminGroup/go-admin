@@ -25,6 +25,7 @@ const (
 	Currency
 	Number
 	TextArea
+	Custom
 )
 
 func (t Type) String() string {
@@ -65,6 +66,8 @@ func (t Type) String() string {
 		return "number"
 	case TextArea:
 		return "textarea"
+	case Custom:
+		return "custom"
 	default:
 		panic("wrong form type")
 	}

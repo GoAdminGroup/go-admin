@@ -13,6 +13,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/template/types/table"
 	"html"
 	"html/template"
 	"strconv"
@@ -325,6 +326,9 @@ type Field struct {
 	Filterable bool
 	Hide       bool
 
+	EditType    table.Type
+	EditOptions []map[string]string
+
 	FieldDisplay
 }
 
@@ -409,6 +413,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 		TypeName: typeName,
 		Sortable: false,
 		EditAble: false,
+		EditType: table.Text,
 		FieldDisplay: FieldDisplay{
 			Display: func(value FieldModel) interface{} {
 				return value.Value
@@ -438,8 +443,16 @@ func (i *InfoPanel) FieldSortable() *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldEditAble() *InfoPanel {
+func (i *InfoPanel) FieldEditOptions(options []map[string]string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].EditOptions = options
+	return i
+}
+
+func (i *InfoPanel) FieldEditAble(editType ...table.Type) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].EditAble = true
+	if len(editType) > 0 {
+		i.FieldList[i.curFieldListIndex].EditType = editType[0]
+	}
 	return i
 }
 
@@ -762,7 +775,7 @@ func (f *FormPanel) FieldSubstr(start int, end int) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldToTitle() *FormPanel {
+func (f *FormPanel) FieldToTitlCustomJse() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToTitle()
 	return f
 }

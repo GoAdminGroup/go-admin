@@ -343,6 +343,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 			"field":    headField,
 			"hide":     hide,
 			"editable": editable,
+			"edittype": tb.info.FieldList[i].EditType.String(),
 			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 	}
@@ -515,6 +516,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 			"field":    headField,
 			"hide":     hide,
 			"editable": editable,
+			"edittype": tb.info.FieldList[i].EditType.String(),
 			"width":    strconv.Itoa(tb.info.FieldList[i].Width),
 		})
 	}
