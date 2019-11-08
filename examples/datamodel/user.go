@@ -8,7 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	table2 "github.com/GoAdminGroup/go-admin/template/types/table"
+	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
 func GetUserTable() (userTable table.Table) {
@@ -28,7 +28,7 @@ func GetUserTable() (userTable table.Table) {
 
 	info := userTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField("Name", "name", db.Varchar).FieldEditAble()
+	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text)
 	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel) interface{} {
 		if model.Value == "0" {
 			return "men"
@@ -37,16 +37,19 @@ func GetUserTable() (userTable table.Table) {
 			return "women"
 		}
 		return "unknown"
+	}).FieldEditAble(editType.Select).FieldEditOptions([]map[string]string{
+		{"value": "0", "text": "men"},
+		{"value": "1", "text": "women"},
 	})
-	info.AddField("Phone", "phone", db.Varchar)
-	info.AddField("City", "city", db.Varchar)
+	info.AddField("Phone", "phone", db.Varchar).FieldEditAble()
+	info.AddField("City", "city", db.Varchar).FieldEditAble()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").GetContent()
 	})
-	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(table2.Datetime)
-	info.AddField("updatedAt", "updated_at", db.Timestamp).FieldEditAble(table2.Datetime)
+	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime)
+	info.AddField("updatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

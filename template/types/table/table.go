@@ -8,14 +8,9 @@ const (
 	Select
 	Date
 	Datetime
-	Dateui
-	Combodate
-	Html5types
-	Checklist
-	Wysihtml5
-	Typeahead
-	Typeaheadjs
-	Select2
+	Year
+	Month
+	Day
 )
 
 func (t Type) String() string {
@@ -28,24 +23,14 @@ func (t Type) String() string {
 		return "textarea"
 	case Date:
 		return "date"
+	case Year:
+		return "year"
+	case Month:
+		return "month"
+	case Day:
+		return "day"
 	case Datetime:
 		return "datetime"
-	case Dateui:
-		return "dateui"
-	case Combodate:
-		return "combodate"
-	case Html5types:
-		return "html5types"
-	case Checklist:
-		return "checklist"
-	case Wysihtml5:
-		return "wysihtml5"
-	case Typeahead:
-		return "typeahead"
-	case Typeaheadjs:
-		return "typeaheadjs"
-	case Select2:
-		return "select2"
 	default:
 		panic("wrong form type")
 	}

@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
 func GetPostsTable() (postsTable table.Table) {
@@ -14,7 +15,7 @@ func GetPostsTable() (postsTable table.Table) {
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Title", "title", db.Varchar)
 	info.AddField("Description", "description", db.Varchar)
-	info.AddField("Content", "content", db.Varchar)
+	info.AddField("Content", "content", db.Varchar).FieldEditAble(editType.Textarea)
 	info.AddField("Date", "date", db.Varchar)
 
 	info.SetTable("posts").SetTitle("Posts").SetDescription("Posts")

@@ -5,6 +5,7 @@
 package types
 
 import (
+	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -330,6 +331,19 @@ type Field struct {
 	EditOptions []map[string]string
 
 	FieldDisplay
+}
+
+func (f Field) GetEditOptions() string {
+	if len(f.EditOptions) == 0 {
+		return ""
+	}
+	eo, err := json.Marshal(f.EditOptions)
+
+	if err != nil {
+		return ""
+	}
+
+	return string(eo)
 }
 
 type Join struct {
