@@ -32,6 +32,14 @@ $ cd $GOPATH/src/github.com/GoAdminGroup/go-admin # GOPATH is $HOME/go by defaul
 $ git remote add <FORK_NAME> <FORK_URL>
 ```
 
+在你提交代码之前，记得执行下面这个命令： 
+
+```
+make test
+```
+
+看根目录下的```Makefile```获得更多信息。
+
 注意了： `go get` 返回 `package github.com/GoAdminGroup/go-admin: no Go files in /go/src/github.com/GoAdminGroup/go-admin` 是正常的。
 
 ### 依赖管理

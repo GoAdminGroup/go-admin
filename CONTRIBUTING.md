@@ -32,6 +32,14 @@ $ cd $GOPATH/src/github.com/GoAdminGroup/go-admin # GOPATH is $HOME/go by defaul
 $ git remote add <FORK_NAME> <FORK_URL>
 ```
 
+And before you commit, remember to execute the command: 
+
+```
+make test
+```
+
+See the Makefile for more details.
+
 Notice: `go get` return `package github.com/GoAdminGroup/go-admin: no Go files in /go/src/github.com/GoAdminGroup/go-admin` is normal.
 
 ### Dependency management
