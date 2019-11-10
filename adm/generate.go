@@ -405,5 +405,5 @@ func getType(typeName string) string {
 	r, _ := regexp.Compile(`\(.*?\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	r2, _ := regexp.Compile(`unsigned(.*)`)
-	return strings.TrimSpace(strings.Title(r2.ReplaceAllString(typeName, "")))
+	return strings.TrimSpace(strings.Title(strings.ToLower(r2.ReplaceAllString(typeName, ""))))
 }
