@@ -59,16 +59,14 @@ func filterQuery(query string) string {
 
 func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 	db.Once.Do(func() {
-		var (
-			sqlDB *sql.DB
-			err   error
-		)
-
 		for conn, cfg := range cfgList {
-			connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-				cfg.Host, cfg.Port, cfg.User, cfg.Pwd, cfg.Name)
 
-			sqlDB, err = sql.Open("postgres", connStr)
+			if cfg.Dsn == "" {
+				cfg.Dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+					cfg.Host, cfg.Port, cfg.User, cfg.Pwd, cfg.Name)
+			}
+
+			sqlDB, err := sql.Open("postgres", cfg.Dsn)
 			if err != nil {
 				panic(err)
 			}

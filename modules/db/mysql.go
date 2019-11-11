@@ -39,14 +39,13 @@ func (db *Mysql) GetName() string {
 
 func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 	db.Once.Do(func() {
-		var (
-			err   error
-			SqlDB *sql.DB
-		)
-
 		for conn, cfg := range cfgs {
-			SqlDB, err = sql.Open("mysql", cfg.User+
-				":"+cfg.Pwd+"@tcp("+cfg.Host+":"+cfg.Port+")/"+cfg.Name+"?charset=utf8mb4")
+
+			if cfg.Dsn == "" {
+				cfg.Dsn = cfg.User + ":" + cfg.Pwd + "@tcp(" + cfg.Host + ":" + cfg.Port + ")/" + cfg.Name + "?charset=utf8mb4"
+			}
+
+			SqlDB, err := sql.Open("mysql", cfg.Dsn)
 
 			if err != nil {
 				if SqlDB != nil {

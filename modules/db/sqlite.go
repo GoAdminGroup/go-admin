@@ -45,13 +45,8 @@ func (db *Sqlite) Exec(query string, args ...interface{}) (sql.Result, error) {
 
 func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 	db.Once.Do(func() {
-		var (
-			sqlDB *sql.DB
-			err   error
-		)
-
 		for conn, cfg := range cfgList {
-			sqlDB, err = sql.Open("sqlite3", cfg.File)
+			sqlDB, err := sql.Open("sqlite3", cfg.File)
 
 			if err != nil {
 				panic(err)

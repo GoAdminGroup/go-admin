@@ -51,20 +51,18 @@ func (db *Mssql) Exec(query string, args ...interface{}) (sql.Result, error) {
 
 func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 	db.Once.Do(func() {
-		var (
-			err   error
-			SqlDB *sql.DB
-		)
-
 		for conn, cfg := range cfglist {
 
-			u := &url.URL{
-				Scheme: "mssql",
-				User:   url.UserPassword(cfg.User, cfg.Pwd),
-				Host:   fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
+			if cfg.Dsn == "" {
+				u := &url.URL{
+					Scheme: "mssql",
+					User:   url.UserPassword(cfg.User, cfg.Pwd),
+					Host:   fmt.Sprintf("%s:%s", cfg.Host, cfg.Port),
+				}
+				cfg.Dsn = u.String()
 			}
 
-			SqlDB, err = sql.Open("mssql", u.String())
+			SqlDB, err := sql.Open("mssql", cfg.Dsn)
 
 			if SqlDB == nil {
 				panic("invalid connection")

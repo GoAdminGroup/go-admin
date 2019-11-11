@@ -16,10 +16,15 @@ import (
 )
 
 // Database is a type of database connection config.
+//
 // Because a little difference of different database driver.
-// The Config has multiple options but may be not used.
+// The Config has multiple options but may not be used.
 // Such as the sqlite driver only use the File option which
 // can be ignored when the driver is mysql.
+//
+// If the Dsn is configured, when driver is mysql/postgresql/
+// mssql, the other configurations will be ignored, except for
+// MaxIdleCon and MaxOpenCon.
 type Database struct {
 	Host       string `json:"host"`
 	Port       string `json:"port"`
@@ -30,6 +35,7 @@ type Database struct {
 	MaxOpenCon int    `json:"max_open_con"`
 	Driver     string `json:"driver"`
 	File       string `json:"file"`
+	Dsn        string `json:"dsn"`
 }
 
 type DatabaseList map[string]Database
