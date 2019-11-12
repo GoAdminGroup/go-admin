@@ -1,6 +1,11 @@
+// +build go1.13
+
 package iris
 
 import (
+	"net/http"
+	"os"
+
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
@@ -14,10 +19,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/context"
-	"net/http"
-	"os"
+
+	"github.com/kataras/iris/v12"
 )
 
 func NewIrisHandler() http.Handler {
@@ -35,7 +38,7 @@ func NewIrisHandler() http.Handler {
 		panic(err)
 	}
 
-	app.Get("/admin", func(context context.Context) {
+	app.Get("/admin", func(context iris.Context) {
 		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})

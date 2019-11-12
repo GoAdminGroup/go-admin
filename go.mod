@@ -1,10 +1,10 @@
 module github.com/GoAdminGroup/go-admin
 
-go 1.12
+go 1.13
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/kataras/iris/v12 v12.0.1
 	github.com/magiconair/properties v1.8.1
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b

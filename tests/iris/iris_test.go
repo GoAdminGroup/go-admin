@@ -1,10 +1,15 @@
+// +build go1.13
+
 package iris
 
 import (
-	"github.com/GoAdminGroup/go-admin/tests/common"
-	"github.com/gavv/httpexpect"
 	"net/http"
 	"testing"
+
+	"github.com/GoAdminGroup/go-admin/tests/common"
+	// NOTE: iris has its own `kataras/iris/v12/httptest`
+	// package which uses gavv/httpexpect under the hoods as well.
+	"github.com/gavv/httpexpect"
 )
 
 func TestIris(t *testing.T) {
