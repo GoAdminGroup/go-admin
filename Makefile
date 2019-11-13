@@ -58,6 +58,7 @@ test:
 
 mysql-test:
 	make import-mysql
+	go get github.com/ugorji/go/codec@none
 	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
 	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PATH)
@@ -72,6 +73,7 @@ mysql-test:
 
 sqlite-test:
 	make import-sqlite
+	go get github.com/ugorji/go/codec@none
 	gotest -v ./tests/gin/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
 	gotest -v ./tests/beego/... -args $(TEST_CONFIG_SQLITE_PATH)
@@ -99,6 +101,7 @@ import-postgresql:
 
 pg-test:
 	make import-postgresql
+	go get github.com/ugorji/go/codec@none
 	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
 	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PQ_PATH)
