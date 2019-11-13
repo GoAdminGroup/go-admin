@@ -2,10 +2,10 @@ language: go
 sudo: false
 
 go:
-  - 1.12.x
+  - 1.13.x
 
 env:
-  - GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.cn
+  - GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.io,https://goproxy.cn,direct
 
 services:
   - mysql

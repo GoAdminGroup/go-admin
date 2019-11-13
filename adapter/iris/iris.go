@@ -1,3 +1,5 @@
+// +build go1.13
+
 // Copyright 2019 GoAdmin Core Team.  All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
@@ -7,6 +9,10 @@ package iris
 import (
 	"bytes"
 	"errors"
+	template2 "html/template"
+	"net/http"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -18,14 +24,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/kataras/iris"
-	template2 "html/template"
-	"net/http"
-	"strings"
+
+	"github.com/kataras/iris/v12"
 )
 
-type Iris struct {
-}
+// Iris structure value is an Iris go-admin adapter.
+type Iris struct{}
 
 func init() {
 	engine.Register(new(Iris))
@@ -149,5 +153,5 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 	if err != nil {
 		logger.Error("Iris Content", err)
 	}
-	_, _ = ctx.WriteString(buf.String())
+	_, _ = ctx.Write(buf.Bytes())
 }
