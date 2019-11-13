@@ -387,46 +387,17 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		// TODO: add object pool
 
 		tempModelData := make(map[string]template.HTML)
-		row := res[i]
 
-		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
-
-		for j := 0; j < len(tb.info.FieldList); j++ {
-
-			headField = tb.info.FieldList[j].Field
-
-			if tb.info.FieldList[j].Join.Valid() {
-				headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
-			}
-
-			if tb.info.FieldList[j].Hide {
-				continue
-			}
-			if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-				continue
-			}
-			var value interface{}
-			if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
-				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-					ID:    primaryKeyValue.String(),
-					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
-					Row:   row,
-				})
+		if i != len(res)-1 && res[i][tb.primaryKey.Name] == res[i+1][tb.primaryKey.Name] {
+			tempModelData = tb.getTempModelCombineData(res[i], res[i+1], params, columns)
+			if i != len(res)-2 {
+				res = append(res[:i+1], res[i+2:]...)
 			} else {
-				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-					ID:    primaryKeyValue.String(),
-					Value: "",
-					Row:   row,
-				})
+				res = res[:i+1]
 			}
-			if valueStr, ok := value.(string); ok {
-				tempModelData[headField] = template.HTML(valueStr)
-			} else {
-				tempModelData[headField] = value.(template.HTML)
-			}
+		} else {
+			tempModelData = tb.getTempModelData(res[i], params, columns)
 		}
-
-		tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
 
 		infoList = append(infoList, tempModelData)
 	}
@@ -457,6 +428,112 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		Title:       tb.info.Title,
 		Description: tb.info.Description,
 	}, nil
+}
+
+func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters,
+	columns Columns) map[string]template.HTML {
+
+	tempModelData := make(map[string]template.HTML)
+	headField := ""
+
+	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
+
+	for j := 0; j < len(tb.info.FieldList); j++ {
+
+		headField = tb.info.FieldList[j].Field
+
+		if tb.info.FieldList[j].Join.Valid() {
+			headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
+		}
+
+		if tb.info.FieldList[j].Hide {
+			continue
+		}
+		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
+			continue
+		}
+		var value interface{}
+		if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
+			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, res[headField]).String(),
+				Row:   res,
+			})
+		} else {
+			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: "",
+				Row:   res,
+			})
+		}
+		if valueStr, ok := value.(string); ok {
+			tempModelData[headField] = template.HTML(valueStr)
+		} else {
+			tempModelData[headField] = value.(template.HTML)
+		}
+	}
+
+	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
+	return tempModelData
+}
+
+func (tb DefaultTable) getTempModelCombineData(res map[string]interface{}, resNext map[string]interface{}, params parameter.Parameters,
+	columns Columns) map[string]template.HTML {
+
+	tempModelData := make(map[string]template.HTML)
+	headField := ""
+
+	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
+
+	for j := 0; j < len(tb.info.FieldList); j++ {
+
+		headField = tb.info.FieldList[j].Field
+
+		if tb.info.FieldList[j].Join.Valid() {
+			headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
+		}
+
+		if tb.info.FieldList[j].Hide {
+			continue
+		}
+		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
+			continue
+		}
+
+		var (
+			resValue     = db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, res[headField]).String()
+			resNextValue = db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, resNext[headField]).String()
+			combineValue = ""
+		)
+		if resValue == resNextValue {
+			combineValue = resValue
+		} else {
+			combineValue = resValue + "|" + resNextValue
+		}
+
+		var value interface{}
+		if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
+			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: combineValue,
+				Row:   res,
+			})
+		} else {
+			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: "",
+				Row:   res,
+			})
+		}
+		if valueStr, ok := value.(string); ok {
+			tempModelData[headField] = template.HTML(valueStr)
+		} else {
+			tempModelData[headField] = value.(template.HTML)
+		}
+	}
+
+	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
+	return tempModelData
 }
 
 // GetDataFromDatabaseWithIds query the data set.
@@ -555,47 +632,17 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		// TODO: add object pool
 
 		tempModelData := make(map[string]template.HTML)
-		row := res[i]
 
-		primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[i][tb.primaryKey.Name])
-
-		for j := 0; j < len(tb.info.FieldList); j++ {
-
-			headField = tb.info.FieldList[i].Field
-
-			if tb.info.FieldList[j].Join.Valid() {
-				headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
-			}
-
-			if tb.info.FieldList[j].Hide {
-				continue
-			}
-			if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-				continue
-			}
-			var value interface{}
-			if checkInTable(columns, headField) {
-				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-					ID:    primaryKeyValue.String(),
-					Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, row[headField]).String(),
-					Row:   row,
-				})
+		if i != len(res)-1 && res[i][tb.primaryKey.Name] == res[i+1][tb.primaryKey.Name] {
+			tempModelData = tb.getTempModelCombineData(res[i], res[i+1], params, columns)
+			if i != len(res)-2 {
+				res = append(res[:i+1], res[i+2:]...)
 			} else {
-				value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-					ID:    primaryKeyValue.String(),
-					Value: "",
-					Row:   row,
-				})
+				res = res[:i+1]
 			}
-
-			if valueStr, ok := value.(string); ok {
-				tempModelData[headField] = template.HTML(valueStr)
-			} else {
-				tempModelData[headField] = value.(template.HTML)
-			}
+		} else {
+			tempModelData = tb.getTempModelData(res[i], params, columns)
 		}
-
-		tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
 
 		infoList = append(infoList, tempModelData)
 	}
