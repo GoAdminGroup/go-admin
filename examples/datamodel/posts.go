@@ -7,6 +7,7 @@ import (
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
+// GetPostsTable return the model of table posts.
 func GetPostsTable() (postsTable table.Table) {
 
 	postsTable = table.NewDefaultTable(table.DefaultConfig)

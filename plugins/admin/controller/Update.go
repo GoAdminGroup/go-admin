@@ -13,13 +13,13 @@ func Update(ctx *context.Context) {
 	err := param.Panel.UpdateDataFromDatabase(param.Value)
 
 	if err != nil {
-		ctx.Json(http.StatusInternalServerError, map[string]interface{}{
+		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"msg": "fail",
 		})
 		return
 	}
 
-	ctx.Json(http.StatusOK, map[string]interface{}{
+	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"msg": "ok",
 	})
 }

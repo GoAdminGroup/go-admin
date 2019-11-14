@@ -18,7 +18,7 @@ func Update(ctx *context.Context) {
 	panel := table.List[prefix]
 
 	if !panel.GetEditable() {
-		ctx.Json(http.StatusForbidden, map[string]interface{}{
+		ctx.JSON(http.StatusForbidden, map[string]interface{}{
 			"msg": "operation not allow",
 		})
 		ctx.Abort()
@@ -30,7 +30,7 @@ func Update(ctx *context.Context) {
 	id := ctx.FormValue("pk")
 
 	if id == "" {
-		ctx.Json(http.StatusBadRequest, map[string]interface{}{
+		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 			"msg": "wrong " + pname,
 		})
 		ctx.Abort()

@@ -23,7 +23,7 @@ func TestJoin(t *testing.T) {
 }
 
 func TestTree(t *testing.T) {
-	tree := Tree()
+	tree := tree()
 	tree.addPath([]string{}, "GET", []Handler{})
 	tree.printChildren()
 }

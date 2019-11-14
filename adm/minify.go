@@ -13,7 +13,7 @@ import (
 	"sort"
 )
 
-func CSS(inputDir, outputFile string) {
+func cssMinifier(inputDir, outputFile string) {
 	err := removeOutputFile(outputFile)
 	if err != nil {
 		log.Panicln("removeOutputFileError", err)
@@ -45,7 +45,7 @@ func CSS(inputDir, outputFile string) {
 	}
 }
 
-func JS(inputDir, outputFile string) {
+func jsMinifier(inputDir, outputFile string) {
 	err := removeOutputFile(outputFile)
 	if err != nil {
 		log.Panicln("removeOutputFileError", err)

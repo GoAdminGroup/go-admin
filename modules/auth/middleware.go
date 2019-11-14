@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -18,14 +18,18 @@ import (
 	"strings"
 )
 
+// Invoker contains the callback functions which are used
+// in the route middleware.
 type Invoker struct {
 	prefix                 string
 	authFailCallback       MiddlewareCallback
 	permissionDenyCallback MiddlewareCallback
 }
 
+// Middleware is the default auth middleware of plugins.
 var Middleware = DefaultInvoker().Middleware()
 
+// DefaultInvoker return a default Invoker.
 func DefaultInvoker() *Invoker {
 	return &Invoker{
 		prefix: config.Get().Prefix(),
@@ -50,6 +54,7 @@ func DefaultInvoker() *Invoker {
 	}
 }
 
+// SetPrefix return the default Invoker with the given prefix.
 func SetPrefix(prefix string) *Invoker {
 	i := DefaultInvoker()
 	i.prefix = prefix
@@ -66,6 +71,7 @@ func (invoker *Invoker) SetPermissionDenyCallback(callback MiddlewareCallback) *
 	return invoker
 }
 
+// MiddlewareCallback is type of callback function.
 type MiddlewareCallback func(ctx *context.Context)
 
 func (invoker *Invoker) Middleware() context.Handler {
@@ -93,6 +99,8 @@ func (invoker *Invoker) Middleware() context.Handler {
 	}
 }
 
+// Filter retrieve the user model from Context and check the permission
+// at the same time.
 func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	var (
 		id   float64
@@ -113,6 +121,7 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
+// GetCurUserById return the user model of given user id.
 func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 
 	user = models.User().Find(id)
@@ -135,6 +144,7 @@ func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 	return
 }
 
+// CheckPermissions check the permission of the user.
 func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 	if path == config.Get().Url("/logout") {
@@ -147,7 +157,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 	for _, v := range user.Permissions {
 
-		if v.HttpMethod[0] == "" || InMethodArr(v.HttpMethod, method) {
+		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
 
 			if v.HttpPath[0] == "*" {
 				return true
@@ -178,7 +188,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 	return false
 }
 
-func InMethodArr(arr []string, str string) bool {
+func inMethodArr(arr []string, str string) bool {
 	for i := 0; i < len(arr); i++ {
 		if strings.EqualFold(arr[i], str) {
 			return true

@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
+func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
 	printlnWithColor("Manager", "blue")
@@ -17,7 +17,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show", "green")
 	e.GET(config.Get().Url("/info/manager")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
 		Body().Contains("Managers").Contains("admin").Contains("1")
@@ -26,7 +26,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("edit", "green")
 	e.POST(config.Get().Url("/edit/manager")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithForm(map[string]interface{}{
 			"username":        "admin",
@@ -44,7 +44,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show form: without id", "green")
 	e.GET(config.Get().Url("/info/manager/edit")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains("wrong id")
 
 	// show form
@@ -52,7 +52,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	printlnWithColor("show form", "green")
 	formBody := e.GET(config.Get().Url("/info/manager/edit")).
 		WithQuery("id", "1").
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token := reg.FindStringSubmatch(formBody.Raw())
@@ -61,7 +61,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("edit form", "green")
 	res := e.POST(config.Get().Url("/edit/manager")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithForm(map[string]interface{}{
 			"username":        "admin",
@@ -82,7 +82,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show new form", "green")
 	formBody = e.GET(config.Get().Url("/info/manager/new")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token = reg.FindStringSubmatch(formBody.Raw())
@@ -91,7 +91,7 @@ func ManagerTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("new manager tester", "green")
 	res = e.POST(config.Get().Url("/new/manager")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithForm(map[string]interface{}{
 			"username":        "tester",

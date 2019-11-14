@@ -119,7 +119,7 @@ func generating() {
 	// step 2. show tables
 	tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
 
-	tables := getTablesFromSqlResult(tableModels, driver.Value, name)
+	tables := getTablesFromSQLResult(tableModels, driver.Value, name)
 	if len(tables) == 0 {
 		exitWithError(`no tables, you should build a table of your own business first.
 
@@ -196,7 +196,7 @@ func clear(osName string) {
 	}
 }
 
-func getTablesFromSqlResult(models []map[string]interface{}, driver string, dbName string) []string {
+func getTablesFromSQLResult(models []map[string]interface{}, driver string, dbName string) []string {
 	tables := make([]string, 0)
 	if len(models) == 0 {
 		return tables

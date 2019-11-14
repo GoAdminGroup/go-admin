@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func AuthTest(e *httpexpect.Expect) *http.Cookie {
+func authTest(e *httpexpect.Expect) *http.Cookie {
 
 	printlnWithColor("Auth", "blue")
 	fmt.Println("============================")
@@ -25,7 +25,7 @@ func AuthTest(e *httpexpect.Expect) *http.Cookie {
 	// login
 
 	printlnWithColor("login", "green")
-	sesId := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
+	sesID := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
 		"username": "admin",
 		"password": "admin",
 	}).Expect().Status(200).Cookie("go_admin_session").Raw()
@@ -39,7 +39,7 @@ func AuthTest(e *httpexpect.Expect) *http.Cookie {
 	// logout
 
 	printlnWithColor("logout", "green")
-	e.GET(config.Get().Url("/logout")).WithCookie("go_admin_session", sesId.Value).Expect().
+	e.GET(config.Get().Url("/logout")).WithCookie("go_admin_session", sesID.Value).Expect().
 		Status(200)
 
 	// login again

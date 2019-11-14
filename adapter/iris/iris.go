@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -7,6 +7,7 @@ package iris
 import (
 	"bytes"
 	"errors"
+	"github.com/kataras/iris"
 	template2 "html/template"
 	"net/http"
 	"strings"
@@ -26,13 +27,14 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-// Iris structure value is an Iris go-admin adapter.
+// Iris structure value is an Iris GoAdmin adapter.
 type Iris struct{}
 
 func init() {
 	engine.Register(new(Iris))
 }
 
+// Use implement WebFrameWork.Use method.
 func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *iris.Application
@@ -78,6 +80,7 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// Content implement WebFrameWork.Content method.
 func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -97,14 +100,14 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserById(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)

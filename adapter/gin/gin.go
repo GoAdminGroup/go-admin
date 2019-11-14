@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -24,13 +24,14 @@ import (
 	"strings"
 )
 
-type Gin struct {
-}
+// Gin structure value is a Gin GoAdmin adapter.
+type Gin struct {}
 
 func init() {
 	engine.Register(new(Gin))
 }
 
+// Use implement WebFrameWork.Use method.
 func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *gin.Engine
@@ -72,6 +73,7 @@ func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// Content implement WebFrameWork.Content method.
 func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -92,7 +94,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
@@ -100,7 +102,7 @@ func (gins *Gin) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserById(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))

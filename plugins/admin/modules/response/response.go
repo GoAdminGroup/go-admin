@@ -14,14 +14,14 @@ import (
 )
 
 func Ok(ctx *context.Context) {
-	ctx.Json(http.StatusOK, map[string]interface{}{
+	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"code": 200,
 		"msg":  "ok",
 	})
 }
 
 func OkWithData(ctx *context.Context, data map[string]interface{}) {
-	ctx.Json(http.StatusOK, map[string]interface{}{
+	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"code": 200,
 		"msg":  "ok",
 		"data": data,
@@ -29,7 +29,7 @@ func OkWithData(ctx *context.Context, data map[string]interface{}) {
 }
 
 func BadRequest(ctx *context.Context, msg string) {
-	ctx.Json(http.StatusBadRequest, map[string]interface{}{
+	ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 		"code": 400,
 		"msg":  language.Get(msg),
 	})
@@ -50,11 +50,11 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string) 
 		Description: desc,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func Error(ctx *context.Context, msg string) {
-	ctx.Json(http.StatusInternalServerError, map[string]interface{}{
+	ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 		"code": 500,
 		"msg":  language.Get(msg),
 	})

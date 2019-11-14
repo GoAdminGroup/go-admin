@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
+// GetAllTypesTable return the model of table types.
 func GetAllTypesTable() table.Table {
 
 	allTypesTable := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))

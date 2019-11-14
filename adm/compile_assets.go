@@ -53,16 +53,14 @@ func getAllFiles(dirPth string) (files []string, err error) {
 	PthSep := string(os.PathSeparator)
 
 	for _, fi := range dir {
-		if fi.IsDir() { // 目录, 递归遍历
+		if fi.IsDir() {
 			dirs = append(dirs, dirPth+PthSep+fi.Name())
 			_, _ = getAllFiles(dirPth + PthSep + fi.Name())
 		} else {
-			// 过滤指定格式
 			files = append(files, dirPth+PthSep+fi.Name())
 		}
 	}
 
-	// 读取子目录下文件
 	for _, table := range dirs {
 		temp, _ := getAllFiles(table)
 		files = append(files, temp...)
@@ -77,10 +75,9 @@ func parseInput(path string) bindata.InputConfig {
 			Path:      filepath.Clean(path[:len(path)-4]),
 			Recursive: true,
 		}
-	} else {
-		return bindata.InputConfig{
-			Path:      filepath.Clean(path),
-			Recursive: false,
-		}
+	}
+	return bindata.InputConfig{
+		Path:      filepath.Clean(path),
+		Recursive: false,
 	}
 }

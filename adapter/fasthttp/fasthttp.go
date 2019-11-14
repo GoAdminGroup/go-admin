@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -27,13 +27,14 @@ import (
 	"strings"
 )
 
-type Fasthttp struct {
-}
+// Fasthttp structure value is a Fasthttp GoAdmin adapter.
+type Fasthttp struct {}
 
 func init() {
 	engine.Register(new(Fasthttp))
 }
 
+// Use implement WebFrameWork.Use method.
 func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *fasthttprouter.Router
@@ -47,7 +48,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 		var plugCopy = plug
 		for _, req := range plug.GetRequest() {
 			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
-				httpreq := Convertor(c)
+				httpreq := convertCtx(c)
 				ctx := context.NewContext(httpreq)
 
 				var params = make(map[string]string)
@@ -82,7 +83,7 @@ func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
-func Convertor(ctx *fasthttp.RequestCtx) *http.Request {
+func convertCtx(ctx *fasthttp.RequestCtx) *http.Request {
 	var r http.Request
 
 	body := ctx.PostBody()
@@ -136,6 +137,7 @@ func (r *netHTTPBody) Close() error {
 	return nil
 }
 
+// Content implement WebFrameWork.Content method.
 func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -155,14 +157,14 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserById(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)

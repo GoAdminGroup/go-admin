@@ -48,7 +48,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func NewForm(ctx *context.Context) {
@@ -100,6 +100,6 @@ func NewForm(ctx *context.Context) {
 
 	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 }

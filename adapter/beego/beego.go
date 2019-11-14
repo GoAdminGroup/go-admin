@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -25,13 +25,14 @@ import (
 	"strings"
 )
 
-type Beego struct {
-}
+// Beego structure value is a Beego GoAdmin adapter.
+type Beego struct {}
 
 func init() {
 	engine.Register(new(Beego))
 }
 
+// Use implement WebFrameWork.Use method.
 func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *beego.App
@@ -70,6 +71,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// Content implement WebFrameWork.Content method.
 func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -89,14 +91,14 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserById(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))

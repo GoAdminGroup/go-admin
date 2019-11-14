@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
+func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
 	printlnWithColor("Menu", "blue")
@@ -18,7 +18,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show", "green")
 	formBody := e.GET(config.Get().Url("/menu")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
 		Body().Contains(language.Get("menus manage"))
@@ -29,7 +29,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("new menu tester", "green")
 	res := e.POST(config.Get().Url("/menu/new")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
@@ -48,7 +48,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show form: without id", "green")
 	e.GET(config.Get().Url("/menu/edit/show")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains("wrong id")
 
 	// show form
@@ -56,7 +56,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/menu/edit/show")).
 		WithQuery("id", "3").
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token = reg.FindStringSubmatch(formBody.Raw())
@@ -65,7 +65,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("edit form", "green")
 	res = e.POST(config.Get().Url("/menu/edit")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
@@ -85,7 +85,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("new tester2", "green")
 	e.POST(config.Get().Url("/menu/new")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
@@ -103,7 +103,7 @@ func MenuTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	printlnWithColor("delete menu tester2", "green")
 	e.POST(config.Get().Url("/menu/delete")).
 		WithQuery("id", "9").
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		Expect().Status(200).JSON().Object().
 		ValueEqual("code", 200).

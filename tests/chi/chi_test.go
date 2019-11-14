@@ -10,7 +10,7 @@ import (
 func TestChi(t *testing.T) {
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(NewChiHandler()),
+			Transport: httpexpect.NewBinder(newChiHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

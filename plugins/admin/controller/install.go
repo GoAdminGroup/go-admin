@@ -19,7 +19,7 @@ func ShowInstall(ctx *context.Context) {
 	//rs2, _ := mysql.Query("show columns from users")
 	//fmt.Println(rs2[0]["Field"])
 
-	ctx.Html(http.StatusOK, buffer.String())
+	ctx.HTML(http.StatusOK, buffer.String())
 }
 
 func CheckDatabase(ctx *context.Context) {

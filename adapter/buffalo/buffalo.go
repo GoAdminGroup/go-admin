@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -26,13 +26,14 @@ import (
 	"strings"
 )
 
-type Buffalo struct {
-}
+// Buffalo structure value is a Buffalo GoAdmin adapter.
+type Buffalo struct {}
 
 func init() {
 	engine.Register(new(Buffalo))
 }
 
+// Use implement WebFrameWork.Use method.
 func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
 
 	var (
@@ -92,6 +93,7 @@ func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// HandleFun is type of route methods of buffalo.
 type HandleFun func(p string, h buffalo.Handler) *buffalo.RouteInfo
 
 func getHandleFunc(eng *buffalo.App, method string) HandleFun {
@@ -115,6 +117,7 @@ func getHandleFunc(eng *buffalo.App, method string) HandleFun {
 	}
 }
 
+// Content implement WebFrameWork.Content method.
 func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -134,14 +137,14 @@ func (bu *Buffalo) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey)["user_id"]
 
 	if !ok {
 		_ = ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserById(int64(userID.(float64)))
 
 	if !ok {
 		_ = ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))

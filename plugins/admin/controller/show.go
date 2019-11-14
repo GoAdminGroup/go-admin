@@ -44,7 +44,7 @@ func ShowInfo(ctx *context.Context) {
 	updateUrl := config.Url("/update/" + prefix)
 
 	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,

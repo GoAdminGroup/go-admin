@@ -10,7 +10,7 @@ import (
 func TestEcho(t *testing.T) {
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(NewEchoHandler()),
+			Transport: httpexpect.NewBinder(newEchoHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

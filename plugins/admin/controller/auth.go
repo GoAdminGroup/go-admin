@@ -60,9 +60,9 @@ func ShowLogin(ctx *context.Context) {
 		},
 		CdnUrl: config.AssetUrl,
 	}); err == nil {
-		ctx.Html(http.StatusOK, buf.String())
+		ctx.HTML(http.StatusOK, buf.String())
 	} else {
 		logger.Error(err)
-		ctx.Html(http.StatusOK, "parse template error (；′⌒`)")
+		ctx.HTML(http.StatusOK, "parse template error (；′⌒`)")
 	}
 }
