@@ -1,13 +1,15 @@
 language: go
 sudo: false
 
-go:
-  - 1.11.x
-  - 1.12.x
-  - 1.13.x
-
-env:
-  - GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.io,https://goproxy.cn,direct
+matrix:
+  fast_finish: true
+  include:
+    - go: 1.11.x
+      env: GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.cn
+    - go: 1.12.x
+      env: GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.cn
+    - go: master
+      env: GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.io,https://goproxy.cn,direct
 
 services:
   - mysql
