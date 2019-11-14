@@ -1,5 +1,3 @@
-// +build go1.13
-
 package iris
 
 import (
@@ -7,8 +5,6 @@ import (
 	"testing"
 
 	"github.com/GoAdminGroup/go-admin/tests/common"
-	// NOTE: iris has its own `kataras/iris/v12/httptest`
-	// package which uses gavv/httpexpect under the hoods as well.
 	"github.com/gavv/httpexpect"
 )
 
