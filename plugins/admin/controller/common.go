@@ -8,7 +8,15 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
-var config c.Config
+var (
+	config c.Config
+	captchaConfig map[string]string
+)
+
+// SetConfig set the config.
+func SetCaptcha(cap map[string]string) {
+	captchaConfig = cap
+}
 
 // SetConfig set the config.
 func SetConfig(cfg c.Config) {
