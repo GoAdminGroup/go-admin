@@ -10,7 +10,7 @@ import (
 func TestNewBeego(t *testing.T) {
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(NewBeegoHandler()),
+			Transport: httpexpect.NewBinder(newBeegoHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

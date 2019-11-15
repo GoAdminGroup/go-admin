@@ -96,7 +96,6 @@ func compareVersion(srcVersion string) string {
 	toCompareVersion := getLatestVersion()
 	if isRequireUpdate(srcVersion, toCompareVersion) {
 		return ", the latest version is " + toCompareVersion + " now."
-	} else {
-		return ""
 	}
+	return ""
 }

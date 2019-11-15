@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
+// GetAuthorsTable return the model of table author.
 func GetAuthorsTable() (authorsTable table.Table) {
 
 	authorsTable = table.NewDefaultTable(table.DefaultConfig)

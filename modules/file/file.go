@@ -1,18 +1,25 @@
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
+// license that can be found in the LICENSE file.
+
 package file
 
 import (
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"io"
 	"mime/multipart"
 	"os"
 	"path"
 	"sync"
+
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 )
 
+// Uploader is a file uploader which contains the method Upload.
 type Uploader interface {
 	Upload(*multipart.Form) error
 }
 
+// UploaderGenerator is a function return an Uploader.
 type UploaderGenerator func() Uploader
 
 var uploaderList = map[string]UploaderGenerator{
@@ -36,6 +43,7 @@ func AddUploader(name string, up UploaderGenerator) {
 	uploaderList[name] = up
 }
 
+// GetFileEngine return the Uploader of given name.
 func GetFileEngine(name string) Uploader {
 	if up, ok := uploaderList[name]; ok {
 		return up()
@@ -43,8 +51,10 @@ func GetFileEngine(name string) Uploader {
 	panic("wrong uploader name")
 }
 
+// UploadFun is a function to process the uploading logic.
 type UploadFun func(*multipart.FileHeader, string) (string, error)
 
+// Upload receive the return value of given UploadFun and put them into the form.
 func Upload(c UploadFun, form *multipart.Form) error {
 	var (
 		suffix   string
@@ -69,6 +79,7 @@ func Upload(c UploadFun, form *multipart.Form) error {
 	return nil
 }
 
+// SaveMultipartFile used in a local Uploader which help to save file in the local path.
 func SaveMultipartFile(fh *multipart.FileHeader, path string) (err error) {
 	var f multipart.File
 	f, err = fh.Open()

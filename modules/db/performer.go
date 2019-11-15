@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// CommonQuery is a common method of query.
 func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]interface{}, error) {
 
 	rs, err := db.Query(query, args...)
@@ -62,6 +63,7 @@ func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]in
 	return results, nil
 }
 
+// CommonExec is a common method of exec.
 func CommonExec(db *sql.DB, query string, args ...interface{}) (sql.Result, error) {
 
 	rs, err := db.Exec(query, args...)

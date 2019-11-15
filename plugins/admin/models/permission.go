@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// PermissionModel is permission model structure.
 type PermissionModel struct {
 	Base
 
@@ -18,20 +19,25 @@ type PermissionModel struct {
 	UpdatedAt  string
 }
 
+// Permission return a default permission model.
 func Permission() PermissionModel {
 	return PermissionModel{Base: Base{Table: "goadmin_permissions"}}
 }
 
+// PermissionWithId return a default permission model of given id.
 func PermissionWithId(id string) PermissionModel {
 	idInt, _ := strconv.Atoi(id)
 	return PermissionModel{Base: Base{Table: "goadmin_permissions"}, Id: int64(idInt)}
 }
 
+// Find return a default permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
 	item, _ := db.Table(t.Table).Find(id)
 	return t.MapToModel(item)
+
 }
 
+// MapToModel get the permission model from given map.
 func (t PermissionModel) MapToModel(m map[string]interface{}) PermissionModel {
 	t.Id = m["id"].(int64)
 	t.Name, _ = m["name"].(string)

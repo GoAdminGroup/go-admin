@@ -1,5 +1,3 @@
-// +build go1.13
-
 package main
 
 import (
@@ -70,7 +68,7 @@ func main() {
 
 	// load config from json file
 	//
-	// eng.AddConfigFromJson("../datamodel/config.json")
+	// eng.AddConfigFromJSON("../datamodel/config.json")
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)

@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -44,7 +44,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Path()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Path()))),
 		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("SetPageContent", err)

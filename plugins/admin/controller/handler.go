@@ -18,6 +18,7 @@ import (
 	"strings"
 )
 
+// GlobalDeferHandler is a global error handler of admin plugin.
 func GlobalDeferHandler(ctx *context.Context) {
 
 	logger.Access(ctx)
@@ -66,8 +67,8 @@ func GlobalDeferHandler(ctx *context.Context) {
 			Content:     alert,
 			Description: "error",
 			Title:       "error",
-		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-		ctx.Html(http.StatusOK, buf.String())
+		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+		ctx.HTML(http.StatusOK, buf.String())
 		return
 	}
 }
@@ -122,7 +123,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-	ctx.Html(http.StatusOK, buf.String())
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 )
 
+// Delete delete the row from database.
 func Delete(ctx *context.Context) {
 
 	param := guard.GetDeleteParam(ctx)

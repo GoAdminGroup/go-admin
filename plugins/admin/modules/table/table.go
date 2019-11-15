@@ -372,7 +372,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
-	logger.LogSql(queryCmd, args)
+	logger.LogSQL(queryCmd, args)
 
 	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
 
@@ -412,7 +412,7 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		return PanelInfo{}, err
 	}
 
-	logger.LogSql(countCmd, whereArgs)
+	logger.LogSQL(countCmd, whereArgs)
 
 	var size int
 	if tb.connectionDriver == "postgresql" {
@@ -623,7 +623,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		return PanelInfo{}, err
 	}
 
-	logger.LogSql(queryCmd, nil)
+	logger.LogSQL(queryCmd, nil)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -657,7 +657,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.
 		return PanelInfo{}, err
 	}
 
-	logger.LogSql(countCmd, nil)
+	logger.LogSQL(countCmd, nil)
 
 	var size int
 	if tb.connectionDriver == "postgresql" {
@@ -1055,7 +1055,7 @@ func (tb DefaultTable) db() db.Connection {
 }
 
 // sql is a helper function return db sql.
-func (tb DefaultTable) sql() *db.Sql {
+func (tb DefaultTable) sql() *db.SQL {
 	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
 }
 

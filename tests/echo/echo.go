@@ -1,13 +1,19 @@
 package echo
 
 import (
+	// add echo adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
+	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	// add postgresql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	// add sqlite driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	// add adminlte ui theme
+	_ "github.com/GoAdminGroup/themes/adminlte"
+
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -19,7 +25,7 @@ import (
 	"os"
 )
 
-func NewEchoHandler() http.Handler {
+func newEchoHandler() http.Handler {
 	e := echo.New()
 
 	eng := engine.Default()
@@ -30,7 +36,7 @@ func NewEchoHandler() http.Handler {
 
 	examplePlugin := example.NewExample()
 
-	if err := eng.AddConfigFromJson(os.Args[len(os.Args)-1]).
+	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
 		panic(err)
 	}

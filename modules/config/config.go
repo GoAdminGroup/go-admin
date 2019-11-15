@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -38,16 +38,20 @@ type Database struct {
 	Dsn        string `json:"dsn"`
 }
 
+// DatabaseList is a map of Database.
 type DatabaseList map[string]Database
 
+// GetDefault get the default Database.
 func (d DatabaseList) GetDefault() Database {
 	return d["default"]
 }
 
+// Add add a Database to the DatabaseList.
 func (d DatabaseList) Add(key string, db Database) {
 	d[key] = db
 }
 
+// GroupByDriver group the Databases with the drivers.
 func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
 	drivers := make(map[string]DatabaseList)
 	for key, item := range d {
@@ -62,14 +66,21 @@ func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
 }
 
 const (
-	EnvTest  = "test"
+	// EnvTest is a const value of test environment.
+	EnvTest = "test"
+	// EnvLocal is a const value of local environment.
 	EnvLocal = "local"
-	EnvProd  = "prod"
+	// EnvProd is a const value of production environment.
+	EnvProd = "prod"
 
-	DriverMysql      = "mysql"
-	DriverSqlite     = "sqlite"
+	// DriverMysql is a const value of mysql driver.
+	DriverMysql = "mysql"
+	// DriverSqlite is a const value of sqlite driver.
+	DriverSqlite = "sqlite"
+	// DriverPostgresql is a const value of postgresql driver.
 	DriverPostgresql = "postgresql"
-	DriverMssql      = "mssql"
+	// DriverMssql is a const value of mssql driver.
+	DriverMssql = "mssql"
 )
 
 // Store is the file store config. Path is the local store path.
@@ -165,12 +176,14 @@ type Config struct {
 	prefix string
 }
 
+// FileUploadEngine is a file upload engine.
 type FileUploadEngine struct {
 	Name   string
 	Config map[string]interface{}
 }
 
-func (c Config) GetIndexUrl() string {
+// GetIndexURL get the index url with prefix.
+func (c Config) GetIndexURL() string {
 	index := c.Index()
 	if index == "/" {
 		return c.Prefix()
@@ -179,6 +192,7 @@ func (c Config) GetIndexUrl() string {
 	return c.Prefix() + index
 }
 
+// Url get url with the given suffix.
 func (c Config) Url(suffix string) string {
 	if c.prefix == "/" {
 		return suffix
@@ -189,25 +203,30 @@ func (c Config) Url(suffix string) string {
 	return c.prefix + suffix
 }
 
+// IsTestEnvironment check the environment if it is test.
 func (c Config) IsTestEnvironment() bool {
 	return c.Env == EnvTest
 }
 
+// IsLocalEnvironment check the environment if it is local.
 func (c Config) IsLocalEnvironment() bool {
 	return c.Env == EnvLocal
 }
 
+// IsProductionEnvironment check the environment if it is production.
 func (c Config) IsProductionEnvironment() bool {
 	return c.Env == EnvProd
 }
 
-func (c Config) UrlRemovePrefix(u string) string {
-	if u == c.prefix {
+// URLRemovePrefix remove prefix from the given url.
+func (c Config) URLRemovePrefix(url string) string {
+	if url == c.prefix {
 		return "/"
 	}
-	return strings.Replace(u, c.Prefix(), "", 1)
+	return strings.Replace(url, c.Prefix(), "", 1)
 }
 
+// Index return the index url without prefix.
 func (c Config) Index() string {
 	if c.IndexUrl == "" {
 		return "/"
@@ -218,10 +237,12 @@ func (c Config) Index() string {
 	return c.IndexUrl
 }
 
+// Prefix return the prefix.
 func (c Config) Prefix() string {
 	return c.prefix
 }
 
+// PrefixFixSlash return the prefix fix the slash error.
 func (c Config) PrefixFixSlash() string {
 	if c.UrlPrefix == "/" {
 		return ""
@@ -238,6 +259,7 @@ var (
 	declare   sync.Once
 )
 
+// ReadFromJson read the Config from a JSON file.
 func ReadFromJson(path string) Config {
 	jsonByte, err := ioutil.ReadFile(path)
 
@@ -288,7 +310,7 @@ func Set(cfg Config) {
 	logger.SetAccessLogger(cfg.AccessLogPath, cfg.Debug, cfg.AccessLogOff)
 
 	if cfg.SqlLog {
-		logger.OpenSqlLog()
+		logger.OpenSQLLog()
 	}
 
 	if cfg.Debug {

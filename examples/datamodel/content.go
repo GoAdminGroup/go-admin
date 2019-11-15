@@ -13,6 +13,7 @@ import (
 	"html/template"
 )
 
+// GetContent return the content of index page.
 func GetContent() (types.Panel, error) {
 
 	components := template2.Default()

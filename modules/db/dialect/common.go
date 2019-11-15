@@ -6,27 +6,27 @@ type commonDialect struct {
 	delimiter string
 }
 
-func (c commonDialect) Insert(comp *SqlComponent) string {
+func (c commonDialect) Insert(comp *SQLComponent) string {
 	comp.prepareInsert(c.delimiter)
 	return comp.Statement
 }
 
-func (c commonDialect) Delete(comp *SqlComponent) string {
+func (c commonDialect) Delete(comp *SQLComponent) string {
 	comp.Statement = "delete from " + comp.TableName + comp.getWheres(c.delimiter)
 	return comp.Statement
 }
 
-func (c commonDialect) Update(comp *SqlComponent) string {
+func (c commonDialect) Update(comp *SQLComponent) string {
 	comp.prepareUpdate(c.delimiter)
 	return comp.Statement
 }
 
-func (c commonDialect) Count(comp *SqlComponent) string {
+func (c commonDialect) Count(comp *SQLComponent) string {
 	comp.prepareUpdate(c.delimiter)
 	return comp.Statement
 }
 
-func (c commonDialect) Select(comp *SqlComponent) string {
+func (c commonDialect) Select(comp *SQLComponent) string {
 	comp.Statement = "select " + comp.getFields(c.delimiter) + " from " + comp.TableName + comp.getJoins(c.delimiter) +
 		comp.getWheres(c.delimiter) + comp.getOrderBy() + comp.getLimit() + comp.getOffset()
 	return comp.Statement

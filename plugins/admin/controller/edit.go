@@ -16,6 +16,7 @@ import (
 	"net/http"
 )
 
+// ShowForm show form page.
 func ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
 	showForm(ctx, "", param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl())
@@ -50,9 +51,9 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func EditForm(ctx *context.Context) {
@@ -104,6 +105,6 @@ func EditForm(ctx *context.Context) {
 
 	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 }

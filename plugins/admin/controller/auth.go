@@ -13,6 +13,7 @@ import (
 	"net/http"
 )
 
+// Auth check the input password and username for authentication.
 func Auth(ctx *context.Context) {
 
 	password := ctx.FormValue("password")
@@ -28,19 +29,21 @@ func Auth(ctx *context.Context) {
 		auth.SetCookie(ctx, user)
 
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": config.GetIndexUrl(),
+			"url": config.GetIndexURL(),
 		})
 		return
 	}
 	response.BadRequest(ctx, "fail")
 }
 
+// Logout delete the cookie.
 func Logout(ctx *context.Context) {
 	auth.DelCookie(ctx)
 	ctx.AddHeader("Location", config.Url("/login"))
 	ctx.SetStatusCode(302)
 }
 
+// ShowLogin show the login page.
 func ShowLogin(ctx *context.Context) {
 
 	tmpl, name := template.GetComp("login").GetTemplate()
@@ -60,9 +63,9 @@ func ShowLogin(ctx *context.Context) {
 		},
 		CdnUrl: config.AssetUrl,
 	}); err == nil {
-		ctx.Html(http.StatusOK, buf.String())
+		ctx.HTML(http.StatusOK, buf.String())
 	} else {
 		logger.Error(err)
-		ctx.Html(http.StatusOK, "parse template error (；′⌒`)")
+		ctx.HTML(http.StatusOK, "parse template error (；′⌒`)")
 	}
 }

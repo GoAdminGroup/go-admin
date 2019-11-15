@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// MenuModel is menu model structure.
 type MenuModel struct {
 	Base
 
@@ -19,20 +20,24 @@ type MenuModel struct {
 	UpdatedAt string
 }
 
+// Menu return a default menu model.
 func Menu() MenuModel {
 	return MenuModel{Base: Base{Table: "goadmin_menu"}}
 }
 
+// MenuWithId return a default menu model of given id.
 func MenuWithId(id string) MenuModel {
 	idInt, _ := strconv.Atoi(id)
 	return MenuModel{Base: Base{Table: "goadmin_menu"}, Id: int64(idInt)}
 }
 
+// Find return a default menu model of given id.
 func (t MenuModel) Find(id interface{}) MenuModel {
 	item, _ := db.Table(t.Table).Find(id)
 	return t.MapToModel(item)
 }
 
+// New create a new menu model.
 func (t MenuModel) New(title, icon, uri, header string, parentId, order int64) MenuModel {
 
 	id, _ := db.Table(t.Table).Insert(dialect.H{
@@ -54,6 +59,7 @@ func (t MenuModel) New(title, icon, uri, header string, parentId, order int64) M
 	return t
 }
 
+// Delete delete the menu model.
 func (t MenuModel) Delete() {
 	_ = db.Table(t.Table).Where("id", "=", t.Id).Delete()
 	_ = db.Table("goadmin_role_menu").Where("menu_id", "=", t.Id).Delete()
@@ -70,6 +76,7 @@ func (t MenuModel) Delete() {
 	_ = db.Table(t.Table).Where("parent_id", "=", t.Id).Delete()
 }
 
+// Update update the menu model.
 func (t MenuModel) Update(title, icon, uri, header string, parentId int64) MenuModel {
 
 	_, _ = db.Table(t.Table).
@@ -91,6 +98,7 @@ func (t MenuModel) Update(title, icon, uri, header string, parentId int64) MenuM
 	return t
 }
 
+// ResetOrder update the order of menu models.
 func (t MenuModel) ResetOrder(data []map[string]interface{}) {
 	count := 1
 	for _, v := range data {
@@ -120,6 +128,7 @@ func (t MenuModel) ResetOrder(data []map[string]interface{}) {
 	}
 }
 
+// CheckRole check the role if has permission to get the menu.
 func (t MenuModel) CheckRole(roleId string) bool {
 	checkRole, _ := db.Table("goadmin_role_menu").
 		Where("role_id", "=", roleId).
@@ -128,6 +137,7 @@ func (t MenuModel) CheckRole(roleId string) bool {
 	return checkRole != nil
 }
 
+// AddRole add a role to the menu.
 func (t MenuModel) AddRole(roleId string) {
 	if roleId != "" {
 		if !t.CheckRole(roleId) {
@@ -140,12 +150,14 @@ func (t MenuModel) AddRole(roleId string) {
 	}
 }
 
+// DeleteRoles delete roles with menu.
 func (t MenuModel) DeleteRoles() {
 	_ = db.Table("goadmin_role_menu").
 		Where("menu_id", "=", t.Id).
 		Delete()
 }
 
+// MapToModel get the menu model from given map.
 func (t MenuModel) MapToModel(m map[string]interface{}) MenuModel {
 	t.Id = m["id"].(int64)
 	t.Title, _ = m["title"].(string)

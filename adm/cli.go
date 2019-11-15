@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -61,7 +61,7 @@ func main() {
 			)
 
 			cmd.Action = func() {
-				CSS(*rootPath, *outputPath)
+				cssMinifier(*rootPath, *outputPath)
 			}
 		})
 
@@ -72,7 +72,7 @@ func main() {
 			)
 
 			cmd.Action = func() {
-				JS(*rootPath, *outputPath)
+				jsMinifier(*rootPath, *outputPath)
 			}
 		})
 	})

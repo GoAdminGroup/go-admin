@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -13,7 +13,7 @@ type node struct {
 	handle   []Handler
 }
 
-func Tree() *node {
+func tree() *node {
 	return &node{
 		children: make([]*node, 0),
 		value:    "/",
@@ -63,17 +63,14 @@ func (n *node) findPath(paths []string, method string) []Handler {
 		child := n.search(paths[0])
 		if child == nil {
 			return nil
-		} else {
-			if len(paths) > 1 {
-				return child.findPath(paths[1:], method)
-			} else {
-				if child.method != method {
-					return nil
-				} else {
-					return child.handle
-				}
-			}
 		}
+		if len(paths) > 1 {
+			return child.findPath(paths[1:], method)
+		}
+		if child.method != method {
+			return nil
+		}
+		return child.handle
 	}
 	return nil
 }

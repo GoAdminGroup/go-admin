@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -24,13 +24,14 @@ import (
 	"strings"
 )
 
-type Echo struct {
-}
+// Echo structure value is an Echo GoAdmin adapter.
+type Echo struct {}
 
 func init() {
 	engine.Register(new(Echo))
 }
 
+// Use implement WebFrameWork.Use method.
 func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *echo.Echo
@@ -71,6 +72,7 @@ func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// Content implement WebFrameWork.Content method.
 func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -90,14 +92,14 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
 		_ = ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		_ = ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
@@ -136,7 +138,7 @@ func (e *Echo) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request().URL.String()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request().URL.String()))),
 		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Echo Content", err)

@@ -1,3 +1,7 @@
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
+// license that can be found in the LICENSE file.
+
 package gorilla
 
 import (
@@ -21,13 +25,14 @@ import (
 	"strings"
 )
 
-type Gorilla struct {
-}
+// Gorilla structure value is a Gorilla GoAdmin adapter.
+type Gorilla struct {}
 
 func init() {
 	engine.Register(new(Gorilla))
 }
 
+// Use implement WebFrameWork.Use method.
 func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 	var (
 		eng *mux.Router
@@ -88,11 +93,13 @@ func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// Context wraps the Request and Response object of Gorilla.
 type Context struct {
 	Request  *http.Request
 	Response http.ResponseWriter
 }
 
+// Content implement WebFrameWork.Content method.
 func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -112,14 +119,14 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
 		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
@@ -158,7 +165,7 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URL.String()))),
 		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Gorilla Content", err)

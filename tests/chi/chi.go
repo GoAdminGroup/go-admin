@@ -1,12 +1,17 @@
 package chi
 
 import (
+	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	// add postgresql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	// add sqlite driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	// add adminlte ui theme
+	_ "github.com/GoAdminGroup/themes/adminlte"
+
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	ada "github.com/GoAdminGroup/go-admin/adapter/chi"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -19,7 +24,7 @@ import (
 	"os"
 )
 
-func NewChiHandler() http.Handler {
+func newChiHandler() http.Handler {
 	r := chi.NewRouter()
 
 	eng := engine.Default()
@@ -29,7 +34,7 @@ func NewChiHandler() http.Handler {
 	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfigFromJson(os.Args[len(os.Args)-1]).
+	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
 		panic(err)
 	}

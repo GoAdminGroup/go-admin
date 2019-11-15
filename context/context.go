@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -29,7 +29,7 @@ type Context struct {
 	handlers  Handlers
 }
 
-// Path is used in the matching of request and response. URL stores the
+// Path is used in the matching of request and response. Url stores the
 // raw register url. RegUrl contains the wildcard which on behalf of
 // the route params.
 type Path struct {
@@ -60,7 +60,7 @@ func (ctx *Context) Next() {
 	}
 }
 
-// Next should be used only inside middleware.
+// SetHandlers set the handlers of Context.
 func (ctx *Context) SetHandlers(handlers Handlers) *Context {
 	ctx.handlers = handlers
 	return ctx
@@ -95,9 +95,9 @@ func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
 
-// Json serializes the given struct as JSON into the response body.
+// JSON serializes the given struct as JSON into the response body.
 // It also sets the Content-Type as "application/json".
-func (ctx *Context) Json(code int, Body map[string]interface{}) {
+func (ctx *Context) JSON(code int, Body map[string]interface{}) {
 	ctx.Response.StatusCode = code
 	ctx.AddHeader("Content-Type", "application/json")
 	BodyStr, err := json.Marshal(Body)
@@ -114,14 +114,14 @@ func (ctx *Context) Data(code int, contentType string, data []byte) {
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 }
 
-// Html output html response.
-func (ctx *Context) Html(code int, body string) {
+// HTML output html response.
+func (ctx *Context) HTML(code int, body string) {
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 	ctx.SetStatusCode(code)
 	ctx.WriteString(body)
 }
 
-// Write save the given body string into the response.
+// WriteString save the given body string into the response.
 func (ctx *Context) WriteString(Body string) {
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
 }
@@ -131,7 +131,7 @@ func (ctx *Context) SetStatusCode(code int) {
 	ctx.Response.StatusCode = code
 }
 
-// SetStatusCode save the given content type header into the response header.
+// SetContentType save the given content type header into the response header.
 func (ctx *Context) SetContentType(contentType string) {
 	ctx.AddHeader("Content-Type", contentType)
 }
@@ -201,14 +201,16 @@ type App struct {
 func NewApp() *App {
 	return &App{
 		Requests:    make([]Path, 0),
-		tree:        Tree(),
+		tree:        tree(),
 		Prefix:      "/",
 		Middlewares: make([]Handler, 0),
 	}
 }
 
+// Handler defines the handler used by the middleware as return value.
 type Handler func(ctx *Context)
 
+// Handlers is the array of Handler
 type Handlers []Handler
 
 // AppendReqAndResp stores the request info and handle into app.
@@ -265,7 +267,7 @@ func (app *App) HEAD(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
-// Any registers a route that matches all the HTTP methods.
+// ANY registers a route that matches all the HTTP methods.
 // GET, POST, PUT, HEAD, OPTIONS, DELETE.
 func (app *App) ANY(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "post", handler)
@@ -276,7 +278,7 @@ func (app *App) ANY(url string, handler ...Handler) {
 	app.AppendReqAndResp(url, "head", handler)
 }
 
-// TabGroups add middlewares and prefix for App.
+// Group add middlewares and prefix for App.
 func (app *App) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         app,
@@ -341,7 +343,7 @@ func (g *RouterGroup) HEAD(url string, handler ...Handler) {
 	g.AppendReqAndResp(url, "head", handler)
 }
 
-// Any registers a route that matches all the HTTP methods.
+// ANY registers a route that matches all the HTTP methods.
 // GET, POST, PUT, HEAD, OPTIONS, DELETE.
 func (g *RouterGroup) ANY(url string, handler ...Handler) {
 	g.AppendReqAndResp(url, "post", handler)
@@ -352,7 +354,7 @@ func (g *RouterGroup) ANY(url string, handler ...Handler) {
 	g.AppendReqAndResp(url, "head", handler)
 }
 
-// TabGroups add middlewares and prefix for App.
+// Group add middlewares and prefix for RouterGroup.
 func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 	return &RouterGroup{
 		app:         g.app,

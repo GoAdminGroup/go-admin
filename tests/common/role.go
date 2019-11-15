@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
+func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
 	printlnWithColor("Role", "blue")
@@ -17,7 +17,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show", "green")
 	e.GET(config.Get().Url("/info/roles")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
 		Body().Contains("Administrator").Contains("Operator")
@@ -26,7 +26,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show new form", "green")
 	formBody := e.GET(config.Get().Url("/info/roles/new")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token := reg.FindStringSubmatch(formBody.Raw())
@@ -35,7 +35,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("new roles tester", "green")
 	res := e.POST(config.Get().Url("/new/roles")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
@@ -51,7 +51,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show form: without id", "green")
 	e.GET(config.Get().Url("/info/roles/edit")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains("wrong id")
 
 	// show form
@@ -59,7 +59,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/info/roles/edit")).
 		WithQuery("id", "3").
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token = reg.FindStringSubmatch(formBody.Raw())
@@ -68,7 +68,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("edit form", "green")
 	res = e.POST(config.Get().Url("/edit/roles")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithFormField("permission_id[]", "2").
@@ -86,7 +86,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show new form", "green")
 	formBody = e.GET(config.Get().Url("/info/roles/new")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
 	token = reg.FindStringSubmatch(formBody.Raw())
@@ -95,7 +95,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("new tester2", "green")
 	e.POST(config.Get().Url("/new/roles")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
@@ -109,7 +109,7 @@ func RoleTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("delete roles tester2", "green")
 	e.POST(config.Get().Url("/delete/roles")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("id", "3").
 		Expect().Status(200).JSON().Object().

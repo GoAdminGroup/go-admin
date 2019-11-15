@@ -11,6 +11,7 @@ import (
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
+// GetUserTable return the model of table user.
 func GetUserTable() (userTable table.Table) {
 
 	userTable = table.NewDefaultTable(table.Config{

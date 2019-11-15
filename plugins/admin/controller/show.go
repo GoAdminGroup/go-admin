@@ -24,6 +24,7 @@ import (
 	"time"
 )
 
+// ShowInfo show info page.
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("__prefix")
@@ -44,7 +45,7 @@ func ShowInfo(ctx *context.Context) {
 	updateUrl := config.Url("/update/" + prefix)
 
 	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
@@ -63,7 +64,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			Content:     alert,
 			Description: language.Get("error"),
 			Title:       language.Get("error"),
-		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	}
 
 	var (
@@ -134,11 +135,12 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 }
 
+// Assets return front-end assets according the request path.
 func Assets(ctx *context.Context) {
-	filepath := config.UrlRemovePrefix(ctx.Path())
+	filepath := config.URLRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
@@ -165,6 +167,7 @@ func Assets(ctx *context.Context) {
 	}, string(data))
 }
 
+// Export export table rows as excel object.
 func Export(ctx *context.Context) {
 	param := guard.GetExportParam(ctx)
 

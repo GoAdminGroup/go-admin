@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func OperationLogTest(e *httpexpect.Expect, sesId *http.Cookie) {
+func operationLogTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
 	printlnWithColor("Operation Log", "blue")
@@ -18,7 +18,7 @@ func OperationLogTest(e *httpexpect.Expect, sesId *http.Cookie) {
 
 	printlnWithColor("show", "green")
 	e.GET(config.Get().Url("/info/op")).
-		WithCookie(sesId.Name, sesId.Value).
+		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
 		Body().Contains(language.Get("operation log"))

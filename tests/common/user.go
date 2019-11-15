@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func UserTest(e *httpexpect.Expect, sesId *http.Cookie) {
+func userTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
 	printlnWithColor("User", "blue")

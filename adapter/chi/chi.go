@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -25,13 +25,14 @@ import (
 	"strings"
 )
 
-type Chi struct {
-}
+// Chi structure value is a Chi GoAdmin adapter.
+type Chi struct {}
 
 func init() {
 	engine.Register(new(Chi))
 }
 
+// Use implement WebFrameWork.Use method.
 func (bu *Chi) Use(router interface{}, plugin []plugins.Plugin) error {
 
 	var (
@@ -94,6 +95,7 @@ func (bu *Chi) Use(router interface{}, plugin []plugins.Plugin) error {
 	return nil
 }
 
+// HandleFun is type of route methods of chi.
 type HandleFun func(pattern string, handlerFn http.HandlerFunc)
 
 func getHandleFunc(eng *chi.Mux, method string) HandleFun {
@@ -117,11 +119,13 @@ func getHandleFunc(eng *chi.Mux, method string) HandleFun {
 	}
 }
 
+// Context wraps the Request and Response object of Chi.
 type Context struct {
 	Request  *http.Request
 	Response http.ResponseWriter
 }
 
+// Content implement WebFrameWork.Content method.
 func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 
 	var (
@@ -141,14 +145,14 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	userId, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+	userID, ok := auth.Driver.Load(sesKey.Value)["user_id"]
 
 	if !ok {
 		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userId.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
@@ -187,7 +191,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Request.URL.String()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Request.URL.String()))),
 		panel, config, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Chi Content", err)

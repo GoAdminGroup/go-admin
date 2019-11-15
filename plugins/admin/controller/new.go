@@ -16,6 +16,7 @@ import (
 	"net/http"
 )
 
+// ShowNewForm show a new form page.
 func ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
 	showNewForm(ctx, "", param.Panel, param.GetUrl(), param.GetInfoUrl())
@@ -47,10 +48,11 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 			GetContent(),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
-	ctx.Html(http.StatusOK, buf.String())
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	ctx.HTML(http.StatusOK, buf.String())
 }
 
+// NewForm insert a table row into database.
 func NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
@@ -100,6 +102,6 @@ func NewForm(ctx *context.Context) {
 
 	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 
-	ctx.Html(http.StatusOK, buf.String())
+	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 }

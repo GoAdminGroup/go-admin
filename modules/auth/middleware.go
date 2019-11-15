@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -18,14 +18,18 @@ import (
 	"strings"
 )
 
+// Invoker contains the callback functions which are used
+// in the route middleware.
 type Invoker struct {
 	prefix                 string
 	authFailCallback       MiddlewareCallback
 	permissionDenyCallback MiddlewareCallback
 }
 
+// Middleware is the default auth middleware of plugins.
 var Middleware = DefaultInvoker().Middleware()
 
+// DefaultInvoker return a default Invoker.
 func DefaultInvoker() *Invoker {
 	return &Invoker{
 		prefix: config.Get().Prefix(),
@@ -50,24 +54,29 @@ func DefaultInvoker() *Invoker {
 	}
 }
 
+// SetPrefix return the default Invoker with the given prefix.
 func SetPrefix(prefix string) *Invoker {
 	i := DefaultInvoker()
 	i.prefix = prefix
 	return i
 }
 
+// SetAuthFailCallback set the authFailCallback of Invoker.
 func (invoker *Invoker) SetAuthFailCallback(callback MiddlewareCallback) *Invoker {
 	invoker.authFailCallback = callback
 	return invoker
 }
 
+// SetPermissionDenyCallback set the permissionDenyCallback of Invoker.
 func (invoker *Invoker) SetPermissionDenyCallback(callback MiddlewareCallback) *Invoker {
 	invoker.permissionDenyCallback = callback
 	return invoker
 }
 
+// MiddlewareCallback is type of callback function.
 type MiddlewareCallback func(ctx *context.Context)
 
+// Middleware get the auth middleware from Invoker.
 func (invoker *Invoker) Middleware() context.Handler {
 	return func(ctx *context.Context) {
 		user, authOk, permissionOk := Filter(ctx)
@@ -93,6 +102,8 @@ func (invoker *Invoker) Middleware() context.Handler {
 	}
 }
 
+// Filter retrieve the user model from Context and check the permission
+// at the same time.
 func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	var (
 		id   float64
@@ -104,7 +115,7 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 		return user, false, false
 	}
 
-	user, ok = GetCurUserById(int64(id))
+	user, ok = GetCurUserByID(int64(id))
 
 	if !ok {
 		return user, false, false
@@ -113,7 +124,8 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
-func GetCurUserById(id int64) (user models.UserModel, ok bool) {
+// GetCurUserByID return the user model of given user id.
+func GetCurUserByID(id int64) (user models.UserModel, ok bool) {
 
 	user = models.User().Find(id)
 
@@ -135,6 +147,7 @@ func GetCurUserById(id int64) (user models.UserModel, ok bool) {
 	return
 }
 
+// CheckPermissions check the permission of the user.
 func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 	if path == config.Get().Url("/logout") {
@@ -147,7 +160,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 	for _, v := range user.Permissions {
 
-		if v.HttpMethod[0] == "" || InMethodArr(v.HttpMethod, method) {
+		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
 
 			if v.HttpPath[0] == "*" {
 				return true
@@ -178,7 +191,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 	return false
 }
 
-func InMethodArr(arr []string, str string) bool {
+func inMethodArr(arr []string, str string) bool {
 	for i := 0; i < len(arr); i++ {
 		if strings.EqualFold(arr[i], str) {
 			return true

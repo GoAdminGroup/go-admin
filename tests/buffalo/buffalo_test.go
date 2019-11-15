@@ -10,7 +10,7 @@ import (
 func TestBuffalo(t *testing.T) {
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(NewBuffaloHandler()),
+			Transport: httpexpect.NewBinder(newBuffaloHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

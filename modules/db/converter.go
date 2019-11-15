@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import (
 	"database/sql"
 )
 
+// SetColVarType set the column type.
 func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch {
 	case Contains(DT(typeName), BoolTypeList):
@@ -31,6 +32,7 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	}
 }
 
+// SetResultValue set the result value.
 func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch {
 	case Contains(DT(typeName), BoolTypeList):

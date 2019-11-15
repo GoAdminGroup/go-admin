@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 )
 
+// InitRouter initialize the router and return the context.
 func InitRouter(prefix string) *context.App {
 	app := context.NewApp()
 

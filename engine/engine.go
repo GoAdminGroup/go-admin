@@ -1,4 +1,4 @@
-// Copyright 2019 GoAdmin Core Team.  All rights reserved.
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
 // Use of this source code is governed by a Apache-2.0 style
 // license that can be found in the LICENSE file.
 
@@ -53,8 +53,8 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 	return eng
 }
 
-// AddConfigFromJson set the global config from json file.
-func (eng *Engine) AddConfigFromJson(path string) *Engine {
+// AddConfigFromJSON set the global config from json file.
+func (eng *Engine) AddConfigFromJSON(path string) *Engine {
 	config.ReadFromJson(path)
 	return eng
 }
@@ -66,8 +66,10 @@ func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	return eng
 }
 
+// DefaultAdapter is the default adapter of engine.
 var DefaultAdapter adapter.WebFrameWork
 
+// Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
 	if ada == nil {
 		panic("adapter is nil")
@@ -75,6 +77,8 @@ func Register(ada adapter.WebFrameWork) {
 	DefaultAdapter = ada
 }
 
+// Content call the Content method of DefaultAdapter.
+// If DefaultAdapter is nil, it will panic.
 func Content(ctx interface{}, panel types.GetPanel) {
 	if DefaultAdapter == nil {
 		panic("adapter is nil")

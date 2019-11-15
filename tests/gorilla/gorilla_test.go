@@ -10,7 +10,7 @@ import (
 func TestGorilla(t *testing.T) {
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(NewGorillaHandler()),
+			Transport: httpexpect.NewBinder(newGorillaHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

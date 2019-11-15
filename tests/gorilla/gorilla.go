@@ -1,14 +1,19 @@
 package gorilla
 
 import (
-	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
+	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	// add postgresql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	// add sqlite driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
+
+	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
@@ -19,14 +24,14 @@ import (
 	"os"
 )
 
-func NewGorillaHandler() http.Handler {
+func newGorillaHandler() http.Handler {
 	app := mux.NewRouter()
 	eng := engine.Default()
 
 	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfigFromJson(os.Args[len(os.Args)-1]).
+	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(admin.NewAdmin(datamodel.Generators).
 			AddGenerator("user", datamodel.GetUserTable), examplePlugin).
 		Use(app); err != nil {

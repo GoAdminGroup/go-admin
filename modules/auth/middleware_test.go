@@ -41,5 +41,5 @@ func TestCheckPermissions(t *testing.T) {
 
 func TestInMethodArr(t *testing.T) {
 	methods := []string{"get", "post"}
-	assert.Equal(t, InMethodArr(methods, "get"), true)
+	assert.Equal(t, inMethodArr(methods, "get"), true)
 }

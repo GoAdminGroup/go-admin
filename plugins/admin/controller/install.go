@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// ShowInstall show install page.
 func ShowInstall(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
@@ -19,9 +20,10 @@ func ShowInstall(ctx *context.Context) {
 	//rs2, _ := mysql.Query("show columns from users")
 	//fmt.Println(rs2[0]["Field"])
 
-	ctx.Html(http.StatusOK, buffer.String())
+	ctx.HTML(http.StatusOK, buffer.String())
 }
 
+// CheckDatabase check the database connection.
 func CheckDatabase(ctx *context.Context) {
 
 	ip := ctx.FormValue("h")
