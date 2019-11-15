@@ -122,7 +122,7 @@ func GetDTAndCheck(s string) DatabaseType {
 		!Contains(ss, FloatTypeList) &&
 		!Contains(ss, UintTypeList) &&
 		!Contains(ss, StringTypeList) {
-		panic("wrong type")
+		panic("wrong type: " + s)
 	}
 	return ss
 }
@@ -213,7 +213,7 @@ func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
 		return "0"
 	case Contains(typ, UintTypeList):
 		if v, ok := value.([]uint8); ok {
-			return Value(fmt.Sprintf("%d", v))
+			return Value(string(v))
 		}
 		return "0"
 	}
