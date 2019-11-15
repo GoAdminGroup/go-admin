@@ -53,6 +53,12 @@ func NewAdmin(tableCfg table.GeneratorList) *Admin {
 	return App
 }
 
+// SetCaptcha set captcha driver.
+func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
+	controller.SetCaptcha(captcha)
+	return admin
+}
+
 // AddGenerator add table model generator.
 func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
 	admin.tableCfg.Add(key, g)

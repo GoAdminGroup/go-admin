@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/captcha"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -20,11 +21,19 @@ func Auth(ctx *context.Context) {
 	username := ctx.FormValue("username")
 
 	if password == "" || username == "" {
-		response.BadRequest(ctx, "fail")
+		response.BadRequest(ctx, "wrong password or username")
 		return
 	}
 
 	if user, ok := auth.Check(password, username); ok {
+
+		cd, ok := captcha.Get(captchaConfig["driver"])
+
+		if ok {
+			if !cd.Validate(ctx.FormValue("token")) {
+				response.BadRequest(ctx, "wrong captcha")
+			}
+		}
 
 		auth.SetCookie(ctx, user)
 

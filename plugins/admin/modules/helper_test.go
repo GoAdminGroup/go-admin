@@ -1,10 +1,10 @@
 package modules
 
 import (
-	"fmt"
+	"github.com/magiconair/properties/assert"
 	"testing"
 )
 
-func TestUuid(t *testing.T) {
-	fmt.Println(Uuid())
+func TestInArray(t *testing.T) {
+	assert.Equal(t, InArray([]string{"2"}, "2"), true)
 }
