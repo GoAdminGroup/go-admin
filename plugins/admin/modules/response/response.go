@@ -49,7 +49,7 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string) 
 		Content:     alert,
 		Description: desc,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	ctx.HTML(http.StatusOK, buf.String())
 }
 

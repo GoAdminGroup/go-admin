@@ -164,7 +164,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userID.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
@@ -206,7 +206,7 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName,
-		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URI().String()))),
+		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URI().String()))),
 			panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Fasthttp Content", err)

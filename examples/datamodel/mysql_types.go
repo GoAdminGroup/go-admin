@@ -57,7 +57,7 @@ func GetAllTypesTable() table.Table {
 	info.AddField("Type_40", "type_40", db.Multipoint)
 	info.AddField("Type_42", "type_42", db.Geometrycollection)
 	info.AddField("Type_50", "type_50", db.Double)
-	info.AddField("Type_51", "type_51", db.Json)
+	info.AddField("Type_51", "type_51", db.JSON)
 
 	info.SetTable("all_types").SetTitle("All_types").SetDescription("All_types")
 
@@ -107,7 +107,7 @@ func GetAllTypesTable() table.Table {
 	formList.AddField("Type_40", "type_40", db.Multipoint, form.Text)
 	formList.AddField("Type_42", "type_42", db.Geometrycollection, form.Text)
 	formList.AddField("Type_50", "type_50", db.Double, form.Text)
-	formList.AddField("Type_51", "type_51", db.Json, form.Text)
+	formList.AddField("Type_51", "type_51", db.JSON, form.Text)
 
 	formList.SetTable("all_types").SetTitle("All_types").SetDescription("All_types")
 

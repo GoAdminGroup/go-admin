@@ -12,31 +12,38 @@ import (
 	"sync"
 )
 
-type SqlTx struct {
+// SQLTx is an in-progress database transaction.
+type SQLTx struct {
 	Tx *sql.Tx
 }
 
+// Mysql is a Connection of mssql.
 type Mysql struct {
 	DbList map[string]*sql.DB
 	Once   sync.Once
 }
 
+// MysqlDB is a global variable which handles the mysql connection.
 var MysqlDB = Mysql{
 	DbList: map[string]*sql.DB{},
 }
 
+// GetMysqlDB return the global mssql connection.
 func GetMysqlDB() *Mysql {
 	return &MysqlDB
 }
 
+// GetDelimiter implements the method Connection.GetDelimiter.
 func (db *Mysql) GetDelimiter() string {
 	return "`"
 }
 
+// GetName implements the method Connection.GetName.
 func (db *Mysql) GetName() string {
 	return "mysql"
 }
 
+// InitDB implements the method Connection.InitDB.
 func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgs {
@@ -45,70 +52,80 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 				cfg.Dsn = cfg.User + ":" + cfg.Pwd + "@tcp(" + cfg.Host + ":" + cfg.Port + ")/" + cfg.Name + "?charset=utf8mb4"
 			}
 
-			SqlDB, err := sql.Open("mysql", cfg.Dsn)
+			sqlDB, err := sql.Open("mysql", cfg.Dsn)
 
 			if err != nil {
-				if SqlDB != nil {
-					_ = SqlDB.Close()
+				if sqlDB != nil {
+					_ = sqlDB.Close()
 				}
 				panic(err.Error())
 			} else {
 				// Largest set up the database connection reduce time wait
-				SqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-				SqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
-				db.DbList[conn] = SqlDB
+				db.DbList[conn] = sqlDB
 			}
 		}
 	})
 }
 
+// QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Mysql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)
 }
 
+// ExecWithConnection implements the method Connection.ExecWithConnection.
 func (db *Mysql) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], query, args...)
 }
 
+// Query implements the method Connection.Query.
 func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], query, args...)
 }
 
+// Exec implements the method Connection.Exec.
 func (db *Mysql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
-func (db *Mysql) BeginTransactionsWithReadUncommitted() *SqlTx {
+// BeginTransactionsWithReadUncommitted starts a transaction with level LevelReadUncommitted.
+func (db *Mysql) BeginTransactionsWithReadUncommitted() *SQLTx {
 	return db.BeginTransactionsWithLevel(sql.LevelReadUncommitted)
 }
 
-func (db *Mysql) BeginTransactionsWithReadCommitted() *SqlTx {
+// BeginTransactionsWithReadCommitted starts a transaction with level LevelReadCommitted.
+func (db *Mysql) BeginTransactionsWithReadCommitted() *SQLTx {
 	return db.BeginTransactionsWithLevel(sql.LevelReadCommitted)
 }
 
-func (db *Mysql) BeginTransactionsWithRepeatableRead() *SqlTx {
+// BeginTransactionsWithRepeatableRead starts a transaction with level LevelRepeatableRead.
+func (db *Mysql) BeginTransactionsWithRepeatableRead() *SQLTx {
 	return db.BeginTransactionsWithLevel(sql.LevelRepeatableRead)
 }
 
-func (db *Mysql) BeginTransactions() *SqlTx {
+// BeginTransactions starts a transaction with level LevelDefault.
+func (db *Mysql) BeginTransactions() *SQLTx {
 	return db.BeginTransactionsWithLevel(sql.LevelDefault)
 }
 
-func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SqlTx {
+// BeginTransactionsWithLevel starts a transaction with given transaction isolation level.
+func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SQLTx {
 	tx, err := db.DbList["default"].BeginTx(context.Background(),
 		&sql.TxOptions{Isolation: level})
 	if err != nil {
 		panic(err)
 	}
 
-	SqlTx := new(SqlTx)
+	sqlTx := new(SQLTx)
 
-	(*SqlTx).Tx = tx
-	return SqlTx
+	(*sqlTx).Tx = tx
+	return sqlTx
 }
 
-func (SqlTx *SqlTx) Exec(query string, args ...interface{}) (sql.Result, error) {
+// Exec is exec method within the transaction.
+func (SqlTx *SQLTx) Exec(query string, args ...interface{}) (sql.Result, error) {
 	rs, err := SqlTx.Tx.Exec(query, args...)
 	if err != nil {
 		return nil, err
@@ -121,7 +138,8 @@ func (SqlTx *SqlTx) Exec(query string, args ...interface{}) (sql.Result, error) 
 	return rs, nil
 }
 
-func (SqlTx *SqlTx) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
+// Query is query method within the transaction.
+func (SqlTx *SQLTx) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	rs, err := SqlTx.Tx.Query(query, args...)
 
 	if err != nil {
@@ -173,48 +191,53 @@ func (SqlTx *SqlTx) Query(query string, args ...interface{}) ([]map[string]inter
 	return results, nil
 }
 
-type TxFn func(*SqlTx) (error, map[string]interface{})
+// TxFn is the transaction callback function.
+type TxFn func(*SQLTx) (error, map[string]interface{})
 
-func (db *Mysql) WithTransaction(fn TxFn) (err error, res map[string]interface{}) {
+// WithTransaction call the callback function within the transaction and
+// catch the error.
+func (db *Mysql) WithTransaction(fn TxFn) (res map[string]interface{}, err error) {
 
-	SqlTx := db.BeginTransactions()
+	tx := db.BeginTransactions()
 
 	defer func() {
 		if p := recover(); p != nil {
 			// a panic occurred, rollback and repanic
-			_ = SqlTx.Tx.Rollback()
+			_ = tx.Tx.Rollback()
 			panic(p)
 		} else if err != nil {
 			// something went wrong, rollback
-			_ = SqlTx.Tx.Rollback()
+			_ = tx.Tx.Rollback()
 		} else {
 			// all good, commit
-			err = SqlTx.Tx.Commit()
+			err = tx.Tx.Commit()
 		}
 	}()
 
-	err, res = fn(SqlTx)
+	err, res = fn(tx)
 	return
 }
 
-func (db *Mysql) WithTransactionByLevel(level sql.IsolationLevel, fn TxFn) (err error, res map[string]interface{}) {
+// WithTransactionByLevel call the callback function within the transaction
+// of given transaction level and catch the error.
+func (db *Mysql) WithTransactionByLevel(level sql.IsolationLevel, fn TxFn) (res map[string]interface{}, err error) {
 
-	SqlTx := db.BeginTransactionsWithLevel(level)
+	tx := db.BeginTransactionsWithLevel(level)
 
 	defer func() {
 		if p := recover(); p != nil {
 			// a panic occurred, rollback and repanic
-			_ = SqlTx.Tx.Rollback()
+			_ = tx.Tx.Rollback()
 			panic(p)
 		} else if err != nil {
 			// something went wrong, rollback
-			_ = SqlTx.Tx.Rollback()
+			_ = tx.Tx.Rollback()
 		} else {
 			// all good, commit
-			err = SqlTx.Tx.Commit()
+			err = tx.Tx.Commit()
 		}
 	}()
 
-	err, res = fn(SqlTx)
+	err, res = fn(tx)
 	return
 }

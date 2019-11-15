@@ -56,7 +56,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			GetContent() + template2.HTML(js),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }
@@ -177,7 +177,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

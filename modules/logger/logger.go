@@ -32,6 +32,7 @@ func init() {
 	}
 }
 
+// SetInfoLogger set the info logger.
 func SetInfoLogger(path string, debug, isInfoLogOn bool) {
 	if path != "" {
 		SetLogger("info", path, debug)
@@ -39,6 +40,7 @@ func SetInfoLogger(path string, debug, isInfoLogOn bool) {
 	infoLogOff = isInfoLogOn
 }
 
+// SetErrorLogger set the error logger.
 func SetErrorLogger(path string, debug, isErrorLogOn bool) {
 	if path != "" {
 		SetLogger("error", path, debug)
@@ -46,6 +48,7 @@ func SetErrorLogger(path string, debug, isErrorLogOn bool) {
 	errorLogOff = isErrorLogOn
 }
 
+// SetAccessLogger set the access logger.
 func SetAccessLogger(path string, debug, isAccessLogOn bool) {
 	if path != "" {
 		SetLogger("access", path, debug)
@@ -53,6 +56,7 @@ func SetAccessLogger(path string, debug, isAccessLogOn bool) {
 	accessLogOff = isAccessLogOn
 }
 
+// SetLogger set the logger.
 func SetLogger(kind, path string, debug bool) {
 	if debug {
 		manager[kind].Out = io.MultiWriter(openFile(path), os.Stdout)
@@ -69,26 +73,31 @@ func openFile(path string) *os.File {
 	return file
 }
 
-func OpenSqlLog() {
+// OpenSQLLog set the sqlLogOpen true.
+func OpenSQLLog() {
 	sqlLogOpen = true
 }
 
+// Error print the error message.
 func Error(err ...interface{}) {
 	if !errorLogOff {
 		manager["error"].Errorln(err...)
 	}
 }
 
+// Info print the info message.
 func Info(info ...interface{}) {
 	if !infoLogOff {
 		manager["info"].Infoln(info...)
 	}
 }
 
+// Warn print the warning message.
 func Warn(info ...interface{}) {
 	manager["info"].Warnln(info...)
 }
 
+// Access print the access message.
 func Access(ctx *context.Context) {
 	if !accessLogOff {
 		manager["access"].Println("["+constant.Title+"]",
@@ -98,7 +107,8 @@ func Access(ctx *context.Context) {
 	}
 }
 
-func LogSql(statement string, args []interface{}) {
+// LogSQL print the sql info message.
+func LogSQL(statement string, args []interface{}) {
 	if sqlLogOpen && statement != "" {
 		manager["info"].Infoln("["+constant.Title+"]", "statement", statement, "args", args)
 	}

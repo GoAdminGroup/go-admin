@@ -98,7 +98,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userID.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
@@ -140,7 +140,7 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.UrlRemovePrefix(ctx.Request.URL.String()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URL.String()))),
 		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Beego Content", err)

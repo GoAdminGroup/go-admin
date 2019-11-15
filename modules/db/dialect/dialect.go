@@ -1,3 +1,7 @@
+// Copyright 2019 GoAdmin Core Team. All rights reserved.
+// Use of this source code is governed by a Apache-2.0 style
+// license that can be found in the LICENSE file.
+
 package dialect
 
 import (
@@ -5,6 +9,7 @@ import (
 	"strings"
 )
 
+// Dialect is methods set of different driver.
 type Dialect interface {
 	// GetName get dialect's name
 	GetName() string
@@ -16,24 +21,27 @@ type Dialect interface {
 	ShowTables() string
 
 	// Insert
-	Insert(comp *SqlComponent) string
+	Insert(comp *SQLComponent) string
 
 	// Delete
-	Delete(comp *SqlComponent) string
+	Delete(comp *SQLComponent) string
 
 	// Update
-	Update(comp *SqlComponent) string
+	Update(comp *SQLComponent) string
 
 	// Select
-	Select(comp *SqlComponent) string
+	Select(comp *SQLComponent) string
 
+	// GetDelimiter return the delimiter of Dialect.
 	GetDelimiter() string
 }
 
+// GetDialect return the default Dialect.
 func GetDialect() Dialect {
 	return GetDialectByDriver(config.Get().Databases.GetDefault().Driver)
 }
 
+// GetDialectByDriver return the Dialect of given driver.
 func GetDialectByDriver(driver string) Dialect {
 	switch driver {
 	case "mysql":
@@ -57,9 +65,11 @@ func GetDialectByDriver(driver string) Dialect {
 	}
 }
 
+// H is a shorthand of map.
 type H map[string]interface{}
 
-type SqlComponent struct {
+// SQLComponent is a sql components set.
+type SQLComponent struct {
 	Fields     []string
 	TableName  string
 	Wheres     []Where
@@ -74,12 +84,14 @@ type SqlComponent struct {
 	Values     H
 }
 
+// Where contains the operation and field.
 type Where struct {
 	Operation string
 	Field     string
 	Qmark     string
 }
 
+// Join contains the table and field and operation.
 type Join struct {
 	Table     string
 	FieldA    string
@@ -87,6 +99,7 @@ type Join struct {
 	FieldB    string
 }
 
+// RawUpdate contains the expression and arguments.
 type RawUpdate struct {
 	Expression string
 	Args       []interface{}
@@ -96,28 +109,28 @@ type RawUpdate struct {
 // internal help function
 // *******************************
 
-func (sql *SqlComponent) getLimit() string {
+func (sql *SQLComponent) getLimit() string {
 	if sql.Limit == "" {
 		return ""
 	}
 	return " limit " + sql.Limit + " "
 }
 
-func (sql *SqlComponent) getOffset() string {
+func (sql *SQLComponent) getOffset() string {
 	if sql.Offset == "" {
 		return ""
 	}
 	return " offset " + sql.Offset + " "
 }
 
-func (sql *SqlComponent) getOrderBy() string {
+func (sql *SQLComponent) getOrderBy() string {
 	if sql.Order == "" {
 		return ""
 	}
 	return " order by " + sql.Order + " "
 }
 
-func (sql *SqlComponent) getJoins(delimiter string) string {
+func (sql *SQLComponent) getJoins(delimiter string) string {
 	if len(sql.Leftjoins) == 0 {
 		return ""
 	}
@@ -128,7 +141,7 @@ func (sql *SqlComponent) getJoins(delimiter string) string {
 	return joins
 }
 
-func (sql *SqlComponent) getFields(delimiter string) string {
+func (sql *SQLComponent) getFields(delimiter string) string {
 	if len(sql.Fields) == 0 {
 		return "*"
 	}
@@ -153,7 +166,7 @@ func (sql *SqlComponent) getFields(delimiter string) string {
 	return fields[:len(fields)-1]
 }
 
-func (sql *SqlComponent) getWheres(delimiter string) string {
+func (sql *SQLComponent) getWheres(delimiter string) string {
 	if len(sql.Wheres) == 0 {
 		if sql.WhereRaws != "" {
 			return " where " + sql.WhereRaws
@@ -173,12 +186,11 @@ func (sql *SqlComponent) getWheres(delimiter string) string {
 
 	if sql.WhereRaws != "" {
 		return wheres + sql.WhereRaws
-	} else {
-		return wheres[:len(wheres)-5]
 	}
+	return wheres[:len(wheres)-5]
 }
 
-func (sql *SqlComponent) prepareUpdate(delimiter string) {
+func (sql *SQLComponent) prepareUpdate(delimiter string) {
 	fields := ""
 	args := make([]interface{}, 0)
 
@@ -222,7 +234,7 @@ func (sql *SqlComponent) prepareUpdate(delimiter string) {
 	sql.Statement = "update " + sql.TableName + " set " + fields + sql.getWheres(delimiter)
 }
 
-func (sql *SqlComponent) prepareInsert(delimiter string) {
+func (sql *SQLComponent) prepareInsert(delimiter string) {
 	fields := " ("
 	quesMark := "("
 

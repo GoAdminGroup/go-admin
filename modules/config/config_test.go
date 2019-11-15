@@ -11,21 +11,21 @@ func TestConfig_GetIndexUrl(t *testing.T) {
 		IndexUrl:  "/",
 	})
 
-	assert.Equal(t, Get().GetIndexUrl(), "/admin")
+	assert.Equal(t, Get().GetIndexURL(), "/admin")
 
 	Set(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
 
-	assert.Equal(t, Get().GetIndexUrl(), "/admin")
+	assert.Equal(t, Get().GetIndexURL(), "/admin")
 
 	Set(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
 
-	assert.Equal(t, Get().GetIndexUrl(), "/admin")
+	assert.Equal(t, Get().GetIndexURL(), "/admin")
 }
 
 func TestConfig_Index(t *testing.T) {
@@ -77,7 +77,7 @@ func TestConfig_UrlRemovePrefix(t *testing.T) {
 		IndexUrl:  "/",
 	})
 
-	assert.Equal(t, Get().UrlRemovePrefix("/admin/info/user"), "/info/user")
+	assert.Equal(t, Get().URLRemovePrefix("/admin/info/user"), "/info/user")
 }
 
 func TestConfig_PrefixFixSlash(t *testing.T) {

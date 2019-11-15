@@ -63,7 +63,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			Content:     alert,
 			Description: language.Get("error"),
 			Title:       language.Get("error"),
-		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+		}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	}
 
 	var (
@@ -134,11 +134,11 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 }
 
 func Assets(ctx *context.Context) {
-	filepath := config.UrlRemovePrefix(ctx.Path())
+	filepath := config.URLRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {

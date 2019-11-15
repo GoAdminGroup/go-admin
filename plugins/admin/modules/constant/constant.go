@@ -2,6 +2,6 @@ package constant
 
 const (
 	PjaxHeader    = "X-PJAX"
-	PjaxUrlHeader = "X-PJAX-URL"
+	PjaxUrlHeader = "X-PJAX-Url"
 	Title         = "GoAdmin"
 )

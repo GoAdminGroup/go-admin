@@ -85,7 +85,7 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		Logo:           cfg.Logo,
 		MiniLogo:       cfg.MiniLogo,
 		ColorScheme:    cfg.ColorScheme,
-		IndexUrl:       cfg.GetIndexUrl(),
+		IndexUrl:       cfg.GetIndexURL(),
 		CdnUrl:         cfg.AssetUrl,
 		CustomHeadHtml: cfg.CustomHeadHtml,
 		CustomFootHtml: cfg.CustomFootHtml,

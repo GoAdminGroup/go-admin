@@ -53,8 +53,8 @@ func (ses *Session) Get(key string) interface{} {
 	return ses.Values[key]
 }
 
-// Get set the session value of key.
-func (ses *Session) Set(key string, value interface{}) {
+// Add add the session value of key.
+func (ses *Session) Add(key string, value interface{}) {
 	ses.Values[key] = value
 	ses.Driver.Update(ses.Sid, ses.Values)
 	cookie := http.Cookie{
@@ -121,11 +121,11 @@ func (driver *DBDriver) Load(sid string) map[string]interface{} {
 
 	if sesModel == nil {
 		return map[string]interface{}{}
-	} else {
-		var values map[string]interface{}
-		_ = json.Unmarshal([]byte(sesModel["values"].(string)), &values)
-		return values
 	}
+
+	var values map[string]interface{}
+	_ = json.Unmarshal([]byte(sesModel["values"].(string)), &values)
+	return values
 }
 
 func deleteOverdueSession() {
@@ -151,7 +151,7 @@ func deleteOverdueSession() {
 		cmd = `delete from goadmin_session where strftime('%s', created_at) < strftime('%s', 'now') - ` + duration
 	}
 
-	logger.LogSql(cmd, nil)
+	logger.LogSQL(cmd, nil)
 
 	_, _ = db.Query(cmd)
 }

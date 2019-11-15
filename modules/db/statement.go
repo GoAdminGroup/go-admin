@@ -13,17 +13,19 @@ import (
 	"sync"
 )
 
-type Sql struct {
-	dialect.SqlComponent
+// SQL wraps the Connection and driver dialect methods.
+type SQL struct {
+	dialect.SQLComponent
 	diver   Connection
 	dialect dialect.Dialect
 	conn    string
 }
 
-var SqlPool = sync.Pool{
+// SQLPool is a object pool of SQL.
+var SQLPool = sync.Pool{
 	New: func() interface{} {
-		return &Sql{
-			SqlComponent: dialect.SqlComponent{
+		return &SQL{
+			SQLComponent: dialect.SQLComponent{
 				Fields:     make([]string, 0),
 				TableName:  "",
 				Args:       make([]interface{}, 0),
@@ -38,18 +40,21 @@ var SqlPool = sync.Pool{
 	},
 }
 
+// H is a shorthand of map.
 type H map[string]interface{}
 
-func newSql() *Sql {
-	return SqlPool.Get().(*Sql)
+// newSQL get a new SQL from SQLPool.
+func newSQL() *SQL {
+	return SQLPool.Get().(*SQL)
 }
 
 // *******************************
 // process method
 // *******************************
 
-func Table(table string) *Sql {
-	sql := newSql()
+// Table return a SQL with given table and default connection.
+func Table(table string) *SQL {
+	sql := newSQL()
 	sql.TableName = table
 	sql.diver = GetConnection()
 	sql.dialect = dialect.GetDialect()
@@ -57,38 +62,44 @@ func Table(table string) *Sql {
 	return sql
 }
 
-func WithDriver(driver string) *Sql {
-	sql := newSql()
+// WithDriver return a SQL with given driver.
+func WithDriver(driver string) *SQL {
+	sql := newSQL()
 	sql.diver = GetConnectionByDriver(driver)
 	sql.dialect = dialect.GetDialectByDriver(driver)
 	sql.conn = "default"
 	return sql
 }
 
-func WithDriverAndConnection(conn, driver string) *Sql {
-	sql := newSql()
+// WithDriverAndConnection return a SQL with given driver and connection name.
+func WithDriverAndConnection(conn, driver string) *SQL {
+	sql := newSQL()
 	sql.diver = GetConnectionByDriver(driver)
 	sql.dialect = dialect.GetDialectByDriver(driver)
 	sql.conn = conn
 	return sql
 }
 
-func (sql *Sql) WithConnection(conn string) *Sql {
+// WithConnection set the connection name of SQL.
+func (sql *SQL) WithConnection(conn string) *SQL {
 	sql.conn = conn
 	return sql
 }
 
-func (sql *Sql) Table(table string) *Sql {
+// Table set table of SQL.
+func (sql *SQL) Table(table string) *SQL {
 	sql.TableName = table
 	return sql
 }
 
-func (sql *Sql) Select(fields ...string) *Sql {
+// Select set select fields.
+func (sql *SQL) Select(fields ...string) *SQL {
 	sql.Fields = fields
 	return sql
 }
 
-func (sql *Sql) OrderBy(fields ...string) *Sql {
+// OrderBy set order fields.
+func (sql *SQL) OrderBy(fields ...string) *SQL {
 	if len(fields) == 0 {
 		panic("wrong order field")
 	}
@@ -102,17 +113,20 @@ func (sql *Sql) OrderBy(fields ...string) *Sql {
 	return sql
 }
 
-func (sql *Sql) Skip(offset int) *Sql {
+// Skip set offset value.
+func (sql *SQL) Skip(offset int) *SQL {
 	sql.Offset = strconv.Itoa(offset)
 	return sql
 }
 
-func (sql *Sql) Take(take int) *Sql {
+// Take set limit value.
+func (sql *SQL) Take(take int) *SQL {
 	sql.Limit = strconv.Itoa(take)
 	return sql
 }
 
-func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
+// Where add the where operation and argument value.
+func (sql *SQL) Where(field string, operation string, arg interface{}) *SQL {
 	sql.Wheres = append(sql.Wheres, dialect.Where{
 		Field:     field,
 		Operation: operation,
@@ -122,7 +136,8 @@ func (sql *Sql) Where(field string, operation string, arg interface{}) *Sql {
 	return sql
 }
 
-func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
+// WhereIn add the where operation of "in" and argument values.
+func (sql *SQL) WhereIn(field string, arg []interface{}) *SQL {
 	if len(arg) == 0 {
 		return sql
 	}
@@ -135,7 +150,8 @@ func (sql *Sql) WhereIn(field string, arg []interface{}) *Sql {
 	return sql
 }
 
-func (sql *Sql) WhereNotIn(field string, arg []interface{}) *Sql {
+// WhereNotIn add the where operation of "not in" and argument values.
+func (sql *SQL) WhereNotIn(field string, arg []interface{}) *SQL {
 	if len(arg) == 0 {
 		return sql
 	}
@@ -148,11 +164,13 @@ func (sql *Sql) WhereNotIn(field string, arg []interface{}) *Sql {
 	return sql
 }
 
-func (sql *Sql) Find(arg interface{}) (map[string]interface{}, error) {
+// Find query the sql result with given id assuming that primary key name is "id".
+func (sql *SQL) Find(arg interface{}) (map[string]interface{}, error) {
 	return sql.Where("id", "=", arg).First()
 }
 
-func (sql *Sql) Count() (int64, error) {
+// Count query the count of query results.
+func (sql *SQL) Count() (int64, error) {
 	var (
 		res map[string]interface{}
 		err error
@@ -163,13 +181,15 @@ func (sql *Sql) Count() (int64, error) {
 	return res["count(*)"].(int64), nil
 }
 
-func (sql *Sql) WhereRaw(raw string, args ...interface{}) *Sql {
+// WhereRaw set WhereRaws and arguments.
+func (sql *SQL) WhereRaw(raw string, args ...interface{}) *SQL {
 	sql.WhereRaws = raw
 	sql.Args = append(sql.Args, args...)
 	return sql
 }
 
-func (sql *Sql) UpdateRaw(raw string, args ...interface{}) *Sql {
+// UpdateRaw set UpdateRaw.
+func (sql *SQL) UpdateRaw(raw string, args ...interface{}) *SQL {
 	sql.UpdateRaws = append(sql.UpdateRaws, dialect.RawUpdate{
 		Expression: raw,
 		Args:       args,
@@ -177,7 +197,8 @@ func (sql *Sql) UpdateRaw(raw string, args ...interface{}) *Sql {
 	return sql
 }
 
-func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB string) *Sql {
+// LeftJoin add a left join info.
+func (sql *SQL) LeftJoin(table string, fieldA string, operation string, fieldB string) *SQL {
 	sql.Leftjoins = append(sql.Leftjoins, dialect.Join{
 		FieldA:    fieldA,
 		FieldB:    fieldB,
@@ -194,10 +215,11 @@ func (sql *Sql) LeftJoin(table string, fieldA string, operation string, fieldB s
 // update ... => where ...
 // *******************************
 
-func (sql *Sql) First() (map[string]interface{}, error) {
-	defer RecycleSql(sql)
+// First query the result and return the first row.
+func (sql *SQL) First() (map[string]interface{}, error) {
+	defer RecycleSQL(sql)
 
-	sql.dialect.Select(&sql.SqlComponent)
+	sql.dialect.Select(&sql.SQLComponent)
 
 	res, err := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 
@@ -211,32 +233,36 @@ func (sql *Sql) First() (map[string]interface{}, error) {
 	return res[0], nil
 }
 
-func (sql *Sql) All() ([]map[string]interface{}, error) {
-	defer RecycleSql(sql)
+// All query all the result and return.
+func (sql *SQL) All() ([]map[string]interface{}, error) {
+	defer RecycleSQL(sql)
 
-	sql.dialect.Select(&sql.SqlComponent)
+	sql.dialect.Select(&sql.SQLComponent)
 
 	return sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 }
 
-func (sql *Sql) ShowColumns() ([]map[string]interface{}, error) {
-	defer RecycleSql(sql)
+// ShowColumns show columns info.
+func (sql *SQL) ShowColumns() ([]map[string]interface{}, error) {
+	defer RecycleSQL(sql)
 
 	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumns(sql.TableName))
 }
 
-func (sql *Sql) ShowTables() ([]map[string]interface{}, error) {
-	defer RecycleSql(sql)
+// ShowTables show table info.
+func (sql *SQL) ShowTables() ([]map[string]interface{}, error) {
+	defer RecycleSQL(sql)
 
 	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
 }
 
-func (sql *Sql) Update(values dialect.H) (int64, error) {
-	defer RecycleSql(sql)
+// Update exec the update method of given key/value pairs.
+func (sql *SQL) Update(values dialect.H) (int64, error) {
+	defer RecycleSQL(sql)
 
 	sql.Values = values
 
-	sql.dialect.Update(&sql.SqlComponent)
+	sql.dialect.Update(&sql.SQLComponent)
 
 	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
@@ -251,10 +277,11 @@ func (sql *Sql) Update(values dialect.H) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (sql *Sql) Delete() error {
-	defer RecycleSql(sql)
+// Delete exec the delete method.
+func (sql *SQL) Delete() error {
+	defer RecycleSQL(sql)
 
-	sql.dialect.Delete(&sql.SqlComponent)
+	sql.dialect.Delete(&sql.SQLComponent)
 
 	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
@@ -269,10 +296,11 @@ func (sql *Sql) Delete() error {
 	return nil
 }
 
-func (sql *Sql) Exec() (int64, error) {
-	defer RecycleSql(sql)
+// Exec exec the exec method.
+func (sql *SQL) Exec() (int64, error) {
+	defer RecycleSQL(sql)
 
-	sql.dialect.Update(&sql.SqlComponent)
+	sql.dialect.Update(&sql.SQLComponent)
 
 	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
 
@@ -287,12 +315,13 @@ func (sql *Sql) Exec() (int64, error) {
 	return res.LastInsertId()
 }
 
-func (sql *Sql) Insert(values dialect.H) (int64, error) {
-	defer RecycleSql(sql)
+// Insert exec the insert method of given key/value pairs.
+func (sql *SQL) Insert(values dialect.H) (int64, error) {
+	defer RecycleSQL(sql)
 
 	sql.Values = values
 
-	sql.dialect.Insert(&sql.SqlComponent)
+	sql.dialect.Insert(&sql.SQLComponent)
 
 	if sql.diver.GetName() == DriverPostgresql {
 		if sql.TableName == "goadmin_menu" ||
@@ -325,13 +354,14 @@ func (sql *Sql) Insert(values dialect.H) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (sql *Sql) filed(filed string) string {
+func (sql *SQL) filed(filed string) string {
 	return sql.diver.GetDelimiter() + filed + sql.diver.GetDelimiter()
 }
 
-func RecycleSql(sql *Sql) {
+// RecycleSQL clear the SQL and put into the pool.
+func RecycleSQL(sql *SQL) {
 
-	logger.LogSql(sql.Statement, sql.Args)
+	logger.LogSQL(sql.Statement, sql.Args)
 
 	sql.Fields = make([]string, 0)
 	sql.TableName = ""
@@ -345,5 +375,5 @@ func RecycleSql(sql *Sql) {
 	sql.UpdateRaws = make([]dialect.RawUpdate, 0)
 	sql.Statement = ""
 
-	SqlPool.Put(sql)
+	SQLPool.Put(sql)
 }

@@ -8,6 +8,7 @@ import (
 	"database/sql"
 )
 
+// SetColVarType set the column type.
 func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	switch {
 	case Contains(DT(typeName), BoolTypeList):
@@ -31,6 +32,7 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 	}
 }
 
+// SetResultValue set the result value.
 func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
 	switch {
 	case Contains(DT(typeName), BoolTypeList):

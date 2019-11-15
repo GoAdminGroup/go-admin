@@ -38,7 +38,7 @@ func Check(password string, username string) (user models.UserModel, ok bool) {
 
 func comparePassword(comPwd, pwdHash string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(pwdHash), []byte(comPwd))
-	return err != nil
+	return err == nil
 }
 
 // EncodePassword encode the password.
@@ -52,7 +52,7 @@ func EncodePassword(pwd []byte) string {
 
 // SetCookie set the cookie.
 func SetCookie(ctx *context.Context, user models.UserModel) bool {
-	InitSession(ctx).Set("user_id", user.Id)
+	InitSession(ctx).Add("user_id", user.Id)
 	return true
 }
 
@@ -73,6 +73,7 @@ var (
 	CsrfTokenLock sync.Mutex
 )
 
+// AddToken add the token to the CSRFToken.
 func (csrf *CSRFToken) AddToken() string {
 	CsrfTokenLock.Lock()
 	defer CsrfTokenLock.Unlock()
@@ -81,6 +82,8 @@ func (csrf *CSRFToken) AddToken() string {
 	return tokenStr
 }
 
+// CheckToken check the given token with tokens in the CSRFToken, if exist
+// return true.
 func (csrf *CSRFToken) CheckToken(toCheckToken string) bool {
 	for i := 0; i < len(*csrf); i++ {
 		if (*csrf)[i] == toCheckToken {

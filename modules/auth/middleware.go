@@ -61,11 +61,13 @@ func SetPrefix(prefix string) *Invoker {
 	return i
 }
 
+// SetAuthFailCallback set the authFailCallback of Invoker.
 func (invoker *Invoker) SetAuthFailCallback(callback MiddlewareCallback) *Invoker {
 	invoker.authFailCallback = callback
 	return invoker
 }
 
+// SetPermissionDenyCallback set the permissionDenyCallback of Invoker.
 func (invoker *Invoker) SetPermissionDenyCallback(callback MiddlewareCallback) *Invoker {
 	invoker.permissionDenyCallback = callback
 	return invoker
@@ -74,6 +76,7 @@ func (invoker *Invoker) SetPermissionDenyCallback(callback MiddlewareCallback) *
 // MiddlewareCallback is type of callback function.
 type MiddlewareCallback func(ctx *context.Context)
 
+// Middleware get the auth middleware from Invoker.
 func (invoker *Invoker) Middleware() context.Handler {
 	return func(ctx *context.Context) {
 		user, authOk, permissionOk := Filter(ctx)
@@ -112,7 +115,7 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 		return user, false, false
 	}
 
-	user, ok = GetCurUserById(int64(id))
+	user, ok = GetCurUserByID(int64(id))
 
 	if !ok {
 		return user, false, false
@@ -121,8 +124,8 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
-// GetCurUserById return the user model of given user id.
-func GetCurUserById(id int64) (user models.UserModel, ok bool) {
+// GetCurUserByID return the user model of given user id.
+func GetCurUserByID(id int64) (user models.UserModel, ok bool) {
 
 	user = models.User().Find(id)
 

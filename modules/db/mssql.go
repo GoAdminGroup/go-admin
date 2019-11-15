@@ -12,43 +12,53 @@ import (
 	"sync"
 )
 
+// Mssql is a Connection of mssql.
 type Mssql struct {
 	DbList map[string]*sql.DB
 	Once   sync.Once
 }
 
+// MssqlDB is a global variable which handles the mssql connection.
 var MssqlDB = Mssql{
 	DbList: map[string]*sql.DB{},
 }
 
+// GetMssqlDB return the global mssql connection.
 func GetMssqlDB() *Mssql {
 	return &MssqlDB
 }
 
+// GetDelimiter implements the method Connection.GetDelimiter.
 func (db *Mssql) GetDelimiter() string {
 	return "`"
 }
 
+// GetName implements the method Connection.GetName.
 func (db *Mssql) GetName() string {
 	return "mssql"
 }
 
+// QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Mssql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)
 }
 
+// ExecWithConnection implements the method Connection.ExecWithConnection.
 func (db *Mssql) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], query, args...)
 }
 
+// Query implements the method Connection.Query.
 func (db *Mssql) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], query, args...)
 }
 
+// Exec implements the method Connection.Exec.
 func (db *Mssql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
+// InitDB implements the method Connection.InitDB.
 func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 	db.Once.Do(func() {
 		for conn, cfg := range cfglist {
@@ -62,21 +72,20 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 				cfg.Dsn = u.String()
 			}
 
-			SqlDB, err := sql.Open("mssql", cfg.Dsn)
+			sqlDB, err := sql.Open("mssql", cfg.Dsn)
 
-			if SqlDB == nil {
+			if sqlDB == nil {
 				panic("invalid connection")
 			}
 
 			if err != nil {
-				_ = SqlDB.Close()
+				_ = sqlDB.Close()
 				panic(err.Error())
 			} else {
-				// 设置数据库最大连接 减少timewait 正式环境调大
-				SqlDB.SetMaxIdleConns(cfg.MaxIdleCon) // 连接池连接数 = mysql最大连接数/2
-				SqlDB.SetMaxOpenConns(cfg.MaxOpenCon) // 最大打开连接 = mysql最大连接数
+				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
-				db.DbList[conn] = SqlDB
+				db.DbList[conn] = sqlDB
 			}
 		}
 	})

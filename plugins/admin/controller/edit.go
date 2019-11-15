@@ -50,7 +50,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 			GetContent(),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

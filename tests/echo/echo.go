@@ -3,8 +3,14 @@ package echo
 import (
 	// add echo adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
-
-
+	// add mysql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	// add postgresql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	// add sqlite driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	// add adminlte ui theme
+	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"

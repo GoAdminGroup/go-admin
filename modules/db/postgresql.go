@@ -14,35 +14,48 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 )
 
+// Postgresql is a Connection of mssql.
 type Postgresql struct {
 	DbList map[string]*sql.DB
 	Once   sync.Once
 }
 
+// PostgresqlDB is a global variable which handles the postgresql connection.
+var PostgresqlDB = Postgresql{
+	DbList: map[string]*sql.DB{},
+}
+
+// GetPostgresqlDB return the global mssql connection.
 func GetPostgresqlDB() *Postgresql {
 	return &PostgresqlDB
 }
 
+// GetName implements the method Connection.GetName.
 func (db *Postgresql) GetName() string {
 	return "postgresql"
 }
 
+// GetDelimiter implements the method Connection.GetDelimiter.
 func (db *Postgresql) GetDelimiter() string {
 	return `"`
 }
 
+// QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], filterQuery(query), args...)
 }
 
+// ExecWithConnection implements the method Connection.ExecWithConnection.
 func (db *Postgresql) ExecWithConnection(con string, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList[con], filterQuery(query), args...)
 }
 
+// Query implements the method Connection.Query.
 func (db *Postgresql) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList["default"], filterQuery(query), args...)
 }
 
+// Exec implements the method Connection.Exec.
 func (db *Postgresql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], filterQuery(query), args...)
 }
@@ -57,6 +70,7 @@ func filterQuery(query string) string {
 	return strings.Replace(query, "by order ", `by "order" `, -1)
 }
 
+// InitDB implements the method Connection.InitDB.
 func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
@@ -74,8 +88,4 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 			db.DbList[conn] = sqlDB
 		}
 	})
-}
-
-var PostgresqlDB = Postgresql{
-	DbList: map[string]*sql.DB{},
 }

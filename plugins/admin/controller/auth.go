@@ -28,7 +28,7 @@ func Auth(ctx *context.Context) {
 		auth.SetCookie(ctx, user)
 
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": config.GetIndexUrl(),
+			"url": config.GetIndexURL(),
 		})
 		return
 	}

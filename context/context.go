@@ -29,7 +29,7 @@ type Context struct {
 	handlers  Handlers
 }
 
-// Path is used in the matching of request and response. URL stores the
+// Path is used in the matching of request and response. Url stores the
 // raw register url. RegUrl contains the wildcard which on behalf of
 // the route params.
 type Path struct {

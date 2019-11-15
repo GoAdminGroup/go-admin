@@ -152,7 +152,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		return
 	}
 
-	user, ok := auth.GetCurUserById(int64(userID.(float64)))
+	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
 
 	if !ok {
 		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
@@ -191,7 +191,7 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(config.UrlRemovePrefix(ctx.Request.URL.String()))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Request.URL.String()))),
 		panel, config, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Chi Content", err)
