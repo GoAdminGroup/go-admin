@@ -6,6 +6,7 @@ import (
 	"strconv"
 )
 
+// RoleModel is role model structure.
 type RoleModel struct {
 	Base
 
@@ -16,20 +17,24 @@ type RoleModel struct {
 	UpdatedAt string
 }
 
+// Role return a default role model.
 func Role() RoleModel {
 	return RoleModel{Base: Base{Table: "goadmin_roles"}}
 }
 
+// RoleWithId return a default role model of given id.
 func RoleWithId(id string) RoleModel {
 	idInt, _ := strconv.Atoi(id)
 	return RoleModel{Base: Base{Table: "goadmin_roles"}, Id: int64(idInt)}
 }
 
+// Find return a default role model of given id.
 func (t RoleModel) Find(id interface{}) RoleModel {
 	item, _ := db.Table(t.Table).Find(id)
 	return t.MapToModel(item)
 }
 
+// New create a role model.
 func (t RoleModel) New(name, slug string) RoleModel {
 
 	id, _ := db.Table(t.Table).Insert(dialect.H{
@@ -44,6 +49,7 @@ func (t RoleModel) New(name, slug string) RoleModel {
 	return t
 }
 
+// Update update the role model.
 func (t RoleModel) Update(name, slug string) RoleModel {
 
 	_, _ = db.Table(t.Table).
@@ -59,6 +65,7 @@ func (t RoleModel) Update(name, slug string) RoleModel {
 	return t
 }
 
+// CheckPermission check the permission of role.
 func (t RoleModel) CheckPermission(permissionId string) bool {
 	checkPermission, _ := db.Table("goadmin_role_permissions").
 		Where("permission_id", "=", permissionId).
@@ -67,12 +74,14 @@ func (t RoleModel) CheckPermission(permissionId string) bool {
 	return checkPermission != nil
 }
 
+// DeletePermissions delete all the permissions of role.
 func (t RoleModel) DeletePermissions() {
 	_ = db.Table("goadmin_role_permissions").
 		Where("role_id", "=", t.Id).
 		Delete()
 }
 
+// AddPermission add the permissions to the role.
 func (t RoleModel) AddPermission(permissionId string) {
 	if permissionId != "" {
 		if !t.CheckPermission(permissionId) {
@@ -85,6 +94,7 @@ func (t RoleModel) AddPermission(permissionId string) {
 	}
 }
 
+// MapToModel get the role model from given map.
 func (t RoleModel) MapToModel(m map[string]interface{}) RoleModel {
 	t.Id = m["id"].(int64)
 	t.Name, _ = m["name"].(string)

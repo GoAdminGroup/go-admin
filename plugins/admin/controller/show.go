@@ -24,6 +24,7 @@ import (
 	"time"
 )
 
+// ShowInfo show info page.
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query("__prefix")
@@ -137,6 +138,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 }
 
+// Assets return front-end assets according the request path.
 func Assets(ctx *context.Context) {
 	filepath := config.URLRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
@@ -165,6 +167,7 @@ func Assets(ctx *context.Context) {
 	}, string(data))
 }
 
+// Export export table rows as excel object.
 func Export(ctx *context.Context) {
 	param := guard.GetExportParam(ctx)
 

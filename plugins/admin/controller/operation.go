@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 )
 
+// RecordOperationLog record all operation logs, store into database.
 func RecordOperationLog(ctx *context.Context) {
 	if user, ok := ctx.UserValue["user"].(models.UserModel); ok {
 		var input []byte

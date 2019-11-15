@@ -17,15 +17,17 @@ import (
 	"net/http"
 )
 
+// ShowMenu show menu info page.
 func ShowMenu(ctx *context.Context) {
 	getMenuInfoPanel(ctx, "")
 }
 
+// ShowEditMenu show edit menu page.
 func ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
 		getMenuInfoPanel(ctx, template.Get(config.Theme).Alert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> `+language.Get("error")+`!`)).
+			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 			SetTheme("warning").
 			SetContent(template2.HTML("wrong id")).
 			GetContent())
@@ -61,12 +63,14 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
+// DeleteMenu delete the menu of given id.
 func DeleteMenu(ctx *context.Context) {
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).Delete()
 	table.RefreshTableList()
 	response.Ok(ctx)
 }
 
+// EditMenu edit the menu of given id.
 func EditMenu(ctx *context.Context) {
 
 	param := guard.GetMenuEditParam(ctx)
@@ -93,6 +97,7 @@ func EditMenu(ctx *context.Context) {
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }
 
+// NewMenu create a new menu item.
 func NewMenu(ctx *context.Context) {
 
 	param := guard.GetMenuNewParam(ctx)
@@ -120,6 +125,7 @@ func NewMenu(ctx *context.Context) {
 	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/menu"))
 }
 
+// MenuOrder change the order of menu items.
 func MenuOrder(ctx *context.Context) {
 
 	var data []map[string]interface{}

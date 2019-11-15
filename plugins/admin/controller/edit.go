@@ -16,6 +16,7 @@ import (
 	"net/http"
 )
 
+// ShowForm show form page.
 func ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
 	showForm(ctx, "", param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl())

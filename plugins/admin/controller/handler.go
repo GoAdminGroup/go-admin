@@ -18,6 +18,7 @@ import (
 	"strings"
 )
 
+// GlobalDeferHandler is a global error handler of admin plugin.
 func GlobalDeferHandler(ctx *context.Context) {
 
 	logger.Access(ctx)

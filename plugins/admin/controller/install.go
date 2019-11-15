@@ -8,6 +8,7 @@ import (
 	"net/http"
 )
 
+// ShowInstall show install page.
 func ShowInstall(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
@@ -22,6 +23,7 @@ func ShowInstall(ctx *context.Context) {
 	ctx.HTML(http.StatusOK, buffer.String())
 }
 
+// CheckDatabase check the database connection.
 func CheckDatabase(ctx *context.Context) {
 
 	ip := ctx.FormValue("h")

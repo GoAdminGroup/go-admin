@@ -13,6 +13,7 @@ import (
 	"net/http"
 )
 
+// Auth check the input password and username for authentication.
 func Auth(ctx *context.Context) {
 
 	password := ctx.FormValue("password")
@@ -35,12 +36,14 @@ func Auth(ctx *context.Context) {
 	response.BadRequest(ctx, "fail")
 }
 
+// Logout delete the cookie.
 func Logout(ctx *context.Context) {
 	auth.DelCookie(ctx)
 	ctx.AddHeader("Location", config.Url("/login"))
 	ctx.SetStatusCode(302)
 }
 
+// ShowLogin show the login page.
 func ShowLogin(ctx *context.Context) {
 
 	tmpl, name := template.GetComp("login").GetTemplate()

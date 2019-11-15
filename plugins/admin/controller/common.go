@@ -10,6 +10,7 @@ import (
 
 var config c.Config
 
+// SetConfig set the config.
 func SetConfig(cfg c.Config) {
 	config = cfg
 }

@@ -16,6 +16,7 @@ import (
 	"net/http"
 )
 
+// ShowNewForm show a new form page.
 func ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
 	showNewForm(ctx, "", param.Panel, param.GetUrl(), param.GetInfoUrl())
@@ -51,6 +52,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
+// NewForm insert a table row into database.
 func NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
