@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/gavv/httpexpect"
 	"net/http"
@@ -28,7 +29,7 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	sesID := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
 		"username": "admin",
 		"password": "admin",
-	}).Expect().Status(200).Cookie("go_admin_session").Raw()
+	}).Expect().Status(200).Cookie(auth.DefaultCookieKey).Raw()
 
 	// logout: without login
 
@@ -39,7 +40,7 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	// logout
 
 	printlnWithColor("logout", "green")
-	e.GET(config.Get().Url("/logout")).WithCookie("go_admin_session", sesID.Value).Expect().
+	e.GET(config.Get().Url("/logout")).WithCookie(auth.DefaultCookieKey, sesID.Value).Expect().
 		Status(200)
 
 	// login again
@@ -48,13 +49,13 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	cookie := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
 		"username": "admin",
 		"password": "admin",
-	}).Expect().Status(200).Cookie("go_admin_session").Raw()
+	}).Expect().Status(200).Cookie(auth.DefaultCookieKey).Raw()
 
 	// login success
 
 	printlnWithColor("login success", "green")
 	e.GET(config.Get().Url("/")).
-		WithCookie("go_admin_session", cookie.Value).Expect().
+		WithCookie(auth.DefaultCookieKey, cookie.Value).Expect().
 		Status(200).
 		Body().Contains("Dashboard")
 

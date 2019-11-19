@@ -7,33 +7,31 @@ package chi
 import (
 	"bytes"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	cfg "github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/go-chi/chi"
-	template2 "html/template"
 	"net/http"
 	"regexp"
 	"strings"
 )
 
 // Chi structure value is a Chi GoAdmin adapter.
-type Chi struct {}
+type Chi struct {
+	adapter.BaseAdapter
+}
 
 func init() {
 	engine.Register(new(Chi))
 }
 
 // Use implement WebFrameWork.Use method.
-func (bu *Chi) Use(router interface{}, plugin []plugins.Plugin) error {
+func (ch *Chi) Use(router interface{}, plugin []plugins.Plugin) error {
 
 	var (
 		eng *chi.Mux
@@ -126,7 +124,7 @@ type Context struct {
 }
 
 // Content implement WebFrameWork.Content method.
-func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
+func (ch *Chi) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
 
 	var (
 		ctx Context
@@ -136,66 +134,26 @@ func (bu *Chi) Content(contextInterface interface{}, c types.GetPanel) {
 		panic("wrong parameter")
 	}
 
-	config := cfg.Get()
-
-	sesKey, err := ctx.Request.Cookie("go_admin_session")
+	sesKey, err := ctx.Request.Cookie(ch.CookieKey())
 
 	if err != nil || sesKey == nil {
-		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
+		http.Redirect(ctx.Response, ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	userID, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+	body, authSuccess, err := ch.GetContent(sesKey.Value, ctx.Request.URL.Path,
+		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
 
-	if !ok {
-		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
+	if !authSuccess {
+		http.Redirect(ctx.Response, ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
-
-	if !ok {
-		http.Redirect(ctx.Response, ctx.Request, config.Url("/login"), http.StatusFound)
-		return
-	}
-
-	var panel types.Panel
-
-	if !auth.CheckPermissions(user, ctx.Request.URL.Path, ctx.Request.Method) {
-		alert := template.Get(config.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
-		}
-	} else {
-		panel, err = c(ctx)
-		if err != nil {
-			alert := template.Get(config.Theme).
-				Alert().
-				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-			panel = types.Panel{
-				Content:     alert,
-				Description: language.Get("error"),
-				Title:       language.Get("error"),
-			}
-		}
-	}
-
-	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
-
-	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Request.URL.String()))),
-		panel, config, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Chi Content", err)
 	}
+
+	ctx.Response.Header().Set("Content-Type", ch.HTMLContentType())
 	ctx.Response.WriteHeader(http.StatusOK)
-	_, _ = ctx.Response.Write(buf.Bytes())
+	_, _ = ctx.Response.Write(body)
 }

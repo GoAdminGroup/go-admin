@@ -106,7 +106,7 @@ type Panel struct {
 	Url         string
 }
 
-type GetPanel func(ctx interface{}) (Panel, error)
+type GetPanelFn func(ctx interface{}) (Panel, error)
 
 // FieldModel is the single query result.
 type FieldModel struct {

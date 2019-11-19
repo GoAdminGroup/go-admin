@@ -79,7 +79,7 @@ func Register(ada adapter.WebFrameWork) {
 
 // Content call the Content method of DefaultAdapter.
 // If DefaultAdapter is nil, it will panic.
-func Content(ctx interface{}, panel types.GetPanel) {
+func Content(ctx interface{}, panel types.GetPanelFn) {
 	if DefaultAdapter == nil {
 		panic("adapter is nil")
 	}

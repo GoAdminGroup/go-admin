@@ -124,6 +124,33 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
+const defaultUserIDSesKey = "user_id"
+
+// GetUserID return the user id from the session.
+func GetUserID(sesKey string) int64 {
+	id := GetSessionByKey(sesKey, defaultUserIDSesKey)
+	if idFloat64, ok := id.(float64); ok {
+		return int64(idFloat64)
+	}
+	return -1
+}
+
+// GetCurUser return the user model.
+func GetCurUser(sesKey string) (user models.UserModel, ok bool) {
+
+	if sesKey == "" {
+		ok = false
+		return
+	}
+
+	id := GetUserID(sesKey)
+	if id == -1 {
+		ok = false
+		return
+	}
+	return GetCurUserByID(id)
+}
+
 // GetCurUserByID return the user model of given user id.
 func GetCurUserByID(id int64) (user models.UserModel, ok bool) {
 

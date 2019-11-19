@@ -17,6 +17,8 @@ import (
 	"time"
 )
 
+const DefaultCookieKey = "go_admin_session"
+
 // Driver is the default PersistenceDriver.
 var Driver DBDriver
 
@@ -24,6 +26,11 @@ var Driver DBDriver
 type PersistenceDriver interface {
 	Load(string) map[string]interface{}
 	Update(sid string, values map[string]interface{})
+}
+
+// GetSessionByKey get the session value by key.
+func GetSessionByKey(sesKey, key string) interface{} {
+	return Driver.Load(sesKey)[key]
 }
 
 // Session contains info of session.
@@ -103,7 +110,7 @@ func InitSession(ctx *context.Context) *Session {
 	sessions := new(Session)
 	sessions.UpdateConfig(Config{
 		Expires: time.Second * time.Duration(config.Get().SessionLifeTime),
-		Cookie:  "go_admin_session",
+		Cookie:  DefaultCookieKey,
 	})
 
 	sessions.UseDriver(&Driver)

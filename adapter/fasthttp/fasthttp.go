@@ -7,20 +7,16 @@ package fasthttp
 import (
 	"bytes"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	template2 "html/template"
 	"io"
 	"net/http"
 	"net/url"
@@ -28,7 +24,9 @@ import (
 )
 
 // Fasthttp structure value is a Fasthttp GoAdmin adapter.
-type Fasthttp struct {}
+type Fasthttp struct {
+	adapter.BaseAdapter
+}
 
 func init() {
 	engine.Register(new(Fasthttp))
@@ -138,7 +136,7 @@ func (r *netHTTPBody) Close() error {
 }
 
 // Content implement WebFrameWork.Content method.
-func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
+func (fast *Fasthttp) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
 
 	var (
 		ctx *fasthttp.RequestCtx
@@ -148,68 +146,19 @@ func (fast *Fasthttp) Content(contextInterface interface{}, c types.GetPanel) {
 		panic("wrong parameter")
 	}
 
-	globalConfig := config.Get()
+	body, authSuccess, err := fast.GetContent(string(ctx.Request.Header.Cookie(fast.CookieKey())), string(ctx.Path()),
+		string(ctx.Method()), string(ctx.Request.Header.Peek(constant.PjaxHeader)), getPanelFn, ctx)
 
-	sesKey := string(ctx.Request.Header.Cookie("go_admin_session"))
-
-	if sesKey == "" {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
+	if !authSuccess {
+		ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	userID, ok := auth.Driver.Load(sesKey)["user_id"]
-
-	if !ok {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
-		return
-	}
-
-	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
-
-	if !ok {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
-		return
-	}
-
-	var (
-		panel types.Panel
-		err   error
-	)
-
-	if !auth.CheckPermissions(user, string(ctx.Path()), string(ctx.Method())) {
-		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
-		}
-	} else {
-		panel, err = c(ctx)
-		if err != nil {
-			alert := template.Get(globalConfig.Theme).
-				Alert().
-				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-			panel = types.Panel{
-				Content:     alert,
-				Description: language.Get("error"),
-				Title:       language.Get("error"),
-			}
-		}
-	}
-
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(string(ctx.Request.Header.Peek(constant.PjaxHeader)) == "true")
-
-	ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName,
-		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URI().String()))),
-			panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Fasthttp Content", err)
 	}
-	_, _ = ctx.WriteString(buf.String())
+
+	ctx.Response.Header.Set("Content-Type", fast.HTMLContentType())
+
+	_, _ = ctx.Write(body)
 }

@@ -7,26 +7,24 @@ package gorilla
 import (
 	"bytes"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gorilla/mux"
-	template2 "html/template"
 	"net/http"
 	"regexp"
 	"strings"
 )
 
 // Gorilla structure value is a Gorilla GoAdmin adapter.
-type Gorilla struct {}
+type Gorilla struct {
+	adapter.BaseAdapter
+}
 
 func init() {
 	engine.Register(new(Gorilla))
@@ -100,7 +98,7 @@ type Context struct {
 }
 
 // Content implement WebFrameWork.Content method.
-func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
+func (g *Gorilla) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
 
 	var (
 		ctx Context
@@ -110,66 +108,25 @@ func (g *Gorilla) Content(contextInterface interface{}, c types.GetPanel) {
 		panic("wrong parameter")
 	}
 
-	globalConfig := config.Get()
-
-	sesKey, err := ctx.Request.Cookie("go_admin_session")
+	sesKey, err := ctx.Request.Cookie(g.CookieKey())
 
 	if err != nil || sesKey == nil {
-		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
+		http.Redirect(ctx.Response, ctx.Request, config.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	userID, ok := auth.Driver.Load(sesKey.Value)["user_id"]
+	body, authSuccess, err := g.GetContent(sesKey.Value, ctx.Request.RequestURI,
+		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
 
-	if !ok {
-		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
+	if !authSuccess {
+		http.Redirect(ctx.Response, ctx.Request, config.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
-
-	if !ok {
-		http.Redirect(ctx.Response, ctx.Request, globalConfig.Url("/login"), http.StatusFound)
-		return
-	}
-
-	var panel types.Panel
-
-	if !auth.CheckPermissions(user, ctx.Request.RequestURI, ctx.Request.Method) {
-		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-			SetTheme("warning").SetContent(template2.HTML("Permission Denied")).GetContent()
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
-		}
-	} else {
-		panel, err = c(ctx)
-		if err != nil {
-			alert := template.Get(globalConfig.Theme).
-				Alert().
-				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-			panel = types.Panel{
-				Content:     alert,
-				Description: language.Get("error"),
-				Title:       language.Get("error"),
-			}
-		}
-	}
-
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
-
-	ctx.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URL.String()))),
-		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
-		logger.Error("Gorilla Content", err)
+		logger.Error("Echo Content", err)
 	}
+
 	ctx.Response.WriteHeader(http.StatusOK)
-	_, _ = ctx.Response.Write(buf.Bytes())
+	_, _ = ctx.Response.Write(body)
 }

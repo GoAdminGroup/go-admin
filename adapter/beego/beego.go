@@ -7,26 +7,24 @@ package beego
 import (
 	"bytes"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/adapter"
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	template2 "html/template"
 	"net/http"
 	"strings"
 )
 
 // Beego structure value is a Beego GoAdmin adapter.
-type Beego struct {}
+type Beego struct {
+	adapter.BaseAdapter
+}
 
 func init() {
 	engine.Register(new(Beego))
@@ -72,7 +70,7 @@ func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
 }
 
 // Content implement WebFrameWork.Content method.
-func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
+func (bee *Beego) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
 
 	var (
 		ctx *context.Context
@@ -82,68 +80,17 @@ func (bee *Beego) Content(contextInterface interface{}, c types.GetPanel) {
 		panic("wrong parameter")
 	}
 
-	globalConfig := config.Get()
+	body, authSuccess, err := bee.GetContent(ctx.GetCookie(bee.CookieKey()), ctx.Request.URL.Path,
+		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
 
-	sesKey := ctx.GetCookie("go_admin_session")
-
-	if sesKey == "" {
-		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
+	if !authSuccess {
+		ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
 		return
 	}
 
-	userID, ok := auth.Driver.Load(sesKey)["user_id"]
-
-	if !ok {
-		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
-		return
-	}
-
-	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
-
-	if !ok {
-		ctx.Redirect(http.StatusFound, globalConfig.Url("/login"))
-		return
-	}
-
-	var (
-		panel types.Panel
-		err   error
-	)
-
-	if !auth.CheckPermissions(user, ctx.Request.URL.Path, ctx.Request.Method) {
-		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
-		}
-	} else {
-		panel, err = c(ctx)
-		if err != nil {
-			alert := template.Get(globalConfig.Theme).
-				Alert().
-				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-			panel = types.Panel{
-				Content:     alert,
-				Description: language.Get("error"),
-				Title:       language.Get("error"),
-			}
-		}
-	}
-
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.Request.Header.Get(constant.PjaxHeader) == "true")
-
-	ctx.ResponseWriter.Header().Add("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request.URL.String()))),
-		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("Beego Content", err)
 	}
-	ctx.WriteString(buf.String())
+	ctx.ResponseWriter.Header().Set("Content-Type", bee.HTMLContentType())
+	_, _ = ctx.ResponseWriter.Write(body)
 }

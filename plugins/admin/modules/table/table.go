@@ -288,14 +288,97 @@ func (tb DefaultTable) GetFiltersMap() []map[string]string {
 
 // GetDataFromDatabase query the data set.
 func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
+	return tb.getDataFromDatabase(path, params, []string{})
+}
 
+// GetDataFromDatabaseWithIds query the data set.
+func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+	return tb.getDataFromDatabase(path, params, ids)
+}
+
+func (tb DefaultTable) getTempModelData(res map[string]interface{}, resNext map[string]interface{}, params parameter.Parameters,
+	columns Columns, isLast bool) (map[string]template.HTML, bool) {
+
+	tempModelData := make(map[string]template.HTML)
+	headField := ""
+
+	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
+
+	// check if is join query result, which
+	isCombine := !isLast && res[tb.primaryKey.Name] == resNext[tb.primaryKey.Name]
+
+	for _, field := range tb.info.FieldList {
+
+		headField = field.Field
+
+		if field.Join.Valid() {
+			headField = field.Join.Table + "_" + field.Field
+		}
+
+		if field.Hide {
+			continue
+		}
+		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
+			continue
+		}
+
+		var combineValue = ""
+
+		if isCombine {
+			var (
+				resValue     = db.GetValueFromDatabaseType(field.TypeName, res[headField]).String()
+				resNextValue = db.GetValueFromDatabaseType(field.TypeName, resNext[headField]).String()
+			)
+			if resValue == resNextValue {
+				combineValue = resValue
+			} else {
+				combineValue = resValue + "|" + resNextValue
+			}
+		} else {
+			combineValue = db.GetValueFromDatabaseType(field.TypeName, res[headField]).String()
+		}
+
+		var value interface{}
+		if inArray(columns, headField) || field.Join.Valid() {
+			value = field.ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: combineValue,
+				Row:   res,
+			})
+		} else {
+			value = field.ToDisplay(types.FieldModel{
+				ID:    primaryKeyValue.String(),
+				Value: "",
+				Row:   res,
+			})
+		}
+		if valueStr, ok := value.(string); ok {
+			tempModelData[headField] = template.HTML(valueStr)
+		} else {
+			tempModelData[headField] = value.(template.HTML)
+		}
+	}
+
+	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
+	return tempModelData, isCombine
+}
+
+func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
 	connection := tb.db()
 
 	var (
-		queryStatement = "select %s from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
-			"%s %s order by " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + " %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() + "%s"
+		placeholder    = delimiter(connection.GetDelimiter(), "%s")
+		queryStatement string
+		countStatement string
 	)
+
+	if len(ids) > 0 {
+		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) order by " + placeholder + " %s"
+		countStatement = "select count(*) from " + placeholder + " where " + tb.primaryKey.Name + " in (%s)"
+	} else {
+		queryStatement = "select %s from " + placeholder + "%s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
+		countStatement = "select count(*) from " + placeholder + "%s"
+	}
 
 	thead := make([]map[string]string, 0)
 	fields := ""
@@ -312,67 +395,79 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		headField  string
 		joinTables = make([]string, 0)
 	)
-	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
-			!tb.info.FieldList[i].Join.Valid() {
-			fields += tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
+	for _, field := range tb.info.FieldList {
+		if field.Field != tb.primaryKey.Name && inArray(columns, field.Field) &&
+			!field.Join.Valid() {
+			fields += tb.info.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + ","
 		}
 
-		headField = tb.info.FieldList[i].Field
+		headField = field.Field
 
-		if tb.info.FieldList[i].Join.Valid() {
-			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
-			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
-			if !modules.InArray(joinTables, tb.info.FieldList[i].Join.Table) {
-				joinTables = append(joinTables, tb.info.FieldList[i].Join.Table)
-				joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
-					tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
-					tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
+		if field.Join.Valid() {
+			headField = field.Join.Table + "_" + field.Field
+			fields += field.Join.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + " as " + headField + ","
+			if !modules.InArray(joinTables, field.Join.Table) {
+				joinTables = append(joinTables, field.Join.Table)
+				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +
+					field.Join.Table + "." + filterFiled(field.Join.JoinField, connection.GetDelimiter()) + " = " +
+					tb.info.Table + "." + filterFiled(field.Join.Field, connection.GetDelimiter())
 			}
 		}
 
-		if tb.info.FieldList[i].Hide {
+		if field.Hide {
 			continue
 		}
-		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
-		editable = modules.AorB(tb.info.FieldList[i].EditAble, "true", "false")
+		sortable = modules.AorB(field.Sortable, "1", "0")
+		editable = modules.AorB(field.EditAble, "true", "false")
 		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
 		thead = append(thead, map[string]string{
-			"head":       tb.info.FieldList[i].Head,
+			"head":       field.Head,
 			"sortable":   sortable,
 			"field":      headField,
 			"hide":       hide,
 			"editable":   editable,
-			"edittype":   tb.info.FieldList[i].EditType.String(),
-			"editoption": tb.info.FieldList[i].GetEditOptions(),
-			"width":      strconv.Itoa(tb.info.FieldList[i].Width),
+			"edittype":   field.EditType.String(),
+			"editoption": field.GetEditOptions(),
+			"width":      strconv.Itoa(field.Width),
 		})
 	}
 
 	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
 
-	if !checkInTable(columns, params.SortField) {
+	if !inArray(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
 	}
 
-	wheres := " where "
-	whereArgs := make([]interface{}, 0)
-	if len(params.Fields) == 0 {
-		wheres = ""
-	} else {
-		for key, value := range params.Fields {
-			if checkInTable(columns, key) {
-				wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
-				whereArgs = append(whereArgs, value)
+	var (
+		wheres    = ""
+		whereArgs = make([]interface{}, 0)
+		args      = make([]interface{}, 0)
+	)
+
+	if len(ids) > 0 {
+		for _, value := range ids {
+			if value != "" {
+				wheres += value + ","
 			}
 		}
-		wheres = wheres[:len(wheres)-4]
+		wheres = wheres[:len(wheres)-1]
+	} else {
+		wheres = " where "
+		if len(params.Fields) == 0 {
+			wheres = ""
+		} else {
+			for key, value := range params.Fields {
+				if inArray(columns, key) {
+					wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
+					whereArgs = append(whereArgs, value)
+				}
+			}
+			wheres = wheres[:len(wheres)-4]
+		}
+		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 	}
-	args := append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
-
-	logger.LogSQL(queryCmd, args)
 
 	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
 
@@ -380,23 +475,27 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 		return PanelInfo{}, err
 	}
 
+	logger.LogSQL(queryCmd, whereArgs)
+
 	infoList := make([]map[string]template.HTML, 0)
 
 	for i := 0; i < len(res); i++ {
 
 		// TODO: add object pool
 
-		tempModelData := make(map[string]template.HTML)
+		rexNext := make(map[string]interface{})
+		if i != len(res)-1 {
+			rexNext = res[i+1]
+		}
 
-		if i != len(res)-1 && res[i][tb.primaryKey.Name] == res[i+1][tb.primaryKey.Name] {
-			tempModelData = tb.getTempModelCombineData(res[i], res[i+1], params, columns)
+		tempModelData, isCombine := tb.getTempModelData(res[i], rexNext, params, columns, i == len(res)-1)
+
+		if isCombine {
 			if i != len(res)-2 {
 				res = append(res[:i+1], res[i+2:]...)
 			} else {
 				res = res[:i+1]
 			}
-		} else {
-			tempModelData = tb.getTempModelData(res[i], params, columns)
 		}
 
 		infoList = append(infoList, tempModelData)
@@ -407,251 +506,6 @@ func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Paramet
 	countCmd := fmt.Sprintf(countStatement, tb.info.Table, wheres)
 
 	total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
-
-	if err != nil {
-		return PanelInfo{}, err
-	}
-
-	logger.LogSQL(countCmd, whereArgs)
-
-	var size int
-	if tb.connectionDriver == "postgresql" {
-		size = int(total[0]["count"].(int64))
-	} else {
-		size = int(total[0]["count(*)"].(int64))
-	}
-
-	return PanelInfo{
-		Thead:       thead,
-		InfoList:    infoList,
-		Paginator:   paginator.Get(path, params, size, tb.info.GetPageSizeList()),
-		Title:       tb.info.Title,
-		Description: tb.info.Description,
-	}, nil
-}
-
-func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters,
-	columns Columns) map[string]template.HTML {
-
-	tempModelData := make(map[string]template.HTML)
-	headField := ""
-
-	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
-
-	for j := 0; j < len(tb.info.FieldList); j++ {
-
-		headField = tb.info.FieldList[j].Field
-
-		if tb.info.FieldList[j].Join.Valid() {
-			headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
-		}
-
-		if tb.info.FieldList[j].Hide {
-			continue
-		}
-		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-			continue
-		}
-		var value interface{}
-		if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
-			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-				ID:    primaryKeyValue.String(),
-				Value: db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, res[headField]).String(),
-				Row:   res,
-			})
-		} else {
-			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-				ID:    primaryKeyValue.String(),
-				Value: "",
-				Row:   res,
-			})
-		}
-		if valueStr, ok := value.(string); ok {
-			tempModelData[headField] = template.HTML(valueStr)
-		} else {
-			tempModelData[headField] = value.(template.HTML)
-		}
-	}
-
-	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
-	return tempModelData
-}
-
-func (tb DefaultTable) getTempModelCombineData(res map[string]interface{}, resNext map[string]interface{}, params parameter.Parameters,
-	columns Columns) map[string]template.HTML {
-
-	tempModelData := make(map[string]template.HTML)
-	headField := ""
-
-	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
-
-	for j := 0; j < len(tb.info.FieldList); j++ {
-
-		headField = tb.info.FieldList[j].Field
-
-		if tb.info.FieldList[j].Join.Valid() {
-			headField = tb.info.FieldList[j].Join.Table + "_" + tb.info.FieldList[j].Field
-		}
-
-		if tb.info.FieldList[j].Hide {
-			continue
-		}
-		if !modules.InArrayWithoutEmpty(params.Columns, headField) {
-			continue
-		}
-
-		var (
-			resValue     = db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, res[headField]).String()
-			resNextValue = db.GetValueFromDatabaseType(tb.info.FieldList[j].TypeName, resNext[headField]).String()
-			combineValue = ""
-		)
-		if resValue == resNextValue {
-			combineValue = resValue
-		} else {
-			combineValue = resValue + "|" + resNextValue
-		}
-
-		var value interface{}
-		if checkInTable(columns, headField) || tb.info.FieldList[j].Join.Valid() {
-			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-				ID:    primaryKeyValue.String(),
-				Value: combineValue,
-				Row:   res,
-			})
-		} else {
-			value = tb.info.FieldList[j].ToDisplay(types.FieldModel{
-				ID:    primaryKeyValue.String(),
-				Value: "",
-				Row:   res,
-			})
-		}
-		if valueStr, ok := value.(string); ok {
-			tempModelData[headField] = template.HTML(valueStr)
-		} else {
-			tempModelData[headField] = value.(template.HTML)
-		}
-	}
-
-	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
-	return tempModelData
-}
-
-// GetDataFromDatabaseWithIds query the data set.
-func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
-
-	connection := tb.db()
-
-	var (
-		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) order by " + connection.GetDelimiter() +
-			"%s" + connection.GetDelimiter() + " %s"
-		countStatement = "select count(*) from " + connection.GetDelimiter() + "%s" + connection.GetDelimiter() +
-			" where " + tb.primaryKey.Name + " in (%s)"
-	)
-
-	thead := make([]map[string]string, 0)
-	fields := ""
-
-	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
-
-	columns := getColumns(columnsModel, tb.connectionDriver)
-
-	var (
-		sortable   string
-		editable   string
-		hide       string
-		joins      string
-		headField  string
-		joinTables = make([]string, 0)
-	)
-	for i := 0; i < len(tb.info.FieldList); i++ {
-		if tb.info.FieldList[i].Field != tb.primaryKey.Name && checkInTable(columns, tb.info.FieldList[i].Field) &&
-			!tb.info.FieldList[i].Join.Valid() {
-			fields += tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + ","
-		}
-
-		headField = tb.info.FieldList[i].Field
-
-		if tb.info.FieldList[i].Join.Valid() {
-			headField = tb.info.FieldList[i].Join.Table + "_" + tb.info.FieldList[i].Field
-			fields += tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Field, connection.GetDelimiter()) + " as " + headField + ","
-			if !modules.InArray(joinTables, tb.info.FieldList[i].Join.Table) {
-				joinTables = append(joinTables, tb.info.FieldList[i].Join.Table)
-				joins += " left join " + filterFiled(tb.info.FieldList[i].Join.Table, connection.GetDelimiter()) + " on " +
-					tb.info.FieldList[i].Join.Table + "." + filterFiled(tb.info.FieldList[i].Join.JoinField, connection.GetDelimiter()) + " = " +
-					tb.info.Table + "." + filterFiled(tb.info.FieldList[i].Join.Field, connection.GetDelimiter())
-			}
-		}
-
-		if tb.info.FieldList[i].Hide {
-			continue
-		}
-		sortable = modules.AorB(tb.info.FieldList[i].Sortable, "1", "0")
-		editable = modules.AorB(tb.info.FieldList[i].EditAble, "true", "false")
-		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
-		thead = append(thead, map[string]string{
-			"head":       tb.info.FieldList[i].Head,
-			"sortable":   sortable,
-			"field":      headField,
-			"hide":       hide,
-			"editable":   editable,
-			"edittype":   tb.info.FieldList[i].EditType.String(),
-			"editoption": tb.info.FieldList[i].GetEditOptions(),
-			"width":      strconv.Itoa(tb.info.FieldList[i].Width),
-		})
-	}
-
-	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
-
-	if !checkInTable(columns, params.SortField) {
-		params.SortField = tb.primaryKey.Name
-	}
-
-	whereIds := ""
-
-	for _, value := range ids {
-		if value != "" {
-			whereIds += value + ","
-		}
-	}
-	whereIds = whereIds[:len(whereIds)-1]
-
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, whereIds, params.SortField, params.SortType)
-
-	res, err := connection.QueryWithConnection(tb.connection, queryCmd)
-
-	if err != nil {
-		return PanelInfo{}, err
-	}
-
-	logger.LogSQL(queryCmd, nil)
-
-	infoList := make([]map[string]template.HTML, 0)
-
-	for i := 0; i < len(res); i++ {
-
-		// TODO: add object pool
-
-		tempModelData := make(map[string]template.HTML)
-
-		if i != len(res)-1 && res[i][tb.primaryKey.Name] == res[i+1][tb.primaryKey.Name] {
-			tempModelData = tb.getTempModelCombineData(res[i], res[i+1], params, columns)
-			if i != len(res)-2 {
-				res = append(res[:i+1], res[i+2:]...)
-			} else {
-				res = res[:i+1]
-			}
-		} else {
-			tempModelData = tb.getTempModelData(res[i], params, columns)
-		}
-
-		infoList = append(infoList, tempModelData)
-	}
-
-	// TODO: use the dialect
-
-	countCmd := fmt.Sprintf(countStatement, tb.info.Table, whereIds)
-
-	total, err := connection.QueryWithConnection(tb.connection, countCmd)
 
 	if err != nil {
 		return PanelInfo{}, err
@@ -691,7 +545,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 	formList := tb.form.FieldList.Copy()
 
 	for i := 0; i < len(tb.form.FieldList); i++ {
-		if checkInTable(columns, formList[i].Field) {
+		if inArray(columns, formList[i].Field) {
 			fields = append(fields, formList[i].Field)
 		}
 	}
@@ -716,7 +570,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 			for j := 0; j < len(value); j++ {
 				for i := 0; i < len(tb.form.FieldList); i++ {
 					if value[j] == formList[i].Field {
-						if checkInTable(columns, formList[i].Field) {
+						if inArray(columns, formList[i].Field) {
 							if formList[i].FormType.IsSelect() {
 								valueRet := formList[i].ToDisplay(types.FieldModel{
 									ID:    id,
@@ -824,7 +678,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 	}
 
 	for i := 0; i < len(tb.form.FieldList); i++ {
-		if checkInTable(columns, formList[i].Field) {
+		if inArray(columns, formList[i].Field) {
 			if formList[i].FormType.IsSelect() {
 				valueRet := formList[i].ToDisplay(types.FieldModel{
 					ID:    id,
@@ -937,6 +791,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getValues(dataList))
 
+	// TODO: some error should be ignored.
 	//if err != nil {
 	//	return err
 	//}
@@ -959,6 +814,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
 	id, _ := tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
 
+	// TODO: some error should be ignored.
 	//if err != nil {
 	//	return err
 	//}
@@ -982,7 +838,7 @@ func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
 		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" {
-			if checkInTable(columns, k) {
+			if inArray(columns, k) {
 				delimiter := ","
 				for i := 0; i < len(tb.form.FieldList); i++ {
 					if k == tb.form.FieldList[i].Field {
@@ -1107,6 +963,10 @@ func GetNewFormList(groupHeaders []string,
 // helper function for database operation
 // ***************************************
 
+func delimiter(del, s string) string {
+	return del + s + del
+}
+
 func filterFiled(filed, delimiter string) string {
 	return delimiter + filed + delimiter
 }
@@ -1136,8 +996,8 @@ func getColumns(columnsModel []map[string]interface{}, driver string) Columns {
 	}
 }
 
-// checkInTable checks the find string is in the columns or not.
-func checkInTable(columns []string, find string) bool {
+// inArray checks the find string is in the columns or not.
+func inArray(columns []string, find string) bool {
 	for i := 0; i < len(columns); i++ {
 		if columns[i] == find {
 			return true

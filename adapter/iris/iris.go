@@ -7,28 +7,24 @@ package iris
 import (
 	"bytes"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/kataras/iris"
-	template2 "html/template"
 	"net/http"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-
-	"github.com/kataras/iris/v12"
 )
 
 // Iris structure value is an Iris GoAdmin adapter.
-type Iris struct{}
+type Iris struct {
+	adapter.BaseAdapter
+}
 
 func init() {
 	engine.Register(new(Iris))
@@ -81,7 +77,7 @@ func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
 }
 
 // Content implement WebFrameWork.Content method.
-func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
+func (is *Iris) Content(contextInterface interface{}, c types.GetPanelFn) {
 
 	var (
 		ctx iris.Context
@@ -91,68 +87,17 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanel) {
 		panic("wrong parameter")
 	}
 
-	globalConfig := config.Get()
+	body, authSuccess, err := is.GetContent(ctx.GetCookie(is.CookieKey()), ctx.Path(), ctx.Method(),
+		ctx.GetHeader(constant.PjaxHeader), c, ctx)
 
-	sesKey := ctx.GetCookie("go_admin_session")
-
-	if sesKey == "" {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
+	if !authSuccess {
+		ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
 		return
 	}
 
-	userID, ok := auth.Driver.Load(sesKey)["user_id"]
-
-	if !ok {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
-		return
-	}
-
-	user, ok := auth.GetCurUserByID(int64(userID.(float64)))
-
-	if !ok {
-		ctx.Redirect(globalConfig.Url("/login"), http.StatusFound)
-		return
-	}
-
-	var (
-		panel types.Panel
-		err   error
-	)
-
-	if !auth.CheckPermissions(user, ctx.Path(), ctx.Method()) {
-		alert := template.Get(globalConfig.Theme).Alert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-			SetTheme("warning").SetContent(template2.HTML("no permission")).GetContent()
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
-		}
-	} else {
-		panel, err = c(ctx)
-		if err != nil {
-			alert := template.Get(globalConfig.Theme).
-				Alert().
-				SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-			panel = types.Panel{
-				Content:     alert,
-				Description: language.Get("error"),
-				Title:       language.Get("error"),
-			}
-		}
-	}
-
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.GetHeader(constant.PjaxHeader) == "true")
-
-	ctx.Header("Content-Type", "text/html; charset=utf-8")
-
-	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName,
-		types.NewPage(user, *(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Request().URL.String()))),
-			panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
-		logger.Error("Iris Content", err)
+		logger.Error("Echo Content", err)
 	}
-	_, _ = ctx.Write(buf.Bytes())
+
+	_, _ = ctx.Write(body)
 }

@@ -67,7 +67,7 @@ type CSRFToken []string
 
 var (
 	// TokenHelper helps check the token.
-	TokenHelper   = new(CSRFToken)
+	TokenHelper = new(CSRFToken)
 
 	// CsrfTokenLock is the a lock of checking.
 	CsrfTokenLock sync.Mutex

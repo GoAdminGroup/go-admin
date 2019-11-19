@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	config c.Config
+	config        c.Config
 	captchaConfig map[string]string
 )
 
