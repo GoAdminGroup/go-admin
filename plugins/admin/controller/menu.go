@@ -22,6 +22,40 @@ func ShowMenu(ctx *context.Context) {
 	getMenuInfoPanel(ctx, "")
 }
 
+// ShowNewMenu show new menu page.
+func ShowNewMenu(ctx *context.Context) {
+
+	panel := table.List["menu"]
+
+	formData, groupFormData, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders,
+		panel.GetForm().TabGroups,
+		panel.GetForm().FieldList)
+
+	user := auth.Auth(ctx)
+
+	js := `<script>
+$('.icon').iconpicker({placement: 'bottomLeft'});
+</script>`
+
+	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+		Content: aForm().
+			SetContent(formData).
+			SetTabContents(groupFormData).
+			SetTabHeaders(groupHeaders).
+			SetPrefix(config.PrefixFixSlash()).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
+			SetUrl(config.Url("/menu/edit")).
+			SetToken(auth.TokenHelper.AddToken()).
+			SetInfoUrl(config.Url("/menu")).
+			GetContent() + template2.HTML(js),
+		Description: panel.GetForm().Description,
+		Title:       panel.GetForm().Title,
+	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+
+	ctx.HTML(http.StatusOK, buf.String())
+}
+
 // ShowEditMenu show edit menu page.
 func ShowEditMenu(ctx *context.Context) {
 

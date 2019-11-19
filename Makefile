@@ -58,7 +58,6 @@ test:
 
 mysql-test:
 	make import-mysql
-	go get github.com/ugorji/go/codec@none
 	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
 	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PATH)

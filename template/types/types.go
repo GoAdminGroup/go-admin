@@ -650,6 +650,29 @@ const (
 	SortAsc
 )
 
+type FieldOptions []map[string]string
+
+func (fo FieldOptions) SetSelected(val interface{}) {
+
+	if valArr, ok := val.([]string); ok {
+		for _, v := range fo {
+			if modules.InArray(valArr, v["value"]) {
+				v["selected"] = "selected"
+			} else {
+				v["selected"] = ""
+			}
+		}
+	} else {
+		for _, v := range fo {
+			if v["value"] == val {
+				v["selected"] = "selected"
+			} else {
+				v["selected"] = ""
+			}
+		}
+	}
+}
+
 // FormField is the form field with different options.
 type FormField struct {
 	Field    string
@@ -659,7 +682,7 @@ type FormField struct {
 
 	Default                string
 	Value                  string
-	Options                []map[string]string
+	Options                FieldOptions
 	DefaultOptionDelimiter string
 
 	CustomContent template.HTML
@@ -672,6 +695,23 @@ type FormField struct {
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
+}
+
+func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
+	if f.FormType.IsSelect() {
+		f.Options.SetSelected(f.ToDisplay(FieldModel{
+			ID:    id,
+			Value: val,
+			Row:   res,
+		}))
+	} else {
+		f.Value = f.ToDisplay(FieldModel{
+			ID:    id,
+			Value: val,
+			Row:   res,
+		}).(string)
+	}
+	return f
 }
 
 // FormPanel

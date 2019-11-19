@@ -43,8 +43,7 @@ func InitRouter(prefix string) *context.App {
 	authRoute.POST("/menu/order", controller.MenuOrder)
 	authRoute.GET("/menu", controller.ShowMenu)
 	authRoute.GET("/menu/edit/show", controller.ShowEditMenu)
-
-	//authRoute.GET("/menu/new", controller.ShowMenu) // TODO: this will cause a bug of the tire
+	authRoute.GET("/menu/new", controller.ShowNewMenu)
 
 	// add delete modify query
 	authRoute.GET("/info/:__prefix/edit", guard.ShowForm, controller.ShowForm)

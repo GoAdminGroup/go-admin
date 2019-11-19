@@ -24,6 +24,17 @@ func TestJoin(t *testing.T) {
 
 func TestTree(t *testing.T) {
 	tree := tree()
-	tree.addPath([]string{}, "GET", []Handler{})
+	tree.addPath(stringToArr("/adm"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admi"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/info/menu"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/info/me"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/info/mefr"), "GET", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/info/user"), "POST", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/menu/new"), "POST", []Handler{func(ctx *Context) {}})
+	tree.addPath(stringToArr("/admin/menu/new"), "GET", []Handler{func(ctx *Context) {}})
+	assert.Equal(t, tree.findPath(stringToArr("/admin/menu/new"), "GET") != nil, true)
+	assert.Equal(t, tree.findPath(stringToArr("/admin/menu/new"), "POST") != nil, true)
+	assert.Equal(t, tree.findPath(stringToArr("/admin/me/new"), "POST") == nil, true)
 	tree.printChildren()
 }

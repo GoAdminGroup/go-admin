@@ -481,8 +481,6 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	for i := 0; i < len(res); i++ {
 
-		// TODO: add object pool
-
 		rexNext := make(map[string]interface{})
 		if i != len(res)-1 {
 			rexNext = res[i+1]
@@ -568,104 +566,11 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		for key, value := range tb.form.TabGroups {
 			list := make([]types.FormField, len(value))
 			for j := 0; j < len(value); j++ {
-				for i := 0; i < len(tb.form.FieldList); i++ {
-					if value[j] == formList[i].Field {
-						if inArray(columns, formList[i].Field) {
-							if formList[i].FormType.IsSelect() {
-								valueRet := formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-									Row:   res,
-								})
-
-								if _, ok := valueRet.(string); ok {
-									for _, v := range formList[i].Options {
-										if v["value"] == valueRet {
-											v["selected"] = "selected"
-										} else {
-											v["selected"] = ""
-										}
-									}
-								} else {
-									valueArr := valueRet.([]string)
-									for _, v := range formList[i].Options {
-										if modules.InArray(valueArr, v["value"]) {
-											v["selected"] = "selected"
-										} else {
-											v["selected"] = ""
-										}
-									}
-								}
-
-							} else if formList[i].FormType.IsRadio() {
-								value := formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-									Row:   res,
-								}).(string)
-								for _, v := range formList[i].Options {
-									if value == v["value"] {
-										v["selected"] = "checked"
-									} else {
-										v["selected"] = ""
-									}
-								}
-							} else {
-								formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-									Row:   res,
-								}).(string)
-							}
-						} else {
-							if formList[i].FormType.IsSelect() {
-								valueRet := formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: "",
-									Row:   res,
-								})
-
-								if _, ok := valueRet.(string); ok {
-									for _, v := range formList[i].Options {
-										if v["value"] == valueRet {
-											v["selected"] = "selected"
-										} else {
-											v["selected"] = ""
-										}
-									}
-								} else {
-									valueArr := valueRet.([]string)
-									for _, v := range formList[i].Options {
-										if modules.InArray(valueArr, v["value"]) {
-											v["selected"] = "selected"
-										} else {
-											v["selected"] = ""
-										}
-									}
-								}
-							} else if formList[i].FormType.IsRadio() {
-								value := formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: "",
-									Row:   res,
-								}).(string)
-
-								for _, v := range formList[i].Options {
-									if value == v["value"] {
-										v["selected"] = "checked"
-									} else {
-										v["selected"] = ""
-									}
-								}
-							} else {
-								formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-									ID:    id,
-									Value: "",
-									Row:   res,
-								}).(string)
-							}
-						}
-						list[j] = formList[i]
+				for _, field := range tb.form.FieldList {
+					if value[j] == field.Field {
+						rowValue := modules.AorB(inArray(columns, field.Field),
+							db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
+						list[j] = field.UpdateValue(id, rowValue, res)
 						break
 					}
 				}
@@ -677,102 +582,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
 	}
 
-	for i := 0; i < len(tb.form.FieldList); i++ {
-		if inArray(columns, formList[i].Field) {
-			if formList[i].FormType.IsSelect() {
-				valueRet := formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-					Row:   res,
-				})
-
-				if _, ok := valueRet.(string); ok {
-					for _, v := range formList[i].Options {
-						if v["value"] == valueRet {
-							v["selected"] = "selected"
-						} else {
-							v["selected"] = ""
-						}
-					}
-				} else {
-					valueArr := valueRet.([]string)
-					for _, v := range formList[i].Options {
-						if modules.InArray(valueArr, v["value"]) {
-							v["selected"] = "selected"
-						} else {
-							v["selected"] = ""
-						}
-					}
-				}
-			} else if formList[i].FormType.IsRadio() {
-				value := formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-					Row:   res,
-				}).(string)
-
-				for _, v := range formList[i].Options {
-					if value == v["value"] {
-						v["selected"] = "checked"
-					} else {
-						v["selected"] = ""
-					}
-				}
-			} else {
-				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: db.GetValueFromDatabaseType(formList[i].TypeName, res[formList[i].Field]).String(),
-					Row:   res,
-				}).(string)
-			}
-		} else {
-			if formList[i].FormType.IsSelect() {
-				valueRet := formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: "",
-					Row:   res,
-				})
-
-				if _, ok := valueRet.(string); ok {
-					for _, v := range formList[i].Options {
-						if v["value"] == valueRet {
-							v["selected"] = "selected"
-						} else {
-							v["selected"] = ""
-						}
-					}
-				} else {
-					valueArr := valueRet.([]string)
-					for _, v := range formList[i].Options {
-						if modules.InArray(valueArr, v["value"]) {
-							v["selected"] = "selected"
-						} else {
-							v["selected"] = ""
-						}
-					}
-				}
-			} else if formList[i].FormType.IsRadio() {
-				value := formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: "",
-					Row:   res,
-				}).(string)
-
-				for _, v := range formList[i].Options {
-					if value == v["value"] {
-						v["selected"] = "checked"
-					} else {
-						v["selected"] = ""
-					}
-				}
-			} else {
-				formList[i].Value = formList[i].ToDisplay(types.FieldModel{
-					ID:    id,
-					Value: "",
-					Row:   res,
-				}).(string)
-			}
-		}
+	for _, field := range tb.form.FieldList {
+		rowValue := modules.AorB(inArray(columns, field.Field),
+			db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
+		field = field.UpdateValue(id, rowValue, res)
 	}
 
 	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
@@ -789,9 +602,9 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
 	_, _ = tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
-		Update(tb.getValues(dataList))
+		Update(tb.getInjectValueFromFormValue(dataList))
 
-	// TODO: some error should be ignored.
+	// TODO: some errors should be ignored.
 	//if err != nil {
 	//	return err
 	//}
@@ -812,9 +625,9 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
-	id, _ := tb.sql().Table(tb.form.Table).Insert(tb.getValues(dataList))
+	id, _ := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
-	// TODO: some error should be ignored.
+	// TODO: some errors should be ignored.
 	//if err != nil {
 	//	return err
 	//}
@@ -828,16 +641,19 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 	return nil
 }
 
-func (tb DefaultTable) getValues(dataList form.Values) dialect.H {
+func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect.H {
 	value := make(dialect.H)
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 
 	columns := getColumns(columnsModel, tb.connectionDriver)
-	var fun types.PostFieldFilterFn
+	var (
+		fun          types.PostFieldFilterFn
+		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
+	)
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
-		if k != tb.primaryKey.Name && k != "_previous_" && k != "_method" && k != "_t" {
+		if !modules.InArray(exceptString, k) {
 			if inArray(columns, k) {
 				delimiter := ","
 				for i := 0; i < len(tb.form.FieldList); i++ {

@@ -9,8 +9,8 @@ import "fmt"
 type node struct {
 	children []*node
 	value    string
-	method   string
-	handle   []Handler
+	method   []string
+	handle   [][]Handler
 }
 
 func tree() *node {
@@ -19,6 +19,20 @@ func tree() *node {
 		value:    "/",
 		handle:   nil,
 	}
+}
+
+func (n *node) hasMethod(method string) int {
+	for k, m := range n.method {
+		if m == method {
+			return k
+		}
+	}
+	return -1
+}
+
+func (n *node) addMethodAndHandler(method string, handler []Handler) {
+	n.method = append(n.method, method)
+	n.handle = append(n.handle, handler)
 }
 
 func (n *node) addChild(child *node) {
@@ -47,32 +61,27 @@ func (n *node) search(value string) *node {
 }
 
 func (n *node) addPath(paths []string, method string, handler []Handler) {
-	if len(paths) > 0 {
-		child := n.addContent(paths[0])
-		if len(paths) > 1 {
-			child.addPath(paths[1:], method, handler)
-		} else {
-			child.method = method
-			child.handle = handler
-		}
+	child := n
+	for i := 0; i < len(paths); i++ {
+		child = child.addContent(paths[i])
 	}
+	child.addMethodAndHandler(method, handler)
 }
 
 func (n *node) findPath(paths []string, method string) []Handler {
-	if len(paths) > 0 {
-		child := n.search(paths[0])
+	child := n
+	for i := 0; i < len(paths); i++ {
+		child = child.search(paths[i])
 		if child == nil {
 			return nil
 		}
-		if len(paths) > 1 {
-			return child.findPath(paths[1:], method)
-		}
-		if child.method != method {
-			return nil
-		}
-		return child.handle
 	}
-	return nil
+
+	methodIndex := child.hasMethod(method)
+	if methodIndex == -1 {
+		return nil
+	}
+	return child.handle[methodIndex]
 }
 
 func (n *node) print() {
