@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gorilla/mux"
@@ -24,71 +25,83 @@ import (
 // Gorilla structure value is a Gorilla GoAdmin adapter.
 type Gorilla struct {
 	adapter.BaseAdapter
+	ctx Context
+	app *mux.Router
 }
 
 func init() {
 	engine.Register(new(Gorilla))
 }
 
-// Use implement WebFrameWork.Use method.
-func (g *Gorilla) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Gorilla).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (g *Gorilla) Use(router interface{}, plugs []plugins.Plugin) error {
+	return g.GetUse(router, plugs, g)
+}
+
+func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	g.GetContent(ctx, getPanelFn, g)
+}
+
+func (g *Gorilla) SetApp(app interface{}) error {
 	var (
 		eng *mux.Router
 		ok  bool
 	)
-	if eng, ok = router.(*mux.Router); !ok {
+	if eng, ok = app.(*mux.Router); !ok {
 		return errors.New("wrong parameter")
 	}
+	g.app = eng
+	return nil
+}
+
+func (g *Gorilla) AddHandler(method, path string, plug plugins.Plugin) {
 
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
 
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
+	url := path
+	url = reg1.ReplaceAllString(url, "{$1}/")
+	url = reg2.ReplaceAllString(url, "{$1}")
 
-			url := req.URL
-			url = reg1.ReplaceAllString(url, "{$1}/")
-			url = reg2.ReplaceAllString(url, "{$1}")
+	g.app.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.NewContext(r)
 
-			eng.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
-				ctx := context.NewContext(r)
+		params := mux.Vars(r)
 
-				params := mux.Vars(r)
-
-				for key, param := range params {
-					if r.URL.RawQuery == "" {
-						r.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param
-					} else {
-						r.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
-				for key, head := range ctx.Response.Header {
-					w.Header().Add(key, head[0])
-				}
-
-				if ctx.Response.Body == nil {
-					w.WriteHeader(ctx.Response.StatusCode)
-					return
-				}
-
-				w.WriteHeader(ctx.Response.StatusCode)
-
-				buf := new(bytes.Buffer)
-				_, _ = buf.ReadFrom(ctx.Response.Body)
-
-				_, err := w.Write(buf.Bytes())
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-					return
-				}
-			}).Methods(strings.ToUpper(req.Method))
+		for key, param := range params {
+			if r.URL.RawQuery == "" {
+				r.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param
+			} else {
+				r.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param
+			}
 		}
-	}
 
-	return nil
+		ctx.SetHandlers(plug.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
+		for key, head := range ctx.Response.Header {
+			w.Header().Add(key, head[0])
+		}
+
+		if ctx.Response.Body == nil {
+			w.WriteHeader(ctx.Response.StatusCode)
+			return
+		}
+
+		w.WriteHeader(ctx.Response.StatusCode)
+
+		buf := new(bytes.Buffer)
+		_, _ = buf.ReadFrom(ctx.Response.Body)
+
+		_, err := w.Write(buf.Bytes())
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}).Methods(strings.ToUpper(method))
 }
 
 // Context wraps the Request and Response object of Gorilla.
@@ -97,9 +110,11 @@ type Context struct {
 	Response http.ResponseWriter
 }
 
-// Content implement WebFrameWork.Content method.
-func (g *Gorilla) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (g *Gorilla) Name() string {
+	return "gorilla"
+}
 
+func (g *Gorilla) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx Context
 		ok  bool
@@ -108,25 +123,37 @@ func (g *Gorilla) Content(contextInterface interface{}, getPanelFn types.GetPane
 		panic("wrong parameter")
 	}
 
-	sesKey, err := ctx.Request.Cookie(g.CookieKey())
+	return &Gorilla{ctx: ctx}
+}
 
-	if err != nil || sesKey == nil {
-		http.Redirect(ctx.Response, ctx.Request, config.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (g *Gorilla) Redirect() {
+	http.Redirect(g.ctx.Response, g.ctx.Request, config.Get().Url("/login"), http.StatusFound)
+}
 
-	body, authSuccess, err := g.GetContent(sesKey.Value, ctx.Request.RequestURI,
-		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (g *Gorilla) SetContentType() {
+	g.ctx.Response.Header().Set("Content-Type", g.HTMLContentType())
+}
 
-	if !authSuccess {
-		http.Redirect(ctx.Response, ctx.Request, config.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (g *Gorilla) Write(body []byte) {
+	_, _ = g.ctx.Response.Write(body)
+}
 
+func (g *Gorilla) GetCookie() (string, error) {
+	cookie, err := g.ctx.Request.Cookie(g.CookieKey())
 	if err != nil {
-		logger.Error("Echo Content", err)
+		return "", err
 	}
+	return cookie.Value, err
+}
 
-	ctx.Response.WriteHeader(http.StatusOK)
-	_, _ = ctx.Response.Write(body)
+func (g *Gorilla) Path() string {
+	return g.ctx.Request.RequestURI
+}
+
+func (g *Gorilla) Method() string {
+	return g.ctx.Request.Method
+}
+
+func (g *Gorilla) PjaxHeader() string {
+	return g.ctx.Request.Header.Get(constant.PjaxHeader)
 }

@@ -29,7 +29,7 @@ func GetUserTable() (userTable table.Table) {
 
 	info := userTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text)
+	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text).FieldFilterable()
 	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel) interface{} {
 		if model.Value == "0" {
 			return "men"
@@ -41,9 +41,9 @@ func GetUserTable() (userTable table.Table) {
 	}).FieldEditAble(editType.Select).FieldEditOptions([]map[string]string{
 		{"value": "0", "text": "men"},
 		{"value": "1", "text": "women"},
-	})
-	info.AddField("Phone", "phone", db.Varchar).FieldEditAble()
-	info.AddField("City", "city", db.Varchar).FieldEditAble()
+	}).FieldFilterable()
+	info.AddField("Phone", "phone", db.Varchar).FieldEditAble().FieldFilterable()
+	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).

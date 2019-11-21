@@ -30,11 +30,27 @@ func PermissionWithId(id string) PermissionModel {
 	return PermissionModel{Base: Base{Table: "goadmin_permissions"}, Id: int64(idInt)}
 }
 
-// Find return a default permission model of given id.
+// IsEmpty check the user model is empty or not.
+func (t PermissionModel) IsEmpty() bool {
+	return t.Id == int64(0)
+}
+
+// Find return the permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
 	item, _ := db.Table(t.Table).Find(id)
 	return t.MapToModel(item)
+}
 
+// FindBySlug return the permission model of given slug.
+func (t PermissionModel) FindBySlug(slug string) PermissionModel {
+	item, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+	return t.MapToModel(item)
+}
+
+// FindBySlug return the permission model of given slug.
+func (t PermissionModel) FindByName(name string) PermissionModel {
+	item, _ := db.Table(t.Table).Where("name", "=", name).First()
+	return t.MapToModel(item)
 }
 
 // MapToModel get the permission model from given map.

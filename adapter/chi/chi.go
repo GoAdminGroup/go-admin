@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	cfg "github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/go-chi/chi"
@@ -24,73 +25,82 @@ import (
 // Chi structure value is a Chi GoAdmin adapter.
 type Chi struct {
 	adapter.BaseAdapter
+	ctx Context
+	app *chi.Mux
 }
 
 func init() {
 	engine.Register(new(Chi))
 }
 
-// Use implement WebFrameWork.Use method.
-func (ch *Chi) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Chi).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
 
+func (ch *Chi) Use(router interface{}, plugs []plugins.Plugin) error {
+	return ch.GetUse(router, plugs, ch)
+}
+
+func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	ch.GetContent(ctx, getPanelFn, ch)
+}
+
+func (ch *Chi) SetApp(app interface{}) error {
 	var (
 		eng *chi.Mux
 		ok  bool
 	)
-	if eng, ok = router.(*chi.Mux); !ok {
+	if eng, ok = app.(*chi.Mux); !ok {
 		return errors.New("wrong parameter")
 	}
+	ch.app = eng
+	return nil
+}
 
+func (ch *Chi) AddHandler(method, path string, plug plugins.Plugin) {
+	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
+	url = reg1.ReplaceAllString(url, "{$1}/")
+	url = reg2.ReplaceAllString(url, "{$1}")
 
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-
-			url := req.URL
-			url = reg1.ReplaceAllString(url, "{$1}/")
-			url = reg2.ReplaceAllString(url, "{$1}")
-
-			if len(url) > 1 && url[0] == '/' && url[1] == '/' {
-				url = url[1:]
-			}
-
-			getHandleFunc(eng, strings.ToUpper(req.Method))(url, func(w http.ResponseWriter, r *http.Request) {
-
-				if r.URL.Path[len(r.URL.Path)-1] == '/' {
-					r.URL.Path = r.URL.Path[:len(r.URL.Path)-1]
-				}
-
-				ctx := context.NewContext(r)
-
-				params := chi.RouteContext(r.Context()).URLParams
-
-				for i := 0; i < len(params.Values); i++ {
-					if r.URL.RawQuery == "" {
-						r.URL.RawQuery += strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
-					} else {
-						r.URL.RawQuery += "&" + strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
-				for key, head := range ctx.Response.Header {
-					w.Header().Set(key, head[0])
-				}
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					w.WriteHeader(ctx.Response.StatusCode)
-					_, _ = w.Write(buf.Bytes())
-				} else {
-					w.WriteHeader(ctx.Response.StatusCode)
-				}
-			})
-		}
+	if len(url) > 1 && url[0] == '/' && url[1] == '/' {
+		url = url[1:]
 	}
 
-	return nil
+	getHandleFunc(ch.app, strings.ToUpper(method))(url, func(w http.ResponseWriter, r *http.Request) {
+
+		if r.URL.Path[len(r.URL.Path)-1] == '/' {
+			r.URL.Path = r.URL.Path[:len(r.URL.Path)-1]
+		}
+
+		ctx := context.NewContext(r)
+
+		params := chi.RouteContext(r.Context()).URLParams
+
+		for i := 0; i < len(params.Values); i++ {
+			if r.URL.RawQuery == "" {
+				r.URL.RawQuery += strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
+			} else {
+				r.URL.RawQuery += "&" + strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
+		for key, head := range ctx.Response.Header {
+			w.Header().Set(key, head[0])
+		}
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			w.WriteHeader(ctx.Response.StatusCode)
+			_, _ = w.Write(buf.Bytes())
+		} else {
+			w.WriteHeader(ctx.Response.StatusCode)
+		}
+	})
 }
 
 // HandleFun is type of route methods of chi.
@@ -123,9 +133,7 @@ type Context struct {
 	Response http.ResponseWriter
 }
 
-// Content implement WebFrameWork.Content method.
-func (ch *Chi) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
-
+func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx Context
 		ok  bool
@@ -133,27 +141,42 @@ func (ch *Chi) Content(contextInterface interface{}, getPanelFn types.GetPanelFn
 	if ctx, ok = contextInterface.(Context); !ok {
 		panic("wrong parameter")
 	}
+	return &Chi{ctx: ctx}
+}
 
-	sesKey, err := ctx.Request.Cookie(ch.CookieKey())
+func (ch *Chi) Name() string {
+	return "chi"
+}
 
-	if err != nil || sesKey == nil {
-		http.Redirect(ctx.Response, ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (ch *Chi) Redirect() {
+	http.Redirect(ch.ctx.Response, ch.ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
+}
 
-	body, authSuccess, err := ch.GetContent(sesKey.Value, ctx.Request.URL.Path,
-		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (ch *Chi) SetContentType() {
+	ch.ctx.Response.Header().Set("Content-Type", ch.HTMLContentType())
+}
 
-	if !authSuccess {
-		http.Redirect(ctx.Response, ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (ch *Chi) Write(body []byte) {
+	ch.ctx.Response.WriteHeader(http.StatusOK)
+	_, _ = ch.ctx.Response.Write(body)
+}
 
+func (ch *Chi) GetCookie() (string, error) {
+	cookie, err := ch.ctx.Request.Cookie(ch.CookieKey())
 	if err != nil {
-		logger.Error("Chi Content", err)
+		return "", err
 	}
+	return cookie.Value, err
+}
 
-	ctx.Response.Header().Set("Content-Type", ch.HTMLContentType())
-	ctx.Response.WriteHeader(http.StatusOK)
-	_, _ = ctx.Response.Write(body)
+func (ch *Chi) Path() string {
+	return ch.ctx.Request.URL.Path
+}
+
+func (ch *Chi) Method() string {
+	return ch.ctx.Request.Method
+}
+
+func (ch *Chi) PjaxHeader() string {
+	return ch.ctx.Request.Header.Get(constant.PjaxHeader)
 }

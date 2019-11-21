@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gobuffalo/buffalo"
@@ -25,70 +26,79 @@ import (
 // Buffalo structure value is a Buffalo GoAdmin adapter.
 type Buffalo struct {
 	adapter.BaseAdapter
+	ctx buffalo.Context
+	app *buffalo.App
 }
 
 func init() {
 	engine.Register(new(Buffalo))
 }
 
-// Use implement WebFrameWork.Use method.
-func (bu *Buffalo) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Buffalo).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
 
+func (bu *Buffalo) Use(router interface{}, plugs []plugins.Plugin) error {
+	return bu.GetUse(router, plugs, bu)
+}
+
+func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	bu.GetContent(ctx, getPanelFn, bu)
+}
+
+func (bu *Buffalo) SetApp(app interface{}) error {
 	var (
 		eng *buffalo.App
 		ok  bool
 	)
-	if eng, ok = router.(*buffalo.App); !ok {
+	if eng, ok = app.(*buffalo.App); !ok {
 		return errors.New("wrong parameter")
 	}
+	bu.app = eng
+	return nil
+}
 
+func (bu *Buffalo) AddHandler(method, path string, plug plugins.Plugin) {
+	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
+	url = reg1.ReplaceAllString(url, "{$1}/")
+	url = reg2.ReplaceAllString(url, "{$1}")
 
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
+	getHandleFunc(bu.app, strings.ToUpper(method))(url, func(c buffalo.Context) error {
 
-			url := req.URL
-			url = reg1.ReplaceAllString(url, "{$1}/")
-			url = reg2.ReplaceAllString(url, "{$1}")
-
-			getHandleFunc(eng, strings.ToUpper(req.Method))(url, func(c buffalo.Context) error {
-
-				if c.Request().URL.Path[len(c.Request().URL.Path)-1] == '/' {
-					c.Request().URL.Path = c.Request().URL.Path[:len(c.Request().URL.Path)-1]
-				}
-
-				ctx := context.NewContext(c.Request())
-
-				params := c.Params().(neturl.Values)
-
-				for key, param := range params {
-					if c.Request().URL.RawQuery == "" {
-						c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param[0]
-					} else {
-						c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param[0]
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Response().Header().Set(key, head[0])
-				}
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					c.Response().WriteHeader(ctx.Response.StatusCode)
-					_, _ = c.Response().Write(buf.Bytes())
-				} else {
-					c.Response().WriteHeader(ctx.Response.StatusCode)
-				}
-				return nil
-			})
+		if c.Request().URL.Path[len(c.Request().URL.Path)-1] == '/' {
+			c.Request().URL.Path = c.Request().URL.Path[:len(c.Request().URL.Path)-1]
 		}
-	}
 
-	return nil
+		ctx := context.NewContext(c.Request())
+
+		params := c.Params().(neturl.Values)
+
+		for key, param := range params {
+			if c.Request().URL.RawQuery == "" {
+				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param[0]
+			} else {
+				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param[0]
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Response().Header().Set(key, head[0])
+		}
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			c.Response().WriteHeader(ctx.Response.StatusCode)
+			_, _ = c.Response().Write(buf.Bytes())
+		} else {
+			c.Response().WriteHeader(ctx.Response.StatusCode)
+		}
+		return nil
+	})
 }
 
 // HandleFun is type of route methods of buffalo.
@@ -115,9 +125,11 @@ func getHandleFunc(eng *buffalo.App, method string) HandleFun {
 	}
 }
 
-// Content implement WebFrameWork.Content method.
-func (bu *Buffalo) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (bu *Buffalo) Name() string {
+	return "buffalo"
+}
 
+func (bu *Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx buffalo.Context
 		ok  bool
@@ -125,27 +137,34 @@ func (bu *Buffalo) Content(contextInterface interface{}, getPanelFn types.GetPan
 	if ctx, ok = contextInterface.(buffalo.Context); !ok {
 		panic("wrong parameter")
 	}
+	return &Buffalo{ctx: ctx}
+}
 
-	sesKey, err := ctx.Cookies().Get(bu.CookieKey())
+func (bu *Buffalo) Redirect() {
+	_ = bu.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+}
 
-	if err != nil || sesKey == "" {
-		_ = ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		return
-	}
+func (bu *Buffalo) SetContentType() {
+	bu.ctx.Response().Header().Set("Content-Type", bu.HTMLContentType())
+}
 
-	body, authSuccess, err := bu.GetContent(sesKey, ctx.Request().URL.Path,
-		ctx.Request().Method, ctx.Request().Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (bu *Buffalo) Write(body []byte) {
+	bu.ctx.Response().WriteHeader(http.StatusOK)
+	_, _ = bu.ctx.Response().Write(body)
+}
 
-	if !authSuccess {
-		_ = ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		return
-	}
+func (bu *Buffalo) GetCookie() (string, error) {
+	return bu.ctx.Cookies().Get(bu.CookieKey())
+}
 
-	if err != nil {
-		logger.Error("Buffalo Content", err)
-	}
+func (bu *Buffalo) Path() string {
+	return bu.ctx.Request().URL.Path
+}
 
-	ctx.Response().Header().Set("Content-Type", bu.HTMLContentType())
-	ctx.Response().WriteHeader(http.StatusOK)
-	_, _ = ctx.Response().Write(body)
+func (bu *Buffalo) Method() string {
+	return bu.ctx.Request().Method
+}
+
+func (bu *Buffalo) PjaxHeader() string {
+	return bu.ctx.Request().Header.Get(constant.PjaxHeader)
 }

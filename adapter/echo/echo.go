@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/labstack/echo"
@@ -23,56 +24,70 @@ import (
 // Echo structure value is an Echo GoAdmin adapter.
 type Echo struct {
 	adapter.BaseAdapter
+	ctx echo.Context
+	app *echo.Echo
 }
 
 func init() {
 	engine.Register(new(Echo))
 }
 
-// Use implement WebFrameWork.Use method.
-func (e *Echo) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Echo).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (e *Echo) Use(router interface{}, plugs []plugins.Plugin) error {
+	return e.GetUse(router, plugs, e)
+}
+
+func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	e.GetContent(ctx, getPanelFn, e)
+}
+
+func (e *Echo) SetApp(app interface{}) error {
 	var (
 		eng *echo.Echo
 		ok  bool
 	)
-	if eng, ok = router.(*echo.Echo); !ok {
+	if eng, ok = app.(*echo.Echo); !ok {
 		return errors.New("wrong parameter")
 	}
-
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			eng.Add(strings.ToUpper(req.Method), req.URL, func(c echo.Context) error {
-				ctx := context.NewContext(c.Request())
-
-				for _, key := range c.ParamNames() {
-					if c.Request().URL.RawQuery == "" {
-						c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
-					} else {
-						c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Response().Header().Set(key, head[0])
-				}
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					_ = c.String(ctx.Response.StatusCode, buf.String())
-				}
-				return nil
-			})
-		}
-	}
-
+	e.app = eng
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (e *Echo) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (e *Echo) AddHandler(method, path string, plug plugins.Plugin) {
+	e.app.Add(strings.ToUpper(method), path, func(c echo.Context) error {
+		ctx := context.NewContext(c.Request())
 
+		for _, key := range c.ParamNames() {
+			if c.Request().URL.RawQuery == "" {
+				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
+			} else {
+				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Response().Header().Set(key, head[0])
+		}
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			_ = c.String(ctx.Response.StatusCode, buf.String())
+		}
+		return nil
+	})
+}
+
+func (e *Echo) Name() string {
+	return "echo"
+}
+
+func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx echo.Context
 		ok  bool
@@ -80,25 +95,38 @@ func (e *Echo) Content(contextInterface interface{}, getPanelFn types.GetPanelFn
 	if ctx, ok = contextInterface.(echo.Context); !ok {
 		panic("wrong parameter")
 	}
+	return &Echo{ctx: ctx}
+}
 
-	sesKey, err := ctx.Cookie(e.CookieKey())
+func (e *Echo) Redirect() {
+	_ = e.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+}
 
-	if err != nil || sesKey == nil {
-		_ = ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		return
-	}
+func (e *Echo) SetContentType() {
+	e.ctx.Response().Header().Set("Content-Type", e.HTMLContentType())
+}
 
-	body, authSuccess, err := e.GetContent(sesKey.Value, ctx.Path(),
-		ctx.Request().Method, ctx.Request().Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (e *Echo) Write(body []byte) {
+	e.ctx.Response().WriteHeader(http.StatusOK)
+	_, _ = e.ctx.Response().Write(body)
+}
 
-	if !authSuccess {
-		_ = ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		return
-	}
-
+func (e *Echo) GetCookie() (string, error) {
+	cookie, err := e.ctx.Cookie(e.CookieKey())
 	if err != nil {
-		logger.Error("Echo Content", err)
+		return "", err
 	}
+	return cookie.Value, err
+}
 
-	_ = ctx.Blob(http.StatusOK, e.HTMLContentType(), body)
+func (e *Echo) Path() string {
+	return e.ctx.Request().URL.Path
+}
+
+func (e *Echo) Method() string {
+	return e.ctx.Request().Method
+}
+
+func (e *Echo) PjaxHeader() string {
+	return e.ctx.Request().Header.Get(constant.PjaxHeader)
 }

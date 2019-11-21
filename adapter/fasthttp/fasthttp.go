@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/buaazp/fasthttprouter"
@@ -26,59 +27,72 @@ import (
 // Fasthttp structure value is a Fasthttp GoAdmin adapter.
 type Fasthttp struct {
 	adapter.BaseAdapter
+	ctx *fasthttp.RequestCtx
+	app *fasthttprouter.Router
 }
 
 func init() {
 	engine.Register(new(Fasthttp))
 }
 
-// Use implement WebFrameWork.Use method.
-func (fast *Fasthttp) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Fasthttp).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (fast *Fasthttp) Use(router interface{}, plugs []plugins.Plugin) error {
+	return fast.GetUse(router, plugs, fast)
+}
+
+func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	fast.GetContent(ctx, getPanelFn, fast)
+}
+
+func (fast *Fasthttp) SetApp(app interface{}) error {
 	var (
 		eng *fasthttprouter.Router
 		ok  bool
 	)
-	if eng, ok = router.(*fasthttprouter.Router); !ok {
+	if eng, ok = app.(*fasthttprouter.Router); !ok {
 		return errors.New("wrong parameter")
 	}
 
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *fasthttp.RequestCtx) {
-				httpreq := convertCtx(c)
-				ctx := context.NewContext(httpreq)
-
-				var params = make(map[string]string)
-				c.VisitUserValues(func(i []byte, i2 interface{}) {
-					if value, ok := i2.(string); ok {
-						params[string(i)] = value
-					}
-				})
-
-				for key, value := range params {
-					if httpreq.URL.RawQuery == "" {
-						httpreq.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
-					} else {
-						httpreq.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Response.Header.Set(key, head[0])
-				}
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					_, _ = c.WriteString(buf.String())
-				}
-				c.Response.SetStatusCode(ctx.Response.StatusCode)
-			})
-		}
-	}
-
+	fast.app = eng
 	return nil
+}
+
+func (fast *Fasthttp) AddHandler(method, path string, plug plugins.Plugin) {
+	fast.app.Handle(strings.ToUpper(method), path, func(c *fasthttp.RequestCtx) {
+		httpreq := convertCtx(c)
+		ctx := context.NewContext(httpreq)
+
+		var params = make(map[string]string)
+		c.VisitUserValues(func(i []byte, i2 interface{}) {
+			if value, ok := i2.(string); ok {
+				params[string(i)] = value
+			}
+		})
+
+		for key, value := range params {
+			if httpreq.URL.RawQuery == "" {
+				httpreq.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+			} else {
+				httpreq.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Response.Header.Set(key, head[0])
+		}
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			_, _ = c.WriteString(buf.String())
+		}
+		c.Response.SetStatusCode(ctx.Response.StatusCode)
+	})
 }
 
 func convertCtx(ctx *fasthttp.RequestCtx) *http.Request {
@@ -135,9 +149,11 @@ func (r *netHTTPBody) Close() error {
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (fast *Fasthttp) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (fast *Fasthttp) Name() string {
+	return "fasthttp"
+}
 
+func (fast *Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *fasthttp.RequestCtx
 		ok  bool
@@ -145,20 +161,33 @@ func (fast *Fasthttp) Content(contextInterface interface{}, getPanelFn types.Get
 	if ctx, ok = contextInterface.(*fasthttp.RequestCtx); !ok {
 		panic("wrong parameter")
 	}
+	return &Fasthttp{ctx: ctx}
+}
 
-	body, authSuccess, err := fast.GetContent(string(ctx.Request.Header.Cookie(fast.CookieKey())), string(ctx.Path()),
-		string(ctx.Method()), string(ctx.Request.Header.Peek(constant.PjaxHeader)), getPanelFn, ctx)
+func (fast *Fasthttp) Redirect() {
+	fast.ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
+}
 
-	if !authSuccess {
-		ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (fast *Fasthttp) SetContentType() {
+	fast.ctx.Response.Header.Set("Content-Type", fast.HTMLContentType())
+}
 
-	if err != nil {
-		logger.Error("Fasthttp Content", err)
-	}
+func (fast *Fasthttp) Write(body []byte) {
+	_, _ = fast.ctx.Write(body)
+}
 
-	ctx.Response.Header.Set("Content-Type", fast.HTMLContentType())
+func (fast *Fasthttp) GetCookie() (string, error) {
+	return string(fast.ctx.Request.Header.Cookie(fast.CookieKey())), nil
+}
 
-	_, _ = ctx.Write(body)
+func (fast *Fasthttp) Path() string {
+	return string(fast.ctx.Path())
+}
+
+func (fast *Fasthttp) Method() string {
+	return string(fast.ctx.Method())
+}
+
+func (fast *Fasthttp) PjaxHeader() string {
+	return string(fast.ctx.Request.Header.Peek(constant.PjaxHeader))
 }

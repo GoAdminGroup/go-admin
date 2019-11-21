@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/astaxie/beego"
@@ -24,54 +25,68 @@ import (
 // Beego structure value is a Beego GoAdmin adapter.
 type Beego struct {
 	adapter.BaseAdapter
+	ctx *context.Context
+	app *beego.App
 }
 
 func init() {
 	engine.Register(new(Beego))
 }
 
-// Use implement WebFrameWork.Use method.
-func (bee *Beego) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Beego).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
+	return bee.GetUse(router, plugs, bee)
+}
+
+func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	bee.GetContent(ctx, getPanelFn, bee)
+}
+
+func (bee *Beego) SetApp(app interface{}) error {
 	var (
 		eng *beego.App
 		ok  bool
 	)
-	if eng, ok = router.(*beego.App); !ok {
+	if eng, ok = app.(*beego.App); !ok {
 		return errors.New("wrong parameter")
 	}
-
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			eng.Handlers.AddMethod(req.Method, req.URL, func(c *context.Context) {
-				for key, value := range c.Input.Params() {
-					if c.Request.URL.RawQuery == "" {
-						c.Request.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
-					} else {
-						c.Request.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
-					}
-				}
-				ctx := gctx.NewContext(c.Request)
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.ResponseWriter.Header().Add(key, head[0])
-				}
-				c.ResponseWriter.WriteHeader(ctx.Response.StatusCode)
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					c.WriteString(buf.String())
-				}
-			})
-		}
-	}
-
+	bee.app = eng
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (bee *Beego) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (bee *Beego) AddHandler(method, path string, plug plugins.Plugin) {
+	bee.app.Handlers.AddMethod(method, path, func(c *context.Context) {
+		for key, value := range c.Input.Params() {
+			if c.Request.URL.RawQuery == "" {
+				c.Request.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+			} else {
+				c.Request.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+			}
+		}
+		ctx := gctx.NewContext(c.Request)
+		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.ResponseWriter.Header().Add(key, head[0])
+		}
+		c.ResponseWriter.WriteHeader(ctx.Response.StatusCode)
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			c.WriteString(buf.String())
+		}
+	})
+}
 
+func (bee *Beego) Name() string {
+	return "beego"
+}
+
+func (bee *Beego) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *context.Context
 		ok  bool
@@ -79,18 +94,33 @@ func (bee *Beego) Content(contextInterface interface{}, getPanelFn types.GetPane
 	if ctx, ok = contextInterface.(*context.Context); !ok {
 		panic("wrong parameter")
 	}
+	return &Beego{ctx: ctx}
+}
 
-	body, authSuccess, err := bee.GetContent(ctx.GetCookie(bee.CookieKey()), ctx.Request.URL.Path,
-		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (bee *Beego) Redirect() {
+	bee.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+}
 
-	if !authSuccess {
-		ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		return
-	}
+func (bee *Beego) SetContentType() {
+	bee.ctx.ResponseWriter.Header().Set("Content-Type", bee.HTMLContentType())
+}
 
-	if err != nil {
-		logger.Error("Beego Content", err)
-	}
-	ctx.ResponseWriter.Header().Set("Content-Type", bee.HTMLContentType())
-	_, _ = ctx.ResponseWriter.Write(body)
+func (bee *Beego) Write(body []byte) {
+	_, _ = bee.ctx.ResponseWriter.Write(body)
+}
+
+func (bee *Beego) GetCookie() (string, error) {
+	return bee.ctx.GetCookie(bee.CookieKey()), nil
+}
+
+func (bee *Beego) Path() string {
+	return bee.ctx.Request.URL.Path
+}
+
+func (bee *Beego) Method() string {
+	return bee.ctx.Request.Method
+}
+
+func (bee *Beego) PjaxHeader() string {
+	return bee.ctx.Request.Header.Get(constant.PjaxHeader)
 }

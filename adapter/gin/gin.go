@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gin-gonic/gin"
@@ -23,57 +24,71 @@ import (
 // Gin structure value is a Gin GoAdmin adapter.
 type Gin struct {
 	adapter.BaseAdapter
+	ctx *gin.Context
+	app *gin.Engine
 }
 
 func init() {
 	engine.Register(new(Gin))
 }
 
-// Use implement WebFrameWork.Use method.
-func (gins *Gin) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Gin).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (gins *Gin) Use(router interface{}, plugs []plugins.Plugin) error {
+	return gins.GetUse(router, plugs, gins)
+}
+
+func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	gins.GetContent(ctx, getPanelFn, gins)
+}
+
+func (gins *Gin) SetApp(app interface{}) error {
 	var (
 		eng *gin.Engine
 		ok  bool
 	)
-	if eng, ok = router.(*gin.Engine); !ok {
+	if eng, ok = app.(*gin.Engine); !ok {
 		return errors.New("wrong parameter")
 	}
-
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c *gin.Context) {
-				ctx := context.NewContext(c.Request)
-
-				for _, param := range c.Params {
-					if c.Request.URL.RawQuery == "" {
-						c.Request.URL.RawQuery += strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
-					} else {
-						c.Request.URL.RawQuery += "&" + strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Header(key, head[0])
-				}
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					c.String(ctx.Response.StatusCode, buf.String())
-				} else {
-					c.Status(ctx.Response.StatusCode)
-				}
-			})
-		}
-	}
-
+	gins.app = eng
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (gins *Gin) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (gins *Gin) AddHandler(method, path string, plug plugins.Plugin) {
+	gins.app.Handle(strings.ToUpper(method), path, func(c *gin.Context) {
+		ctx := context.NewContext(c.Request)
 
+		for _, param := range c.Params {
+			if c.Request.URL.RawQuery == "" {
+				c.Request.URL.RawQuery += strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
+			} else {
+				c.Request.URL.RawQuery += "&" + strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Header(key, head[0])
+		}
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			c.String(ctx.Response.StatusCode, buf.String())
+		} else {
+			c.Status(ctx.Response.StatusCode)
+		}
+	})
+}
+
+func (gins *Gin) Name() string {
+	return "gin"
+}
+
+func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *gin.Context
 		ok  bool
@@ -83,25 +98,34 @@ func (gins *Gin) Content(contextInterface interface{}, getPanelFn types.GetPanel
 		panic("wrong parameter")
 	}
 
-	sesKey, err := ctx.Cookie(gins.CookieKey())
+	return &Gin{ctx: ctx}
+}
 
-	if err != nil || sesKey == "" {
-		ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		ctx.Abort()
-		return
-	}
+func (gins *Gin) Redirect() {
+	gins.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+	gins.ctx.Abort()
+}
 
-	body, authSuccess, err := gins.GetContent(sesKey, ctx.Request.URL.Path,
-		ctx.Request.Method, ctx.Request.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (gins *Gin) SetContentType() {
+	return
+}
 
-	if !authSuccess {
-		ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
-		ctx.Abort()
-		return
-	}
+func (gins *Gin) Write(body []byte) {
+	gins.ctx.Data(http.StatusOK, gins.HTMLContentType(), body)
+}
 
-	if err != nil {
-		logger.Error("Gin Content", err)
-	}
-	ctx.Data(http.StatusOK, gins.HTMLContentType(), body)
+func (gins *Gin) GetCookie() (string, error) {
+	return gins.ctx.Cookie(gins.CookieKey())
+}
+
+func (gins *Gin) Path() string {
+	return gins.ctx.Request.URL.Path
+}
+
+func (gins *Gin) Method() string {
+	return gins.ctx.Request.Method
+}
+
+func (gins *Gin) PjaxHeader() string {
+	return gins.ctx.Request.Header.Get(constant.PjaxHeader)
 }

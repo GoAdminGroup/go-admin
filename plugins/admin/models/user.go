@@ -221,9 +221,24 @@ func (t UserModel) AddRole(roleId string) {
 }
 
 // CheckPermission check the permission of the user.
-func (t UserModel) CheckPermission(permissionId string) bool {
+func (t UserModel) CheckPermissionById(permissionId string) bool {
 	checkPermission, _ := db.Table("goadmin_user_permissions").
 		Where("permission_id", "=", permissionId).
+		Where("user_id", "=", t.Id).
+		First()
+	return checkPermission != nil
+}
+
+// CheckPermission check the permission of the user.
+func (t UserModel) CheckPermission(permission string) bool {
+	p := Permission().FindBySlug(permission)
+
+	if p.IsEmpty() {
+		return false
+	}
+
+	checkPermission, _ := db.Table("goadmin_user_permissions").
+		Where("permission_id", "=", p.Id).
 		Where("user_id", "=", t.Id).
 		First()
 	return checkPermission != nil
@@ -239,7 +254,7 @@ func (t UserModel) DeletePermissions() {
 // AddPermission add a permission of the user model.
 func (t UserModel) AddPermission(permissionId string) {
 	if permissionId != "" {
-		if !t.CheckPermission(permissionId) {
+		if !t.CheckPermissionById(permissionId) {
 			_, _ = db.Table("goadmin_user_permissions").
 				Insert(dialect.H{
 					"permission_id": permissionId,

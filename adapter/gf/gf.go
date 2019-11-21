@@ -10,9 +10,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gogf/gf/net/ghttp"
@@ -24,66 +25,79 @@ import (
 // Gf structure value is a Gf GoAdmin adapter.
 type Gf struct {
 	adapter.BaseAdapter
+	ctx *ghttp.Request
+	app *ghttp.Server
 }
 
 func init() {
 	engine.Register(new(Gf))
 }
 
-// Use implement WebFrameWork.Use method.
-func (gf *Gf) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Gf).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (gf *Gf) Use(router interface{}, plugs []plugins.Plugin) error {
+	return gf.GetUse(router, plugs, gf)
+}
+
+func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	gf.GetContent(ctx, getPanelFn, gf)
+}
+
+func (gf *Gf) SetApp(app interface{}) error {
 	var (
 		eng *ghttp.Server
 		ok  bool
 	)
-	if eng, ok = router.(*ghttp.Server); !ok {
+	if eng, ok = app.(*ghttp.Server); !ok {
 		return errors.New("wrong parameter")
 	}
-
-	reg1 := regexp.MustCompile(":(.*?)/")
-	reg2 := regexp.MustCompile(":(.*?)$")
-
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			pluginReqUrl := req.URL
-			eng.BindHandler(strings.ToUpper(req.Method)+":"+req.URL, func(c *ghttp.Request) {
-				ctx := context.NewContext(c.Request)
-
-				params := reg1.FindAllString(pluginReqUrl, -1)
-				params = append(params, reg2.FindAllString(pluginReqUrl, -1)...)
-
-				for _, param := range params {
-					p := strings.Replace(param, ":", "", -1)
-					if c.Request.URL.RawQuery == "" {
-						c.Request.URL.RawQuery += p + "=" + c.GetRequestString(p)
-					} else {
-						c.Request.URL.RawQuery += "&" + p + "=" + c.GetRequestString(p)
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Response.Header().Add(key, head[0])
-				}
-
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					c.Response.WriteStatus(ctx.Response.StatusCode, buf.Bytes())
-				} else {
-					c.Response.WriteStatus(ctx.Response.StatusCode)
-				}
-			})
-		}
-	}
-
+	gf.app = eng
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (gf *Gf) Content(contextInterface interface{}, getPanelFn types.GetPanelFn) {
+func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
+	pluginReqUrl := path
+	reg1 := regexp.MustCompile(":(.*?)/")
+	reg2 := regexp.MustCompile(":(.*?)$")
+	gf.app.BindHandler(strings.ToUpper(method)+":"+path, func(c *ghttp.Request) {
+		ctx := context.NewContext(c.Request)
 
+		params := reg1.FindAllString(pluginReqUrl, -1)
+		params = append(params, reg2.FindAllString(pluginReqUrl, -1)...)
+
+		for _, param := range params {
+			p := strings.Replace(param, ":", "", -1)
+			if c.Request.URL.RawQuery == "" {
+				c.Request.URL.RawQuery += p + "=" + c.GetRequestString(p)
+			} else {
+				c.Request.URL.RawQuery += "&" + p + "=" + c.GetRequestString(p)
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Response.Header().Add(key, head[0])
+		}
+
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			c.Response.WriteStatus(ctx.Response.StatusCode, buf.Bytes())
+		} else {
+			c.Response.WriteStatus(ctx.Response.StatusCode)
+		}
+	})
+}
+
+func (gf *Gf) Name() string {
+	return "gf"
+}
+
+func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *ghttp.Request
 		ok  bool
@@ -92,18 +106,33 @@ func (gf *Gf) Content(contextInterface interface{}, getPanelFn types.GetPanelFn)
 	if ctx, ok = contextInterface.(*ghttp.Request); !ok {
 		panic("wrong parameter")
 	}
+	return &Gf{ctx: ctx}
+}
 
-	body, authSuccess, err := gf.GetContent(ctx.Cookie.Get(gf.CookieKey()), ctx.URL.Path,
-		ctx.Method, ctx.Header.Get(constant.PjaxHeader), getPanelFn, ctx)
+func (gf *Gf) Redirect() {
+	gf.ctx.Response.RedirectTo(config.Get().Url("/login"))
+}
 
-	if !authSuccess {
-		ctx.Response.RedirectTo(config.Get().Url("/login"))
-		return
-	}
+func (gf *Gf) SetContentType() {
+	gf.ctx.Response.Header().Add("Content-Type", gf.HTMLContentType())
+}
 
-	if err != nil {
-		logger.Error("Gf Content", err)
-	}
-	ctx.Response.Header().Add("Content-Type", gf.HTMLContentType())
-	ctx.Response.WriteStatus(http.StatusOK, body)
+func (gf *Gf) Write(body []byte) {
+	gf.ctx.Response.WriteStatus(http.StatusOK, body)
+}
+
+func (gf *Gf) GetCookie() (string, error) {
+	return gf.ctx.Cookie.Get(gf.CookieKey()), nil
+}
+
+func (gf *Gf) Path() string {
+	return gf.ctx.URL.Path
+}
+
+func (gf *Gf) Method() string {
+	return gf.ctx.Method
+}
+
+func (gf *Gf) PjaxHeader() string {
+	return gf.ctx.Header.Get(constant.PjaxHeader)
 }

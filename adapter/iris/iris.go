@@ -8,77 +8,92 @@ import (
 	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/adapter"
-	"github.com/kataras/iris"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/kataras/iris/v12"
 	"net/http"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 // Iris structure value is an Iris GoAdmin adapter.
 type Iris struct {
 	adapter.BaseAdapter
+	ctx iris.Context
+	app *iris.Application
 }
 
 func init() {
 	engine.Register(new(Iris))
 }
 
-// Use implement WebFrameWork.Use method.
-func (is *Iris) Use(router interface{}, plugin []plugins.Plugin) error {
+func User(ci interface{}) models.UserModel {
+	cookie, _ := new(Iris).SetContext(ci).GetCookie()
+	user, _ := auth.GetCurUser(cookie)
+	return user
+}
+
+func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
+	return is.GetUse(router, plugs, is)
+}
+
+func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	is.GetContent(ctx, getPanelFn, is)
+}
+
+func (is *Iris) SetApp(app interface{}) error {
 	var (
 		eng *iris.Application
 		ok  bool
 	)
-	if eng, ok = router.(*iris.Application); !ok {
+	if eng, ok = app.(*iris.Application); !ok {
 		return errors.New("wrong parameter")
 	}
-
-	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			eng.Handle(strings.ToUpper(req.Method), req.URL, func(c iris.Context) {
-				ctx := context.NewContext(c.Request())
-
-				var params = map[string]string{}
-				c.Params().Visit(func(key string, value string) {
-					params[key] = value
-				})
-
-				for key, value := range params {
-					if c.Request().URL.RawQuery == "" {
-						c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
-					} else {
-						c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
-					}
-				}
-
-				ctx.SetHandlers(plugCopy.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
-				for key, head := range ctx.Response.Header {
-					c.Header(key, head[0])
-				}
-				c.StatusCode(ctx.Response.StatusCode)
-				if ctx.Response.Body != nil {
-					buf := new(bytes.Buffer)
-					_, _ = buf.ReadFrom(ctx.Response.Body)
-					_, _ = c.WriteString(buf.String())
-				}
-			})
-		}
-	}
-
+	is.app = eng
 	return nil
 }
 
-// Content implement WebFrameWork.Content method.
-func (is *Iris) Content(contextInterface interface{}, c types.GetPanelFn) {
+func (is *Iris) AddHandler(method, path string, plug plugins.Plugin) {
+	is.app.Handle(strings.ToUpper(method), path, func(c iris.Context) {
+		ctx := context.NewContext(c.Request())
 
+		var params = map[string]string{}
+		c.Params().Visit(func(key string, value string) {
+			params[key] = value
+		})
+
+		for key, value := range params {
+			if c.Request().URL.RawQuery == "" {
+				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+			} else {
+				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+			}
+		}
+
+		ctx.SetHandlers(plug.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
+		for key, head := range ctx.Response.Header {
+			c.Header(key, head[0])
+		}
+		c.StatusCode(ctx.Response.StatusCode)
+		if ctx.Response.Body != nil {
+			buf := new(bytes.Buffer)
+			_, _ = buf.ReadFrom(ctx.Response.Body)
+			_, _ = c.WriteString(buf.String())
+		}
+	})
+}
+
+func (is *Iris) Name() string {
+	return "iris"
+}
+
+func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx iris.Context
 		ok  bool
@@ -87,17 +102,33 @@ func (is *Iris) Content(contextInterface interface{}, c types.GetPanelFn) {
 		panic("wrong parameter")
 	}
 
-	body, authSuccess, err := is.GetContent(ctx.GetCookie(is.CookieKey()), ctx.Path(), ctx.Method(),
-		ctx.GetHeader(constant.PjaxHeader), c, ctx)
+	return &Iris{ctx: ctx}
+}
 
-	if !authSuccess {
-		ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
-		return
-	}
+func (is *Iris) Redirect() {
+	is.ctx.Redirect(config.Get().Url("/login"), http.StatusFound)
+}
 
-	if err != nil {
-		logger.Error("Echo Content", err)
-	}
+func (is *Iris) SetContentType() {
+	is.ctx.Header("Content-Type", is.HTMLContentType())
+}
 
-	_, _ = ctx.Write(body)
+func (is *Iris) Write(body []byte) {
+	_, _ = is.ctx.Write(body)
+}
+
+func (is *Iris) GetCookie() (string, error) {
+	return is.ctx.GetCookie(is.CookieKey()), nil
+}
+
+func (is *Iris) Path() string {
+	return is.ctx.Path()
+}
+
+func (is *Iris) Method() string {
+	return is.ctx.Method()
+}
+
+func (is *Iris) PjaxHeader() string {
+	return is.ctx.GetHeader(constant.PjaxHeader)
 }

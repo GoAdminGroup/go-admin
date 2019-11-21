@@ -6,12 +6,13 @@ package adapter
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
@@ -24,34 +25,70 @@ import (
 type WebFrameWork interface {
 	Use(interface{}, []plugins.Plugin) error
 	Content(interface{}, types.GetPanelFn)
+	SetContext(ctx interface{}) WebFrameWork
+	GetCookie() (string, error)
+	Path() string
+	Method() string
+	PjaxHeader() string
+	Redirect()
+	SetContentType()
+	Write(body []byte)
+	CookieKey() string
+	HTMLContentType() string
+	Name() string
+	SetApp(app interface{}) error
+	AddHandler(method, path string, plug plugins.Plugin)
 }
 
 type BaseAdapter struct{}
 
-func (BaseAdapter) HTMLContentType() string {
+func (base BaseAdapter) HTMLContentType() string {
 	return "text/html; charset=utf-8"
 }
 
-func (BaseAdapter) CookieKey() string {
+func (base BaseAdapter) CookieKey() string {
 	return auth.DefaultCookieKey
 }
 
-func (BaseAdapter) GetContent(cookie, path, method, pjax string, c types.GetPanelFn,
-	ctx interface{}) (body []byte, authSuccess bool, hasError error) {
+func (base BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
+	if err := wf.SetApp(router); err != nil {
+		return err
+	}
+
+	for _, plug := range plugin {
+		var plugCopy = plug
+		for _, req := range plug.GetRequest() {
+			wf.AddHandler(req.Method, req.URL, plugCopy)
+		}
+	}
+
+	return nil
+}
+
+func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork) {
+
+	newBase := wf.SetContext(ctx)
+
+	cookie, hasError := newBase.GetCookie()
+
+	if hasError != nil || cookie == "" {
+		newBase.Redirect()
+		return
+	}
+
+	user, authSuccess := auth.GetCurUser(cookie)
+
+	if !authSuccess {
+		newBase.Redirect()
+		return
+	}
 
 	var (
-		user  models.UserModel
 		panel types.Panel
 		err   error
 	)
 
-	user, authSuccess = auth.GetCurUser(cookie)
-
-	if !authSuccess {
-		return
-	}
-
-	if !auth.CheckPermissions(user, path, method) {
+	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method()) {
 		alert := getErrorAlert("no permission")
 		errTitle := language.Get("error")
 
@@ -61,7 +98,7 @@ func (BaseAdapter) GetContent(cookie, path, method, pjax string, c types.GetPane
 			Title:       errTitle,
 		}
 	} else {
-		panel, err = c(ctx)
+		panel, err = getPanelFn(ctx)
 		if err != nil {
 			alert := getErrorAlert(err.Error())
 			errTitle := language.Get("error")
@@ -74,14 +111,19 @@ func (BaseAdapter) GetContent(cookie, path, method, pjax string, c types.GetPane
 		}
 	}
 
-	tmpl, tmplName := template.Default().GetTemplate(pjax == "true")
+	tmpl, tmplName := template.Default().GetTemplate(newBase.PjaxHeader() == "true")
 
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(config.Get().URLRemovePrefix(path))),
+		*(menu.GetGlobalMenu(user).SetActiveClass(config.Get().URLRemovePrefix(newBase.Path()))),
 		panel, config.Get(), template.GetComponentAssetListsHTML()))
-	body = buf.Bytes()
-	return
+
+	if hasError != nil {
+		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), err)
+	}
+
+	newBase.SetContentType()
+	newBase.Write(buf.Bytes())
 }
 
 func getErrorAlert(msg string) template2.HTML {
