@@ -780,6 +780,8 @@ type FormField struct {
 	Must        bool
 	Hide        bool
 
+	HelpMsg string
+
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
 }
@@ -906,6 +908,11 @@ func (f *FormPanel) FieldMust() *FormPanel {
 
 func (f *FormPanel) FieldHide() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Hide = true
+	return f
+}
+
+func (f *FormPanel) FieldHelpMsg(s string) *FormPanel {
+	f.FieldList[f.curFieldListIndex].HelpMsg = s
 	return f
 }
 
