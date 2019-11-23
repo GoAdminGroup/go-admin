@@ -155,6 +155,10 @@ func (d DisplayProcessFnChains) Add(f DisplayProcessFn) DisplayProcessFnChains {
 	return append(d, f)
 }
 
+func (d DisplayProcessFnChains) Append(f DisplayProcessFnChains) DisplayProcessFnChains {
+	return append(d, f...)
+}
+
 func (d DisplayProcessFnChains) Copy() DisplayProcessFnChains {
 	if len(d) == 0 {
 		return make(DisplayProcessFnChains, 0)
@@ -165,6 +169,13 @@ func (d DisplayProcessFnChains) Copy() DisplayProcessFnChains {
 	}
 }
 
+func chooseDisplayProcessChains(internal DisplayProcessFnChains) DisplayProcessFnChains {
+	if len(internal) > 0 {
+		return internal
+	}
+	return globalDisplayProcessChains.Copy()
+}
+
 var globalDisplayProcessChains = make(DisplayProcessFnChains, 0)
 
 func AddGlobalDisplayProcessFn(f DisplayProcessFn) {
@@ -172,7 +183,39 @@ func AddGlobalDisplayProcessFn(f DisplayProcessFn) {
 }
 
 func AddLimit(limit int) DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+	return addLimit(limit, globalDisplayProcessChains)
+}
+
+func AddTrimSpace() DisplayProcessFnChains {
+	return addTrimSpace(globalDisplayProcessChains)
+}
+
+func AddSubstr(start int, end int) DisplayProcessFnChains {
+	return addSubstr(start, end, globalDisplayProcessChains)
+}
+
+func AddToTitle() DisplayProcessFnChains {
+	return addToTitle(globalDisplayProcessChains)
+}
+
+func AddToUpper() DisplayProcessFnChains {
+	return addToUpper(globalDisplayProcessChains)
+}
+
+func AddToLower() DisplayProcessFnChains {
+	return addToLower(globalDisplayProcessChains)
+}
+
+func AddXssFilter() DisplayProcessFnChains {
+	return addXssFilter(globalDisplayProcessChains)
+}
+
+func AddXssJsFilter() DisplayProcessFnChains {
+	return addXssJsFilter(globalDisplayProcessChains)
+}
+
+func addLimit(limit int, chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		if limit > len(value) {
 			return value
 		} else if limit < 0 {
@@ -181,18 +224,18 @@ func AddLimit(limit int) DisplayProcessFnChains {
 			return value[:limit]
 		}
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddTrimSpace() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addTrimSpace(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		return strings.TrimSpace(value)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddSubstr(start int, end int) DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addSubstr(start int, end int, chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		if start > end || start > len(value) || end < 0 {
 			return ""
 		}
@@ -204,43 +247,43 @@ func AddSubstr(start int, end int) DisplayProcessFnChains {
 		}
 		return value[start:end]
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddToTitle() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addToTitle(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		return strings.Title(value)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddToUpper() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addToUpper(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		return strings.ToUpper(value)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddToLower() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addToLower(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		return strings.ToLower(value)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddXssFilter() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addXssFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		return html.EscapeString(value)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
-func AddXssJsFilter() DisplayProcessFnChains {
-	globalDisplayProcessChains = globalDisplayProcessChains.Add(func(value string) string {
+func addXssJsFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value string) string {
 		s := strings.Replace(value, "<script>", "&lt;script&gt;", -1)
 		return strings.Replace(s, "</script>", "&lt;/script&gt;", -1)
 	})
-	return globalDisplayProcessChains
+	return chains
 }
 
 type FieldDisplay struct {
@@ -403,6 +446,8 @@ type InfoPanel struct {
 	IsHideRowSelector  bool
 	IsHidePagination   bool
 
+	processChains DisplayProcessFnChains
+
 	Action     template.HTML
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
@@ -417,7 +462,48 @@ func NewInfoPanel() *InfoPanel {
 		curFieldListIndex: -1,
 		PageSizeList:      DefaultPageSizeList,
 		DefaultPageSize:   DefaultPageSize,
+		processChains:     make(DisplayProcessFnChains, 0),
 	}
+}
+
+func (i *InfoPanel) AddLimitFilter(limit int) *InfoPanel {
+	i.processChains = addLimit(limit, i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddTrimSpaceFilter() *InfoPanel {
+	i.processChains = addTrimSpace(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddSubstrFilter(start int, end int) *InfoPanel {
+	i.processChains = addSubstr(start, end, i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddToTitleFilter() *InfoPanel {
+	i.processChains = addToTitle(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddToUpperFilter() *InfoPanel {
+	i.processChains = addToUpper(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddToLowerFilter() *InfoPanel {
+	i.processChains = addToLower(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddXssFilter() *InfoPanel {
+	i.processChains = addXssFilter(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) AddXssJsFilter() *InfoPanel {
+	i.processChains = addXssJsFilter(i.processChains)
+	return i
 }
 
 func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *InfoPanel {
@@ -432,7 +518,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
-			DisplayProcessChains: globalDisplayProcessChains.Copy(),
+			DisplayProcessChains: chooseDisplayProcessChains(i.processChains),
 		},
 	})
 	i.curFieldListIndex++
@@ -730,12 +816,54 @@ type FormPanel struct {
 	Validator FormValidator
 	PostHook  FormPostHookFn
 
+	processChains DisplayProcessFnChains
+
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
 }
 
 func NewFormPanel() *FormPanel {
 	return &FormPanel{curFieldListIndex: -1}
+}
+
+func (f *FormPanel) AddLimitFilter(limit int) *FormPanel {
+	f.processChains = addLimit(limit, f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddTrimSpaceFilter() *FormPanel {
+	f.processChains = addTrimSpace(f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddSubstrFilter(start int, end int) *FormPanel {
+	f.processChains = addSubstr(start, end, f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddToTitleFilter() *FormPanel {
+	f.processChains = addToTitle(f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddToUpperFilter() *FormPanel {
+	f.processChains = addToUpper(f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddToLowerFilter() *FormPanel {
+	f.processChains = addToLower(f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddXssFilter() *FormPanel {
+	f.processChains = addXssFilter(f.processChains)
+	return f
+}
+
+func (f *FormPanel) AddXssJsFilter() *FormPanel {
+	f.processChains = addXssJsFilter(f.processChains)
+	return f
 }
 
 func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form.Type) *FormPanel {
@@ -749,7 +877,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 			Display: func(value FieldModel) interface{} {
 				return value.Value
 			},
-			DisplayProcessChains: globalDisplayProcessChains.Copy(),
+			DisplayProcessChains: chooseDisplayProcessChains(f.processChains),
 		},
 	})
 	f.curFieldListIndex++
@@ -829,7 +957,7 @@ func (f *FormPanel) FieldSubstr(start int, end int) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldToTitlCustomJse() *FormPanel {
+func (f *FormPanel) FieldToTitle() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToTitle()
 	return f
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	template2 "html/template"
 	"strconv"
 	"strings"
 )
@@ -15,7 +14,7 @@ import (
 func GetManagerTable() (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := ManagerTable.GetInfo()
+	info := ManagerTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar)
@@ -28,14 +27,14 @@ func GetManagerTable() (ManagerTable Table) {
 				Where("user_id", "=", model.ID).
 				All()
 
-			labels := template2.HTML("")
+			labels := template.HTML("")
 			labelTpl := template.Get(config.Get().Theme).Label()
 
 			for key, label := range labelModels {
 				if key == len(labelModels)-1 {
-					labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent()
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
 				} else {
-					labels += labelTpl.SetContent(template2.HTML(label["name"].(string))).GetContent() + "<br><br>"
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
 				}
 			}
 
@@ -63,7 +62,7 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 	}
 
-	formList := ManagerTable.GetForm()
+	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
@@ -104,7 +103,7 @@ func GetManagerTable() (ManagerTable Table) {
 func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := PermissionTable.GetInfo()
+	info := PermissionTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("permission"), "name", db.Varchar)
@@ -116,9 +115,9 @@ func GetPermissionTable() (PermissionTable Table) {
 			res := ""
 			for i := 0; i < len(pathArr); i++ {
 				if i == len(pathArr)-1 {
-					res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent())
+					res += string(template.Get(config.Get().Theme).Label().SetContent(template.HTML(pathArr[i])).GetContent())
 				} else {
-					res += string(template.Get(config.Get().Theme).Label().SetContent(template2.HTML(pathArr[i])).GetContent()) + "<br><br>"
+					res += string(template.Get(config.Get().Theme).Label().SetContent(template.HTML(pathArr[i])).GetContent()) + "<br><br>"
 				}
 			}
 			return res
@@ -130,7 +129,7 @@ func GetPermissionTable() (PermissionTable Table) {
 		SetTitle(lg("Permission Manage")).
 		SetDescription(lg("Permission Manage"))
 
-	formList := PermissionTable.GetForm()
+	formList := PermissionTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
@@ -175,7 +174,7 @@ func GetRolesTable() (RolesTable Table) {
 		})
 	}
 
-	info := RolesTable.GetInfo()
+	info := RolesTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("role"), "name", db.Varchar)
@@ -187,7 +186,7 @@ func GetRolesTable() (RolesTable Table) {
 		SetTitle(lg("Roles Manage")).
 		SetDescription(lg("Roles Manage"))
 
-	formList := RolesTable.GetForm()
+	formList := RolesTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
@@ -229,7 +228,7 @@ func GetOpTable() (OpTable Table) {
 		},
 	})
 
-	info := OpTable.GetInfo()
+	info := OpTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("userID"), "user_id", db.Int)
@@ -244,7 +243,7 @@ func GetOpTable() (OpTable Table) {
 		SetTitle(lg("operation log")).
 		SetDescription(lg("operation log"))
 
-	formList := OpTable.GetForm()
+	formList := OpTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
@@ -265,7 +264,7 @@ func GetOpTable() (OpTable Table) {
 func GetMenuTable() (MenuTable Table) {
 	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := MenuTable.GetInfo()
+	info := MenuTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("parent"), "parent_id", db.Int)
@@ -308,7 +307,7 @@ func GetMenuTable() (MenuTable Table) {
 		"value": "0",
 	}}, parents...)
 
-	formList := MenuTable.GetForm()
+	formList := MenuTable.GetForm().AddXssJsFilter()
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptions(parents).FieldDisplay(func(model types.FieldModel) interface{} {

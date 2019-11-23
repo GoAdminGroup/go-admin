@@ -128,8 +128,8 @@ func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn,
 
 func getErrorAlert(msg string) template2.HTML {
 	return template.Default().Alert().
-		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 		SetTheme("warning").
-		SetContent(template2.HTML(msg)).
+		SetContent(template.HTML(msg)).
 		GetContent()
 }

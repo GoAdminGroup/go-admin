@@ -55,6 +55,18 @@ type Template interface {
 	GetTemplate(bool) (*template.Template, string)
 }
 
+func HTML(s string) template.HTML {
+	return template.HTML(s)
+}
+
+func CSS(s string) template.CSS {
+	return template.CSS(s)
+}
+
+func JS(s string) template.JS {
+	return template.JS(s)
+}
+
 // The templateMap contains templates registered.
 var templateMap = make(map[string]Template)
 

@@ -582,10 +582,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
 	}
 
-	for _, field := range tb.form.FieldList {
+	for key, field := range formList {
 		rowValue := modules.AorB(inArray(columns, field.Field),
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
-		field = field.UpdateValue(id, rowValue, res)
+		formList[key] = field.UpdateValue(id, rowValue, res)
 	}
 
 	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
