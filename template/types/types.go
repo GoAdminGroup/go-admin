@@ -780,7 +780,7 @@ type FormField struct {
 	Must        bool
 	Hide        bool
 
-	HelpMsg string
+	HelpMsg template.HTML
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
@@ -911,7 +911,7 @@ func (f *FormPanel) FieldHide() *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldHelpMsg(s string) *FormPanel {
+func (f *FormPanel) FieldHelpMsg(s template.HTML) *FormPanel {
 	f.FieldList[f.curFieldListIndex].HelpMsg = s
 	return f
 }

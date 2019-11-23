@@ -149,7 +149,8 @@ func GetPermissionTable() (PermissionTable Table) {
 		}).
 		FieldPostFilterFn(func(model types.PostFieldModel) string {
 			return strings.Join(model.Value, ",")
-		})
+		}).
+		FieldHelpMsg(template.HTML(lg("all method if empty")))
 
 	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea)
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()

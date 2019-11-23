@@ -37,6 +37,7 @@ var en = map[string]string{
 	"cancel":                 "cancel",
 	"refresh succeeded":      "Refresh succeeded",
 	"reload succeeded":       "Reload succeeded",
+	"all method if empty":    "All method if empty",
 
 	"permission manage": "Permission Manage",
 	"menus manage":      "Menus Manage",
