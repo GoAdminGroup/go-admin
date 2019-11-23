@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
@@ -34,6 +35,12 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 	}
 
 	user := auth.Auth(ctx)
+
+	referer := ctx.Headers("Referer")
+
+	if referer != "" && !modules.IsInfoUrl(referer) {
+		infoUrl = referer
+	}
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
@@ -95,6 +102,12 @@ func EditForm(ctx *context.Context) {
 	}
 
 	table.RefreshTableList()
+
+	if !param.FromList {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
+		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
+		return
+	}
 
 	editUrl := modules.AorB(param.Panel.GetEditable(), param.GetEditUrl(), "")
 	deleteUrl := modules.AorB(param.Panel.GetDeletable(), param.GetDeleteUrl(), "")

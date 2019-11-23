@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/gob"
 	"github.com/satori/go.uuid"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 func InArray(arr []string, str string) bool {
@@ -36,6 +38,12 @@ func RemoveBlankFromArray(s []string) []string {
 		}
 	}
 	return r
+}
+
+func IsInfoUrl(s string) bool {
+	reg, _ := regexp.Compile("(.*?)info/(.*?)$")
+	sub := reg.FindStringSubmatch(s)
+	return len(sub) > 2 && !strings.Contains(sub[2], "/")
 }
 
 func Uuid() string {

@@ -600,14 +600,19 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
-	_, _ = tb.sql().Table(tb.form.Table).
+	_, err := tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
-	//if err != nil {
-	//	return err
-	//}
+	if err != nil {
+		if tb.connectionDriver != db.DriverPostgresql {
+			return err
+		}
+		if !strings.Contains(err.Error(), "LastInsertId is not supported by this driver") {
+			return err
+		}
+	}
 
 	if tb.form.PostHook != nil {
 		go tb.form.PostHook(dataList)
@@ -625,12 +630,17 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
-	id, _ := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
+	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
-	//if err != nil {
-	//	return err
-	//}
+	if err != nil {
+		if tb.connectionDriver != db.DriverPostgresql {
+			return err
+		}
+		if !strings.Contains(err.Error(), "LastInsertId is not supported by this driver") {
+			return err
+		}
+	}
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 

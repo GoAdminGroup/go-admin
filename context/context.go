@@ -114,6 +114,13 @@ func (ctx *Context) Data(code int, contentType string, data []byte) {
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 }
 
+// Redirect add redirect url to header.
+func (ctx *Context) Redirect(path string) {
+	ctx.Response.StatusCode = http.StatusFound
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.AddHeader("Location", path)
+}
+
 // HTML output html response.
 func (ctx *Context) HTML(code int, body string) {
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")

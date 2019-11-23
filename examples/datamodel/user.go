@@ -62,14 +62,14 @@ func GetUserTable() (userTable table.Table) {
 		FieldOptions([]map[string]string{
 			{
 				"field":    "gender",
-				"label":    "male",
+				"label":    "men",
 				"value":    "0",
-				"selected": "true",
+				"selected": "checked",
 			}, {
 				"field":    "gender",
-				"label":    "female",
+				"label":    "women",
 				"value":    "1",
-				"selected": "false",
+				"selected": "",
 			},
 		})
 	formList.AddField("Phone", "phone", db.Varchar, form.Text)

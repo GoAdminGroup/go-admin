@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -66,11 +67,11 @@ type EditFormParam struct {
 	Id           string
 	Prefix       string
 	Param        parameter.Parameters
-	Previous     string
 	Path         string
 	MultiForm    *multipart.Form
 	PreviousPath string
 	Alert        template2.HTML
+	FromList     bool
 }
 
 func (e EditFormParam) Value() form.Values {
@@ -153,7 +154,13 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+	fromList := modules.IsInfoUrl(previous)
+
+	param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+
+	if fromList {
+		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
+	}
 
 	ctx.SetUserValue("edit_form_param", &EditFormParam{
 		Panel:        panel,
@@ -162,7 +169,8 @@ func EditForm(ctx *context.Context) {
 		Param:        param,
 		Path:         strings.Split(previous, "?")[0],
 		MultiForm:    multiForm,
-		PreviousPath: config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId()),
+		PreviousPath: previous,
+		FromList:     fromList,
 	})
 	ctx.Next()
 }

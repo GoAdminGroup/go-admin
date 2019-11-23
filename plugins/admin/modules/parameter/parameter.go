@@ -59,7 +59,12 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 	}
 }
 
-func GetParamFromUrl(value string, defaultPageSize int, primaryKey, defaultSort string) Parameters {
+func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {
+
+	if !fromList {
+		return Parameters{}
+	}
+
 	prevUrlArr := strings.Split(value, "?")
 	paramArr := strings.Split(prevUrlArr[1], "&")
 

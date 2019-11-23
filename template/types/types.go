@@ -738,22 +738,22 @@ const (
 
 type FieldOptions []map[string]string
 
-func (fo FieldOptions) SetSelected(val interface{}) {
+func (fo FieldOptions) SetSelected(val interface{}, labels []string) {
 
 	if valArr, ok := val.([]string); ok {
 		for _, v := range fo {
 			if modules.InArray(valArr, v["value"]) {
-				v["selected"] = "selected"
+				v["selected"] = labels[0]
 			} else {
-				v["selected"] = ""
+				v["selected"] = labels[1]
 			}
 		}
 	} else {
 		for _, v := range fo {
 			if v["value"] == val {
-				v["selected"] = "selected"
+				v["selected"] = labels[0]
 			} else {
-				v["selected"] = ""
+				v["selected"] = labels[1]
 			}
 		}
 	}
@@ -778,6 +778,7 @@ type FormField struct {
 	Editable    bool
 	NotAllowAdd bool
 	Must        bool
+	Hide        bool
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
@@ -789,7 +790,7 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 			ID:    id,
 			Value: val,
 			Row:   res,
-		}))
+		}), f.FormType.SelectedLabel())
 	} else {
 		f.Value = f.ToDisplay(FieldModel{
 			ID:    id,
@@ -872,6 +873,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 		Field:    field,
 		TypeName: filedType,
 		Editable: true,
+		Hide:     false,
 		FormType: formType,
 		FieldDisplay: FieldDisplay{
 			Display: func(value FieldModel) interface{} {
@@ -899,6 +901,11 @@ func (f *FormPanel) SetTable(table string) *FormPanel {
 
 func (f *FormPanel) FieldMust() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Must = true
+	return f
+}
+
+func (f *FormPanel) FieldHide() *FormPanel {
+	f.FieldList[f.curFieldListIndex].Hide = true
 	return f
 }
 

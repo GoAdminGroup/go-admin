@@ -11,6 +11,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
@@ -121,7 +122,32 @@ func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
 		return user, false, false
 	}
 
-	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
+	return user, true, CheckPermissions(user, getPath(ctx), ctx.Method())
+}
+
+func getPath(ctx *context.Context) string {
+
+	if strings.ToUpper(ctx.Method()) == "GET" {
+		ok, err := regexp.MatchString("/info/(.*?)/edit", ctx.Path())
+		id := ctx.Query("id")
+		if ok && err == nil && id != "" {
+			return ctx.Path() + "?id=" + id
+		}
+		return ctx.Path()
+	} else if strings.ToUpper(ctx.Method()) == "POST" {
+		ok, err := regexp.MatchString("/edit/(.*)", ctx.Path())
+		if ok && err == nil {
+			pk := table.List[ctx.Query("__prefix")].GetPrimaryKey().Name
+			id := ctx.FormValue(pk)
+			if id != "" {
+				return ctx.Path() + "?" + pk + "=" + id
+			}
+			return ctx.Path()
+		}
+		return ctx.Path()
+	}
+
+	return ctx.Path()
 }
 
 const defaultUserIDSesKey = "user_id"

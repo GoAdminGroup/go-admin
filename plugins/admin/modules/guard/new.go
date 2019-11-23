@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -54,10 +55,10 @@ type NewFormParam struct {
 	Id           string
 	Prefix       string
 	Param        parameter.Parameters
-	Previous     string
 	Path         string
 	MultiForm    *multipart.Form
 	PreviousPath string
+	FromList     bool
 	Alert        template.HTML
 }
 
@@ -127,7 +128,13 @@ func NewForm(ctx *context.Context) {
 		return
 	}
 
-	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+	fromList := modules.IsInfoUrl(previous)
+
+	param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+
+	if fromList {
+		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
+	}
 
 	ctx.SetUserValue("new_form_param", &NewFormParam{
 		Panel:        panel,
@@ -136,7 +143,8 @@ func NewForm(ctx *context.Context) {
 		Param:        param,
 		Path:         strings.Split(previous, "?")[0],
 		MultiForm:    ctx.Request.MultipartForm,
-		PreviousPath: config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId()),
+		PreviousPath: previous,
+		FromList:     fromList,
 	})
 	ctx.Next()
 }

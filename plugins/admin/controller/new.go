@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
@@ -88,9 +89,15 @@ func NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl())
+			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl())
 			return
 		}
+	}
+
+	if !param.FromList {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
+		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
+		return
 	}
 
 	editUrl := modules.AorB(param.Panel.GetEditable(), param.GetEditUrl(), "")
@@ -103,5 +110,5 @@ func NewForm(ctx *context.Context) {
 	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
 
 	ctx.HTML(http.StatusOK, buf.String())
-	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
+	ctx.AddHeader(constant.PjaxUrlHeader, param.GetInfoUrl())
 }

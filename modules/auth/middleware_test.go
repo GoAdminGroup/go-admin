@@ -43,3 +43,7 @@ func TestInMethodArr(t *testing.T) {
 	methods := []string{"get", "post"}
 	assert.Equal(t, inMethodArr(methods, "get"), true)
 }
+
+func TestGetPath(t *testing.T) {
+	assert.Equal(t, getPath("/info/manager/edit", "3"), "/info/manager/edit?id=3")
+}
