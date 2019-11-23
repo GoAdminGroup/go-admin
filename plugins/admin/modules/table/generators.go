@@ -17,8 +17,8 @@ func GetManagerTable() (ManagerTable Table) {
 	info := ManagerTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("Name"), "username", db.Varchar)
-	info.AddField(lg("Nickname"), "name", db.Varchar)
+	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
+	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
 	info.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			labelModels, _ := db.Table("goadmin_role_users").
@@ -39,7 +39,7 @@ func GetManagerTable() (ManagerTable Table) {
 			}
 
 			return string(labels)
-		})
+		}).FieldFilterable()
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
@@ -106,9 +106,14 @@ func GetPermissionTable() (PermissionTable Table) {
 	info := PermissionTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("permission"), "name", db.Varchar)
-	info.AddField(lg("slug"), "slug", db.Varchar)
-	info.AddField(lg("method"), "http_method", db.Varchar)
+	info.AddField(lg("permission"), "name", db.Varchar).FieldFilterable()
+	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable()
+	info.AddField(lg("method"), "http_method", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
+		if value.Value == "" {
+			return "All methods"
+		}
+		return value.Value
+	})
 	info.AddField(lg("path"), "http_path", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			pathArr := strings.Split(model.Value, "\n")
@@ -178,8 +183,8 @@ func GetRolesTable() (RolesTable Table) {
 	info := RolesTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("role"), "name", db.Varchar)
-	info.AddField(lg("slug"), "slug", db.Varchar)
+	info.AddField(lg("role"), "name", db.Varchar).FieldFilterable()
+	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable()
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
@@ -232,10 +237,10 @@ func GetOpTable() (OpTable Table) {
 	info := OpTable.GetInfo().AddXssJsFilter()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("userID"), "user_id", db.Int)
-	info.AddField(lg("path"), "path", db.Varchar)
-	info.AddField(lg("method"), "method", db.Varchar)
-	info.AddField(lg("ip"), "ip", db.Varchar)
+	info.AddField(lg("userID"), "user_id", db.Int).FieldFilterable()
+	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable()
+	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable()
+	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable()
 	info.AddField(lg("content"), "input", db.Varchar)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
