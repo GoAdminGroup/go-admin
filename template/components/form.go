@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
@@ -19,6 +20,7 @@ type FormAttribute struct {
 	CSRFToken   string
 	Title       template.HTML
 	Prefix      string
+	CdnUrl      string
 	types.Attribute
 }
 
@@ -83,9 +85,10 @@ func (compo *FormAttribute) SetToken(value string) types.FormAttribute {
 }
 
 func (compo *FormAttribute) GetContent() template.HTML {
+	compo.CdnUrl = config.Get().AssetUrl
 	return ComposeHtml(compo.TemplateList, *compo, "form",
 		"form/default", "form/file", "form/textarea", "form/custom",
-		"form/selectbox", "form/text", "form/radio",
+		"form/selectbox", "form/text", "form/radio", "form/switch",
 		"form/password", "form/select", "form/singleselect",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number",
 		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components")

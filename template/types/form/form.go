@@ -26,6 +26,7 @@ const (
 	Number
 	TextArea
 	Custom
+	Switch
 )
 
 func (t Type) String() string {
@@ -68,20 +69,22 @@ func (t Type) String() string {
 		return "textarea"
 	case Custom:
 		return "custom"
+	case Switch:
+		return "switch"
 	default:
 		panic("wrong form type")
 	}
 }
 
 func (t Type) IsSelect() bool {
-	return t == Select || t == SelectSingle || t == SelectBox || t == Radio
+	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
 }
 
 func (t Type) SelectedLabel() []string {
 	if t == Select || t == SelectSingle || t == SelectBox {
 		return []string{"selected", ""}
 	}
-	if t == Radio {
+	if t == Radio || t == Switch {
 		return []string{"checked", ""}
 	}
 	return []string{}
