@@ -67,10 +67,12 @@ func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
 		ctx := context.NewContext(c.Request)
 
 		params := reg1.FindAllString(pluginReqUrl, -1)
+		pluginReqUrl = reg1.ReplaceAllString(pluginReqUrl, "")
 		params = append(params, reg2.FindAllString(pluginReqUrl, -1)...)
 
 		for _, param := range params {
 			p := strings.Replace(param, ":", "", -1)
+			p = strings.Replace(p, "/", "", -1)
 			if c.Request.URL.RawQuery == "" {
 				c.Request.URL.RawQuery += p + "=" + c.GetRequestString(p)
 			} else {
