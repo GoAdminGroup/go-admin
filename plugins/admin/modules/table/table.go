@@ -1,6 +1,7 @@
 package table
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"strconv"
@@ -64,7 +65,7 @@ type Table interface {
 	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error
-	DeleteDataFromDatabase(id string)
+	DeleteDataFromDatabase(id string) error
 }
 
 type PrimaryKey struct {
@@ -600,6 +601,10 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
+	if tb.form.UpdateFn != nil {
+		return tb.form.UpdateFn(dataList)
+	}
+
 	_, err := tb.sql().Table(tb.form.Table).
 		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
@@ -614,8 +619,22 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		}
 	}
 
+	// NOTE: Database Transaction may be considered here.
+
 	if tb.form.PostHook != nil {
-		go tb.form.PostHook(dataList)
+		go func() {
+
+			defer func() {
+				if err := recover(); err != nil {
+					logger.Error(err)
+				}
+			}()
+
+			err := tb.form.PostHook(dataList)
+			if err != nil {
+				logger.Error(err)
+			}
+		}()
 	}
 
 	return nil
@@ -628,6 +647,10 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 		if err := tb.form.Validator(dataList); err != nil {
 			return err
 		}
+	}
+
+	if tb.form.InsertFn != nil {
+		return tb.form.InsertFn(dataList)
 	}
 
 	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
@@ -644,8 +667,22 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 
+	// NOTE: Database Transaction may be considered here.
+
 	if tb.form.PostHook != nil {
-		go tb.form.PostHook(dataList)
+		go func() {
+
+			defer func() {
+				if err := recover(); err != nil {
+					logger.Error(err)
+				}
+			}()
+
+			err := tb.form.PostHook(dataList)
+			if err != nil {
+				logger.Error(err)
+			}
+		}()
 	}
 
 	return nil
@@ -702,27 +739,43 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 }
 
 // DeleteDataFromDatabase delete data.
-func (tb DefaultTable) DeleteDataFromDatabase(id string) {
+func (tb DefaultTable) DeleteDataFromDatabase(id string) error {
 	idArr := strings.Split(id, ",")
+
+	if tb.info.DeleteFn != nil {
+
+		if len(idArr) == 0 {
+			return errors.New("wrong parameter")
+		}
+
+		return tb.info.DeleteFn(idArr)
+	}
+
+	if tb.info.PreDeleteFn != nil && len(idArr) > 0 {
+		if err := tb.info.PreDeleteFn(idArr); err != nil {
+			return err
+		}
+	}
+
 	for _, id := range idArr {
 		tb.delete(tb.form.Table, tb.primaryKey.Name, id)
 	}
-	if tb.form.Table == "goadmin_roles" {
-		tb.delete("goadmin_role_users", "role_id", id)
-		tb.delete("goadmin_role_permissions", "role_id", id)
-		tb.delete("goadmin_role_menu", "role_id", id)
+
+	if tb.info.DeleteHook != nil && len(idArr) > 0 {
+		go func() {
+			defer func() {
+				if err := recover(); err != nil {
+					logger.Error(err)
+				}
+			}()
+
+			if err := tb.info.DeleteHook(idArr); err != nil {
+				logger.Error(err)
+			}
+		}()
 	}
-	if tb.form.Table == "goadmin_users" {
-		tb.delete("goadmin_role_users", "user_id", id)
-		tb.delete("goadmin_user_permissions", "user_id", id)
-	}
-	if tb.form.Table == "goadmin_permissions" {
-		tb.delete("goadmin_role_permissions", "permission_id", id)
-		tb.delete("goadmin_user_permissions", "permission_id", id)
-	}
-	if tb.form.Table == "goadmin_menu" {
-		tb.delete("goadmin_role_menu", "menu_id", id)
-	}
+
+	return nil
 }
 
 func (tb DefaultTable) delete(table, key, id string) {

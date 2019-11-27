@@ -1,6 +1,7 @@
 package table
 
 import (
+	"database/sql"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -43,7 +44,47 @@ func GetManagerTable() (ManagerTable Table) {
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
-	info.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
+	info.SetTable("goadmin_users").
+		SetTitle(lg("Managers")).
+		SetDescription(lg("Managers")).
+		SetDeleteFn(func(idArr []string) error {
+
+			var ids = interfaces(idArr)
+
+			_, txErr := dbsql().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+
+				deleteUserRoleErr := dbsql().WithTx(tx).
+					Table("goadmin_role_users").
+					WhereIn("user_id", ids).
+					Delete()
+
+				if deleteUserRoleErr != nil && notNoAffectRow(deleteUserRoleErr) {
+					return deleteUserRoleErr, map[string]interface{}{}
+				}
+
+				deleteUserPermissionErr := dbsql().WithTx(tx).
+					Table("goadmin_user_permissions").
+					WhereIn("user_id", ids).
+					Delete()
+
+				if deleteUserPermissionErr != nil && notNoAffectRow(deleteUserPermissionErr) {
+					return deleteUserPermissionErr, map[string]interface{}{}
+				}
+
+				deleteUserErr := dbsql().WithTx(tx).
+					Table("goadmin_users").
+					WhereIn("id", ids).
+					Delete()
+
+				if deleteUserErr != nil {
+					return deleteUserErr, map[string]interface{}{}
+				}
+
+				return nil, map[string]interface{}{}
+			})
+
+			return txErr
+		})
 
 	var roles, permissions []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -88,12 +129,14 @@ func GetManagerTable() (ManagerTable Table) {
 		}
 		return permissions
 	})
-	formList.AddField(lg("password"), "password", db.Varchar, form.Password).FieldDisplay(func(value types.FieldModel) interface{} {
-		return ""
-	})
-	formList.AddField(lg("confirm password"), "password_again", db.Varchar, form.Password).FieldDisplay(func(value types.FieldModel) interface{} {
-		return ""
-	})
+	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
+		FieldDisplay(func(value types.FieldModel) interface{} {
+			return ""
+		})
+	formList.AddField(lg("confirm password"), "password_again", db.Varchar, form.Password).
+		FieldDisplay(func(value types.FieldModel) interface{} {
+			return ""
+		})
 
 	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
 
@@ -132,7 +175,45 @@ func GetPermissionTable() (PermissionTable Table) {
 
 	info.SetTable("goadmin_permissions").
 		SetTitle(lg("Permission Manage")).
-		SetDescription(lg("Permission Manage"))
+		SetDescription(lg("Permission Manage")).
+		SetDeleteFn(func(idArr []string) error {
+
+			var ids = interfaces(idArr)
+
+			_, txErr := dbsql().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+
+				deleteRolePermissionErr := dbsql().WithTx(tx).
+					Table("goadmin_role_permissions").
+					WhereIn("permission_id", ids).
+					Delete()
+
+				if deleteRolePermissionErr != nil && notNoAffectRow(deleteRolePermissionErr) {
+					return deleteRolePermissionErr, map[string]interface{}{}
+				}
+
+				deleteUserPermissionErr := dbsql().WithTx(tx).
+					Table("goadmin_user_permissions").
+					WhereIn("permission_id", ids).
+					Delete()
+
+				if deleteUserPermissionErr != nil && notNoAffectRow(deleteUserPermissionErr) {
+					return deleteUserPermissionErr, map[string]interface{}{}
+				}
+
+				deletePermissionsErr := dbsql().WithTx(tx).
+					Table("goadmin_permissions").
+					WhereIn("id", ids).
+					Delete()
+
+				if deletePermissionsErr != nil {
+					return deletePermissionsErr, map[string]interface{}{}
+				}
+
+				return nil, map[string]interface{}{}
+			})
+
+			return txErr
+		})
 
 	formList := PermissionTable.GetForm().AddXssJsFilter()
 
@@ -190,7 +271,54 @@ func GetRolesTable() (RolesTable Table) {
 
 	info.SetTable("goadmin_roles").
 		SetTitle(lg("Roles Manage")).
-		SetDescription(lg("Roles Manage"))
+		SetDescription(lg("Roles Manage")).
+		SetDeleteFn(func(idArr []string) error {
+
+			var ids = interfaces(idArr)
+
+			_, txErr := dbsql().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+
+				deleteRoleUserErr := dbsql().WithTx(tx).
+					Table("goadmin_role_users").
+					WhereIn("role_id", ids).
+					Delete()
+
+				if deleteRoleUserErr != nil && notNoAffectRow(deleteRoleUserErr) {
+					return deleteRoleUserErr, map[string]interface{}{}
+				}
+
+				deleteRoleMenuErr := dbsql().WithTx(tx).
+					Table("goadmin_role_menu").
+					WhereIn("role_id", ids).
+					Delete()
+
+				if deleteRoleMenuErr != nil && notNoAffectRow(deleteRoleMenuErr) {
+					return deleteRoleMenuErr, map[string]interface{}{}
+				}
+
+				deleteRolePermissionErr := dbsql().WithTx(tx).
+					Table("goadmin_role_permissions").
+					WhereIn("role_id", ids).
+					Delete()
+
+				if deleteRolePermissionErr != nil && notNoAffectRow(deleteRolePermissionErr) {
+					return deleteRolePermissionErr, map[string]interface{}{}
+				}
+
+				deleteRolesErr := dbsql().WithTx(tx).
+					Table("goadmin_roles").
+					WhereIn("id", ids).
+					Delete()
+
+				if deleteRolesErr != nil {
+					return deleteRolesErr, map[string]interface{}{}
+				}
+
+				return nil, map[string]interface{}{}
+			})
+
+			return txErr
+		})
 
 	formList := RolesTable.GetForm().AddXssJsFilter()
 
@@ -284,7 +412,36 @@ func GetMenuTable() (MenuTable Table) {
 
 	info.SetTable("goadmin_menu").
 		SetTitle(lg("Menus Manage")).
-		SetDescription(lg("Menus Manage"))
+		SetDescription(lg("Menus Manage")).
+		SetDeleteFn(func(idArr []string) error {
+
+			var ids = interfaces(idArr)
+
+			_, txErr := dbsql().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+
+				deleteRoleMenuErr := dbsql().WithTx(tx).
+					Table("goadmin_role_menu").
+					WhereIn("menu_id", ids).
+					Delete()
+
+				if deleteRoleMenuErr != nil && notNoAffectRow(deleteRoleMenuErr) {
+					return deleteRoleMenuErr, map[string]interface{}{}
+				}
+
+				deleteMenusErr := dbsql().WithTx(tx).
+					Table("goadmin_menu").
+					WhereIn("id", ids).
+					Delete()
+
+				if deleteMenusErr != nil {
+					return deleteMenusErr, map[string]interface{}{}
+				}
+
+				return nil, map[string]interface{}{}
+			})
+
+			return txErr
+		})
 
 	var roles, parents []map[string]string
 	rolesModel, _ := db.Table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
@@ -352,4 +509,22 @@ func GetMenuTable() (MenuTable Table) {
 
 func lg(v string) string {
 	return language.Get(v)
+}
+
+func dbsql() *db.SQL {
+	return db.WithDriver(config.Get().Databases.GetDefault().Driver)
+}
+
+func interfaces(arr []string) []interface{} {
+	var iarr = make([]interface{}, len(arr))
+
+	for key, v := range arr {
+		iarr[key] = v
+	}
+
+	return iarr
+}
+
+func notNoAffectRow(s error) bool {
+	return s.Error() != "no affect row"
 }

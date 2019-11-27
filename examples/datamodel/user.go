@@ -90,8 +90,9 @@ func GetUserTable() (userTable table.Table) {
 
 	formList.SetTable("users").SetTitle("Users").SetDescription("Users")
 
-	formList.SetPostHook(func(values form2.Values) {
+	formList.SetPostHook(func(values form2.Values) error {
 		fmt.Println("userTable.GetForm().PostHook", values)
+		return nil
 	})
 
 	return

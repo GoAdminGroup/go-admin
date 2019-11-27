@@ -420,6 +420,8 @@ func (t TabHeaders) Add(header string) TabHeaders {
 	return append(t, header)
 }
 
+type DeleteFn func(ids []string) error
+
 // InfoPanel
 type InfoPanel struct {
 	FieldList         []Field
@@ -445,6 +447,10 @@ type InfoPanel struct {
 	IsHideFilterButton bool
 	IsHideRowSelector  bool
 	IsHidePagination   bool
+
+	DeleteHook  DeleteFn
+	PreDeleteFn DeleteFn
+	DeleteFn    DeleteFn
 
 	processChains DisplayProcessFnChains
 
@@ -503,6 +509,21 @@ func (i *InfoPanel) AddXssFilter() *InfoPanel {
 
 func (i *InfoPanel) AddXssJsFilter() *InfoPanel {
 	i.processChains = addXssJsFilter(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) SetDeleteHook(fn DeleteFn) *InfoPanel {
+	i.DeleteHook = fn
+	return i
+}
+
+func (i *InfoPanel) SetPreDeleteFn(fn DeleteFn) *InfoPanel {
+	i.PreDeleteFn = fn
+	return i
+}
+
+func (i *InfoPanel) SetDeleteFn(fn DeleteFn) *InfoPanel {
+	i.DeleteFn = fn
 	return i
 }
 
@@ -816,8 +837,11 @@ type FormPanel struct {
 	Title       string
 	Description string
 
-	Validator FormValidator
-	PostHook  FormPostHookFn
+	Validator FormPostFn
+	PostHook  FormPostFn
+
+	UpdateFn FormPostFn
+	InsertFn FormPostFn
 
 	processChains DisplayProcessFnChains
 
@@ -1042,19 +1066,27 @@ func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) SetPostValidator(va FormValidator) *FormPanel {
+func (f *FormPanel) SetPostValidator(va FormPostFn) *FormPanel {
 	f.Validator = va
 	return f
 }
 
-func (f *FormPanel) SetPostHook(po FormPostHookFn) *FormPanel {
+func (f *FormPanel) SetPostHook(po FormPostFn) *FormPanel {
 	f.PostHook = po
 	return f
 }
 
-type FormValidator func(values form2.Values) error
+func (f *FormPanel) SetUpdateFn(po FormPostFn) *FormPanel {
+	f.UpdateFn = po
+	return f
+}
 
-type FormPostHookFn func(values form2.Values)
+func (f *FormPanel) SetInsertFn(po FormPostFn) *FormPanel {
+	f.InsertFn = po
+	return f
+}
+
+type FormPostFn func(values form2.Values) error
 
 type FormFields []FormField
 

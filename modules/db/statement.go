@@ -5,6 +5,7 @@
 package db
 
 import (
+	dbsql "database/sql"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -19,6 +20,7 @@ type SQL struct {
 	diver   Connection
 	dialect dialect.Dialect
 	conn    string
+	tx      *dbsql.Tx
 }
 
 // SQLPool is a object pool of SQL.
@@ -86,6 +88,12 @@ func (sql *SQL) WithConnection(conn string) *SQL {
 	return sql
 }
 
+// WithTx set the database transaction object of SQL.
+func (sql *SQL) WithTx(tx *dbsql.Tx) *SQL {
+	sql.tx = tx
+	return sql
+}
+
 // Table set table of SQL.
 func (sql *SQL) Table(table string) *SQL {
 	sql.TableName = table
@@ -139,7 +147,7 @@ func (sql *SQL) Where(field string, operation string, arg interface{}) *SQL {
 // WhereIn add the where operation of "in" and argument values.
 func (sql *SQL) WhereIn(field string, arg []interface{}) *SQL {
 	if len(arg) == 0 {
-		return sql
+		panic("wrong parameter")
 	}
 	sql.Wheres = append(sql.Wheres, dialect.Where{
 		Field:     field,
@@ -153,7 +161,7 @@ func (sql *SQL) WhereIn(field string, arg []interface{}) *SQL {
 // WhereNotIn add the where operation of "not in" and argument values.
 func (sql *SQL) WhereNotIn(field string, arg []interface{}) *SQL {
 	if len(arg) == 0 {
-		return sql
+		panic("wrong parameter")
 	}
 	sql.Wheres = append(sql.Wheres, dialect.Where{
 		Field:     field,
@@ -209,6 +217,61 @@ func (sql *SQL) LeftJoin(table string, fieldA string, operation string, fieldB s
 }
 
 // *******************************
+// Transaction method
+// *******************************
+
+// TxFn is the transaction callback function.
+type TxFn func(tx *dbsql.Tx) (error, map[string]interface{})
+
+// WithTransaction call the callback function within the transaction and
+// catch the error.
+func (sql *SQL) WithTransaction(fn TxFn) (res map[string]interface{}, err error) {
+
+	tx := sql.diver.BeginTxAndConnection(sql.conn)
+
+	defer func() {
+		if p := recover(); p != nil {
+			// a panic occurred, rollback and repanic
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			// something went wrong, rollback
+			_ = tx.Rollback()
+		} else {
+			// all good, commit
+			err = tx.Commit()
+		}
+	}()
+
+	err, res = fn(tx)
+	return
+}
+
+// WithTransactionByLevel call the callback function within the transaction
+// of given transaction level and catch the error.
+func (sql *SQL) WithTransactionByLevel(level dbsql.IsolationLevel, fn TxFn) (res map[string]interface{}, err error) {
+
+	tx := sql.diver.BeginTxWithLevelAndConnection(sql.conn, level)
+
+	defer func() {
+		if p := recover(); p != nil {
+			// a panic occurred, rollback and repanic
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			// something went wrong, rollback
+			_ = tx.Rollback()
+		} else {
+			// all good, commit
+			err = tx.Commit()
+		}
+	}()
+
+	err, res = fn(tx)
+	return
+}
+
+// *******************************
 // terminal method
 // -------------------------------
 // sql args order:
@@ -221,7 +284,16 @@ func (sql *SQL) First() (map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SQLComponent)
 
-	res, err := sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
+	var (
+		res []map[string]interface{}
+		err error
+	)
+
+	if sql.tx != nil {
+		res, err = sql.diver.QueryWithTx(sql.tx, sql.Statement, sql.Args...)
+	} else {
+		res, err = sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
+	}
 
 	if err != nil {
 		return nil, err
@@ -239,6 +311,9 @@ func (sql *SQL) All() ([]map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SQLComponent)
 
+	if sql.tx != nil {
+		return sql.diver.QueryWithTx(sql.tx, sql.Statement, sql.Args...)
+	}
 	return sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
 }
 
@@ -264,7 +339,16 @@ func (sql *SQL) Update(values dialect.H) (int64, error) {
 
 	sql.dialect.Update(&sql.SQLComponent)
 
-	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	var (
+		res dbsql.Result
+		err error
+	)
+
+	if sql.tx != nil {
+		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
+	} else {
+		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	}
 
 	if err != nil {
 		return 0, err
@@ -283,7 +367,16 @@ func (sql *SQL) Delete() error {
 
 	sql.dialect.Delete(&sql.SQLComponent)
 
-	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	var (
+		res dbsql.Result
+		err error
+	)
+
+	if sql.tx != nil {
+		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
+	} else {
+		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	}
 
 	if err != nil {
 		return err
@@ -302,7 +395,16 @@ func (sql *SQL) Exec() (int64, error) {
 
 	sql.dialect.Update(&sql.SQLComponent)
 
-	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	var (
+		res dbsql.Result
+		err error
+	)
+
+	if sql.tx != nil {
+		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
+	} else {
+		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	}
 
 	if err != nil {
 		return 0, err
@@ -323,25 +425,40 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 
 	sql.dialect.Insert(&sql.SQLComponent)
 
+	var (
+		res    dbsql.Result
+		err    error
+		resMap []map[string]interface{}
+	)
+
 	if sql.diver.GetName() == DriverPostgresql {
 		if sql.TableName == "goadmin_menu" ||
 			sql.TableName == "goadmin_permissions" ||
 			sql.TableName == "goadmin_roles" ||
 			sql.TableName == "goadmin_users" {
-			res, err := sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
+
+			if sql.tx != nil {
+				resMap, err = sql.diver.QueryWithTx(sql.tx, sql.Statement+" RETURNING id", sql.Args...)
+			} else {
+				resMap, err = sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
+			}
 
 			if err != nil {
 				return 0, err
 			}
 
-			if len(res) == 0 {
+			if len(resMap) == 0 {
 				return 0, errors.New("no affect row")
 			}
-			return res[0]["id"].(int64), nil
+			return resMap[0]["id"].(int64), nil
 		}
 	}
 
-	res, err := sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	if sql.tx != nil {
+		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
+	} else {
+		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
+	}
 
 	if err != nil {
 		return 0, err
@@ -374,6 +491,7 @@ func RecycleSQL(sql *SQL) {
 	sql.WhereRaws = ""
 	sql.UpdateRaws = make([]dialect.RawUpdate, 0)
 	sql.Statement = ""
+	sql.tx = nil
 
 	SQLPool.Put(sql)
 }

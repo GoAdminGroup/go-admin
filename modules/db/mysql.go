@@ -5,9 +5,7 @@
 package db
 
 import (
-	"context"
 	"database/sql"
-	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"sync"
 )
@@ -90,154 +88,62 @@ func (db *Mysql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
-// BeginTransactionsWithReadUncommitted starts a transaction with level LevelReadUncommitted.
-func (db *Mysql) BeginTransactionsWithReadUncommitted() *SQLTx {
-	return db.BeginTransactionsWithLevel(sql.LevelReadUncommitted)
+// BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.
+func (db *Mysql) BeginTxWithReadUncommitted() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelReadUncommitted)
 }
 
-// BeginTransactionsWithReadCommitted starts a transaction with level LevelReadCommitted.
-func (db *Mysql) BeginTransactionsWithReadCommitted() *SQLTx {
-	return db.BeginTransactionsWithLevel(sql.LevelReadCommitted)
+// BeginTxWithReadCommitted starts a transaction with level LevelReadCommitted.
+func (db *Mysql) BeginTxWithReadCommitted() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelReadCommitted)
 }
 
-// BeginTransactionsWithRepeatableRead starts a transaction with level LevelRepeatableRead.
-func (db *Mysql) BeginTransactionsWithRepeatableRead() *SQLTx {
-	return db.BeginTransactionsWithLevel(sql.LevelRepeatableRead)
+// BeginTxWithRepeatableRead starts a transaction with level LevelRepeatableRead.
+func (db *Mysql) BeginTxWithRepeatableRead() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelRepeatableRead)
 }
 
-// BeginTransactions starts a transaction with level LevelDefault.
-func (db *Mysql) BeginTransactions() *SQLTx {
-	return db.BeginTransactionsWithLevel(sql.LevelDefault)
+// BeginTx starts a transaction with level LevelDefault.
+func (db *Mysql) BeginTx() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelDefault)
 }
 
-// BeginTransactionsWithLevel starts a transaction with given transaction isolation level.
-func (db *Mysql) BeginTransactionsWithLevel(level sql.IsolationLevel) *SQLTx {
-	tx, err := db.DbList["default"].BeginTx(context.Background(),
-		&sql.TxOptions{Isolation: level})
-	if err != nil {
-		panic(err)
-	}
-
-	sqlTx := new(SQLTx)
-
-	(*sqlTx).Tx = tx
-	return sqlTx
+// BeginTxWithLevel starts a transaction with given transaction isolation level.
+func (db *Mysql) BeginTxWithLevel(level sql.IsolationLevel) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], level)
 }
 
-// Exec is exec method within the transaction.
-func (SqlTx *SQLTx) Exec(query string, args ...interface{}) (sql.Result, error) {
-	rs, err := SqlTx.Tx.Exec(query, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	if rows, execError := rs.RowsAffected(); execError != nil || rows == 0 {
-		return nil, errors.New("exec fail")
-	}
-
-	return rs, nil
+// BeginTxWithReadUncommittedAndConnection starts a transaction with level LevelReadUncommitted and connection.
+func (db *Mysql) BeginTxWithReadUncommittedAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelReadUncommitted)
 }
 
-// Query is query method within the transaction.
-func (SqlTx *SQLTx) Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
-	rs, err := SqlTx.Tx.Query(query, args...)
-
-	if err != nil {
-		return nil, err
-	}
-
-	col, colErr := rs.Columns()
-
-	if colErr != nil {
-		if closeErr := rs.Close(); closeErr != nil {
-			panic(closeErr)
-		}
-		panic(colErr)
-	}
-
-	typeVal, err := rs.ColumnTypes()
-	if err != nil {
-		if closeErr := rs.Close(); closeErr != nil {
-			panic(closeErr)
-		}
-		panic(err)
-	}
-
-	results := make([]map[string]interface{}, 0)
-
-	for rs.Next() {
-		var colVar = make([]interface{}, len(col))
-		for i := 0; i < len(col); i++ {
-			SetColVarType(&colVar, i, typeVal[i].DatabaseTypeName())
-		}
-		result := make(map[string]interface{})
-		if scanErr := rs.Scan(colVar...); scanErr != nil {
-			if closeErr := rs.Close(); closeErr != nil {
-				panic(closeErr)
-			}
-			panic(scanErr)
-		}
-		for j := 0; j < len(col); j++ {
-			SetResultValue(&result, col[j], colVar[j], typeVal[j].DatabaseTypeName())
-		}
-		results = append(results, result)
-	}
-	if err := rs.Err(); err != nil {
-		if closeErr := rs.Close(); closeErr != nil {
-			panic(closeErr)
-		}
-		panic(err)
-	}
-	return results, nil
+// BeginTxWithReadCommittedAndConnection starts a transaction with level LevelReadCommitted and connection.
+func (db *Mysql) BeginTxWithReadCommittedAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelReadCommitted)
 }
 
-// TxFn is the transaction callback function.
-type TxFn func(*SQLTx) (error, map[string]interface{})
-
-// WithTransaction call the callback function within the transaction and
-// catch the error.
-func (db *Mysql) WithTransaction(fn TxFn) (res map[string]interface{}, err error) {
-
-	tx := db.BeginTransactions()
-
-	defer func() {
-		if p := recover(); p != nil {
-			// a panic occurred, rollback and repanic
-			_ = tx.Tx.Rollback()
-			panic(p)
-		} else if err != nil {
-			// something went wrong, rollback
-			_ = tx.Tx.Rollback()
-		} else {
-			// all good, commit
-			err = tx.Tx.Commit()
-		}
-	}()
-
-	err, res = fn(tx)
-	return
+// BeginTxWithRepeatableReadAndConnection starts a transaction with level LevelRepeatableRead and connection.
+func (db *Mysql) BeginTxWithRepeatableReadAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelRepeatableRead)
 }
 
-// WithTransactionByLevel call the callback function within the transaction
-// of given transaction level and catch the error.
-func (db *Mysql) WithTransactionByLevel(level sql.IsolationLevel, fn TxFn) (res map[string]interface{}, err error) {
+// BeginTxAndConnection starts a transaction with level LevelDefault and connection.
+func (db *Mysql) BeginTxAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelDefault)
+}
 
-	tx := db.BeginTransactionsWithLevel(level)
+// BeginTxWithLevelAndConnection starts a transaction with given transaction isolation level and connection.
+func (db *Mysql) BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], level)
+}
 
-	defer func() {
-		if p := recover(); p != nil {
-			// a panic occurred, rollback and repanic
-			_ = tx.Tx.Rollback()
-			panic(p)
-		} else if err != nil {
-			// something went wrong, rollback
-			_ = tx.Tx.Rollback()
-		} else {
-			// all good, commit
-			err = tx.Tx.Commit()
-		}
-	}()
+// QueryWithTx is query method within the transaction.
+func (db *Mysql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	return CommonQueryWithTx(tx, query, args...)
+}
 
-	err, res = fn(tx)
-	return
+// ExecWithTx is exec method within the transaction.
+func (db *Mysql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+	return CommonExecWithTx(tx, query, args...)
 }

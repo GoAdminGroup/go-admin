@@ -89,3 +89,63 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 		}
 	})
 }
+
+// BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.
+func (db *Postgresql) BeginTxWithReadUncommitted() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelReadUncommitted)
+}
+
+// BeginTxWithReadCommitted starts a transaction with level LevelReadCommitted.
+func (db *Postgresql) BeginTxWithReadCommitted() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelReadCommitted)
+}
+
+// BeginTxWithRepeatableRead starts a transaction with level LevelRepeatableRead.
+func (db *Postgresql) BeginTxWithRepeatableRead() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelRepeatableRead)
+}
+
+// BeginTx starts a transaction with level LevelDefault.
+func (db *Postgresql) BeginTx() *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelDefault)
+}
+
+// BeginTxWithLevel starts a transaction with given transaction isolation level.
+func (db *Postgresql) BeginTxWithLevel(level sql.IsolationLevel) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList["default"], level)
+}
+
+// BeginTxWithReadUncommittedAndConnection starts a transaction with level LevelReadUncommitted and connection.
+func (db *Postgresql) BeginTxWithReadUncommittedAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelReadUncommitted)
+}
+
+// BeginTxWithReadCommittedAndConnection starts a transaction with level LevelReadCommitted and connection.
+func (db *Postgresql) BeginTxWithReadCommittedAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelReadCommitted)
+}
+
+// BeginTxWithRepeatableReadAndConnection starts a transaction with level LevelRepeatableRead and connection.
+func (db *Postgresql) BeginTxWithRepeatableReadAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelRepeatableRead)
+}
+
+// BeginTxAndConnection starts a transaction with level LevelDefault and connection.
+func (db *Postgresql) BeginTxAndConnection(conn string) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], sql.LevelDefault)
+}
+
+// BeginTxWithLevelAndConnection starts a transaction with given transaction isolation level and connection.
+func (db *Postgresql) BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx {
+	return CommonBeginTxWithLevel(db.DbList[conn], level)
+}
+
+// QueryWithTx is query method within the transaction.
+func (db *Postgresql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	return CommonQueryWithTx(tx, filterQuery(query), args...)
+}
+
+// ExecWithTx is exec method within the transaction.
+func (db *Postgresql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+	return CommonExecWithTx(tx, filterQuery(query), args...)
+}

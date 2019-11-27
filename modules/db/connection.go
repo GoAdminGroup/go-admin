@@ -34,6 +34,22 @@ type Connection interface {
 	// ExecWithConnection is the exec method with given connection of sql.
 	ExecWithConnection(conn, query string, args ...interface{}) (sql.Result, error)
 
+	QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error)
+
+	ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error)
+
+	BeginTxWithReadUncommitted() *sql.Tx
+	BeginTxWithReadCommitted() *sql.Tx
+	BeginTxWithRepeatableRead() *sql.Tx
+	BeginTx() *sql.Tx
+	BeginTxWithLevel(level sql.IsolationLevel) *sql.Tx
+
+	BeginTxWithReadUncommittedAndConnection(conn string) *sql.Tx
+	BeginTxWithReadCommittedAndConnection(conn string) *sql.Tx
+	BeginTxWithRepeatableReadAndConnection(conn string) *sql.Tx
+	BeginTxAndConnection(conn string) *sql.Tx
+	BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx
+
 	// InitDB initialize the database connections.
 	InitDB(cfg map[string]config.Database)
 
