@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func TestNewHandler(t *testing.T) {
+func TestGf(t *testing.T) {
 
 	s := newHandler()
 	s.SetPort(8103)

@@ -71,6 +71,8 @@ mysql-test:
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PATH)
+	make import-mysql
+	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PATH)
 
 sqlite-test:
 	make import-sqlite
@@ -88,6 +90,8 @@ sqlite-test:
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_SQLITE_PATH)
+	make import-sqlite
+	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_SQLITE_PATH)
 
 import-sqlite:
 	rm -rf ./tests/common/admin.db
@@ -117,6 +121,8 @@ pg-test:
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PQ_PATH)
+	make import-postgresql
+	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
 
 lint:
 	make golint
