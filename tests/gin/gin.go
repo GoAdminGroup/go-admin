@@ -18,7 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
@@ -37,11 +36,10 @@ func newHandler() http.Handler {
 	adminPlugin := admin.NewAdmin(datamodel.Generators)
 	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
-	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(adminPlugin, examplePlugin).
+		AddPlugins(adminPlugin).
 		Use(r); err != nil {
 		panic(err)
 	}
