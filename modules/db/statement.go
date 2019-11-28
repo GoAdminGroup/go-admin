@@ -9,6 +9,7 @@ import (
 	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -103,6 +104,15 @@ func (sql *SQL) Table(table string) *SQL {
 // Select set select fields.
 func (sql *SQL) Select(fields ...string) *SQL {
 	sql.Fields = fields
+	sql.Functions = make([]string, len(fields))
+	reg, _ := regexp.Compile("(.*?)\\((.*?)\\)")
+	for k, field := range fields {
+		res := reg.FindAllStringSubmatch(field, -1)
+		if len(res) > 0 && len(res[0]) > 2 {
+			sql.Functions[k] = res[0][1]
+			sql.Fields[k] = res[0][2]
+		}
+	}
 	return sql
 }
 
@@ -113,10 +123,10 @@ func (sql *SQL) OrderBy(fields ...string) *SQL {
 	}
 	for i := 0; i < len(fields); i++ {
 		if i == len(fields)-2 {
-			sql.Order += " " + sql.filed(fields[i]) + " " + fields[i+1]
+			sql.Order += " " + sql.wrap(fields[i]) + " " + fields[i+1]
 			return sql
 		}
-		sql.Order += " " + sql.filed(fields[i]) + " and "
+		sql.Order += " " + sql.wrap(fields[i]) + " and "
 	}
 	return sql
 }
@@ -187,6 +197,80 @@ func (sql *SQL) Count() (int64, error) {
 		return 0, err
 	}
 	return res["count(*)"].(int64), nil
+}
+
+// Sum sum the value of given field.
+func (sql *SQL) Sum(field string) (float64, error) {
+	var (
+		res map[string]interface{}
+		err error
+	)
+	if res, err = sql.Select("sum(" + field + ")").First(); err != nil {
+		return 0, err
+	}
+
+	if res == nil {
+		return 0, nil
+	}
+
+	if r, ok := res["sum("+sql.wrap(field)+")"].(float64); ok {
+		return r, nil
+	} else if r, ok := res["sum("+sql.wrap(field)+")"].([]uint8); ok {
+		return strconv.ParseFloat(string(r), 64)
+	} else {
+		return 0, nil
+	}
+}
+
+// Max find the maximal value of given field.
+func (sql *SQL) Max(field string) (interface{}, error) {
+	var (
+		res map[string]interface{}
+		err error
+	)
+	if res, err = sql.Select("max(" + field + ")").First(); err != nil {
+		return 0, err
+	}
+
+	if res == nil {
+		return 0, nil
+	}
+
+	return res["max("+sql.wrap(field)+")"], nil
+}
+
+// Min find the minimal value of given field.
+func (sql *SQL) Min(field string) (interface{}, error) {
+	var (
+		res map[string]interface{}
+		err error
+	)
+	if res, err = sql.Select("min(" + field + ")").First(); err != nil {
+		return 0, err
+	}
+
+	if res == nil {
+		return 0, nil
+	}
+
+	return res["min("+sql.wrap(field)+")"], nil
+}
+
+// Avg find the average value of given field.
+func (sql *SQL) Avg(field string) (interface{}, error) {
+	var (
+		res map[string]interface{}
+		err error
+	)
+	if res, err = sql.Select("avg(" + field + ")").First(); err != nil {
+		return 0, err
+	}
+
+	if res == nil {
+		return 0, nil
+	}
+
+	return res["avg("+sql.wrap(field)+")"], nil
 }
 
 // WhereRaw set WhereRaws and arguments.
@@ -471,8 +555,8 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 	return res.LastInsertId()
 }
 
-func (sql *SQL) filed(filed string) string {
-	return sql.diver.GetDelimiter() + filed + sql.diver.GetDelimiter()
+func (sql *SQL) wrap(field string) string {
+	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter()
 }
 
 // RecycleSQL clear the SQL and put into the pool.

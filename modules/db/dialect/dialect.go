@@ -71,6 +71,7 @@ type H map[string]interface{}
 // SQLComponent is a sql components set.
 type SQLComponent struct {
 	Fields     []string
+	Functions  []string
 	TableName  string
 	Wheres     []Where
 	Leftjoins  []Join
@@ -136,7 +137,7 @@ func (sql *SQLComponent) getJoins(delimiter string) string {
 	}
 	joins := ""
 	for _, join := range sql.Leftjoins {
-		joins += " left join " + delimiter + join.Table + delimiter + " on " + join.FieldA + " " + join.Operation + " " + join.FieldB + " "
+		joins += " left join " + wrap(delimiter, join.Table) + " on " + join.FieldA + " " + join.Operation + " " + join.FieldB + " "
 	}
 	return joins
 }
@@ -145,25 +146,33 @@ func (sql *SQLComponent) getFields(delimiter string) string {
 	if len(sql.Fields) == 0 {
 		return "*"
 	}
-	if sql.Fields[0] == "count(*)" {
-		return "count(*)"
-	}
 	fields := ""
 	if len(sql.Leftjoins) == 0 {
-		for _, field := range sql.Fields {
-			fields += delimiter + field + delimiter + ","
+		for k, field := range sql.Fields {
+			if sql.Functions[k] != "" {
+				fields += sql.Functions[k] + "(" + wrap(delimiter, field) + "),"
+			} else {
+				fields += wrap(delimiter, field) + ","
+			}
 		}
 	} else {
 		for _, field := range sql.Fields {
 			arr := strings.Split(field, ".")
 			if len(arr) > 1 {
-				fields += arr[0] + "." + delimiter + arr[1] + delimiter + ","
+				fields += arr[0] + "." + wrap(delimiter, arr[1]) + ","
 			} else {
-				fields += delimiter + field + delimiter + ","
+				fields += wrap(delimiter, field) + ","
 			}
 		}
 	}
 	return fields[:len(fields)-1]
+}
+
+func wrap(delimiter, field string) string {
+	if field == "*" {
+		return "*"
+	}
+	return delimiter + field + delimiter
 }
 
 func (sql *SQLComponent) getWheres(delimiter string) string {
@@ -178,9 +187,9 @@ func (sql *SQLComponent) getWheres(delimiter string) string {
 	for _, where := range sql.Wheres {
 		arr = strings.Split(where.Field, ".")
 		if len(arr) > 1 {
-			wheres += arr[0] + "." + delimiter + arr[1] + delimiter + " " + where.Operation + " " + where.Qmark + " and "
+			wheres += arr[0] + "." + wrap(delimiter, arr[1]) + " " + where.Operation + " " + where.Qmark + " and "
 		} else {
-			wheres += delimiter + where.Field + delimiter + " " + where.Operation + " " + where.Qmark + " and "
+			wheres += wrap(delimiter, where.Field) + " " + where.Operation + " " + where.Qmark + " and "
 		}
 	}
 
@@ -197,7 +206,7 @@ func (sql *SQLComponent) prepareUpdate(delimiter string) {
 	if len(sql.Values) != 0 {
 
 		for key, value := range sql.Values {
-			fields += delimiter + key + delimiter + " = ?, "
+			fields += wrap(delimiter, key) + " = ?, "
 			args = append(args, value)
 		}
 
@@ -239,7 +248,7 @@ func (sql *SQLComponent) prepareInsert(delimiter string) {
 	quesMark := "("
 
 	for key, value := range sql.Values {
-		fields += delimiter + key + delimiter + ","
+		fields += wrap(delimiter, key) + ","
 		quesMark += "?,"
 		sql.Args = append(sql.Args, value)
 	}
