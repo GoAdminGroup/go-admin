@@ -60,19 +60,22 @@ func (gf *Gf) SetApp(app interface{}) error {
 }
 
 func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
-	pluginReqUrl := path
-	reg1 := regexp.MustCompile(":(.*?)/")
-	reg2 := regexp.MustCompile(":(.*?)$")
 	gf.app.BindHandler(strings.ToUpper(method)+":"+path, func(c *ghttp.Request) {
 		ctx := context.NewContext(c.Request)
 
-		params := reg1.FindAllString(pluginReqUrl, -1)
-		pluginReqUrl = reg1.ReplaceAllString(pluginReqUrl, "")
-		params = append(params, reg2.FindAllString(pluginReqUrl, -1)...)
+		newPath := path
+
+		reg1 := regexp.MustCompile(":(.*?)/")
+		reg2 := regexp.MustCompile(":(.*?)$")
+
+		params := reg1.FindAllString(newPath, -1)
+		newPath = reg1.ReplaceAllString(newPath, "")
+		params = append(params, reg2.FindAllString(newPath, -1)...)
 
 		for _, param := range params {
 			p := strings.Replace(param, ":", "", -1)
 			p = strings.Replace(p, "/", "", -1)
+
 			if c.Request.URL.RawQuery == "" {
 				c.Request.URL.RawQuery += p + "=" + c.GetRequestString(p)
 			} else {

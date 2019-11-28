@@ -3,6 +3,7 @@ package gf
 import (
 	// add gf adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
+	"net/http"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -23,7 +24,7 @@ import (
 	"os"
 )
 
-func newHandler() *ghttp.Server {
+func newHandler() http.Handler {
 	s := g.Server(8103)
 
 	eng := engine.Default()
@@ -46,5 +47,19 @@ func newHandler() *ghttp.Server {
 		})
 	})
 
-	return s
+	return new(httpHandler).SetSrv(s)
+}
+
+type httpHandler struct {
+	srv *ghttp.Server
+}
+
+func (hh *httpHandler) SetSrv(s *ghttp.Server) *httpHandler {
+	hh.srv = s
+	return hh
+}
+
+func (hh *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// NOTE: ╮(╯▽╰)╭
+	hh.srv.DefaultHttpHandle(w, r)
 }
