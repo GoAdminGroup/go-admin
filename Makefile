@@ -52,7 +52,6 @@ deps:
 	govendor sync
 
 test:
-	make fix-gf
 	make mysql-test
 	make pg-test
 	make sqlite-test
@@ -128,8 +127,6 @@ pg-test:
 
 fix-gf:
 	go get -u -v github.com/gogf/gf@v1.9.10
-	ls $(GOPATH)/pkg/mod/github.com/gogf
-	ls $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/
 	sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
 
 lint:
