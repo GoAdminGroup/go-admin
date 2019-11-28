@@ -20,7 +20,7 @@ before_script:
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
   - go get -u github.com/rakyll/gotest
   - go get -u -v github.com/gogf/gf@v1.9.10
-  - sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
 
 script:
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
