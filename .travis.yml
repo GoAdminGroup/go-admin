@@ -1,5 +1,5 @@
 language: go
-sudo: false
+sudo: true
 
 go:
   - 1.13.x

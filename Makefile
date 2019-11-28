@@ -52,6 +52,7 @@ deps:
 	govendor sync
 
 test:
+	make fix-gf
 	make mysql-test
 	make pg-test
 	make sqlite-test
@@ -71,7 +72,6 @@ mysql-test:
 	make import-mysql
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	make fix-gf
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
 	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PATH)
@@ -91,7 +91,6 @@ sqlite-test:
 	make import-sqlite
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	make fix-gf
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
 	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_SQLITE_PATH)
@@ -123,14 +122,13 @@ pg-test:
 	make import-postgresql
 	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	make fix-gf
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
 	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
 
 fix-gf:
 	go get -u -v github.com/gogf/gf@v1.9.10
-	echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+	sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
 
 lint:
 	make golint
