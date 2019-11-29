@@ -32,10 +32,14 @@ func init() {
 	engine.Register(new(Echo))
 }
 
-func User(ci interface{}) models.UserModel {
-	cookie, _ := new(Echo).SetContext(ci).GetCookie()
-	user, _ := auth.GetCurUser(cookie)
-	return user
+func User(ci interface{}) (models.UserModel, bool) {
+	cookie, err := new(Echo).SetContext(ci).GetCookie()
+
+	if err != nil {
+		return models.UserModel{}, false
+	}
+
+	return auth.GetCurUser(cookie)
 }
 
 func (e *Echo) Use(router interface{}, plugs []plugins.Plugin) error {

@@ -95,7 +95,7 @@ func (e NewFormParam) IsManage() bool {
 }
 
 func (e *NewFormParam) GetUrl() string {
-	return config.Get().Url("/edit/" + e.Prefix)
+	return config.Get().Url("/new/" + e.Prefix)
 }
 
 func (e *NewFormParam) GetInfoUrl() string {

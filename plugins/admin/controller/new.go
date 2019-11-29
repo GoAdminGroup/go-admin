@@ -20,10 +20,10 @@ import (
 // ShowNewForm show a new form page.
 func ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
-	showNewForm(ctx, "", param.Panel, param.GetUrl(), param.GetInfoUrl())
+	showNewForm(ctx, "", param.Panel, param.GetUrl(), param.GetInfoUrl(), "")
 }
 
-func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, url, infoUrl string) {
+func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, url, infoUrl, newUrl string) {
 
 	user := auth.Auth(ctx)
 
@@ -51,6 +51,10 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 		Title:       panel.GetForm().Title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	ctx.HTML(http.StatusOK, buf.String())
+
+	if newUrl != "" {
+		ctx.AddHeader(constant.PjaxUrlHeader, newUrl)
+	}
 }
 
 // NewForm insert a table row into database.
@@ -61,7 +65,7 @@ func NewForm(ctx *context.Context) {
 	table.RefreshTableList()
 
 	if param.HasAlert() {
-		showNewForm(ctx, param.Alert, param.Panel, param.GetUrl(), param.GetInfoUrl())
+		showNewForm(ctx, param.Alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 		return
 	}
 
@@ -73,7 +77,7 @@ func NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl())
+			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 			return
 		}
 	}
@@ -89,7 +93,7 @@ func NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl())
+			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 			return
 		}
 	}

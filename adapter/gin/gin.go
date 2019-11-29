@@ -32,10 +32,14 @@ func init() {
 	engine.Register(new(Gin))
 }
 
-func User(ci interface{}) models.UserModel {
-	cookie, _ := new(Gin).SetContext(ci).GetCookie()
-	user, _ := auth.GetCurUser(cookie)
-	return user
+func User(ci interface{}) (models.UserModel, bool) {
+	cookie, err := new(Gin).SetContext(ci).GetCookie()
+
+	if err != nil {
+		return models.UserModel{}, false
+	}
+
+	return auth.GetCurUser(cookie)
 }
 
 func (gins *Gin) Use(router interface{}, plugs []plugins.Plugin) error {

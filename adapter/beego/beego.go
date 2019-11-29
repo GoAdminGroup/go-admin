@@ -33,10 +33,14 @@ func init() {
 	engine.Register(new(Beego))
 }
 
-func User(ci interface{}) models.UserModel {
-	cookie, _ := new(Beego).SetContext(ci).GetCookie()
-	user, _ := auth.GetCurUser(cookie)
-	return user
+func User(ci interface{}) (models.UserModel, bool) {
+	cookie, err := new(Beego).SetContext(ci).GetCookie()
+
+	if err != nil {
+		return models.UserModel{}, false
+	}
+
+	return auth.GetCurUser(cookie)
 }
 
 func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
