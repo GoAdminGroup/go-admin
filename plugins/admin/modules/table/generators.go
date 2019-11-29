@@ -2,12 +2,16 @@ package table
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"strings"
 )
@@ -139,8 +143,70 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 
 	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
+	formList.SetUpdateFn(func(values form2.Values) error {
+
+		if values.IsEmpty("name", "username") {
+			return errors.New("username and password can not be empty")
+		}
+
+		user := models.UserWithId(values.Get("id"))
+
+		password := values.Get("password")
+
+		if password != "" {
+
+			if password != values.Get("password_again") {
+				panic("password does not match")
+			}
+
+			password = encodePassword([]byte(values.Get("password")))
+		}
+
+		user.Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+
+		user.DeleteRoles()
+		for i := 0; i < len(values["role_id[]"]); i++ {
+			user.AddRole(values["role_id[]"][i])
+		}
+
+		user.DeletePermissions()
+		for i := 0; i < len(values["permission_id[]"]); i++ {
+			user.AddPermission(values["permission_id[]"][i])
+		}
+
+		return nil
+	})
+	formList.SetInsertFn(func(values form2.Values) error {
+		if values.IsEmpty("name", "username", "password") {
+			return errors.New("username and password can not be empty")
+		}
+
+		user := models.User().New(values.Get("username"),
+			encodePassword([]byte(values.Get("password"))),
+			values.Get("name"),
+			values.Get("avatar"))
+
+		// TODO: Add transaction support.
+
+		for i := 0; i < len(values["role_id[]"]); i++ {
+			user.AddRole(values["role_id[]"][i])
+		}
+
+		for i := 0; i < len(values["permission_id[]"]); i++ {
+			user.AddPermission(values["permission_id[]"][i])
+		}
+		return nil
+	})
 
 	return
+}
+
+func encodePassword(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
+	if err != nil {
+		return ""
+	}
+	return string(hash[:])
 }
 
 func GetPermissionTable() (PermissionTable Table) {
@@ -344,6 +410,31 @@ func GetRolesTable() (RolesTable Table) {
 	formList.SetTable("goadmin_roles").
 		SetTitle(lg("Roles Manage")).
 		SetDescription(lg("Roles Manage"))
+
+	formList.SetUpdateFn(func(values form2.Values) error {
+
+		role := models.RoleWithId(values.Get("id"))
+
+		role.Update(values.Get("name"), values.Get("slug"))
+
+		role.DeletePermissions()
+		for i := 0; i < len(values["permission_id[]"]); i++ {
+			role.AddPermission(values["permission_id[]"][i])
+		}
+
+		return nil
+	})
+
+	formList.SetInsertFn(func(values form2.Values) error {
+
+		role := models.Role().New(values.Get("name"), values.Get("slug"))
+
+		for i := 0; i < len(values["permission_id[]"]); i++ {
+			role.AddPermission(values["permission_id[]"][i])
+		}
+
+		return nil
+	})
 
 	return
 }

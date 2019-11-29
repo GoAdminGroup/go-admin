@@ -89,20 +89,14 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	if param.IsManage() { // manager edit
-		editManager(param.Value())
-	} else if param.IsRole() { // role edit
-		editRole(param.Value())
-	} else {
-		err := param.Panel.UpdateDataFromDatabase(param.Value())
-		if err != nil {
-			alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").
-				SetContent(template2.HTML(err.Error())).
-				GetContent()
-			showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
-			return
-		}
+	err := param.Panel.UpdateDataFromDatabase(param.Value())
+	if err != nil {
+		alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+		showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+		return
 	}
 
 	table.RefreshTableList()

@@ -82,20 +82,14 @@ func NewForm(ctx *context.Context) {
 		}
 	}
 
-	if param.IsManage() { // manager edit
-		newManager(param.Value())
-	} else if param.IsRole() { // role edit
-		newRole(param.Value())
-	} else {
-		err := param.Panel.InsertDataFromDatabase(param.Value())
-		if err != nil {
-			alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-				SetTheme("warning").
-				SetContent(template2.HTML(err.Error())).
-				GetContent()
-			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
-			return
-		}
+	err := param.Panel.InsertDataFromDatabase(param.Value())
+	if err != nil {
+		alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+		showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+		return
 	}
 
 	if !param.FromList {
