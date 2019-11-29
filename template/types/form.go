@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -53,7 +54,8 @@ type FormField struct {
 	Must        bool
 	Hide        bool
 
-	HelpMsg template.HTML
+	HelpMsg   template.HTML
+	OptionExt template.JS
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
@@ -189,6 +191,12 @@ func (f *FormPanel) FieldHide() *FormPanel {
 
 func (f *FormPanel) FieldHelpMsg(s template.HTML) *FormPanel {
 	f.FieldList[f.curFieldListIndex].HelpMsg = s
+	return f
+}
+
+func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
+	s, _ := json.Marshal(m)
+	f.FieldList[f.curFieldListIndex].OptionExt = template.JS(s)
 	return f
 }
 
