@@ -59,6 +59,8 @@ type DataTableAttribute struct {
 	IsTab      bool
 	ExportUrl  string
 	InfoUrl    string
+	Buttons    template.HTML
+	ActionJs   template.JS
 	NoAction   bool
 	Action     template.HTML
 	FilterUrl  string
@@ -77,6 +79,16 @@ func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataT
 
 func (compo *DataTableAttribute) SetIsTab(value bool) types.DataTableAttribute {
 	compo.IsTab = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetButtons(btns template.HTML) types.DataTableAttribute {
+	compo.Buttons = btns
+	return compo
+}
+
+func (compo *DataTableAttribute) SetActionJs(aj template.JS) types.DataTableAttribute {
+	compo.ActionJs = aj
 	return compo
 }
 

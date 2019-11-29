@@ -79,6 +79,8 @@ type DataTableAttribute interface {
 	SetPrimaryKey(value string) DataTableAttribute
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
+	SetButtons(btns template.HTML) DataTableAttribute
+	SetActionJs(aj template.JS) DataTableAttribute
 	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute

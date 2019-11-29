@@ -72,6 +72,8 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		dataTable types.DataTableAttribute
 	)
 
+	btns, actionJs := panel.GetInfo().Buttons.Content()
+
 	if panel.GetInfo().TabGroups.Valid() {
 
 		dataTable = aDataTable().
@@ -92,6 +94,8 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 					SetInfoList(infoListArr[key]).
 					SetFilters(panel.GetFiltersMap()).
 					SetInfoUrl(infoUrl).
+					SetButtons(btns).
+					SetActionJs(actionJs).
 					SetAction(panel.GetInfo().Action).
 					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
@@ -109,6 +113,8 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetInfoList(panelInfo.InfoList).
 			SetFilters(panel.GetFiltersMap()).
 			SetInfoUrl(infoUrl).
+			SetButtons(btns).
+			SetActionJs(actionJs).
 			SetAction(panel.GetInfo().Action).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).

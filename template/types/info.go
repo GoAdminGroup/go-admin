@@ -1,112 +1,15 @@
-// Copyright 2019 GoAdmin Core Team. All rights reserved.
-// Use of this source code is governed by a Apache-2.0 style
-// license that can be found in the LICENSE file.
-
 package types
 
 import (
 	"encoding/json"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
 	"html"
 	"html/template"
 	"strconv"
 	"strings"
 )
-
-// Attribute is the component interface of template. Every component of
-// template should implement it.
-type Attribute struct {
-	TemplateList map[string]string
-}
-
-// Page used in the template as a top variable.
-type Page struct {
-	// User is the login user.
-	User models.UserModel
-
-	// Menu is the left side menu of the template.
-	Menu menu.Menu
-
-	// Panel is the main content of template.
-	Panel Panel
-
-	// System contains some system info.
-	System SystemInfo
-
-	// UrlPrefix is the prefix of url.
-	UrlPrefix string
-
-	// Title is the title of the web page.
-	Title string
-
-	// Logo is the logo of the template.
-	Logo template.HTML
-
-	// MiniLogo is the downsizing logo of the template.
-	MiniLogo template.HTML
-
-	// ColorScheme is the color scheme of the template.
-	ColorScheme string
-
-	// IndexUrl is the home page url of the site.
-	IndexUrl string
-
-	// AssetUrl is the cdn link of assets
-	CdnUrl string
-
-	// Custom html in the tag head.
-	CustomHeadHtml template.HTML
-
-	// Custom html after body.
-	CustomFootHtml template.HTML
-
-	// Components assets
-	AssetsList template.HTML
-}
-
-func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML) Page {
-	return Page{
-		User:  user,
-		Menu:  menu,
-		Panel: panel,
-		System: SystemInfo{
-			Version: system.Version,
-		},
-		UrlPrefix:      cfg.Prefix(),
-		Title:          cfg.Title,
-		Logo:           cfg.Logo,
-		MiniLogo:       cfg.MiniLogo,
-		ColorScheme:    cfg.ColorScheme,
-		IndexUrl:       cfg.GetIndexURL(),
-		CdnUrl:         cfg.AssetUrl,
-		CustomHeadHtml: cfg.CustomHeadHtml,
-		CustomFootHtml: cfg.CustomFootHtml,
-		AssetsList:     assetsList,
-	}
-}
-
-// SystemInfo contains basic info of system.
-type SystemInfo struct {
-	Version string
-}
-
-// Panel contains the main content of the template which used as pjax.
-type Panel struct {
-	Content     template.HTML
-	Title       string
-	Description string
-	Url         string
-}
-
-type GetPanelFn func(ctx interface{}) (Panel, error)
 
 // FieldModel is the single query result.
 type FieldModel struct {
@@ -422,6 +325,13 @@ func (t TabHeaders) Add(header string) TabHeaders {
 
 type DeleteFn func(ids []string) error
 
+type Sort uint8
+
+const (
+	SortDesc Sort = iota
+	SortAsc
+)
+
 // InfoPanel
 type InfoPanel struct {
 	FieldList         []Field
@@ -448,6 +358,8 @@ type InfoPanel struct {
 	IsHideRowSelector  bool
 	IsHidePagination   bool
 
+	Buttons Buttons
+
 	DeleteHook  DeleteFn
 	PreDeleteFn DeleteFn
 	DeleteFn    DeleteFn
@@ -457,6 +369,62 @@ type InfoPanel struct {
 	Action     template.HTML
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
+}
+
+type Action interface {
+	Js() template.JS
+	BtnAttribute() template.HTML
+	ExtContent() template.HTML
+	SetBtnId(btnId string)
+}
+
+type Button struct {
+	Id        string
+	Title     template.HTML
+	Color     template.HTML
+	TextColor template.HTML
+	Action    Action
+	Icon      string
+}
+
+func (b Button) Content() (template.HTML, template.JS) {
+
+	color := template.HTML("")
+	if b.Color != template.HTML("") {
+		color = template.HTML(`background-color:`) + b.Color + template.HTML(`;`)
+	}
+	textColor := template.HTML("")
+	if b.TextColor != template.HTML("") {
+		textColor = template.HTML(`color:`) + b.TextColor + template.HTML(`;`)
+	}
+
+	style := template.HTML("")
+	addColor := color + textColor
+
+	if addColor != template.HTML("") {
+		style = template.HTML(`style="`) + addColor + template.HTML(`"`)
+	}
+
+	h := template.HTML(`<div class="btn-group pull-right" style="margin-right: 10px">
+                <a id="`+template.HTML(b.Id)+`" `+style+`class="btn btn-sm btn-default" `+b.Action.BtnAttribute()+`>
+                    <i class="fa `+template.HTML(b.Icon)+`"></i>&nbsp;&nbsp;`+b.Title+`
+                </a>
+        </div>`) + b.Action.ExtContent()
+	return h, b.Action.Js()
+}
+
+type Buttons []Button
+
+func (b Buttons) Content() (template.HTML, template.JS) {
+	h := template.HTML("")
+	j := template.JS("")
+
+	for _, btn := range b {
+		hh, jj := btn.Content()
+		h += hh
+		j += jj
+	}
+	return h, j
 }
 
 var DefaultPageSizeList = []int{10, 20, 30, 50, 100}
@@ -469,7 +437,23 @@ func NewInfoPanel() *InfoPanel {
 		PageSizeList:      DefaultPageSizeList,
 		DefaultPageSize:   DefaultPageSize,
 		processChains:     make(DisplayProcessFnChains, 0),
+		Buttons:           make(Buttons, 0),
 	}
+}
+
+func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {
+	id := "info-btn-" + utils.Uuid(10)
+	action.SetBtnId(id)
+	if len(color) == 0 {
+		i.Buttons = append(i.Buttons, Button{Title: title, Id: id, Action: action, Icon: icon})
+	}
+	if len(color) == 1 {
+		i.Buttons = append(i.Buttons, Button{Title: title, Color: color[0], Id: id, Action: action, Icon: icon})
+	}
+	if len(color) >= 2 {
+		i.Buttons = append(i.Buttons, Button{Title: title, Color: color[0], TextColor: color[1], Id: id, Action: action, Icon: icon})
+	}
+	return i
 }
 
 func (i *InfoPanel) AddLimitFilter(limit int) *InfoPanel {
@@ -748,365 +732,4 @@ func (i *InfoPanel) HideEditButton() *InfoPanel {
 func (i *InfoPanel) HideDeleteButton() *InfoPanel {
 	i.IsHideDeleteButton = true
 	return i
-}
-
-type Sort uint8
-
-const (
-	SortDesc Sort = iota
-	SortAsc
-)
-
-type FieldOptions []map[string]string
-
-func (fo FieldOptions) SetSelected(val interface{}, labels []string) {
-
-	if valArr, ok := val.([]string); ok {
-		for _, v := range fo {
-			if modules.InArray(valArr, v["value"]) {
-				v["selected"] = labels[0]
-			} else {
-				v["selected"] = labels[1]
-			}
-		}
-	} else {
-		for _, v := range fo {
-			if v["value"] == val {
-				v["selected"] = labels[0]
-			} else {
-				v["selected"] = labels[1]
-			}
-		}
-	}
-}
-
-// FormField is the form field with different options.
-type FormField struct {
-	Field    string
-	TypeName db.DatabaseType
-	Head     string
-	FormType form.Type
-
-	Default                string
-	Value                  string
-	Options                FieldOptions
-	DefaultOptionDelimiter string
-
-	CustomContent template.HTML
-	CustomJs      template.JS
-	CustomCss     template.CSS
-
-	Editable    bool
-	NotAllowAdd bool
-	Must        bool
-	Hide        bool
-
-	HelpMsg template.HTML
-
-	FieldDisplay
-	PostFilterFn PostFieldFilterFn
-}
-
-func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
-	if f.FormType.IsSelect() {
-		f.Options.SetSelected(f.ToDisplay(FieldModel{
-			ID:    id,
-			Value: val,
-			Row:   res,
-		}), f.FormType.SelectedLabel())
-	} else {
-		f.Value = f.ToDisplay(FieldModel{
-			ID:    id,
-			Value: val,
-			Row:   res,
-		}).(string)
-	}
-	return f
-}
-
-// FormPanel
-type FormPanel struct {
-	FieldList         FormFields
-	curFieldListIndex int
-
-	// Warn: may be deprecated in the future.
-	TabGroups  TabGroups
-	TabHeaders TabHeaders
-
-	Table       string
-	Title       string
-	Description string
-
-	Validator FormPostFn
-	PostHook  FormPostFn
-
-	UpdateFn FormPostFn
-	InsertFn FormPostFn
-
-	processChains DisplayProcessFnChains
-
-	HeaderHtml template.HTML
-	FooterHtml template.HTML
-}
-
-func NewFormPanel() *FormPanel {
-	return &FormPanel{curFieldListIndex: -1}
-}
-
-func (f *FormPanel) AddLimitFilter(limit int) *FormPanel {
-	f.processChains = addLimit(limit, f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddTrimSpaceFilter() *FormPanel {
-	f.processChains = addTrimSpace(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddSubstrFilter(start int, end int) *FormPanel {
-	f.processChains = addSubstr(start, end, f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddToTitleFilter() *FormPanel {
-	f.processChains = addToTitle(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddToUpperFilter() *FormPanel {
-	f.processChains = addToUpper(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddToLowerFilter() *FormPanel {
-	f.processChains = addToLower(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddXssFilter() *FormPanel {
-	f.processChains = addXssFilter(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddXssJsFilter() *FormPanel {
-	f.processChains = addXssJsFilter(f.processChains)
-	return f
-}
-
-func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form.Type) *FormPanel {
-	f.FieldList = append(f.FieldList, FormField{
-		Head:     head,
-		Field:    field,
-		TypeName: filedType,
-		Editable: true,
-		Hide:     false,
-		FormType: formType,
-		FieldDisplay: FieldDisplay{
-			Display: func(value FieldModel) interface{} {
-				return value.Value
-			},
-			DisplayProcessChains: chooseDisplayProcessChains(f.processChains),
-		},
-	})
-	f.curFieldListIndex++
-	return f
-}
-
-// Field attribute setting functions
-// ====================================================
-
-func (f *FormPanel) FieldDisplay(filter FieldFilterFn) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Display = filter
-	return f
-}
-
-func (f *FormPanel) SetTable(table string) *FormPanel {
-	f.Table = table
-	return f
-}
-
-func (f *FormPanel) FieldMust() *FormPanel {
-	f.FieldList[f.curFieldListIndex].Must = true
-	return f
-}
-
-func (f *FormPanel) FieldHide() *FormPanel {
-	f.FieldList[f.curFieldListIndex].Hide = true
-	return f
-}
-
-func (f *FormPanel) FieldHelpMsg(s template.HTML) *FormPanel {
-	f.FieldList[f.curFieldListIndex].HelpMsg = s
-	return f
-}
-
-func (f *FormPanel) FieldDefault(def string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Default = def
-	return f
-}
-
-func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
-	f.FieldList[f.curFieldListIndex].Editable = false
-	return f
-}
-
-func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
-	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
-	return f
-}
-
-func (f *FormPanel) FieldFormType(formType form.Type) *FormPanel {
-	f.FieldList[f.curFieldListIndex].FormType = formType
-	return f
-}
-
-func (f *FormPanel) FieldValue(value string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Value = value
-	return f
-}
-
-func (f *FormPanel) FieldOptions(options []map[string]string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Options = options
-	return f
-}
-
-func (f *FormPanel) FieldDefaultOptionDelimiter(delimiter string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].DefaultOptionDelimiter = delimiter
-	return f
-}
-
-func (f *FormPanel) FieldPostFilterFn(post PostFieldFilterFn) *FormPanel {
-	f.FieldList[f.curFieldListIndex].PostFilterFn = post
-	return f
-}
-
-func (f *FormPanel) FieldLimit(limit int) *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddLimit(limit)
-	return f
-}
-
-func (f *FormPanel) FieldTrimSpace() *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddTrimSpace()
-	return f
-}
-
-func (f *FormPanel) FieldSubstr(start int, end int) *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddSubstr(start, end)
-	return f
-}
-
-func (f *FormPanel) FieldToTitle() *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToTitle()
-	return f
-}
-
-func (f *FormPanel) FieldToUpper() *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToUpper()
-	return f
-}
-
-func (f *FormPanel) FieldToLower() *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToLower()
-	return f
-}
-
-func (f *FormPanel) FieldXssFilter() *FormPanel {
-	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].DisplayProcessChains.
-		Add(func(s string) string {
-			return html.EscapeString(s)
-		})
-	return f
-}
-
-func (f *FormPanel) FieldCustomContent(content template.HTML) *FormPanel {
-	f.FieldList[f.curFieldListIndex].CustomContent = content
-	return f
-}
-
-func (f *FormPanel) FieldCustomJs(js template.JS) *FormPanel {
-	f.FieldList[f.curFieldListIndex].CustomJs = js
-	return f
-}
-
-func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
-	f.FieldList[f.curFieldListIndex].CustomCss = css
-	return f
-}
-
-// FormPanel attribute setting functions
-// ====================================================
-
-func (f *FormPanel) SetTitle(title string) *FormPanel {
-	f.Title = title
-	return f
-}
-
-func (f *FormPanel) SetTabGroups(groups TabGroups) *FormPanel {
-	f.TabGroups = groups
-	return f
-}
-
-func (f *FormPanel) SetTabHeaders(headers ...string) *FormPanel {
-	f.TabHeaders = headers
-	return f
-}
-
-func (f *FormPanel) SetDescription(desc string) *FormPanel {
-	f.Description = desc
-	return f
-}
-
-func (f *FormPanel) SetHeaderHtml(header template.HTML) *FormPanel {
-	f.HeaderHtml = header
-	return f
-}
-
-func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
-	f.FooterHtml = footer
-	return f
-}
-
-func (f *FormPanel) SetPostValidator(va FormPostFn) *FormPanel {
-	f.Validator = va
-	return f
-}
-
-func (f *FormPanel) SetPostHook(po FormPostFn) *FormPanel {
-	f.PostHook = po
-	return f
-}
-
-func (f *FormPanel) SetUpdateFn(po FormPostFn) *FormPanel {
-	f.UpdateFn = po
-	return f
-}
-
-func (f *FormPanel) SetInsertFn(po FormPostFn) *FormPanel {
-	f.InsertFn = po
-	return f
-}
-
-type FormPostFn func(values form2.Values) error
-
-type FormFields []FormField
-
-func (f FormFields) Copy() FormFields {
-	formList := make(FormFields, len(f))
-	copy(formList, f)
-	for i := 0; i < len(formList); i++ {
-		formList[i].Options = make([]map[string]string, len(f[i].Options))
-		for j := 0; j < len(f[i].Options); j++ {
-			formList[i].Options[j] = modules.CopyMap(f[i].Options[j])
-		}
-	}
-	return formList
-}
-
-func (f FormFields) FindByFieldName(field string) FormField {
-	for i := 0; i < len(f); i++ {
-		if f[i].Field == field {
-			return f[i]
-		}
-	}
-	return FormField{}
 }
