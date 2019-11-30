@@ -33,7 +33,7 @@ func GetManagerTable() (ManagerTable Table) {
 				All()
 
 			labels := template.HTML("")
-			labelTpl := template.Get(config.Get().Theme).Label()
+			labelTpl := label().SetType("success")
 
 			for key, label := range labelModels {
 				if key == len(labelModels)-1 {
@@ -201,14 +201,6 @@ func GetManagerTable() (ManagerTable Table) {
 	return
 }
 
-func encodePassword(pwd []byte) string {
-	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
-	if err != nil {
-		return ""
-	}
-	return string(hash[:])
-}
-
 func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
@@ -229,9 +221,9 @@ func GetPermissionTable() (PermissionTable Table) {
 			res := ""
 			for i := 0; i < len(pathArr); i++ {
 				if i == len(pathArr)-1 {
-					res += string(template.Get(config.Get().Theme).Label().SetContent(template.HTML(pathArr[i])).GetContent())
+					res += string(label().SetContent(template.HTML(pathArr[i])).GetContent())
 				} else {
-					res += string(template.Get(config.Get().Theme).Label().SetContent(template.HTML(pathArr[i])).GetContent()) + "<br><br>"
+					res += string(label().SetContent(template.HTML(pathArr[i])).GetContent()) + "<br><br>"
 				}
 			}
 			return res
@@ -596,6 +588,22 @@ func GetMenuTable() (MenuTable Table) {
 		SetDescription(lg("Menus Manage"))
 
 	return
+}
+
+// -------------------------
+// helper functions
+// -------------------------
+
+func encodePassword(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.DefaultCost)
+	if err != nil {
+		return ""
+	}
+	return string(hash[:])
+}
+
+func label() types.LabelAttribute {
+	return template.Get(config.Get().Theme).Label().SetType("success")
 }
 
 func lg(v string) string {
