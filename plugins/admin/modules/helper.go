@@ -46,6 +46,16 @@ func IsInfoUrl(s string) bool {
 	return len(sub) > 2 && !strings.Contains(sub[2], "/")
 }
 
+func IsNewUrl(s string, p string) bool {
+	reg, _ := regexp.Compile("(.*?)info/" + p + "/new")
+	return reg.MatchString(s)
+}
+
+func IsEditUrl(s string, p string) bool {
+	reg, _ := regexp.Compile("(.*?)info/" + p + "/edit")
+	return reg.MatchString(s)
+}
+
 func Uuid() string {
 	return uuid.NewV4().String()
 }

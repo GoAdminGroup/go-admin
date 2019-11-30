@@ -1,8 +1,8 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
 BINARY_NAME=adm
-LASTVERSION=v1.0.9
-VERSION=v1.0.10
+LASTVERSION=v1.0.10
+VERSION=v1.1.0
 CLI=adm
 
 TEST_CONFIG_PATH=./../common/config.json
@@ -55,7 +55,7 @@ test:
 	go get github.com/ugorji/go/codec@none
 	make mysql-test
 	make pg-test
-	make sqlite-test
+	make sqlite-tes
 
 mysql-test:
 	make import-mysql

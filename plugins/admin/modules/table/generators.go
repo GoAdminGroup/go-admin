@@ -43,7 +43,11 @@ func GetManagerTable() (ManagerTable Table) {
 				}
 			}
 
-			return string(labels)
+			if labels == template.HTML("") {
+				return lg("no roles")
+			}
+
+			return labels
 		}).FieldFilterable()
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
@@ -110,8 +114,8 @@ func GetManagerTable() (ManagerTable Table) {
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("Name"), "username", db.Varchar, form.Text)
-	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text)
+	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used for login")))
+	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used to display")))
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
 		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
@@ -122,7 +126,8 @@ func GetManagerTable() (ManagerTable Table) {
 			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
 		}
 		return roles
-	})
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/roles/new">` +
+		lg("Create here.") + `</a>`))
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
 		permissionModel, _ := db.Table("goadmin_user_permissions").
@@ -132,7 +137,8 @@ func GetManagerTable() (ManagerTable Table) {
 			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
 		}
 		return permissions
-	})
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/permission/new">` +
+		lg("Create here.") + `</a>`))
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
@@ -179,6 +185,12 @@ func GetManagerTable() (ManagerTable Table) {
 	formList.SetInsertFn(func(values form2.Values) error {
 		if values.IsEmpty("name", "username", "password") {
 			return errors.New("username and password can not be empty")
+		}
+
+		password := values.Get("password")
+
+		if password != values.Get("password_again") {
+			return errors.New("password does not match")
 		}
 
 		user := models.User().New(values.Get("username"),
@@ -277,7 +289,7 @@ func GetPermissionTable() (PermissionTable Table) {
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
-	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique")))
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
 		FieldOptions([]map[string]string{
 			{"value": "GET", "field": "GET"},
@@ -296,13 +308,24 @@ func GetPermissionTable() (PermissionTable Table) {
 		}).
 		FieldHelpMsg(template.HTML(lg("all method if empty")))
 
-	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea)
+	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea).FieldHelpMsg(template.HTML(lg("a path a line")))
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_permissions").
 		SetTitle(lg("Permission Manage")).
-		SetDescription(lg("Permission Manage"))
+		SetDescription(lg("Permission Manage")).
+		SetPostValidator(func(values form2.Values) error {
+
+			if values.IsEmpty("slug", "http_path", "name") {
+				return errors.New("slug or http_path or name should not be empty")
+			}
+
+			if models.Permission().IsSlugExist(values.Get("slug"), values.Get("id")) {
+				return errors.New("slug exists")
+			}
+			return nil
+		})
 
 	return
 }
@@ -310,11 +333,11 @@ func GetPermissionTable() (PermissionTable Table) {
 func GetRolesTable() (RolesTable Table) {
 	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 	var permissions []map[string]string
-	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
+	permissionsModel, _ := db.Table("goadmin_permissions").Select("id", "name").All()
 
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
-			"field": v["slug"].(string),
+			"field": v["name"].(string),
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
@@ -382,7 +405,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
-	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text)
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique")))
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
 		perModel, _ := db.Table("goadmin_role_permissions").
@@ -394,7 +417,8 @@ func GetRolesTable() (RolesTable Table) {
 			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
 		}
 		return permissions
-	})
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/permission/new">` +
+		lg("Create here.") + `</a>`))
 
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
@@ -404,6 +428,10 @@ func GetRolesTable() (RolesTable Table) {
 		SetDescription(lg("Roles Manage"))
 
 	formList.SetUpdateFn(func(values form2.Values) error {
+
+		if models.Role().IsSlugExist(values.Get("slug"), values.Get("id")) {
+			return errors.New("slug exists")
+		}
 
 		role := models.RoleWithId(values.Get("id"))
 
@@ -418,6 +446,10 @@ func GetRolesTable() (RolesTable Table) {
 	})
 
 	formList.SetInsertFn(func(values form2.Values) error {
+
+		if models.Role().IsSlugExist(values.Get("slug"), "") {
+			return errors.New("slug exists")
+		}
 
 		role := models.Role().New(values.Get("name"), values.Get("slug"))
 

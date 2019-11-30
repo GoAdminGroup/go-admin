@@ -34,6 +34,19 @@ func (t RoleModel) Find(id interface{}) RoleModel {
 	return t.MapToModel(item)
 }
 
+// IsSlugExist check the row exist with given slug and id.
+func (t RoleModel) IsSlugExist(slug string, id string) bool {
+	if id == "" {
+		check, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+		return check != nil
+	}
+	check, _ := db.Table(t.Table).
+		Where("slug", "=", slug).
+		Where("id", "!=", id).
+		First()
+	return check != nil
+}
+
 // New create a role model.
 func (t RoleModel) New(name, slug string) RoleModel {
 

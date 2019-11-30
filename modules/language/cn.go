@@ -75,6 +75,16 @@ var cn = map[string]string{
 	"menu":      "菜单",
 	"dashboard": "仪表盘",
 
-	"username and password can not be empty": "账号密码不能为空",
-	"operation not allow":                    "不允许的操作",
+	"username and password can not be empty":        "用户名密码不能为空",
+	"operation not allow":                           "不允许的操作",
+	"password does not match":                       "密码不一致",
+	"should be unique":                              "需要保证唯一",
+	"slug exists":                                   "标志已经存在了",
+	"no corresponding options?":                     "没找到对应选项？",
+	"create here.":                                  "在这里新建一个。",
+	"used for login":                                "用于登录",
+	"used to display":                               "用来展示",
+	"a path a line":                                 "一行一个路径，换行输入新路径",
+	"slug or http_path or name should not be empty": "标志或路径或权限名不能为空",
+	"no roles":                                      "无角色",
 }

@@ -35,6 +35,19 @@ func (t PermissionModel) IsEmpty() bool {
 	return t.Id == int64(0)
 }
 
+// IsSlugExist check the row exist with given slug and id.
+func (t PermissionModel) IsSlugExist(slug string, id string) bool {
+	if id == "" {
+		check, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+		return check != nil
+	}
+	check, _ := db.Table(t.Table).
+		Where("slug", "=", slug).
+		Where("id", "!=", id).
+		First()
+	return check != nil
+}
+
 // Find return the permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
 	item, _ := db.Table(t.Table).Find(id)

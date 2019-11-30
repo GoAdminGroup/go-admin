@@ -38,7 +38,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 
 	referer := ctx.Headers("Referer")
 
-	if referer != "" && !modules.IsInfoUrl(referer) {
+	if referer != "" && !modules.IsInfoUrl(referer) && !modules.IsEditUrl(referer, ctx.Query("__prefix")) {
 		infoUrl = referer
 	}
 

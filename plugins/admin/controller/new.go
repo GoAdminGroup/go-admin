@@ -32,6 +32,12 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
 
+	referer := ctx.Headers("Referer")
+
+	if referer != "" && !modules.IsInfoUrl(referer) && !modules.IsNewUrl(referer, ctx.Query("__prefix")) {
+		infoUrl = referer
+	}
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + aForm().
@@ -62,8 +68,6 @@ func NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
-	table.RefreshTableList()
-
 	if param.HasAlert() {
 		showNewForm(ctx, param.Alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 		return
@@ -91,6 +95,8 @@ func NewForm(ctx *context.Context) {
 		showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 		return
 	}
+
+	table.RefreshTableList()
 
 	if !param.FromList {
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
