@@ -53,6 +53,7 @@ type ImgAttribute interface {
 type LabelAttribute interface {
 	SetContent(value template.HTML) LabelAttribute
 	SetColor(value template.HTML) LabelAttribute
+	SetType(value string) LabelAttribute
 	GetContent() template.HTML
 }
 

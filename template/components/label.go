@@ -8,8 +8,14 @@ import (
 type LabelAttribute struct {
 	Name    string
 	Color   template.HTML
+	Type    string
 	Content template.HTML
 	types.Attribute
+}
+
+func (compo *LabelAttribute) SetType(value string) types.LabelAttribute {
+	compo.Type = value
+	return compo
 }
 
 func (compo *LabelAttribute) SetColor(value template.HTML) types.LabelAttribute {
