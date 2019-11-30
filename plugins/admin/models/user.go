@@ -266,10 +266,10 @@ func (t UserModel) AddPermission(permissionId string) {
 
 // MapToModel get the user model from given map.
 func (t UserModel) MapToModel(m map[string]interface{}) UserModel {
-	t.Id = m["id"].(int64)
+	t.Id, _ = m["id"].(int64)
 	t.Name, _ = m["name"].(string)
 	t.UserName, _ = m["username"].(string)
-	t.Password = m["password"].(string)
+	t.Password, _ = m["password"].(string)
 	t.Avatar, _ = m["avatar"].(string)
 	t.RememberToken, _ = m["remember_token"].(string)
 	t.CreatedAt, _ = m["created_at"].(string)
