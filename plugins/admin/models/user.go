@@ -222,7 +222,7 @@ func (t UserModel) AddRole(roleId string) {
 
 // CheckPermission check the permission of the user.
 func (t UserModel) CheckPermissionById(permissionId string) bool {
-	checkPermission, _ := db.Table("goadmin_user_permissions").
+	checkPermission, _ := db.Table("goLeveladmin_user_permissions").
 		Where("permission_id", "=", permissionId).
 		Where("user_id", "=", t.Id).
 		First()

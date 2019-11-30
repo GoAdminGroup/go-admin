@@ -55,7 +55,7 @@ test:
 	go get github.com/ugorji/go/codec@none
 	make mysql-test
 	make pg-test
-	make sqlite-tes
+	make sqlite-test
 
 mysql-test:
 	make import-mysql
