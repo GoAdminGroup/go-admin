@@ -1,4 +1,4 @@
 package system
 
 // Version is the version of framework.
-const Version = "v1.1.0"
+const Version = "v1.1.1"
