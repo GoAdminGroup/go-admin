@@ -44,7 +44,7 @@ func main() {
 
 	app.Spec = "[-v]"
 
-	verbose = app.BoolOpt("v verbose", false, "debug infd distput")
+	verbose = app.BoolOpt("v verbose", false, "debug info output")
 	// quiet
 
 	app.Command("-V version", "display this application version", func(cmd *cli.Cmd) {
@@ -117,8 +117,13 @@ func main() {
 	})
 
 	app.Command("generate", "generate table model files", func(cmd *cli.Cmd) {
+
+		var (
+			config = cmd.StringOpt("c config", "", "config ini path")
+		)
+
 		cmd.Action = func() {
-			generating()
+			generating(*config)
 		}
 	})
 

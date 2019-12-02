@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/go-ini/ini"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -32,52 +34,104 @@ var systemGoAdminTables = []string{
 	"goadmin_user_permissions",
 }
 
-func generating() {
+func generating(cfgFile string) {
 
 	clear(runtime.GOOS)
 	cliInfo()
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
+	var (
+		driverName, host, port, dbFile, user, password, connection, packageName, outputPath, database string
+		chooseTables                                                                                  = make([]string, 0)
+	)
 
-	var qs = []*survey.Question{
-		{
-			Name: "driver",
-			Prompt: &survey.Select{
-				Message: "choose a driver",
-				Options: []string{"mysql", "postgresql", "sqlite"},
-				Default: "mysql",
-			},
-		},
+	if cfgFile != "" {
+		cfgModel, err := ini.Load(cfgFile)
+
+		if err != nil {
+			panic("wrong config file path")
+		}
+
+		dbCfgModel, exist := cfgModel.GetSection("database")
+
+		if exist == nil {
+			driverName = dbCfgModel.Key("driver").Value()
+			host = dbCfgModel.Key("host").Value()
+			user = dbCfgModel.Key("username").Value()
+			port = dbCfgModel.Key("port").Value()
+			dbFile = dbCfgModel.Key("file").Value()
+			password = dbCfgModel.Key("password").Value()
+			database = dbCfgModel.Key("database").Value()
+			t := dbCfgModel.Key("tables").Value()
+			if t != "" {
+				chooseTables = strings.Split(t, ",")
+			}
+		}
+
+		modelCfgModel, exist2 := cfgModel.GetSection("model")
+
+		if exist2 == nil {
+			connection = modelCfgModel.Key("connection").Value()
+			packageName = modelCfgModel.Key("package").Value()
+			outputPath = modelCfgModel.Key("output").Value()
+		}
+
 	}
 
-	var result = make(map[string]interface{})
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
 
-	err := survey.Ask(qs, &result)
-	checkError(err)
-	driver := result["driver"].(core.OptionAnswer)
+	if driverName == "" {
+		var qs = []*survey.Question{
+			{
+				Name: "driver",
+				Prompt: &survey.Select{
+					Message: "choose a driver",
+					Options: []string{"mysql", "postgresql", "sqlite"},
+					Default: "mysql",
+				},
+			},
+		}
+
+		var result = make(map[string]interface{})
+
+		err := survey.Ask(qs, &result)
+		checkError(err)
+		driverName = result["driver"].(core.OptionAnswer).Value
+	}
 
 	var (
 		cfg  map[string]config.Database
-		name string
-		conn = db.GetConnectionByDriver(driver.Value)
+		conn = db.GetConnectionByDriver(driverName)
 	)
 
-	if driver.Value != "sqlite" {
+	if driverName != "sqlite" {
 
 		defaultPort := "3306"
 		defaultUser := "root"
 
-		if driver.Value == "postgresql" {
+		if driverName == "postgresql" {
 			defaultPort = "5432"
 			defaultUser = "postgres"
 		}
 
-		host := promptWithDefault("sql address", "127.0.0.1")
-		port := promptWithDefault("sql port", defaultPort)
-		user := promptWithDefault("sql username", defaultUser)
-		password := promptPassword()
+		if host == "" {
+			host = promptWithDefault("sql address", "127.0.0.1")
+		}
 
-		name = prompt("sql database name")
+		if port == "" {
+			port = promptWithDefault("sql port", defaultPort)
+		}
+
+		if user == "" {
+			user = promptWithDefault("sql username", defaultUser)
+		}
+
+		if password == "" {
+			password = promptPassword()
+		}
+
+		if database == "" {
+			database = prompt("sql database name")
+		}
 
 		if conn == nil {
 			exitWithError("invalid db connection")
@@ -89,17 +143,22 @@ func generating() {
 				Port:       port,
 				User:       user,
 				Pwd:        password,
-				Name:       name,
+				Name:       database,
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     driver.Value,
+				Driver:     driverName,
 				File:       "",
 			},
 		}
 	} else {
-		file := prompt("sql file")
 
-		name = prompt("sql database name")
+		if dbFile == "" {
+			dbFile = prompt("sql file")
+		}
+
+		if database == "" {
+			database = prompt("sql database name")
+		}
 
 		if conn == nil {
 			exitWithError("invalid db connection")
@@ -107,8 +166,8 @@ func generating() {
 		}
 		cfg = map[string]config.Database{
 			"default": {
-				Driver: driver.Value,
-				File:   file,
+				Driver: driverName,
+				File:   dbFile,
 			},
 		}
 	}
@@ -117,36 +176,50 @@ func generating() {
 	conn.InitDB(cfg)
 
 	// step 2. show tables
-	tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
+	if len(chooseTables) == 0 {
+		tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
 
-	tables := getTablesFromSQLResult(tableModels, driver.Value, name)
-	if len(tables) == 0 {
-		exitWithError(`no tables, you should build a table of your own business first.
+		tables := getTablesFromSQLResult(tableModels, driverName, database)
+		if len(tables) == 0 {
+			exitWithError(`no tables, you should build a table of your own business first.
 
 see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
+		}
+		tables = append([]string{"[select all]"}, tables...)
+
+		survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
+
+		chooseTables = selects(tables)
+		if len(chooseTables) == 0 {
+			exitWithError("no table is selected")
+		}
+		if modules.InArray(chooseTables, "[select all]") {
+			chooseTables = tables[1:]
+		}
 	}
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
-
-	chooseTables := selects(tables)
-	if len(chooseTables) == 0 {
-		exitWithError("no table is selected")
+	if packageName == "" {
+		packageName = promptWithDefault("set package name", "main")
 	}
 
-	packageName := promptWithDefault("set package name", "main")
-	connectionName := promptWithDefault("set connection name", "default")
-	outputPath := promptWithDefault("set file output path", "./")
+	if connection == "" {
+		connection = promptWithDefault("set connection name", "default")
+	}
+
+	if outputPath == "" {
+		outputPath = promptWithDefault("set file output path", "./")
+	}
 
 	fmt.Println(ansi.Color("✔", "green") + " generating: ")
 	fmt.Println()
 
 	fieldField := "Field"
 	typeField := "Type"
-	if driver.Value == "postgresql" {
+	if driverName == "postgresql" {
 		fieldField = "column_name"
 		typeField = "udt_name"
 	}
-	if driver.Value == "sqlite" {
+	if driverName == "sqlite" {
 		fieldField = "name"
 		typeField = "type"
 	}
@@ -155,7 +228,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	for i := 0; i < len(chooseTables); i++ {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
-		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, connectionName, driver.Value, outputPath)
+		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, connection, driverName, outputPath)
 	}
 	generateTables(outputPath, chooseTables, packageName)
 
@@ -303,15 +376,15 @@ func selects(tables []string) []string {
 	return chooseTables
 }
 
-func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, connectionName, driver, outputPath string) {
+func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, connection, driver, outputPath string) {
 
 	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
 
 	tableCamel := camelcase(table)
 
 	var newTable = `table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))`
-	if connectionName != "default" {
-		newTable = `table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("` + driver + `", "` + connectionName + `"))`
+	if connection != "default" {
+		newTable = `table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("` + driver + `", "` + connection + `"))`
 	}
 
 	content := `package ` + packageName + `
