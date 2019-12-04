@@ -3,7 +3,6 @@ package admin
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
@@ -22,11 +21,6 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	cfg := config.Get()
 
-	// Init database
-	for driver, databaseCfg := range cfg.Databases.GroupByDriver() {
-		db.GetConnectionByDriver(driver).InitDB(databaseCfg)
-	}
-
 	// Init router
 	App.app = InitRouter(cfg.Prefix(), services)
 
@@ -37,6 +31,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"op":         table.GetOpTable,
 		"menu":       table.GetMenuTable,
 	})
+	table.SetServices(services)
 	table.SetGenerators(admin.tableCfg)
 	table.InitTableList()
 

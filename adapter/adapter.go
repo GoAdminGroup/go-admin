@@ -9,10 +9,13 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
@@ -24,7 +27,7 @@ import (
 // response to the corresponding context of framework.
 type WebFrameWork interface {
 	Use(interface{}, []plugins.Plugin) error
-	Content(interface{}, types.GetPanelFn)
+	Content(interface{}, types.GetPanelFn, service.List)
 	SetContext(ctx interface{}) WebFrameWork
 	GetCookie() (string, error)
 	Path() string
@@ -36,6 +39,7 @@ type WebFrameWork interface {
 	CookieKey() string
 	HTMLContentType() string
 	Name() string
+	User(ci interface{}, conn db.Connection) (models.UserModel, bool)
 	SetApp(app interface{}) error
 	AddHandler(method, path string, plug plugins.Plugin)
 }
@@ -48,6 +52,16 @@ func (base BaseAdapter) HTMLContentType() string {
 
 func (base BaseAdapter) CookieKey() string {
 	return auth.DefaultCookieKey
+}
+
+func (base BaseAdapter) GetUser(ci interface{}, conn db.Connection, wf WebFrameWork) (models.UserModel, bool) {
+	cookie, err := wf.GetCookie()
+
+	if err != nil {
+		return models.UserModel{}, false
+	}
+
+	return auth.GetCurUser(cookie, conn)
 }
 
 func (base BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
@@ -65,7 +79,7 @@ func (base BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf W
 	return nil
 }
 
-func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork) {
+func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, conn db.Connection) {
 
 	newBase := wf.SetContext(ctx)
 
@@ -76,7 +90,7 @@ func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn,
 		return
 	}
 
-	user, authSuccess := auth.GetCurUser(cookie)
+	user, authSuccess := auth.GetCurUser(cookie, conn)
 
 	if !authSuccess {
 		newBase.Redirect()

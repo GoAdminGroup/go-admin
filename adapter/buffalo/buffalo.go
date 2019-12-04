@@ -10,8 +10,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -34,22 +35,16 @@ func init() {
 	engine.Register(new(Buffalo))
 }
 
-func User(ci interface{}) (models.UserModel, bool) {
-	cookie, err := new(Buffalo).SetContext(ci).GetCookie()
-
-	if err != nil {
-		return models.UserModel{}, false
-	}
-
-	return auth.GetCurUser(cookie)
+func (bu *Buffalo) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
+	return bu.GetUser(ci, conn, bu)
 }
 
 func (bu *Buffalo) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bu.GetUse(router, plugs, bu)
 }
 
-func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	bu.GetContent(ctx, getPanelFn, bu)
+func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
+	bu.GetContent(ctx, getPanelFn, bu, db.GetConnection(list))
 }
 
 func (bu *Buffalo) SetApp(app interface{}) error {

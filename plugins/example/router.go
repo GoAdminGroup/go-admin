@@ -3,13 +3,15 @@ package example
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 )
 
-func InitRouter(prefix string) *context.App {
+func InitRouter(prefix string, srv service.List) *context.App {
 
 	app := context.NewApp()
 	route := app.Group(prefix)
-	route.GET("/example", auth.Middleware, TestHandler)
+	route.GET("/example", auth.Middleware(db.GetConnection(srv)), TestHandler)
 
 	return app
 }

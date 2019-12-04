@@ -21,13 +21,18 @@ type PermissionModel struct {
 
 // Permission return a default permission model.
 func Permission() PermissionModel {
-	return PermissionModel{Base: Base{Table: "goadmin_permissions"}}
+	return PermissionModel{Base: Base{TableName: "goadmin_permissions"}}
 }
 
 // PermissionWithId return a default permission model of given id.
 func PermissionWithId(id string) PermissionModel {
 	idInt, _ := strconv.Atoi(id)
-	return PermissionModel{Base: Base{Table: "goadmin_permissions"}, Id: int64(idInt)}
+	return PermissionModel{Base: Base{TableName: "goadmin_permissions"}, Id: int64(idInt)}
+}
+
+func (t PermissionModel) SetConn(con db.Connection) PermissionModel {
+	t.Conn = con
+	return t
 }
 
 // IsEmpty check the user model is empty or not.
@@ -38,10 +43,10 @@ func (t PermissionModel) IsEmpty() bool {
 // IsSlugExist check the row exist with given slug and id.
 func (t PermissionModel) IsSlugExist(slug string, id string) bool {
 	if id == "" {
-		check, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+		check, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
 		return check != nil
 	}
-	check, _ := db.Table(t.Table).
+	check, _ := t.Table(t.TableName).
 		Where("slug", "=", slug).
 		Where("id", "!=", id).
 		First()
@@ -50,19 +55,19 @@ func (t PermissionModel) IsSlugExist(slug string, id string) bool {
 
 // Find return the permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
-	item, _ := db.Table(t.Table).Find(id)
+	item, _ := t.Table(t.TableName).Find(id)
 	return t.MapToModel(item)
 }
 
 // FindBySlug return the permission model of given slug.
 func (t PermissionModel) FindBySlug(slug string) PermissionModel {
-	item, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+	item, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
 	return t.MapToModel(item)
 }
 
 // FindBySlug return the permission model of given slug.
 func (t PermissionModel) FindByName(name string) PermissionModel {
-	item, _ := db.Table(t.Table).Where("name", "=", name).First()
+	item, _ := t.Table(t.TableName).Where("name", "=", name).First()
 	return t.MapToModel(item)
 }
 

@@ -275,8 +275,7 @@ func ReadFromJson(path string) Config {
 		panic(err)
 	}
 
-	globalCfg = Set(cfg)
-	return globalCfg
+	return cfg
 }
 
 var (

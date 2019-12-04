@@ -28,24 +28,29 @@ type UserModel struct {
 
 // User return a default user model.
 func User() UserModel {
-	return UserModel{Base: Base{Table: "goadmin_users"}}
+	return UserModel{Base: Base{TableName: "goadmin_users"}}
 }
 
 // UserWithId return a default user model of given id.
 func UserWithId(id string) UserModel {
 	idInt, _ := strconv.Atoi(id)
-	return UserModel{Base: Base{Table: "goadmin_users"}, Id: int64(idInt)}
+	return UserModel{Base: Base{TableName: "goadmin_users"}, Id: int64(idInt)}
+}
+
+func (t UserModel) SetConn(con db.Connection) UserModel {
+	t.Conn = con
+	return t
 }
 
 // Find return a default user model of given id.
 func (t UserModel) Find(id interface{}) UserModel {
-	item, _ := db.Table(t.Table).Find(id)
+	item, _ := t.Table(t.TableName).Find(id)
 	return t.MapToModel(item)
 }
 
 // FindByUserName return a default user model of given name.
 func (t UserModel) FindByUserName(username interface{}) UserModel {
-	item, _ := db.Table(t.Table).Where("username", "=", username).First()
+	item, _ := t.Table(t.TableName).Where("username", "=", username).First()
 	return t.MapToModel(item)
 }
 
@@ -71,7 +76,7 @@ func (t UserModel) UpdateAvatar(avatar string) {
 
 // WithRoles query the role info of the user.
 func (t UserModel) WithRoles() UserModel {
-	roleModel, _ := db.Table("goadmin_role_users").
+	roleModel, _ := t.Table("goadmin_role_users").
 		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
 		Where("user_id", "=", t.Id).
 		Select("goadmin_roles.id", "goadmin_roles.name", "goadmin_roles.slug",
@@ -87,7 +92,7 @@ func (t UserModel) WithRoles() UserModel {
 // WithPermissions query the permission info of the user.
 func (t UserModel) WithPermissions() UserModel {
 
-	permissions, _ := db.Table("goadmin_role_permissions").
+	permissions, _ := t.Table("goadmin_role_permissions").
 		LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_role_permissions.permission_id").
 		Where("role_id", "=", t.Role.Id).
 		Select("goadmin_permissions.http_method", "goadmin_permissions.http_path",
@@ -105,7 +110,7 @@ func (t UserModel) WithPermissions() UserModel {
 // WithMenus query the menu info of the user.
 func (t UserModel) WithMenus() UserModel {
 
-	menuIdsModel, _ := db.Table("goadmin_role_menu").
+	menuIdsModel, _ := t.Table("goadmin_role_menu").
 		LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
 		Where("goadmin_role_menu.role_id", "=", t.Role.Id).
 		Select("menu_id", "parent_id").
@@ -133,7 +138,7 @@ func (t UserModel) WithMenus() UserModel {
 // New create a user model.
 func (t UserModel) New(username, password, name, avatar string) UserModel {
 
-	id, _ := db.Table(t.Table).Insert(dialect.H{
+	id, _ := t.Table(t.TableName).Insert(dialect.H{
 		"username": username,
 		"password": password,
 		"name":     name,
@@ -167,7 +172,7 @@ func (t UserModel) Update(username, password, name, avatar string) UserModel {
 		t.Avatar = avatar
 	}
 
-	_, _ = db.Table(t.Table).
+	_, _ = t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(fieldValues)
 
@@ -181,7 +186,7 @@ func (t UserModel) Update(username, password, name, avatar string) UserModel {
 // UpdatePwd update the password of the user model.
 func (t UserModel) UpdatePwd(password string) UserModel {
 
-	_, _ = db.Table(t.Table).
+	_, _ = t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
 			"password": password,
@@ -193,7 +198,7 @@ func (t UserModel) UpdatePwd(password string) UserModel {
 
 // CheckRole check the role of the user model.
 func (t UserModel) CheckRole(roleId string) bool {
-	checkRole, _ := db.Table("goadmin_role_users").
+	checkRole, _ := t.Table("goadmin_role_users").
 		Where("role_id", "=", roleId).
 		Where("user_id", "=", t.Id).
 		First()
@@ -202,7 +207,7 @@ func (t UserModel) CheckRole(roleId string) bool {
 
 // DeleteRoles delete all the roles of the user model.
 func (t UserModel) DeleteRoles() {
-	_ = db.Table("goadmin_role_users").
+	_ = t.Table("goadmin_role_users").
 		Where("user_id", "=", t.Id).
 		Delete()
 }
@@ -211,7 +216,7 @@ func (t UserModel) DeleteRoles() {
 func (t UserModel) AddRole(roleId string) {
 	if roleId != "" {
 		if !t.CheckRole(roleId) {
-			_, _ = db.Table("goadmin_role_users").
+			_, _ = t.Table("goadmin_role_users").
 				Insert(dialect.H{
 					"role_id": roleId,
 					"user_id": t.Id,
@@ -222,7 +227,7 @@ func (t UserModel) AddRole(roleId string) {
 
 // CheckPermission check the permission of the user.
 func (t UserModel) CheckPermissionById(permissionId string) bool {
-	checkPermission, _ := db.Table("goadmin_user_permissions").
+	checkPermission, _ := t.Table("goadmin_user_permissions").
 		Where("permission_id", "=", permissionId).
 		Where("user_id", "=", t.Id).
 		First()
@@ -237,7 +242,7 @@ func (t UserModel) CheckPermission(permission string) bool {
 		return false
 	}
 
-	checkPermission, _ := db.Table("goadmin_user_permissions").
+	checkPermission, _ := t.Table("goadmin_user_permissions").
 		Where("permission_id", "=", p.Id).
 		Where("user_id", "=", t.Id).
 		First()
@@ -246,7 +251,7 @@ func (t UserModel) CheckPermission(permission string) bool {
 
 // DeletePermissions delete all the permissions of the user model.
 func (t UserModel) DeletePermissions() {
-	_ = db.Table("goadmin_user_permissions").
+	_ = t.Table("goadmin_user_permissions").
 		Where("user_id", "=", t.Id).
 		Delete()
 }
@@ -255,7 +260,7 @@ func (t UserModel) DeletePermissions() {
 func (t UserModel) AddPermission(permissionId string) {
 	if permissionId != "" {
 		if !t.CheckPermissionById(permissionId) {
-			_, _ = db.Table("goadmin_user_permissions").
+			_, _ = t.Table("goadmin_user_permissions").
 				Insert(dialect.H{
 					"permission_id": permissionId,
 					"user_id":       t.Id,

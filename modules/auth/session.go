@@ -19,8 +19,12 @@ import (
 
 const DefaultCookieKey = "go_admin_session"
 
-// Driver is the default PersistenceDriver.
-var Driver DBDriver
+// NewDBDriver return the default PersistenceDriver.
+func newDBDriver(conn db.Connection) *DBDriver {
+	return &DBDriver{
+		conn: conn,
+	}
+}
 
 // PersistenceDriver is a driver of storing and getting the session info.
 type PersistenceDriver interface {
@@ -29,8 +33,8 @@ type PersistenceDriver interface {
 }
 
 // GetSessionByKey get the session value by key.
-func GetSessionByKey(sesKey, key string) interface{} {
-	return Driver.Load(sesKey)[key]
+func GetSessionByKey(sesKey, key string, conn db.Connection) interface{} {
+	return newDBDriver(conn).Load(sesKey)[key]
 }
 
 // Session contains info of session.
@@ -105,7 +109,7 @@ func (ses *Session) StartCtx(ctx *context.Context) *Session {
 }
 
 // InitSession return the default Session.
-func InitSession(ctx *context.Context) *Session {
+func InitSession(ctx *context.Context, conn db.Connection) *Session {
 
 	sessions := new(Session)
 	sessions.UpdateConfig(Config{
@@ -113,18 +117,20 @@ func InitSession(ctx *context.Context) *Session {
 		Cookie:  DefaultCookieKey,
 	})
 
-	sessions.UseDriver(&Driver)
+	sessions.UseDriver(newDBDriver(conn))
 	sessions.Values = make(map[string]interface{})
 
 	return sessions.StartCtx(ctx)
 }
 
 // DBDriver is a driver which uses database as a persistence tool.
-type DBDriver struct{}
+type DBDriver struct {
+	conn db.Connection
+}
 
 // Load implements the PersistenceDriver.Load.
 func (driver *DBDriver) Load(sid string) map[string]interface{} {
-	sesModel, _ := db.Table("goadmin_session").Where("sid", "=", sid).First()
+	sesModel, _ := driver.table("goadmin_session").Where("sid", "=", sid).First()
 
 	if sesModel == nil {
 		return map[string]interface{}{}
@@ -135,7 +141,7 @@ func (driver *DBDriver) Load(sid string) map[string]interface{} {
 	return values
 }
 
-func deleteOverdueSession() {
+func deleteOverdueSession(conn db.Connection) {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -160,32 +166,36 @@ func deleteOverdueSession() {
 
 	logger.LogSQL(cmd, nil)
 
-	_, _ = db.Query(cmd)
+	_, _ = conn.Query(cmd)
 }
 
 // Update implements the PersistenceDriver.Update.
 func (driver *DBDriver) Update(sid string, values map[string]interface{}) {
 
-	go deleteOverdueSession()
+	go deleteOverdueSession(driver.conn)
 
 	if sid != "" {
 		if len(values) == 0 {
-			_ = db.Table("goadmin_session").Where("sid", "=", sid).Delete()
+			_ = driver.table("goadmin_session").Where("sid", "=", sid).Delete()
 			return
 		}
 		valuesByte, _ := json.Marshal(values)
-		sesModel, _ := db.Table("goadmin_session").Where("sid", "=", sid).First()
+		sesModel, _ := driver.table("goadmin_session").Where("sid", "=", sid).First()
 		if sesModel == nil {
-			_, _ = db.Table("goadmin_session").Insert(dialect.H{
+			_, _ = driver.table("goadmin_session").Insert(dialect.H{
 				"values": string(valuesByte),
 				"sid":    sid,
 			})
 		} else {
-			_, _ = db.Table("goadmin_session").
+			_, _ = driver.table("goadmin_session").
 				Where("sid", "=", sid).
 				Update(dialect.H{
 					"values": string(valuesByte),
 				})
 		}
 	}
+}
+
+func (driver *DBDriver) table(table string) *db.SQL {
+	return db.Table(table).WithDriver(driver.conn)
 }

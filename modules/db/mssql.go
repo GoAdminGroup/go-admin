@@ -25,7 +25,9 @@ var MssqlDB = Mssql{
 
 // GetMssqlDB return the global mssql connection.
 func GetMssqlDB() *Mssql {
-	return &MssqlDB
+	return &Mssql{
+		DbList: map[string]*sql.DB{},
+	}
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.
@@ -33,8 +35,8 @@ func (db *Mssql) GetDelimiter() string {
 	return "`"
 }
 
-// GetName implements the method Connection.GetName.
-func (db *Mssql) GetName() string {
+// Name implements the method Connection.Name.
+func (db *Mssql) Name() string {
 	return "mssql"
 }
 
@@ -59,7 +61,7 @@ func (db *Mssql) Exec(query string, args ...interface{}) (sql.Result, error) {
 }
 
 // InitDB implements the method Connection.InitDB.
-func (db *Mssql) InitDB(cfglist map[string]config.Database) {
+func (db *Mssql) InitDB(cfglist map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfglist {
 
@@ -89,6 +91,7 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) {
 			}
 		}
 	})
+	return db
 }
 
 // BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.

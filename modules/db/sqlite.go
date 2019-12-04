@@ -23,11 +23,13 @@ var DB = Sqlite{
 
 // GetSqliteDB return the global mssql connection.
 func GetSqliteDB() *Sqlite {
-	return &DB
+	return &Sqlite{
+		DbList: map[string]*sql.DB{},
+	}
 }
 
-// GetName implements the method Connection.GetName.
-func (db *Sqlite) GetName() string {
+// Name implements the method Connection.Name.
+func (db *Sqlite) Name() string {
 	return "sqlite"
 }
 
@@ -57,7 +59,7 @@ func (db *Sqlite) Exec(query string, args ...interface{}) (sql.Result, error) {
 }
 
 // InitDB implements the method Connection.InitDB.
-func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
+func (db *Sqlite) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 			sqlDB, err := sql.Open("sqlite3", cfg.File)
@@ -69,6 +71,7 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) {
 			}
 		}
 	})
+	return db
 }
 
 // BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.

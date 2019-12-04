@@ -1,6 +1,7 @@
 package guard
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -158,11 +159,14 @@ func EditForm(srv service.List) context.Handler {
 
 		fromList := modules.IsInfoUrl(previous)
 
-		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize,
+			panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 
 		if fromList {
 			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
 		}
+
+		fmt.Println("prefix", prefix, "panel", panel)
 
 		ctx.SetUserValue("edit_form_param", &EditFormParam{
 			Panel:        panel,

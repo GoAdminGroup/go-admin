@@ -8,10 +8,10 @@ import (
 	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/adapter"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/kataras/iris/v12"
 	"net/http"
 	"strings"
 
@@ -33,22 +33,16 @@ func init() {
 	engine.Register(new(Iris))
 }
 
-func User(ci interface{}) (models.UserModel, bool) {
-	cookie, err := new(Iris).SetContext(ci).GetCookie()
-
-	if err != nil {
-		return models.UserModel{}, false
-	}
-
-	return auth.GetCurUser(cookie)
+func (is *Iris) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
+	return is.GetUser(ci, conn, is)
 }
 
 func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
 	return is.GetUse(router, plugs, is)
 }
 
-func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	is.GetContent(ctx, getPanelFn, is)
+func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
+	is.GetContent(ctx, getPanelFn, is, db.GetConnection(list))
 }
 
 func (is *Iris) SetApp(app interface{}) error {

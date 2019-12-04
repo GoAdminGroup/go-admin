@@ -10,8 +10,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	cfg "github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -33,22 +34,16 @@ func init() {
 	engine.Register(new(Chi))
 }
 
-func User(ci interface{}) (models.UserModel, bool) {
-	cookie, err := new(Chi).SetContext(ci).GetCookie()
-
-	if err != nil {
-		return models.UserModel{}, false
-	}
-
-	return auth.GetCurUser(cookie)
+func (ch *Chi) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
+	return ch.GetUser(ci, conn, ch)
 }
 
 func (ch *Chi) Use(router interface{}, plugs []plugins.Plugin) error {
 	return ch.GetUse(router, plugs, ch)
 }
 
-func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	ch.GetContent(ctx, getPanelFn, ch)
+func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
+	ch.GetContent(ctx, getPanelFn, ch, db.GetConnection(list))
 }
 
 func (ch *Chi) SetApp(app interface{}) error {

@@ -177,7 +177,7 @@ func generating(cfgFile string) {
 
 	// step 2. show tables
 	if len(chooseTables) == 0 {
-		tableModels, _ := db.WithDriver(conn.GetName()).ShowTables()
+		tableModels, _ := db.WithDriver(conn).ShowTables()
 
 		tables := getTablesFromSQLResult(tableModels, driverName, database)
 		if len(tables) == 0 {
@@ -378,7 +378,7 @@ func selects(tables []string) []string {
 
 func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, connection, driver, outputPath string) {
 
-	columnsModel, _ := db.WithDriver(conn.GetName()).Table(table).ShowColumns()
+	columnsModel, _ := db.WithDriver(conn).Table(table).ShowColumns()
 
 	tableCamel := camelcase(table)
 
@@ -395,11 +395,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func Get` + strings.Title(tableCamel) + `Table() table.Table {
+func Get` + strings.Title(tableCamel) + `TableName() table.TableName {
 
-    ` + tableCamel + `Table := ` + newTable + `
+    ` + tableCamel + `TableName := ` + newTable + `
 
-	info := ` + tableCamel + `Table.GetInfo()
+	info := ` + tableCamel + `TableName.GetInfo()
 	
 	`
 
@@ -413,7 +413,7 @@ func Get` + strings.Title(tableCamel) + `Table() table.Table {
 	content += `
 	info.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	formList := ` + tableCamel + `Table.GetForm()
+	formList := ` + tableCamel + `TableName.GetForm()
 	
 	`
 
@@ -436,7 +436,7 @@ func Get` + strings.Title(tableCamel) + `Table() table.Table {
 	content += `
 	formList.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	return ` + tableCamel + `Table
+	return ` + tableCamel + `TableName
 }`
 
 	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
@@ -450,7 +450,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 
 	for i := 0; i < len(tables); i++ {
 		tableStr += `
-	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
+	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `TableName,`
 		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
 `
 	}
@@ -460,7 +460,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
-// The corresponding value is the Form and Table data.
+// The corresponding value is the Form and TableName data.
 //
 // http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
 //

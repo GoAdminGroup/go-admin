@@ -27,11 +27,13 @@ var PostgresqlDB = Postgresql{
 
 // GetPostgresqlDB return the global mssql connection.
 func GetPostgresqlDB() *Postgresql {
-	return &PostgresqlDB
+	return &Postgresql{
+		DbList: map[string]*sql.DB{},
+	}
 }
 
-// GetName implements the method Connection.GetName.
-func (db *Postgresql) GetName() string {
+// Name implements the method Connection.Name.
+func (db *Postgresql) Name() string {
 	return "postgresql"
 }
 
@@ -71,7 +73,7 @@ func filterQuery(query string) string {
 }
 
 // InitDB implements the method Connection.InitDB.
-func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
+func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
@@ -88,6 +90,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) {
 			db.DbList[conn] = sqlDB
 		}
 	})
+	return db
 }
 
 // BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.

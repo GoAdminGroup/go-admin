@@ -1,9 +1,12 @@
 package auth
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/url"
 	"testing"
 )
 
@@ -45,5 +48,10 @@ func TestInMethodArr(t *testing.T) {
 }
 
 func TestGetPath(t *testing.T) {
-	assert.Equal(t, getPath("/info/manager/edit", "3"), "/info/manager/edit?id=3")
+	assert.Equal(t, getPath(&context.Context{
+		Request: &http.Request{
+			URL:    &url.URL{Path: "/info/manager/edit"},
+			Method: "GET",
+		},
+	}), "/info/manager/edit?id=3")
 }

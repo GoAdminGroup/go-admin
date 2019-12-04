@@ -28,7 +28,9 @@ var MysqlDB = Mysql{
 
 // GetMysqlDB return the global mssql connection.
 func GetMysqlDB() *Mysql {
-	return &MysqlDB
+	return &Mysql{
+		DbList: map[string]*sql.DB{},
+	}
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.
@@ -36,13 +38,13 @@ func (db *Mysql) GetDelimiter() string {
 	return "`"
 }
 
-// GetName implements the method Connection.GetName.
-func (db *Mysql) GetName() string {
+// Name implements the method Connection.Name.
+func (db *Mysql) Name() string {
 	return "mysql"
 }
 
 // InitDB implements the method Connection.InitDB.
-func (db *Mysql) InitDB(cfgs map[string]config.Database) {
+func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgs {
 
@@ -66,6 +68,7 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) {
 			}
 		}
 	})
+	return db
 }
 
 // QueryWithConnection implements the method Connection.QueryWithConnection.

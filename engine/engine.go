@@ -7,6 +7,7 @@ package engine
 import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -20,15 +21,16 @@ import (
 type Engine struct {
 	PluginList []plugins.Plugin
 	Adapter    adapter.WebFrameWork
-	Config     config.Config
-	services   service.List
+	Services   service.List
+
+	config config.Config
 }
 
 // Default return the default engine instance.
 func Default() *Engine {
 	return &Engine{
 		Adapter:  defaultAdapter,
-		services: service.GetServices(),
+		Services: service.GetServices(),
 	}
 }
 
@@ -37,6 +39,7 @@ func (eng *Engine) Use(router interface{}) error {
 	if eng.Adapter == nil {
 		panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
 	}
+
 	return eng.Adapter.Use(router, eng.PluginList)
 }
 
@@ -44,7 +47,7 @@ func (eng *Engine) Use(router interface{}) error {
 func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 	for _, plug := range plugs {
-		plug.InitPlugin(eng.services)
+		plug.InitPlugin(eng.Services)
 	}
 
 	eng.PluginList = append(eng.PluginList, plugs...)
@@ -53,13 +56,25 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	eng.Config = config.Set(cfg)
+	return eng.setConfig(cfg).InitDatabase()
+}
+
+// setConfig set the config of engine.
+func (eng *Engine) setConfig(cfg config.Config) *Engine {
+	eng.config = config.Set(cfg)
 	return eng
 }
 
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
-	eng.Config = config.ReadFromJson(path)
+	return eng.setConfig(config.ReadFromJson(path)).InitDatabase()
+}
+
+// InitDatabase initialize all database connection.
+func (eng *Engine) InitDatabase() *Engine {
+	for driver, databaseCfg := range eng.config.Databases.GroupByDriver() {
+		eng.Services.Add(driver, db.GetConnectionByDriver(driver).InitDB(databaseCfg))
+	}
 	return eng
 }
 
@@ -83,9 +98,9 @@ func Register(ada adapter.WebFrameWork) {
 
 // Content call the Content method of defaultAdapter.
 // If defaultAdapter is nil, it will panic.
-func Content(ctx interface{}, panel types.GetPanelFn) {
+func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	defaultAdapter.Content(ctx, panel)
+	defaultAdapter.Content(ctx, panel, eng.Services)
 }

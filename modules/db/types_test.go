@@ -13,7 +13,7 @@ func TestGetTypeFromString(t *testing.T) {
 	driver := "mysql"
 	typeField := "Type"
 
-	GetConnectionByDriver(driver).InitDB(map[string]config.Database{
+	conn := GetConnectionByDriver(driver).InitDB(map[string]config.Database{
 		"default": {
 			Host:       "127.0.0.1",
 			Port:       "3306",
@@ -30,14 +30,14 @@ func TestGetTypeFromString(t *testing.T) {
 		SqlLog: true,
 	})
 
-	columnsModel, _ := WithDriver(driver).Table("all_types").ShowColumns()
+	columnsModel, _ := WithDriver(conn).Table("all_types").ShowColumns()
 
 	for _, model := range columnsModel {
 		fieldTypeName := strings.ToUpper(getType(model[typeField].(string)))
 		GetDTAndCheck(fieldTypeName)
 	}
 
-	item, _ := WithDriver(driver).Table("all_types").First()
+	item, _ := WithDriver(conn).Table("all_types").First()
 	fmt.Println("item", item)
 }
 

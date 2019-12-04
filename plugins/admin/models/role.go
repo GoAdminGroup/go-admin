@@ -19,28 +19,33 @@ type RoleModel struct {
 
 // Role return a default role model.
 func Role() RoleModel {
-	return RoleModel{Base: Base{Table: "goadmin_roles"}}
+	return RoleModel{Base: Base{TableName: "goadmin_roles"}}
 }
 
 // RoleWithId return a default role model of given id.
 func RoleWithId(id string) RoleModel {
 	idInt, _ := strconv.Atoi(id)
-	return RoleModel{Base: Base{Table: "goadmin_roles"}, Id: int64(idInt)}
+	return RoleModel{Base: Base{TableName: "goadmin_roles"}, Id: int64(idInt)}
+}
+
+func (t RoleModel) SetConn(con db.Connection) RoleModel {
+	t.Conn = con
+	return t
 }
 
 // Find return a default role model of given id.
 func (t RoleModel) Find(id interface{}) RoleModel {
-	item, _ := db.Table(t.Table).Find(id)
+	item, _ := t.Table(t.TableName).Find(id)
 	return t.MapToModel(item)
 }
 
 // IsSlugExist check the row exist with given slug and id.
 func (t RoleModel) IsSlugExist(slug string, id string) bool {
 	if id == "" {
-		check, _ := db.Table(t.Table).Where("slug", "=", slug).First()
+		check, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
 		return check != nil
 	}
-	check, _ := db.Table(t.Table).
+	check, _ := t.Table(t.TableName).
 		Where("slug", "=", slug).
 		Where("id", "!=", id).
 		First()
@@ -50,7 +55,7 @@ func (t RoleModel) IsSlugExist(slug string, id string) bool {
 // New create a role model.
 func (t RoleModel) New(name, slug string) RoleModel {
 
-	id, _ := db.Table(t.Table).Insert(dialect.H{
+	id, _ := t.Table(t.TableName).Insert(dialect.H{
 		"name": name,
 		"slug": slug,
 	})
@@ -65,7 +70,7 @@ func (t RoleModel) New(name, slug string) RoleModel {
 // Update update the role model.
 func (t RoleModel) Update(name, slug string) RoleModel {
 
-	_, _ = db.Table(t.Table).
+	_, _ = t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
 			"name": name,
@@ -80,7 +85,7 @@ func (t RoleModel) Update(name, slug string) RoleModel {
 
 // CheckPermission check the permission of role.
 func (t RoleModel) CheckPermission(permissionId string) bool {
-	checkPermission, _ := db.Table("goadmin_role_permissions").
+	checkPermission, _ := t.Table("goadmin_role_permissions").
 		Where("permission_id", "=", permissionId).
 		Where("role_id", "=", t.Id).
 		First()
@@ -89,7 +94,7 @@ func (t RoleModel) CheckPermission(permissionId string) bool {
 
 // DeletePermissions delete all the permissions of role.
 func (t RoleModel) DeletePermissions() {
-	_ = db.Table("goadmin_role_permissions").
+	_ = t.Table("goadmin_role_permissions").
 		Where("role_id", "=", t.Id).
 		Delete()
 }
@@ -98,7 +103,7 @@ func (t RoleModel) DeletePermissions() {
 func (t RoleModel) AddPermission(permissionId string) {
 	if permissionId != "" {
 		if !t.CheckPermission(permissionId) {
-			_, _ = db.Table("goadmin_role_permissions").
+			_, _ = t.Table("goadmin_role_permissions").
 				Insert(dialect.H{
 					"permission_id": permissionId,
 					"role_id":       t.Id,

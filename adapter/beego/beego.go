@@ -10,8 +10,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -33,22 +34,16 @@ func init() {
 	engine.Register(new(Beego))
 }
 
-func User(ci interface{}) (models.UserModel, bool) {
-	cookie, err := new(Beego).SetContext(ci).GetCookie()
-
-	if err != nil {
-		return models.UserModel{}, false
-	}
-
-	return auth.GetCurUser(cookie)
+func (bee *Beego) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
+	return bee.GetUser(ci, conn, bee)
 }
 
 func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(router, plugs, bee)
 }
 
-func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	bee.GetContent(ctx, getPanelFn, bee)
+func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, services service.List) {
+	bee.GetContent(ctx, getPanelFn, bee, db.GetConnection(services))
 }
 
 func (bee *Beego) SetApp(app interface{}) error {

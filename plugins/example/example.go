@@ -25,7 +25,8 @@ func SetConfig(cfg c.Config) {
 
 func (example *Example) InitPlugin(srv service.List) {
 	config = c.Get()
-	Plug.app = InitRouter(config.Prefix())
+
+	Plug.app = InitRouter(config.Prefix(), srv)
 }
 
 func (example *Example) GetRequest() []context.Path {

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
@@ -25,13 +26,16 @@ type Invoker struct {
 	prefix                 string
 	authFailCallback       MiddlewareCallback
 	permissionDenyCallback MiddlewareCallback
+	conn                   db.Connection
 }
 
 // Middleware is the default auth middleware of plugins.
-var Middleware = DefaultInvoker().Middleware()
+func Middleware(conn db.Connection) context.Handler {
+	return DefaultInvoker(conn).Middleware()
+}
 
 // DefaultInvoker return a default Invoker.
-func DefaultInvoker() *Invoker {
+func DefaultInvoker(conn db.Connection) *Invoker {
 	return &Invoker{
 		prefix: config.Get().Prefix(),
 		authFailCallback: func(ctx *context.Context) {
@@ -52,12 +56,13 @@ func DefaultInvoker() *Invoker {
 				}, nil
 			})
 		},
+		conn: conn,
 	}
 }
 
 // SetPrefix return the default Invoker with the given prefix.
-func SetPrefix(prefix string) *Invoker {
-	i := DefaultInvoker()
+func SetPrefix(prefix string, conn db.Connection) *Invoker {
+	i := DefaultInvoker(conn)
 	i.prefix = prefix
 	return i
 }
@@ -80,7 +85,7 @@ type MiddlewareCallback func(ctx *context.Context)
 // Middleware get the auth middleware from Invoker.
 func (invoker *Invoker) Middleware() context.Handler {
 	return func(ctx *context.Context) {
-		user, authOk, permissionOk := Filter(ctx)
+		user, authOk, permissionOk := Filter(ctx, invoker.conn)
 
 		if authOk && permissionOk {
 			ctx.SetUserValue("user", user)
@@ -105,18 +110,18 @@ func (invoker *Invoker) Middleware() context.Handler {
 
 // Filter retrieve the user model from Context and check the permission
 // at the same time.
-func Filter(ctx *context.Context) (models.UserModel, bool, bool) {
+func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, bool) {
 	var (
 		id   float64
 		ok   bool
 		user = models.User()
 	)
 
-	if id, ok = InitSession(ctx).Get("user_id").(float64); !ok {
+	if id, ok = InitSession(ctx, conn).Get("user_id").(float64); !ok {
 		return user, false, false
 	}
 
-	user, ok = GetCurUserByID(int64(id))
+	user, ok = GetCurUserByID(int64(id), conn)
 
 	if !ok {
 		return user, false, false
@@ -153,8 +158,8 @@ func getPath(ctx *context.Context) string {
 const defaultUserIDSesKey = "user_id"
 
 // GetUserID return the user id from the session.
-func GetUserID(sesKey string) int64 {
-	id := GetSessionByKey(sesKey, defaultUserIDSesKey)
+func GetUserID(sesKey string, conn db.Connection) int64 {
+	id := GetSessionByKey(sesKey, defaultUserIDSesKey, conn)
 	if idFloat64, ok := id.(float64); ok {
 		return int64(idFloat64)
 	}
@@ -162,25 +167,25 @@ func GetUserID(sesKey string) int64 {
 }
 
 // GetCurUser return the user model.
-func GetCurUser(sesKey string) (user models.UserModel, ok bool) {
+func GetCurUser(sesKey string, conn db.Connection) (user models.UserModel, ok bool) {
 
 	if sesKey == "" {
 		ok = false
 		return
 	}
 
-	id := GetUserID(sesKey)
+	id := GetUserID(sesKey, conn)
 	if id == -1 {
 		ok = false
 		return
 	}
-	return GetCurUserByID(id)
+	return GetCurUserByID(id, conn)
 }
 
 // GetCurUserByID return the user model of given user id.
-func GetCurUserByID(id int64) (user models.UserModel, ok bool) {
+func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok bool) {
 
-	user = models.User().Find(id)
+	user = models.User().SetConn(conn).Find(id)
 
 	if user.IsEmpty() {
 		ok = false

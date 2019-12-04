@@ -44,7 +44,7 @@ func newBeegoHandler() http.Handler {
 	template.AddComp(chartjs.NewChart())
 
 	app.Handlers.Get("/admin", func(ctx *context.Context) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

@@ -75,7 +75,7 @@ func main() {
 	}
 
 	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

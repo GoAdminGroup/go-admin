@@ -86,7 +86,7 @@ func main() {
 	// customize your pages
 
 	s.BindHandler("GET:/admin", func(ctx *ghttp.Request) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

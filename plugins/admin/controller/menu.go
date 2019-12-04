@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
@@ -99,7 +100,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 // DeleteMenu delete the menu of given id.
 func DeleteMenu(ctx *context.Context) {
-	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).Delete()
+	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).SetConn(db.GetConnection(services)).Delete()
 	table.RefreshTableList()
 	response.Ok(ctx)
 }
@@ -116,7 +117,7 @@ func EditMenu(ctx *context.Context) {
 		return
 	}
 
-	menuModel := models.MenuWithId(param.Id)
+	menuModel := models.MenuWithId(param.Id).SetConn(db.GetConnection(services))
 
 	menuModel.DeleteRoles()
 	for _, roleId := range param.Roles {
@@ -145,7 +146,8 @@ func NewMenu(ctx *context.Context) {
 
 	user := auth.Auth(ctx)
 
-	menuModel := models.Menu().New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user)).MaxOrder+1)
+	menuModel := models.Menu().SetConn(db.GetConnection(services)).
+		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user)).MaxOrder+1)
 
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
@@ -165,7 +167,7 @@ func MenuOrder(ctx *context.Context) {
 	var data []map[string]interface{}
 	_ = json.Unmarshal([]byte(ctx.FormValue("_order")), &data)
 
-	models.Menu().ResetOrder(data)
+	models.Menu().SetConn(db.GetConnection(services)).ResetOrder(data)
 
 	response.Ok(ctx)
 }

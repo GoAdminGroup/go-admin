@@ -6,6 +6,7 @@ package auth
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -19,9 +20,9 @@ func Auth(ctx *context.Context) models.UserModel {
 }
 
 // Check check the password and username and return the user model.
-func Check(password string, username string) (user models.UserModel, ok bool) {
+func Check(password string, username string, conn db.Connection) (user models.UserModel, ok bool) {
 
-	user = models.User().FindByUserName(username)
+	user = models.User().SetConn(conn).FindByUserName(username)
 
 	if user.IsEmpty() {
 		ok = false
@@ -52,14 +53,14 @@ func EncodePassword(pwd []byte) string {
 }
 
 // SetCookie set the cookie.
-func SetCookie(ctx *context.Context, user models.UserModel) bool {
-	InitSession(ctx).Add("user_id", user.Id)
+func SetCookie(ctx *context.Context, user models.UserModel, conn db.Connection) bool {
+	InitSession(ctx, conn).Add("user_id", user.Id)
 	return true
 }
 
 // DelCookie delete the cookie from Context.
-func DelCookie(ctx *context.Context) bool {
-	InitSession(ctx).Clear()
+func DelCookie(ctx *context.Context, conn db.Connection) bool {
+	InitSession(ctx, conn).Clear()
 	return true
 }
 

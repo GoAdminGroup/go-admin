@@ -55,31 +55,36 @@ func newSQL() *SQL {
 // process method
 // *******************************
 
-// Table return a SQL with given table and default connection.
+// TableName return a SQL with given table and default connection.
 func Table(table string) *SQL {
 	sql := newSQL()
 	sql.TableName = table
-	sql.diver = GetConnection()
-	sql.dialect = dialect.GetDialect()
 	sql.conn = "default"
 	return sql
 }
 
 // WithDriver return a SQL with given driver.
-func WithDriver(driver string) *SQL {
+func WithDriver(conn Connection) *SQL {
 	sql := newSQL()
-	sql.diver = GetConnectionByDriver(driver)
-	sql.dialect = dialect.GetDialectByDriver(driver)
+	sql.diver = conn
+	sql.dialect = dialect.GetDialectByDriver(conn.Name())
 	sql.conn = "default"
 	return sql
 }
 
 // WithDriverAndConnection return a SQL with given driver and connection name.
-func WithDriverAndConnection(conn, driver string) *SQL {
+func WithDriverAndConnection(connName string, conn Connection) *SQL {
 	sql := newSQL()
-	sql.diver = GetConnectionByDriver(driver)
-	sql.dialect = dialect.GetDialectByDriver(driver)
-	sql.conn = conn
+	sql.diver = conn
+	sql.dialect = dialect.GetDialectByDriver(conn.Name())
+	sql.conn = connName
+	return sql
+}
+
+// WithDriver return a SQL with given driver.
+func (sql *SQL) WithDriver(conn Connection) *SQL {
+	sql.diver = conn
+	sql.dialect = dialect.GetDialectByDriver(conn.Name())
 	return sql
 }
 
@@ -95,7 +100,7 @@ func (sql *SQL) WithTx(tx *dbsql.Tx) *SQL {
 	return sql
 }
 
-// Table set table of SQL.
+// TableName set table of SQL.
 func (sql *SQL) Table(table string) *SQL {
 	sql.TableName = table
 	return sql
@@ -515,7 +520,7 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 		resMap []map[string]interface{}
 	)
 
-	if sql.diver.GetName() == DriverPostgresql {
+	if sql.diver.Name() == DriverPostgresql {
 		if sql.TableName == "goadmin_menu" ||
 			sql.TableName == "goadmin_permissions" ||
 			sql.TableName == "goadmin_roles" ||

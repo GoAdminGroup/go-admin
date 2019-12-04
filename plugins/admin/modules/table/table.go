@@ -3,6 +3,7 @@ package table
 import (
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"html/template"
 	"strconv"
 	"strings"
@@ -791,12 +792,18 @@ func (tb DefaultTable) delete(table, key, id string) {
 
 // db is a helper function return raw db connection.
 func (tb DefaultTable) db() db.Connection {
-	return db.GetConnectionByDriver(tb.connectionDriver)
+	return db.GetConnectionFromService(services.Get(tb.connectionDriver))
+}
+
+var services service.List
+
+func SetServices(srv service.List) {
+	services = srv
 }
 
 // sql is a helper function return db sql.
 func (tb DefaultTable) sql() *db.SQL {
-	return db.WithDriverAndConnection(tb.connection, tb.connectionDriver)
+	return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
 }
 
 func GetNewFormList(groupHeaders []string,

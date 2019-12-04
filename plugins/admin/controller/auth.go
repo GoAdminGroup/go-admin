@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/captcha"
@@ -25,7 +26,9 @@ func Auth(ctx *context.Context) {
 		return
 	}
 
-	if user, ok := auth.Check(password, username); ok {
+	conn := db.GetConnection(services)
+
+	if user, ok := auth.Check(password, username, conn); ok {
 
 		cd, ok := captcha.Get(captchaConfig["driver"])
 
@@ -35,7 +38,7 @@ func Auth(ctx *context.Context) {
 			}
 		}
 
-		auth.SetCookie(ctx, user)
+		auth.SetCookie(ctx, user, conn)
 
 		response.OkWithData(ctx, map[string]interface{}{
 			"url": config.GetIndexURL(),
@@ -47,7 +50,7 @@ func Auth(ctx *context.Context) {
 
 // Logout delete the cookie.
 func Logout(ctx *context.Context) {
-	auth.DelCookie(ctx)
+	auth.DelCookie(ctx, db.GetConnection(services))
 	ctx.AddHeader("Location", config.Url("/login"))
 	ctx.SetStatusCode(302)
 }

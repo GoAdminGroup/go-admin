@@ -8,8 +8,9 @@ import (
 	"testing"
 )
 
-func init() {
-	GetConnectionByDriver(DriverPostgresql).InitDB(map[string]config.Database{
+func TestSQL_WhereIn(t *testing.T) {
+
+	post := GetConnectionByDriver(DriverPostgresql).InitDB(map[string]config.Database{
 		"default": {
 			Host:       "127.0.0.1",
 			Port:       "5433",
@@ -22,18 +23,11 @@ func init() {
 		},
 	})
 
-	config.Set(config.Config{
-		SqlLog: true,
-	})
-}
-
-func TestSQL_WhereIn(t *testing.T) {
-
-	item, _ := WithDriver(DriverPostgresql).Table("users").WhereIn("id", []interface{}{"3"}).First()
+	item, _ := WithDriver(post).Table("users").WhereIn("id", []interface{}{"3"}).First()
 	assert.Equal(t, item != nil, true)
 
-	_, _ = WithDriver(DriverPostgresql).WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
-		item, _ := WithDriver(DriverPostgresql).WithTx(tx).Table("users").WhereIn("id", []interface{}{"3"}).First()
+	_, _ = WithDriver(post).WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+		item, _ := WithDriver(post).WithTx(tx).Table("users").WhereIn("id", []interface{}{"3"}).First()
 		assert.Equal(t, item != nil, true)
 		return nil, nil
 	})

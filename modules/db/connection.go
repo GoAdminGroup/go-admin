@@ -7,6 +7,7 @@ package db
 import (
 	"database/sql"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 )
 
 const (
@@ -51,10 +52,10 @@ type Connection interface {
 	BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx
 
 	// InitDB initialize the database connections.
-	InitDB(cfg map[string]config.Database)
+	InitDB(cfg map[string]config.Database) Connection
 
 	// GetName get the connection name.
-	GetName() string
+	Name() string
 
 	// GetDelimiter get the default delimiter.
 	GetDelimiter() string
@@ -76,17 +77,16 @@ func GetConnectionByDriver(driver string) Connection {
 	}
 }
 
-// GetConnection return the default Connection.
-func GetConnection() Connection {
-	return GetConnectionByDriver(config.Get().Databases.GetDefault().Driver)
+func GetConnectionFromService(srv interface{}) Connection {
+	if v, ok := srv.(Connection); ok {
+		return v
+	}
+	panic("wrong service")
 }
 
-// Query call the Query method of default Connection.
-func Query(query string, args ...interface{}) ([]map[string]interface{}, error) {
-	return GetConnection().Query(query, args...)
-}
-
-// Exec call the Exec method of default Connection.
-func Exec(query string, args ...interface{}) (sql.Result, error) {
-	return GetConnection().Exec(query, args...)
+func GetConnection(srvs service.List) Connection {
+	if v, ok := srvs.Get(config.Get().Databases.GetDefault().Driver).(Connection); ok {
+		return v
+	}
+	panic("wrong service")
 }

@@ -10,8 +10,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -33,22 +34,16 @@ func init() {
 	engine.Register(new(Gorilla))
 }
 
-func User(ci interface{}) (models.UserModel, bool) {
-	cookie, err := new(Gorilla).SetContext(ci).GetCookie()
-
-	if err != nil {
-		return models.UserModel{}, false
-	}
-
-	return auth.GetCurUser(cookie)
+func (g *Gorilla) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
+	return g.GetUser(ci, conn, g)
 }
 
 func (g *Gorilla) Use(router interface{}, plugs []plugins.Plugin) error {
 	return g.GetUse(router, plugs, g)
 }
 
-func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	g.GetContent(ctx, getPanelFn, g)
+func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
+	g.GetContent(ctx, getPanelFn, g, db.GetConnection(list))
 }
 
 func (g *Gorilla) SetApp(app interface{}) error {

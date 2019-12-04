@@ -76,7 +76,7 @@ func main() {
 	// you can custom your pages like:
 
 	e.GET("/admin", func(context echo.Context) error {
-		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
+		eng.Content(context, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 		return nil
