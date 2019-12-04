@@ -8,6 +8,7 @@ import (
 	"errors"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"plugin"
 )
 
@@ -20,7 +21,7 @@ import (
 type Plugin interface {
 	GetRequest() []context.Path
 	GetHandler(url, method string) context.Handlers
-	InitPlugin()
+	InitPlugin(services service.List)
 }
 
 // GetHandler is a help method for Plugin GetHandler.

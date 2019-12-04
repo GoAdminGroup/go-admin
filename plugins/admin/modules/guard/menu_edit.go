@@ -3,6 +3,7 @@ package guard
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"html/template"
 	"strconv"
 )
@@ -22,40 +23,42 @@ func (e MenuEditParam) HasAlert() bool {
 	return e.Alert != template.HTML("")
 }
 
-func MenuEdit(ctx *context.Context) {
+func MenuEdit(srv service.List) context.Handler {
+	return func(ctx *context.Context) {
 
-	parentId := ctx.FormValue("parent_id")
-	if parentId == "" {
-		parentId = "0"
+		parentId := ctx.FormValue("parent_id")
+		if parentId == "" {
+			parentId = "0"
+		}
+
+		var (
+			parentIdInt, _ = strconv.Atoi(parentId)
+			token          = ctx.FormValue("_t")
+			alert          template.HTML
+		)
+
+		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
+			alert = getAlert("edit fail, wrong token")
+		}
+
+		if alert == "" {
+			alert = checkEmpty(ctx, "id", "title", "icon")
+		}
+
+		// TODO: check the user permission
+
+		ctx.SetUserValue("edit_menu_param", &MenuEditParam{
+			Id:       ctx.FormValue("id"),
+			Title:    ctx.FormValue("title"),
+			Header:   ctx.FormValue("header"),
+			ParentId: int64(parentIdInt),
+			Icon:     ctx.FormValue("icon"),
+			Uri:      ctx.FormValue("uri"),
+			Roles:    ctx.Request.Form["roles[]"],
+			Alert:    alert,
+		})
+		ctx.Next()
 	}
-
-	var (
-		parentIdInt, _ = strconv.Atoi(parentId)
-		token          = ctx.FormValue("_t")
-		alert          template.HTML
-	)
-
-	if !auth.TokenHelper.CheckToken(token) {
-		alert = getAlert("edit fail, wrong token")
-	}
-
-	if alert == "" {
-		alert = checkEmpty(ctx, "id", "title", "icon")
-	}
-
-	// TODO: check the user permission
-
-	ctx.SetUserValue("edit_menu_param", &MenuEditParam{
-		Id:       ctx.FormValue("id"),
-		Title:    ctx.FormValue("title"),
-		Header:   ctx.FormValue("header"),
-		ParentId: int64(parentIdInt),
-		Icon:     ctx.FormValue("icon"),
-		Uri:      ctx.FormValue("uri"),
-		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    alert,
-	})
-	ctx.Next()
 }
 
 func GetMenuEditParam(ctx *context.Context) *MenuEditParam {

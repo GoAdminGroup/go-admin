@@ -7,6 +7,7 @@ package engine
 import (
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
@@ -19,12 +20,15 @@ import (
 type Engine struct {
 	PluginList []plugins.Plugin
 	Adapter    adapter.WebFrameWork
+	Config     config.Config
+	services   service.List
 }
 
 // Default return the default engine instance.
 func Default() *Engine {
 	return &Engine{
-		Adapter: DefaultAdapter,
+		Adapter:  defaultAdapter,
+		services: service.GetServices(),
 	}
 }
 
@@ -40,7 +44,7 @@ func (eng *Engine) Use(router interface{}) error {
 func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 	for _, plug := range plugs {
-		plug.InitPlugin()
+		plug.InitPlugin(eng.services)
 	}
 
 	eng.PluginList = append(eng.PluginList, plugs...)
@@ -49,39 +53,39 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	config.Set(cfg)
+	eng.Config = config.Set(cfg)
 	return eng
 }
 
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
-	config.ReadFromJson(path)
+	eng.Config = config.ReadFromJson(path)
 	return eng
 }
 
 // AddAdapter add the adapter of engine.
 func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 	eng.Adapter = ada
-	DefaultAdapter = ada
+	defaultAdapter = ada
 	return eng
 }
 
-// DefaultAdapter is the default adapter of engine.
-var DefaultAdapter adapter.WebFrameWork
+// defaultAdapter is the default adapter of engine.
+var defaultAdapter adapter.WebFrameWork
 
 // Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
 	if ada == nil {
 		panic("adapter is nil")
 	}
-	DefaultAdapter = ada
+	defaultAdapter = ada
 }
 
-// Content call the Content method of DefaultAdapter.
-// If DefaultAdapter is nil, it will panic.
+// Content call the Content method of defaultAdapter.
+// If defaultAdapter is nil, it will panic.
 func Content(ctx interface{}, panel types.GetPanelFn) {
-	if DefaultAdapter == nil {
+	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	DefaultAdapter.Content(ctx, panel)
+	defaultAdapter.Content(ctx, panel)
 }

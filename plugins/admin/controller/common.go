@@ -2,7 +2,9 @@ package controller
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -11,6 +13,7 @@ import (
 var (
 	config        c.Config
 	captchaConfig map[string]string
+	services      service.List
 )
 
 // SetConfig set the config.
@@ -21,6 +24,15 @@ func SetCaptcha(cap map[string]string) {
 // SetConfig set the config.
 func SetConfig(cfg c.Config) {
 	config = cfg
+}
+
+// SetServices set the services.
+func SetServices(l service.List) {
+	services = l
+}
+
+func authSrv() *auth.Service {
+	return auth.GetService(services.Get("auth"))
 }
 
 func aAlert() types.AlertAttribute {

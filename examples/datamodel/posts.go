@@ -10,7 +10,7 @@ import (
 // GetPostsTable return the model of table posts.
 func GetPostsTable() (postsTable table.Table) {
 
-	postsTable = table.NewDefaultTable(table.DefaultConfig)
+	postsTable = table.NewDefaultTable(table.DefaultConfig())
 
 	info := postsTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()

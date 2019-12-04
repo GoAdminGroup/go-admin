@@ -25,7 +25,7 @@ func ShowMenu(ctx *context.Context) {
 // ShowNewMenu show new menu page.
 func ShowNewMenu(ctx *context.Context) {
 
-	panel := table.List["menu"]
+	panel := table.Get("menu")
 
 	formData, groupFormData, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders,
 		panel.GetForm().TabGroups,
@@ -46,7 +46,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
-			SetToken(auth.TokenHelper.AddToken()).
+			SetToken(authSrv().AddToken()).
 			SetInfoUrl(config.Url("/menu")).
 			GetContent() + template2.HTML(js),
 		Description: panel.GetForm().Description,
@@ -70,7 +70,7 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formData, groupFormData, groupHeaders, title, description, _ := table.List["menu"].GetDataFromDatabaseWithId(ctx.Query("id"))
+	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu").GetDataFromDatabaseWithId(ctx.Query("id"))
 
 	user := auth.Auth(ctx)
 
@@ -85,9 +85,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
-			SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
+			SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
-			SetToken(auth.TokenHelper.AddToken()).
+			SetToken(authSrv().AddToken()).
 			SetInfoUrl(config.Url("/menu")).
 			GetContent() + template2.HTML(js),
 		Description: description,
@@ -191,7 +191,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
 
-	list := table.List["menu"]
+	list := table.Get("menu")
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
 		list.GetForm().FieldList)
@@ -199,8 +199,8 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	newForm := aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
-		SetPrimaryKey(table.List["menu"].GetPrimaryKey().Name).
-		SetToken(auth.TokenHelper.AddToken()).
+		SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
+		SetToken(authSrv().AddToken()).
 		SetInfoUrl(config.Url("/menu")).
 		SetTitle("New").
 		SetContent(formList).

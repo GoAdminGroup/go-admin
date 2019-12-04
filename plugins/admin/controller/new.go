@@ -47,7 +47,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, 
 			SetTabHeaders(groupHeaders).
 			SetUrl(url).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
-			SetToken(auth.TokenHelper.AddToken()).
+			SetToken(authSrv().AddToken()).
 			SetTitle("New").
 			SetInfoUrl(infoUrl).
 			SetHeader(panel.GetForm().HeaderHtml).

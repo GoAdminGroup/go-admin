@@ -68,7 +68,7 @@ func ShowLogin(ctx *context.Context) {
 		Title:     config.LoginTitle,
 		Logo:      config.LoginLogo,
 		System: types.SystemInfo{
-			Version: system.Version,
+			Version: system.Version(),
 		},
 		CdnUrl: config.AssetUrl,
 	}); err == nil {

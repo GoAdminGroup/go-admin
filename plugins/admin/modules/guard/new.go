@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -30,7 +31,7 @@ func (e *ShowNewFormParam) GetInfoUrl() string {
 func ShowNewForm(ctx *context.Context) {
 
 	prefix := ctx.Query("__prefix")
-	panel := table.List[prefix]
+	panel := table.Get(prefix)
 	if !panel.GetCanAdd() {
 		alert(ctx, panel, "operation not allow")
 		ctx.Abort()
@@ -110,43 +111,45 @@ func (e NewFormParam) IsRole() bool {
 	return e.Prefix == "roles"
 }
 
-func NewForm(ctx *context.Context) {
-	prefix := ctx.Query("__prefix")
-	previous := ctx.FormValue("_previous_")
-	panel := table.List[prefix]
+func NewForm(srv service.List) context.Handler {
+	return func(ctx *context.Context) {
+		prefix := ctx.Query("__prefix")
+		previous := ctx.FormValue("_previous_")
+		panel := table.Get(prefix)
 
-	if !panel.GetCanAdd() {
-		alert(ctx, panel, "operation not allow")
-		ctx.Abort()
-		return
+		if !panel.GetCanAdd() {
+			alert(ctx, panel, "operation not allow")
+			ctx.Abort()
+			return
+		}
+		token := ctx.FormValue("_t")
+
+		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
+			alert(ctx, panel, "edit fail, wrong token")
+			ctx.Abort()
+			return
+		}
+
+		fromList := modules.IsInfoUrl(previous)
+
+		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+
+		if fromList {
+			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
+		}
+
+		ctx.SetUserValue("new_form_param", &NewFormParam{
+			Panel:        panel,
+			Id:           "",
+			Prefix:       prefix,
+			Param:        param,
+			Path:         strings.Split(previous, "?")[0],
+			MultiForm:    ctx.Request.MultipartForm,
+			PreviousPath: previous,
+			FromList:     fromList,
+		})
+		ctx.Next()
 	}
-	token := ctx.FormValue("_t")
-
-	if !auth.TokenHelper.CheckToken(token) {
-		alert(ctx, panel, "edit fail, wrong token")
-		ctx.Abort()
-		return
-	}
-
-	fromList := modules.IsInfoUrl(previous)
-
-	param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
-
-	if fromList {
-		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
-	}
-
-	ctx.SetUserValue("new_form_param", &NewFormParam{
-		Panel:        panel,
-		Id:           "",
-		Prefix:       prefix,
-		Param:        param,
-		Path:         strings.Split(previous, "?")[0],
-		MultiForm:    ctx.Request.MultipartForm,
-		PreviousPath: previous,
-		FromList:     fromList,
-	})
-	ctx.Next()
 }
 
 func GetNewFormParam(ctx *context.Context) *NewFormParam {

@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-**Description** [describe your advice]
+### Description [describe your advice]
 
-**Solution** [if any solutions, describe here]
+### Solution [if any solutions, describe here]
 
-**Others** [screenshots and other info]
+### Others [screenshots and other info]

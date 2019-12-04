@@ -101,3 +101,9 @@ func TestSetDefault(t *testing.T) {
 	assert.Equal(t, setDefault("/", "/", "/admin"), "/admin")
 	assert.Equal(t, setDefault("/", "/ad", "/admin"), "/")
 }
+
+func TestSet(t *testing.T) {
+	Set(Config{Theme: "abc"})
+	Set(Config{Theme: "bcd"})
+	assert.Equal(t, Get().Theme, "abc")
+}

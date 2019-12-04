@@ -15,7 +15,7 @@ type ExportParam struct {
 func Export(ctx *context.Context) {
 
 	prefix := ctx.Query("__prefix")
-	panel := table.List[prefix]
+	panel := table.Get(prefix)
 	if !panel.GetExportable() {
 		alert(ctx, panel, "operation not allow")
 		ctx.Abort()

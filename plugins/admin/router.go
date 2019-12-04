@@ -4,13 +4,14 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/template"
 )
 
 // InitRouter initialize the router and return the context.
-func InitRouter(prefix string) *context.App {
+func InitRouter(prefix string, srv service.List) *context.App {
 	app := context.NewApp()
 
 	route := app.Group(prefix, globalErrorHandler)
@@ -38,8 +39,8 @@ func InitRouter(prefix string) *context.App {
 
 	// menus
 	authRoute.POST("/menu/delete", guard.MenuDelete, controller.DeleteMenu)
-	authRoute.POST("/menu/new", guard.MenuNew, controller.NewMenu)
-	authRoute.POST("/menu/edit", guard.MenuEdit, controller.EditMenu)
+	authRoute.POST("/menu/new", guard.MenuNew(srv), controller.NewMenu)
+	authRoute.POST("/menu/edit", guard.MenuEdit(srv), controller.EditMenu)
 	authRoute.POST("/menu/order", controller.MenuOrder)
 	authRoute.GET("/menu", controller.ShowMenu)
 	authRoute.GET("/menu/edit/show", controller.ShowEditMenu)
@@ -48,8 +49,8 @@ func InitRouter(prefix string) *context.App {
 	// add delete modify query
 	authRoute.GET("/info/:__prefix/edit", guard.ShowForm, controller.ShowForm)
 	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm, controller.ShowNewForm)
-	authRoute.POST("/edit/:__prefix", guard.EditForm, controller.EditForm)
-	authRoute.POST("/new/:__prefix", guard.NewForm, controller.NewForm)
+	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm)
+	authRoute.POST("/new/:__prefix", guard.NewForm(srv), controller.NewForm)
 	authRoute.POST("/delete/:__prefix", guard.Delete, controller.Delete)
 	authRoute.POST("/export/:__prefix", guard.Export, controller.Export)
 	authRoute.GET("/info/:__prefix", controller.ShowInfo)

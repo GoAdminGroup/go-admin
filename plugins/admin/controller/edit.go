@@ -51,7 +51,7 @@ func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id 
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(url).
-			SetToken(auth.TokenHelper.AddToken()).
+			SetToken(authSrv().AddToken()).
 			SetInfoUrl(infoUrl).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml).

@@ -15,7 +15,7 @@ type UpdateParam struct {
 
 func Update(ctx *context.Context) {
 	prefix := ctx.Query("__prefix")
-	panel := table.List[prefix]
+	panel := table.Get(prefix)
 
 	if !panel.GetEditable() {
 		ctx.JSON(http.StatusForbidden, map[string]interface{}{

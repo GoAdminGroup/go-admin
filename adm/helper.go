@@ -15,7 +15,7 @@ import (
 )
 
 func cliInfo() {
-	fmt.Println("GoAdmin CLI " + system.Version + compareVersion(system.Version))
+	fmt.Println("GoAdmin CLI " + system.Version() + compareVersion(system.Version()))
 	fmt.Println()
 }
 

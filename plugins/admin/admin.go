@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -17,7 +18,7 @@ type Admin struct {
 }
 
 // InitPlugin implements Plugin.InitPlugin.
-func (admin *Admin) InitPlugin() {
+func (admin *Admin) InitPlugin(services service.List) {
 
 	cfg := config.Get()
 
@@ -27,7 +28,7 @@ func (admin *Admin) InitPlugin() {
 	}
 
 	// Init router
-	App.app = InitRouter(cfg.Prefix())
+	App.app = InitRouter(cfg.Prefix(), services)
 
 	table.SetGenerators(table.GeneratorList{
 		"manager":    table.GetManagerTable,
@@ -40,6 +41,7 @@ func (admin *Admin) InitPlugin() {
 	table.InitTableList()
 
 	controller.SetConfig(cfg)
+	controller.SetServices(services)
 }
 
 // App is the global Admin plugin.

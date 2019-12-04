@@ -8,11 +8,11 @@ import (
 )
 
 func TestGetLatestVersion(t *testing.T) {
-	assert.Equal(t, getLatestVersion(), system.Version)
+	assert.Equal(t, getLatestVersion(), system.Version())
 }
 
 func TestCompareVersion(t *testing.T) {
-	assert.Equal(t, isRequireUpdate(system.Version, getLatestVersion()), false)
+	assert.Equal(t, isRequireUpdate(system.Version(), getLatestVersion()), false)
 }
 
 func TestGetType(t *testing.T) {

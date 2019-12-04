@@ -87,7 +87,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		groupHeaders       []string
 		title, description string
 		prefix             = ctx.Query("__prefix")
-		panel              = table.List[prefix]
+		panel              = table.Get(prefix)
 	)
 
 	if kind == "edit" {
@@ -95,7 +95,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
 		}
-		formData, groupFormData, groupHeaders, title, description, _ = table.List[prefix].GetDataFromDatabaseWithId(id)
+		formData, groupFormData, groupHeaders, title, description, _ = table.Get(prefix).GetDataFromDatabaseWithId(id)
 	} else {
 		formData, groupFormData, groupHeaders = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 			panel.GetForm().FieldList)
@@ -118,7 +118,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/"+kind+"/"+prefix)).
-			SetToken(auth.TokenHelper.AddToken()).
+			SetToken(authSrv().AddToken()).
 			SetInfoUrl(config.Url("/info/"+prefix+queryParam)).
 			GetContent(),
 		Description: description,

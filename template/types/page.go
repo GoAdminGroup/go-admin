@@ -69,7 +69,7 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		Menu:  menu,
 		Panel: panel,
 		System: SystemInfo{
-			Version: system.Version,
+			Version: system.Version(),
 		},
 		UrlPrefix:      cfg.Prefix(),
 		Title:          cfg.Title,

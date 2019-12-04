@@ -137,7 +137,7 @@ func getPath(ctx *context.Context) string {
 	} else if strings.ToUpper(ctx.Method()) == "POST" {
 		ok, err := regexp.MatchString("/edit/(.*)", ctx.Path())
 		if ok && err == nil {
-			pk := table.List[ctx.Query("__prefix")].GetPrimaryKey().Name
+			pk := table.Get(ctx.Query("__prefix")).GetPrimaryKey().Name
 			id := ctx.FormValue(pk)
 			if id != "" {
 				return ctx.Path() + "?" + pk + "=" + id

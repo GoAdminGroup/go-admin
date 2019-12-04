@@ -6,6 +6,7 @@ package auth
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"golang.org/x/crypto/bcrypt"
@@ -62,34 +63,50 @@ func DelCookie(ctx *context.Context) bool {
 	return true
 }
 
-// CSRFToken is type of a csrf token list.
-type CSRFToken []string
+type Service struct {
+	tokens CSRFToken
+	lock   sync.Mutex
+}
 
-var (
-	// TokenHelper helps check the token.
-	TokenHelper = new(CSRFToken)
+func (s *Service) Name() string {
+	return "auth"
+}
 
-	// CsrfTokenLock is the a lock of checking.
-	CsrfTokenLock sync.Mutex
-)
+func init() {
+	service.Register("auth", func() (service.Service, error) {
+		return &Service{
+			tokens: make(CSRFToken, 0),
+		}, nil
+	})
+}
+
+func GetService(s interface{}) *Service {
+	if srv, ok := s.(*Service); ok {
+		return srv
+	}
+	panic("wrong service")
+}
 
 // AddToken add the token to the CSRFToken.
-func (csrf *CSRFToken) AddToken() string {
-	CsrfTokenLock.Lock()
-	defer CsrfTokenLock.Unlock()
+func (s *Service) AddToken() string {
+	s.lock.Lock()
+	defer s.lock.Unlock()
 	tokenStr := modules.Uuid()
-	*csrf = append(*csrf, tokenStr)
+	s.tokens = append(s.tokens, tokenStr)
 	return tokenStr
 }
 
 // CheckToken check the given token with tokens in the CSRFToken, if exist
 // return true.
-func (csrf *CSRFToken) CheckToken(toCheckToken string) bool {
-	for i := 0; i < len(*csrf); i++ {
-		if (*csrf)[i] == toCheckToken {
-			*csrf = append((*csrf)[:i], (*csrf)[i+1:]...)
+func (s *Service) CheckToken(toCheckToken string) bool {
+	for i := 0; i < len(s.tokens); i++ {
+		if (s.tokens)[i] == toCheckToken {
+			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
 			return true
 		}
 	}
 	return false
 }
+
+// CSRFToken is type of a csrf token list.
+type CSRFToken []string

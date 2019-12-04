@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // Database is a type of database connection config.
@@ -255,7 +256,6 @@ func (c Config) PrefixFixSlash() string {
 
 var (
 	globalCfg Config
-	mutex     sync.Mutex
 	declare   sync.Once
 )
 
@@ -267,42 +267,54 @@ func ReadFromJson(path string) Config {
 		panic(err)
 	}
 
-	err = json.Unmarshal(jsonByte, &globalCfg)
+	var cfg Config
+
+	err = json.Unmarshal(jsonByte, &cfg)
 
 	if err != nil {
 		panic(err)
 	}
 
-	Set(globalCfg)
-
+	globalCfg = Set(cfg)
 	return globalCfg
 }
 
-// Set sets the config.
-func Set(cfg Config) {
-	mutex.Lock()
-	globalCfg = cfg
+var (
+	count uint32
+	lock  sync.Mutex
+)
 
-	globalCfg.Title = setDefault(globalCfg.Title, "", constant.Title)
-	globalCfg.LoginTitle = setDefault(globalCfg.LoginTitle, "", constant.Title)
-	globalCfg.Logo = template.HTML(setDefault(string(globalCfg.Logo), "", "<b>Go</b>Admin"))
-	globalCfg.MiniLogo = template.HTML(setDefault(string(globalCfg.MiniLogo), "", "<b>G</b>A"))
-	globalCfg.Theme = setDefault(globalCfg.Theme, "", "adminlte")
-	globalCfg.IndexUrl = setDefault(globalCfg.IndexUrl, "", "/info/manager")
-	globalCfg.ColorScheme = setDefault(globalCfg.ColorScheme, "", "skin-black")
-	globalCfg.FileUploadEngine.Name = setDefault(globalCfg.FileUploadEngine.Name, "", "local")
-	globalCfg.Env = setDefault(globalCfg.Env, "", EnvProd)
-	if globalCfg.SessionLifeTime == 0 {
+// Set sets the config.
+func Set(cfg Config) Config {
+
+	lock.Lock()
+	defer lock.Unlock()
+
+	if atomic.LoadUint32(&count) != 0 {
+		panic("can not set config twice")
+	}
+	atomic.StoreUint32(&count, 1)
+
+	cfg.Title = setDefault(cfg.Title, "", constant.Title)
+	cfg.LoginTitle = setDefault(cfg.LoginTitle, "", constant.Title)
+	cfg.Logo = template.HTML(setDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
+	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
+	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")
+	cfg.IndexUrl = setDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.ColorScheme = setDefault(cfg.ColorScheme, "", "skin-black")
+	cfg.FileUploadEngine.Name = setDefault(cfg.FileUploadEngine.Name, "", "local")
+	cfg.Env = setDefault(cfg.Env, "", EnvProd)
+	if cfg.SessionLifeTime == 0 {
 		// default two hours
-		globalCfg.SessionLifeTime = 7200
+		cfg.SessionLifeTime = 7200
 	}
 
-	if globalCfg.UrlPrefix == "" {
-		globalCfg.prefix = "/"
-	} else if globalCfg.UrlPrefix[0] != '/' {
-		globalCfg.prefix = "/" + globalCfg.UrlPrefix
+	if cfg.UrlPrefix == "" {
+		cfg.prefix = "/"
+	} else if cfg.UrlPrefix[0] != '/' {
+		cfg.prefix = "/" + cfg.UrlPrefix
 	} else {
-		globalCfg.prefix = globalCfg.UrlPrefix
+		cfg.prefix = cfg.UrlPrefix
 	}
 
 	logger.SetInfoLogger(cfg.InfoLogPath, cfg.Debug, cfg.InfoLogOff)
@@ -321,7 +333,9 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 		})
 	}
 
-	mutex.Unlock()
+	globalCfg = cfg
+
+	return cfg
 }
 
 // Get gets the config.

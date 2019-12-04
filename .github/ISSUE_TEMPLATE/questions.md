@@ -7,8 +7,8 @@ assignees: ''
 
 ---
 
-**Description** [describe your questions]
+### Description [describe your questions]
 
-**Example code** [If you have any code info]
+### Example code [If you have any code info]
 
-**Others** [screenshots or other info]
+### Others [screenshots or other info]

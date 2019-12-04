@@ -9,7 +9,7 @@ import (
 // GetAuthorsTable return the model of table author.
 func GetAuthorsTable() (authorsTable table.Table) {
 
-	authorsTable = table.NewDefaultTable(table.DefaultConfig)
+	authorsTable = table.NewDefaultTable(table.DefaultConfig())
 
 	// connect your custom connection
 	// authorsTable = table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("mysql", "admin"))

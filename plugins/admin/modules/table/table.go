@@ -26,28 +26,31 @@ func (g GeneratorList) Add(key string, gen Generator) {
 }
 
 var (
-	Generators = make(GeneratorList)
-	List       = map[string]Table{}
+	generators = make(GeneratorList)
+	tableList  = map[string]Table{}
 )
 
+func Get(key string) Table {
+	return tableList[key]
+}
+
 func InitTableList() {
-	List = make(map[string]Table, len(Generators))
-	for prefix, generator := range Generators {
-		List[prefix] = generator()
+	for prefix, generator := range generators {
+		tableList[prefix] = generator()
 	}
 }
 
 // RefreshTableList refresh the table list when the table relationship changed.
 func RefreshTableList() {
-	for k, v := range Generators {
-		List[k] = v()
+	for k, v := range generators {
+		tableList[k] = v()
 	}
 }
 
-// SetGenerators update Generators.
-func SetGenerators(generators map[string]Generator) {
-	for key, generator := range generators {
-		Generators[key] = generator
+// SetGenerators update generators.
+func SetGenerators(gens map[string]Generator) {
+	for key, gen := range gens {
+		generators[key] = gen
 	}
 }
 
@@ -153,17 +156,19 @@ type Config struct {
 	PrimaryKey PrimaryKey
 }
 
-var DefaultConfig = Config{
-	Driver:     db.DriverMysql,
-	CanAdd:     true,
-	Editable:   true,
-	Deletable:  true,
-	Exportable: false,
-	Connection: DefaultConnectionName,
-	PrimaryKey: PrimaryKey{
-		Type: db.Int,
-		Name: DefaultPrimaryKeyName,
-	},
+func DefaultConfig() Config {
+	return Config{
+		Driver:     db.DriverMysql,
+		CanAdd:     true,
+		Editable:   true,
+		Deletable:  true,
+		Exportable: false,
+		Connection: DefaultConnectionName,
+		PrimaryKey: PrimaryKey{
+			Type: db.Int,
+			Name: DefaultPrimaryKeyName,
+		},
+	}
 }
 
 func (config Config) SetPrimaryKeyType(typ string) Config {
