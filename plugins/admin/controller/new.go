@@ -20,14 +20,15 @@ import (
 // ShowNewForm show a new form page.
 func ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
-	showNewForm(ctx, "", param.Panel, param.GetUrl(), param.GetInfoUrl(), "")
+	showNewForm(ctx, "", param.Prefix, param.GetUrl(), param.GetInfoUrl(), "")
 }
 
-func showNewForm(ctx *context.Context, alert template2.HTML, panel table.Table, url, infoUrl, newUrl string) {
+func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url, infoUrl, newUrl string) {
 
 	user := auth.Auth(ctx)
 
 	table.RefreshTableList()
+	panel := table.Get(prefix)
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
@@ -69,7 +70,7 @@ func NewForm(ctx *context.Context) {
 	param := guard.GetNewFormParam(ctx)
 
 	if param.HasAlert() {
-		showNewForm(ctx, param.Alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+		showNewForm(ctx, param.Alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 		return
 	}
 
@@ -81,7 +82,7 @@ func NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+			showNewForm(ctx, alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 			return
 		}
 	}
@@ -92,11 +93,9 @@ func NewForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		showNewForm(ctx, alert, param.Panel, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+		showNewForm(ctx, alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
 		return
 	}
-
-	table.RefreshTableList()
 
 	if !param.FromList {
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))

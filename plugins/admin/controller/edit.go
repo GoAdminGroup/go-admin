@@ -20,10 +20,13 @@ import (
 // ShowForm show form page.
 func ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
-	showForm(ctx, "", param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), "")
+	showForm(ctx, "", param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), "")
 }
 
-func showForm(ctx *context.Context, alert template2.HTML, panel table.Table, id string, url, infoUrl string, editUrl string) {
+func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, url, infoUrl string, editUrl string) {
+
+	table.RefreshTableList()
+	panel := table.Get(prefix)
 
 	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataFromDatabaseWithId(id)
 
@@ -72,7 +75,7 @@ func EditForm(ctx *context.Context) {
 	param := guard.GetEditFormParam(ctx)
 
 	if param.HasAlert() {
-		showForm(ctx, param.Alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+		showForm(ctx, param.Alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
 		return
 	}
 
@@ -84,7 +87,7 @@ func EditForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+			showForm(ctx, alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
 			return
 		}
 	}
@@ -95,11 +98,9 @@ func EditForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		showForm(ctx, alert, param.Panel, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+		showForm(ctx, alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
 		return
 	}
-
-	table.RefreshTableList()
 
 	if !param.FromList {
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))

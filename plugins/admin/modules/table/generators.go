@@ -95,7 +95,7 @@ func GetManagerTable() (ManagerTable Table) {
 		})
 
 	var roles, permissions []map[string]string
-	rolesModel, _ := table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
+	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
@@ -103,7 +103,7 @@ func GetManagerTable() (ManagerTable Table) {
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := table("goadmin_permissions").Select("id", "slug").Where("id", ">", 0).All()
+	permissionsModel, _ := table("goadmin_permissions").Select("id", "slug").All()
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -332,15 +332,6 @@ func GetPermissionTable() (PermissionTable Table) {
 
 func GetRolesTable() (RolesTable Table) {
 	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
-	var permissions []map[string]string
-	permissionsModel, _ := table("goadmin_permissions").Select("id", "name").All()
-
-	for _, v := range permissionsModel {
-		permissions = append(permissions, map[string]string{
-			"field": v["name"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
 
 	info := RolesTable.GetInfo().AddXssJsFilter()
 
@@ -403,6 +394,16 @@ func GetRolesTable() (RolesTable Table) {
 
 	formList := RolesTable.GetForm().AddXssJsFilter()
 
+	permissionsModel, _ := table("goadmin_permissions").Select("id", "name").All()
+	var permissions = make([]map[string]string, len(permissionsModel))
+
+	for k, v := range permissionsModel {
+		permissions[k] = map[string]string{
+			"field": v["name"].(string),
+			"value": strconv.FormatInt(v["id"].(int64), 10),
+		}
+	}
+
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique")))
@@ -412,9 +413,9 @@ func GetRolesTable() (RolesTable Table) {
 			Select("permission_id").
 			Where("role_id", "=", model.ID).
 			All()
-		var permissions []string
-		for _, v := range perModel {
-			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+		var permissions = make([]string, len(perModel))
+		for k, v := range perModel {
+			permissions[k] = strconv.FormatInt(v["permission_id"].(int64), 10)
 		}
 		return permissions
 	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/permission/new">` +
@@ -429,7 +430,7 @@ func GetRolesTable() (RolesTable Table) {
 
 	formList.SetUpdateFn(func(values form2.Values) error {
 
-		if models.Role().IsSlugExist(values.Get("slug"), values.Get("id")) {
+		if models.Role().SetConn(conn()).IsSlugExist(values.Get("slug"), values.Get("id")) {
 			return errors.New("slug exists")
 		}
 
@@ -559,7 +560,7 @@ func GetMenuTable() (MenuTable Table) {
 		})
 
 	var roles, parents []map[string]string
-	rolesModel, _ := table("goadmin_roles").Select("id", "slug").Where("id", ">", 0).All()
+	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{

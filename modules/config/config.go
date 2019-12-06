@@ -333,6 +333,7 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 	}
 
 	globalCfg = cfg
+	eraseSens()
 
 	return cfg
 }
@@ -340,6 +341,21 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 // Get gets the config.
 func Get() Config {
 	return globalCfg
+}
+
+// eraseSens erase sensitive info.
+func eraseSens() {
+	for _, d := range globalCfg.Databases {
+		d.Host = ""
+		d.Port = ""
+		d.User = ""
+		d.Pwd = ""
+		d.Name = ""
+		d.MaxIdleCon = 0
+		d.MaxOpenCon = 0
+		d.File = ""
+		d.Dsn = ""
+	}
 }
 
 func setDefault(value, condition, def string) string {

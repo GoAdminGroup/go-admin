@@ -59,6 +59,11 @@ func (t UserModel) IsEmpty() bool {
 	return t.Id == int64(0)
 }
 
+// HasMenu check the user has visitable menu or not.
+func (t UserModel) HasMenu() bool {
+	return len(t.MenuIds) != 0 || t.IsSuperAdmin()
+}
+
 // IsSuperAdmin check the user model is super admin or not.
 func (t UserModel) IsSuperAdmin() bool {
 	for _, per := range t.Permissions {
@@ -110,11 +115,20 @@ func (t UserModel) WithPermissions() UserModel {
 // WithMenus query the menu info of the user.
 func (t UserModel) WithMenus() UserModel {
 
-	menuIdsModel, _ := t.Table("goadmin_role_menu").
-		LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
-		Where("goadmin_role_menu.role_id", "=", t.Role.Id).
-		Select("menu_id", "parent_id").
-		All()
+	var menuIdsModel []map[string]interface{}
+
+	if t.IsSuperAdmin() {
+		menuIdsModel, _ = t.Table("goadmin_role_menu").
+			LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
+			Select("menu_id", "parent_id").
+			All()
+	} else {
+		menuIdsModel, _ = t.Table("goadmin_role_menu").
+			LeftJoin("goadmin_menu", "goadmin_menu.id", "=", "goadmin_role_menu.menu_id").
+			Where("goadmin_role_menu.role_id", "=", t.Role.Id).
+			Select("menu_id", "parent_id").
+			All()
+	}
 
 	var menuIds []int64
 

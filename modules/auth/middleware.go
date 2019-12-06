@@ -200,7 +200,7 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 
 	user = user.WithRoles().WithPermissions().WithMenus()
 
-	ok = true
+	ok = user.HasMenu()
 
 	return
 }
