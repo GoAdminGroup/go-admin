@@ -5,11 +5,11 @@
 package auth
 
 import (
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -216,6 +216,8 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 		path = path[:len(path)-1]
 	}
 
+	hasQmark := strings.Contains(path, "?id=")
+
 	for _, v := range user.Permissions {
 
 		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
@@ -228,6 +230,10 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
 
+				if hasQmark && !strings.Contains(matchPath, "?") {
+					matchPath += "?(.*)"
+				}
+
 				if matchPath == path {
 					return true
 				}
@@ -235,7 +241,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 				reg, err := regexp.Compile(matchPath)
 
 				if err != nil {
-					fmt.Println("err", err)
+					logger.Error("CheckPermissions error: ", err)
 					continue
 				}
 

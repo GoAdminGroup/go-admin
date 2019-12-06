@@ -28,6 +28,11 @@ func TestCheckPermissions(t *testing.T) {
 				Slug:       "/",
 				HttpMethod: []string{"GET"},
 				HttpPath:   []string{"/info/user"},
+			}, {
+				Name:       "/info/user/edit",
+				Slug:       "/",
+				HttpMethod: []string{"GET"},
+				HttpPath:   []string{"/info/user/edit"},
 			},
 		},
 	}
@@ -40,6 +45,7 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "GET"), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "get"), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "post"), false)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/user/edit?id=3", "get"), true)
 }
 
 func TestInMethodArr(t *testing.T) {
