@@ -42,7 +42,7 @@ func newHandler() http.Handler {
 	}
 
 	s.BindHandler("GET:/admin", func(ctx *ghttp.Request) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

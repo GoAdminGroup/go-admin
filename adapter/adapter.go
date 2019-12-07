@@ -13,7 +13,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -27,7 +26,9 @@ import (
 // response to the corresponding context of framework.
 type WebFrameWork interface {
 	Use(interface{}, []plugins.Plugin) error
-	Content(interface{}, types.GetPanelFn, service.List)
+	Content(interface{}, types.GetPanelFn)
+	SetConnection(db.Connection)
+	GetConnection() db.Connection
 	SetContext(ctx interface{}) WebFrameWork
 	GetCookie() (string, error)
 	Path() string
@@ -39,32 +40,43 @@ type WebFrameWork interface {
 	CookieKey() string
 	HTMLContentType() string
 	Name() string
-	User(ci interface{}, conn db.Connection) (models.UserModel, bool)
+	User(ci interface{}) (models.UserModel, bool)
 	SetApp(app interface{}) error
 	AddHandler(method, path string, plug plugins.Plugin)
 }
 
-type BaseAdapter struct{}
+type BaseAdapter struct {
+	db db.Connection
+}
 
-func (base BaseAdapter) HTMLContentType() string {
+func (base *BaseAdapter) SetConnection(conn db.Connection) {
+	base.db = conn
+}
+
+func (base *BaseAdapter) GetConnection() db.Connection {
+	return base.db
+}
+
+func (base *BaseAdapter) HTMLContentType() string {
 	return "text/html; charset=utf-8"
 }
 
-func (base BaseAdapter) CookieKey() string {
+func (base *BaseAdapter) CookieKey() string {
 	return auth.DefaultCookieKey
 }
 
-func (base BaseAdapter) GetUser(ci interface{}, conn db.Connection, wf WebFrameWork) (models.UserModel, bool) {
+func (base *BaseAdapter) GetUser(ci interface{}, wf WebFrameWork) (models.UserModel, bool) {
 	cookie, err := wf.GetCookie()
 
 	if err != nil {
 		return models.UserModel{}, false
 	}
 
-	return auth.GetCurUser(cookie, conn)
+	user, exist := auth.GetCurUser(cookie, wf.GetConnection())
+	return user.ReleaseConn(), exist
 }
 
-func (base BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
+func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
 	if err := wf.SetApp(router); err != nil {
 		return err
 	}
@@ -79,7 +91,7 @@ func (base BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf W
 	return nil
 }
 
-func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, conn db.Connection) {
+func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork) {
 
 	newBase := wf.SetContext(ctx)
 
@@ -90,7 +102,7 @@ func (base BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn,
 		return
 	}
 
-	user, authSuccess := auth.GetCurUser(cookie, conn)
+	user, authSuccess := auth.GetCurUser(cookie, wf.GetConnection())
 
 	if !authSuccess {
 		newBase.Redirect()

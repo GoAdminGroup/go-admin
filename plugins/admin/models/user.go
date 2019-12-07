@@ -75,6 +75,12 @@ func (t UserModel) IsSuperAdmin() bool {
 }
 
 // UpdateAvatar update the avatar of user.
+func (t UserModel) ReleaseConn() UserModel {
+	t.Conn = nil
+	return t
+}
+
+// UpdateAvatar update the avatar of user.
 func (t UserModel) UpdateAvatar(avatar string) {
 	t.Avatar = avatar
 }

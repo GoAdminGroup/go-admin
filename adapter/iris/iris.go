@@ -8,10 +8,9 @@ import (
 	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/adapter"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/kataras/iris/v12"
 	"net/http"
 	"strings"
 
@@ -33,16 +32,26 @@ func init() {
 	engine.Register(new(Iris))
 }
 
-func (is *Iris) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return is.GetUser(ci, conn, is)
+func (is *Iris) User(ci interface{}) (models.UserModel, bool) {
+	return is.GetUser(ci,  is)
 }
 
 func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
 	return is.GetUse(router, plugs, is)
 }
 
-func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
-	is.GetContent(ctx, getPanelFn, is, db.GetConnection(list))
+func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	is.GetContent(ctx, getPanelFn, is)
+}
+
+type HandlerFunc func(ctx iris.Context) (types.Panel, error)
+
+func Content(handler HandlerFunc) iris.Handler {
+	return func(ctx iris.Context) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(iris.Context))
+		})
+	}
 }
 
 func (is *Iris) SetApp(app interface{}) error {

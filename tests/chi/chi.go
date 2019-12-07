@@ -40,7 +40,7 @@ func newChiHandler() http.Handler {
 	}
 
 	r.Get("/admin", func(writer http.ResponseWriter, request *http.Request) {
-		eng.Content(ada.Context{Request: request, Response: writer}, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(ada.Context{Request: request, Response: writer}, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

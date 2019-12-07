@@ -11,8 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -35,16 +33,27 @@ func init() {
 	engine.Register(new(Buffalo))
 }
 
-func (bu *Buffalo) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return bu.GetUser(ci, conn, bu)
+func (bu *Buffalo) User(ci interface{}) (models.UserModel, bool) {
+	return bu.GetUser(ci, bu)
 }
 
 func (bu *Buffalo) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bu.GetUse(router, plugs, bu)
 }
 
-func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
-	bu.GetContent(ctx, getPanelFn, bu, db.GetConnection(list))
+func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	bu.GetContent(ctx, getPanelFn, bu)
+}
+
+type HandlerFunc func(ctx buffalo.Context) (types.Panel, error)
+
+func Content(handler HandlerFunc) buffalo.Handler {
+	return func(ctx buffalo.Context) error {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(buffalo.Context))
+		})
+		return nil
+	}
 }
 
 func (bu *Buffalo) SetApp(app interface{}) error {

@@ -11,8 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -34,16 +32,26 @@ func init() {
 	engine.Register(new(Gf))
 }
 
-func (gf *Gf) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return gf.GetUser(ci, conn, gf)
+func (gf *Gf) User(ci interface{}) (models.UserModel, bool) {
+	return gf.GetUser(ci, gf)
 }
 
 func (gf *Gf) Use(router interface{}, plugs []plugins.Plugin) error {
 	return gf.GetUse(router, plugs, gf)
 }
 
-func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
-	gf.GetContent(ctx, getPanelFn, gf, db.GetConnection(list))
+func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	gf.GetContent(ctx, getPanelFn, gf)
+}
+
+type HandlerFunc func(ctx *ghttp.Request) (types.Panel, error)
+
+func Content(handler HandlerFunc) ghttp.HandlerFunc {
+	return func(ctx *ghttp.Request) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(*ghttp.Request))
+		})
+	}
 }
 
 func (gf *Gf) SetApp(app interface{}) error {

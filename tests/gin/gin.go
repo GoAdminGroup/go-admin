@@ -45,7 +45,7 @@ func newHandler() http.Handler {
 	}
 
 	r.GET("/admin", func(ctx *gin.Context) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

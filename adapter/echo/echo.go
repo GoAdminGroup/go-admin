@@ -11,8 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -33,16 +31,27 @@ func init() {
 	engine.Register(new(Echo))
 }
 
-func (e *Echo) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return e.GetUser(ci, conn, e)
+func (e *Echo) User(ci interface{}) (models.UserModel, bool) {
+	return e.GetUser(ci, e)
 }
 
 func (e *Echo) Use(router interface{}, plugs []plugins.Plugin) error {
 	return e.GetUse(router, plugs, e)
 }
 
-func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
-	e.GetContent(ctx, getPanelFn, e, db.GetConnection(list))
+func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	e.GetContent(ctx, getPanelFn, e)
+}
+
+type HandlerFunc func(ctx echo.Context) (types.Panel, error)
+
+func Content(handler HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(echo.Context))
+		})
+		return nil
+	}
 }
 
 func (e *Echo) SetApp(app interface{}) error {

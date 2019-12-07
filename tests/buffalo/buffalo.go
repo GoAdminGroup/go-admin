@@ -46,7 +46,7 @@ func newBuffaloHandler() http.Handler {
 	}
 
 	bu.GET("/admin", func(ctx buffalo.Context) error {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 		return nil

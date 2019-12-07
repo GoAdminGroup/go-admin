@@ -43,7 +43,7 @@ func newIrisHandler() http.Handler {
 	}
 
 	app.Get("/admin", func(context iris.Context) {
-		eng.Content(context, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})

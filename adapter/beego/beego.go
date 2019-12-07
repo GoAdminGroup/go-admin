@@ -11,8 +11,6 @@ import (
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -34,16 +32,26 @@ func init() {
 	engine.Register(new(Beego))
 }
 
-func (bee *Beego) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return bee.GetUser(ci, conn, bee)
+func (bee *Beego) User(ci interface{}) (models.UserModel, bool) {
+	return bee.GetUser(ci, bee)
 }
 
 func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(router, plugs, bee)
 }
 
-func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, services service.List) {
-	bee.GetContent(ctx, getPanelFn, bee, db.GetConnection(services))
+func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	bee.GetContent(ctx, getPanelFn, bee)
+}
+
+type HandlerFunc func(ctx *context.Context) (types.Panel, error)
+
+func Content(handler HandlerFunc) beego.FilterFunc {
+	return func(ctx *context.Context) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(*context.Context))
+		})
+	}
 }
 
 func (bee *Beego) SetApp(app interface{}) error {

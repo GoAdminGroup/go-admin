@@ -11,8 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -36,16 +34,26 @@ func init() {
 	engine.Register(new(Fasthttp))
 }
 
-func (fast *Fasthttp) User(ci interface{}, conn db.Connection) (models.UserModel, bool) {
-	return fast.GetUser(ci, conn, fast)
+func (fast *Fasthttp) User(ci interface{}) (models.UserModel, bool) {
+	return fast.GetUser(ci, fast)
 }
 
 func (fast *Fasthttp) Use(router interface{}, plugs []plugins.Plugin) error {
 	return fast.GetUse(router, plugs, fast)
 }
 
-func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, list service.List) {
-	fast.GetContent(ctx, getPanelFn, fast, db.GetConnection(list))
+func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+	fast.GetContent(ctx, getPanelFn, fast)
+}
+
+type HandlerFunc func(ctx *fasthttp.RequestCtx) (types.Panel, error)
+
+func Content(handler HandlerFunc) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+			return handler(ctx.(*fasthttp.RequestCtx))
+		})
+	}
 }
 
 func (fast *Fasthttp) SetApp(app interface{}) error {

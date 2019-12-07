@@ -40,7 +40,7 @@ func newHandler() fasthttp.RequestHandler {
 	}
 
 	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
+		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
 		})
 	})
