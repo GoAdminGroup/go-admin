@@ -33,7 +33,7 @@ func init() {
 }
 
 func (g *Gorilla) User(ci interface{}) (models.UserModel, bool) {
-	return g.GetUser(ci,  g)
+	return g.GetUser(ci, g)
 }
 
 func (g *Gorilla) Use(router interface{}, plugs []plugins.Plugin) error {

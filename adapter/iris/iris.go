@@ -33,7 +33,7 @@ func init() {
 }
 
 func (is *Iris) User(ci interface{}) (models.UserModel, bool) {
-	return is.GetUser(ci,  is)
+	return is.GetUser(ci, is)
 }
 
 func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
