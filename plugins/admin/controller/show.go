@@ -90,10 +90,10 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 				"title": template2.HTML(header),
 				"content": aDataTable().
 					SetInfoList(infoListArr[key]).
-					SetFilters(panel.GetFiltersMap()).
 					SetInfoUrl(infoUrl).
 					SetButtons(btns).
 					SetActionJs(actionJs).
+					SetHasFilter(len(panelInfo.FormData) > 0).
 					SetAction(panel.GetInfo().Action).
 					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
@@ -109,11 +109,11 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 	} else {
 		dataTable = aDataTable().
 			SetInfoList(panelInfo.InfoList).
-			SetFilters(panel.GetFiltersMap()).
 			SetInfoUrl(infoUrl).
 			SetButtons(btns).
 			SetActionJs(actionJs).
 			SetAction(panel.GetInfo().Action).
+			SetHasFilter(len(panelInfo.FormData) > 0).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).
 			SetExportUrl(exportUrl).
@@ -124,20 +124,24 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		body = dataTable.GetContent()
 	}
 
-	box := aBox().
+	boxModel := aBox().
 		SetBody(body).
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
 		WithHeadBorder().
-		SetSecondHeaderClass("filter-area").
-		SetSecondHeader(aForm().
-			SetContent(panelInfo.FormData).
-			SetPrefix(config.PrefixFixSlash()).
-			SetMethod("get").
-			SetUrl(infoUrl).
-			SetOperationFooter(filterFormFooter(infoUrl)).GetContent()).
-		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
-		GetContent()
+		SetFooter(panelInfo.Paginator.GetContent())
+
+	if len(panelInfo.FormData) > 0 {
+		boxModel = boxModel.SetSecondHeaderClass("filter-area").
+			SetSecondHeader(aForm().
+				SetContent(panelInfo.FormData).
+				SetPrefix(config.PrefixFixSlash()).
+				SetMethod("get").
+				SetUrl(infoUrl).
+				SetOperationFooter(filterFormFooter(infoUrl)).GetContent())
+	}
+
+	box := boxModel.GetContent()
 
 	user := auth.Auth(ctx)
 

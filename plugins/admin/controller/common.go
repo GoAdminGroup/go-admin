@@ -136,5 +136,3 @@ func menuFormContent(form types.FormAttribute) template2.HTML {
 		SetBody(form.GetContent()).
 		GetContent()
 }
-
-

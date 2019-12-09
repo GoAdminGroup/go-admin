@@ -395,7 +395,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func Get` + strings.Title(tableCamel) + `TableName() table.TableName {
+func Get` + strings.Title(tableCamel) + `TableName() table.Table {
 
     ` + tableCamel + `TableName := ` + newTable + `
 
@@ -404,10 +404,17 @@ func Get` + strings.Title(tableCamel) + `TableName() table.TableName {
 	`
 
 	for _, model := range columnsModel {
-		content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
-			`","` + model[fieldField].(string) +
-			`", db.` + getType(model[typeField].(string)) + `)
+		if model[fieldField].(string) == "id" {
+			content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
+				`","` + model[fieldField].(string) +
+				`", db.` + getType(model[typeField].(string)) + `).FieldFilterable()
 	`
+		} else {
+			content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
+				`","` + model[fieldField].(string) +
+				`", db.` + getType(model[typeField].(string)) + `)
+	`
+		}
 	}
 
 	content += `

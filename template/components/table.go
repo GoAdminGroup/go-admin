@@ -62,9 +62,8 @@ type DataTableAttribute struct {
 	Buttons    template.HTML
 	ActionJs   template.JS
 	NoAction   bool
+	HasFilter  bool
 	Action     template.HTML
-	FilterUrl  string
-	Filters    []map[string]string
 	types.Attribute
 }
 
@@ -92,6 +91,11 @@ func (compo *DataTableAttribute) SetActionJs(aj template.JS) types.DataTableAttr
 	return compo
 }
 
+func (compo *DataTableAttribute) SetHasFilter(hasFilter bool) types.DataTableAttribute {
+	compo.HasFilter = hasFilter
+	return compo
+}
+
 func (compo *DataTableAttribute) SetInfoUrl(value string) types.DataTableAttribute {
 	compo.InfoUrl = value
 	return compo
@@ -107,11 +111,6 @@ func (compo *DataTableAttribute) SetExportUrl(value string) types.DataTableAttri
 	return compo
 }
 
-func (compo *DataTableAttribute) SetFilterUrl(value string) types.DataTableAttribute {
-	compo.FilterUrl = value
-	return compo
-}
-
 func (compo *DataTableAttribute) SetUpdateUrl(value string) types.DataTableAttribute {
 	compo.UpdateUrl = value
 	return compo
@@ -119,11 +118,6 @@ func (compo *DataTableAttribute) SetUpdateUrl(value string) types.DataTableAttri
 
 func (compo *DataTableAttribute) SetPrimaryKey(value string) types.DataTableAttribute {
 	compo.PrimaryKey = value
-	return compo
-}
-
-func (compo *DataTableAttribute) SetFilters(value []map[string]string) types.DataTableAttribute {
-	compo.Filters = value
 	return compo
 }
 

@@ -63,7 +63,7 @@ func ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
 		getMenuInfoPanel(ctx, template.Get(config.Theme).Alert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> `+language.Get("error")+`!`)).
 			SetTheme("warning").
 			SetContent(template2.HTML("wrong id")).
 			GetContent())

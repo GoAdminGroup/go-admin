@@ -109,11 +109,10 @@ type DataTableAttribute interface {
 	SetIsTab(value bool) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
 	SetActionJs(aj template.JS) DataTableAttribute
-	SetFilterUrl(value string) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
+	SetHasFilter(hasFilter bool) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute
 	SetUpdateUrl(value string) DataTableAttribute
-	SetFilters(value []map[string]string) DataTableAttribute
 	GetContent() template.HTML
 }
 

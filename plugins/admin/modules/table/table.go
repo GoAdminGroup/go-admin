@@ -63,7 +63,6 @@ type Table interface {
 	GetDeletable() bool
 	GetExportable() bool
 	GetPrimaryKey() PrimaryKey
-	GetFiltersMap() []map[string]string
 	GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error)
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
 	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
@@ -273,25 +272,6 @@ func (tb DefaultTable) GetDeletable() bool {
 
 func (tb DefaultTable) GetExportable() bool {
 	return tb.exportable && !tb.info.IsHideExportButton
-}
-
-func (tb DefaultTable) GetFiltersMap() []map[string]string {
-	var filters = make([]map[string]string, 0)
-	for _, value := range tb.info.FieldList {
-		if value.Filterable {
-			filters = append(filters, map[string]string{
-				"title": value.Head,
-				"name":  value.Field,
-			})
-		}
-	}
-	if len(filters) == 0 {
-		filters = append(filters, map[string]string{
-			"title": "ID",
-			"name":  tb.primaryKey.Name,
-		})
-	}
-	return filters
 }
 
 // GetDataFromDatabase query the data set.
