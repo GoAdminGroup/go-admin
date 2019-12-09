@@ -281,6 +281,8 @@ type Field struct {
 	FilterOptions   FieldOptions
 	FilterOperator  FilterOperator
 	FilterOptionExt template.JS
+	FilterHead      string
+	FilterHelpMsg   template.HTML
 
 	FieldDisplay
 }
@@ -575,6 +577,8 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 type FilterType struct {
 	FormType form.Type
 	Operator FilterOperator
+	Head     string
+	HelpMsg  template.HTML
 }
 
 type FilterOperator string
@@ -670,6 +674,8 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 		} else {
 			i.FieldList[i.curFieldListIndex].FilterType = filterType[0].FormType
 		}
+		i.FieldList[i.curFieldListIndex].FilterHead = filterType[0].Head
+		i.FieldList[i.curFieldListIndex].FilterHelpMsg = filterType[0].HelpMsg
 	} else {
 		i.FieldList[i.curFieldListIndex].FilterType = form.Text
 	}

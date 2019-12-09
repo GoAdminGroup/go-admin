@@ -53,9 +53,9 @@ func GetUserTable() (userTable table.Table) {
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").GetContent()
 	})
-	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
+	info.AddField("CreatedAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
-	info.AddField("updatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
+	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
@@ -85,8 +85,8 @@ func GetUserTable() (userTable table.Table) {
 			return ""
 		})
 
-	formList.AddField("updatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
-	formList.AddField("createdAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField("UpdatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 
 	userTable.GetForm().SetTabGroups(types.
 		NewTabGroups("id", "ip", "name", "gender", "city").

@@ -439,8 +439,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 			filterForm = append(filterForm, types.FormField{
 				Field:     field.Field,
-				Head:      field.Head,
+				Head:      modules.AorB(field.FilterHead == "", field.Head, field.FilterHead),
 				TypeName:  field.TypeName,
+				HelpMsg:   field.FilterHelpMsg,
 				FormType:  field.FilterType,
 				Editable:  true,
 				Value:     value,
