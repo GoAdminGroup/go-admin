@@ -96,7 +96,7 @@ func GetContent() (types.Panel, error) {
 	}).GetContent()
 
 	boxInfo := components.Box().
-		WithHeadBorder(true).
+		WithHeadBorder().
 		SetHeader("Latest Orders").
 		SetHeadColor("#f7f7f7").
 		SetBody(table).
@@ -134,7 +134,7 @@ func GetContent() (types.Panel, error) {
 		},
 	}).GetContent()
 
-	boxWarning := components.Box().SetTheme("warning").WithHeadBorder(true).SetHeader("Recently Added Products").
+	boxWarning := components.Box().SetTheme("warning").WithHeadBorder().SetHeader("Recently Added Products").
 		SetBody(productList).
 		SetFooter(`<a href="javascript:void(0)" class="uppercase">View All Products</a>`).
 		GetContent()
@@ -250,7 +250,7 @@ func GetContent() (types.Panel, error) {
 
 	boxInternalRow2 := components.Row().SetContent(boxInternalCol3 + boxInternalCol4 + boxInternalCol5 + boxInternalCol6).GetContent()
 
-	box := components.Box().WithHeadBorder(true).SetHeader("Monthly Recap Report").
+	box := components.Box().WithHeadBorder().SetHeader("Monthly Recap Report").
 		SetBody(boxInternalRow).
 		SetFooter(boxInternalRow2).
 		GetContent()
@@ -311,7 +311,7 @@ func GetContent() (types.Panel, error) {
 		},
 	}).GetContent()
 
-	boxDanger := components.Box().SetTheme("danger").WithHeadBorder(true).SetHeader("Browser Usage").
+	boxDanger := components.Box().SetTheme("danger").WithHeadBorder().SetHeader("Browser Usage").
 		SetBody(components.Row().
 			SetContent(colComp.SetSize(map[string]string{"md": "8"}).
 				SetContent(pie).

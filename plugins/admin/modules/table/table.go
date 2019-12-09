@@ -97,6 +97,7 @@ type DefaultTable struct {
 type PanelInfo struct {
 	Thead       Thead
 	InfoList    InfoList
+	FormData    []types.FormField
 	Paginator   types.PaginatorAttribute
 	Title       string
 	Description string
@@ -401,6 +402,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		joins      string
 		headField  string
 		joinTables = make([]string, 0)
+		filterForm = make([]types.FormField, 0)
 	)
 	for _, field := range tb.info.FieldList {
 		if field.Field != tb.primaryKey.Name && inArray(columns, field.Field) &&
@@ -418,6 +420,31 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +
 					field.Join.Table + "." + filterFiled(field.Join.JoinField, connection.GetDelimiter()) + " = " +
 					tb.info.Table + "." + filterFiled(field.Join.Field, connection.GetDelimiter())
+			}
+		}
+
+		if field.Filterable {
+			filterForm = append(filterForm, types.FormField{
+				Field:     field.Field,
+				Head:      field.Head,
+				TypeName:  field.TypeName,
+				FormType:  field.FilterType,
+				Editable:  true,
+				Value:     params.GetFieldValue(field.Field),
+				Options:   field.FilterOptions.SetSelected(params.GetFieldValue(field.Field), field.FilterType.SelectedLabel()),
+				OptionExt: field.FilterOptionExt,
+				Label:     template.HTML(field.FilterOperator),
+			})
+
+			if field.FilterOperator != "" {
+				filterForm = append(filterForm, types.FormField{
+					Field:    field.Field + "__operator__",
+					Head:     field.Head,
+					TypeName: field.TypeName,
+					Value:    string(field.FilterOperator),
+					FormType: field.FilterType,
+					Hide:     true,
+				})
 			}
 		}
 
@@ -465,7 +492,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		} else {
 			for key, value := range params.Fields {
 				if inArray(columns, key) {
-					wheres += filterFiled(key, connection.GetDelimiter()) + " = ? and "
+					wheres += filterFiled(key, connection.GetDelimiter()) + " " + params.GetFieldOperator(value) + " ? and "
 					whereArgs = append(whereArgs, value)
 				}
 			}
@@ -476,13 +503,13 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
+	logger.LogSQL(queryCmd, args)
+
 	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
 
 	if err != nil {
 		return PanelInfo{}, err
 	}
-
-	logger.LogSQL(queryCmd, whereArgs)
 
 	infoList := make([]map[string]template.HTML, 0)
 
@@ -530,6 +557,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		InfoList:    infoList,
 		Paginator:   paginator.Get(path, params, size, tb.info.GetPageSizeList()),
 		Title:       tb.info.Title,
+		FormData:    filterForm,
 		Description: tb.info.Description,
 	}, nil
 }

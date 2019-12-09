@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
 	"html"
 	"html/template"
@@ -275,6 +276,11 @@ type Field struct {
 
 	EditType    table.Type
 	EditOptions []map[string]string
+
+	FilterType      form.Type
+	FilterOptions   FieldOptions
+	FilterOperator  FilterOperator
+	FilterOptionExt template.JS
 
 	FieldDisplay
 }
@@ -566,8 +572,44 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldFilterable() *InfoPanel {
+type FilterType struct {
+	FormType form.Type
+	Operator FilterOperator
+}
+
+type FilterOperator string
+
+const (
+	FilterOperatorLike    FilterOperator = "like"
+	FilterOperatorGreater FilterOperator = ">"
+	FilterOperatorLess    FilterOperator = "<"
+)
+
+func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Filterable = true
+	if len(filterType) > 0 {
+		i.FieldList[i.curFieldListIndex].FilterOperator = filterType[0].Operator
+
+		if filterType[0].Operator != "" {
+			i.FieldList[i.curFieldListIndex].FilterType = form.Text
+		} else {
+			i.FieldList[i.curFieldListIndex].FilterType = filterType[0].FormType
+		}
+
+	} else {
+		i.FieldList[i.curFieldListIndex].FilterType = form.Text
+	}
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].FilterOptions = options
+	return i
+}
+
+func (i *InfoPanel) FieldFilterFilterOptionExt(m map[string]interface{}) *InfoPanel {
+	s, _ := json.Marshal(m)
+	i.FieldList[i.curFieldListIndex].FilterOptionExt = template.JS(s)
 	return i
 }
 

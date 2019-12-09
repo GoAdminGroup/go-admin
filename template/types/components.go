@@ -22,17 +22,24 @@ type FormAttribute interface {
 	SetMethod(value string) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
 	SetToken(value string) FormAttribute
+	SetOperationFooter(value template.HTML) FormAttribute
+	GetBoxHeader() template.HTML
 	GetContent() template.HTML
 }
 
 type BoxAttribute interface {
 	SetHeader(value template.HTML) BoxAttribute
 	SetBody(value template.HTML) BoxAttribute
+	SetNoPadding() BoxAttribute
 	SetFooter(value template.HTML) BoxAttribute
 	SetTitle(value template.HTML) BoxAttribute
-	WithHeadBorder(has bool) BoxAttribute
+	WithHeadBorder() BoxAttribute
 	SetHeadColor(value string) BoxAttribute
 	SetTheme(value string) BoxAttribute
+	SetSecondHeader(value template.HTML) BoxAttribute
+	SetSecondHeadColor(value string) BoxAttribute
+	WithSecondHeadBorder() BoxAttribute
+	SetSecondHeaderClass(value string) BoxAttribute
 	GetContent() template.HTML
 }
 
@@ -60,6 +67,24 @@ type LabelAttribute interface {
 type RowAttribute interface {
 	SetContent(value template.HTML) RowAttribute
 	AddContent(value template.HTML) RowAttribute
+	GetContent() template.HTML
+}
+
+type ButtonAttribute interface {
+	SetContent(value template.HTML) ButtonAttribute
+	SetOrientationRight() ButtonAttribute
+	SetOrientationLeft() ButtonAttribute
+	SetMarginLeft(int) ButtonAttribute
+	SetMarginRight(int) ButtonAttribute
+	SetThemePrimary() ButtonAttribute
+	SetSmallSize() ButtonAttribute
+	SetMiddleSize() ButtonAttribute
+	SetHref(string) ButtonAttribute
+	SetThemeWarning() ButtonAttribute
+	SetTheme(value string) ButtonAttribute
+	SetLoadingText(value template.HTML) ButtonAttribute
+	SetThemeDefault() ButtonAttribute
+	SetType(string) ButtonAttribute
 	GetContent() template.HTML
 }
 

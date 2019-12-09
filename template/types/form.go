@@ -12,7 +12,7 @@ import (
 
 type FieldOptions []map[string]string
 
-func (fo FieldOptions) SetSelected(val interface{}, labels []string) {
+func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOptions {
 
 	if valArr, ok := val.([]string); ok {
 		for _, v := range fo {
@@ -31,6 +31,8 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []string) {
 			}
 		}
 	}
+
+	return fo
 }
 
 // FormField is the form field with different options.
@@ -44,6 +46,7 @@ type FormField struct {
 	Value                  string
 	Options                FieldOptions
 	DefaultOptionDelimiter string
+	Label                  template.HTML
 
 	CustomContent template.HTML
 	CustomJs      template.JS

@@ -43,6 +43,7 @@ var cn = map[string]string{
 	"operation":         "操作",
 	"menu name":         "菜单名",
 	"reload succeeded":  "加载成功",
+	"search":            "搜索",
 
 	"permission denied": "没有权限",
 	"error":             "错误",

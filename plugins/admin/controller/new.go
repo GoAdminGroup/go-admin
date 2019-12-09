@@ -41,7 +41,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: alert + aForm().
+		Content: alert + formContent(aForm().
 			SetPrefix(config.PrefixFixSlash()).
 			SetContent(formList).
 			SetTabContents(groupFormList).
@@ -49,11 +49,11 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 			SetUrl(url).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetToken(authSrv().AddToken()).
+			SetOperationFooter(formFooter()).
 			SetTitle("New").
 			SetInfoUrl(infoUrl).
 			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml).
-			GetContent(),
+			SetFooter(panel.GetForm().FooterHtml)),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))

@@ -1,6 +1,7 @@
 package parameter
 
 import (
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -16,6 +17,10 @@ type Parameters struct {
 	Fields    map[string]string
 }
 
+var keys = []string{"__page", "__pageSize", "__sort", "__columns", "__prefix", "_pjax"}
+
+const operatorSuffix = "__operator__"
+
 func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
 	page := GetDefault(values, "__page", "1")
 	pageSize := GetDefault(values, "__pageSize", strconv.Itoa(defaultPageSize))
@@ -26,19 +31,16 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 	fields := make(map[string]string)
 
 	for key, value := range values {
-		if key != "__page" &&
-			key != "__pageSize" &&
-			key != "__sort" &&
-			key != "__columns" &&
-			key != "__sort_type" &&
-			key != "__prefix" &&
-			key != "_pjax" &&
-			value[0] != "" {
+		if !modules.InArray(keys, key) && value[0] != "" {
 			if key == "__sort_type" {
 				if value[0] != "desc" && value[0] != "asc" {
 					fields[key] = "desc"
 				}
 			} else {
+				if strings.Contains(key, operatorSuffix) &&
+					fields[strings.Replace(key, operatorSuffix, "", -1)] == "" {
+					continue
+				}
 				fields[key] = value[0]
 			}
 		}
@@ -57,6 +59,17 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 		Fields:    fields,
 		Columns:   columnsArr,
 	}
+}
+
+func (param Parameters) GetFieldValue(field string) string {
+	return param.Fields[field]
+}
+
+func (param Parameters) GetFieldOperator(field string) string {
+	if param.Fields[field+operatorSuffix] == "" {
+		return "="
+	}
+	return param.Fields[field+operatorSuffix]
 }
 
 func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {

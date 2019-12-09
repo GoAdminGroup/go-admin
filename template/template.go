@@ -48,6 +48,8 @@ type Template interface {
 	Label() types.LabelAttribute
 	Image() types.ImgAttribute
 
+	Button() types.ButtonAttribute
+
 	// Builder methods
 	GetTmplList() map[string]string
 	GetAssetList() []string

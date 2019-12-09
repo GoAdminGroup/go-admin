@@ -41,7 +41,10 @@ func GetUserTable() (userTable table.Table) {
 	}).FieldEditAble(editType.Select).FieldEditOptions([]map[string]string{
 		{"value": "0", "text": "men"},
 		{"value": "1", "text": "women"},
-	}).FieldFilterable()
+	}).FieldFilterable(types.FilterType{FormType: form.SelectSingle}).FieldFilterOptions([]map[string]string{
+		{"value": "0", "field": "men"},
+		{"value": "1", "field": "women"},
+	})
 	info.AddField("Phone", "phone", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {

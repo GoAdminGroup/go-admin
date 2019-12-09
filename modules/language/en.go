@@ -31,6 +31,7 @@ var en = map[string]string{
 	"sign out":         "Sign out",
 	"all":              "All",
 	"confirm password": "Confirm Password",
+	"search":           "Search",
 
 	"are you sure to delete":    "Are you sure to delete",
 	"yes":                       "yes",

@@ -124,8 +124,16 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 
 	box := aBox().
 		SetBody(body).
+		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
-		WithHeadBorder(false).
+		WithHeadBorder().
+		SetSecondHeaderClass("filter-area").
+		SetSecondHeader(aForm().
+			SetContent(panelInfo.FormData).
+			SetPrefix(config.PrefixFixSlash()).
+			SetMethod("get").
+			SetUrl(infoUrl).
+			SetOperationFooter(filterFormFooter(infoUrl)).GetContent()).
 		SetFooter(panel.GetInfo().FooterHtml + panelInfo.Paginator.GetContent()).
 		GetContent()
 

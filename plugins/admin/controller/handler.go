@@ -110,7 +110,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: alert + aForm().
+		Content: alert + formContent(aForm().
 			SetContent(formData).
 			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
@@ -119,8 +119,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/"+kind+"/"+prefix)).
 			SetToken(authSrv().AddToken()).
-			SetInfoUrl(config.Url("/info/"+prefix+queryParam)).
-			GetContent(),
+			SetInfoUrl(config.Url("/info/"+prefix+queryParam))),
 		Description: description,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
