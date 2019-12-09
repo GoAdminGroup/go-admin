@@ -47,7 +47,7 @@ func GetUserTable() (userTable table.Table) {
 		{"value": "1", "field": "women"},
 	}).FieldFilterOptionExt(map[string]interface{}{"allowClear": true})
 	info.AddField("Phone", "phone", db.Varchar).FieldEditAble().FieldFilterable()
-	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable(types.FilterType{FormType: form.NumberRange})
+	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
