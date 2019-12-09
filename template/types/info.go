@@ -585,17 +585,26 @@ const (
 	FilterOperatorLess    FilterOperator = "<"
 )
 
+func (o FilterOperator) String() string {
+	return string(o)
+}
+
+func (o FilterOperator) Label() template.HTML {
+	if o == FilterOperatorLike {
+		return ""
+	}
+	return template.HTML(o)
+}
+
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Filterable = true
 	if len(filterType) > 0 {
 		i.FieldList[i.curFieldListIndex].FilterOperator = filterType[0].Operator
-
-		if filterType[0].Operator != "" {
+		if uint8(filterType[0].FormType) == 0 {
 			i.FieldList[i.curFieldListIndex].FilterType = form.Text
 		} else {
 			i.FieldList[i.curFieldListIndex].FilterType = filterType[0].FormType
 		}
-
 	} else {
 		i.FieldList[i.curFieldListIndex].FilterType = form.Text
 	}
@@ -607,7 +616,7 @@ func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldFilterFilterOptionExt(m map[string]interface{}) *InfoPanel {
+func (i *InfoPanel) FieldFilterOptionExt(m map[string]interface{}) *InfoPanel {
 	s, _ := json.Marshal(m)
 	i.FieldList[i.curFieldListIndex].FilterOptionExt = template.JS(s)
 	return i

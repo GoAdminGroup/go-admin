@@ -424,16 +424,27 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		}
 
 		if field.Filterable {
+
+			var value, value2 string
+
+			if field.FilterType.IsRange() {
+				value = params.GetFieldValue(field.Field + "_start__goadmin")
+				value2 = params.GetFieldValue(field.Field + "_end__goadmin")
+			} else {
+				value = params.GetFieldValue(field.Field)
+			}
+
 			filterForm = append(filterForm, types.FormField{
 				Field:     field.Field,
 				Head:      field.Head,
 				TypeName:  field.TypeName,
 				FormType:  field.FilterType,
 				Editable:  true,
-				Value:     params.GetFieldValue(field.Field),
+				Value:     value,
+				Value2:    value2,
 				Options:   field.FilterOptions.SetSelected(params.GetFieldValue(field.Field), field.FilterType.SelectedLabel()),
 				OptionExt: field.FilterOptionExt,
-				Label:     template.HTML(field.FilterOperator),
+				Label:     field.FilterOperator.Label(),
 			})
 
 			if field.FilterOperator != "" {
@@ -441,7 +452,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 					Field:    field.Field + "__operator__",
 					Head:     field.Head,
 					TypeName: field.TypeName,
-					Value:    string(field.FilterOperator),
+					Value:    field.FilterOperator.String(),
 					FormType: field.FilterType,
 					Hide:     true,
 				})
@@ -491,9 +502,25 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 			wheres = ""
 		} else {
 			for key, value := range params.Fields {
+
+				var op string
+				if strings.Contains(key, "_end__goadmin") {
+					key = strings.Replace(key, "_end__goadmin", "", -1)
+					op = "<"
+				} else if strings.Contains(key, "_start__goadmin") {
+					key = strings.Replace(key, "_start__goadmin", "", -1)
+					op = ">"
+				} else {
+					op = params.GetFieldOperator(key)
+				}
+
 				if inArray(columns, key) {
-					wheres += filterFiled(key, connection.GetDelimiter()) + " " + params.GetFieldOperator(value) + " ? and "
-					whereArgs = append(whereArgs, value)
+					wheres += filterFiled(key, connection.GetDelimiter()) + " " + op + " ? and "
+					if op == types.FilterOperatorLike.String() && !strings.Contains(value, "%") {
+						whereArgs = append(whereArgs, "%"+value+"%")
+					} else {
+						whereArgs = append(whereArgs, value)
+					}
 				}
 			}
 			wheres = wheres[:len(wheres)-4]

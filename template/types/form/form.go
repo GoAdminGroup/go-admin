@@ -17,6 +17,7 @@ const (
 	Password
 	RichText
 	Datetime
+	DatetimeRange
 	Radio
 	Email
 	Url
@@ -51,6 +52,8 @@ func (t Type) String() string {
 		return "richtext"
 	case Datetime:
 		return "datetime"
+	case DatetimeRange:
+		return "datetime_range"
 	case Radio:
 		return "radio"
 	case Email:
@@ -78,6 +81,10 @@ func (t Type) String() string {
 
 func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
+}
+
+func (t Type) IsRange() bool {
+	return t == DatetimeRange
 }
 
 func (t Type) SelectedLabel() []string {

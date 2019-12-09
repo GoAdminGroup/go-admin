@@ -44,6 +44,7 @@ type FormField struct {
 
 	Default                string
 	Value                  string
+	Value2                 string
 	Options                FieldOptions
 	DefaultOptionDelimiter string
 	Label                  template.HTML

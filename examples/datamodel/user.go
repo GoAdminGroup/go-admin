@@ -29,7 +29,8 @@ func GetUserTable() (userTable table.Table) {
 
 	info := userTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text).FieldFilterable()
+	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text).
+		FieldFilterable(types.FilterType{Operator: types.FilterOperatorLike})
 	info.AddField("Gender", "gender", db.Tinyint).FieldDisplay(func(model types.FieldModel) interface{} {
 		if model.Value == "0" {
 			return "men"
@@ -44,7 +45,7 @@ func GetUserTable() (userTable table.Table) {
 	}).FieldFilterable(types.FilterType{FormType: form.SelectSingle}).FieldFilterOptions([]map[string]string{
 		{"value": "0", "field": "men"},
 		{"value": "1", "field": "women"},
-	})
+	}).FieldFilterOptionExt(map[string]interface{}{"allowClear": true})
 	info.AddField("Phone", "phone", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
@@ -52,7 +53,8 @@ func GetUserTable() (userTable table.Table) {
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").GetContent()
 	})
-	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime)
+	info.AddField("createdAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
+		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("updatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
