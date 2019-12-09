@@ -128,3 +128,13 @@ func formContent(form types.FormAttribute) template2.HTML {
 		SetBody(form.GetContent()).
 		GetContent()
 }
+
+func menuFormContent(form types.FormAttribute) template2.HTML {
+	return aBox().
+		SetHeader(form.GetBoxHeaderNoButton()).
+		WithHeadBorder().
+		SetBody(form.GetContent()).
+		GetContent()
+}
+
+

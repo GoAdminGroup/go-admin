@@ -97,6 +97,10 @@ func (compo *FormAttribute) GetBoxHeader() template.HTML {
             </div>`, language.GetFromHtml(compo.Title), compo.InfoUrl, language.Get("Back")))
 }
 
+func (compo *FormAttribute) GetBoxHeaderNoButton() template.HTML {
+	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>`, language.GetFromHtml(compo.Title)))
+}
+
 func (compo *FormAttribute) SetOperationFooter(value template.HTML) types.FormAttribute {
 	compo.OperationFooter = value
 	return compo

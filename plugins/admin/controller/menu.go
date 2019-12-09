@@ -40,7 +40,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: aForm().
+		Content: formContent(aForm().
 			SetContent(formData).
 			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
@@ -48,8 +48,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
 			SetToken(authSrv().AddToken()).
-			SetInfoUrl(config.Url("/menu")).
-			GetContent() + template2.HTML(js),
+			SetOperationFooter(formFooter()).
+			SetInfoUrl(config.Url("/menu"))) +
+			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
@@ -62,7 +63,7 @@ func ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
 		getMenuInfoPanel(ctx, template.Get(config.Theme).Alert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> `+language.Get("error")+`!`)).
+			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
 			SetTheme("warning").
 			SetContent(template2.HTML("wrong id")).
 			GetContent())
@@ -81,16 +82,16 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: aForm().
+		Content: formContent(aForm().
 			SetContent(formData).
 			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
+			SetOperationFooter(formFooter()).
 			SetToken(authSrv().AddToken()).
-			SetInfoUrl(config.Url("/menu")).
-			GetContent() + template2.HTML(js),
+			SetInfoUrl(config.Url("/menu"))) + template2.HTML(js),
 		Description: description,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
@@ -198,17 +199,17 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
 		list.GetForm().FieldList)
 
-	newForm := aForm().
+	newForm := menuFormContent(aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
 		SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
 		SetToken(authSrv().AddToken()).
 		SetInfoUrl(config.Url("/menu")).
+		SetOperationFooter(formFooter()).
 		SetTitle("New").
 		SetContent(formList).
 		SetTabContents(groupFormList).
-		SetTabHeaders(groupHeaders).
-		GetContent()
+		SetTabHeaders(groupHeaders))
 
 	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
 
