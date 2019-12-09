@@ -2,6 +2,7 @@ package parameter
 
 import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -38,7 +39,7 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 				}
 			} else {
 				if strings.Contains(key, operatorSuffix) &&
-					fields[strings.Replace(key, operatorSuffix, "", -1)] == "" {
+					values.Get(strings.Replace(key, operatorSuffix, "", -1)) == "" {
 					continue
 				}
 				fields[key] = value[0]
@@ -65,11 +66,11 @@ func (param Parameters) GetFieldValue(field string) string {
 	return param.Fields[field]
 }
 
-func (param Parameters) GetFieldOperator(field string) string {
+func (param Parameters) GetFieldOperator(field string) types.FilterOperator {
 	if param.Fields[field+operatorSuffix] == "" {
-		return "="
+		return types.FilterOperatorEqual
 	}
-	return param.Fields[field+operatorSuffix]
+	return types.GetOperatorFromValue(param.Fields[field+operatorSuffix])
 }
 
 func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {

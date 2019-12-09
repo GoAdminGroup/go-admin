@@ -25,6 +25,7 @@ const (
 	Color
 	Currency
 	Number
+	NumberRange
 	TextArea
 	Custom
 	Switch
@@ -68,6 +69,8 @@ func (t Type) String() string {
 		return "currency"
 	case Number:
 		return "number"
+	case NumberRange:
+		return "number_range"
 	case TextArea:
 		return "textarea"
 	case Custom:
@@ -84,7 +87,7 @@ func (t Type) IsSelect() bool {
 }
 
 func (t Type) IsRange() bool {
-	return t == DatetimeRange
+	return t == DatetimeRange || t == NumberRange
 }
 
 func (t Type) SelectedLabel() []string {

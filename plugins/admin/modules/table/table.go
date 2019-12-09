@@ -431,6 +431,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 				value = params.GetFieldValue(field.Field + "_start__goadmin")
 				value2 = params.GetFieldValue(field.Field + "_end__goadmin")
 			} else {
+				if field.FilterOperator == types.FilterOperatorFree {
+					value2 = params.GetFieldOperator(field.Field).String()
+				}
 				value = params.GetFieldValue(field.Field)
 			}
 
@@ -447,12 +450,12 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 				Label:     field.FilterOperator.Label(),
 			})
 
-			if field.FilterOperator != "" {
+			if field.FilterOperator.AddOrNot() {
 				filterForm = append(filterForm, types.FormField{
 					Field:    field.Field + "__operator__",
 					Head:     field.Head,
 					TypeName: field.TypeName,
-					Value:    field.FilterOperator.String(),
+					Value:    field.FilterOperator.Value(),
 					FormType: field.FilterType,
 					Hide:     true,
 				})
@@ -503,20 +506,20 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		} else {
 			for key, value := range params.Fields {
 
-				var op string
+				var op types.FilterOperator
 				if strings.Contains(key, "_end__goadmin") {
 					key = strings.Replace(key, "_end__goadmin", "", -1)
-					op = "<"
+					op = "<="
 				} else if strings.Contains(key, "_start__goadmin") {
 					key = strings.Replace(key, "_start__goadmin", "", -1)
-					op = ">"
-				} else {
+					op = ">="
+				} else if !strings.Contains(key, "__operator__") {
 					op = params.GetFieldOperator(key)
 				}
 
 				if inArray(columns, key) {
-					wheres += filterFiled(key, connection.GetDelimiter()) + " " + op + " ? and "
-					if op == types.FilterOperatorLike.String() && !strings.Contains(value, "%") {
+					wheres += filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
+					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
 						whereArgs = append(whereArgs, "%"+value+"%")
 					} else {
 						whereArgs = append(whereArgs, value)
