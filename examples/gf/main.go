@@ -83,7 +83,7 @@ func main() {
 		panic(err)
 	}
 
-	s.AddStaticPath("uploads", "./uploads")
+	s.AddStaticPath("/uploads", "./uploads")
 
 	// customize your pages
 

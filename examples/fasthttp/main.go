@@ -78,7 +78,7 @@ func main() {
 		panic(err)
 	}
 
-	router.ServeFiles("/uploads", "./uploads")
+	router.ServeFiles("/uploads/*filepath", "./uploads")
 
 	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
 		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {

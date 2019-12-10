@@ -37,9 +37,13 @@ func main() {
 			},
 		},
 		UrlPrefix: "admin",
-		IndexUrl:  "/",
-		Debug:     true,
-		Language:  language.CN,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		IndexUrl: "/",
+		Debug:    true,
+		Language: language.CN,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
