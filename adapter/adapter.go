@@ -66,7 +66,7 @@ func (base *BaseAdapter) CookieKey() string {
 }
 
 func (base *BaseAdapter) GetUser(ci interface{}, wf WebFrameWork) (models.UserModel, bool) {
-	cookie, err := wf.GetCookie()
+	cookie, err := wf.SetContext(ci).GetCookie()
 
 	if err != nil {
 		return models.UserModel{}, false

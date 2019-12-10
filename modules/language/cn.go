@@ -50,6 +50,7 @@ var cn = map[string]string{
 
 	"are you sure to delete": "你确定要删除吗",
 	"yes":                    "确定",
+	"confirm":                "确认",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",
 	"edit fail":              "编辑失败",
