@@ -162,7 +162,7 @@ func GetManagerTable() (ManagerTable Table) {
 		if password != "" {
 
 			if password != values.Get("password_again") {
-				panic("password does not match")
+				return errors.New("password does not match")
 			}
 
 			password = encodePassword([]byte(values.Get("password")))

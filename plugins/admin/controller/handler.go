@@ -119,6 +119,9 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetPrefix(config.PrefixFixSlash()).
 			SetUrl(config.Url("/" + kind + "/" + prefix)).
 			SetToken(authSrv().AddToken()).
+			SetOperationFooter(formFooter()).
+			SetHeader(panel.GetForm().HeaderHtml).
+			SetFooter(panel.GetForm().FooterHtml).
 			SetInfoUrl(config.Url("/info/"+prefix+queryParam))),
 		Description: description,
 		Title:       title,
