@@ -83,6 +83,8 @@ func main() {
 		panic(err)
 	}
 
+	s.AddStaticPath("uploads", "./uploads")
+
 	// customize your pages
 
 	s.BindHandler("GET:/admin", func(ctx *ghttp.Request) {

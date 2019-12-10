@@ -74,6 +74,12 @@ func main() {
 		panic(err)
 	}
 
+	app.HandleDir("/uploads", "./uploads", iris.DirOptions{
+		IndexName: "/index.html",
+		Gzip:      false,
+		ShowList:  false,
+	})
+
 	// you can custom your pages like:
 
 	app.Get("/admin", func(context iris.Context) {

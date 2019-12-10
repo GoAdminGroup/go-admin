@@ -38,8 +38,12 @@ func main() {
 		},
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
-		Debug:     true,
-		Language:  language.CN,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Debug:    true,
+		Language: language.CN,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
@@ -73,6 +77,8 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(router); err != nil {
 		panic(err)
 	}
+
+	router.ServeFiles("/uploads", "./uploads")
 
 	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
 		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {

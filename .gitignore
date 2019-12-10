@@ -2,15 +2,14 @@
 .DS_Store
 demo/config.json
 demo/config
-demo/uploads
 demo/deploy.yml
 demo/hosts
 demo/go-admin
 demo/Makefile
 demo/deploy.retry
-examples/gin/uploads/
 vendor/**
 !vendor/vendor.json
 logs
 adm/build
 template/login/assets/login
+uploads

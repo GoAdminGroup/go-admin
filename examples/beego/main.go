@@ -5,6 +5,7 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/themes/adminlte"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -36,10 +37,15 @@ func main() {
 				Driver:     config.DriverMysql,
 			},
 		},
-		UrlPrefix: "admin",
-		IndexUrl:  "/",
-		Debug:     true,
-		Language:  language.CN,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		UrlPrefix:   "admin",
+		IndexUrl:    "/",
+		Debug:       true,
+		Language:    language.CN,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
@@ -69,6 +75,8 @@ func main() {
 	// load config from json file
 	//
 	// eng.AddConfigFromJSON("../datamodel/config.json")
+
+	beego.SetStaticPath("/uploads", "uploads")
 
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)

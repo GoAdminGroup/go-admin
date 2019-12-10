@@ -37,8 +37,12 @@ func main() {
 		},
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
-		Debug:     true,
-		Language:  language.CN,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Debug:    true,
+		Language: language.CN,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
@@ -72,6 +76,8 @@ func main() {
 	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
 		panic(err)
 	}
+
+	e.Static("/uploads", "./uploads")
 
 	// you can custom your pages like:
 
