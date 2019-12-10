@@ -54,6 +54,7 @@ type ColAttribute interface {
 type ImgAttribute interface {
 	SetWidth(value string) ImgAttribute
 	SetHeight(value string) ImgAttribute
+	WithModal() ImgAttribute
 	SetSrc(value template.HTML) ImgAttribute
 	GetContent() template.HTML
 }

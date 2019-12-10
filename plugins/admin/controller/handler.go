@@ -117,7 +117,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(config.PrefixFixSlash()).
-			SetUrl(config.Url("/"+kind+"/"+prefix)).
+			SetUrl(config.Url("/" + kind + "/" + prefix)).
 			SetToken(authSrv().AddToken()).
 			SetInfoUrl(config.Url("/info/"+prefix+queryParam))),
 		Description: description,

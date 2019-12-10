@@ -1,15 +1,18 @@
 package components
 
 import (
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
 
 type ImgAttribute struct {
-	Name   string
-	Width  string
-	Height string
-	Src    template.HTML
+	Name     string
+	Width    string
+	Height   string
+	Uuid     string
+	HasModal bool
+	Src      template.HTML
 	types.Attribute
 }
 
@@ -20,6 +23,12 @@ func (compo *ImgAttribute) SetWidth(value string) types.ImgAttribute {
 
 func (compo *ImgAttribute) SetHeight(value string) types.ImgAttribute {
 	compo.Height = value
+	return compo
+}
+
+func (compo *ImgAttribute) WithModal() types.ImgAttribute {
+	compo.HasModal = true
+	compo.Uuid = modules.Uuid()
 	return compo
 }
 

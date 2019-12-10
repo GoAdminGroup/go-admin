@@ -51,7 +51,7 @@ func GetUserTable() (userTable table.Table) {
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
-			SetHeight("120").SetWidth("120").GetContent()
+			SetHeight("120").SetWidth("120").WithModal().GetContent()
 	})
 	info.AddField("CreatedAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
