@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
 	"strings"
@@ -27,16 +28,16 @@ import (
 // mssql, the other configurations will be ignored, except for
 // MaxIdleCon and MaxOpenCon.
 type Database struct {
-	Host       string `json:"host"`
-	Port       string `json:"port"`
-	User       string `json:"user"`
-	Pwd        string `json:"pwd"`
-	Name       string `json:"name"`
-	MaxIdleCon int    `json:"max_idle_con"`
-	MaxOpenCon int    `json:"max_open_con"`
-	Driver     string `json:"driver"`
-	File       string `json:"file"`
-	Dsn        string `json:"dsn"`
+	Host       string `json:"host",yaml:"host"`
+	Port       string `json:"port",yaml:"port"`
+	User       string `json:"user",yaml:"user"`
+	Pwd        string `json:"pwd",yaml:"pwd"`
+	Name       string `json:"name",yaml:"name"`
+	MaxIdleCon int    `json:"max_idle_con",yaml:"max_idle_con"`
+	MaxOpenCon int    `json:"max_open_con",yaml:"max_open_con"`
+	Driver     string `json:"driver",yaml:"driver"`
+	File       string `json:"file",yaml:"file"`
+	Dsn        string `json:"dsn",yaml:"dsn"`
 }
 
 // DatabaseList is a map of Database.
@@ -97,82 +98,82 @@ type Config struct {
 	// An map supports multi database connection. The first
 	// element of Databases is the default connection. See the
 	// file connection.go.
-	Databases DatabaseList `json:"database"`
+	Databases DatabaseList `json:"database",yaml:"database"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
-	Domain string `json:"domain"`
+	Domain string `json:"domain",yaml:"domain"`
 
 	// Used to set as the localize language which show in the
 	// interface.
-	Language string `json:"language"`
+	Language string `json:"language",yaml:"language"`
 
 	// The global url prefix.
-	UrlPrefix string `json:"prefix"`
+	UrlPrefix string `json:"prefix",yaml:"prefix"`
 
 	// The theme name of template.
-	Theme string `json:"theme"`
+	Theme string `json:"theme",yaml:"theme"`
 
 	// The path where files will be stored into.
-	Store Store `json:"store"`
+	Store Store `json:"store",yaml:"store"`
 
 	// The title of web page.
-	Title string `json:"title"`
+	Title string `json:"title",yaml:"title"`
 
 	// Logo is the top text in the sidebar.
-	Logo template.HTML `json:"logo"`
+	Logo template.HTML `json:"logo",yaml:"logo"`
 
 	// Mini-logo is the top text in the sidebar when folding.
-	MiniLogo template.HTML `json:"mini_logo"`
+	MiniLogo template.HTML `json:"mini_logo",yaml:"mini_logo"`
 
 	// The url redirect to after login.
-	IndexUrl string `json:"index"`
+	IndexUrl string `json:"index",yaml:"index"`
 
 	// Debug mode
-	Debug bool `json:"debug"`
+	Debug bool `json:"debug",yaml:"debug"`
 
-	// Env is the environment, which maybe local, test, prod.
-	Env string `json:"env"`
+	// Env is the environment,which maybe local,test,prod.
+	Env string `json:"env",yaml:"env"`
 
 	// Info log path.
-	InfoLogPath string `json:"info_log"`
+	InfoLogPath string `json:"info_log",yaml:"info_log"`
 
 	// Error log path.
-	ErrorLogPath string `json:"error_log"`
+	ErrorLogPath string `json:"error_log",yaml:"error_log"`
 
 	// Access log path.
-	AccessLogPath string `json:"access_log"`
+	AccessLogPath string `json:"access_log",yaml:"access_log"`
 
 	// Sql operator record log switch.
-	SqlLog bool `json:"sql_log"`
+	SqlLog bool `json:"sql_log",yaml:"sql_log"`
 
-	AccessLogOff bool `json:"access_log_off"`
-	InfoLogOff   bool `json:"info_log_off"`
-	ErrorLogOff  bool `json:"error_log_off"`
+	AccessLogOff bool `json:"access_log_off",yaml:"access_log_off"`
+	InfoLogOff   bool `json:"info_log_off",yaml:"info_log_off"`
+	ErrorLogOff  bool `json:"error_log_off",yaml:"error_log_off"`
 
 	// Color scheme.
-	ColorScheme string `json:"color_scheme"`
+	ColorScheme string `json:"color_scheme",yaml:"color_scheme"`
 
-	// Session valid time duration, units are seconds.
-	SessionLifeTime int `json:"session_life_time"`
+	// Session valid time duration,units are seconds.
+	SessionLifeTime int `json:"session_life_time",yaml:"session_life_time"`
 
 	// Assets visit link.
-	AssetUrl string `json:"asset_url"`
+	AssetUrl string `json:"asset_url",yaml:"asset_url"`
 
-	// File upload engine, default "local"
-	FileUploadEngine FileUploadEngine `json:"file_upload_engine"`
+	// File upload engine,default "local"
+	FileUploadEngine FileUploadEngine `json:"file_upload_engine",yaml:"file_upload_engine"`
 
 	// Custom html in the tag head.
-	CustomHeadHtml template.HTML `json:"custom_head_html"`
+	CustomHeadHtml template.HTML `json:"custom_head_html",yaml:"custom_head_html"`
 
 	// Custom html after body.
-	CustomFootHtml template.HTML `json:"custom_foot_html"`
+	CustomFootHtml template.HTML `json:"custom_foot_html",yaml:"custom_foot_html"`
 
 	// Login page title
-	LoginTitle string `json:"login_title"`
+	LoginTitle string `json:"login_title",yaml:"login_title"`
 
 	// Login page logo
-	LoginLogo template.HTML `json:"login_logo"`
+	LoginLogo template.HTML `json:"login_logo",yaml:"login_logo"`
 
 	prefix string
 }
@@ -270,6 +271,25 @@ func ReadFromJson(path string) Config {
 	var cfg Config
 
 	err = json.Unmarshal(jsonByte, &cfg)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return cfg
+}
+
+// ReadFromYaml read the Config from a YAML file.
+func ReadFromYaml(path string) Config {
+	jsonByte, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var cfg Config
+
+	err = yaml.Unmarshal(jsonByte, &cfg)
 
 	if err != nil {
 		panic(err)

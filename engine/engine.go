@@ -71,6 +71,11 @@ func (eng *Engine) AddConfigFromJSON(path string) *Engine {
 	return eng.setConfig(config.ReadFromJson(path)).InitDatabase()
 }
 
+// AddConfigFromYAML set the global config from yaml file.
+func (eng *Engine) AddConfigFromYAML(path string) *Engine {
+	return eng.setConfig(config.ReadFromYaml(path)).InitDatabase()
+}
+
 // InitDatabase initialize all database connection.
 func (eng *Engine) InitDatabase() *Engine {
 	for driver, databaseCfg := range eng.config.Databases.GroupByDriver() {
