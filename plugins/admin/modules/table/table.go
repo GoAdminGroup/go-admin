@@ -606,7 +606,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 					}
 				}
 
-				if field := tb.info.FieldList.GetFieldByFieldName(key); field.Exist() {
+				if field := tb.info.FieldList.GetFieldByFieldName(key); field.Exist() && field.Join.Table != "" {
 					wheres += field.Join.Table + "." + filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
 					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
 						whereArgs = append(whereArgs, "%"+value+"%")
