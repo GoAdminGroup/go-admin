@@ -300,6 +300,21 @@ func (f Field) GetEditOptions() string {
 	return string(eo)
 }
 
+func (f Field) Exist() bool {
+	return f.Field != ""
+}
+
+type FieldList []Field
+
+func (f FieldList) GetFieldByFieldName(name string) Field {
+	for _, field := range f {
+		if field.Field == name {
+			return field
+		}
+	}
+	return Field{}
+}
+
 type Join struct {
 	Table     string
 	Field     string
@@ -342,7 +357,7 @@ const (
 
 // InfoPanel
 type InfoPanel struct {
-	FieldList         []Field
+	FieldList         FieldList
 	curFieldListIndex int
 
 	Table       string

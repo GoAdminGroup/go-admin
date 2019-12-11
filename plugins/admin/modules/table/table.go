@@ -63,7 +63,7 @@ type Table interface {
 	GetDeletable() bool
 	GetExportable() bool
 	GetPrimaryKey() PrimaryKey
-	GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error)
+	GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
 	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
@@ -275,7 +275,10 @@ func (tb DefaultTable) GetExportable() bool {
 }
 
 // GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
+func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+	if isAll {
+		return tb.getAllDataFromDatabase(path, params)
+	}
 	return tb.getDataFromDatabase(path, params, []string{})
 }
 
@@ -351,10 +354,106 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, resNext map[
 	return tempModelData, isCombine
 }
 
-func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
-	connection := tb.db()
+func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
+	var (
+		connection     = tb.db()
+		placeholder    = delimiter(connection.GetDelimiter(), "%s")
+		queryStatement = "select %s from %s %s order by " + placeholder + " %s"
+	)
+
+	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
+
+	columns := getColumns(columnsModel, tb.connectionDriver)
 
 	var (
+		fields     string
+		joins      string
+		headField  string
+		joinTables = make([]string, 0)
+		thead      = make([]map[string]string, 0)
+	)
+	for _, field := range tb.info.FieldList {
+		if field.Field != tb.primaryKey.Name && inArray(columns, field.Field) &&
+			!field.Join.Valid() {
+			fields += tb.info.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + ","
+		}
+
+		headField = field.Field
+
+		if field.Join.Valid() {
+			headField = field.Join.Table + "_" + field.Field
+			fields += field.Join.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + " as " + headField + ","
+			if !modules.InArray(joinTables, field.Join.Table) {
+				joinTables = append(joinTables, field.Join.Table)
+				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +
+					field.Join.Table + "." + filterFiled(field.Join.JoinField, connection.GetDelimiter()) + " = " +
+					tb.info.Table + "." + filterFiled(field.Join.Field, connection.GetDelimiter())
+			}
+		}
+
+		if field.Hide {
+			continue
+		}
+
+		thead = append(thead, map[string]string{
+			"head":       field.Head,
+			"field":      headField,
+			"edittype":   field.EditType.String(),
+			"editoption": field.GetEditOptions(),
+			"width":      strconv.Itoa(field.Width),
+		})
+	}
+
+	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
+
+	if !inArray(columns, params.SortField) {
+		params.SortField = tb.primaryKey.Name
+	}
+
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, params.SortField, params.SortType)
+
+	logger.LogSQL(queryCmd, []interface{}{})
+
+	res, err := connection.QueryWithConnection(tb.connection, queryCmd)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	infoList := make([]map[string]template.HTML, 0)
+
+	for i := 0; i < len(res); i++ {
+
+		rexNext := make(map[string]interface{})
+		if i != len(res)-1 {
+			rexNext = res[i+1]
+		}
+
+		tempModelData, isCombine := tb.getTempModelData(res[i], rexNext, params, columns, i == len(res)-1)
+
+		if isCombine {
+			if i != len(res)-2 {
+				res = append(res[:i+1], res[i+2:]...)
+			} else {
+				res = res[:i+1]
+			}
+		}
+
+		infoList = append(infoList, tempModelData)
+	}
+
+	return PanelInfo{
+		InfoList:    infoList,
+		Thead:       thead,
+		Title:       tb.info.Title,
+		Description: tb.info.Description,
+	}, nil
+}
+
+func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+
+	var (
+		connection     = tb.db()
 		placeholder    = delimiter(connection.GetDelimiter(), "%s")
 		queryStatement string
 		countStatement string
@@ -506,8 +605,19 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 						whereArgs = append(whereArgs, value)
 					}
 				}
+
+				if field := tb.info.FieldList.GetFieldByFieldName(key); field.Exist() {
+					wheres += field.Join.Table + "." + filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
+					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
+						whereArgs = append(whereArgs, "%"+value+"%")
+					} else {
+						whereArgs = append(whereArgs, value)
+					}
+				}
 			}
-			wheres = wheres[:len(wheres)-4]
+			if wheres != " where " {
+				wheres = wheres[:len(wheres)-4]
+			}
 		}
 		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 	}

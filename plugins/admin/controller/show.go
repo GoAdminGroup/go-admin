@@ -49,7 +49,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 
 	table.InitTableList()
 
-	panelInfo, err := panel.GetDataFromDatabase(path, params)
+	panelInfo, err := panel.GetDataFromDatabase(path, params, false)
 
 	if err != nil {
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
@@ -208,7 +208,7 @@ func Export(ctx *context.Context) {
 	if len(param.Id) == 1 {
 		params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
 			panel.GetInfo().GetSort())
-		panelInfo, err = panel.GetDataFromDatabase(ctx.Path(), params)
+		panelInfo, err = panel.GetDataFromDatabase(ctx.Path(), params, param.IsAll)
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(),
 			params.Page, params.PageSize)
 	} else {

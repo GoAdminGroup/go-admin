@@ -10,6 +10,7 @@ type ExportParam struct {
 	Panel  table.Table
 	Id     []string
 	Prefix string
+	IsAll  bool
 }
 
 func Export(ctx *context.Context) {
@@ -26,6 +27,7 @@ func Export(ctx *context.Context) {
 		Panel:  panel,
 		Id:     strings.Split(ctx.FormValue("id"), ","),
 		Prefix: prefix,
+		IsAll:  ctx.FormValue("is_all") == "true",
 	})
 	ctx.Next()
 }
