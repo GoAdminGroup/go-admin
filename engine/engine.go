@@ -76,6 +76,11 @@ func (eng *Engine) AddConfigFromYAML(path string) *Engine {
 	return eng.setConfig(config.ReadFromYaml(path)).InitDatabase()
 }
 
+// AddConfigFromINI set the global config from ini file.
+func (eng *Engine) AddConfigFromINI(path string) *Engine {
+	return eng.setConfig(config.ReadFromINI(path)).InitDatabase()
+}
+
 // InitDatabase initialize all database connection.
 func (eng *Engine) InitDatabase() *Engine {
 	for driver, databaseCfg := range eng.config.Databases.GroupByDriver() {
