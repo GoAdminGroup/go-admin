@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 )
 
@@ -12,6 +13,8 @@ type FormAttribute struct {
 	Name            string
 	Header          template.HTML
 	Content         []types.FormField
+	ContentList     [][]types.FormField
+	Layout          form.Layout
 	TabContents     [][]types.FormField
 	TabHeaders      []string
 	Footer          template.HTML
@@ -54,6 +57,11 @@ func (compo *FormAttribute) SetTabHeaders(value []string) types.FormAttribute {
 
 func (compo *FormAttribute) SetFooter(value template.HTML) types.FormAttribute {
 	compo.Footer = value
+	return compo
+}
+
+func (compo *FormAttribute) SetLayout(layout form.Layout) types.FormAttribute {
+	compo.Layout = layout
 	return compo
 }
 
@@ -108,10 +116,23 @@ func (compo *FormAttribute) SetOperationFooter(value template.HTML) types.FormAt
 
 func (compo *FormAttribute) GetContent() template.HTML {
 	compo.CdnUrl = config.Get().AssetUrl
+
+	if compo.Layout == form.LayoutTwoCol {
+		compo.ContentList = make([][]types.FormField, 2)
+		for i := 0; i < len(compo.Content); i++ {
+			if i%2 == 0 {
+				compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i])
+			} else {
+				compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i])
+			}
+		}
+	}
+
 	return ComposeHtml(compo.TemplateList, *compo, "form",
 		"form/default", "form/file", "form/textarea", "form/custom",
 		"form/selectbox", "form/text", "form/radio", "form/switch",
 		"form/password", "form/select", "form/singleselect", "form/datetime_range",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number", "form/number_range",
-		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components")
+		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components",
+		"form_layout_default", "form_layout_two_col", "form_layout_tab")
 }

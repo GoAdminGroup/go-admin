@@ -117,6 +117,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).
 			SetExportUrl(exportUrl).
+			SetHideFilterArea(panel.GetInfo().IsHideFilterArea).
 			SetNewUrl(newUrl).
 			SetEditUrl(editUrl).
 			SetUpdateUrl(updateUrl).
@@ -137,6 +138,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 				SetContent(panelInfo.FormData).
 				SetPrefix(config.PrefixFixSlash()).
 				SetMethod("get").
+				SetLayout(panel.GetInfo().FilterFormLayout).
 				SetUrl(infoUrl).
 				SetOperationFooter(filterFormFooter(infoUrl)).GetContent())
 	}

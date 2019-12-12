@@ -380,6 +380,8 @@ type InfoPanel struct {
 	IsHideFilterButton bool
 	IsHideRowSelector  bool
 	IsHidePagination   bool
+	IsHideFilterArea   bool
+	FilterFormLayout   form.Layout
 
 	Buttons Buttons
 
@@ -811,6 +813,11 @@ func (i *InfoPanel) SetDescription(desc string) *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) SetFilterFormLayout(layout form.Layout) *InfoPanel {
+	i.FilterFormLayout = layout
+	return i
+}
+
 func (i *InfoPanel) SetSortAsc() *InfoPanel {
 	i.Sort = SortAsc
 	return i
@@ -858,6 +865,11 @@ func (i *InfoPanel) HideRowSelector() *InfoPanel {
 
 func (i *InfoPanel) HidePagination() *InfoPanel {
 	i.IsHidePagination = true
+	return i
+}
+
+func (i *InfoPanel) HideFilterArea() *InfoPanel {
+	i.IsHideFilterArea = true
 	return i
 }
 

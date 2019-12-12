@@ -6,6 +6,7 @@ package types
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 )
 
@@ -21,6 +22,7 @@ type FormAttribute interface {
 	SetInfoUrl(value string) FormAttribute
 	SetMethod(value string) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
+	SetLayout(layout form.Layout) FormAttribute
 	SetToken(value string) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute
 	GetBoxHeader() template.HTML
@@ -109,6 +111,7 @@ type DataTableAttribute interface {
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
+	SetHideFilterArea(value bool) DataTableAttribute
 	SetActionJs(aj template.JS) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetHasFilter(hasFilter bool) DataTableAttribute

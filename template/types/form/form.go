@@ -31,6 +31,15 @@ const (
 	Switch
 )
 
+type Layout uint8
+
+const (
+	LayoutDefault Layout = iota
+	LayoutTwoCol
+	LayoutFlow
+	LayoutTab
+)
+
 func (t Type) String() string {
 	switch t {
 	case Default:

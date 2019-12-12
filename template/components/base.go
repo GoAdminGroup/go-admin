@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 )
 
@@ -38,6 +39,7 @@ func (b Base) Form() types.FormAttribute {
 		Url:       "/",
 		Method:    "post",
 		InfoUrl:   "",
+		Layout:    form.LayoutDefault,
 		Title:     "edit",
 		Attribute: b.Attribute,
 	}

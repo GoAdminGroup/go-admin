@@ -19,7 +19,7 @@ import (
 func GetManagerTable() (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := ManagerTable.GetInfo().AddXssJsFilter()
+	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
@@ -216,7 +216,7 @@ func GetManagerTable() (ManagerTable Table) {
 func GetPermissionTable() (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := PermissionTable.GetInfo().AddXssJsFilter()
+	info := PermissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("permission"), "name", db.Varchar).FieldFilterable()
@@ -333,7 +333,7 @@ func GetPermissionTable() (PermissionTable Table) {
 func GetRolesTable() (RolesTable Table) {
 	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := RolesTable.GetInfo().AddXssJsFilter()
+	info := RolesTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("role"), "name", db.Varchar).FieldFilterable()
@@ -478,7 +478,7 @@ func GetOpTable() (OpTable Table) {
 		},
 	})
 
-	info := OpTable.GetInfo().AddXssJsFilter()
+	info := OpTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("userID"), "user_id", db.Int).FieldFilterable()
@@ -514,7 +514,7 @@ func GetOpTable() (OpTable Table) {
 func GetMenuTable() (MenuTable Table) {
 	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
-	info := MenuTable.GetInfo().AddXssJsFilter()
+	info := MenuTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("parent"), "parent_id", db.Int)
