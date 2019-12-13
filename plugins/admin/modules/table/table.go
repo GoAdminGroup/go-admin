@@ -570,6 +570,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		wheres    = ""
 		whereArgs = make([]interface{}, 0)
 		args      = make([]interface{}, 0)
+		existKeys = make([]string, 0)
 	)
 
 	if len(ids) > 0 {
@@ -580,11 +581,18 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		}
 		wheres = wheres[:len(wheres)-1]
 	} else {
-		wheres = " where "
-		if len(params.Fields) == 0 {
+
+		if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 {
 			wheres = ""
 		} else {
+
+			wheres = " where "
+
 			for key, value := range params.Fields {
+
+				if modules.InArray(existKeys, key) {
+					continue
+				}
 
 				var op types.FilterOperator
 				if strings.Contains(key, "_end__goadmin") {
@@ -614,10 +622,31 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 						whereArgs = append(whereArgs, value)
 					}
 				}
+
+				existKeys = append(existKeys, key)
 			}
+
+			for _, wh := range tb.info.Wheres {
+
+				if modules.InArray(existKeys, wh.Field) {
+					continue
+				}
+
+				// TODO: support like operation and join table
+				if inArray(columns, wh.Field) {
+					wheres += filterFiled(wh.Field, connection.GetDelimiter()) + " " + wh.Operator + " ? and "
+					whereArgs = append(whereArgs, wh.Arg)
+				}
+
+				existKeys = append(existKeys, wh.Field)
+			}
+
 			if wheres != " where " {
 				wheres = wheres[:len(wheres)-4]
+			} else {
+				wheres = ""
 			}
+
 		}
 		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
 	}
