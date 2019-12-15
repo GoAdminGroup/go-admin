@@ -20,10 +20,10 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
         <title>{{.Title}}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <link rel="stylesheet" href="{{.UrlPrefix}}/assets/login/dist/all.min.css">
+        <link rel="stylesheet" href="{{link .CdnUrl .UrlPrefix "/assets/login/dist/all.min.css"}}">
 
         <!--[if lt IE 9]>
-        <script src="{{.UrlPrefix}}/assets/login/dist/respond.min.js"></script>
+        <script src="{{link .CdnUrl .UrlPrefix "/assets/login/dist/respond.min.js"}}"></script>
         <![endif]-->
 
     </head>
@@ -64,7 +64,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
         <canvas class="particles-js-canvas-el" width="1606" height="1862" style="width: 100%; height: 100%;"></canvas>
     </div>
 
-    <script src="{{.UrlPrefix}}/assets/login/dist/all.min.js"></script>
+    <script src="{{link .CdnUrl .UrlPrefix "/assets/login/dist/all.min.js"}}"></script>
 
     <script>
         $("#sign-up-form").submit(function (e) {

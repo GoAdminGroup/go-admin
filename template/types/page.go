@@ -71,7 +71,7 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		System: SystemInfo{
 			Version: system.Version(),
 		},
-		UrlPrefix:      cfg.Prefix(),
+		UrlPrefix:      cfg.AssertPrefix(),
 		Title:          cfg.Title,
 		Logo:           cfg.Logo,
 		MiniLogo:       cfg.MiniLogo,

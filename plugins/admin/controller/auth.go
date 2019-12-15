@@ -67,7 +67,7 @@ func ShowLogin(ctx *context.Context) {
 		CdnUrl    string
 		System    types.SystemInfo
 	}{
-		UrlPrefix: config.Prefix(),
+		UrlPrefix: config.AssertPrefix(),
 		Title:     config.LoginTitle,
 		Logo:      config.LoginLogo,
 		System: types.SystemInfo{
