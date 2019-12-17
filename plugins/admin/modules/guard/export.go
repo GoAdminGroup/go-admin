@@ -2,6 +2,7 @@ package guard
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"strings"
 )
@@ -13,23 +14,25 @@ type ExportParam struct {
 	IsAll  bool
 }
 
-func Export(ctx *context.Context) {
+func Export(conn db.Connection) context.Handler {
+	return func(ctx *context.Context) {
 
-	prefix := ctx.Query("__prefix")
-	panel := table.Get(prefix)
-	if !panel.GetExportable() {
-		alert(ctx, panel, "operation not allow")
-		ctx.Abort()
-		return
+		prefix := ctx.Query("__prefix")
+		panel := table.Get(prefix)
+		if !panel.GetExportable() {
+			alert(ctx, panel, "operation not allow", conn)
+			ctx.Abort()
+			return
+		}
+
+		ctx.SetUserValue("export_param", &ExportParam{
+			Panel:  panel,
+			Id:     strings.Split(ctx.FormValue("id"), ","),
+			Prefix: prefix,
+			IsAll:  ctx.FormValue("is_all") == "true",
+		})
+		ctx.Next()
 	}
-
-	ctx.SetUserValue("export_param", &ExportParam{
-		Panel:  panel,
-		Id:     strings.Split(ctx.FormValue("id"), ","),
-		Prefix: prefix,
-		IsAll:  ctx.FormValue("is_all") == "true",
-	})
-	ctx.Next()
 }
 
 func GetExportParam(ctx *context.Context) *ExportParam {

@@ -765,7 +765,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "no affect") {
 		if tb.connectionDriver != db.DriverPostgresql {
 			return err
 		}
@@ -853,6 +853,15 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		fun          types.PostFieldFilterFn
 		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
 	)
+
+	for _, field := range tb.form.FieldList {
+		if field.FormType.IsSelect() {
+			if _, ok := dataList[field.Field+"[]"]; !ok {
+				dataList[field.Field+"[]"] = []string{""}
+			}
+		}
+	}
+
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
 		if !modules.InArray(exceptString, k) {

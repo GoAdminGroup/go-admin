@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -19,7 +20,7 @@ import (
 )
 
 // SetPageContent set and return the panel of page content.
-func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx interface{}) (types.Panel, error)) {
+func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx interface{}) (types.Panel, error), conn db.Connection) {
 
 	panel, err := c(ctx)
 
@@ -44,7 +45,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Path()))),
+		*(menu.GetGlobalMenu(user, conn).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Path()))),
 		panel, globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("SetPageContent", err)

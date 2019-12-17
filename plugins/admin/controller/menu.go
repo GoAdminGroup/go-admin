@@ -53,7 +53,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }
@@ -94,7 +94,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetInfoUrl(config.Url("/menu"))) + template2.HTML(js),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }
@@ -148,13 +148,13 @@ func NewMenu(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	menuModel := models.Menu().SetConn(db.GetConnection(services)).
-		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user)).MaxOrder+1)
+		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user, conn)).MaxOrder+1)
 
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
 
-	menu.GetGlobalMenu(user).AddMaxOrder()
+	menu.GetGlobalMenu(user, conn).AddMaxOrder()
 	table.RefreshTableList()
 
 	getMenuInfoPanel(ctx, "")
@@ -183,7 +183,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	orderUrl := config.Url("/menu/order")
 
 	tree := aTree().
-		SetTree((menu.GetGlobalMenu(user)).List).
+		SetTree((menu.GetGlobalMenu(user, conn)).List).
 		SetEditUrl(editUrl).
 		SetUrlPrefix(config.Prefix()).
 		SetDeleteUrl(deleteUrl).
@@ -220,7 +220,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

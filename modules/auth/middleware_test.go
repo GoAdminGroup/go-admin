@@ -1,12 +1,9 @@
 package auth
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/url"
 	"testing"
 )
 
@@ -33,6 +30,11 @@ func TestCheckPermissions(t *testing.T) {
 				Slug:       "/",
 				HttpMethod: []string{"GET"},
 				HttpPath:   []string{"/info/user/edit"},
+			}, {
+				Name:       "/info/manager?id=2",
+				Slug:       "/",
+				HttpMethod: []string{"GET"},
+				HttpPath:   []string{"/info/manager?id=2"},
 			},
 		},
 	}
@@ -44,6 +46,9 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/info/users", "GET"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "GET"), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "get"), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?id=2&__columns=id,roles,created_at,updated_at", "get"), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?id=3&__columns=id,roles,created_at,updated_at", "get"), false)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?__columns=id,roles,created_at,updated_at&id=3", "get"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "post"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user/edit?id=3", "get"), true)
 }
@@ -51,13 +56,4 @@ func TestCheckPermissions(t *testing.T) {
 func TestInMethodArr(t *testing.T) {
 	methods := []string{"get", "post"}
 	assert.Equal(t, inMethodArr(methods, "get"), true)
-}
-
-func TestGetPath(t *testing.T) {
-	assert.Equal(t, getPath(&context.Context{
-		Request: &http.Request{
-			URL:    &url.URL{Path: "/info/manager/edit"},
-			Method: "GET",
-		},
-	}), "/info/manager/edit?id=3")
 }

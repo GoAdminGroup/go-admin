@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -28,23 +29,26 @@ func (e *ShowNewFormParam) GetInfoUrl() string {
 	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
 }
 
-func ShowNewForm(ctx *context.Context) {
+func ShowNewForm(conn db.Connection) context.Handler {
+	return func(ctx *context.Context) {
 
-	prefix := ctx.Query("__prefix")
-	panel := table.Get(prefix)
-	if !panel.GetCanAdd() {
-		alert(ctx, panel, "operation not allow")
-		ctx.Abort()
-		return
+		prefix := ctx.Query("__prefix")
+		panel := table.Get(prefix)
+
+		if !panel.GetCanAdd() {
+			alert(ctx, panel, "operation not allow", conn)
+			ctx.Abort()
+			return
+		}
+
+		ctx.SetUserValue("show_new_form_param", &ShowNewFormParam{
+			Panel:  panel,
+			Prefix: prefix,
+			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+				panel.GetInfo().GetSort()),
+		})
+		ctx.Next()
 	}
-
-	ctx.SetUserValue("show_new_form_param", &ShowNewFormParam{
-		Panel:  panel,
-		Prefix: prefix,
-		Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
-			panel.GetInfo().GetSort()),
-	})
-	ctx.Next()
 }
 
 func GetShowNewFormParam(ctx *context.Context) *ShowNewFormParam {
@@ -117,15 +121,17 @@ func NewForm(srv service.List) context.Handler {
 		previous := ctx.FormValue("_previous_")
 		panel := table.Get(prefix)
 
+		conn := db.GetConnection(srv)
+
 		if !panel.GetCanAdd() {
-			alert(ctx, panel, "operation not allow")
+			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()
 			return
 		}
 		token := ctx.FormValue("_t")
 
 		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
-			alert(ctx, panel, "edit fail, wrong token")
+			alert(ctx, panel, "edit fail, wrong token", conn)
 			ctx.Abort()
 			return
 		}

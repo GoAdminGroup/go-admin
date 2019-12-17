@@ -38,8 +38,10 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	// auth
 	authRoute.GET("/logout", controller.Logout)
 
+	conn := db.GetConnection(srv)
+
 	// menus
-	authRoute.POST("/menu/delete", guard.MenuDelete, controller.DeleteMenu)
+	authRoute.POST("/menu/delete", guard.MenuDelete(conn), controller.DeleteMenu)
 	authRoute.POST("/menu/new", guard.MenuNew(srv), controller.NewMenu)
 	authRoute.POST("/menu/edit", guard.MenuEdit(srv), controller.EditMenu)
 	authRoute.POST("/menu/order", controller.MenuOrder)
@@ -48,12 +50,12 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	authRoute.GET("/menu/new", controller.ShowNewMenu)
 
 	// add delete modify query
-	authRoute.GET("/info/:__prefix/edit", guard.ShowForm, controller.ShowForm)
-	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm, controller.ShowNewForm)
+	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn), controller.ShowForm)
+	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn), controller.ShowNewForm)
 	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm)
 	authRoute.POST("/new/:__prefix", guard.NewForm(srv), controller.NewForm)
-	authRoute.POST("/delete/:__prefix", guard.Delete, controller.Delete)
-	authRoute.POST("/export/:__prefix", guard.Export, controller.Export)
+	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete)
+	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export)
 	authRoute.GET("/info/:__prefix", controller.ShowInfo)
 
 	authRoute.POST("/update/:__prefix", guard.Update, controller.Update)

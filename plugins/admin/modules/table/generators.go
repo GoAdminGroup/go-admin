@@ -3,6 +3,7 @@ package table
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -302,10 +303,12 @@ func GetPermissionTable() (PermissionTable Table) {
 			{"value": "OPTIONS", "field": "OPTIONS"},
 			{"value": "HEAD", "field": "HEAD"},
 		}).
+		FieldOptionExt(map[string]interface{}{"allowClear": true}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			return strings.Split(model.Value, ",")
 		}).
 		FieldPostFilterFn(func(model types.PostFieldModel) string {
+			fmt.Println("model.Value", model.Value)
 			return strings.Join(model.Value, ",")
 		}).
 		FieldHelpMsg(template.HTML(lg("all method if empty")))

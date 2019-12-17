@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
@@ -54,7 +53,7 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 					Description: "Error",
 					Title:       "Error",
 				}, nil
-			})
+			}, conn)
 		},
 		conn: conn,
 	}
@@ -127,32 +126,7 @@ func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, b
 		return user, false, false
 	}
 
-	return user, true, CheckPermissions(user, getPath(ctx), ctx.Method())
-}
-
-func getPath(ctx *context.Context) string {
-
-	if strings.ToUpper(ctx.Method()) == "GET" {
-		ok, err := regexp.MatchString("/info/(.*?)/edit", ctx.Path())
-		id := ctx.Query("id")
-		if ok && err == nil && id != "" {
-			return ctx.Path() + "?id=" + id
-		}
-		return ctx.Path()
-	} else if strings.ToUpper(ctx.Method()) == "POST" {
-		ok, err := regexp.MatchString("/edit/(.*)", ctx.Path())
-		if ok && err == nil {
-			pk := table.Get(ctx.Query("__prefix")).GetPrimaryKey().Name
-			id := ctx.FormValue(pk)
-			if id != "" {
-				return ctx.Path() + "?" + pk + "=" + id
-			}
-			return ctx.Path()
-		}
-		return ctx.Path()
-	}
-
-	return ctx.Path()
+	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
 }
 
 const defaultUserIDSesKey = "user_id"
@@ -216,7 +190,7 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 		path = path[:len(path)-1]
 	}
 
-	hasQmark := strings.Contains(path, "?id=")
+	pathArr := strings.Split(path, "?")
 
 	for _, v := range user.Permissions {
 
@@ -230,8 +204,12 @@ func CheckPermissions(user models.UserModel, path string, method string) bool {
 
 				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
 
-				if hasQmark && !strings.Contains(matchPath, "?") {
-					matchPath += "?(.*)"
+				if len(pathArr) > 1 {
+					if pathArr[0] == matchPath && !strings.Contains(matchPath, "?") {
+						matchPath += "(.*)"
+					} else if strings.Contains(matchPath, "?id=") && !strings.Contains(matchPath, "(.*)") {
+						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
+					}
 				}
 
 				if matchPath == path {

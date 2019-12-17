@@ -23,10 +23,13 @@ func SetConfig(cfg c.Config) {
 	config = cfg
 }
 
+var services service.List
+
 func (example *Example) InitPlugin(srv service.List) {
 	config = c.Get()
 
 	Plug.app = InitRouter(config.Prefix(), srv)
+	services = srv
 }
 
 func (example *Example) GetRequest() []context.Path {

@@ -61,7 +61,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: description,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 

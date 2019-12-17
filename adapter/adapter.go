@@ -141,7 +141,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user).SetActiveClass(config.Get().URLRemovePrefix(newBase.Path()))),
+		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(newBase.Path()))),
 		panel, config.Get(), template.GetComponentAssetListsHTML()))
 
 	if hasError != nil {

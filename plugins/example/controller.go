@@ -3,6 +3,7 @@ package example
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
@@ -388,5 +389,5 @@ func TestHandler(ctx *context.Context) {
 			Title:       "Dashboard",
 			Description: "dashboard example",
 		}, nil
-	})
+	}, db.GetConnection(services))
 }

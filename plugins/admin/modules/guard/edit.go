@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -32,31 +33,34 @@ func (e *ShowFormParam) GetInfoUrl() string {
 	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
 }
 
-func ShowForm(ctx *context.Context) {
+func ShowForm(conn db.Connection) context.Handler {
+	return func(ctx *context.Context) {
 
-	prefix := ctx.Query("__prefix")
-	panel := table.Get(prefix)
-	if !panel.GetEditable() {
-		alert(ctx, panel, "operation not allow")
-		ctx.Abort()
-		return
+		prefix := ctx.Query("__prefix")
+		panel := table.Get(prefix)
+
+		if !panel.GetEditable() {
+			alert(ctx, panel, "operation not allow", conn)
+			ctx.Abort()
+			return
+		}
+
+		id := ctx.Query(panel.GetPrimaryKey().Name)
+		if id == "" {
+			alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, conn)
+			ctx.Abort()
+			return
+		}
+
+		ctx.SetUserValue("show_form_param", &ShowFormParam{
+			Panel:  panel,
+			Id:     id,
+			Prefix: prefix,
+			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+				panel.GetInfo().GetSort()),
+		})
+		ctx.Next()
 	}
-
-	id := ctx.Query(panel.GetPrimaryKey().Name)
-	if id == "" {
-		alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name)
-		ctx.Abort()
-		return
-	}
-
-	ctx.SetUserValue("show_form_param", &ShowFormParam{
-		Panel:  panel,
-		Id:     id,
-		Prefix: prefix,
-		Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
-			panel.GetInfo().GetSort()),
-	})
-	ctx.Next()
 }
 
 func GetShowFormParam(ctx *context.Context) *ShowFormParam {
@@ -130,15 +134,17 @@ func EditForm(srv service.List) context.Handler {
 		panel := table.Get(prefix)
 		multiForm := ctx.Request.MultipartForm
 
+		conn := db.GetConnection(srv)
+
 		if !panel.GetEditable() {
-			alert(ctx, panel, "operation not allow")
+			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()
 			return
 		}
 		token := ctx.FormValue("_t")
 
 		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
-			alert(ctx, panel, "edit fail, wrong token")
+			alert(ctx, panel, "edit fail, wrong token", conn)
 			ctx.Abort()
 			return
 		}
@@ -170,12 +176,12 @@ func GetEditFormParam(ctx *context.Context) *EditFormParam {
 	return ctx.UserValue["edit_form_param"].(*EditFormParam)
 }
 
-func alert(ctx *context.Context, panel table.Table, msg string) {
-	response.Alert(ctx, config.Get(), panel.GetInfo().Description, panel.GetInfo().Title, msg)
+func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection) {
+	response.Alert(ctx, config.Get(), panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
 }
 
-func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string) {
-	response.Alert(ctx, config.Get(), desc, title, msg)
+func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn db.Connection) {
+	response.Alert(ctx, config.Get(), desc, title, msg, conn)
 }
 
 func getAlert(msg string) template2.HTML {
