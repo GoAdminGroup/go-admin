@@ -18,6 +18,7 @@ type PaginatorAttribute struct {
 	PageSizeList      []string
 	Option            map[string]template.HTML
 	Url               string
+	ExtraInfo         template.HTML
 	types.Attribute
 }
 
@@ -33,6 +34,11 @@ func (compo *PaginatorAttribute) SetCurPageEndIndex(value string) types.Paginato
 
 func (compo *PaginatorAttribute) SetTotal(value string) types.PaginatorAttribute {
 	compo.Total = value
+	return compo
+}
+
+func (compo *PaginatorAttribute) SetExtraInfo(value template.HTML) types.PaginatorAttribute {
+	compo.ExtraInfo = value
 	return compo
 }
 

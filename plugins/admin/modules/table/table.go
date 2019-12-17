@@ -3,19 +3,20 @@ package table
 import (
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/service"
-	"html/template"
-	"strconv"
-	"strings"
-
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"html/template"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Generator func() Table
@@ -431,6 +432,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		countStatement string
 	)
 
+	beginTime := time.Now()
+
 	if len(ids) > 0 {
 		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
 		countStatement = "select count(*) from " + placeholder + " where " + tb.primaryKey.Name + " in (%s)"
@@ -666,10 +669,14 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		size = int(total[0]["count(*)"].(int64))
 	}
 
+	endTime := time.Now()
+
 	return PanelInfo{
-		Thead:       thead,
-		InfoList:    infoList,
-		Paginator:   paginator.Get(path, params, size, tb.info.GetPageSizeList()),
+		Thead:    thead,
+		InfoList: infoList,
+		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
+			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+				fmt.Sprintf("%fs", endTime.Sub(beginTime).Seconds())))),
 		Title:       tb.info.Title,
 		FormData:    filterForm,
 		Description: tb.info.Description,

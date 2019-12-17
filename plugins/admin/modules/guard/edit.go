@@ -143,19 +143,6 @@ func EditForm(srv service.List) context.Handler {
 			return
 		}
 
-		if prefix != "manager" && prefix != "roles" {
-			for _, f := range panel.GetForm().FieldList {
-				if f.Editable {
-					continue
-				}
-				if len(multiForm.Value[f.Field]) > 0 && f.Field != "id" {
-					alert(ctx, panel, "field["+f.Field+"]is not editable")
-					ctx.Abort()
-					return
-				}
-			}
-		}
-
 		fromList := modules.IsInfoUrl(previous)
 
 		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize,

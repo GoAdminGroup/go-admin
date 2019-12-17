@@ -142,6 +142,7 @@ type PaginatorAttribute interface {
 	SetNextUrl(value string) PaginatorAttribute
 	SetOption(value map[string]template.HTML) PaginatorAttribute
 	SetUrl(value string) PaginatorAttribute
+	SetExtraInfo(value template.HTML) PaginatorAttribute
 	GetContent() template.HTML
 }
 

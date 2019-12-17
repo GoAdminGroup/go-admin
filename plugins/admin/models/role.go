@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
+	"time"
 )
 
 // RoleModel is role model structure.
@@ -73,8 +74,9 @@ func (t RoleModel) Update(name, slug string) RoleModel {
 	_, _ = t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
-			"name": name,
-			"slug": slug,
+			"name":       name,
+			"slug":       slug,
+			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
 		})
 
 	t.Name = name

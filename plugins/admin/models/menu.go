@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
+	"time"
 )
 
 // MenuModel is menu model structure.
@@ -87,11 +88,12 @@ func (t MenuModel) Update(title, icon, uri, header string, parentId int64) MenuM
 	_, _ = t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
-			"title":     title,
-			"parent_id": parentId,
-			"icon":      icon,
-			"uri":       uri,
-			"header":    header,
+			"title":      title,
+			"parent_id":  parentId,
+			"icon":       icon,
+			"uri":        uri,
+			"header":     header,
+			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
 		})
 
 	t.Title = title

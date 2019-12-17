@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
+	"time"
 )
 
 // UserModel is user model structure.
@@ -224,8 +225,9 @@ func (t UserModel) New(username, password, name, avatar string) UserModel {
 func (t UserModel) Update(username, password, name, avatar string) UserModel {
 
 	fieldValues := dialect.H{
-		"username": username,
-		"name":     name,
+		"username":   username,
+		"name":       name,
+		"updated_at": time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	if avatar != "" {

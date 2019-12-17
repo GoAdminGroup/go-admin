@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -14,6 +15,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func GetManagerTable() (ManagerTable Table) {
@@ -325,7 +327,13 @@ func GetPermissionTable() (PermissionTable Table) {
 				return errors.New("slug exists")
 			}
 			return nil
+		}).SetPostHook(func(values form2.Values) error {
+		_, err := connection().Table("goadmin_permissions").
+			Where("id", "=", values.Get("id")).Update(dialect.H{
+			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
 		})
+		return err
+	})
 
 	return
 }
