@@ -4,6 +4,8 @@ import (
 	// add gf adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
 	"net/http"
+	"time"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -47,19 +49,18 @@ func newHandler() http.Handler {
 		})
 	})
 
-	return new(httpHandler).SetSrv(s)
-}
+	go s.Run()
 
-type httpHandler struct {
-	srv *ghttp.Server
-}
+	var handler http.Handler
+	times := 0
+	for times < 50 {
+		handler = s.Handler()
+		if handler != nil {
+			return handler
+		}
+		time.Sleep(time.Second)
+		times++
+	}
 
-func (hh *httpHandler) SetSrv(s *ghttp.Server) *httpHandler {
-	hh.srv = s
-	return hh
-}
-
-func (hh *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// NOTE: ╮(╯▽╰)╭
-	hh.srv.DefaultHttpHandle(w, r)
+	return s.Handler()
 }
