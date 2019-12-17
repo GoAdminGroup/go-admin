@@ -325,6 +325,8 @@ func (j Join) Valid() bool {
 	return j.Table != "" && j.Field != "" && j.JoinField != ""
 }
 
+var JoinFieldValueDelimiter = utils.Uuid(8)
+
 type TabGroups [][]string
 
 func (t TabGroups) Valid() bool {

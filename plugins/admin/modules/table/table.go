@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"html/template"
 	"strconv"
 	"strings"
@@ -81,8 +80,6 @@ const (
 	DefaultPrimaryKeyName = "id"
 	DefaultConnectionName = "default"
 )
-
-var JoinFieldValueDelimiter = utils.Uuid(8)
 
 type DefaultTable struct {
 	info             *types.InfoPanel
@@ -471,7 +468,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 			hasJoin = true
 			headField = field.Join.Table + "_" + field.Field
 			fields += getAggregationExpression(tb.connectionDriver, field.Join.Table+"."+
-				filterFiled(field.Field, connection.GetDelimiter()), headField, JoinFieldValueDelimiter) + ","
+				filterFiled(field.Field, connection.GetDelimiter()), headField, types.JoinFieldValueDelimiter) + ","
 			if !modules.InArray(joinTables, field.Join.Table) {
 				joinTables = append(joinTables, field.Join.Table)
 				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +

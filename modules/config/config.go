@@ -256,7 +256,6 @@ func (c Config) AssertPrefix() string {
 	return c.prefix
 }
 
-
 // PrefixFixSlash return the prefix fix the slash error.
 func (c Config) PrefixFixSlash() string {
 	if c.UrlPrefix == "/" {
