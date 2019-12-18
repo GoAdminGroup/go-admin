@@ -1,6 +1,7 @@
 package gf
 
 import (
+	"fmt"
 	// add gf adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
 	"net/http"
@@ -49,7 +50,14 @@ func newHandler() http.Handler {
 		})
 	})
 
-	go s.Run()
+	go func() {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+		}()
+		s.Run()
+	}()
 
 	var handler http.Handler
 	times := 0
