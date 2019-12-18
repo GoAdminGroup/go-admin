@@ -1,12 +1,9 @@
 package gf
 
 import (
-	"fmt"
 	// add gf adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
 	"net/http"
-	"time"
-
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -50,25 +47,19 @@ func newHandler() http.Handler {
 		})
 	})
 
-	go func() {
-		defer func() {
-			if err := recover(); err != nil {
-				fmt.Println(err)
-			}
-		}()
-		s.Run()
-	}()
+	return new(httpHandler).SetSrv(s)
+}
 
-	var handler http.Handler
-	times := 0
-	for times < 50 {
-		handler = s.Handler()
-		if handler != nil {
-			return handler
-		}
-		time.Sleep(time.Second)
-		times++
-	}
+type httpHandler struct {
+	srv *ghttp.Server
+}
 
-	return s.Handler()
+func (hh *httpHandler) SetSrv(s *ghttp.Server) *httpHandler {
+	hh.srv = s
+	return hh
+}
+
+func (hh *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// NOTE: ╮(╯▽╰)╭
+	hh.srv.DefaultHttpHandle(w, r)
 }

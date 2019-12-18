@@ -19,6 +19,9 @@ before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
   - go get -u github.com/rakyll/gotest
+  - go get -u -v github.com/gogf/gf@v1.9.10
+  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
 
 script:
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
