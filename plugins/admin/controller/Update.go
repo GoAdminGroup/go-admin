@@ -15,7 +15,7 @@ func Update(ctx *context.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"msg": "fail",
+			"msg": err.Error(),
 		})
 		return
 	}

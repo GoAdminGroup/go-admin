@@ -17,14 +17,6 @@ func Update(ctx *context.Context) {
 	prefix := ctx.Query("__prefix")
 	panel := table.Get(prefix)
 
-	if !panel.GetEditable() {
-		ctx.JSON(http.StatusForbidden, map[string]interface{}{
-			"msg": "operation not allow",
-		})
-		ctx.Abort()
-		return
-	}
-
 	pname := panel.GetPrimaryKey().Name
 
 	id := ctx.FormValue("pk")
@@ -38,6 +30,7 @@ func Update(ctx *context.Context) {
 	}
 
 	var f = make(form.Values)
+	f.Add("__go_admin_single_update", "1")
 	f.Add(pname, id)
 	f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
 

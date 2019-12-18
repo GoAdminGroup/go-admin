@@ -785,6 +785,8 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
+			dataList.Add("__go_admin_post_type", "0")
+
 			err := tb.form.PostHook(dataList)
 			if err != nil {
 				logger.Error(err)
@@ -833,6 +835,8 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
+			dataList.Add("__go_admin_post_type", "1")
+
 			err := tb.form.PostHook(dataList)
 			if err != nil {
 				logger.Error(err)
@@ -854,13 +858,16 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
 	)
 
-	for _, field := range tb.form.FieldList {
-		if field.FormType.IsSelect() {
-			if _, ok := dataList[field.Field+"[]"]; !ok {
-				dataList[field.Field+"[]"] = []string{""}
+	if !dataList.IsSingleUpdatePost() {
+		for _, field := range tb.form.FieldList {
+			if field.FormType.IsSelect() {
+				if _, ok := dataList[field.Field+"[]"]; !ok {
+					dataList[field.Field+"[]"] = []string{""}
+				}
 			}
 		}
 	}
+	dataList = dataList.RemoveRemark()
 
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
