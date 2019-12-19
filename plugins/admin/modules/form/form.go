@@ -33,6 +33,16 @@ func (f Values) IsEmpty(key ...string) bool {
 	return false
 }
 
+// Has check the key exists or not.
+func (f Values) Has(key ...string) bool {
+	for _, k := range key {
+		if f.Get(k) != "" {
+			return true
+		}
+	}
+	return false
+}
+
 // Delete deletes the values associated with key.
 func (f Values) Delete(key string) {
 	delete(f, key)

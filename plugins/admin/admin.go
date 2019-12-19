@@ -25,11 +25,12 @@ func (admin *Admin) InitPlugin(services service.List) {
 	App.app = InitRouter(cfg.Prefix(), services)
 
 	table.SetGenerators(table.GeneratorList{
-		"manager":    table.GetManagerTable,
-		"permission": table.GetPermissionTable,
-		"roles":      table.GetRolesTable,
-		"op":         table.GetOpTable,
-		"menu":       table.GetMenuTable,
+		"manager":        table.GetManagerTable,
+		"permission":     table.GetPermissionTable,
+		"roles":          table.GetRolesTable,
+		"op":             table.GetOpTable,
+		"menu":           table.GetMenuTable,
+		"normal_manager": table.GetNormalManagerTable,
 	})
 	table.SetServices(services)
 	table.SetGenerators(admin.tableCfg)

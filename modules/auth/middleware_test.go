@@ -31,10 +31,15 @@ func TestCheckPermissions(t *testing.T) {
 				HttpMethod: []string{"GET"},
 				HttpPath:   []string{"/info/user/edit"},
 			}, {
-				Name:       "/info/manager?id=2",
+				Name:       "/info/normal_manager?id=2",
 				Slug:       "/",
 				HttpMethod: []string{"GET"},
-				HttpPath:   []string{"/info/manager?id=2"},
+				HttpPath:   []string{"/info/normal_manager?id=2"},
+			}, {
+				Name:       "/info/normal_manager/edit?id=2",
+				Slug:       "/",
+				HttpMethod: []string{"GET"},
+				HttpPath:   []string{"/info/normal_manager/edit?id=2"},
 			},
 		},
 	}
@@ -46,9 +51,9 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/info/users", "GET"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "GET"), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "get"), true)
-	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?id=2&__columns=id,roles,created_at,updated_at", "get"), true)
-	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?id=3&__columns=id,roles,created_at,updated_at", "get"), false)
-	assert.Equal(t, CheckPermissions(user, "/admin/info/manager?__columns=id,roles,created_at,updated_at&id=3", "get"), false)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/normal_manager/edit?id=2&__columns=id,roles,created_at,updated_at", "get"), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/normal_manager/edit?id=3&__columns=id,roles,created_at,updated_at", "get"), false)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/normal_manager/edit?__columns=id,roles,created_at,updated_at&id=3", "get"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "post"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user/edit?id=3", "get"), true)
 }
