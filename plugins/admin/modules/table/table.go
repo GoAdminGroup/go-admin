@@ -626,7 +626,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 			}
 
 		}
-		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*10)
+		pageSize, _ := strconv.Atoi(params.PageSize)
+		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*pageSize)
 	}
 
 	groupBy := ""

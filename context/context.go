@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"math"
+	"net"
 	"net/http"
 	"strings"
 )
@@ -145,6 +146,21 @@ func (ctx *Context) SetContentType(contentType string) {
 
 // LocalIP return the request client ip.
 func (ctx *Context) LocalIP() string {
+	xForwardedFor := ctx.Request.Header.Get("X-Forwarded-For")
+	ip := strings.TrimSpace(strings.Split(xForwardedFor, ",")[0])
+	if ip != "" {
+		return ip
+	}
+
+	ip = strings.TrimSpace(ctx.Request.Header.Get("X-Real-Ip"))
+	if ip != "" {
+		return ip
+	}
+
+	if ip, _, err := net.SplitHostPort(strings.TrimSpace(ctx.Request.RemoteAddr)); err == nil {
+		return ip
+	}
+
 	return "127.0.0.1"
 }
 
