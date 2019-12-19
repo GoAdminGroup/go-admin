@@ -126,7 +126,7 @@ func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, b
 		return user, false, false
 	}
 
-	return user, true, CheckPermissions(user, ctx.Path(), ctx.Method())
+	return user, true, CheckPermissions(user, ctx.Request.URL.String(), ctx.Method())
 }
 
 const defaultUserIDSesKey = "user_id"
