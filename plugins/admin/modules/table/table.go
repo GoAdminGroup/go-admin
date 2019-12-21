@@ -24,19 +24,31 @@ type Generator func() Table
 type GeneratorList map[string]Generator
 
 func (g GeneratorList) Add(key string, gen Generator) {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	g[key] = gen
 }
 
 var (
 	generators = make(GeneratorList)
 	tableList  = map[string]Table{}
+
+	//lock for tableList and generators
+	tableLock sync.RWMutex
 )
 
 func Get(key string) Table {
+	tableLock.RLock()
+	defer tableLock.RUnlock()
+
 	return tableList[key]
 }
 
 func InitTableList() {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for prefix, generator := range generators {
 		tableList[prefix] = generator()
 	}
@@ -44,6 +56,9 @@ func InitTableList() {
 
 // RefreshTableList refresh the table list when the table relationship changed.
 func RefreshTableList() {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for k, v := range generators {
 		tableList[k] = v()
 	}
@@ -51,6 +66,9 @@ func RefreshTableList() {
 
 // SetGenerators update generators.
 func SetGenerators(gens map[string]Generator) {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for key, gen := range gens {
 		generators[key] = gen
 	}
