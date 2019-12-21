@@ -398,6 +398,10 @@ func (sql *SQL) First() (map[string]interface{}, error) {
 func (sql *SQL) All() ([]map[string]interface{}, error) {
 	defer RecycleSQL(sql)
 
+	if sql.dialect == nil {
+		return nil, nil
+	}
+
 	sql.dialect.Select(&sql.SQLComponent)
 
 	if sql.tx != nil {
