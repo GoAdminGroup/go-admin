@@ -3,6 +3,12 @@ package table
 import (
 	"errors"
 	"fmt"
+	"html/template"
+	"strconv"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -13,10 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type Generator func() Table
@@ -24,19 +26,31 @@ type Generator func() Table
 type GeneratorList map[string]Generator
 
 func (g GeneratorList) Add(key string, gen Generator) {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	g[key] = gen
 }
 
 var (
 	generators = make(GeneratorList)
 	tableList  = map[string]Table{}
+
+	//lock for tableList
+	tableLock sync.RWMutex
 )
 
 func Get(key string) Table {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	return tableList[key]
 }
 
 func InitTableList() {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for prefix, generator := range generators {
 		tableList[prefix] = generator()
 	}
@@ -44,6 +58,9 @@ func InitTableList() {
 
 // RefreshTableList refresh the table list when the table relationship changed.
 func RefreshTableList() {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for k, v := range generators {
 		tableList[k] = v()
 	}
@@ -51,6 +68,9 @@ func RefreshTableList() {
 
 // SetGenerators update generators.
 func SetGenerators(gens map[string]Generator) {
+	tableLock.Lock()
+	defer tableLock.Unlock()
+
 	for key, gen := range gens {
 		generators[key] = gen
 	}
