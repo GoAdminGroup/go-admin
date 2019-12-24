@@ -20,11 +20,6 @@ type Postgresql struct {
 	Once   sync.Once
 }
 
-// PostgresqlDB is a global variable which handles the postgresql connection.
-var PostgresqlDB = Postgresql{
-	DbList: map[string]*sql.DB{},
-}
-
 // GetPostgresqlDB return the global mssql connection.
 func GetPostgresqlDB() *Postgresql {
 	return &Postgresql{
@@ -35,6 +30,13 @@ func GetPostgresqlDB() *Postgresql {
 // Name implements the method Connection.Name.
 func (db *Postgresql) Name() string {
 	return "postgresql"
+}
+
+// Close implements the method Connection.Close.
+func (db *Postgresql) Close() {
+	for _, d := range db.DbList {
+		d.Close()
+	}
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.

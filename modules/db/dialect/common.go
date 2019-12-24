@@ -33,7 +33,7 @@ func (c commonDialect) Select(comp *SQLComponent) string {
 }
 
 func (c commonDialect) ShowColumns(table string) string {
-	return fmt.Sprintf("select column_name, udt_name from information_schema.columns where table_name = '%s'", table)
+	return fmt.Sprintf("select * from information_schema.columns where table_name = '%s'", table)
 }
 
 func (c commonDialect) GetName() string {

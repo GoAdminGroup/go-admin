@@ -27,6 +27,24 @@ func (g GeneratorList) Add(key string, gen Generator) {
 	g[key] = gen
 }
 
+func (g GeneratorList) Combine(gg GeneratorList) {
+	for key, gen := range gg {
+		if _, ok := g[key]; !ok {
+			g[key] = gen
+		}
+	}
+}
+
+func (g GeneratorList) CombineAll(ggg []GeneratorList) {
+	for _, gg := range ggg {
+		for key, gen := range gg {
+			if _, ok := g[key]; !ok {
+				g[key] = gen
+			}
+		}
+	}
+}
+
 var (
 	generators = make(GeneratorList)
 	tableList  = map[string]Table{}
@@ -352,7 +370,7 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 
 	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
 
-	columns := getColumns(columnsModel, tb.connectionDriver)
+	columns, _ := tb.getColumns(columnsModel)
 
 	var (
 		fields     string
@@ -447,7 +465,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
 
-	columns := getColumns(columnsModel, tb.connectionDriver)
+	columns, _ := tb.getColumns(columnsModel)
 
 	var (
 		sortable   string
@@ -695,7 +713,7 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		return nil, nil, nil, "", "", err
 	}
 
-	columns := getColumns(columnsModel, tb.connectionDriver)
+	columns, _ := tb.getColumns(columnsModel)
 
 	formList := tb.form.FieldList.Copy()
 
@@ -825,8 +843,6 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 
-	// NOTE: Database Transaction may be considered here.
-
 	if tb.form.PostHook != nil {
 		go func() {
 
@@ -853,11 +869,17 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 
 	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
 
-	columns := getColumns(columnsModel, tb.connectionDriver)
+	columns, auto := tb.getColumns(columnsModel)
 	var (
 		fun          types.PostFieldFilterFn
-		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
+		exceptString = make([]string, 0)
 	)
+
+	if auto {
+		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
+	} else {
+		exceptString = []string{"_previous_", "_method", "_t"}
+	}
 
 	if !dataList.IsSingleUpdatePost() {
 		for _, field := range tb.form.FieldList {
@@ -1030,24 +1052,44 @@ func filterFiled(filed, delimiter string) string {
 
 type Columns []string
 
-func getColumns(columnsModel []map[string]interface{}, driver string) Columns {
+func (tb DefaultTable) getColumns(columnsModel []map[string]interface{}) (Columns, bool) {
 	columns := make(Columns, len(columnsModel))
-	switch driver {
+	switch tb.connectionDriver {
 	case "postgresql":
+		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["column_name"].(string)
+			if columns[key] == tb.primaryKey.Name {
+				if v, ok := model["column_default"].(string); ok {
+					if strings.Contains(v, "nextval") {
+						auto = true
+					}
+				}
+			}
 		}
-		return columns
+		return columns, auto
 	case "mysql":
+		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["Field"].(string)
+			if columns[key] == tb.primaryKey.Name {
+				if v, ok := model["Extra"].(string); ok {
+					if v == "auto_increment" {
+						auto = true
+					}
+				}
+			}
 		}
-		return columns
+		return columns, auto
 	case "sqlite":
 		for key, model := range columnsModel {
 			columns[key] = string(model["name"].(string))
 		}
-		return columns
+
+		num, _ := tb.sql().Table("sqlite_sequence").
+			Where("name", "=", tb.GetForm().Table).Count()
+
+		return columns, num > 0
 	default:
 		panic("wrong driver")
 	}

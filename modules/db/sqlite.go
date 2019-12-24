@@ -16,11 +16,6 @@ type Sqlite struct {
 	Once   sync.Once
 }
 
-// DB is a global variable which handles the sqlite connection.
-var DB = Sqlite{
-	DbList: map[string]*sql.DB{},
-}
-
 // GetSqliteDB return the global mssql connection.
 func GetSqliteDB() *Sqlite {
 	return &Sqlite{
@@ -31,6 +26,13 @@ func GetSqliteDB() *Sqlite {
 // Name implements the method Connection.Name.
 func (db *Sqlite) Name() string {
 	return "sqlite"
+}
+
+// Close implements the method Connection.Close.
+func (db *Sqlite) Close() {
+	for _, d := range db.DbList {
+		d.Close()
+	}
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.

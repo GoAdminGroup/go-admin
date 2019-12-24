@@ -11,6 +11,7 @@ import (
 	"math"
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -193,6 +194,12 @@ func (ctx *Context) Headers(key string) string {
 // FormValue get the value of request form key.
 func (ctx *Context) FormValue(key string) string {
 	return ctx.Request.FormValue(key)
+}
+
+// PostForm get the values of request form.
+func (ctx *Context) PostForm() url.Values {
+	_ = ctx.Request.ParseForm()
+	return ctx.Request.PostForm
 }
 
 // AddHeader adds the key, value pair to the header.

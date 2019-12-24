@@ -29,7 +29,7 @@ func GetWithScope(value string, scopes ...string) string {
 		return value
 	}
 
-	if locale, ok := Lang[config.Get().Language][joinScopes(scopes)+strings.ToLower(value)]; ok {
+	if locale, ok := Lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(value)]; ok {
 		return locale
 	}
 
@@ -42,7 +42,7 @@ func GetFromHtml(value template.HTML, scopes ...string) template.HTML {
 		return value
 	}
 
-	if locale, ok := Lang[config.Get().Language][joinScopes(scopes)+strings.ToLower(string(value))]; ok {
+	if locale, ok := Lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(string(value))]; ok {
 		return template.HTML(locale)
 	}
 
@@ -51,7 +51,7 @@ func GetFromHtml(value template.HTML, scopes ...string) template.HTML {
 
 // WithScopes join scopes prefix and the value.
 func WithScopes(value string, scopes ...string) string {
-	return joinScopes(scopes) + strings.ToLower(value)
+	return JoinScopes(scopes) + strings.ToLower(value)
 }
 
 // LangMap is the map of language packages.
@@ -81,7 +81,7 @@ func (lang LangMap) GetWithScope(value string, scopes ...string) string {
 		return value
 	}
 
-	if locale, ok := lang[config.Get().Language][joinScopes(scopes)+strings.ToLower(value)]; ok {
+	if locale, ok := lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(value)]; ok {
 		return locale
 	}
 
@@ -93,7 +93,7 @@ func Add(key string, lang map[string]string) {
 	Lang[key] = lang
 }
 
-func joinScopes(scopes []string) string {
+func JoinScopes(scopes []string) string {
 	j := ""
 	for _, scope := range scopes {
 		j += scope + "."

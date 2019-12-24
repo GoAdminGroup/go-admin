@@ -18,11 +18,6 @@ type Mssql struct {
 	Once   sync.Once
 }
 
-// MssqlDB is a global variable which handles the mssql connection.
-var MssqlDB = Mssql{
-	DbList: map[string]*sql.DB{},
-}
-
 // GetMssqlDB return the global mssql connection.
 func GetMssqlDB() *Mssql {
 	return &Mssql{
@@ -38,6 +33,13 @@ func (db *Mssql) GetDelimiter() string {
 // Name implements the method Connection.Name.
 func (db *Mssql) Name() string {
 	return "mssql"
+}
+
+// Close implements the method Connection.Close.
+func (db *Mssql) Close() {
+	for _, d := range db.DbList {
+		d.Close()
+	}
 }
 
 // QueryWithConnection implements the method Connection.QueryWithConnection.

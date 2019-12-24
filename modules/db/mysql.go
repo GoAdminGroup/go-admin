@@ -21,11 +21,6 @@ type Mysql struct {
 	Once   sync.Once
 }
 
-// MysqlDB is a global variable which handles the mysql connection.
-var MysqlDB = Mysql{
-	DbList: map[string]*sql.DB{},
-}
-
 // GetMysqlDB return the global mssql connection.
 func GetMysqlDB() *Mysql {
 	return &Mysql{
@@ -41,6 +36,13 @@ func (db *Mysql) GetDelimiter() string {
 // Name implements the method Connection.Name.
 func (db *Mysql) Name() string {
 	return "mysql"
+}
+
+// Close implements the method Connection.Close.
+func (db *Mysql) Close() {
+	for _, d := range db.DbList {
+		d.Close()
+	}
 }
 
 // InitDB implements the method Connection.InitDB.

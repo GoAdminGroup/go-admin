@@ -46,8 +46,8 @@ var App = &Admin{
 }
 
 // NewAdmin return the global Admin plugin.
-func NewAdmin(tableCfg table.GeneratorList) *Admin {
-	App.tableCfg = tableCfg
+func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
+	App.tableCfg.CombineAll(tableCfg)
 	return App
 }
 
