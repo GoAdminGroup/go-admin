@@ -5,6 +5,9 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"log"
+	"os"
+	"os/signal"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -93,5 +96,13 @@ func main() {
 		return nil
 	})
 
-	_ = bu.Serve()
+	go func() {
+		_ = bu.Serve()
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

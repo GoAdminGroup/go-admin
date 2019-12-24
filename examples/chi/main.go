@@ -14,8 +14,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/go-chi/chi"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
 )
@@ -93,7 +95,15 @@ func main() {
 		})
 	})
 
-	_ = http.ListenAndServe(":3333", r)
+	go func() {
+		_ = http.ListenAndServe(":3333", r)
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }
 
 // FileServer conveniently sets up a http.FileServer handler to serve

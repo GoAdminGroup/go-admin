@@ -6,6 +6,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"log"
+	"os"
+	"os/signal"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -89,5 +92,11 @@ func main() {
 	})
 
 	// Start server
-	e.Logger.Fatal(e.Start(":1323"))
+	go e.Logger.Fatal(e.Start(":1323"))
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

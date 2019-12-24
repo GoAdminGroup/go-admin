@@ -7,6 +7,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"log"
+	"os"
+	"os/signal"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -92,5 +95,11 @@ func main() {
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087
-	app.Run()
+	go app.Run()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

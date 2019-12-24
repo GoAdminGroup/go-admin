@@ -5,6 +5,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"os"
+	"os/signal"
 
 	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -82,5 +84,13 @@ func main() {
 	})).Methods("get")
 
 	log.Println("Listening 9033")
-	log.Fatal(http.ListenAndServe(":9033", app))
+	go func() {
+		_ = http.ListenAndServe(":9033", app)
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

@@ -16,6 +16,9 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
+	"log"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -97,5 +100,13 @@ func main() {
 		})
 	})
 
-	_ = r.Run(":9033")
+	go func() {
+		_ = r.Run(":9033")
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

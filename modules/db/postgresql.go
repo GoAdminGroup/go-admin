@@ -33,10 +33,12 @@ func (db *Postgresql) Name() string {
 }
 
 // Close implements the method Connection.Close.
-func (db *Postgresql) Close() {
+func (db *Postgresql) Close() []error {
+	errs := make([]error, 0)
 	for _, d := range db.DbList {
-		d.Close()
+		errs = append(errs, d.Close())
 	}
+	return errs
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.

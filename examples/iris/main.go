@@ -6,6 +6,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"log"
+	"os"
+	"os/signal"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -92,5 +95,13 @@ func main() {
 		})
 	})
 
-	_ = app.Run(iris.Addr(":8099"))
+	go func() {
+		_ = app.Run(iris.Addr(":8099"))
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

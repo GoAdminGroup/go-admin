@@ -39,10 +39,12 @@ func (db *Mysql) Name() string {
 }
 
 // Close implements the method Connection.Close.
-func (db *Mysql) Close() {
+func (db *Mysql) Close() []error {
+	errs := make([]error, 0)
 	for _, d := range db.DbList {
-		d.Close()
+		errs = append(errs, d.Close())
 	}
+	return errs
 }
 
 // InitDB implements the method Connection.InitDB.

@@ -15,6 +15,9 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"log"
+	"os"
+	"os/signal"
 )
 
 func main() {
@@ -94,5 +97,11 @@ func main() {
 	})
 
 	s.SetPort(9033)
-	s.Run()
+	go s.Run()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
 }

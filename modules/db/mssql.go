@@ -36,10 +36,12 @@ func (db *Mssql) Name() string {
 }
 
 // Close implements the method Connection.Close.
-func (db *Mssql) Close() {
+func (db *Mssql) Close() []error {
+	errs := make([]error, 0)
 	for _, d := range db.DbList {
-		d.Close()
+		errs = append(errs, d.Close())
 	}
+	return errs
 }
 
 // QueryWithConnection implements the method Connection.QueryWithConnection.

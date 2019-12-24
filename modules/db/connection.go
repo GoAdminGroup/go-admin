@@ -57,7 +57,7 @@ type Connection interface {
 	// GetName get the connection name.
 	Name() string
 
-	Close()
+	Close() []error
 
 	// GetDelimiter get the default delimiter.
 	GetDelimiter() string
