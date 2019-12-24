@@ -61,6 +61,8 @@ type Connection interface {
 
 	// GetDelimiter get the default delimiter.
 	GetDelimiter() string
+
+	GetDB(key string) *sql.DB
 }
 
 // GetConnectionByDriver return the Connection by given driver name.

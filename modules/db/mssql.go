@@ -9,19 +9,19 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"net/url"
-	"sync"
 )
 
 // Mssql is a Connection of mssql.
 type Mssql struct {
-	DbList map[string]*sql.DB
-	Once   sync.Once
+	Base
 }
 
 // GetMssqlDB return the global mssql connection.
 func GetMssqlDB() *Mssql {
 	return &Mssql{
-		DbList: map[string]*sql.DB{},
+		Base: Base{
+			DbList: make(map[string]*sql.DB),
+		},
 	}
 }
 
@@ -33,15 +33,6 @@ func (db *Mssql) GetDelimiter() string {
 // Name implements the method Connection.Name.
 func (db *Mssql) Name() string {
 	return "mssql"
-}
-
-// Close implements the method Connection.Close.
-func (db *Mssql) Close() []error {
-	errs := make([]error, 0)
-	for _, d := range db.DbList {
-		errs = append(errs, d.Close())
-	}
-	return errs
 }
 
 // QueryWithConnection implements the method Connection.QueryWithConnection.

@@ -7,38 +7,28 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"strconv"
 	"strings"
-	"sync"
-
-	"github.com/GoAdminGroup/go-admin/modules/config"
 )
 
-// Postgresql is a Connection of mssql.
+// Postgresql is a Connection of postgresql.
 type Postgresql struct {
-	DbList map[string]*sql.DB
-	Once   sync.Once
+	Base
 }
 
-// GetPostgresqlDB return the global mssql connection.
+// GetPostgresqlDB return the global postgresql connection.
 func GetPostgresqlDB() *Postgresql {
 	return &Postgresql{
-		DbList: map[string]*sql.DB{},
+		Base: Base{
+			DbList: make(map[string]*sql.DB),
+		},
 	}
 }
 
 // Name implements the method Connection.Name.
 func (db *Postgresql) Name() string {
 	return "postgresql"
-}
-
-// Close implements the method Connection.Close.
-func (db *Postgresql) Close() []error {
-	errs := make([]error, 0)
-	for _, d := range db.DbList {
-		errs = append(errs, d.Close())
-	}
-	return errs
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.
