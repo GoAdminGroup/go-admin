@@ -2,33 +2,33 @@ package types
 
 import (
 	"encoding/json"
+	"html"
+	"html/template"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
-	"html"
-	"html/template"
 )
 
 type FieldOptions []map[string]string
 
 func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOptions {
 
+	var valArray []string
+
 	if valArr, ok := val.([]string); ok {
-		for _, v := range fo {
-			if modules.InArray(valArr, v["value"]) {
-				v["selected"] = labels[0]
-			} else {
-				v["selected"] = labels[1]
-			}
-		}
+		valArray = valArr
 	} else {
-		for _, v := range fo {
-			if v["value"] == val {
-				v["selected"] = labels[0]
-			} else {
-				v["selected"] = labels[1]
-			}
+		valArray = strings.Split(val.(string), ",")
+	}
+
+	for _, v := range fo {
+		if modules.InArray(valArray, v["value"]) {
+			v["selected"] = labels[0]
+		} else {
+			v["selected"] = labels[1]
 		}
 	}
 
