@@ -3,6 +3,11 @@ package table
 import (
 	"errors"
 	"fmt"
+	"html/template"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -13,10 +18,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"strconv"
-	"strings"
-	"time"
+	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 type Generator func() Table
@@ -883,7 +885,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 
 	if !dataList.IsSingleUpdatePost() {
 		for _, field := range tb.form.FieldList {
-			if field.FormType.IsSelect() {
+			if field.FormType == form2.Select {
 				if _, ok := dataList[field.Field+"[]"]; !ok {
 					dataList[field.Field+"[]"] = []string{""}
 				}
