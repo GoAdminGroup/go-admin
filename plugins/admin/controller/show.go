@@ -39,13 +39,14 @@ func ShowInfo(ctx *context.Context) {
 	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
 	infoUrl := config.Url("/info/" + prefix)
 	updateUrl := config.Url("/update/" + prefix)
+	detailUrl := config.Url("/info/" + prefix + "/detail" + params.GetRouteParamStr())
 
-	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl)
+	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
-	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl string) *bytes.Buffer {
+	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl string) *bytes.Buffer {
 
 	table.InitTableList()
 
@@ -103,7 +104,9 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 					SetNewUrl(newUrl).
 					SetEditUrl(editUrl).
 					SetUpdateUrl(updateUrl).
-					SetDeleteUrl(deleteUrl).GetContent(),
+					SetDetailUrl(detailUrl).
+					SetDeleteUrl(deleteUrl).
+					GetContent(),
 			}
 		}
 		body = aTab().SetData(tabsHtml).GetContent()
@@ -123,6 +126,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetNewUrl(newUrl).
 			SetEditUrl(editUrl).
 			SetUpdateUrl(updateUrl).
+			SetDetailUrl(detailUrl).
 			SetDeleteUrl(deleteUrl)
 		body = dataTable.GetContent()
 	}
@@ -142,7 +146,8 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 				SetMethod("get").
 				SetLayout(panel.GetInfo().FilterFormLayout).
 				SetUrl(infoUrl).
-				SetOperationFooter(filterFormFooter(infoUrl)).GetContent())
+				SetOperationFooter(filterFormFooter(infoUrl)).
+				GetContent())
 	}
 
 	box := boxModel.GetContent()

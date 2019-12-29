@@ -91,6 +91,10 @@ func (e EditFormParam) GetUpdateUrl() string {
 	return config.Get().Url("/update/" + e.Prefix)
 }
 
+func (e EditFormParam) GetDetailUrl() string {
+	return config.Get().Url("/info/" + e.Prefix + "/detail" + e.Param.GetRouteParamStr())
+}
+
 func (e EditFormParam) HasAlert() bool {
 	return e.Alert != template2.HTML("")
 }

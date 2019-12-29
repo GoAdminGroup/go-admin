@@ -42,8 +42,8 @@ type FormField struct {
 	Head     string
 	FormType form2.Type
 
-	Default                string
-	Value                  string
+	Default                template.HTML
+	Value                  template.HTML
 	Value2                 string
 	Options                FieldOptions
 	DefaultOptionDelimiter string
@@ -73,11 +73,16 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 			Row:   res,
 		}), f.FormType.SelectedLabel())
 	} else {
-		f.Value = f.ToDisplay(FieldModel{
+		value := f.ToDisplay(FieldModel{
 			ID:    id,
 			Value: val,
 			Row:   res,
-		}).(string)
+		})
+		if v, ok := value.(template.HTML); ok {
+			f.Value = v
+		} else {
+			f.Value = template.HTML(value.(string))
+		}
 	}
 	return f
 }
@@ -205,7 +210,7 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 }
 
 func (f *FormPanel) FieldDefault(def string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Default = def
+	f.FieldList[f.curFieldListIndex].Default = template.HTML(def)
 	return f
 }
 
@@ -225,7 +230,7 @@ func (f *FormPanel) FieldFormType(formType form2.Type) *FormPanel {
 }
 
 func (f *FormPanel) FieldValue(value string) *FormPanel {
-	f.FieldList[f.curFieldListIndex].Value = value
+	f.FieldList[f.curFieldListIndex].Value = template.HTML(value)
 	return f
 }
 

@@ -65,6 +65,8 @@ var en = map[string]string{
 	"icon":       "Icon",
 	"uri":        "Uri",
 
+	"detail": "Detail",
+
 	"admin":     "Admin",
 	"users":     "Users",
 	"roles":     "Roles",

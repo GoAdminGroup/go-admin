@@ -115,6 +115,7 @@ type DataTableAttribute interface {
 	SetHideRowSelector(value bool) DataTableAttribute
 	SetActionJs(aj template.JS) DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
+	SetDetailUrl(value string) DataTableAttribute
 	SetHasFilter(hasFilter bool) DataTableAttribute
 	SetExportUrl(value string) DataTableAttribute
 	SetUpdateUrl(value string) DataTableAttribute

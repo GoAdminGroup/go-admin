@@ -156,6 +156,7 @@ func deleteOverdueSession(conn db.Connection) {
 		cmd      = ``
 	)
 
+	// TODO: use dialect module
 	if db.DriverPostgresql == driver {
 		cmd = `delete from goadmin_session where extract(epoch from now()) - ` + duration + ` > extract(epoch from created_at)`
 	} else if db.DriverMysql == driver {

@@ -107,6 +107,10 @@ func (e *NewFormParam) GetInfoUrl() string {
 	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
 }
 
+func (e *NewFormParam) GetDetailUrl() string {
+	return config.Get().Url("/info/" + e.Prefix + "/detail" + e.Param.GetRouteParamStr())
+}
+
 func (e NewFormParam) HasAlert() bool {
 	return e.Alert != template.HTML("")
 }

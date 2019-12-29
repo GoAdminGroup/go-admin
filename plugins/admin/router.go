@@ -57,6 +57,7 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete)
 	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export)
 	authRoute.GET("/info/:__prefix", controller.ShowInfo)
+	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail)
 
 	authRoute.POST("/update/:__prefix", guard.Update, controller.Update)
 
