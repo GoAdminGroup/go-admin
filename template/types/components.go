@@ -26,6 +26,7 @@ type FormAttribute interface {
 	SetToken(value string) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute
 	GetBoxHeader() template.HTML
+	GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML
 	GetBoxHeaderNoButton() template.HTML
 	GetContent() template.HTML
 }

@@ -16,6 +16,7 @@ type TableAttribute struct {
 	EditUrl    string
 	MinWidth   int
 	DeleteUrl  string
+	DetailUrl  string
 	UpdateUrl  string
 	IsTab      bool
 	ExportUrl  string

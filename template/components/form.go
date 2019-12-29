@@ -105,6 +105,39 @@ func (compo *FormAttribute) GetBoxHeader() template.HTML {
             </div>`, language.GetFromHtml(compo.Title), compo.InfoUrl, language.Get("Back")))
 }
 
+func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML {
+
+	var (
+		editBtn   string
+		deleteBtn string
+	)
+
+	if editUrl != "" {
+		editBtn = fmt.Sprintf(`
+                <div class="btn-group pull-right" style="margin-right: 10px">
+                    <a href='%s' class="btn btn-sm btn-primary"><i
+                                class="fa fa-edit"></i> %s</a>
+                </div>`, editUrl, language.Get("Edit"))
+	}
+
+	if deleteUrl != "" {
+		deleteBtn = fmt.Sprintf(`
+                <div class="btn-group pull-right" style="margin-right: 10px">
+                    <a href='javascript:;' class="btn btn-sm btn-danger delete-btn"><i
+                                class="fa fa-trash"></i> %s</a>
+                </div>`, language.Get("Delete"))
+	}
+
+	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>
+            <div class="box-tools">
+				`+deleteBtn+editBtn+`
+                <div class="btn-group pull-right" style="margin-right: 10px">
+                    <a href='%s' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> %s</a>
+                </div>
+            </div>`, language.GetFromHtml(compo.Title), compo.InfoUrl, language.Get("Back")))
+}
+
 func (compo *FormAttribute) GetBoxHeaderNoButton() template.HTML {
 	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>`, language.GetFromHtml(compo.Title)))
 }

@@ -1,11 +1,13 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	config2 "github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -48,18 +50,65 @@ func ShowDetail(ctx *context.Context) {
 			GetContent()
 	}
 
-	param := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
 		panel.GetInfo().GetSort())
+
+	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
+	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
+	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStrWithoutId())
+
+	deleteJs := ""
+
+	if deleteUrl != "" {
+		deleteJs = fmt.Sprintf(`<script>
+function DeletePost(id) {
+	swal({
+			title: '%s',
+			type: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#DD6B55",
+			confirmButtonText: '%s',
+			closeOnConfirm: false,
+			cancelButtonText: '%s',
+		},
+		function () {
+			$.ajax({
+				method: 'post',
+				url: '%s',
+				data: {
+					id: id
+				},
+				success: function (data) {
+					if (typeof (data) === "string") {
+						data = JSON.parse(data);
+					}
+					if (data.code === 200) {
+						location.href = '%s'
+					} else {
+						swal(data.msg, '', 'error');
+					}
+				}
+			});
+		});
+}
+
+$('.delete-btn').on('click', function (event) {
+	DeletePost(%s)
+});
+
+</script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
+	}
 
 	title := language.Get("Detail")
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: alert + formContent(aForm().
+		Content: alert + detailContent(aForm().
 			SetTitle(template.HTML(title)).
 			SetContent(formData).
-			SetInfoUrl(config2.Get().Url("/info/"+prefix+param.GetRouteParamStrWithoutId())).
-			SetPrefix(config.PrefixFixSlash())),
+			SetFooter(template.HTML(deleteJs)).
+			SetInfoUrl(infoUrl).
+			SetPrefix(config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: title,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
