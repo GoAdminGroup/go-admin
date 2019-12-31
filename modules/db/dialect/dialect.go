@@ -81,6 +81,7 @@ type SQLComponent struct {
 	Limit      string
 	WhereRaws  string
 	UpdateRaws []RawUpdate
+	Group      string
 	Statement  string
 	Values     H
 }
@@ -129,6 +130,13 @@ func (sql *SQLComponent) getOrderBy() string {
 		return ""
 	}
 	return " order by " + sql.Order + " "
+}
+
+func (sql *SQLComponent) getGroupBy() string {
+	if sql.Group == "" {
+		return ""
+	}
+	return " group by " + sql.Group + " "
 }
 
 func (sql *SQLComponent) getJoins(delimiter string) string {

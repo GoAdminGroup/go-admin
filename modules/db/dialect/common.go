@@ -28,7 +28,7 @@ func (c commonDialect) Count(comp *SQLComponent) string {
 
 func (c commonDialect) Select(comp *SQLComponent) string {
 	comp.Statement = "select " + comp.getFields(c.delimiter) + " from " + comp.TableName + comp.getJoins(c.delimiter) +
-		comp.getWheres(c.delimiter) + comp.getOrderBy() + comp.getLimit() + comp.getOffset()
+		comp.getWheres(c.delimiter) + comp.getGroupBy() + comp.getOrderBy() + comp.getLimit() + comp.getOffset()
 	return comp.Statement
 }
 
