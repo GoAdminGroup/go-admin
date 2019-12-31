@@ -95,6 +95,10 @@ func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
 }
 
+func (t Type) IsMultiSelect() bool {
+	return t == Select || t == SelectBox
+}
+
 func (t Type) IsRange() bool {
 	return t == DatetimeRange || t == NumberRange
 }

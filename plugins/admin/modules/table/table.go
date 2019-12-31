@@ -714,7 +714,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		InfoList: infoList,
 		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
-				fmt.Sprintf("%fs", endTime.Sub(beginTime).Seconds())))),
+				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
 		Title:       tb.info.Title,
 		FormData:    filterForm,
 		Description: tb.info.Description,
@@ -902,13 +902,14 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 
 	if !dataList.IsSingleUpdatePost() {
 		for _, field := range tb.form.FieldList {
-			if field.FormType.IsSelect() {
+			if field.FormType.IsMultiSelect() {
 				if _, ok := dataList[field.Field+"[]"]; !ok {
 					dataList[field.Field+"[]"] = []string{""}
 				}
 			}
 		}
 	}
+
 	dataList = dataList.RemoveRemark()
 
 	for k, v := range dataList {
