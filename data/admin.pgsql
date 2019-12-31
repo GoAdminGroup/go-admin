@@ -422,7 +422,7 @@ SELECT pg_catalog.setval('public.goadmin_menu_myid_seq', 7, true);
 -- Name: goadmin_operation_log_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.goadmin_operation_log_myid_seq', 0, true);
+SELECT pg_catalog.setval('public.goadmin_operation_log_myid_seq', 1, true);
 
 
 --
@@ -443,7 +443,7 @@ SELECT pg_catalog.setval('public.goadmin_roles_myid_seq', 2, true);
 -- Name: goadmin_session_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.goadmin_session_myid_seq', 0, true);
+SELECT pg_catalog.setval('public.goadmin_session_myid_seq', 1, true);
 
 
 --
