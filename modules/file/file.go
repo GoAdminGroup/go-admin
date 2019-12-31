@@ -80,26 +80,42 @@ func Upload(c UploadFun, form *multipart.Form) error {
 }
 
 // SaveMultipartFile used in a local Uploader which help to save file in the local path.
-func SaveMultipartFile(fh *multipart.FileHeader, path string) (err error) {
-	var f multipart.File
-	f, err = fh.Open()
+func SaveMultipartFile(fh *multipart.FileHeader, path string) error {
+	f, err := fh.Open()
 	if err != nil {
 		return err
 	}
+
+	if ff, ok := f.(*os.File); ok {
+		// Windows can't rename files that are opened.
+		if err := f.Close(); err != nil {
+			return err
+		}
+
+		// If renaming fails we try the normal copying method.
+		// Renaming could fail if the files are on different devices.
+		if os.Rename(ff.Name(), path) == nil {
+			return nil
+		}
+
+		// Reopen f for the code below.
+		f, err = fh.Open()
+		if err != nil {
+			return err
+		}
+	}
+
 	defer func() {
 		if err2 := f.Close(); err2 != nil {
 			err = err2
 		}
 	}()
 
-	if ff, ok := f.(*os.File); ok {
-		return os.Rename(ff.Name(), path)
-	}
-
 	ff, err := os.Create(path)
 	if err != nil {
 		return err
 	}
+
 	defer func() {
 		if err2 := ff.Close(); err2 != nil {
 			err = err2
@@ -110,10 +126,9 @@ func SaveMultipartFile(fh *multipart.FileHeader, path string) (err error) {
 }
 
 func copyZeroAlloc(w io.Writer, r io.Reader) (int64, error) {
-	vbuf := copyBufPool.Get()
-	buf := vbuf.([]byte)
+	buf := copyBufPool.Get().([]byte)
 	n, err := io.CopyBuffer(w, r, buf)
-	copyBufPool.Put(vbuf)
+	copyBufPool.Put(buf)
 	return n, err
 }
 
