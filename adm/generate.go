@@ -85,7 +85,7 @@ func generating(cfgFile string) {
 				Name: "driver",
 				Prompt: &survey.Select{
 					Message: "choose a driver",
-					Options: []string{"mysql", "postgresql", "sqlite"},
+					Options: []string{"mysql", "postgresql", "sqlite", "mssql"},
 					Default: "mysql",
 				},
 			},
@@ -111,6 +111,11 @@ func generating(cfgFile string) {
 		if driverName == "postgresql" {
 			defaultPort = "5432"
 			defaultUser = "postgres"
+		}
+
+		if driverName == "mssql" {
+			defaultPort = "1433"
+			defaultUser = "sa"
 		}
 
 		if host == "" {
@@ -223,6 +228,10 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 		fieldField = "name"
 		typeField = "type"
 	}
+	if driverName == "mssql" {
+		fieldField = "column_name"
+		typeField = "data_type"
+	}
 
 	bar := progressbar.New(len(chooseTables))
 	for i := 0; i < len(chooseTables); i++ {
@@ -278,6 +287,8 @@ func getTablesFromSQLResult(models []map[string]interface{}, driver string, dbNa
 	key := "Tables_in_" + dbName
 	if driver == "postgresql" || driver == "sqlite" {
 		key = "tablename"
+	} else if driver == "mssql" {
+		key = "TABLE_NAME"
 	} else {
 		if _, ok := models[0][key].(string); !ok {
 			key = "Tables_in_" + strings.ToLower(dbName)
