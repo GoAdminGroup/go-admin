@@ -1,0 +1,195 @@
+
+
+CREATE TABLE [goadmin_menu] (
+ [id] int   identity(1,1) ,
+ [parent_id] int   NOT NULL DEFAULT 0,
+ [type] tinyint   NOT NULL DEFAULT 0,
+ [order] int   NOT NULL DEFAULT '0',
+ [title] varchar(50)   NOT NULL,
+ [icon] varchar(50)   NOT NULL,
+ [uri] varchar(50)   NOT NULL DEFAULT '',
+ [header] varchar(150)   DEFAULT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+ PRIMARY KEY ([id]),
+) 
+set  IDENTITY_INSERT [goadmin_menu] ON 
+INSERT INTO[goadmin_menu] ([id],[parent_id],[type],[order],[title],[icon],[uri],[header],[created_at],[updated_at])
+VALUES
+	(1,0,1,2,'Admin','fa-tasks','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,1,1,2,'Users','fa-users','/info/manager',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(3,1,1,3,'Roles','fa-user','/info/roles',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(4,1,1,4,'Permission','fa-ban','/info/permission',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(5,1,1,5,'Menu','fa-bars','/menu',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(6,1,1,6,'Operation log','fa-history','/info/op',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(7,0,1,1,'Dashboard','fa-bar-chart','/',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+set  IDENTITY_INSERT [goadmin_menu] OFF 
+
+
+
+
+
+CREATE TABLE[goadmin_operation_log] (
+ [id] int   identity(1,1) ,
+ [user_id] int   NOT NULL,
+ [path] varchar(255)   NOT NULL,
+ [method] varchar(10)   NOT NULL,
+ [ip] varchar(15)   NOT NULL,
+ [input] text   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([id]),
+) 
+
+
+
+CREATE TABLE[goadmin_permissions] (
+ [id] int   identity(1,1) ,
+ [name] varchar(50)   NOT NULL,
+ [slug] varchar(50)   NOT NULL,
+ [http_method] varchar(255)   DEFAULT NULL,
+ [http_path] text   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([id]),
+) 
+
+set  IDENTITY_INSERT [goadmin_permissions] ON 
+
+INSERT INTO[goadmin_permissions] ([id],[name],[slug],[http_method],[http_path],[created_at],[updated_at])
+VALUES
+	(1,'All permission','*','','*','2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,'Dashboard','dashboard','GET,PUT,POST,DELETE','/','2019-09-10 00:00:00','2019-09-10 00:00:00');
+
+set  IDENTITY_INSERT [goadmin_permissions] OFF 
+
+
+
+
+CREATE TABLE[goadmin_role_menu] (
+ [role_id] int   NOT NULL,
+ [menu_id] int   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+ PRIMARY KEY([role_id],[menu_id])
+) 
+
+
+
+INSERT INTO[goadmin_role_menu] ([role_id],[menu_id],[created_at],[updated_at])
+VALUES
+	(1,1,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(1,7,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,7,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(1,8,'2019-09-11 10:20:55','2019-09-11 10:20:55'),
+	(2,8,'2019-09-11 10:20:55','2019-09-11 10:20:55');
+
+
+
+
+
+CREATE TABLE[goadmin_role_permissions] (
+ [role_id] int   NOT NULL,
+ [permission_id] int   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([role_id],[permission_id])
+) 
+
+
+INSERT INTO[goadmin_role_permissions] ([role_id],[permission_id],[created_at],[updated_at])
+VALUES
+	(1,1,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(1,2,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,2,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+
+
+
+
+CREATE TABLE[goadmin_role_users] (
+ [role_id] int   NOT NULL,
+ [user_id] int   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([role_id],[user_id])
+) 
+
+
+INSERT INTO[goadmin_role_users] ([role_id],[user_id],[created_at],[updated_at])
+VALUES
+	(1,1,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,2,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+
+
+
+
+CREATE TABLE[goadmin_roles] (
+ [id] int   identity(1,1) ,
+ [name] varchar(50)   NOT NULL UNIQUE,
+ [slug] varchar(50)   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([id]),
+) 
+
+set  IDENTITY_INSERT [goadmin_roles] ON 
+
+INSERT INTO[goadmin_roles] ([id],[name],[slug],[created_at],[updated_at])
+VALUES
+	(1,'Administrator','administrator','2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,'Operator','operator','2019-09-10 00:00:00','2019-09-10 00:00:00');
+
+set  IDENTITY_INSERT [goadmin_roles] OFF
+
+
+CREATE TABLE[goadmin_session] (
+ [id] int   identity(1,1) ,
+ [sid] varchar(50)   DEFAULT '',
+ [values] varchar(3000)   DEFAULT '',
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([id])
+)  
+
+
+
+
+CREATE TABLE[goadmin_user_permissions] (
+ [user_id] int   NOT NULL,
+ [permission_id] int   NOT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY  ([user_id],[permission_id])
+) 
+
+
+INSERT INTO[goadmin_user_permissions] ([user_id],[permission_id],[created_at],[updated_at])
+VALUES
+	(1,1,'2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,2,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+
+
+
+
+
+CREATE TABLE[goadmin_users] (
+ [id] int   identity(1,1) ,
+ [username] varchar(190)   NOT NULL UNIQUE,
+ [password] varchar(80)   NOT NULL DEFAULT '',
+ [name] varchar(255)   NOT NULL,
+ [avatar] varchar(255)   DEFAULT NULL,
+ [remember_token] varchar(100)   DEFAULT NULL,
+ [created_at] datetime NULL DEFAULT GETDATE(),
+ [updated_at] datetime NULL DEFAULT GETDATE(),
+  PRIMARY KEY ([id]),
+) 
+
+set  IDENTITY_INSERT [goadmin_users] ON 
+
+INSERT INTO[goadmin_users] ([id],[username],[password],[name],[avatar],[remember_token],[created_at],[updated_at])
+VALUES
+	(1,'admin','$2a$10$U3F/NSaf2kaVbyXTBp7ppOn0jZFyRqXRnYXB.AMioCjXl3Ciaj4oy','admin','','tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh','2019-09-10 00:00:00','2019-09-10 00:00:00'),
+	(2,'operator','$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.','Operator','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
+set  IDENTITY_INSERT [goadmin_users] OFF 
+
+

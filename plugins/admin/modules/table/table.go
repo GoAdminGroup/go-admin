@@ -477,6 +477,10 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	} else {
 		queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
 		countStatement = "select count(*) from " + placeholder + "%s"
+		if connection.Name() == "mssql" {
+			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " + placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
+			countStatement = "select count(*) as [size] from " + placeholder + "%s"
+		}
 	}
 
 	thead := make([]map[string]string, 0)
@@ -664,7 +668,11 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 		}
 		pageSize, _ := strconv.Atoi(params.PageSize)
-		args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*pageSize)
+		if connection.Name() == "mssql" {
+			args = append(whereArgs, (modules.GetPage(params.Page)-1)*pageSize, modules.GetPage(params.Page)*pageSize)
+		} else {
+			args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*pageSize)
+		}
 	}
 
 	groupBy := ""
@@ -673,7 +681,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	}
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
-
+	if connection.Name() == "mssql" {
+		queryCmd = fmt.Sprintf(queryStatement, params.SortField, params.SortType, fields, tb.info.Table, joins, wheres, groupBy)
+	}
 	logger.LogSQL(queryCmd, args)
 
 	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
@@ -703,6 +713,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	var size int
 	if tb.connectionDriver == "postgresql" {
 		size = int(total[0]["count"].(int64))
+	} else if tb.connectionDriver == "mssql" {
+		size = int(total[0]["size"].(int64))
 	} else {
 		size = int(total[0]["count(*)"].(int64))
 	}
@@ -1063,10 +1075,16 @@ func GetNewFormList(groupHeaders []string,
 // ***************************************
 
 func delimiter(del, s string) string {
+	if del == "[" {
+		return "[" + s + "]"
+	}
 	return del + s + del
 }
 
 func filterFiled(filed, delimiter string) string {
+	if delimiter == "[" {
+		return filed
+	}
 	return delimiter + filed + delimiter
 }
 
@@ -1110,6 +1128,11 @@ func (tb DefaultTable) getColumns(columnsModel []map[string]interface{}) (Column
 			Where("name", "=", tb.GetForm().Table).Count()
 
 		return columns, num > 0
+	case "mssql":
+		for key, model := range columnsModel {
+			columns[key] = string(model["column_name"].(string))
+		}
+		return columns, true
 	default:
 		panic("wrong driver")
 	}

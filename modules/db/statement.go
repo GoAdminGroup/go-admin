@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"fmt"
 )
 
 // SQL wraps the Connection and driver dialect methods.
@@ -578,6 +579,9 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 }
 
 func (sql *SQL) wrap(field string) string {
+	if sql.diver.Name() == "mssql" {
+		return fmt.Sprintf(`[%s]`, field)
+	}
 	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter()
 }
 
