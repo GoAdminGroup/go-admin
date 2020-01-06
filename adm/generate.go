@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/go-ini/ini"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -16,7 +14,9 @@ import (
 	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/go-ini/ini"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
 )
@@ -77,7 +77,8 @@ func generating(cfgFile string) {
 
 	}
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "type to filter", "type to filter, enter to select", -1)
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate, "enter to select", "space to select", -1)
 
 	if driverName == "" {
 		var qs = []*survey.Question{
