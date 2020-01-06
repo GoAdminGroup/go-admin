@@ -7,13 +7,14 @@ package db
 import (
 	dbsql "database/sql"
 	"errors"
-	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
 	"sync"
-	"fmt"
+
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 )
 
 // SQL wraps the Connection and driver dialect methods.
