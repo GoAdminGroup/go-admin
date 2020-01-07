@@ -182,7 +182,9 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 // CheckPermissions check the permission of the user.
 func CheckPermissions(user models.UserModel, path string, method string) bool {
 
-	if path == config.Get().Url("/logout") {
+	logoutCheck, _ := regexp.Compile(config.Get().Url("/logout") + "(.*?)")
+
+	if logoutCheck.MatchString(path) {
 		return true
 	}
 
