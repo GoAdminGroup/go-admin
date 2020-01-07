@@ -57,6 +57,7 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/info/normal_manager/edit?__columns=id,roles,created_at,updated_at&id=3", "get"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "post"), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user/edit?id=3", "get"), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/logout?j=asdf", "post"), true)
 }
 
 func TestInMethodArr(t *testing.T) {

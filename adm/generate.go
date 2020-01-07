@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/go-ini/ini"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -16,7 +14,9 @@ import (
 	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/go-ini/ini"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
 )
@@ -77,7 +77,8 @@ func generating(cfgFile string) {
 
 	}
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "space to select", "<enter> to select", -1)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "type to filter", "type to filter, enter to select", -1)
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate, "enter to select", "space to select", -1)
 
 	if driverName == "" {
 		var qs = []*survey.Question{
@@ -406,11 +407,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func Get` + strings.Title(tableCamel) + `TableName() table.Table {
+func Get` + strings.Title(tableCamel) + `Table() table.Table {
 
-    ` + tableCamel + `TableName := ` + newTable + `
+    ` + tableCamel + `Table := ` + newTable + `
 
-	info := ` + tableCamel + `TableName.GetInfo()
+	info := ` + tableCamel + `Table.GetInfo()
 	
 	`
 
@@ -431,7 +432,7 @@ func Get` + strings.Title(tableCamel) + `TableName() table.Table {
 	content += `
 	info.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	formList := ` + tableCamel + `TableName.GetForm()
+	formList := ` + tableCamel + `Table.GetForm()
 	
 	`
 
@@ -454,7 +455,7 @@ func Get` + strings.Title(tableCamel) + `TableName() table.Table {
 	content += `
 	formList.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
-	return ` + tableCamel + `TableName
+	return ` + tableCamel + `Table
 }`
 
 	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
@@ -468,7 +469,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 
 	for i := 0; i < len(tables); i++ {
 		tableStr += `
-	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `TableName,`
+	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
 		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
 `
 	}
@@ -478,7 +479,7 @@ func generateTables(outputPath string, tables []string, packageName string) {
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
 // The key of Generators is the prefix of table info url.
-// The corresponding value is the Form and TableName data.
+// The corresponding value is the Form and Table data.
 //
 // http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
 //

@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -198,7 +199,8 @@ type FieldDisplay struct {
 func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	val := f.Display(value)
 
-	if valStr, ok := val.(string); ok {
+	if _, ok := val.(template.HTML); !ok {
+		valStr := fmt.Sprintf("%v", val)
 		for _, process := range f.DisplayProcessChains {
 			valStr = process(valStr)
 		}
@@ -441,8 +443,8 @@ func (b Button) Content() (template.HTML, template.JS) {
 	}
 
 	h := template.HTML(`<div class="btn-group pull-right" style="margin-right: 10px">
-                <a id="`+template.HTML(b.Id)+`" `+style+`class="btn btn-sm btn-default" `+b.Action.BtnAttribute()+`>
-                    <i class="fa `+template.HTML(b.Icon)+`"></i>&nbsp;&nbsp;`+b.Title+`
+                <a id="` + template.HTML(b.Id) + `" ` + style + `class="btn btn-sm btn-default" ` + b.Action.BtnAttribute() + `>
+                    <i class="fa ` + template.HTML(b.Icon) + `"></i>&nbsp;&nbsp;` + b.Title + `
                 </a>
         </div>`) + b.Action.ExtContent()
 	return h, b.Action.Js()
