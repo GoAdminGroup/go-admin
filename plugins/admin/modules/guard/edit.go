@@ -30,7 +30,7 @@ func (e *ShowFormParam) GetUrl() string {
 }
 
 func (e *ShowFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
+	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func ShowForm(conn db.Connection) context.Handler {
@@ -45,7 +45,7 @@ func ShowForm(conn db.Connection) context.Handler {
 			return
 		}
 
-		id := ctx.Query(panel.GetPrimaryKey().Name)
+		id := ctx.Query("__goadmin_edit_pk")
 		if id == "" {
 			alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, conn)
 			ctx.Abort()
@@ -116,7 +116,7 @@ func (e *EditFormParam) GetUrl() string {
 }
 
 func (e *EditFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
+	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func (e EditFormParam) getUrl(kind string) string {
@@ -159,7 +159,7 @@ func EditForm(srv service.List) context.Handler {
 			panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 
 		if fromList {
-			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
+			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
 		}
 
 		ctx.SetUserValue("edit_form_param", &EditFormParam{

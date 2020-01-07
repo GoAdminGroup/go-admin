@@ -19,7 +19,7 @@ import (
 
 func ShowDetail(ctx *context.Context) {
 	prefix := ctx.Query("__prefix")
-	id := ctx.Query("id")
+	id := ctx.Query("__goadmin_detail_pk")
 	panel := table.Get(prefix)
 	user := auth.Auth(ctx)
 
@@ -55,7 +55,7 @@ func ShowDetail(ctx *context.Context) {
 
 	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
-	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStrWithoutId())
+	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStr())
 
 	deleteJs := ""
 

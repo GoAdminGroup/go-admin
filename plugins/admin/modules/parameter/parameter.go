@@ -4,7 +4,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -23,11 +22,11 @@ var keys = []string{"__page", "__pageSize", "__sort", "__columns", "__prefix", "
 const operatorSuffix = "__operator__"
 
 func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
-	page := GetDefault(values, "__page", "1")
-	pageSize := GetDefault(values, "__pageSize", strconv.Itoa(defaultPageSize))
-	sortField := GetDefault(values, "__sort", primaryKey)
-	sortType := GetDefault(values, "__sort_type", defaultSort)
-	columns := GetDefault(values, "__columns", "")
+	page := getDefault(values, "__page", "1")
+	pageSize := getDefault(values, "__pageSize", strconv.Itoa(defaultPageSize))
+	sortField := getDefault(values, "__sort", primaryKey)
+	sortType := getDefault(values, "__sort_type", defaultSort)
+	columns := getDefault(values, "__columns", "")
 
 	fields := make(map[string]string)
 
@@ -124,10 +123,6 @@ func (param Parameters) GetRouteParamStr() string {
 	return "?__page=" + param.Page + param.GetFixedParamStr()
 }
 
-func (param Parameters) GetRouteParamStrWithoutId() string {
-	return regexp.MustCompile(`&id=[0-9]+`).ReplaceAllString(param.GetRouteParamStr(), "")
-}
-
 func (param Parameters) GetRouteParamStrWithoutPageSize() string {
 	return "?__page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
 }
@@ -158,7 +153,9 @@ func (param Parameters) GetFixedParamStrWithoutPageSize() string {
 func (param Parameters) GetFixedParamStr() string {
 	str := "&"
 	for key, value := range param.Fields {
-		str += key + "=" + value + "&"
+		if key != "__goadmin_edit_pk" && key != "__goadmin_detail_pk" {
+			str += key + "=" + value + "&"
+		}
 	}
 	if len(param.Columns) > 0 {
 		return "&__columns=" + strings.Join(param.Columns, ",") + "&__pageSize=" + param.PageSize + "&__sort=" +
@@ -169,7 +166,7 @@ func (param Parameters) GetFixedParamStr() string {
 	}
 }
 
-func GetDefault(values url.Values, key, def string) string {
+func getDefault(values url.Values, key, def string) string {
 	value := values.Get(key)
 	if value == "" {
 		return def

@@ -26,7 +26,7 @@ func (e *ShowNewFormParam) GetUrl() string {
 }
 
 func (e *ShowNewFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
+	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func ShowNewForm(conn db.Connection) context.Handler {
@@ -104,7 +104,7 @@ func (e *NewFormParam) GetUrl() string {
 }
 
 func (e *NewFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStrWithoutId())
+	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func (e *NewFormParam) GetDetailUrl() string {
@@ -145,7 +145,7 @@ func NewForm(srv service.List) context.Handler {
 		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 
 		if fromList {
-			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStrWithoutId())
+			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
 		}
 
 		ctx.SetUserValue("new_form_param", &NewFormParam{
