@@ -14,6 +14,5 @@ func CompressedContent(h *template.HTML) {
 			ss = append(ss, st[i])
 		}
 	}
-	s = strings.Join(ss, "\n")
-	*h = template.HTML(s)
+	*h = template.HTML(strings.Join(ss, "\n"))
 }
