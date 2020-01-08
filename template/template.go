@@ -19,6 +19,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/utils"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
