@@ -269,7 +269,7 @@ func Execute(tmpl *template.Template,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
 	if !config.Debug {
-		utils.CompressedCode(&panel.Content)
+		utils.CompressedContent(&panel.Content)
 	}
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config, GetComponentAssetListsHTML()))
