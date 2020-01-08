@@ -6,9 +6,7 @@ import (
 )
 
 func CompressedContent(h *template.HTML) {
-	var s = string(*h)
-
-	st := strings.Split(s, "\n")
+	st := strings.Split(string(*h), "\n")
 	ss := []string{}
 	for i := 0;i < len(st);i++ {
 		st[i] = strings.TrimSpace(st[i])
