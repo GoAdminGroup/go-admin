@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func CompressedCode(h *template.HTML) {
+func CompressedContent(h *template.HTML) {
 	var s = string(*h)
 
 	st := strings.Split(s, "\n")
