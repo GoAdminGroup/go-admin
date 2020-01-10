@@ -113,7 +113,7 @@ func Register(ada adapter.WebFrameWork) {
 	defaultAdapter = ada
 }
 
-// Content call the Content method of adapter of engine.
+// Content call the Content method of engine adapter.
 // If adapter is nil, it will panic.
 func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
@@ -136,7 +136,7 @@ func User(ci interface{}) (models.UserModel, bool) {
 	return defaultAdapter.User(ci)
 }
 
-// User call the User method of defaultAdapter.
+// User call the User method of engine adapter.
 func (eng *Engine) User(ci interface{}) (models.UserModel, bool) {
 	return eng.Adapter.User(ci)
 }
