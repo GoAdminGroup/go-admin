@@ -146,6 +146,10 @@ func (eng *Engine) DB(driver string) db.Connection {
 	return db.GetConnectionFromService(eng.Services.Get(driver))
 }
 
+func (eng *Engine) DefaultConnection() db.Connection {
+	return eng.DB(eng.config.Databases.GetDefault().Driver)
+}
+
 // MysqlConnection return the mysql db connection of given driver.
 func (eng *Engine) MysqlConnection() db.Connection {
 	return db.GetConnectionFromService(eng.Services.Get(db.DriverMysql))
