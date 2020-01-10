@@ -51,7 +51,7 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody := e.GET(config.Get().Url("/info/manager/edit")).
-		WithQuery("id", "1").
+		WithQuery("__goadmin_edit_pk", "1").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 

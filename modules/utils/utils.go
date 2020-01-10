@@ -1,6 +1,10 @@
 package utils
 
-import "github.com/NebulousLabs/fastrand"
+import (
+	"github.com/NebulousLabs/fastrand"
+	"html/template"
+	"strings"
+)
 
 func Uuid(length int64) string {
 	ele := []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "v", "k",
@@ -26,4 +30,16 @@ func Random(strings []string) ([]string, error) {
 		str = append(str, strings[i])
 	}
 	return str, nil
+}
+
+func CompressedContent(h *template.HTML) {
+	st := strings.Split(string(*h), "\n")
+	ss := []string{}
+	for i := 0;i < len(st);i++ {
+		st[i] = strings.TrimSpace(st[i])
+		if st[i] != "" {
+			ss = append(ss, st[i])
+		}
+	}
+	*h = template.HTML(strings.Join(ss, "\n"))
 }

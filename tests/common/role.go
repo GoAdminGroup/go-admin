@@ -58,7 +58,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/info/roles/edit")).
-		WithQuery("id", "3").
+		WithQuery("__goadmin_edit_pk", "3").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
