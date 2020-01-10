@@ -81,6 +81,7 @@ type Table interface {
 	GetEditable() bool
 	GetDeletable() bool
 	GetExportable() bool
+	IsShowDetail() bool
 	GetPrimaryKey() PrimaryKey
 	GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
@@ -306,6 +307,10 @@ func (tb DefaultTable) GetEditable() bool {
 
 func (tb DefaultTable) GetDeletable() bool {
 	return tb.deletable && !tb.info.IsHideDeleteButton
+}
+
+func (tb DefaultTable) IsShowDetail() bool {
+	return !tb.info.IsHideDetailButton
 }
 
 func (tb DefaultTable) GetExportable() bool {

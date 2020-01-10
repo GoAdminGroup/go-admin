@@ -381,6 +381,7 @@ type InfoPanel struct {
 	IsHideExportButton bool
 	IsHideEditButton   bool
 	IsHideDeleteButton bool
+	IsHideDetailButton bool
 	IsHideFilterButton bool
 	IsHideRowSelector  bool
 	IsHidePagination   bool
@@ -443,8 +444,8 @@ func (b Button) Content() (template.HTML, template.JS) {
 	}
 
 	h := template.HTML(`<div class="btn-group pull-right" style="margin-right: 10px">
-                <a id="`+template.HTML(b.Id)+`" `+style+`class="btn btn-sm btn-default" `+b.Action.BtnAttribute()+`>
-                    <i class="fa `+template.HTML(b.Icon)+`"></i>&nbsp;&nbsp;`+b.Title+`
+                <a id="` + template.HTML(b.Id) + `" ` + style + `class="btn btn-sm btn-default" ` + b.Action.BtnAttribute() + `>
+                    <i class="fa ` + template.HTML(b.Icon) + `"></i>&nbsp;&nbsp;` + b.Title + `
                 </a>
         </div>`) + b.Action.ExtContent()
 	return h, b.Action.Js()
@@ -898,5 +899,10 @@ func (i *InfoPanel) HideEditButton() *InfoPanel {
 
 func (i *InfoPanel) HideDeleteButton() *InfoPanel {
 	i.IsHideDeleteButton = true
+	return i
+}
+
+func (i *InfoPanel) HideDetailButton() *InfoPanel {
+	i.IsHideDetailButton = true
 	return i
 }

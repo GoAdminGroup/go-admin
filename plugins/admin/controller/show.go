@@ -36,10 +36,11 @@ func ShowInfo(ctx *context.Context) {
 	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
 	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
+	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
+
 	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
 	infoUrl := config.Url("/info/" + prefix)
 	updateUrl := config.Url("/update/" + prefix)
-	detailUrl := config.Url("/info/" + prefix + "/detail" + params.GetRouteParamStr())
 
 	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
 	ctx.HTML(http.StatusOK, buf.String())
