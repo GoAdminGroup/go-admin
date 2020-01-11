@@ -7,24 +7,29 @@ import (
 type JumpAction struct {
 	BtnId string
 	Url   string
+	Ext   template.HTML
+	JS    template.JS
 }
 
-func Jump(url string) *JumpAction {
+func Jump(url string, ext ...template.HTML) *JumpAction {
+	if len(ext) > 0 {
+		return &JumpAction{Url: url, Ext: ext[0]}
+	}
 	return &JumpAction{Url: url}
 }
 
-func (pop *JumpAction) SetBtnId(btnId string) {
-	pop.BtnId = btnId
+func (jump *JumpAction) SetBtnId(btnId string) {
+	jump.BtnId = btnId
 }
 
-func (pop *JumpAction) Js() template.JS {
-	return template.JS(``)
+func (jump *JumpAction) Js() template.JS {
+	return jump.JS
 }
 
-func (pop *JumpAction) BtnAttribute() template.HTML {
-	return template.HTML(`href="` + pop.Url + `"`)
+func (jump *JumpAction) BtnAttribute() template.HTML {
+	return template.HTML(`href="` + jump.Url + `"`)
 }
 
-func (pop *JumpAction) ExtContent() template.HTML {
-	return ``
+func (jump *JumpAction) ExtContent() template.HTML {
+	return jump.Ext
 }

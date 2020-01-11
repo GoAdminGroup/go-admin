@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
@@ -56,6 +57,8 @@ func GetUserTable() (userTable table.Table) {
 	info.AddField("CreatedAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
+
+	info.AddActionButton("测试", action.Jump("http://baidu.com"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
