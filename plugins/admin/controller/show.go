@@ -34,12 +34,31 @@ func ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
 		panel.GetInfo().GetSort())
 
+	user := auth.Auth(ctx)
+	user.HasMenu()
+
 	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
 	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
 	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
-
 	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+
+	if !user.CheckPermissionByUrlMethod(editUrl, "GET") {
+		editUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST") {
+		deleteUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(exportUrl, "POST") {
+		exportUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(detailUrl, "GET") {
+		detailUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(newUrl, "GET") {
+		newUrl = ""
+	}
+
 	infoUrl := config.Url("/info/" + prefix)
 	updateUrl := config.Url("/update/" + prefix)
 

@@ -9,14 +9,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
-	"regexp"
-	"strings"
 )
 
 // Invoker contains the callback functions which are used
@@ -180,66 +177,6 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 }
 
 // CheckPermissions check the permission of the user.
-func CheckPermissions(user models.UserModel, path string, method string) bool {
-
-	logoutCheck, _ := regexp.Compile(config.Get().Url("/logout") + "(.*?)")
-
-	if logoutCheck.MatchString(path) {
-		return true
-	}
-
-	if path != "/" && path[len(path)-1] == '/' {
-		path = path[:len(path)-1]
-	}
-
-	pathArr := strings.Split(path, "?")
-
-	for _, v := range user.Permissions {
-
-		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
-
-			if v.HttpPath[0] == "*" {
-				return true
-			}
-
-			for i := 0; i < len(v.HttpPath); i++ {
-
-				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
-
-				if len(pathArr) > 1 {
-					if pathArr[0] == matchPath && !strings.Contains(matchPath, "?") {
-						matchPath += "(.*)"
-					} else if strings.Contains(matchPath, "?id=") && !strings.Contains(matchPath, "(.*)") {
-						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
-					}
-				}
-
-				if matchPath == path {
-					return true
-				}
-
-				reg, err := regexp.Compile(matchPath)
-
-				if err != nil {
-					logger.Error("CheckPermissions error: ", err)
-					continue
-				}
-
-				if reg.FindString(path) == path {
-					return true
-				}
-			}
-		}
-	}
-
-	return false
-}
-
-func inMethodArr(arr []string, str string) bool {
-	for i := 0; i < len(arr); i++ {
-		if strings.EqualFold(arr[i], str) {
-			return true
-		}
-	}
-	return false
+func CheckPermissions(user models.UserModel, path, method string) bool {
+	return user.CheckPermissionByUrlMethod(path, method)
 }
