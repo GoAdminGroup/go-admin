@@ -58,7 +58,7 @@ func GetUserTable() (userTable table.Table) {
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
-	info.AddActionButton("测试", action.Jump("http://baidu.com"))
+	info.AddActionButton("google", action.Jump("https://google.com"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
