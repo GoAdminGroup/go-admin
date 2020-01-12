@@ -53,7 +53,7 @@ func ShowDetail(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
 		panel.GetInfo().GetSort())
 
-	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr())+"&=__goadmin_detail_pk="+
+	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr())+"&__goadmin_edit_pk="+
 		ctx.Query("__goadmin_detail_pk"), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
 	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStr())
