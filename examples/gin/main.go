@@ -17,6 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 )
@@ -97,6 +98,13 @@ func main() {
 	r.GET("/admin", func(ctx *gin.Context) {
 		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return datamodel.GetContent()
+		})
+	})
+
+	r.POST("/admin/popup", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 0,
+			"data": "<h2>hello world</h2>",
 		})
 	})
 

@@ -61,6 +61,7 @@ func GetUserTable() (userTable table.Table) {
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddButton("google", icon.Google, action.Jump("https://google.com"))
+	info.AddButton("info", icon.Terminal, action.PopUp("/admin/popup", "Popup Example"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

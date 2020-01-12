@@ -101,7 +101,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 		ext := template.HTML("")
 		if deleteUrl != "" {
 			ext = template.HTML(`<li class="divider"></li>`)
-			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%v}' style="cursor: pointer;"`,
+			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%id}' style="cursor: pointer;"`,
 				ext, ""), "grid-row-delete")
 		}
 		ext = template.HTML("")
@@ -109,13 +109,13 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			if editUrl == "" && deleteUrl == "" {
 				ext = template.HTML(`<li class="divider"></li>`)
 			}
-			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&__goadmin_detail_pk={%v}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&__goadmin_detail_pk={%id}", ext))
 		}
 		if editUrl != "" {
 			if detailUrl == "" && deleteUrl == "" {
 				ext = template.HTML(`<li class="divider"></li>`)
 			}
-			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&__goadmin_edit_pk={%v}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&__goadmin_edit_pk={%id}", ext))
 		}
 
 		var content template2.HTML

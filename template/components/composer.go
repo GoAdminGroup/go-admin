@@ -26,8 +26,11 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 		"isLinkUrl": func(s string) bool {
 			return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
 		},
-		"render": func(s, repl template.HTML) template.HTML {
-			return template.HTML(strings.Replace(string(s), "{%v}", string(repl), -1))
+		"render": func(s, old, repl template.HTML) template.HTML {
+			return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+		},
+		"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
+			return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
 		},
 	}).Parse(text)
 	if err != nil {
