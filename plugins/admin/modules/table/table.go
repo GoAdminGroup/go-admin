@@ -76,6 +76,7 @@ func SetGenerators(gens map[string]Generator) {
 
 type Table interface {
 	GetInfo() *types.InfoPanel
+	GetDetail() *types.InfoPanel
 	GetForm() *types.FormPanel
 	GetCanAdd() bool
 	GetEditable() bool
@@ -105,6 +106,7 @@ const (
 type DefaultTable struct {
 	info             *types.InfoPanel
 	form             *types.FormPanel
+	detail           *types.InfoPanel
 	connectionDriver string
 	connection       string
 	canAdd           bool
@@ -257,6 +259,7 @@ func NewDefaultTable(cfg Config) Table {
 	return DefaultTable{
 		info:             types.NewInfoPanel(),
 		form:             types.NewFormPanel(),
+		detail:           types.NewInfoPanel(),
 		connectionDriver: cfg.Driver,
 		connection:       cfg.Connection,
 		canAdd:           cfg.CanAdd,
@@ -287,6 +290,10 @@ func (tb DefaultTable) Copy() Table {
 
 func (tb DefaultTable) GetInfo() *types.InfoPanel {
 	return tb.info
+}
+
+func (tb DefaultTable) GetDetail() *types.InfoPanel {
+	return tb.detail
 }
 
 func (tb DefaultTable) GetForm() *types.FormPanel {

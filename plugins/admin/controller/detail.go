@@ -27,9 +27,17 @@ func ShowDetail(ctx *context.Context) {
 
 	formModel := newPanel.GetForm()
 
-	formModel.FieldList = make([]types.FormField, len(panel.GetInfo().FieldList))
+	var fieldList types.FieldList
 
-	for i, field := range panel.GetInfo().FieldList {
+	if len(panel.GetDetail().FieldList) == 0 {
+		fieldList = panel.GetInfo().FieldList
+	} else {
+		fieldList = panel.GetDetail().FieldList
+	}
+
+	formModel.FieldList = make([]types.FormField, len(fieldList))
+
+	for i, field := range fieldList {
 		formModel.FieldList[i] = types.FormField{
 			Field:        field.Field,
 			TypeName:     field.TypeName,
