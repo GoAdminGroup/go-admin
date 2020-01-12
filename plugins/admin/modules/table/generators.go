@@ -56,6 +56,7 @@ func GetManagerTable() (ManagerTable Table) {
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	info.SetTable("goadmin_users").
+
 		SetTitle(lg("Managers")).
 		SetDescription(lg("Managers")).
 		SetDeleteFn(func(idArr []string) error {
@@ -214,6 +215,69 @@ func GetManagerTable() (ManagerTable Table) {
 		}
 		return nil
 	})
+
+	detail := ManagerTable.GetDetail()
+	detail.AddField("ID", "id", db.Int)
+	detail.AddField(lg("Name"), "username", db.Varchar)
+	detail.AddField(lg("Avatar"), "avatar", db.Varchar).FieldDisplay(func(model types.FieldModel) interface{} {
+		if model.Value == "" || config.Get().Store.Prefix == "" {
+			model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
+		} else {
+			model.Value = "/" + config.Get().Store.Prefix + "/" + model.Value
+		}
+		return template.Default().Image().
+			SetSrc(template.HTML(model.Value)).
+			SetHeight("120").SetWidth("120").WithModal().GetContent()
+	})
+	detail.AddField(lg("Nickname"), "name", db.Varchar)
+	detail.AddField(lg("role"), "roles", db.Varchar).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			labelModels, _ := table("goadmin_role_users").
+				Select("goadmin_roles.name").
+				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+				Where("user_id", "=", model.ID).
+				All()
+
+			labels := template.HTML("")
+			labelTpl := label().SetType("success")
+
+			for key, label := range labelModels {
+				if key == len(labelModels)-1 {
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+				} else {
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+				}
+			}
+
+			if labels == template.HTML("") {
+				return lg("no roles")
+			}
+
+			return labels
+		})
+	detail.AddField(lg("permission"), "roles", db.Varchar).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			permissionModel, _ := table("goadmin_user_permissions").
+				Select("goadmin_permissions.name").
+				LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_user_permissions.permission_id").
+				Where("user_id", "=", model.ID).
+				All()
+
+			permissions := template.HTML("")
+			permissionTpl := label().SetType("success")
+
+			for key, label := range permissionModel {
+				if key == len(permissionModel)-1 {
+					permissions += permissionTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+				} else {
+					permissions += permissionTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+				}
+			}
+
+			return permissions
+		})
+	detail.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	detail.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	return
 }
