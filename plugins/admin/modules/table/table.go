@@ -3,6 +3,7 @@ package table
 import (
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -13,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 	"strconv"
 	"strings"
@@ -789,6 +791,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 						rowValue := modules.AorB(inArray(columns, field.Field),
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
 						list[j] = field.UpdateValue(id, rowValue, res)
+						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
+							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
+						}
 						break
 					}
 				}
@@ -804,6 +809,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		rowValue := modules.AorB(inArray(columns, field.Field),
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
 		formList[key] = field.UpdateValue(id, rowValue, res)
+
+		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
+			formList[key].Value2 = "/" + config.Get().Store.Prefix + "/" + string(formList[key].Value)
+		}
 	}
 
 	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
