@@ -94,7 +94,9 @@ func EditForm(ctx *context.Context) {
 	}
 
 	for _, field := range param.Panel.GetForm().FieldList {
-		if field.FormType == form.File && len(param.MultiForm.File[field.Field]) == 0 {
+		if field.FormType == form.File &&
+			len(param.MultiForm.File[field.Field]) == 0 &&
+			param.MultiForm.Value[field.Field+"__delete_flag"][0] != "1" {
 			delete(param.MultiForm.Value, field.Field)
 		}
 	}
