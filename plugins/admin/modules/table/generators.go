@@ -56,7 +56,6 @@ func GetManagerTable() (ManagerTable Table) {
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	info.SetTable("goadmin_users").
-
 		SetTitle(lg("Managers")).
 		SetDescription(lg("Managers")).
 		SetDeleteFn(func(idArr []string) error {
