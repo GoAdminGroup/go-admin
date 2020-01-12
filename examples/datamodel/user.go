@@ -6,6 +6,7 @@ import (
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -47,18 +48,19 @@ func GetUserTable() (userTable table.Table) {
 		{"value": "0", "field": "men"},
 		{"value": "1", "field": "women"},
 	}).FieldFilterOptionExt(map[string]interface{}{"allowClear": true})
-	info.AddField("Phone", "phone", db.Varchar).FieldEditAble().FieldFilterable()
-	info.AddField("City", "city", db.Varchar).FieldEditAble().FieldFilterable()
+	info.AddField("Phone", "phone", db.Varchar).FieldFilterable()
+	info.AddField("City", "city", db.Varchar).FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").WithModal().GetContent()
 	})
-	info.AddField("CreatedAt", "created_at", db.Timestamp).FieldEditAble(editType.Datetime).
+	info.AddField("CreatedAt", "created_at", db.Timestamp).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
+	info.AddButton("google", icon.Google, action.Jump("https://google.com"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

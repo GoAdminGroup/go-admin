@@ -200,11 +200,13 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	val := f.Display(value)
 
 	if _, ok := val.(template.HTML); !ok {
-		valStr := fmt.Sprintf("%v", val)
-		for _, process := range f.DisplayProcessChains {
-			valStr = process(valStr)
+		if _, ok2 := val.([]string); !ok2 {
+			valStr := fmt.Sprintf("%v", val)
+			for _, process := range f.DisplayProcessChains {
+				valStr = process(valStr)
+			}
+			return valStr
 		}
-		return valStr
 	}
 
 	return val
