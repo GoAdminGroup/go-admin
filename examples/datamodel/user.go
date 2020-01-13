@@ -47,7 +47,7 @@ func GetUserTable() (userTable table.Table) {
 	}).FieldFilterable(types.FilterType{FormType: form.SelectSingle}).FieldFilterOptions([]map[string]string{
 		{"value": "0", "field": "men"},
 		{"value": "1", "field": "women"},
-	}).FieldFilterOptionExt(map[string]interface{}{"allowClear": true})
+	})
 	info.AddField("Phone", "phone", db.Varchar).FieldFilterable()
 	info.AddField("City", "city", db.Varchar).FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {

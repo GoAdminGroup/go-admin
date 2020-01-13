@@ -777,6 +777,7 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 
 func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterOptions = options
+	i.FieldList[i.curFieldListIndex].FilterOptionExt = `{"allowClear": "true"}`
 	return i
 }
 

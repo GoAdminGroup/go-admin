@@ -532,7 +532,6 @@ func GetPermissionTable() (PermissionTable Table) {
 			{"value": "OPTIONS", "field": "OPTIONS"},
 			{"value": "HEAD", "field": "HEAD"},
 		}).
-		FieldOptionExt(map[string]interface{}{"allowClear": true}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			return strings.Split(model.Value, ",")
 		}).
