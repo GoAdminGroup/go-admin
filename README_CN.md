@@ -28,7 +28,7 @@ demo: [https://demo.go-admin.cn](https://demo.go-admin.cn)
 
 demo代码： https://github.com/GoAdminGroup/demo.go-admin.cn
 
-![](http://file.go-admin.cn/introduction/interface_2.png)
+![](http://file.go-admin.cn/introduction/interface_3.png)
 
 ## 特征
 
