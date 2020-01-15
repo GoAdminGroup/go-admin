@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://www.go-admin.com/docs">Documentation</a> | 
+    <a href="https://book.go-admin.cn/en">Documentation</a> | 
     <a href="./README_CN.md">中文文档</a> |
     <a href="https://demo.go-admin.com">DEMO</a>
 </p>
