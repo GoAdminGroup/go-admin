@@ -200,11 +200,13 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	val := f.Display(value)
 
 	if _, ok := val.(template.HTML); !ok {
-		valStr := fmt.Sprintf("%v", val)
-		for _, process := range f.DisplayProcessChains {
-			valStr = process(valStr)
+		if _, ok2 := val.([]string); !ok2 {
+			valStr := fmt.Sprintf("%v", val)
+			for _, process := range f.DisplayProcessChains {
+				valStr = process(valStr)
+			}
+			return valStr
 		}
-		return valStr
 	}
 
 	return val
@@ -381,6 +383,7 @@ type InfoPanel struct {
 	IsHideExportButton bool
 	IsHideEditButton   bool
 	IsHideDeleteButton bool
+	IsHideDetailButton bool
 	IsHideFilterButton bool
 	IsHideRowSelector  bool
 	IsHidePagination   bool
@@ -397,9 +400,10 @@ type InfoPanel struct {
 
 	processChains DisplayProcessFnChains
 
-	Action     template.HTML
-	HeaderHtml template.HTML
-	FooterHtml template.HTML
+	ActionButtons Buttons
+	Action        template.HTML
+	HeaderHtml    template.HTML
+	FooterHtml    template.HTML
 }
 
 type Where struct {
@@ -415,7 +419,26 @@ type Action interface {
 	SetBtnId(btnId string)
 }
 
-type Button struct {
+type DefaultAction struct {
+	Attr template.HTML
+	JS   template.JS
+	Ext  template.HTML
+}
+
+func NewDefaultAction(attr, ext template.HTML, js template.JS) *DefaultAction {
+	return &DefaultAction{Attr: attr, Ext: ext, JS: js}
+}
+
+func (def *DefaultAction) SetBtnId(btnId string)       {}
+func (def *DefaultAction) Js() template.JS             { return def.JS }
+func (def *DefaultAction) BtnAttribute() template.HTML { return def.Attr }
+func (def *DefaultAction) ExtContent() template.HTML   { return def.Ext }
+
+type Button interface {
+	Content() (template.HTML, template.JS)
+}
+
+type DefaultButton struct {
 	Id        string
 	Title     template.HTML
 	Color     template.HTML
@@ -424,7 +447,7 @@ type Button struct {
 	Icon      string
 }
 
-func (b Button) Content() (template.HTML, template.JS) {
+func (b DefaultButton) Content() (template.HTML, template.JS) {
 
 	color := template.HTML("")
 	if b.Color != template.HTML("") {
@@ -442,11 +465,22 @@ func (b Button) Content() (template.HTML, template.JS) {
 		style = template.HTML(`style="`) + addColor + template.HTML(`"`)
 	}
 
-	h := template.HTML(`<div class="btn-group pull-right" style="margin-right: 10px">
-                <a id="`+template.HTML(b.Id)+`" `+style+`class="btn btn-sm btn-default" `+b.Action.BtnAttribute()+`>
-                    <i class="fa `+template.HTML(b.Icon)+`"></i>&nbsp;&nbsp;`+b.Title+`
+	h := `<div class="btn-group pull-right" style="margin-right: 10px">
+                <a id="` + template.HTML(b.Id) + `" ` + style + `class="btn btn-sm btn-default" ` + b.Action.BtnAttribute() + `>
+                    <i class="fa ` + template.HTML(b.Icon) + `"></i>&nbsp;&nbsp;` + b.Title + `
                 </a>
-        </div>`) + b.Action.ExtContent()
+        </div>` + b.Action.ExtContent()
+	return h, b.Action.Js()
+}
+
+type ActionButton struct {
+	Id     string
+	Title  template.HTML
+	Action Action
+}
+
+func (b ActionButton) Content() (template.HTML, template.JS) {
+	h := template.HTML(`<li><a class="`+template.HTML(b.Id)+`" `+b.Action.BtnAttribute()+`>`+b.Title+`</a></li>`) + b.Action.ExtContent()
 	return h, b.Action.Js()
 }
 
@@ -488,14 +522,38 @@ func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, c
 	id := "info-btn-" + utils.Uuid(10)
 	action.SetBtnId(id)
 	if len(color) == 0 {
-		i.Buttons = append(i.Buttons, Button{Title: title, Id: id, Action: action, Icon: icon})
+		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Id: id, Action: action, Icon: icon})
 	}
 	if len(color) == 1 {
-		i.Buttons = append(i.Buttons, Button{Title: title, Color: color[0], Id: id, Action: action, Icon: icon})
+		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Color: color[0], Id: id, Action: action, Icon: icon})
 	}
 	if len(color) >= 2 {
-		i.Buttons = append(i.Buttons, Button{Title: title, Color: color[0], TextColor: color[1], Id: id, Action: action, Icon: icon})
+		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Color: color[0], TextColor: color[1], Id: id, Action: action, Icon: icon})
 	}
+	return i
+}
+
+func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...string) *InfoPanel {
+	id := ""
+	if len(ids) > 0 {
+		id = ids[0]
+	} else {
+		id = "action-info-btn-" + utils.Uuid(10)
+	}
+	action.SetBtnId(id)
+	i.ActionButtons = append(i.ActionButtons, ActionButton{Title: title, Id: id, Action: action})
+	return i
+}
+
+func (i *InfoPanel) AddActionButtonFront(title template.HTML, action Action, ids ...string) *InfoPanel {
+	id := ""
+	if len(ids) > 0 {
+		id = ids[0]
+	} else {
+		id = "action-info-btn-" + utils.Uuid(10)
+	}
+	action.SetBtnId(id)
+	i.ActionButtons = append([]Button{ActionButton{Title: title, Id: id, Action: action}}, i.ActionButtons...)
 	return i
 }
 
@@ -719,6 +777,7 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 
 func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterOptions = options
+	i.FieldList[i.curFieldListIndex].FilterOptionExt = `{"allowClear": "true"}`
 	return i
 }
 
@@ -898,5 +957,10 @@ func (i *InfoPanel) HideEditButton() *InfoPanel {
 
 func (i *InfoPanel) HideDeleteButton() *InfoPanel {
 	i.IsHideDeleteButton = true
+	return i
+}
+
+func (i *InfoPanel) HideDetailButton() *InfoPanel {
+	i.IsHideDetailButton = true
 	return i
 }

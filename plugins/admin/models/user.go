@@ -1,9 +1,13 @@
 package models
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -69,6 +73,73 @@ func (t UserModel) HasMenu() bool {
 func (t UserModel) IsSuperAdmin() bool {
 	for _, per := range t.Permissions {
 		if len(per.HttpPath) > 0 && per.HttpPath[0] == "*" {
+			return true
+		}
+	}
+	return false
+}
+
+func (t UserModel) CheckPermissionByUrlMethod(path, method string) bool {
+	logoutCheck, _ := regexp.Compile(config.Get().Url("/logout") + "(.*?)")
+
+	if logoutCheck.MatchString(path) {
+		return true
+	}
+
+	if path == "" {
+		return false
+	}
+
+	if path != "/" && path[len(path)-1] == '/' {
+		path = path[:len(path)-1]
+	}
+
+	pathArr := strings.Split(path, "?")
+
+	for _, v := range t.Permissions {
+
+		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
+
+			if v.HttpPath[0] == "*" {
+				return true
+			}
+
+			for i := 0; i < len(v.HttpPath); i++ {
+
+				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
+
+				if len(pathArr) > 1 {
+					if pathArr[0] == matchPath && !strings.Contains(matchPath, "?") {
+						matchPath += "(.*)"
+					} else if strings.Contains(matchPath, "?id=") && !strings.Contains(matchPath, "(.*)") {
+						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
+					}
+				}
+
+				if matchPath == path {
+					return true
+				}
+
+				reg, err := regexp.Compile(matchPath)
+
+				if err != nil {
+					logger.Error("CheckPermissions error: ", err)
+					continue
+				}
+
+				if reg.FindString(path) == path {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+func inMethodArr(arr []string, str string) bool {
+	for i := 0; i < len(arr); i++ {
+		if strings.EqualFold(arr[i], str) {
 			return true
 		}
 	}

@@ -3,6 +3,7 @@ package table
 import (
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -13,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 	"strconv"
 	"strings"
@@ -76,11 +78,13 @@ func SetGenerators(gens map[string]Generator) {
 
 type Table interface {
 	GetInfo() *types.InfoPanel
+	GetDetail() *types.InfoPanel
 	GetForm() *types.FormPanel
 	GetCanAdd() bool
 	GetEditable() bool
 	GetDeletable() bool
 	GetExportable() bool
+	IsShowDetail() bool
 	GetPrimaryKey() PrimaryKey
 	GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
 	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
@@ -104,6 +108,7 @@ const (
 type DefaultTable struct {
 	info             *types.InfoPanel
 	form             *types.FormPanel
+	detail           *types.InfoPanel
 	connectionDriver string
 	connection       string
 	canAdd           bool
@@ -256,6 +261,7 @@ func NewDefaultTable(cfg Config) Table {
 	return DefaultTable{
 		info:             types.NewInfoPanel(),
 		form:             types.NewFormPanel(),
+		detail:           types.NewInfoPanel(),
 		connectionDriver: cfg.Driver,
 		connection:       cfg.Connection,
 		canAdd:           cfg.CanAdd,
@@ -288,6 +294,10 @@ func (tb DefaultTable) GetInfo() *types.InfoPanel {
 	return tb.info
 }
 
+func (tb DefaultTable) GetDetail() *types.InfoPanel {
+	return tb.detail
+}
+
 func (tb DefaultTable) GetForm() *types.FormPanel {
 	return tb.form
 }
@@ -306,6 +316,10 @@ func (tb DefaultTable) GetEditable() bool {
 
 func (tb DefaultTable) GetDeletable() bool {
 	return tb.deletable && !tb.info.IsHideDeleteButton
+}
+
+func (tb DefaultTable) IsShowDetail() bool {
+	return !tb.info.IsHideDetailButton
 }
 
 func (tb DefaultTable) GetExportable() bool {
@@ -337,7 +351,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 		headField = field.Field
 
 		if field.Join.Valid() {
-			headField = field.Join.Table + "_" + field.Field
+			headField = field.Join.Table + "_goadmin_join_" + field.Field
 		}
 
 		if field.Hide {
@@ -473,13 +487,14 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	if len(ids) > 0 {
 		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
-		countStatement = "select count(*) from " + placeholder + " where " + tb.primaryKey.Name + " in (%s)"
+		countStatement = "select count(*) from " + placeholder + " %s where " + tb.primaryKey.Name + " in (%s)"
 	} else {
 		queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from " + placeholder + "%s"
+		countStatement = "select count(*) from " + placeholder + " %s %s"
 		if connection.Name() == "mssql" {
-			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " + placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
-			countStatement = "select count(*) as [size] from " + placeholder + "%s"
+			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " +
+				placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
+			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
 		}
 	}
 
@@ -510,7 +525,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 		if field.Join.Valid() {
 			hasJoin = true
-			headField = field.Join.Table + "_" + field.Field
+			headField = field.Join.Table + "_goadmin_join_" + field.Field
 			fields += getAggregationExpression(tb.connectionDriver, field.Join.Table+"."+
 				filterFiled(field.Field, connection.GetDelimiter()), headField, types.JoinFieldValueDelimiter) + ","
 			if !modules.InArray(joinTables, field.Join.Table) {
@@ -526,17 +541,17 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 			var value, value2 string
 
 			if field.FilterType.IsRange() {
-				value = params.GetFieldValue(field.Field + "_start__goadmin")
-				value2 = params.GetFieldValue(field.Field + "_end__goadmin")
+				value = params.GetFieldValue(headField + "_start__goadmin")
+				value2 = params.GetFieldValue(headField + "_end__goadmin")
 			} else {
 				if field.FilterOperator == types.FilterOperatorFree {
-					value2 = params.GetFieldOperator(field.Field).String()
+					value2 = params.GetFieldOperator(headField).String()
 				}
-				value = params.GetFieldValue(field.Field)
+				value = params.GetFieldValue(headField)
 			}
 
 			filterForm = append(filterForm, types.FormField{
-				Field:     field.Field,
+				Field:     headField,
 				Head:      modules.AorB(field.FilterHead == "", field.Head, field.FilterHead),
 				TypeName:  field.TypeName,
 				HelpMsg:   field.FilterHelpMsg,
@@ -551,7 +566,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 			if field.FilterOperator.AddOrNot() {
 				filterForm = append(filterForm, types.FormField{
-					Field:    field.Field + "__operator__",
+					Field:    headField + "__operator__",
 					Head:     field.Head,
 					TypeName: field.TypeName,
 					Value:    template.HTML(field.FilterOperator.Value()),
@@ -631,14 +646,17 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 					} else {
 						whereArgs = append(whereArgs, value)
 					}
-				}
-
-				if field := tb.info.FieldList.GetFieldByFieldName(key); field.Exist() && field.Join.Table != "" {
-					wheres += field.Join.Table + "." + filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
-					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
-						whereArgs = append(whereArgs, "%"+value+"%")
-					} else {
-						whereArgs = append(whereArgs, value)
+				} else {
+					keys := strings.Split(key, "_goadmin_join_")
+					if len(keys) > 1 {
+						if field := tb.info.FieldList.GetFieldByFieldName(keys[1]); field.Exist() && field.Join.Table != "" {
+							wheres += field.Join.Table + "." + filterFiled(keys[1], connection.GetDelimiter()) + " " + op.String() + " ? and "
+							if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
+								whereArgs = append(whereArgs, "%"+value+"%")
+							} else {
+								whereArgs = append(whereArgs, value)
+							}
+						}
 					}
 				}
 
@@ -700,7 +718,11 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	// TODO: use the dialect
 
-	countCmd := fmt.Sprintf(countStatement, tb.info.Table, wheres)
+	if len(ids) > 0 {
+		joins = ""
+	}
+
+	countCmd := fmt.Sprintf(countStatement, tb.info.Table, joins, wheres)
 
 	total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
 
@@ -777,6 +799,9 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 						rowValue := modules.AorB(inArray(columns, field.Field),
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
 						list[j] = field.UpdateValue(id, rowValue, res)
+						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
+							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
+						}
 						break
 					}
 				}
@@ -792,6 +817,10 @@ func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, 
 		rowValue := modules.AorB(inArray(columns, field.Field),
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
 		formList[key] = field.UpdateValue(id, rowValue, res)
+
+		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
+			formList[key].Value2 = "/" + config.Get().Store.Prefix + "/" + string(formList[key].Value)
+		}
 	}
 
 	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil

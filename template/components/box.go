@@ -39,6 +39,11 @@ func (compo *BoxAttribute) SetBody(value template.HTML) types.BoxAttribute {
 	return compo
 }
 
+func (compo *BoxAttribute) SetStyle(value template.HTMLAttr) types.BoxAttribute {
+	compo.Style = value
+	return compo
+}
+
 func (compo *BoxAttribute) SetFooter(value template.HTML) types.BoxAttribute {
 	compo.Footer = value
 	return compo
@@ -86,7 +91,11 @@ func (compo *BoxAttribute) WithSecondHeadBorder() types.BoxAttribute {
 
 func (compo *BoxAttribute) GetContent() template.HTML {
 
-	compo.Style = template.HTMLAttr(fmt.Sprintf(`style="overflow: scroll;%s"`, compo.Padding))
+	if compo.Style == "" {
+		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="overflow: scroll;%s"`, compo.Padding))
+	} else {
+		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="%s"`, string(compo.Style)+compo.Padding))
+	}
 
 	return ComposeHtml(compo.TemplateList, *compo, "box")
 }

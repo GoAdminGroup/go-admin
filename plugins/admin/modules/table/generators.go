@@ -117,8 +117,10 @@ func GetManagerTable() (ManagerTable Table) {
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used for login")))
-	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used to display")))
+	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).
+		FieldHelpMsg(template.HTML(lg("used for login"))).FieldMust()
+	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).
+		FieldHelpMsg(template.HTML(lg("used to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
 		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
@@ -212,6 +214,69 @@ func GetManagerTable() (ManagerTable Table) {
 		}
 		return nil
 	})
+
+	detail := ManagerTable.GetDetail()
+	detail.AddField("ID", "id", db.Int)
+	detail.AddField(lg("Name"), "username", db.Varchar)
+	detail.AddField(lg("Avatar"), "avatar", db.Varchar).FieldDisplay(func(model types.FieldModel) interface{} {
+		if model.Value == "" || config.Get().Store.Prefix == "" {
+			model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
+		} else {
+			model.Value = "/" + config.Get().Store.Prefix + "/" + model.Value
+		}
+		return template.Default().Image().
+			SetSrc(template.HTML(model.Value)).
+			SetHeight("120").SetWidth("120").WithModal().GetContent()
+	})
+	detail.AddField(lg("Nickname"), "name", db.Varchar)
+	detail.AddField(lg("role"), "roles", db.Varchar).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			labelModels, _ := table("goadmin_role_users").
+				Select("goadmin_roles.name").
+				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+				Where("user_id", "=", model.ID).
+				All()
+
+			labels := template.HTML("")
+			labelTpl := label().SetType("success")
+
+			for key, label := range labelModels {
+				if key == len(labelModels)-1 {
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+				} else {
+					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+				}
+			}
+
+			if labels == template.HTML("") {
+				return lg("no roles")
+			}
+
+			return labels
+		})
+	detail.AddField(lg("permission"), "roles", db.Varchar).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			permissionModel, _ := table("goadmin_user_permissions").
+				Select("goadmin_permissions.name").
+				LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_user_permissions.permission_id").
+				Where("user_id", "=", model.ID).
+				All()
+
+			permissions := template.HTML("")
+			permissionTpl := label().SetType("success")
+
+			for key, label := range permissionModel {
+				if key == len(permissionModel)-1 {
+					permissions += permissionTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+				} else {
+					permissions += permissionTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+				}
+			}
+
+			return permissions
+		})
+	detail.AddField(lg("createdAt"), "created_at", db.Timestamp)
+	detail.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	return
 }
@@ -314,13 +379,13 @@ func GetNormalManagerTable() (ManagerTable Table) {
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used for login")))
-	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used to display")))
+	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used for login"))).FieldMust()
+	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
-		})
+		}).FieldMust()
 	formList.AddField(lg("confirm password"), "password_again", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
@@ -455,8 +520,8 @@ func GetPermissionTable() (PermissionTable Table) {
 	formList := PermissionTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("permission"), "name", db.Varchar, form.Text)
-	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique")))
+	formList.AddField(lg("permission"), "name", db.Varchar, form.Text).FieldMust()
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
 		FieldOptions([]map[string]string{
 			{"value": "GET", "field": "GET"},
@@ -467,7 +532,6 @@ func GetPermissionTable() (PermissionTable Table) {
 			{"value": "OPTIONS", "field": "OPTIONS"},
 			{"value": "HEAD", "field": "HEAD"},
 		}).
-		FieldOptionExt(map[string]interface{}{"allowClear": true}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			return strings.Split(model.Value, ",")
 		}).
@@ -580,8 +644,8 @@ func GetRolesTable() (RolesTable Table) {
 	}
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("role"), "name", db.Varchar, form.Text)
-	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique")))
+	formList.AddField(lg("role"), "name", db.Varchar, form.Text).FieldMust()
+	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
 		perModel, _ := table("goadmin_role_permissions").
@@ -771,7 +835,7 @@ func GetMenuTable() (MenuTable Table) {
 		menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
 		return menuItem
 	})
-	formList.AddField(lg("menu name"), "title", db.Varchar, form.Text)
+	formList.AddField(lg("menu name"), "title", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("header"), "header", db.Varchar, form.Text)
 	formList.AddField(lg("icon"), "icon", db.Varchar, form.IconPicker)
 	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)

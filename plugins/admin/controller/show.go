@@ -16,6 +16,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
 	"net/http"
 	"path"
@@ -33,13 +34,33 @@ func ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
 		panel.GetInfo().GetSort())
 
+	user := auth.Auth(ctx)
+	user.HasMenu()
+
 	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
 	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
+	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
 	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+
+	if !user.CheckPermissionByUrlMethod(editUrl, "GET") {
+		editUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST") {
+		deleteUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(exportUrl, "POST") {
+		exportUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(detailUrl, "GET") {
+		detailUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(newUrl, "GET") {
+		newUrl = ""
+	}
+
 	infoUrl := config.Url("/info/" + prefix)
 	updateUrl := config.Url("/update/" + prefix)
-	detailUrl := config.Url("/info/" + prefix + "/detail" + params.GetRouteParamStr())
 
 	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
 	ctx.HTML(http.StatusOK, buf.String())
@@ -67,13 +88,45 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 	}
 
 	var (
-		body      template2.HTML
-		dataTable types.DataTableAttribute
+		body       template2.HTML
+		dataTable  types.DataTableAttribute
+		info       = panel.GetInfo()
+		actionBtns = info.Action
+		actionJs   template2.JS
 	)
 
-	btns, actionJs := panel.GetInfo().Buttons.Content()
+	btns, btnsJs := info.Buttons.Content()
 
-	if panel.GetInfo().TabGroups.Valid() {
+	if actionBtns == template.HTML("") && len(info.ActionButtons) > 0 {
+		ext := template.HTML("")
+		if deleteUrl != "" {
+			ext = template.HTML(`<li class="divider"></li>`)
+			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%id}' style="cursor: pointer;"`,
+				ext, ""), "grid-row-delete")
+		}
+		ext = template.HTML("")
+		if detailUrl != "" {
+			if editUrl == "" && deleteUrl == "" {
+				ext = template.HTML(`<li class="divider"></li>`)
+			}
+			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&__goadmin_detail_pk={%id}", ext))
+		}
+		if editUrl != "" {
+			if detailUrl == "" && deleteUrl == "" {
+				ext = template.HTML(`<li class="divider"></li>`)
+			}
+			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&__goadmin_edit_pk={%id}", ext))
+		}
+
+		var content template2.HTML
+		content, actionJs = info.ActionButtons.Content()
+
+		actionBtns = template.HTML(`<div class="dropdown" style="text-align: center;"><a href="#" class="dropdown-toggle" 
+		data-toggle="dropdown" style="color: #676565;"><i class="fa fa-ellipsis-v"></i></a><ul class="dropdown-menu" role="menu" 
+		aria-labelledby="dLabel" style="min-width: 20px !important;left: -32px;overflow: hidden;">`) + content + template.HTML(`</ul></div>`)
+	}
+
+	if info.TabGroups.Valid() {
 
 		dataTable = aDataTable().
 			SetThead(panelInfo.Thead).
@@ -82,24 +135,24 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetExportUrl(exportUrl)
 
 		var (
-			tabsHtml    = make([]map[string]template2.HTML, len(panel.GetInfo().TabHeaders))
-			infoListArr = panelInfo.InfoList.GroupBy(panel.GetInfo().TabGroups)
-			theadArr    = panelInfo.Thead.GroupBy(panel.GetInfo().TabGroups)
+			tabsHtml    = make([]map[string]template2.HTML, len(info.TabHeaders))
+			infoListArr = panelInfo.InfoList.GroupBy(info.TabGroups)
+			theadArr    = panelInfo.Thead.GroupBy(info.TabGroups)
 		)
-		for key, header := range panel.GetInfo().TabHeaders {
+		for key, header := range info.TabHeaders {
 			tabsHtml[key] = map[string]template2.HTML{
 				"title": template2.HTML(header),
 				"content": aDataTable().
 					SetInfoList(infoListArr[key]).
 					SetInfoUrl(infoUrl).
 					SetButtons(btns).
-					SetActionJs(actionJs).
+					SetActionJs(btnsJs + actionJs).
 					SetHasFilter(len(panelInfo.FormData) > 0).
-					SetAction(panel.GetInfo().Action).
+					SetAction(actionBtns).
 					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
 					SetThead(theadArr[key]).
-					SetHideRowSelector(panel.GetInfo().IsHideRowSelector).
+					SetHideRowSelector(info.IsHideRowSelector).
 					SetExportUrl(exportUrl).
 					SetNewUrl(newUrl).
 					SetEditUrl(editUrl).
@@ -115,14 +168,14 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 			SetInfoList(panelInfo.InfoList).
 			SetInfoUrl(infoUrl).
 			SetButtons(btns).
-			SetActionJs(actionJs).
-			SetAction(panel.GetInfo().Action).
+			SetActionJs(btnsJs + actionJs).
+			SetAction(actionBtns).
 			SetHasFilter(len(panelInfo.FormData) > 0).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).
 			SetExportUrl(exportUrl).
-			SetHideRowSelector(panel.GetInfo().IsHideRowSelector).
-			SetHideFilterArea(panel.GetInfo().IsHideFilterArea).
+			SetHideRowSelector(info.IsHideRowSelector).
+			SetHideFilterArea(info.IsHideFilterArea).
 			SetNewUrl(newUrl).
 			SetEditUrl(editUrl).
 			SetUpdateUrl(updateUrl).
@@ -134,7 +187,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 	boxModel := aBox().
 		SetBody(body).
 		SetNoPadding().
-		SetHeader(dataTable.GetDataTableHeader() + panel.GetInfo().HeaderHtml).
+		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
 		WithHeadBorder().
 		SetFooter(panelInfo.Paginator.GetContent())
 
@@ -144,7 +197,7 @@ func showTable(ctx *context.Context, panel table.Table, path string, params para
 				SetContent(panelInfo.FormData).
 				SetPrefix(config.PrefixFixSlash()).
 				SetMethod("get").
-				SetLayout(panel.GetInfo().FilterFormLayout).
+				SetLayout(info.FilterFormLayout).
 				SetUrl(infoUrl).
 				SetOperationFooter(filterFormFooter(infoUrl)).
 				GetContent())

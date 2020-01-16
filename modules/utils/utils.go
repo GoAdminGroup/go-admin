@@ -35,7 +35,7 @@ func Random(strings []string) ([]string, error) {
 func CompressedContent(h *template.HTML) {
 	st := strings.Split(string(*h), "\n")
 	ss := []string{}
-	for i := 0;i < len(st);i++ {
+	for i := 0; i < len(st); i++ {
 		st[i] = strings.TrimSpace(st[i])
 		if st[i] != "" {
 			ss = append(ss, st[i])

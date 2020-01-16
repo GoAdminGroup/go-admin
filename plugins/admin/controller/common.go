@@ -143,6 +143,7 @@ func detailContent(form types.FormAttribute, editUrl, deleteUrl string) template
 func menuFormContent(form types.FormAttribute) template2.HTML {
 	return aBox().
 		SetHeader(form.GetBoxHeaderNoButton()).
+		SetStyle(" ").
 		WithHeadBorder().
 		SetBody(form.GetContent()).
 		GetContent()

@@ -26,7 +26,9 @@ func (pop *PopUpAction) Js() template.JS {
 						$.ajax({
                             method: 'post',
                             url: "` + pop.Url + `",
-                            data: {},
+                            data: {
+								"ids": {%ids}
+							},
                             success: function (data) { 
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);

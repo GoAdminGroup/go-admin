@@ -13,6 +13,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
 	"net/http"
 )
@@ -89,6 +90,14 @@ func EditForm(ctx *context.Context) {
 				GetContent()
 			showForm(ctx, alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
 			return
+		}
+	}
+
+	for _, field := range param.Panel.GetForm().FieldList {
+		if field.FormType == form.File &&
+			len(param.MultiForm.File[field.Field]) == 0 &&
+			param.MultiForm.Value[field.Field+"__delete_flag"][0] != "1" {
+			delete(param.MultiForm.Value, field.Field)
 		}
 	}
 
