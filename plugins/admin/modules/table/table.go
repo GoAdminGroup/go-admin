@@ -1,6 +1,7 @@
 package table
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -16,6 +17,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -86,9 +89,9 @@ type Table interface {
 	GetExportable() bool
 	IsShowDetail() bool
 	GetPrimaryKey() PrimaryKey
-	GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
-	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
-	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
+	GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
+	GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
+	GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error
 	DeleteDataFromDatabase(id string) error
@@ -116,7 +119,11 @@ type DefaultTable struct {
 	deletable        bool
 	exportable       bool
 	primaryKey       PrimaryKey
+	sourceURL        string
+	getDataFun       GetData
 }
+
+type GetData func(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
 
 type PanelInfo struct {
 	Thead       Thead
@@ -180,6 +187,8 @@ type Config struct {
 	Deletable  bool
 	Exportable bool
 	PrimaryKey PrimaryKey
+	SourceURL  string
+	GetDataFun GetData
 }
 
 func DefaultConfig() Config {
@@ -204,6 +213,16 @@ func (config Config) SetPrimaryKeyType(typ string) Config {
 
 func (config Config) SetCanAdd(canAdd bool) Config {
 	config.CanAdd = canAdd
+	return config
+}
+
+func (config Config) SetSourceURL(url string) Config {
+	config.SourceURL = url
+	return config
+}
+
+func (config Config) SetGetDataFun(fun GetData) Config {
+	config.GetDataFun = fun
 	return config
 }
 
@@ -269,6 +288,8 @@ func NewDefaultTable(cfg Config) Table {
 		deletable:        cfg.Deletable,
 		exportable:       cfg.Exportable,
 		primaryKey:       cfg.PrimaryKey,
+		sourceURL:        cfg.SourceURL,
+		getDataFun:       cfg.GetDataFun,
 	}
 }
 
@@ -326,16 +347,53 @@ func (tb DefaultTable) GetExportable() bool {
 	return tb.exportable && !tb.info.IsHideExportButton
 }
 
-// GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+// GetData query the data set.
+func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+
+	if tb.getDataFun != nil {
+		return tb.getDataFun(path, params, isAll)
+	}
+
+	if tb.sourceURL != "" {
+		return tb.getDataFromURL(path, params, isAll)
+	}
+
 	if isAll {
 		return tb.getAllDataFromDatabase(path, params)
 	}
 	return tb.getDataFromDatabase(path, params, []string{})
 }
 
-// GetDataFromDatabaseWithIds query the data set.
-func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+	res, err := http.Get(tb.sourceURL + "?page=" + params.Page + "&pageSize=" + params.PageSize)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	var data PanelInfo
+
+	err = json.Unmarshal(body, &data)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	return data, nil
+}
+
+// GetDataWithIds query the data set.
+func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
 	return tb.getDataFromDatabase(path, params, ids)
 }
 
@@ -755,8 +813,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	}, nil
 }
 
-// GetDataFromDatabaseWithId query the single row of data.
-func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
+// GetDataWithId query the single row of data.
+func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
 
 	fields := make([]string, 0)
 
