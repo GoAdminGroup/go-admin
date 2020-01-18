@@ -72,7 +72,7 @@ func (b Base) Alert() types.AlertAttribute {
 func (b Base) Label() types.LabelAttribute {
 	return &LabelAttribute{
 		Name:      "label",
-		Color:     "success",
+		Type:      "success",
 		Content:   "",
 		Attribute: b.Attribute,
 	}

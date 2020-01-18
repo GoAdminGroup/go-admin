@@ -29,7 +29,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 	table.RefreshTableList()
 	panel := table.Get(prefix)
 
-	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataFromDatabaseWithId(id)
+	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataWithId(id)
 
 	if err != nil && alert == "" {
 		alert = aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).

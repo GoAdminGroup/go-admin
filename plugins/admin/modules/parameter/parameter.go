@@ -114,6 +114,23 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 	}
 }
 
+func (param Parameters) Join() string {
+
+	fields := ""
+
+	for key, value := range param.Fields {
+		fields += "&" + key + "=" + value
+	}
+
+	join := ""
+
+	join += "__page=" + param.Page + "&__pageSize=" + param.PageSize +
+		"&__sort=" + param.SortField + "&__sort_type=" + param.SortType +
+		"&__columns=" + strings.Join(param.Columns, ",") + fields
+
+	return join
+}
+
 func (param Parameters) SetPage(page string) Parameters {
 	param.Page = page
 	return param

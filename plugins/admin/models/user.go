@@ -33,13 +33,13 @@ type UserModel struct {
 
 // User return a default user model.
 func User() UserModel {
-	return UserModel{Base: Base{TableName: "goadmin_users"}}
+	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}}
 }
 
 // UserWithId return a default user model of given id.
 func UserWithId(id string) UserModel {
 	idInt, _ := strconv.Atoi(id)
-	return UserModel{Base: Base{TableName: "goadmin_users"}, Id: int64(idInt)}
+	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}, Id: int64(idInt)}
 }
 
 func (t UserModel) SetConn(con db.Connection) UserModel {

@@ -1,6 +1,7 @@
 package table
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -16,6 +17,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -80,18 +83,22 @@ type Table interface {
 	GetInfo() *types.InfoPanel
 	GetDetail() *types.InfoPanel
 	GetForm() *types.FormPanel
+
 	GetCanAdd() bool
 	GetEditable() bool
 	GetDeletable() bool
 	GetExportable() bool
 	IsShowDetail() bool
+
 	GetPrimaryKey() PrimaryKey
-	GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
-	GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
-	GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
+
+	GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
+	GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
+	GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error
 	DeleteDataFromDatabase(id string) error
+
 	Copy() Table
 }
 
@@ -116,7 +123,11 @@ type DefaultTable struct {
 	deletable        bool
 	exportable       bool
 	primaryKey       PrimaryKey
+	sourceURL        string
+	getDataFun       GetDataFun
 }
+
+type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) (InfoList, int)
 
 type PanelInfo struct {
 	Thead       Thead
@@ -180,6 +191,8 @@ type Config struct {
 	Deletable  bool
 	Exportable bool
 	PrimaryKey PrimaryKey
+	SourceURL  string
+	GetDataFun GetDataFun
 }
 
 func DefaultConfig() Config {
@@ -204,6 +217,16 @@ func (config Config) SetPrimaryKeyType(typ string) Config {
 
 func (config Config) SetCanAdd(canAdd bool) Config {
 	config.CanAdd = canAdd
+	return config
+}
+
+func (config Config) SetSourceURL(url string) Config {
+	config.SourceURL = url
+	return config
+}
+
+func (config Config) SetGetDataFun(fun GetDataFun) Config {
+	config.GetDataFun = fun
 	return config
 }
 
@@ -269,6 +292,8 @@ func NewDefaultTable(cfg Config) Table {
 		deletable:        cfg.Deletable,
 		exportable:       cfg.Exportable,
 		primaryKey:       cfg.PrimaryKey,
+		sourceURL:        cfg.SourceURL,
+		getDataFun:       cfg.GetDataFun,
 	}
 }
 
@@ -326,16 +351,172 @@ func (tb DefaultTable) GetExportable() bool {
 	return tb.exportable && !tb.info.IsHideExportButton
 }
 
-// GetDataFromDatabase query the data set.
-func (tb DefaultTable) GetDataFromDatabase(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+// GetData query the data set.
+func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+
+	if tb.getDataFun != nil {
+
+		beginTime := time.Now()
+
+		thead, filterForm := tb.getTheadAndFilterForm(params)
+
+		list, size := tb.getDataFun(path, params, isAll, []string{})
+
+		endTime := time.Now()
+
+		return PanelInfo{
+			Thead:    thead,
+			InfoList: list,
+			Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
+				SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+					fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
+			Title:       tb.info.Title,
+			FormData:    filterForm,
+			Description: tb.info.Description,
+		}, nil
+	}
+
+	if tb.sourceURL != "" {
+		return tb.getDataFromURL(path, params, isAll, []string{})
+	}
+
 	if isAll {
 		return tb.getAllDataFromDatabase(path, params)
 	}
 	return tb.getDataFromDatabase(path, params, []string{})
 }
 
-// GetDataFromDatabaseWithIds query the data set.
-func (tb DefaultTable) GetDataFromDatabaseWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+type GetDataFromURLRes struct {
+	Data InfoList
+	Size int
+}
+
+func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, isAll bool, ids []string) (PanelInfo, error) {
+
+	beginTime := time.Now()
+
+	u := ""
+	if strings.Contains(tb.sourceURL, "?") {
+		u = tb.sourceURL + "&" + params.Join()
+	} else {
+		u = tb.sourceURL + "?" + params.Join()
+	}
+	res, err := http.Get(u)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	var data GetDataFromURLRes
+
+	err = json.Unmarshal(body, &data)
+
+	if err != nil {
+		return PanelInfo{}, err
+	}
+
+	thead, filterForm := tb.getTheadAndFilterForm(params)
+
+	endTime := time.Now()
+
+	return PanelInfo{
+		Thead:    thead,
+		InfoList: data.Data,
+		Paginator: paginator.Get(path, params, data.Size, tb.info.GetPageSizeList()).
+			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
+		Title:       tb.info.Title,
+		FormData:    filterForm,
+		Description: tb.info.Description,
+	}, nil
+}
+
+func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters) (Thead, []types.FormField) {
+
+	var (
+		sortable   string
+		editable   string
+		hide       string
+		headField  string
+		filterForm = make([]types.FormField, 0)
+		thead      = make([]map[string]string, 0)
+	)
+	for _, field := range tb.info.FieldList {
+
+		headField = field.Field
+
+		if field.Filterable {
+
+			var value, value2 string
+
+			if field.FilterType.IsRange() {
+				value = params.GetFieldValue(headField + "_start__goadmin")
+				value2 = params.GetFieldValue(headField + "_end__goadmin")
+			} else {
+				if field.FilterOperator == types.FilterOperatorFree {
+					value2 = params.GetFieldOperator(headField).String()
+				}
+				value = params.GetFieldValue(headField)
+			}
+
+			filterForm = append(filterForm, types.FormField{
+				Field:     headField,
+				Head:      modules.AorB(field.FilterHead == "", field.Head, field.FilterHead),
+				TypeName:  field.TypeName,
+				HelpMsg:   field.FilterHelpMsg,
+				FormType:  field.FilterType,
+				Editable:  true,
+				Value:     template.HTML(value),
+				Value2:    value2,
+				Options:   field.FilterOptions.SetSelected(params.GetFieldValue(field.Field), field.FilterType.SelectedLabel()),
+				OptionExt: field.FilterOptionExt,
+				Label:     field.FilterOperator.Label(),
+			})
+
+			if field.FilterOperator.AddOrNot() {
+				filterForm = append(filterForm, types.FormField{
+					Field:    headField + "__operator__",
+					Head:     field.Head,
+					TypeName: field.TypeName,
+					Value:    template.HTML(field.FilterOperator.Value()),
+					FormType: field.FilterType,
+					Hide:     true,
+				})
+			}
+		}
+
+		if field.Hide {
+			continue
+		}
+		sortable = modules.AorB(field.Sortable, "1", "0")
+		editable = modules.AorB(field.EditAble, "true", "false")
+		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
+		thead = append(thead, map[string]string{
+			"head":       field.Head,
+			"sortable":   sortable,
+			"field":      headField,
+			"hide":       hide,
+			"editable":   editable,
+			"edittype":   field.EditType.String(),
+			"editoption": field.GetEditOptions(),
+			"width":      strconv.Itoa(field.Width),
+		})
+	}
+	return thead, filterForm
+}
+
+// GetDataWithIds query the data set.
+func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
 	return tb.getDataFromDatabase(path, params, ids)
 }
 
@@ -755,8 +936,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	}, nil
 }
 
-// GetDataFromDatabaseWithId query the single row of data.
-func (tb DefaultTable) GetDataFromDatabaseWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
+// GetDataWithId query the single row of data.
+func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
 
 	fields := make([]string, 0)
 

@@ -147,7 +147,7 @@ func EditForm(srv service.List) context.Handler {
 		}
 		token := ctx.FormValue("_t")
 
-		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
+		if !auth.GetTokenService(srv.Get(auth.TokenServiceKey)).CheckToken(token) {
 			alert(ctx, panel, "edit fail, wrong token", conn)
 			ctx.Abort()
 			return

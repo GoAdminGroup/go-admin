@@ -64,32 +64,37 @@ func DelCookie(ctx *context.Context, conn db.Connection) bool {
 	return true
 }
 
-type Service struct {
+type TokenService struct {
 	tokens CSRFToken
 	lock   sync.Mutex
 }
 
-func (s *Service) Name() string {
-	return "auth"
+func (s *TokenService) Name() string {
+	return "token_csrf_helper"
 }
 
 func init() {
-	service.Register("auth", func() (service.Service, error) {
-		return &Service{
+	service.Register("token_csrf_helper", func() (service.Service, error) {
+		return &TokenService{
 			tokens: make(CSRFToken, 0),
 		}, nil
 	})
 }
 
-func GetService(s interface{}) *Service {
-	if srv, ok := s.(*Service); ok {
+const (
+	TokenServiceKey = "token_csrf_helper"
+	ServiceKey      = "auth"
+)
+
+func GetTokenService(s interface{}) *TokenService {
+	if srv, ok := s.(*TokenService); ok {
 		return srv
 	}
 	panic("wrong service")
 }
 
 // AddToken add the token to the CSRFToken.
-func (s *Service) AddToken() string {
+func (s *TokenService) AddToken() string {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	tokenStr := modules.Uuid()
@@ -99,7 +104,7 @@ func (s *Service) AddToken() string {
 
 // CheckToken check the given token with tokens in the CSRFToken, if exist
 // return true.
-func (s *Service) CheckToken(toCheckToken string) bool {
+func (s *TokenService) CheckToken(toCheckToken string) bool {
 	for i := 0; i < len(s.tokens); i++ {
 		if (s.tokens)[i] == toCheckToken {
 			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
@@ -111,3 +116,26 @@ func (s *Service) CheckToken(toCheckToken string) bool {
 
 // CSRFToken is type of a csrf token list.
 type CSRFToken []string
+
+type Processor func(ctx *context.Context) (model models.UserModel, exist bool)
+
+type Service struct {
+	P Processor
+}
+
+func (s *Service) Name() string {
+	return "auth"
+}
+
+func GetService(s interface{}) *Service {
+	if srv, ok := s.(*Service); ok {
+		return srv
+	}
+	panic("wrong service")
+}
+
+func NewService(processor Processor) *Service {
+	return &Service{
+		P: processor,
+	}
+}
