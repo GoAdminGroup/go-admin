@@ -5,13 +5,15 @@
 package logger
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/mgutz/ansi"
-	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"strconv"
+
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/gogf/gf/os/glog"
+	"github.com/mgutz/ansi"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -24,9 +26,11 @@ var (
 	accessLogOff = false
 	infoLogOff   = false
 	errorLogOff  = false
+	glogDebug    = false
 )
 
 func init() {
+	glog.SetPath("./glog")
 	for _, l := range manager {
 		l.Out = os.Stdout
 	}
@@ -63,6 +67,7 @@ func SetLogger(kind, path string, debug bool) {
 	} else {
 		manager[kind].Out = openFile(path)
 	}
+	glogDebug = debug
 }
 
 func openFile(path string) *os.File {
@@ -83,6 +88,7 @@ func Error(err ...interface{}) {
 	if !errorLogOff {
 		manager["error"].Errorln(err...)
 	}
+	glog.Error(err)
 }
 
 // Info print the info message.
@@ -99,10 +105,18 @@ func Warn(info ...interface{}) {
 
 // Access print the access message.
 func Access(ctx *context.Context) {
-	if !accessLogOff {
-		manager["access"].Println("["+constant.Title+"]",
+	if glogDebug {
+		glog.Println("["+constant.Title+"]",
 			ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 			ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+			ctx.Path())
+	}
+	if !accessLogOff {
+		manager["access"].WithField("status", ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue")).
+			WithField("sdfdd", "mmm").Infoln()
+		manager["access"].Println("["+constant.Title+"]",
+			strconv.Itoa(ctx.Response.StatusCode),
+			ctx.Method(),
 			ctx.Path())
 	}
 }
