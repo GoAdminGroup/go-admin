@@ -37,7 +37,7 @@ func MenuEdit(srv service.List) context.Handler {
 			alert          template.HTML
 		)
 
-		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
+		if !auth.GetTokenService(srv.Get(auth.TokenServiceKey)).CheckToken(token) {
 			alert = getAlert("edit fail, wrong token")
 		}
 

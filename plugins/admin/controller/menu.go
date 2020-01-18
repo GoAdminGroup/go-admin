@@ -72,7 +72,7 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu").GetDataFromDatabaseWithId(ctx.Query("id"))
+	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu").GetDataWithId(ctx.Query("id"))
 
 	user := auth.Auth(ctx)
 

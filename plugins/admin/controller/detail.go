@@ -47,7 +47,7 @@ func ShowDetail(ctx *context.Context) {
 		}
 	}
 
-	formData, _, _, _, _, err := newPanel.GetDataFromDatabaseWithId(id)
+	formData, _, _, _, _, err := newPanel.GetDataWithId(id)
 
 	var alert template2.HTML
 

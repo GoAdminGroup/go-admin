@@ -36,7 +36,7 @@ func MenuNew(srv service.List) context.Handler {
 			token = ctx.FormValue("_t")
 		)
 
-		if !auth.GetService(srv.Get("auth")).CheckToken(token) {
+		if !auth.GetTokenService(srv.Get(auth.TokenServiceKey)).CheckToken(token) {
 			alert = getAlert("edit fail, wrong token")
 		}
 
