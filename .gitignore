@@ -13,7 +13,3 @@ logs
 adm/build
 template/login/assets/login
 uploads
-*.sum
-*.mod
-go.mod
-go.mod
