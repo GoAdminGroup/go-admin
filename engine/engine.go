@@ -6,6 +6,7 @@ package engine
 
 import (
 	"github.com/GoAdminGroup/go-admin/adapter"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -52,6 +53,11 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 	}
 
 	eng.PluginList = append(eng.PluginList, plugs...)
+	return eng
+}
+
+func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
+	eng.Services.Add("auth", auth.NewService(processor))
 	return eng
 }
 

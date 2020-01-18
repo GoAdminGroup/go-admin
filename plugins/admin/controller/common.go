@@ -36,8 +36,8 @@ func SetServices(l service.List) {
 	conn = db.GetConnection(services)
 }
 
-func authSrv() *auth.Service {
-	return auth.GetService(services.Get("auth"))
+func authSrv() *auth.TokenService {
+	return auth.GetTokenService(services.Get(auth.TokenServiceKey))
 }
 
 func aAlert() types.AlertAttribute {

@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/captcha"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -18,17 +19,27 @@ import (
 // Auth check the input password and username for authentication.
 func Auth(ctx *context.Context) {
 
-	password := ctx.FormValue("password")
-	username := ctx.FormValue("username")
+	s, exist := services.GetOrNot(auth.ServiceKey)
 
-	if password == "" || username == "" {
-		response.BadRequest(ctx, "wrong password or username")
-		return
+	var (
+		user models.UserModel
+		ok   bool
+	)
+
+	if !exist {
+		password := ctx.FormValue("password")
+		username := ctx.FormValue("username")
+
+		if password == "" || username == "" {
+			response.BadRequest(ctx, "wrong password or username")
+			return
+		}
+		user, ok = auth.Check(password, username, conn)
+	} else {
+		user, ok = auth.GetService(s).P(ctx)
 	}
 
-	conn := db.GetConnection(services)
-
-	if user, ok := auth.Check(password, username, conn); ok {
+	if ok {
 
 		cd, ok := captcha.Get(captchaConfig["driver"])
 

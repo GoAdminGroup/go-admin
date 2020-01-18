@@ -43,6 +43,11 @@ func (g List) Get(k string) Service {
 	panic("service not found")
 }
 
+func (g List) GetOrNot(k string) (Service, bool) {
+	v, ok := g[k]
+	return v, ok
+}
+
 func (g List) Add(k string, service Service) {
 	if _, ok := g[k]; ok {
 		panic("service exist")

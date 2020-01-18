@@ -176,6 +176,9 @@ type Config struct {
 	// Login page logo
 	LoginLogo template.HTML `json:"login_logo",yaml:"login_logo",ini:"login_logo"`
 
+	// Auth user table
+	AuthUserTable string `json:"auth_user_table",yaml:"auth_user_table",ini:"auth_user_table"`
+
 	prefix string
 }
 
@@ -351,6 +354,7 @@ func Set(cfg Config) Config {
 	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
 	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")
 	cfg.IndexUrl = setDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.AuthUserTable = setDefault(cfg.AuthUserTable, "", "goadmin_users")
 	cfg.ColorScheme = setDefault(cfg.ColorScheme, "", "skin-black")
 	cfg.FileUploadEngine.Name = setDefault(cfg.FileUploadEngine.Name, "", "local")
 	cfg.Env = setDefault(cfg.Env, "", EnvProd)
