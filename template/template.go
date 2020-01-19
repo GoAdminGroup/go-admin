@@ -41,6 +41,7 @@ type Template interface {
 	Tree() types.TreeAttribute
 	Tabs() types.TabsAttribute
 	Alert() types.AlertAttribute
+	Link() types.LinkAttribute
 
 	Paginator() types.PaginatorAttribute
 	Popup() types.PopupAttribute

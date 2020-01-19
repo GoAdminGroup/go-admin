@@ -162,6 +162,14 @@ type AlertAttribute interface {
 	GetContent() template.HTML
 }
 
+type LinkAttribute interface {
+	OpenInNewTab() LinkAttribute
+	SetURL(value string) LinkAttribute
+	SetTabTitle(value template.HTML) LinkAttribute
+	SetContent(value template.HTML) LinkAttribute
+	GetContent() template.HTML
+}
+
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
