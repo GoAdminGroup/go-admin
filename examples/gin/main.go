@@ -102,6 +102,25 @@ func main() {
 	})
 
 	r.POST("/admin/popup", func(ctx *gin.Context) {
+
+		user, ok := eng.User(ctx)
+
+		if !ok {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 401,
+				"msg":  "请先登录",
+			})
+			return
+		}
+
+		if !user.CheckPermission("*") {
+			ctx.JSON(http.StatusOK, gin.H{
+				"code": 401,
+				"msg":  "没有权限",
+			})
+			return
+		}
+
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 0,
 			"data": "<h2>hello world</h2>",

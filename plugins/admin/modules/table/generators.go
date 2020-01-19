@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -24,21 +25,23 @@ func GetManagerTable() (ManagerTable Table) {
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
+	labelModels, _ := table("goadmin_role_users").
+		Select("goadmin_roles.name", "user_id").
+		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+		All()
+	labelCollection := collection.Collection(labelModels)
+
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
 	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
 	info.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			labelModels, _ := table("goadmin_role_users").
-				Select("goadmin_roles.name").
-				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
-				Where("user_id", "=", model.ID).
-				All()
+			labelCol := labelCollection.Where("user_id", model.ID)
 
 			labels := template.HTML("")
 			labelTpl := label().SetType("success")
 
-			for key, label := range labelModels {
+			for key, label := range labelCol {
 				if key == len(labelModels)-1 {
 					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
 				} else {
@@ -286,21 +289,23 @@ func GetNormalManagerTable() (ManagerTable Table) {
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
+	labelModels, _ := table("goadmin_role_users").
+		Select("goadmin_roles.name", "user_id").
+		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
+		All()
+	labelCollection := collection.Collection(labelModels)
+
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
 	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
 	info.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			labelModels, _ := table("goadmin_role_users").
-				Select("goadmin_roles.name").
-				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
-				Where("user_id", "=", model.ID).
-				All()
+			labelCol := labelCollection.Where("user_id", model.ID)
 
 			labels := template.HTML("")
 			labelTpl := label().SetType("success")
 
-			for key, label := range labelModels {
+			for key, label := range labelCol {
 				if key == len(labelModels)-1 {
 					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
 				} else {
