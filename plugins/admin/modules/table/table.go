@@ -1039,10 +1039,10 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
 	// TODO: some errors should be ignored.
 	if err != nil && !strings.Contains(err.Error(), "no affect") {
-		if tb.connectionDriver != db.DriverPostgresql {
+		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
 			return err
 		}
-		if !strings.Contains(err.Error(), "LastInsertId is not supported by this driver") {
+		if !strings.Contains(err.Error(), "LastInsertId is not supported") {
 			return err
 		}
 	}
@@ -1086,20 +1086,13 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
-	shouldBeIgnored := false
 	if err != nil {
-		if tb.connectionDriver != db.DriverPostgresql {
-			shouldBeIgnored = true
-		}
-		if tb.connectionDriver != db.DriverMssql {
-			shouldBeIgnored = true
+		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
+			return err
 		}
 		if !strings.Contains(err.Error(), "LastInsertId is not supported") {
-			shouldBeIgnored = true
+			return err
 		}
-	}
-	if !shouldBeIgnored {
-		return err
 	}
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
