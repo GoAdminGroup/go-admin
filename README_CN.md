@@ -23,10 +23,7 @@
 
 GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个数据管理平台。
 
-demo: [https://demo.go-admin.cn](https://demo.go-admin.cn)
-账号：admin  密码：admin
-
-demo代码： https://github.com/GoAdminGroup/demo.go-admin.cn
+线上demo: [https://demo.go-admin.cn](https://demo.go-admin.cn)
 
 ![](http://file.go-admin.cn/introduction/interface_3.png)
 
@@ -91,7 +88,7 @@ func main() {
 			Port:         "3306",
 			User:         "root",
 			Pwd:          "root",
-			Name:         "godmin",
+			Name:         "goadmin",
 			MaxIdleCon: 50,
 			MaxOpenCon: 150,
 			Driver:       "mysql",
@@ -153,7 +150,7 @@ GO111MODULE=on go run main.go
 
 访问：[http://localhost:9033/admin](http://localhost:9033/admin)
 
-更多细节详见 [文档说明](http://www.go-admin.cn/docs/#/README)
+更多细节详见 [文档说明](https://book.go-admin.cn/zh)
 
 [这里一个超级简单上手的例子](https://github.com/GoAdminGroup/example)
 

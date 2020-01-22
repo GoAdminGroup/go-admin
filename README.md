@@ -10,7 +10,7 @@
 
 <p align="center">
     <a href="https://book.go-admin.cn/en">Documentation</a> | 
-    <a href="./README_CN.md">中文文档</a> |
+    <a href="./README_CN.md">中文介绍</a> |
     <a href="https://demo.go-admin.com">DEMO</a>
 </p>
 
@@ -32,10 +32,7 @@
 
 GoAdmin is a toolkit to help you build a data visualization admin panel for your golang app.
 
-demo: [https://demo.go-admin.com](https://demo.go-admin.com)
-account: admin  password: admin
-
-demo source code: https://github.com/GoAdminGroup/demo.go-admin.cn
+Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
 ![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
@@ -100,7 +97,7 @@ func main() {
 				Port:         "3306",
 				User:         "root",
 				Pwd:          "root",
-				Name:         "godmin",
+				Name:         "goadmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
 				Driver:       "mysql",
@@ -164,7 +161,7 @@ visit: [http://localhost:9033/admin](http://localhost:9033/admin)
 
 [A super simple example here](https://github.com/GoAdminGroup/example)
 
-See the [docs](https://www.go-admin.com/docs) for more details.
+See the [docs](https://book.go-admin.cn) for more details.
 
 ## Backers
 
