@@ -1,6 +1,7 @@
 package action
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"html/template"
 )
 
@@ -16,6 +17,10 @@ func Jump(url string, ext ...template.HTML) *JumpAction {
 		return &JumpAction{Url: url, Ext: ext[0]}
 	}
 	return &JumpAction{Url: url}
+}
+
+func (jump *JumpAction) GetCallbacks() context.Node {
+	return context.Node{}
 }
 
 func (jump *JumpAction) SetBtnId(btnId string) {

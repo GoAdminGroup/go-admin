@@ -3,6 +3,8 @@ package datamodel
 import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
@@ -15,6 +17,15 @@ func GetPostsTable() (postsTable table.Table) {
 	info := postsTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Title", "title", db.Varchar)
+	info.AddField("AuthorID", "author_id", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
+		return template.Default().
+			Link().
+			SetURL("/admin/info/authors/detail?__goadmin_detail_pk=100").
+			SetContent("100").
+			OpenInNewTab().
+			SetTabTitle("Author Detail").
+			GetContent()
+	})
 	info.AddField("Description", "description", db.Varchar)
 	info.AddField("Content", "content", db.Varchar).FieldEditAble(editType.Textarea)
 	info.AddField("Date", "date", db.Varchar)

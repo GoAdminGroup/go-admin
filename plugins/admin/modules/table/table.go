@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -27,6 +28,18 @@ import (
 type Generator func() Table
 
 type GeneratorList map[string]Generator
+
+func (g GeneratorList) InjectRoutes(app *context.App) {
+	for _, gen := range g {
+		table := gen()
+		for _, cb := range table.GetInfo().Callbacks {
+			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+		}
+		for _, cb := range table.GetForm().Callbacks {
+			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+		}
+	}
+}
 
 func (g GeneratorList) Add(key string, gen Generator) {
 	g[key] = gen

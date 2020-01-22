@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -30,6 +31,15 @@ type PostFieldModel struct {
 	ID    string
 	Value FieldModelValue
 	Row   map[string]interface{}
+}
+
+type Callbacks []context.Node
+
+func (c Callbacks) AddCallback(node context.Node) Callbacks {
+	if node.Path != "" && node.Method != "" && len(node.Handlers) > 0 {
+		return append(c, node)
+	}
+	return c
 }
 
 type FieldModelValue []string
@@ -392,6 +402,8 @@ type InfoPanel struct {
 
 	Wheres []Where
 
+	Callbacks Callbacks
+
 	Buttons Buttons
 
 	DeleteHook  DeleteFn
@@ -417,6 +429,7 @@ type Action interface {
 	BtnAttribute() template.HTML
 	ExtContent() template.HTML
 	SetBtnId(btnId string)
+	GetCallbacks() context.Node
 }
 
 type DefaultAction struct {
@@ -433,6 +446,7 @@ func (def *DefaultAction) SetBtnId(btnId string)       {}
 func (def *DefaultAction) Js() template.JS             { return def.JS }
 func (def *DefaultAction) BtnAttribute() template.HTML { return def.Attr }
 func (def *DefaultAction) ExtContent() template.HTML   { return def.Ext }
+func (def *DefaultAction) GetCallbacks() context.Node  { return context.Node{} }
 
 type Button interface {
 	Content() (template.HTML, template.JS)
@@ -509,6 +523,7 @@ func NewInfoPanel() *InfoPanel {
 		DefaultPageSize:   DefaultPageSize,
 		processChains:     make(DisplayProcessFnChains, 0),
 		Buttons:           make(Buttons, 0),
+		Callbacks:         make(Callbacks, 0),
 		Wheres:            make([]Where, 0),
 	}
 }
@@ -530,6 +545,7 @@ func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, c
 	if len(color) >= 2 {
 		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Color: color[0], TextColor: color[1], Id: id, Action: action, Icon: icon})
 	}
+	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
 
@@ -542,6 +558,7 @@ func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...s
 	}
 	action.SetBtnId(id)
 	i.ActionButtons = append(i.ActionButtons, ActionButton{Title: title, Id: id, Action: action})
+	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
 
@@ -554,6 +571,7 @@ func (i *InfoPanel) AddActionButtonFront(title template.HTML, action Action, ids
 	}
 	action.SetBtnId(id)
 	i.ActionButtons = append([]Button{ActionButton{Title: title, Id: id, Action: action}}, i.ActionButtons...)
+	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
 

@@ -103,6 +103,8 @@ type FormPanel struct {
 	Validator FormPostFn
 	PostHook  FormPostFn
 
+	Callbacks Callbacks
+
 	UpdateFn FormPostFn
 	InsertFn FormPostFn
 
@@ -113,7 +115,10 @@ type FormPanel struct {
 }
 
 func NewFormPanel() *FormPanel {
-	return &FormPanel{curFieldListIndex: -1}
+	return &FormPanel{
+		curFieldListIndex: -1,
+		Callbacks:         make(Callbacks, 0),
+	}
 }
 
 func (f *FormPanel) AddLimitFilter(limit int) *FormPanel {

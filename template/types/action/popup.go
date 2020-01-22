@@ -1,20 +1,41 @@
 package action
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"html/template"
 )
 
 type PopUpAction struct {
-	BtnId string
-	Url   string
-	Id    string
-	Title string
+	BtnId    string
+	Url      string
+	Method   string
+	Id       string
+	Title    string
+	Handlers []context.Handler
 }
 
-func PopUp(url, title string) *PopUpAction {
-	return &PopUpAction{Url: url, Title: title, Id: "info-popup-model-" + utils.Uuid(10)}
+func PopUp(url, title string, handlers ...context.Handler) *PopUpAction {
+	return &PopUpAction{
+		Url:      url,
+		Title:    title,
+		Method:   "post",
+		Id:       "info-popup-model-" + utils.Uuid(10),
+		Handlers: handlers,
+	}
+}
+
+func (pop *PopUpAction) SetUrl(url string) {
+	pop.Url = url
+}
+
+func (pop *PopUpAction) SetMethod(method string) {
+	pop.Method = method
+}
+
+func (pop *PopUpAction) GetCallbacks() context.Node {
+	return context.Node{Path: pop.Url, Method: pop.Method, Handlers: pop.Handlers}
 }
 
 func (pop *PopUpAction) SetBtnId(btnId string) {
@@ -24,7 +45,7 @@ func (pop *PopUpAction) SetBtnId(btnId string) {
 func (pop *PopUpAction) Js() template.JS {
 	return template.JS(`$('#` + pop.BtnId + `').on('click', function (event) {
 						$.ajax({
-                            method: 'post',
+                            method: '` + pop.Method + `',
                             url: "` + pop.Url + `",
                             data: {
 								"ids": {%ids}

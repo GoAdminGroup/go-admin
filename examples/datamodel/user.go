@@ -2,6 +2,7 @@ package datamodel
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -11,6 +12,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // GetUserTable return the model of table user.
@@ -61,7 +64,12 @@ func GetUserTable() (userTable table.Table) {
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddButton("google", icon.Google, action.Jump("https://google.com"))
-	info.AddButton("info", icon.Terminal, action.PopUp("/admin/popup", "Popup Example"))
+	info.AddButton("info", icon.Terminal, action.PopUp("/admin/popup", "Popup Example", func(ctx *context.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 0,
+			"data": "<h2>hello world</h2>",
+		})
+	}))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

@@ -39,6 +39,12 @@ type Path struct {
 	Method string
 }
 
+type Node struct {
+	Path     string
+	Method   string
+	Handlers []Handler
+}
+
 // SetUserValue set the value of user context.
 func (ctx *Context) SetUserValue(key string, value interface{}) {
 	ctx.UserValue[key] = value
