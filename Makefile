@@ -98,7 +98,6 @@ import-sqlite:
 	cp ./data/admin.db ./tests/common/admin.db
 
 import-mysql:
-#create go-admin-test database
 	mysql -uroot -proot -e "create database if not exists \`go-admin-test\`"
 	mysql -uroot -proot go-admin-test < ./data/admin.sql
 
