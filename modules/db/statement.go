@@ -228,6 +228,7 @@ func (sql *SQL) Sum(field string) (float64, error) {
 	var (
 		res map[string]interface{}
 		err error
+		key = "sum(" + sql.wrap(field) + ")"
 	)
 	if res, err = sql.Select("sum(" + field + ")").First(); err != nil {
 		return 0, err
@@ -237,9 +238,9 @@ func (sql *SQL) Sum(field string) (float64, error) {
 		return 0, nil
 	}
 
-	if r, ok := res["sum("+sql.wrap(field)+")"].(float64); ok {
+	if r, ok := res[key].(float64); ok {
 		return r, nil
-	} else if r, ok := res["sum("+sql.wrap(field)+")"].([]uint8); ok {
+	} else if r, ok := res[key].([]uint8); ok {
 		return strconv.ParseFloat(string(r), 64)
 	} else {
 		return 0, nil
@@ -251,6 +252,7 @@ func (sql *SQL) Max(field string) (interface{}, error) {
 	var (
 		res map[string]interface{}
 		err error
+		key = "max(" + sql.wrap(field) + ")"
 	)
 	if res, err = sql.Select("max(" + field + ")").First(); err != nil {
 		return 0, err
@@ -260,7 +262,7 @@ func (sql *SQL) Max(field string) (interface{}, error) {
 		return 0, nil
 	}
 
-	return res["max("+sql.wrap(field)+")"], nil
+	return res[key], nil
 }
 
 // Min find the minimal value of given field.
@@ -268,6 +270,7 @@ func (sql *SQL) Min(field string) (interface{}, error) {
 	var (
 		res map[string]interface{}
 		err error
+		key = "min(" + sql.wrap(field) + ")"
 	)
 	if res, err = sql.Select("min(" + field + ")").First(); err != nil {
 		return 0, err
@@ -277,7 +280,7 @@ func (sql *SQL) Min(field string) (interface{}, error) {
 		return 0, nil
 	}
 
-	return res["min("+sql.wrap(field)+")"], nil
+	return res[key], nil
 }
 
 // Avg find the average value of given field.
@@ -285,6 +288,7 @@ func (sql *SQL) Avg(field string) (interface{}, error) {
 	var (
 		res map[string]interface{}
 		err error
+		key = "avg(" + sql.wrap(field) + ")"
 	)
 	if res, err = sql.Select("avg(" + field + ")").First(); err != nil {
 		return 0, err
@@ -294,7 +298,7 @@ func (sql *SQL) Avg(field string) (interface{}, error) {
 		return 0, nil
 	}
 
-	return res["avg("+sql.wrap(field)+")"], nil
+	return res[key], nil
 }
 
 // WhereRaw set WhereRaws and arguments.
@@ -597,6 +601,8 @@ func RecycleSQL(sql *SQL) {
 	sql.Leftjoins = make([]dialect.Join, 0)
 	sql.Args = make([]interface{}, 0)
 	sql.Order = ""
+	sql.conn = ""
+	sql.diver = nil
 	sql.Offset = ""
 	sql.Limit = ""
 	sql.WhereRaws = ""
