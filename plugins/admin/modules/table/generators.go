@@ -43,7 +43,7 @@ func GetManagerTable() (ManagerTable Table) {
 			labelTpl := label().SetType("success")
 
 			for key, label := range labelCol {
-				if key == len(labelModels)-1 {
+				if key == len(labelCol)-1 {
 					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
 				} else {
 					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
