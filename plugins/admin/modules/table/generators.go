@@ -36,7 +36,8 @@ func GetManagerTable() (ManagerTable Table) {
 	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
 	info.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			labelCol := labelCollection.Where("user_id", model.ID)
+			uid, _ := strconv.Atoi(model.ID)
+			labelCol := labelCollection.Where("user_id", int64(uid))
 
 			labels := template.HTML("")
 			labelTpl := label().SetType("success")

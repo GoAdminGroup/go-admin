@@ -92,7 +92,7 @@ func (compo *BoxAttribute) WithSecondHeadBorder() types.BoxAttribute {
 func (compo *BoxAttribute) GetContent() template.HTML {
 
 	if compo.Style == "" {
-		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="overflow: scroll;%s"`, compo.Padding))
+		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="overflow-x: scroll;overflow-y: hidden;%s"`, compo.Padding))
 	} else {
 		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="%s"`, string(compo.Style)+compo.Padding))
 	}
