@@ -108,7 +108,17 @@ $('.delete-btn').on('click', function (event) {
 </script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
 	}
 
-	title := language.Get("Detail")
+	title := panel.GetDetail().Title
+
+	if title == "" {
+		title = panel.GetInfo().Title + language.Get("Detail")
+	}
+
+	desc := panel.GetDetail().Description
+
+	if desc == "" {
+		desc = panel.GetInfo().Description + language.Get("Detail")
+	}
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
@@ -118,7 +128,7 @@ $('.delete-btn').on('click', function (event) {
 			SetFooter(template.HTML(deleteJs)).
 			SetInfoUrl(infoUrl).
 			SetPrefix(config.PrefixFixSlash()), editUrl, deleteUrl),
-		Description: title,
+		Description: desc,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
