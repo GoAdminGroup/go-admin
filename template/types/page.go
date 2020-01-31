@@ -11,6 +11,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"html/template"
+	"strconv"
 )
 
 // Attribute is the component interface of template. Every component of
@@ -109,6 +110,18 @@ type Panel struct {
 func (p Panel) GetContent(prod bool) Panel {
 	if p.MiniSidebar {
 		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
+	}
+	if p.AutoRefresh {
+		refreshTime := 60
+		if len(p.RefreshInterval) > 0 {
+			refreshTime = p.RefreshInterval[0]
+		}
+
+		p.Content += `<script>
+window.setTimeout(function(){
+	$.pjax.reload('#pjax-container');
+}, ` + template.HTML(strconv.Itoa(refreshTime*1000)) + `);
+</script>`
 	}
 	if prod {
 		utils.CompressedContent(&p.Content)
