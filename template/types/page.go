@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"html/template"
 )
@@ -91,10 +92,28 @@ type SystemInfo struct {
 
 // Panel contains the main content of the template which used as pjax.
 type Panel struct {
-	Content     template.HTML
 	Title       string
 	Description string
+	Content     template.HTML
 	Url         string
+
+	// Whether to toggle the sidebar
+	MiniSidebar bool
+
+	// Auto refresh page switch.
+	AutoRefresh bool
+	// Refresh page intervals, the unit is second.
+	RefreshInterval []int
+}
+
+func (p Panel) GetContent(prod bool) Panel {
+	if p.MiniSidebar {
+		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
+	}
+	if prod {
+		utils.CompressedContent(&p.Content)
+	}
+	return p
 }
 
 type GetPanelFn func(ctx interface{}) (Panel, error)

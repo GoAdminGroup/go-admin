@@ -46,7 +46,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 	buf := new(bytes.Buffer)
 	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
 		*(menu.GetGlobalMenu(user, conn).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Path()))),
-		panel, globalConfig, template.GetComponentAssetListsHTML()))
+		panel.GetContent(globalConfig.IsProductionEnvironment()), globalConfig, template.GetComponentAssetListsHTML()))
 	if err != nil {
 		logger.Error("SetPageContent", err)
 	}

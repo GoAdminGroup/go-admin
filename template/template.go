@@ -18,7 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -269,11 +268,9 @@ func Execute(tmpl *template.Template,
 	config c.Config,
 	globalMenu *menu.Menu) *bytes.Buffer {
 
-	if !config.Debug {
-		utils.CompressedContent(&panel.Content)
-	}
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config, GetComponentAssetListsHTML()))
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu,
+		panel.GetContent(config.IsProductionEnvironment()), config, GetComponentAssetListsHTML()))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}

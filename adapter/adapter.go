@@ -139,10 +139,12 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 
 	tmpl, tmplName := template.Default().GetTemplate(newBase.PjaxHeader() == "true")
 
+	cfg := config.Get()
+
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(newBase.Path()))),
-		panel, config.Get(), template.GetComponentAssetListsHTML()))
+		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path()))),
+		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), err)
