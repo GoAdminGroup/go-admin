@@ -62,14 +62,15 @@ func ShowInfo(ctx *context.Context) {
 	infoUrl := config.Url("/info/" + prefix)
 	updateUrl := config.Url("/update/" + prefix)
 
-	buf := showTable(ctx, panel, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
+	buf := showTable(ctx, prefix, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func showTable(ctx *context.Context, panel table.Table, path string, params parameter.Parameters,
+func showTable(ctx *context.Context, prefix, path string, params parameter.Parameters,
 	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl string) *bytes.Buffer {
 
 	table.InitTableList()
+	panel := table.Get(prefix)
 
 	panelInfo, err := panel.GetData(path, params, false)
 

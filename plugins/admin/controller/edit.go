@@ -125,7 +125,7 @@ func EditForm(ctx *context.Context) {
 	updateUrl := modules.AorB(param.Panel.GetEditable(), param.GetUpdateUrl(), "")
 	detailUrl := param.GetDetailUrl()
 
-	buf := showTable(ctx, param.Panel, param.Path, param.Param, exportUrl, newUrl,
+	buf := showTable(ctx, param.Prefix, param.Path, param.Param, exportUrl, newUrl,
 		deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
 
 	ctx.HTML(http.StatusOK, buf.String())

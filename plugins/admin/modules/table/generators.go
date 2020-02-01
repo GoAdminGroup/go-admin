@@ -202,6 +202,8 @@ func GetManagerTable() (ManagerTable Table) {
 			return errors.New("password does not match")
 		}
 
+		fmt.Println("insert.....")
+
 		user := models.User().SetConn(conn()).New(values.Get("username"),
 			encodePassword([]byte(values.Get("password"))),
 			values.Get("name"),
