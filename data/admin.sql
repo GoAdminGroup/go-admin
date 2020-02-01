@@ -259,9 +259,9 @@ DROP TABLE IF EXISTS `goadmin_users`;
 
 CREATE TABLE `goadmin_users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,

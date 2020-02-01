@@ -174,9 +174,9 @@ VALUES
 
 CREATE TABLE[goadmin_users] (
  [id] int   identity(1,1) ,
- [username] varchar(190)   NOT NULL UNIQUE,
- [password] varchar(80)   NOT NULL DEFAULT '',
- [name] varchar(255)   NOT NULL,
+ [username] varchar(100)   NOT NULL UNIQUE,
+ [password] varchar(100)   NOT NULL DEFAULT '',
+ [name] varchar(100)   NOT NULL,
  [avatar] varchar(255)   DEFAULT NULL,
  [remember_token] varchar(100)   DEFAULT NULL,
  [created_at] datetime NULL DEFAULT GETDATE(),
