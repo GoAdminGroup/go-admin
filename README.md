@@ -34,6 +34,8 @@ GoAdmin is a toolkit to help you build a data visualization admin panel for your
 
 Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
+Quick follow up example: [https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
+
 ![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
 ## Features
@@ -57,9 +59,9 @@ Following three steps to run it.
 
 ### Step 1: import sql
 
-[mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
-[postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
-[sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
+- [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+- [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
+- [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
 
 ### Step 2: create main.go
 
@@ -149,7 +151,7 @@ func main() {
 </p>
 </details>
 
-More Examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
+More framework examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
 
 ### Step 3: run
 

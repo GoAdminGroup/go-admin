@@ -25,6 +25,8 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 线上demo: [https://demo.go-admin.cn](https://demo.go-admin.cn)
 
+上手例子: [https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
+
 ![](http://file.go-admin.cn/introduction/interface_3.png)
 
 ## 特征
@@ -48,9 +50,9 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 ### 第一步：导入 sql
 
-[mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
-[postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
-[sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
+- [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+- [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
+- [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
 
 ### 第二步：创建 main.go
 
@@ -140,7 +142,7 @@ func main() {
 </p>
 </details>
 
-其他框架的例子: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
+更多框架的例子: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
 
 ### 第三步：运行
 
