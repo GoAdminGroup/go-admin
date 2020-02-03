@@ -2,7 +2,6 @@ package parameter
 
 import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"net/url"
 	"strconv"
 	"strings"
@@ -15,6 +14,32 @@ type Parameters struct {
 	Columns   []string
 	SortType  string
 	Fields    map[string]string
+}
+
+func BaseParam() Parameters {
+	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string]string)}
+}
+
+func (param Parameters) WithPK(id ...string) Parameters {
+	param.Fields["pk"] = strings.Join(id, ",")
+	return param
+}
+
+func (param Parameters) PK() []string {
+	return strings.Split(param.Fields["pk"], ",")
+}
+
+func (param Parameters) IsAll() bool {
+	return param.Fields["is_all"] == "true"
+}
+
+func (param Parameters) WithIsAll(isAll bool) Parameters {
+	if isAll {
+		param.Fields["is_all"] = "true"
+	} else {
+		param.Fields["is_all"] = "false"
+	}
+	return param
 }
 
 var keys = []string{"__page", "__pageSize", "__sort", "__columns", "__prefix", "_pjax"}
@@ -65,11 +90,11 @@ func (param Parameters) GetFieldValue(field string) string {
 	return param.Fields[field]
 }
 
-func (param Parameters) GetFieldOperator(field string) types.FilterOperator {
+func (param Parameters) GetFieldOperator(field string) string {
 	if param.Fields[field+operatorSuffix] == "" {
-		return types.FilterOperatorEqual
+		return "eq"
 	}
-	return types.GetOperatorFromValue(param.Fields[field+operatorSuffix])
+	return param.Fields[field+operatorSuffix]
 }
 
 func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {

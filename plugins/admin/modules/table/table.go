@@ -140,7 +140,7 @@ type DefaultTable struct {
 	getDataFun       GetDataFun
 }
 
-type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) (InfoList, int)
+type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int)
 
 type PanelInfo struct {
 	Thead       Thead
@@ -367,81 +367,28 @@ func (tb DefaultTable) GetExportable() bool {
 // GetData query the data set.
 func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
 
+	var (
+		data      []map[string]interface{}
+		size      int
+		beginTime = time.Now()
+	)
+
 	if tb.getDataFun != nil {
-
-		beginTime := time.Now()
-
-		thead, filterForm := tb.getTheadAndFilterForm(params)
-
-		list, size := tb.getDataFun(path, params, isAll, []string{})
-
-		endTime := time.Now()
-
-		return PanelInfo{
-			Thead:    thead,
-			InfoList: list,
-			Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
-				SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
-					fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
-			Title:       tb.info.Title,
-			FormData:    filterForm,
-			Description: tb.info.Description,
-		}, nil
-	}
-
-	if tb.sourceURL != "" {
-		return tb.getDataFromURL(path, params, isAll, []string{})
-	}
-
-	if isAll {
+		data, size = tb.getDataFun(path, params, isAll, []string{})
+	} else if tb.sourceURL != "" {
+		data, size = tb.getDataFromURL(path, params, isAll, []string{})
+	} else if tb.info.GetDataFn != nil {
+		data, size = tb.info.GetDataFn(params.WithIsAll(isAll))
+	} else if isAll {
 		return tb.getAllDataFromDatabase(path, params)
-	}
-	return tb.getDataFromDatabase(path, params, []string{})
-}
-
-type GetDataFromURLRes struct {
-	Data []map[string]interface{}
-	Size int
-}
-
-func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, isAll bool, ids []string) (PanelInfo, error) {
-
-	beginTime := time.Now()
-
-	u := ""
-	if strings.Contains(tb.sourceURL, "?") {
-		u = tb.sourceURL + "&" + params.Join()
 	} else {
-		u = tb.sourceURL + "?" + params.Join()
-	}
-	res, err := http.Get(u)
-
-	if err != nil {
-		return PanelInfo{}, err
-	}
-
-	defer func() {
-		_ = res.Body.Close()
-	}()
-
-	body, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		return PanelInfo{}, err
-	}
-
-	var data GetDataFromURLRes
-
-	err = json.Unmarshal(body, &data)
-
-	if err != nil {
-		return PanelInfo{}, err
+		return tb.getDataFromDatabase(path, params, []string{})
 	}
 
 	infoList := make([]map[string]template.HTML, 0)
 
-	for i := 0; i < len(data.Data); i++ {
-		infoList = append(infoList, tb.getTempModelData(data.Data[i], params, []string{}))
+	for i := 0; i < len(data); i++ {
+		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
 	}
 
 	thead, filterForm := tb.getTheadAndFilterForm(params)
@@ -451,13 +398,53 @@ func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, 
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
-		Paginator: paginator.Get(path, params, data.Size, tb.info.GetPageSizeList()).
+		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
 		Title:       tb.info.Title,
 		FormData:    filterForm,
 		Description: tb.info.Description,
 	}, nil
+}
+
+type GetDataFromURLRes struct {
+	Data []map[string]interface{}
+	Size int
+}
+
+func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int) {
+
+	u := ""
+	if strings.Contains(tb.sourceURL, "?") {
+		u = tb.sourceURL + "&" + params.Join()
+	} else {
+		u = tb.sourceURL + "?" + params.Join()
+	}
+	res, err := http.Get(u + "&pk=" + strings.Join(ids, ","))
+
+	if err != nil {
+		return []map[string]interface{}{}, 0
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return []map[string]interface{}{}, 0
+	}
+
+	var data GetDataFromURLRes
+
+	err = json.Unmarshal(body, &data)
+
+	if err != nil {
+		return []map[string]interface{}{}, 0
+	}
+
+	return data.Data, data.Size
 }
 
 func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters) (Thead, []types.FormField) {
@@ -483,7 +470,7 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters) (Thead
 				value2 = params.GetFieldValue(headField + "_end__goadmin")
 			} else {
 				if field.FilterOperator == types.FilterOperatorFree {
-					value2 = params.GetFieldOperator(headField).String()
+					value2 = types.GetOperatorFromValue(params.GetFieldOperator(headField)).String()
 				}
 				value = params.GetFieldValue(headField)
 			}
@@ -536,7 +523,43 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters) (Thead
 
 // GetDataWithIds query the data set.
 func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
-	return tb.getDataFromDatabase(path, params, ids)
+
+	var (
+		data      []map[string]interface{}
+		size      int
+		beginTime = time.Now()
+	)
+
+	if tb.getDataFun != nil {
+		data, size = tb.getDataFun(path, params, false, ids)
+	} else if tb.sourceURL != "" {
+		data, size = tb.getDataFromURL(path, params, false, ids)
+	} else if tb.info.GetDataFn != nil {
+		data, size = tb.info.GetDataFn(params.WithPK(ids...))
+	} else {
+		return tb.getDataFromDatabase(path, params, ids)
+	}
+
+	infoList := make([]map[string]template.HTML, 0)
+
+	for i := 0; i < len(data); i++ {
+		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
+	}
+
+	thead, filterForm := tb.getTheadAndFilterForm(params)
+
+	endTime := time.Now()
+
+	return PanelInfo{
+		Thead:    thead,
+		InfoList: infoList,
+		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
+			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
+		Title:       tb.info.Title,
+		FormData:    filterForm,
+		Description: tb.info.Description,
+	}, nil
 }
 
 func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]template.HTML {
@@ -745,7 +768,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 				value2 = params.GetFieldValue(headField + "_end__goadmin")
 			} else {
 				if field.FilterOperator == types.FilterOperatorFree {
-					value2 = params.GetFieldOperator(headField).String()
+					value2 = types.GetOperatorFromValue(params.GetFieldOperator(headField)).String()
 				}
 				value = params.GetFieldValue(headField)
 			}
@@ -836,7 +859,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 					key = strings.Replace(key, "_start__goadmin", "", -1)
 					op = ">="
 				} else if !strings.Contains(key, "__operator__") {
-					op = params.GetFieldOperator(key)
+					op = types.GetOperatorFromValue(params.GetFieldOperator(key))
 				}
 
 				if inArray(columns, key) {
@@ -958,15 +981,45 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 // GetDataWithId query the single row of data.
 func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
 
-	fields := make([]string, 0)
+	var (
+		res     map[string]interface{}
+		columns Columns
+		fields  = make([]string, 0)
+	)
 
-	columnsModel, err := tb.sql().Table(tb.form.Table).ShowColumns()
+	if tb.getDataFun != nil {
+		list, _ := tb.getDataFun("", parameter.BaseParam(), false, []string{id})
+		if len(list) > 0 {
+			res = list[0]
+		}
+	} else if tb.sourceURL != "" {
+		list, _ := tb.getDataFromURL("", parameter.BaseParam(), false, []string{id})
+		if len(list) > 0 {
+			res = list[0]
+		}
+	} else if tb.info.GetDataFn != nil {
+		list, _ := tb.info.GetDataFn(parameter.BaseParam().WithPK(id))
+		if len(list) > 0 {
+			res = list[0]
+		}
+	} else {
+		columnsModel, err := tb.sql().Table(tb.form.Table).ShowColumns()
 
-	if err != nil {
-		return nil, nil, nil, "", "", err
+		if err != nil {
+			return nil, nil, nil, "", "", err
+		}
+
+		columns, _ = tb.getColumns(columnsModel)
+
+		res, err = tb.sql().
+			Table(tb.form.Table).Select(fields...).
+			Where(tb.primaryKey.Name, "=", id).
+			First()
+
+		if err != nil {
+			return nil, nil, nil, "", "", err
+		}
 	}
-
-	columns, _ := tb.getColumns(columnsModel)
 
 	formList := tb.form.FieldList.Copy()
 
@@ -974,15 +1027,6 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 		if inArray(columns, formList[i].Field) {
 			fields = append(fields, formList[i].Field)
 		}
-	}
-
-	res, err := tb.sql().
-		Table(tb.form.Table).Select(fields...).
-		Where(tb.primaryKey.Name, "=", id).
-		First()
-
-	if err != nil {
-		return nil, nil, nil, "", "", err
 	}
 
 	var (
@@ -996,8 +1040,8 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 			for j := 0; j < len(value); j++ {
 				for _, field := range tb.form.FieldList {
 					if value[j] == field.Field {
-						rowValue := modules.AorB(inArray(columns, field.Field),
-							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], false).String(), "")
+						rowValue := modules.AorB(inArray(columns, field.Field) || len(columns) == 0,
+							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 						list[j] = field.UpdateValue(id, rowValue, res)
 						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
 							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
@@ -1014,8 +1058,8 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 	}
 
 	for key, field := range formList {
-		rowValue := modules.AorB(inArray(columns, field.Field),
-			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], false).String(), "")
+		rowValue := modules.AorB(inArray(columns, field.Field) || len(columns) == 0,
+			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 		formList[key] = field.UpdateValue(id, rowValue, res)
 
 		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {

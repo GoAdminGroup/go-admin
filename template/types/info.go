@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
 	"html"
@@ -362,6 +363,8 @@ func (t TabHeaders) Add(header string) TabHeaders {
 	return append(t, header)
 }
 
+type GetDataFn func(param parameter.Parameters) ([]map[string]interface{}, int)
+
 type DeleteFn func(ids []string) error
 
 type Sort uint8
@@ -409,6 +412,8 @@ type InfoPanel struct {
 	DeleteHook  DeleteFn
 	PreDeleteFn DeleteFn
 	DeleteFn    DeleteFn
+
+	GetDataFn GetDataFn
 
 	processChains DisplayProcessFnChains
 
@@ -627,6 +632,11 @@ func (i *InfoPanel) SetPreDeleteFn(fn DeleteFn) *InfoPanel {
 
 func (i *InfoPanel) SetDeleteFn(fn DeleteFn) *InfoPanel {
 	i.DeleteFn = fn
+	return i
+}
+
+func (i *InfoPanel) SetGetDataFn(fn GetDataFn) *InfoPanel {
+	i.GetDataFn = fn
 	return i
 }
 
