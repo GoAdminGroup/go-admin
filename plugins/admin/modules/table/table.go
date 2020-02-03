@@ -400,7 +400,7 @@ func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll b
 }
 
 type GetDataFromURLRes struct {
-	Data InfoList
+	Data []map[string]interface{}
 	Size int
 }
 
@@ -438,13 +438,19 @@ func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, 
 		return PanelInfo{}, err
 	}
 
+	infoList := make([]map[string]template.HTML, 0)
+
+	for i := 0; i < len(data.Data); i++ {
+		infoList = append(infoList, tb.getTempModelData(data.Data[i], params, []string{}))
+	}
+
 	thead, filterForm := tb.getTheadAndFilterForm(params)
 
 	endTime := time.Now()
 
 	return PanelInfo{
 		Thead:    thead,
-		InfoList: data.Data,
+		InfoList: infoList,
 		Paginator: paginator.Get(path, params, data.Size, tb.info.GetPageSizeList()).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
@@ -561,10 +567,17 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 			typeName = db.Varchar
 		}
 
-		var combineValue = db.GetValueFromDatabaseType(typeName, res[headField]).String()
+		var combineValue string
+
+		// get from JSON
+		if len(columns) == 0 {
+			combineValue = db.GetValueFromJSONOfDatabaseType(typeName, res[headField]).String()
+		} else {
+			combineValue = db.GetValueFromDatabaseType(typeName, res[headField]).String()
+		}
 
 		var value interface{}
-		if inArray(columns, headField) || field.Join.Valid() {
+		if len(columns) == 0 || inArray(columns, headField) || field.Join.Valid() {
 			value = field.ToDisplay(types.FieldModel{
 				ID:    primaryKeyValue.String(),
 				Value: combineValue,

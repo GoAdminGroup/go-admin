@@ -219,3 +219,35 @@ func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
 	}
 	panic("wrong type：" + string(typ))
 }
+
+// GetValueFromJSONOfDatabaseType return Value of given DatabaseType and interface from JSON string value.
+func GetValueFromJSONOfDatabaseType(typ DatabaseType, value interface{}) Value {
+	switch {
+	case Contains(typ, StringTypeList):
+		if v, ok := value.(string); ok {
+			return Value(v)
+		}
+		return ""
+	case Contains(typ, BoolTypeList):
+		if v, ok := value.(bool); ok {
+			if v {
+				return "true"
+			}
+			return "false"
+		}
+		return "false"
+	case Contains(typ, IntTypeList):
+		if v, ok := value.(float64); ok {
+			return Value(fmt.Sprintf("%f", v))
+		}
+		return "0"
+	case Contains(typ, FloatTypeList):
+		if v, ok := value.(float64); ok {
+			return Value(fmt.Sprintf("%f", v))
+		}
+		return "0"
+	case Contains(typ, UintTypeList):
+		return "0"
+	}
+	panic("wrong type：" + string(typ))
+}
