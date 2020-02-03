@@ -185,8 +185,16 @@ func (v Value) String() string {
 	return string(v)
 }
 
+func GetValueFromDatabaseType(typ DatabaseType, value interface{}, json bool) Value {
+	if json {
+		return GetValueFromJSONOfDatabaseType(typ, value)
+	} else {
+		return GetValueFromSQLOfDatabaseType(typ, value)
+	}
+}
+
 // GetValueFromDatabaseType return Value of given DatabaseType and interface.
-func GetValueFromDatabaseType(typ DatabaseType, value interface{}) Value {
+func GetValueFromSQLOfDatabaseType(typ DatabaseType, value interface{}) Value {
 	switch {
 	case Contains(typ, StringTypeList):
 		if v, ok := value.(string); ok {
@@ -238,7 +246,7 @@ func GetValueFromJSONOfDatabaseType(typ DatabaseType, value interface{}) Value {
 		return "false"
 	case Contains(typ, IntTypeList):
 		if v, ok := value.(float64); ok {
-			return Value(fmt.Sprintf("%f", v))
+			return Value(fmt.Sprintf("%d", int64(v)))
 		}
 		return "0"
 	case Contains(typ, FloatTypeList):

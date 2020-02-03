@@ -544,7 +544,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 	tempModelData := make(map[string]template.HTML)
 	headField := ""
 
-	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name])
+	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name], len(columns) == 0)
 
 	for _, field := range tb.info.FieldList {
 
@@ -567,14 +567,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 			typeName = db.Varchar
 		}
 
-		var combineValue string
-
-		// get from JSON
-		if len(columns) == 0 {
-			combineValue = db.GetValueFromJSONOfDatabaseType(typeName, res[headField]).String()
-		} else {
-			combineValue = db.GetValueFromDatabaseType(typeName, res[headField]).String()
-		}
+		combineValue := db.GetValueFromDatabaseType(typeName, res[headField], len(columns) == 0).String()
 
 		var value interface{}
 		if len(columns) == 0 || inArray(columns, headField) || field.Join.Valid() {
@@ -1004,7 +997,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 				for _, field := range tb.form.FieldList {
 					if value[j] == field.Field {
 						rowValue := modules.AorB(inArray(columns, field.Field),
-							db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
+							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], false).String(), "")
 						list[j] = field.UpdateValue(id, rowValue, res)
 						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
 							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
@@ -1022,7 +1015,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 
 	for key, field := range formList {
 		rowValue := modules.AorB(inArray(columns, field.Field),
-			db.GetValueFromDatabaseType(field.TypeName, res[field.Field]).String(), "")
+			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], false).String(), "")
 		formList[key] = field.UpdateValue(id, rowValue, res)
 
 		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
