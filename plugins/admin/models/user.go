@@ -113,6 +113,12 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string) bool {
 						matchPath += "(.*)"
 					} else if strings.Contains(matchPath, "?id=") && !strings.Contains(matchPath, "(.*)") {
 						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
+						path = strings.Replace(path, "__goadmin_edit_pk", "id", -1)
+						path = strings.Replace(path, "__goadmin_detail_pk", "id", -1)
+					} else if strings.Contains(matchPath, "?__goadmin_edit_pk=") && !strings.Contains(matchPath, "(.*)") {
+						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
+					} else if strings.Contains(matchPath, "?__goadmin_detail_pk=") && !strings.Contains(matchPath, "(.*)") {
+						matchPath = strings.Replace(matchPath, "?", "(.*)", -1) + "(.*)"
 					}
 				}
 
