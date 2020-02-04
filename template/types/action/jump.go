@@ -6,17 +6,25 @@ import (
 )
 
 type JumpAction struct {
-	BtnId string
-	Url   string
-	Ext   template.HTML
-	JS    template.JS
+	BtnId       string
+	Url         string
+	Ext         template.HTML
+	JS          template.JS
+	NewTabTitle string
 }
 
 func Jump(url string, ext ...template.HTML) *JumpAction {
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, Ext: ext[0]}
 	}
-	return &JumpAction{Url: url}
+	return &JumpAction{Url: url, NewTabTitle: ""}
+}
+
+func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
+	if len(ext) > 0 {
+		return &JumpAction{Url: url, NewTabTitle: title, Ext: ext[0]}
+	}
+	return &JumpAction{Url: url, NewTabTitle: title}
 }
 
 func (jump *JumpAction) GetCallbacks() context.Node {
@@ -32,6 +40,9 @@ func (jump *JumpAction) Js() template.JS {
 }
 
 func (jump *JumpAction) BtnAttribute() template.HTML {
+	if jump.NewTabTitle != "" {
+		return template.HTML(`href="` + jump.Url + `" class="new-tab-link" data-title="` + jump.NewTabTitle + `"`)
+	}
 	return template.HTML(`href="` + jump.Url + `"`)
 }
 
