@@ -19,8 +19,6 @@ import (
 // GetUserTable return the model of table user.
 func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
-	fmt.Println(ctx.Path())
-
 	userTable = table.NewDefaultTable(table.Config{
 		Driver:     db.DriverMysql,
 		CanAdd:     true,
