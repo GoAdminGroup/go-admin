@@ -44,7 +44,7 @@ func ShowNewForm(conn db.Connection) context.Handler {
 		ctx.SetUserValue("show_new_form_param", &ShowNewFormParam{
 			Panel:  panel,
 			Prefix: prefix,
-			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 				panel.GetInfo().GetSort()),
 		})
 		ctx.Next()

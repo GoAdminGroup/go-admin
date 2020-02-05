@@ -387,7 +387,8 @@ type InfoPanel struct {
 	TabGroups  TabGroups
 	TabHeaders TabHeaders
 
-	Sort Sort
+	Sort      Sort
+	SortField string
 
 	PageSizeList    []int
 	DefaultPageSize int
@@ -521,7 +522,7 @@ var DefaultPageSizeList = []int{10, 20, 30, 50, 100}
 
 const DefaultPageSize = 10
 
-func NewInfoPanel() *InfoPanel {
+func NewInfoPanel(pk string) *InfoPanel {
 	return &InfoPanel{
 		curFieldListIndex: -1,
 		PageSizeList:      DefaultPageSizeList,
@@ -530,6 +531,7 @@ func NewInfoPanel() *InfoPanel {
 		Buttons:           make(Buttons, 0),
 		Callbacks:         make(Callbacks, 0),
 		Wheres:            make([]Where, 0),
+		SortField:         pk,
 	}
 }
 
@@ -920,6 +922,11 @@ func (i *InfoPanel) SetDescription(desc string) *InfoPanel {
 
 func (i *InfoPanel) SetFilterFormLayout(layout form.Layout) *InfoPanel {
 	i.FilterFormLayout = layout
+	return i
+}
+
+func (i *InfoPanel) SetSortField(field string) *InfoPanel {
+	i.SortField = field
 	return i
 }
 

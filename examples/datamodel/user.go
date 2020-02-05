@@ -32,7 +32,7 @@ func GetUserTable() (userTable table.Table) {
 		},
 	})
 
-	info := userTable.GetInfo().SetFilterFormLayout(form.LayoutTwoCol)
+	info := userTable.GetInfo().SetFilterFormLayout(form.LayoutTwoCol).SetSortField("updated_at")
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text).
 		FieldFilterable(types.FilterType{Operator: types.FilterOperatorLike})

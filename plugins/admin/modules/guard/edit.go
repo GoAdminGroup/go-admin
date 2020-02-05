@@ -56,7 +56,7 @@ func ShowForm(conn db.Connection) context.Handler {
 			Panel:  panel,
 			Id:     id,
 			Prefix: prefix,
-			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name,
+			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 				panel.GetInfo().GetSort()),
 		})
 		ctx.Next()

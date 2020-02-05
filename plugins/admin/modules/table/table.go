@@ -295,9 +295,9 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) Config {
 
 func NewDefaultTable(cfg Config) Table {
 	return DefaultTable{
-		info:             types.NewInfoPanel(),
+		info:             types.NewInfoPanel(cfg.PrimaryKey.Name),
 		form:             types.NewFormPanel(),
-		detail:           types.NewInfoPanel(),
+		detail:           types.NewInfoPanel(cfg.PrimaryKey.Name),
 		connectionDriver: cfg.Driver,
 		connection:       cfg.Connection,
 		canAdd:           cfg.CanAdd,
@@ -315,7 +315,7 @@ func (tb DefaultTable) Copy() Table {
 		form: types.NewFormPanel().SetTable(tb.form.Table).
 			SetDescription(tb.form.Description).
 			SetTitle(tb.form.Title),
-		info: types.NewInfoPanel().SetTable(tb.info.Table).
+		info: types.NewInfoPanel(tb.primaryKey.Name).SetTable(tb.info.Table).
 			SetDescription(tb.info.Description).
 			SetTitle(tb.info.Title),
 		connectionDriver: tb.connectionDriver,
