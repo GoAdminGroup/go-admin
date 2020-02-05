@@ -117,6 +117,8 @@ func EditForm(ctx *context.Context) {
 		return
 	}
 
+	table.RefreshTableList(ctx)
+
 	editUrl := modules.AorB(param.Panel.GetEditable(), param.GetEditUrl(), "")
 	deleteUrl := modules.AorB(param.Panel.GetDeletable(), param.GetDeleteUrl(), "")
 	exportUrl := modules.AorB(param.Panel.GetExportable(), param.GetExportUrl(), "")
