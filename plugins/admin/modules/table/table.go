@@ -25,13 +25,13 @@ import (
 	"time"
 )
 
-type Generator func() Table
+type Generator func(ctx *context.Context) Table
 
 type GeneratorList map[string]Generator
 
 func (g GeneratorList) InjectRoutes(app *context.App) {
 	for _, gen := range g {
-		table := gen()
+		table := gen(&context.Context{})
 		for _, cb := range table.GetInfo().Callbacks {
 			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
 		}
@@ -72,16 +72,16 @@ func Get(key string) Table {
 	return tableList[key]
 }
 
-func InitTableList() {
+func InitTableList(ctx *context.Context) {
 	for prefix, generator := range generators {
-		tableList[prefix] = generator()
+		tableList[prefix] = generator(ctx)
 	}
 }
 
 // RefreshTableList refresh the table list when the table relationship changed.
-func RefreshTableList() {
+func RefreshTableList(ctx *context.Context) {
 	for k, v := range generators {
-		tableList[k] = v()
+		tableList[k] = v(ctx)
 	}
 }
 

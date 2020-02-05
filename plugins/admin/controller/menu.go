@@ -102,7 +102,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 // DeleteMenu delete the menu of given id.
 func DeleteMenu(ctx *context.Context) {
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).SetConn(db.GetConnection(services)).Delete()
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 	response.Ok(ctx)
 }
 
@@ -124,7 +124,7 @@ func EditMenu(ctx *context.Context) {
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 
 	menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
@@ -155,7 +155,7 @@ func NewMenu(ctx *context.Context) {
 	}
 
 	menu.GetGlobalMenu(user, conn).AddMaxOrder()
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 
 	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -176,7 +176,7 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")

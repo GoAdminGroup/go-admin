@@ -346,7 +346,9 @@ func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 		Method: method,
 	})
 
-	g.app.tree.addPath(stringToArr(join(g.Prefix, slash(url))), method, append(g.Middlewares, handler...))
+	var h = make([]Handler, len(g.Middlewares))
+	copy(h, g.Middlewares)
+	g.app.tree.addPath(stringToArr(join(g.Prefix, slash(url))), method, append(h, handler...))
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
@@ -397,6 +399,10 @@ func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 		Middlewares: append(g.Middlewares, middleware...),
 		Prefix:      join(slash(g.Prefix), slash(prefix)),
 	}
+}
+
+func (g *RouterGroup) Print() {
+	g.app.tree.printLeafChildren()
 }
 
 // slash fix the path which has wrong format problem.

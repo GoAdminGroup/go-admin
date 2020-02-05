@@ -402,12 +402,13 @@ func generateFile(table string, conn db.Connection, fieldField, typeField, packa
 	content := `package ` + packageName + `
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func Get` + strings.Title(tableCamel) + `Table() table.Table {
+func Get` + strings.Title(tableCamel) + `Table(ctx *context.Context) table.Table {
 
     ` + tableCamel + `Table := ` + newTable + `
 

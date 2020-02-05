@@ -17,7 +17,7 @@ import (
 )
 
 // GetUserTable return the model of table user.
-func GetUserTable() (userTable table.Table) {
+func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	userTable = table.NewDefaultTable(table.Config{
 		Driver:     db.DriverMysql,

@@ -1,6 +1,7 @@
 package datamodel
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -10,7 +11,7 @@ import (
 )
 
 // GetPostsTable return the model of table posts.
-func GetPostsTable() (postsTable table.Table) {
+func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 
 	postsTable = table.NewDefaultTable(table.DefaultConfig())
 

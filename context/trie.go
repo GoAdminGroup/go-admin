@@ -81,17 +81,27 @@ func (n *node) findPath(paths []string, method string) []Handler {
 	if methodIndex == -1 {
 		return nil
 	}
+
 	return child.handle[methodIndex]
 }
 
 func (n *node) print() {
-	fmt.Println(n.value)
+	fmt.Println(n)
 }
 
 func (n *node) printChildren() {
 	n.print()
 	for _, child := range n.children {
 		child.printChildren()
+	}
+}
+
+func (n *node) printLeafChildren() {
+	if len(n.handle) > 0 {
+		n.print()
+	}
+	for _, child := range n.children {
+		child.printLeafChildren()
 	}
 }
 

@@ -35,7 +35,6 @@ func (admin *Admin) InitPlugin(services service.List) {
 	})
 	table.SetServices(services)
 	table.SetGenerators(admin.tableCfg)
-	table.InitTableList()
 
 	controller.SetConfig(cfg)
 	controller.SetServices(services)

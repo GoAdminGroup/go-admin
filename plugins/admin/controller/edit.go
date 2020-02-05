@@ -26,7 +26,7 @@ func ShowForm(ctx *context.Context) {
 
 func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, url, infoUrl string, editUrl string) {
 
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 	panel := table.Get(prefix)
 
 	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataWithId(id)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -20,7 +21,7 @@ import (
 	"time"
 )
 
-func GetManagerTable() (ManagerTable Table) {
+func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -287,7 +288,7 @@ func GetManagerTable() (ManagerTable Table) {
 	return
 }
 
-func GetNormalManagerTable() (ManagerTable Table) {
+func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -453,7 +454,7 @@ func GetNormalManagerTable() (ManagerTable Table) {
 	return
 }
 
-func GetPermissionTable() (PermissionTable Table) {
+func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := PermissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -577,7 +578,7 @@ func GetPermissionTable() (PermissionTable Table) {
 	return
 }
 
-func GetRolesTable() (RolesTable Table) {
+func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := RolesTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -711,7 +712,7 @@ func GetRolesTable() (RolesTable Table) {
 	return
 }
 
-func GetOpTable() (OpTable Table) {
+func GetOpTable(ctx *context.Context) (OpTable Table) {
 	OpTable = NewDefaultTable(Config{
 		Driver:     config.Get().Databases.GetDefault().Driver,
 		CanAdd:     false,
@@ -758,7 +759,7 @@ func GetOpTable() (OpTable Table) {
 	return
 }
 
-func GetMenuTable() (MenuTable Table) {
+func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := MenuTable.GetInfo().AddXssJsFilter().HideFilterArea()

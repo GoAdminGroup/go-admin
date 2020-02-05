@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 )
 
@@ -33,7 +34,9 @@ func InitRouter(prefix string, srv service.List) *context.App {
 		route.GET("/assets"+path, controller.Assets)
 	}
 
-	authRoute := route.Group("/", auth.Middleware(db.GetConnection(srv)))
+	authRoute := route.Group("/", auth.Middleware(db.GetConnection(srv)), func(ctx *context.Context) {
+		table.InitTableList(ctx)
+	})
 
 	// auth
 	authRoute.GET("/logout", controller.Logout)
@@ -50,6 +53,7 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	authRoute.GET("/menu/new", controller.ShowNewMenu)
 
 	// add delete modify query
+	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail)
 	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn), controller.ShowForm)
 	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn), controller.ShowNewForm)
 	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm)
@@ -57,7 +61,6 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete)
 	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export)
 	authRoute.GET("/info/:__prefix", controller.ShowInfo)
-	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail)
 
 	authRoute.POST("/update/:__prefix", guard.Update, controller.Update)
 

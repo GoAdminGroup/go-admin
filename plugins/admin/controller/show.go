@@ -69,7 +69,6 @@ func ShowInfo(ctx *context.Context) {
 func showTable(ctx *context.Context, prefix, path string, params parameter.Parameters,
 	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl string) *bytes.Buffer {
 
-	table.InitTableList()
 	panel := table.Get(prefix)
 
 	panelInfo, err := panel.GetData(path, params, false)

@@ -27,7 +27,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 
 	user := auth.Auth(ctx)
 
-	table.RefreshTableList()
+	table.RefreshTableList(ctx)
 	panel := table.Get(prefix)
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
