@@ -298,6 +298,7 @@ type Field struct {
 	FilterOptionExt template.JS
 	FilterHead      string
 	FilterHelpMsg   template.HTML
+	FilterProcess   func(string) string
 
 	FieldDisplay
 }
@@ -808,6 +809,11 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterOptions = options
 	i.FieldList[i.curFieldListIndex].FilterOptionExt = `{"allowClear": "true"}`
+	return i
+}
+
+func (i *InfoPanel) FieldFilterProcess(process func(string) string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].FilterProcess = process
 	return i
 }
 

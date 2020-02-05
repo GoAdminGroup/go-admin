@@ -864,6 +864,10 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 				if inArray(columns, key) {
 					wheres += filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
+					field := tb.info.FieldList.GetFieldByFieldName(key)
+					if field.FilterProcess != nil {
+						value = field.FilterProcess(value)
+					}
 					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
 						whereArgs = append(whereArgs, "%"+value+"%")
 					} else {
@@ -873,6 +877,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 					keys := strings.Split(key, "_goadmin_join_")
 					if len(keys) > 1 {
 						if field := tb.info.FieldList.GetFieldByFieldName(keys[1]); field.Exist() && field.Join.Table != "" {
+							if field.FilterProcess != nil {
+								value = field.FilterProcess(value)
+							}
 							wheres += field.Join.Table + "." + filterFiled(keys[1], connection.GetDelimiter()) + " " + op.String() + " ? and "
 							if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
 								whereArgs = append(whereArgs, "%"+value+"%")
