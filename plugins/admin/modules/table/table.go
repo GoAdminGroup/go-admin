@@ -20,6 +20,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -31,7 +32,9 @@ type GeneratorList map[string]Generator
 
 func (g GeneratorList) InjectRoutes(app *context.App) {
 	for _, gen := range g {
-		table := gen(&context.Context{})
+		table := gen(context.NewContext(&http.Request{
+			URL: &url.URL{},
+		}))
 		for _, cb := range table.GetInfo().Callbacks {
 			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
 		}
