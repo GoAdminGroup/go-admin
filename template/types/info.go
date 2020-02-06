@@ -57,7 +57,7 @@ func (r FieldModelValue) First() string {
 type FieldFilterFn func(value FieldModel) interface{}
 
 // PostFieldFilterFn is filter function of data.
-type PostFieldFilterFn func(value PostFieldModel) string
+type PostFieldFilterFn func(value PostFieldModel) interface{}
 
 type DisplayProcessFn func(string) string
 

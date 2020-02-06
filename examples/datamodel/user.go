@@ -94,7 +94,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	formList.AddField("Phone", "phone", db.Varchar, form.Text)
 	formList.AddField("City", "city", db.Varchar, form.Text)
 	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
-		FieldPostFilterFn(func(value types.PostFieldModel) string {
+		FieldPostFilterFn(func(value types.PostFieldModel) interface{} {
 			fmt.Println("user custom field", value)
 			return ""
 		})

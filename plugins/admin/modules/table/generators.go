@@ -3,7 +3,6 @@ package table
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -202,8 +201,6 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 		if password != values.Get("password_again") {
 			return errors.New("password does not match")
 		}
-
-		fmt.Println("insert.....")
 
 		user := models.User().SetConn(conn()).New(values.Get("username"),
 			encodePassword([]byte(values.Get("password"))),
@@ -544,8 +541,7 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			return strings.Split(model.Value, ",")
 		}).
-		FieldPostFilterFn(func(model types.PostFieldModel) string {
-			fmt.Println("model.Value", model.Value)
+		FieldPostFilterFn(func(model types.PostFieldModel) interface{} {
 			return strings.Join(model.Value, ",")
 		}).
 		FieldHelpMsg(template.HTML(lg("all method if empty")))
