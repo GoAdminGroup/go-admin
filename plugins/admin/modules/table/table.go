@@ -842,7 +842,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		wheres = wheres[:len(wheres)-1]
 	} else {
 
-		if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 {
+		if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 && tb.info.WhereRaws.Raw == "" {
 			wheres = ""
 		} else {
 
@@ -896,25 +896,110 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 				existKeys = append(existKeys, key)
 			}
 
-			for _, wh := range tb.info.Wheres {
+			for k, wh := range tb.info.Wheres {
 
-				if modules.InArray(existKeys, wh.Field) {
+				whFieldArr := strings.Split(wh.Field, ".")
+				whField := ""
+				whTable := ""
+				if len(whFieldArr) > 1 {
+					whField = whFieldArr[1]
+					whTable = whFieldArr[0]
+				} else {
+					whField = whFieldArr[0]
+				}
+
+				if modules.InArray(existKeys, whField) {
 					continue
 				}
 
 				// TODO: support like operation and join table
-				if inArray(columns, wh.Field) {
-					wheres += filterFiled(wh.Field, connection.GetDelimiter()) + " " + wh.Operator + " ? and "
+				if inArray(columns, whField) {
+
+					joinMark := "and"
+					if k != len(tb.info.Wheres)-1 {
+						joinMark = tb.info.Wheres[k+1].Join
+					}
+
+					if whTable != "" {
+						wheres += whTable + "." + filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
+					} else {
+						wheres += filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
+					}
 					whereArgs = append(whereArgs, wh.Arg)
 				}
-
-				existKeys = append(existKeys, wh.Field)
 			}
 
 			if wheres != " where " {
 				wheres = wheres[:len(wheres)-4]
+				if tb.info.WhereRaws.Raw != "" {
+					checkGrammar := false
+					for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
+						if tb.info.WhereRaws.Raw[i] == ' ' {
+							continue
+						} else {
+							if tb.info.WhereRaws.Raw[i] == 'a' {
+								if len(tb.info.WhereRaws.Raw) < i+3 {
+									break
+								} else {
+									if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
+										checkGrammar = true
+									}
+								}
+							} else if tb.info.WhereRaws.Raw[i] == 'o' {
+								if len(tb.info.WhereRaws.Raw) < i+2 {
+									break
+								} else {
+									if tb.info.WhereRaws.Raw[i+1] == 'r' {
+										checkGrammar = true
+									}
+								}
+							} else {
+								break
+							}
+						}
+					}
+
+					if checkGrammar {
+						wheres += tb.info.WhereRaws.Raw + " "
+					} else {
+						wheres += " and " + tb.info.WhereRaws.Raw + " "
+					}
+
+					whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
+				}
 			} else {
-				wheres = ""
+				if tb.info.WhereRaws.Raw != "" {
+					index := 0
+					for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
+						if tb.info.WhereRaws.Raw[i] == ' ' {
+							continue
+						} else {
+							if tb.info.WhereRaws.Raw[i] == 'a' {
+								if len(tb.info.WhereRaws.Raw) < i+3 {
+									break
+								} else {
+									if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
+										index = i + 3
+									}
+								}
+							} else if tb.info.WhereRaws.Raw[i] == 'o' {
+								if len(tb.info.WhereRaws.Raw) < i+2 {
+									break
+								} else {
+									if tb.info.WhereRaws.Raw[i+1] == 'r' {
+										index = i + 2
+									}
+								}
+							} else {
+								break
+							}
+						}
+					}
+					wheres += tb.info.WhereRaws.Raw[index:] + " "
+					whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
+				} else {
+					wheres = ""
+				}
 			}
 
 		}
