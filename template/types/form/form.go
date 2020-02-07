@@ -2,6 +2,7 @@ package form
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"html/template"
 )
 
 type Type uint8
@@ -154,4 +155,13 @@ func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string
 	}
 
 	return "form.Text"
+}
+
+func DefaultHTML(value string) template.HTML {
+	return template.HTML(`<div class="box box-solid box-default no-margin"><div class="box-body" style="min-height: 40px;">` +
+		value + `</div></div>`)
+}
+
+func HiddenInputHTML(field, value string) template.HTML {
+	return template.HTML(`<input type="hidden" name="` + field + `" value="` + value + `" class="form-control">`)
 }
