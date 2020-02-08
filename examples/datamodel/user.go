@@ -12,8 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
-	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // GetUserTable return the model of table user.
@@ -64,12 +62,10 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddButton("google", icon.Google, action.Jump("https://google.com"))
-	info.AddButton("info", icon.Terminal, action.PopUp("/admin/popup", "Popup Example", func(ctx *context.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"code": 0,
-			"data": "<h2>hello world</h2>",
-		})
-	}))
+	info.AddButton("info", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
+		func(ctx *context.Context) (success bool, data, msg string) {
+			return true, "<h2>hello world</h2>", ""
+		}))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 

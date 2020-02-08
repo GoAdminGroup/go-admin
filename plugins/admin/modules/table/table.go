@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -30,16 +31,25 @@ type Generator func(ctx *context.Context) Table
 
 type GeneratorList map[string]Generator
 
-func (g GeneratorList) InjectRoutes(app *context.App) {
+func (g GeneratorList) InjectRoutes(app *context.App, srv service.List) {
+	authHandler := auth.Middleware(db.GetConnection(srv))
 	for _, gen := range g {
 		table := gen(context.NewContext(&http.Request{
 			URL: &url.URL{},
 		}))
 		for _, cb := range table.GetInfo().Callbacks {
-			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+			if cb.Value[auth.ContextNodeNeedAuth] == 1 {
+				app.AppendReqAndResp(cb.Path, cb.Method, append([]context.Handler{authHandler}, cb.Handlers...))
+			} else {
+				app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+			}
 		}
 		for _, cb := range table.GetForm().Callbacks {
-			app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+			if cb.Value[auth.ContextNodeNeedAuth] == 1 {
+				app.AppendReqAndResp(cb.Path, cb.Method, append([]context.Handler{authHandler}, cb.Handlers...))
+			} else {
+				app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
+			}
 		}
 	}
 }

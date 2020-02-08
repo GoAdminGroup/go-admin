@@ -23,7 +23,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	// Init router
 	App.app = InitRouter(cfg.Prefix(), services)
-	admin.tableCfg.InjectRoutes(App.app)
+	admin.tableCfg.InjectRoutes(App.app, services)
 
 	table.SetGenerators(table.GeneratorList{
 		"manager":        table.GetManagerTable,

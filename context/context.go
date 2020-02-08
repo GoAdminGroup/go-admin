@@ -43,6 +43,7 @@ type Node struct {
 	Path     string
 	Method   string
 	Handlers []Handler
+	Value    map[string]interface{}
 }
 
 // SetUserValue set the value of user context.

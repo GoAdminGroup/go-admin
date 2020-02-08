@@ -82,8 +82,9 @@ func init() {
 }
 
 const (
-	TokenServiceKey = "token_csrf_helper"
-	ServiceKey      = "auth"
+	TokenServiceKey     = "token_csrf_helper"
+	ServiceKey          = "auth"
+	ContextNodeNeedAuth = "need_auth"
 )
 
 func GetTokenService(s interface{}) *TokenService {
