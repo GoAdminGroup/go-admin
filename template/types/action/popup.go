@@ -53,9 +53,8 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 	}
 }
 
-func (pop *PopUpAction) SetBtnId(btnId string) {
-	pop.BtnId = btnId
-}
+func (pop *PopUpAction) SetBtnId(btnId string)   { pop.BtnId = btnId }
+func (pop *PopUpAction) BtnClass() template.HTML { return "" }
 
 func (pop *PopUpAction) Js() template.JS {
 	return template.JS(`$('#` + pop.BtnId + `').on('click', function (event) {

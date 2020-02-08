@@ -47,9 +47,8 @@ func (ajax *AjaxAction) GetCallbacks() context.Node {
 	}
 }
 
-func (ajax *AjaxAction) SetBtnId(btnId string) {
-	ajax.BtnId = btnId
-}
+func (ajax *AjaxAction) SetBtnId(btnId string)   { ajax.BtnId = btnId }
+func (ajax *AjaxAction) BtnClass() template.HTML { return "" }
 
 func (ajax *AjaxAction) Js() template.JS {
 	return template.JS(`$('#` + ajax.BtnId + `').on('click', function (event) {
