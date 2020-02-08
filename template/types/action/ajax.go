@@ -51,11 +51,16 @@ func (ajax *AjaxAction) SetBtnId(btnId string)   { ajax.BtnId = btnId }
 func (ajax *AjaxAction) BtnClass() template.HTML { return "" }
 
 func (ajax *AjaxAction) Js() template.JS {
-	return template.JS(`$('#` + ajax.BtnId + `').on('click', function (event) {
+	return template.JS(`$('.` + ajax.BtnId + `').on('click', function (event) {
+						let data = ` + ajax.Data.JSON() + `;
+						let id = $(this).attr("data-id");
+						if (id && id !== "") {
+							data["id"] = id;
+						}
 						$.ajax({
                             method: '` + ajax.Method + `',
                             url: "` + ajax.Url + `",
-                            data: ` + ajax.Data.JSON() + `,
+                            data: data,
                             success: function (data) { 
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
@@ -70,5 +75,5 @@ func (ajax *AjaxAction) Js() template.JS {
             		});`)
 }
 
-func (ajax *AjaxAction) BtnAttribute() template.HTML { return template.HTML(``) }
+func (ajax *AjaxAction) BtnAttribute() template.HTML { return template.HTML(`href="javascript:;"`) }
 func (ajax *AjaxAction) ExtContent() template.HTML   { return template.HTML(``) }

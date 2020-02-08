@@ -57,13 +57,16 @@ func (pop *PopUpAction) SetBtnId(btnId string)   { pop.BtnId = btnId }
 func (pop *PopUpAction) BtnClass() template.HTML { return "" }
 
 func (pop *PopUpAction) Js() template.JS {
-	return template.JS(`$('#` + pop.BtnId + `').on('click', function (event) {
+	return template.JS(`$('.` + pop.BtnId + `').on('click', function (event) {
+						let data = ` + pop.Data.JSON() + `;
+						let id = $(this).attr("data-id");
+						if (id && id !== "") {
+							data["id"] = id;
+						}
 						$.ajax({
                             method: '` + pop.Method + `',
                             url: "` + pop.Url + `",
-                            data: {
-								"ids": {%ids}
-							},
+                            data: data,
                             success: function (data) { 
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
