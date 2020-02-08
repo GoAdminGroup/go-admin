@@ -10,15 +10,13 @@ type AjaxAction struct {
 	BtnId    string
 	Url      string
 	Method   string
-	Title    string
 	Data     AjaxData
 	Handlers []context.Handler
 }
 
-func Ajax(url, title string, handler Handler) *AjaxAction {
+func Ajax(url string, handler Handler) *AjaxAction {
 	return &AjaxAction{
 		Url:      url,
-		Title:    title,
 		Method:   "post",
 		Data:     NewAjaxData(),
 		Handlers: context.Handlers{handler.Wrap()},
