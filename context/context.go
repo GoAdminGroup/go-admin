@@ -7,6 +7,7 @@ package context
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"math"
 	"net"
@@ -93,6 +94,31 @@ func NewContext(req *http.Request) *Context {
 		},
 		index: -1,
 	}
+}
+
+func (ctx *Context) BindJSON(data interface{}) error {
+	if ctx.Request.Body != nil {
+		b, err := ioutil.ReadAll(ctx.Request.Body)
+		if err == nil {
+			return json.Unmarshal(b, data)
+		}
+		return err
+	}
+	return errors.New("empty request body")
+}
+
+func (ctx *Context) MustBindJSON(data interface{}) {
+	if ctx.Request.Body != nil {
+		b, err := ioutil.ReadAll(ctx.Request.Body)
+		if err != nil {
+			panic(err)
+		}
+		err = json.Unmarshal(b, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+	panic("empty request body")
 }
 
 // Write save the given status code, header and body string into the response.
