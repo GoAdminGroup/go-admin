@@ -1,6 +1,6 @@
 package system
 
-const version = "v1.1.9"
+const version = "v1.2.0"
 
 // Version return the version of framework.
 func Version() string {
