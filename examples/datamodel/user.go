@@ -63,6 +63,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddActionButton("审批", action.Ajax("/admin/audit",
 		func(ctx *context.Context) (success bool, data, msg string) {
+			fmt.Println("PostForm", ctx.PostForm())
 			return true, "", "审批成功，奥利给"
 		}))
 	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "作者"))
