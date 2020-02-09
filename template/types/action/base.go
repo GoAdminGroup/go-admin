@@ -3,6 +3,7 @@ package action
 import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"net/http"
 	"strings"
 )
@@ -31,8 +32,20 @@ type Handler func(ctx *context.Context) (success bool, data, msg string)
 
 func (h Handler) Wrap() context.Handler {
 	return func(ctx *context.Context) {
-		s, d, m := h(ctx)
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error(err)
+				ctx.JSON(http.StatusOK, map[string]interface{}{
+					"code": 500,
+					"data": "",
+					"msg":  "error",
+				})
+			}
+		}()
+
 		code := 0
+		s, d, m := h(ctx)
+
 		if !s {
 			code = 500
 		}
