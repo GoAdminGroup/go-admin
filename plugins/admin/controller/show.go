@@ -153,6 +153,7 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
 					SetThead(theadArr[key]).
 					SetHideRowSelector(info.IsHideRowSelector).
+					SetLayout(info.TableLayout).
 					SetExportUrl(exportUrl).
 					SetNewUrl(newUrl).
 					SetEditUrl(editUrl).
@@ -168,6 +169,7 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 			SetInfoList(panelInfo.InfoList).
 			SetInfoUrl(infoUrl).
 			SetButtons(btns).
+			SetLayout(info.TableLayout).
 			SetActionJs(btnsJs + actionJs).
 			SetAction(actionBtns).
 			SetHasFilter(len(panelInfo.FormData) > 0).

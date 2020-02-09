@@ -18,6 +18,7 @@ type TableAttribute struct {
 	DeleteUrl  string
 	DetailUrl  string
 	UpdateUrl  string
+	Layout     string
 	IsTab      bool
 	ExportUrl  string
 	types.Attribute
@@ -40,6 +41,11 @@ func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 
 func (compo *TableAttribute) SetMinWidth(value int) types.TableAttribute {
 	compo.MinWidth = value
+	return compo
+}
+
+func (compo *TableAttribute) SetLayout(value string) types.TableAttribute {
+	compo.Layout = value
 	return compo
 }
 
@@ -77,6 +83,11 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 
 func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
 	compo.Thead = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetLayout(value string) types.DataTableAttribute {
+	compo.Layout = value
 	return compo
 }
 

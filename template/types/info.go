@@ -412,6 +412,8 @@ type InfoPanel struct {
 
 	Buttons Buttons
 
+	TableLayout string
+
 	DeleteHook  DeleteFn
 	PreDeleteFn DeleteFn
 	DeleteFn    DeleteFn
@@ -543,6 +545,7 @@ func NewInfoPanel(pk string) *InfoPanel {
 		Wheres:            make([]Where, 0),
 		WhereRaws:         WhereRaw{},
 		SortField:         pk,
+		TableLayout:       "auto",
 	}
 }
 
@@ -661,6 +664,11 @@ func (i *InfoPanel) SetDeleteFn(fn DeleteFn) *InfoPanel {
 
 func (i *InfoPanel) SetGetDataFn(fn GetDataFn) *InfoPanel {
 	i.GetDataFn = fn
+	return i
+}
+
+func (i *InfoPanel) SetTableFixed() *InfoPanel {
+	i.TableLayout = "fixed"
 	return i
 }
 

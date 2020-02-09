@@ -99,6 +99,7 @@ type TableAttribute interface {
 	SetInfoList(value []map[string]template.HTML) TableAttribute
 	SetType(value string) TableAttribute
 	SetMinWidth(value int) TableAttribute
+	SetLayout(value string) TableAttribute
 	GetContent() template.HTML
 }
 
@@ -112,6 +113,7 @@ type DataTableAttribute interface {
 	SetPrimaryKey(value string) DataTableAttribute
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
+	SetLayout(value string) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
 	SetHideFilterArea(value bool) DataTableAttribute
 	SetHideRowSelector(value bool) DataTableAttribute

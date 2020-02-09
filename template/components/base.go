@@ -124,16 +124,18 @@ func (b Base) Table() types.TableAttribute {
 		Thead:     []map[string]string{},
 		InfoList:  []map[string]template.HTML{},
 		Type:      "normal",
+		Layout:    "auto",
 		Attribute: b.Attribute,
 	}
 }
 
 func (b Base) DataTable() types.DataTableAttribute {
 	return &DataTableAttribute{
-		TableAttribute: *(b.Table().SetType("data-table").(*TableAttribute)),
-		EditUrl:        "",
-		NewUrl:         "",
-		Attribute:      b.Attribute,
+		TableAttribute: *(b.Table().
+			SetType("data-table").(*TableAttribute)),
+		EditUrl:   "",
+		NewUrl:    "",
+		Attribute: b.Attribute,
 	}
 }
 
