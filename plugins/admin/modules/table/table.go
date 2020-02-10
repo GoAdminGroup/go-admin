@@ -633,8 +633,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
-		placeholder    = delimiter(connection.GetDelimiter(), "%s")
-		queryStatement = "select %s from %s %s order by " + placeholder + " %s"
+		queryStatement = "select %s from %s %s %s order by " + delimiter(connection.GetDelimiter(), "%s") + " %s"
 	)
 
 	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
@@ -682,15 +681,183 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 
 	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
 
+	var (
+		wheres    = ""
+		whereArgs = make([]interface{}, 0)
+		existKeys = make([]string, 0)
+	)
+
+	if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 && tb.info.WhereRaws.Raw == "" {
+		wheres = ""
+	} else {
+
+		wheres = " where "
+
+		for key, value := range params.Fields {
+
+			if modules.InArray(existKeys, key) {
+				continue
+			}
+
+			var op types.FilterOperator
+			if strings.Contains(key, "_end__goadmin") {
+				key = strings.Replace(key, "_end__goadmin", "", -1)
+				op = "<="
+			} else if strings.Contains(key, "_start__goadmin") {
+				key = strings.Replace(key, "_start__goadmin", "", -1)
+				op = ">="
+			} else if !strings.Contains(key, "__operator__") {
+				op = types.GetOperatorFromValue(params.GetFieldOperator(key))
+			}
+
+			if inArray(columns, key) {
+				wheres += filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
+				field := tb.info.FieldList.GetFieldByFieldName(key)
+				if field.FilterProcess != nil {
+					value = field.FilterProcess(value)
+				}
+				if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
+					whereArgs = append(whereArgs, "%"+value+"%")
+				} else {
+					whereArgs = append(whereArgs, value)
+				}
+			} else {
+				keys := strings.Split(key, "_goadmin_join_")
+				if len(keys) > 1 {
+					if field := tb.info.FieldList.GetFieldByFieldName(keys[1]); field.Exist() && field.Join.Table != "" {
+						if field.FilterProcess != nil {
+							value = field.FilterProcess(value)
+						}
+						wheres += field.Join.Table + "." + filterFiled(keys[1], connection.GetDelimiter()) + " " + op.String() + " ? and "
+						if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
+							whereArgs = append(whereArgs, "%"+value+"%")
+						} else {
+							whereArgs = append(whereArgs, value)
+						}
+					}
+				}
+			}
+
+			existKeys = append(existKeys, key)
+		}
+
+		for k, wh := range tb.info.Wheres {
+
+			whFieldArr := strings.Split(wh.Field, ".")
+			whField := ""
+			whTable := ""
+			if len(whFieldArr) > 1 {
+				whField = whFieldArr[1]
+				whTable = whFieldArr[0]
+			} else {
+				whField = whFieldArr[0]
+			}
+
+			if modules.InArray(existKeys, whField) {
+				continue
+			}
+
+			// TODO: support like operation and join table
+			if inArray(columns, whField) {
+
+				joinMark := "and"
+				if k != len(tb.info.Wheres)-1 {
+					joinMark = tb.info.Wheres[k+1].Join
+				}
+
+				if whTable != "" {
+					wheres += whTable + "." + filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
+				} else {
+					wheres += filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
+				}
+				whereArgs = append(whereArgs, wh.Arg)
+			}
+		}
+
+		if wheres != " where " {
+			wheres = wheres[:len(wheres)-4]
+			if tb.info.WhereRaws.Raw != "" {
+				checkGrammar := false
+				for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
+					if tb.info.WhereRaws.Raw[i] == ' ' {
+						continue
+					} else {
+						if tb.info.WhereRaws.Raw[i] == 'a' {
+							if len(tb.info.WhereRaws.Raw) < i+3 {
+								break
+							} else {
+								if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
+									checkGrammar = true
+								}
+							}
+						} else if tb.info.WhereRaws.Raw[i] == 'o' {
+							if len(tb.info.WhereRaws.Raw) < i+2 {
+								break
+							} else {
+								if tb.info.WhereRaws.Raw[i+1] == 'r' {
+									checkGrammar = true
+								}
+							}
+						} else {
+							break
+						}
+					}
+				}
+
+				if checkGrammar {
+					wheres += tb.info.WhereRaws.Raw + " "
+				} else {
+					wheres += " and " + tb.info.WhereRaws.Raw + " "
+				}
+
+				whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
+			}
+		} else {
+			if tb.info.WhereRaws.Raw != "" {
+				index := 0
+				for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
+					if tb.info.WhereRaws.Raw[i] == ' ' {
+						continue
+					} else {
+						if tb.info.WhereRaws.Raw[i] == 'a' {
+							if len(tb.info.WhereRaws.Raw) < i+3 {
+								break
+							} else {
+								if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
+									index = i + 3
+								}
+							}
+						} else if tb.info.WhereRaws.Raw[i] == 'o' {
+							if len(tb.info.WhereRaws.Raw) < i+2 {
+								break
+							} else {
+								if tb.info.WhereRaws.Raw[i+1] == 'r' {
+									index = i + 2
+								}
+							}
+						} else {
+							break
+						}
+					}
+				}
+				wheres += tb.info.WhereRaws.Raw[index:] + " "
+				whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
+			} else {
+				wheres = ""
+			}
+		}
+
+	}
+
 	if !inArray(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
 	}
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, params.SortField, params.SortType)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
 
 	logger.LogSQL(queryCmd, []interface{}{})
 
-	res, err := connection.QueryWithConnection(tb.connection, queryCmd)
+	res, err := connection.QueryWithConnection(tb.connection, queryCmd, whereArgs...)
 
 	if err != nil {
 		return PanelInfo{}, err
