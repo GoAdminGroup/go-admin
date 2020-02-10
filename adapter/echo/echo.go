@@ -17,6 +17,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/labstack/echo"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -133,6 +134,10 @@ func (e *Echo) Path() string {
 
 func (e *Echo) Method() string {
 	return e.ctx.Request().Method
+}
+
+func (e *Echo) FormParam() url.Values {
+	return e.ctx.Request().PostForm
 }
 
 func (e *Echo) PjaxHeader() string {

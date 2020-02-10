@@ -17,6 +17,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gogf/gf/net/ghttp"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -143,6 +144,10 @@ func (gf *Gf) Path() string {
 
 func (gf *Gf) Method() string {
 	return gf.ctx.Method
+}
+
+func (gf *Gf) FormParam() url.Values {
+	return gf.ctx.Form
 }
 
 func (gf *Gf) PjaxHeader() string {

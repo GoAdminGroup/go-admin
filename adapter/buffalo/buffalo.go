@@ -173,6 +173,10 @@ func (bu *Buffalo) Method() string {
 	return bu.ctx.Request().Method
 }
 
+func (bu *Buffalo) FormParam() neturl.Values {
+	return bu.ctx.Request().PostForm
+}
+
 func (bu *Buffalo) PjaxHeader() string {
 	return bu.ctx.Request().Header.Get(constant.PjaxHeader)
 }

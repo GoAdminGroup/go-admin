@@ -18,6 +18,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
+	"net/url"
 )
 
 // WebFrameWork is a interface which is used as an adapter of
@@ -33,6 +34,7 @@ type WebFrameWork interface {
 	GetCookie() (string, error)
 	Path() string
 	Method() string
+	FormParam() url.Values
 	PjaxHeader() string
 	Redirect()
 	SetContentType()
@@ -114,7 +116,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		err   error
 	)
 
-	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method()) {
+	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
 		alert := getErrorAlert("no permission")
 		errTitle := language.Get("error")
 

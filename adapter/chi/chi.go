@@ -17,6 +17,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/go-chi/chi"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -186,6 +187,10 @@ func (ch *Chi) Path() string {
 
 func (ch *Chi) Method() string {
 	return ch.ctx.Request.Method
+}
+
+func (ch *Chi) FormParam() url.Values {
+	return ch.ctx.Request.PostForm
 }
 
 func (ch *Chi) PjaxHeader() string {

@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/kataras/iris/v12"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -134,6 +135,10 @@ func (is *Iris) Path() string {
 
 func (is *Iris) Method() string {
 	return is.ctx.Method()
+}
+
+func (is *Iris) FormParam() url.Values {
+	return is.ctx.FormValues()
 }
 
 func (is *Iris) PjaxHeader() string {

@@ -19,6 +19,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
 	"net/http"
+	"net/url"
 	"path"
 	"strconv"
 	"strings"
@@ -43,19 +44,19 @@ func ShowInfo(ctx *context.Context) {
 	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
 	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
 
-	if !user.CheckPermissionByUrlMethod(editUrl, "GET") {
+	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
 		editUrl = ""
 	}
-	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST") {
+	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
 		deleteUrl = ""
 	}
-	if !user.CheckPermissionByUrlMethod(exportUrl, "POST") {
+	if !user.CheckPermissionByUrlMethod(exportUrl, "POST", url.Values{}) {
 		exportUrl = ""
 	}
-	if !user.CheckPermissionByUrlMethod(detailUrl, "GET") {
+	if !user.CheckPermissionByUrlMethod(detailUrl, "GET", url.Values{}) {
 		detailUrl = ""
 	}
-	if !user.CheckPermissionByUrlMethod(newUrl, "GET") {
+	if !user.CheckPermissionByUrlMethod(newUrl, "GET", url.Values{}) {
 		newUrl = ""
 	}
 
