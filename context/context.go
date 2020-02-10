@@ -231,10 +231,7 @@ func (ctx *Context) FormValue(key string) string {
 
 // PostForm get the values of request form.
 func (ctx *Context) PostForm() url.Values {
-	if ctx.Request.Form == nil {
-		_ = ctx.Request.ParseMultipartForm(32 << 20)
-	}
-	_ = ctx.Request.ParseForm()
+	_ = ctx.Request.ParseMultipartForm(32 << 20)
 	return ctx.Request.PostForm
 }
 

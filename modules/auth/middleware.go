@@ -11,7 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
@@ -180,5 +179,5 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 
 // CheckPermissions check the permission of the user.
 func CheckPermissions(user models.UserModel, path, method string, param url.Values) bool {
-	return user.CheckPermissionByUrlMethod(path, method, modules.CopyUrlValue(param))
+	return user.CheckPermissionByUrlMethod(path, method, param)
 }

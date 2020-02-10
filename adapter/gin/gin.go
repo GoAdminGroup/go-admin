@@ -135,6 +135,7 @@ func (gins *Gin) Method() string {
 }
 
 func (gins *Gin) FormParam() url.Values {
+	_ = gins.ctx.Request.ParseMultipartForm(32 << 20)
 	return gins.ctx.Request.PostForm
 }
 

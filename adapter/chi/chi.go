@@ -190,6 +190,7 @@ func (ch *Chi) Method() string {
 }
 
 func (ch *Chi) FormParam() url.Values {
+	_ = ch.ctx.Request.ParseMultipartForm(32 << 20)
 	return ch.ctx.Request.PostForm
 }
 

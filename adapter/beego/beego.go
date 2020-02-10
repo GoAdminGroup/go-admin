@@ -130,6 +130,7 @@ func (bee *Beego) Method() string {
 }
 
 func (bee *Beego) FormParam() url.Values {
+	_ = bee.ctx.Request.ParseMultipartForm(32 << 20)
 	return bee.ctx.Request.PostForm
 }
 

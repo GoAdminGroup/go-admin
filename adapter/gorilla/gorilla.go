@@ -167,6 +167,7 @@ func (g *Gorilla) Method() string {
 }
 
 func (g *Gorilla) FormParam() url.Values {
+	_ = g.ctx.Request.ParseMultipartForm(32 << 20)
 	return g.ctx.Request.PostForm
 }
 

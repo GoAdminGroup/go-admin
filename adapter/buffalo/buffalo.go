@@ -174,6 +174,7 @@ func (bu *Buffalo) Method() string {
 }
 
 func (bu *Buffalo) FormParam() neturl.Values {
+	_ = bu.ctx.Request().ParseMultipartForm(32 << 20)
 	return bu.ctx.Request().PostForm
 }
 

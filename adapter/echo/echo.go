@@ -137,6 +137,7 @@ func (e *Echo) Method() string {
 }
 
 func (e *Echo) FormParam() url.Values {
+	_ = e.ctx.Request().ParseMultipartForm(32 << 20)
 	return e.ctx.Request().PostForm
 }
 

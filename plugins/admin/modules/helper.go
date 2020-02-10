@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/gob"
 	"github.com/satori/go.uuid"
-	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -86,22 +85,6 @@ func CopyMap(m map[string]string) map[string]string {
 		panic(err)
 	}
 	var cm map[string]string
-	err = dec.Decode(&cm)
-	if err != nil {
-		panic(err)
-	}
-	return cm
-}
-
-func CopyUrlValue(m url.Values) url.Values {
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	dec := gob.NewDecoder(&buf)
-	err := enc.Encode(m)
-	if err != nil {
-		panic(err)
-	}
-	var cm = make(url.Values)
 	err = dec.Decode(&cm)
 	if err != nil {
 		panic(err)
