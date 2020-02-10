@@ -286,14 +286,22 @@ func Export(ctx *context.Context) {
 		return
 	}
 
-	for key, head := range panelInfo.Thead {
-		f.SetCellValue(tableName, orders[key]+"1", head["head"])
+	columnIndex := 0
+	for _, head := range panelInfo.Thead {
+		if head["hide"] != "1" {
+			f.SetCellValue(tableName, orders[columnIndex]+"1", head["head"])
+			columnIndex++
+		}
 	}
 
 	count := 2
 	for _, info := range panelInfo.InfoList {
-		for key, head := range panelInfo.Thead {
-			f.SetCellValue(tableName, orders[key]+strconv.Itoa(count), info[head["field"]])
+		columnIndex = 0
+		for _, head := range panelInfo.Thead {
+			if head["hide"] != "1" {
+				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head["field"]])
+				columnIndex++
+			}
 		}
 		count++
 	}

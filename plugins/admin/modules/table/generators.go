@@ -391,7 +391,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
-		}).FieldMust()
+		})
 	formList.AddField(lg("confirm password"), "password_again", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
