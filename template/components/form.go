@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
+	"strings"
 )
 
 type FormAttribute struct {
@@ -152,12 +153,24 @@ func (compo *FormAttribute) GetContent() template.HTML {
 
 	if compo.Layout == form.LayoutTwoCol {
 		compo.ContentList = make([][]types.FormField, 2)
+		index := 0
 		for i := 0; i < len(compo.Content); i++ {
-			if i%2 == 0 {
+			if index%2 == 0 {
 				compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i])
 			} else {
 				compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i])
 			}
+			if i < len(compo.Content)-1 {
+				if strings.Contains(compo.Content[i+1].Field, "__operator__") {
+					if index%2 == 0 {
+						compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i+1])
+					} else {
+						compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i+1])
+					}
+					i++
+				}
+			}
+			index++
 		}
 	}
 
