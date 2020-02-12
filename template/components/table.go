@@ -175,7 +175,7 @@ func (compo *DataTableAttribute) GetContent() template.HTML {
 	if compo.MinWidth == 0 {
 		compo.MinWidth = 1000
 	}
-	if compo.EditUrl == "" && compo.DeleteUrl == "" && compo.Action == "" {
+	if compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
 		compo.NoAction = true
 	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")

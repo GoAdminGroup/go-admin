@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
 	"net/http"
+	"net/url"
 )
 
 func ShowDetail(ctx *context.Context) {
@@ -65,6 +66,13 @@ func ShowDetail(ctx *context.Context) {
 		ctx.Query("__goadmin_detail_pk"), "")
 	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
 	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStr())
+
+	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
+		editUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
+		deleteUrl = ""
+	}
 
 	deleteJs := ""
 

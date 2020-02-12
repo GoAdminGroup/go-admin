@@ -71,7 +71,7 @@ func (ses *Session) Add(key string, value interface{}) {
 	cookie := http.Cookie{
 		Name:     ses.Cookie,
 		Value:    ses.Sid,
-		MaxAge:   int(ses.Expires),
+		MaxAge:   config.Get().SessionLifeTime,
 		Expires:  time.Now().Add(ses.Expires),
 		HttpOnly: true,
 		Path:     "/",
