@@ -147,7 +147,7 @@ var (
 		Tinyint,
 		Mediumint,
 		Smallint,
-		Numeric, Smallserial, Serial, Bigserial, Money,
+		Smallserial, Serial, Bigserial,
 		Integer,
 		Bigint}
 
@@ -155,7 +155,7 @@ var (
 	FloatTypeList = []DatabaseType{Float, Double, Real, Doubleprecision}
 
 	// UintTypeList is a DatabaseType list of uint.
-	UintTypeList = []DatabaseType{Decimal, Bit}
+	UintTypeList = []DatabaseType{Decimal, Bit, Money, Numeric}
 )
 
 // Contains check the given DatabaseType is in the list or not.
