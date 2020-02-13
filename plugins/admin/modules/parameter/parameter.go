@@ -100,7 +100,7 @@ func (param Parameters) GetFieldOperator(field string) string {
 func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {
 
 	if !fromList {
-		return Parameters{}
+		return BaseParam()
 	}
 
 	prevUrlArr := strings.Split(value, "?")
@@ -136,6 +136,7 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 		SortField: sortField,
 		SortType:  sortType,
 		Columns:   columns,
+		Fields:    make(map[string]string),
 	}
 }
 
