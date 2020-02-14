@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/gavv/httpexpect"
 	"net/http"
 )
@@ -55,7 +56,7 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/menu/edit/show")).
-		WithQuery("__goadmin_edit_pk", "3").
+		WithQuery(constant.EditPKKey, "3").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 

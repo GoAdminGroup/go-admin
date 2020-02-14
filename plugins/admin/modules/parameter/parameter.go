@@ -2,6 +2,7 @@ package parameter
 
 import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"net/url"
 	"strconv"
 	"strings"
@@ -196,7 +197,7 @@ func (param Parameters) GetFixedParamStrWithoutPageSize() string {
 func (param Parameters) GetFixedParamStr() string {
 	str := "&"
 	for key, value := range param.Fields {
-		if key != "__goadmin_edit_pk" && key != "__goadmin_detail_pk" {
+		if key != constant.EditPKKey && key != constant.DetailPKKey {
 			str += key + "=" + value + "&"
 		}
 	}

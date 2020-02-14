@@ -2,6 +2,7 @@ package guard
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"net/http"
@@ -14,7 +15,7 @@ type UpdateParam struct {
 }
 
 func Update(ctx *context.Context) {
-	prefix := ctx.Query("__prefix")
+	prefix := ctx.Query(constant.PrefixKey)
 	panel := table.Get(prefix)
 
 	pname := panel.GetPrimaryKey().Name

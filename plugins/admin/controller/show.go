@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -28,7 +29,7 @@ import (
 // ShowInfo show info page.
 func ShowInfo(ctx *context.Context) {
 
-	prefix := ctx.Query("__prefix")
+	prefix := ctx.Query(constant.PrefixKey)
 	panel := table.Get(prefix)
 
 	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
@@ -99,13 +100,13 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 			if editUrl == "" && deleteUrl == "" {
 				ext = template.HTML(`<li class="divider"></li>`)
 			}
-			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&__goadmin_detail_pk={%id}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&"+constant.DetailPKKey+"={%id}", ext))
 		}
 		if editUrl != "" {
 			if detailUrl == "" && deleteUrl == "" {
 				ext = template.HTML(`<li class="divider"></li>`)
 			}
-			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&__goadmin_edit_pk={%id}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&"+constant.EditPKKey+"={%id}", ext))
 		}
 
 		var content template2.HTML
@@ -240,7 +241,7 @@ func Export(ctx *context.Context) {
 	param := guard.GetExportParam(ctx)
 
 	tableName := "Sheet1"
-	prefix := ctx.Query("__prefix")
+	prefix := ctx.Query(constant.PrefixKey)
 	panel := table.Get(prefix)
 
 	f := excelize.NewFile()

@@ -86,7 +86,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		groupFormData      [][]types.FormField
 		groupHeaders       []string
 		title, description string
-		prefix             = ctx.Query("__prefix")
+		prefix             = ctx.Query(constant.PrefixKey)
 		panel              = table.Get(prefix)
 	)
 

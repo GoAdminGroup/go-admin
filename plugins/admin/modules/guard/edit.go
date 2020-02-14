@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -28,7 +29,7 @@ type ShowFormParam struct {
 func ShowForm(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
-		prefix := ctx.Query("__prefix")
+		prefix := ctx.Query(constant.PrefixKey)
 		panel := table.Get(prefix)
 
 		if !panel.GetEditable() {
@@ -37,7 +38,7 @@ func ShowForm(conn db.Connection) context.Handler {
 			return
 		}
 
-		id := ctx.Query("__goadmin_edit_pk")
+		id := ctx.Query(constant.EditPKKey)
 		if id == "" {
 			alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, conn)
 			ctx.Abort()
@@ -89,7 +90,7 @@ func (e EditFormParam) IsRole() bool {
 
 func EditForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
-		prefix := ctx.Query("__prefix")
+		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue("_previous_")
 		panel := table.Get(prefix)
 		multiForm := ctx.Request.MultipartForm

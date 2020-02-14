@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -23,7 +24,7 @@ type ShowNewFormParam struct {
 func ShowNewForm(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
-		prefix := ctx.Query("__prefix")
+		prefix := ctx.Query(constant.PrefixKey)
 		panel := table.Get(prefix)
 
 		if !panel.GetCanAdd() {
@@ -76,7 +77,7 @@ func (e NewFormParam) IsRole() bool {
 
 func NewForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
-		prefix := ctx.Query("__prefix")
+		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue("_previous_")
 		panel := table.Get(prefix)
 

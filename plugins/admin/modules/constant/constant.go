@@ -9,4 +9,8 @@ const (
 
 	// Title is default title of the project.
 	Title = "GoAdmin"
+
+	EditPKKey   = "__goadmin_edit_pk"
+	DetailPKKey = "__goadmin_detail_pk"
+	PrefixKey   = "__prefix"
 )

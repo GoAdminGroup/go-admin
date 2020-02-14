@@ -45,7 +45,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 
 	referer := ctx.Headers("Referer")
 
-	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query("__prefix")) {
+	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query(constant.PrefixKey)) {
 		infoUrl = referer
 	}
 
