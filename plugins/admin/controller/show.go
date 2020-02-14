@@ -35,40 +35,11 @@ func ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	user := auth.Auth(ctx)
-	user.HasMenu()
-
-	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
-	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
-	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
-	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
-	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
-
-	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
-		editUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
-		deleteUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(exportUrl, "POST", url.Values{}) {
-		exportUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(detailUrl, "GET", url.Values{}) {
-		detailUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(newUrl, "GET", url.Values{}) {
-		newUrl = ""
-	}
-
-	infoUrl := config.Url("/info/" + prefix)
-	updateUrl := config.Url("/update/" + prefix)
-
-	buf := showTable(ctx, prefix, ctx.Path(), params, exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
+	buf := showTable(ctx, prefix, ctx.Path(), params)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func showTable(ctx *context.Context, prefix, path string, params parameter.Parameters,
-	exportUrl, newUrl, deleteUrl, infoUrl, editUrl, updateUrl, detailUrl string) *bytes.Buffer {
+func showTable(ctx *context.Context, prefix, path string, params parameter.Parameters) *bytes.Buffer {
 
 	panel := table.Get(prefix)
 
@@ -86,6 +57,33 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 			Description: language.Get("error"),
 			Title:       language.Get("error"),
 		}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}
+
+	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
+	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
+	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
+	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
+	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+
+	infoUrl := config.Url("/info/" + prefix)
+	updateUrl := config.Url("/update/" + prefix)
+
+	user := auth.Auth(ctx)
+
+	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
+		editUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
+		deleteUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(exportUrl, "POST", url.Values{}) {
+		exportUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(detailUrl, "GET", url.Values{}) {
+		detailUrl = ""
+	}
+	if !user.CheckPermissionByUrlMethod(newUrl, "GET", url.Values{}) {
+		newUrl = ""
 	}
 
 	var (
@@ -207,8 +205,6 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 	}
 
 	box := boxModel.GetContent()
-
-	user := auth.Auth(ctx)
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 

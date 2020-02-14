@@ -119,16 +119,7 @@ func EditForm(ctx *context.Context) {
 
 	table.RefreshTableList(ctx)
 
-	editUrl := modules.AorB(param.Panel.GetEditable(), param.GetEditUrl(), "")
-	deleteUrl := modules.AorB(param.Panel.GetDeletable(), param.GetDeleteUrl(), "")
-	exportUrl := modules.AorB(param.Panel.GetExportable(), param.GetExportUrl(), "")
-	newUrl := modules.AorB(param.Panel.GetCanAdd(), param.GetNewUrl(), "")
-	infoUrl := param.GetInfoUrl()
-	updateUrl := modules.AorB(param.Panel.GetEditable(), param.GetUpdateUrl(), "")
-	detailUrl := param.GetDetailUrl()
-
-	buf := showTable(ctx, param.Prefix, param.Path, param.Param, exportUrl, newUrl,
-		deleteUrl, infoUrl, editUrl, updateUrl, detailUrl)
+	buf := showTable(ctx, param.Prefix, param.Path, param.Param)
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
