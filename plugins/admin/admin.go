@@ -37,6 +37,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 	table.SetGenerators(admin.tableCfg)
 
 	controller.SetConfig(cfg)
+	controller.SetRoutes(App.app.Routers)
 	controller.SetServices(services)
 }
 

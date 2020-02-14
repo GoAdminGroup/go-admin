@@ -53,16 +53,16 @@ func InitRouter(prefix string, srv service.List) *context.App {
 	authRoute.GET("/menu/new", controller.ShowNewMenu)
 
 	// add delete modify query
-	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail)
-	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn), controller.ShowForm)
-	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn), controller.ShowNewForm)
-	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm)
-	authRoute.POST("/new/:__prefix", guard.NewForm(srv), controller.NewForm)
-	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete)
-	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export)
-	authRoute.GET("/info/:__prefix", controller.ShowInfo)
+	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail).Name("detail")
+	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn), controller.ShowForm).Name("show_edit")
+	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn), controller.ShowNewForm).Name("show_new")
+	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm).Name("edit")
+	authRoute.POST("/new/:__prefix", guard.NewForm(srv), controller.NewForm).Name("new")
+	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete).Name("delete")
+	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export).Name("export")
+	authRoute.GET("/info/:__prefix", controller.ShowInfo).Name("info")
 
-	authRoute.POST("/update/:__prefix", guard.Update, controller.Update)
+	authRoute.POST("/update/:__prefix", guard.Update, controller.Update).Name("update")
 
 	return app
 }

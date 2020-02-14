@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -15,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	template2 "html/template"
 	"mime/multipart"
+	"regexp"
 	"strings"
 )
 
@@ -23,14 +23,6 @@ type ShowFormParam struct {
 	Id     string
 	Prefix string
 	Param  parameter.Parameters
-}
-
-func (e *ShowFormParam) GetUrl() string {
-	return config.Get().Url("/edit/" + e.Prefix)
-}
-
-func (e *ShowFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func ShowForm(conn db.Connection) context.Handler {
@@ -83,44 +75,8 @@ func (e EditFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 
-func (e EditFormParam) GetEditUrl() string {
-	return e.getUrl("edit")
-}
-
-func (e EditFormParam) GetUpdateUrl() string {
-	return config.Get().Url("/update/" + e.Prefix)
-}
-
-func (e EditFormParam) GetDetailUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + "/detail" + e.Param.GetRouteParamStr())
-}
-
 func (e EditFormParam) HasAlert() bool {
 	return e.Alert != template2.HTML("")
-}
-
-func (e EditFormParam) GetNewUrl() string {
-	return e.getUrl("new")
-}
-
-func (e EditFormParam) GetExportUrl() string {
-	return config.Get().Url("/export/" + e.Prefix + e.Param.GetRouteParamStr())
-}
-
-func (e EditFormParam) GetDeleteUrl() string {
-	return config.Get().Url("/delete/" + e.Prefix)
-}
-
-func (e *EditFormParam) GetUrl() string {
-	return config.Get().Url("/edit/" + e.Prefix)
-}
-
-func (e *EditFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
-}
-
-func (e EditFormParam) getUrl(kind string) string {
-	return config.Get().Url("/info/" + e.Prefix + "/" + kind + e.Param.GetRouteParamStr())
 }
 
 func (e EditFormParam) IsManage() bool {
@@ -153,7 +109,7 @@ func EditForm(srv service.List) context.Handler {
 			return
 		}
 
-		fromList := modules.IsInfoUrl(previous)
+		fromList := isInfoUrl(previous)
 
 		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize,
 			panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
@@ -174,6 +130,12 @@ func EditForm(srv service.List) context.Handler {
 		})
 		ctx.Next()
 	}
+}
+
+func isInfoUrl(s string) bool {
+	reg, _ := regexp.Compile("(.*?)info/(.*?)$")
+	sub := reg.FindStringSubmatch(s)
+	return len(sub) > 2 && !strings.Contains(sub[2], "/")
 }
 
 func GetEditFormParam(ctx *context.Context) *EditFormParam {

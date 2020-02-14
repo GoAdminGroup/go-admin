@@ -6,7 +6,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -19,14 +18,6 @@ type ShowNewFormParam struct {
 	Panel  table.Table
 	Prefix string
 	Param  parameter.Parameters
-}
-
-func (e *ShowNewFormParam) GetUrl() string {
-	return config.Get().Url("/new/" + e.Prefix)
-}
-
-func (e *ShowNewFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
 }
 
 func ShowNewForm(conn db.Connection) context.Handler {
@@ -71,44 +62,8 @@ func (e NewFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 
-func (e NewFormParam) GetEditUrl() string {
-	return e.getUrl("edit")
-}
-
-func (e NewFormParam) GetNewUrl() string {
-	return e.getUrl("new")
-}
-
-func (e NewFormParam) GetUpdateUrl() string {
-	return config.Get().Url("/update/" + e.Prefix)
-}
-
-func (e NewFormParam) GetDeleteUrl() string {
-	return config.Get().Url("/delete/" + e.Prefix)
-}
-
-func (e NewFormParam) GetExportUrl() string {
-	return config.Get().Url("/export/" + e.Prefix + e.Param.GetRouteParamStr())
-}
-
-func (e NewFormParam) getUrl(kind string) string {
-	return config.Get().Url("/info/" + e.Prefix + "/" + kind + e.Param.GetRouteParamStr())
-}
-
 func (e NewFormParam) IsManage() bool {
 	return e.Prefix == "manager"
-}
-
-func (e *NewFormParam) GetUrl() string {
-	return config.Get().Url("/new/" + e.Prefix)
-}
-
-func (e *NewFormParam) GetInfoUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + e.Param.GetRouteParamStr())
-}
-
-func (e *NewFormParam) GetDetailUrl() string {
-	return config.Get().Url("/info/" + e.Prefix + "/detail" + e.Param.GetRouteParamStr())
 }
 
 func (e NewFormParam) HasAlert() bool {
@@ -140,7 +95,7 @@ func NewForm(srv service.List) context.Handler {
 			return
 		}
 
-		fromList := modules.IsInfoUrl(previous)
+		fromList := isInfoUrl(previous)
 
 		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize, panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
 

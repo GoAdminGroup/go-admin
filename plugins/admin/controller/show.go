@@ -19,7 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
 	"net/http"
-	"net/url"
 	"path"
 	"strconv"
 	"strings"
@@ -59,32 +58,24 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 		}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	}
 
-	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr()), "")
-	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
-	exportUrl := modules.AorB(panel.GetExportable(), config.Url("/export/"+prefix+params.GetRouteParamStr()), "")
-	detailUrl := modules.AorB(panel.IsShowDetail(), config.Url("/info/"+prefix+"/detail"+params.GetRouteParamStr()), "")
-	newUrl := modules.AorB(panel.GetCanAdd(), config.Url("/info/"+prefix+"/new"+params.GetRouteParamStr()), "")
+	paramStr := params.GetRouteParamStr()
 
-	infoUrl := config.Url("/info/" + prefix)
-	updateUrl := config.Url("/update/" + prefix)
+	editUrl := modules.AorEmpty(panel.GetEditable(), routePathWithPrefix("show_edit", prefix)+paramStr)
+	newUrl := modules.AorEmpty(panel.GetCanAdd(), routePathWithPrefix("show_new", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(panel.GetDeletable(), routePathWithPrefix("delete", prefix))
+	exportUrl := modules.AorEmpty(panel.GetExportable(), routePathWithPrefix("export", prefix)+paramStr)
+	detailUrl := modules.AorEmpty(panel.IsShowDetail(), routePathWithPrefix("detail", prefix)+paramStr)
+
+	infoUrl := routePathWithPrefix("info", prefix)
+	updateUrl := routePathWithPrefix("update", prefix)
 
 	user := auth.Auth(ctx)
 
-	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
-		editUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
-		deleteUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(exportUrl, "POST", url.Values{}) {
-		exportUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(detailUrl, "GET", url.Values{}) {
-		detailUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(newUrl, "GET", url.Values{}) {
-		newUrl = ""
-	}
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, route("show_edit").Method())
+	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, route("show_new").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, route("delete").Method())
+	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, route("export").Method())
+	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, route("detail").Method())
 
 	var (
 		body       template2.HTML

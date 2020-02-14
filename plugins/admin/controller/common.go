@@ -11,6 +11,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
+	"regexp"
+	"strings"
 )
 
 var (
@@ -18,7 +20,12 @@ var (
 	captchaConfig map[string]string
 	services      service.List
 	conn          db.Connection
+	routes        context.RouterMap
 )
+
+func SetRoutes(r context.RouterMap) {
+	routes = r
+}
 
 // SetConfig set the config.
 func SetCaptcha(cap map[string]string) {
@@ -34,6 +41,34 @@ func SetConfig(cfg c.Config) {
 func SetServices(l service.List) {
 	services = l
 	conn = db.GetConnection(services)
+}
+
+func route(name string) context.Router {
+	return routes.Get(name)
+}
+
+func routePath(name string, value ...string) string {
+	return routes.Get(name).GetURL(value...)
+}
+
+func routePathWithPrefix(name string, prefix string) string {
+	return routePath(name, "prefix", prefix)
+}
+
+func isInfoUrl(s string) bool {
+	reg, _ := regexp.Compile("(.*?)info/(.*?)$")
+	sub := reg.FindStringSubmatch(s)
+	return len(sub) > 2 && !strings.Contains(sub[2], "/")
+}
+
+func isNewUrl(s string, p string) bool {
+	reg, _ := regexp.Compile("(.*?)info/" + p + "/new")
+	return reg.MatchString(s)
+}
+
+func isEditUrl(s string, p string) bool {
+	reg, _ := regexp.Compile("(.*?)info/" + p + "/edit")
+	return reg.MatchString(s)
 }
 
 func authSrv() *auth.TokenService {

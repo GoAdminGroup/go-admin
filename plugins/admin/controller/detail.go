@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
-	config2 "github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -15,7 +14,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
 	"net/http"
-	"net/url"
 )
 
 func ShowDetail(ctx *context.Context) {
@@ -59,20 +57,18 @@ func ShowDetail(ctx *context.Context) {
 			GetContent()
 	}
 
-	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
-		panel.GetInfo().GetSort())
+	paramStr := parameter.GetParam(ctx.Request.URL.Query(),
+		panel.GetInfo().DefaultPageSize,
+		panel.GetInfo().SortField,
+		panel.GetInfo().GetSort()).GetRouteParamStr()
 
-	editUrl := modules.AorB(panel.GetEditable(), config.Url("/info/"+prefix+"/edit"+params.GetRouteParamStr())+"&__goadmin_edit_pk="+
-		ctx.Query("__goadmin_detail_pk"), "")
-	deleteUrl := modules.AorB(panel.GetDeletable(), config.Url("/delete/"+prefix), "")
-	infoUrl := config2.Get().Url("/info/" + prefix + params.GetRouteParamStr())
+	editUrl := modules.AorEmpty(panel.GetEditable(), routePathWithPrefix("show_edit", prefix)+paramStr+
+		"&__goadmin_edit_pk="+ctx.Query("__goadmin_detail_pk"))
+	deleteUrl := modules.AorEmpty(panel.GetDeletable(), routePathWithPrefix("delete", prefix)+paramStr)
+	infoUrl := routePathWithPrefix("info", prefix) + paramStr
 
-	if !user.CheckPermissionByUrlMethod(editUrl, "GET", url.Values{}) {
-		editUrl = ""
-	}
-	if !user.CheckPermissionByUrlMethod(deleteUrl, "POST", url.Values{}) {
-		deleteUrl = ""
-	}
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, route("show_edit").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, route("delete").Method())
 
 	deleteJs := ""
 

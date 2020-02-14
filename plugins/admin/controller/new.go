@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -20,10 +19,10 @@ import (
 // ShowNewForm show a new form page.
 func ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
-	showNewForm(ctx, "", param.Prefix, param.GetUrl(), param.GetInfoUrl(), "")
+	showNewForm(ctx, "", param.Prefix, param.Param.GetRouteParamStr(), false)
 }
 
-func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url, infoUrl, newUrl string) {
+func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, paramStr string, isNew bool) {
 
 	user := auth.Auth(ctx)
 
@@ -33,9 +32,13 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
 
+	infoUrl := routePathWithPrefix("info", prefix) + paramStr
+	newUrl := routePathWithPrefix("new", prefix)
+	showNewUrl := routePathWithPrefix("show_new", prefix) + paramStr
+
 	referer := ctx.Headers("Referer")
 
-	if referer != "" && !modules.IsInfoUrl(referer) && !modules.IsNewUrl(referer, ctx.Query("__prefix")) {
+	if referer != "" && !isInfoUrl(referer) && !isNewUrl(referer, ctx.Query("__prefix")) {
 		infoUrl = referer
 	}
 
@@ -46,7 +49,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 			SetContent(formList).
 			SetTabContents(groupFormList).
 			SetTabHeaders(groupHeaders).
-			SetUrl(url).
+			SetUrl(newUrl).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetToken(authSrv().AddToken()).
 			SetOperationFooter(formFooter()).
@@ -59,8 +62,8 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, url,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	ctx.HTML(http.StatusOK, buf.String())
 
-	if newUrl != "" {
-		ctx.AddHeader(constant.PjaxUrlHeader, newUrl)
+	if isNew {
+		ctx.AddHeader(constant.PjaxUrlHeader, showNewUrl)
 	}
 }
 
@@ -69,8 +72,10 @@ func NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
+	paramStr := param.Param.GetRouteParamStr()
+
 	if param.HasAlert() {
-		showNewForm(ctx, param.Alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+		showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
 		return
 	}
 
@@ -82,7 +87,7 @@ func NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showNewForm(ctx, alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+			showNewForm(ctx, alert, param.Prefix, paramStr, true)
 			return
 		}
 	}
@@ -93,7 +98,7 @@ func NewForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		showNewForm(ctx, alert, param.Prefix, param.GetUrl(), param.GetInfoUrl(), param.GetNewUrl())
+		showNewForm(ctx, alert, param.Prefix, paramStr, true)
 		return
 	}
 
@@ -108,5 +113,5 @@ func NewForm(ctx *context.Context) {
 	buf := showTable(ctx, param.Prefix, param.Path, param.Param)
 
 	ctx.HTML(http.StatusOK, buf.String())
-	ctx.AddHeader(constant.PjaxUrlHeader, param.GetInfoUrl())
+	ctx.AddHeader(constant.PjaxUrlHeader, routePathWithPrefix("info", param.Prefix)+paramStr)
 }

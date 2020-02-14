@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -21,10 +20,10 @@ import (
 // ShowForm show form page.
 func ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
-	showForm(ctx, "", param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), "")
+	showForm(ctx, "", param.Prefix, param.Id, param.Param.GetRouteParamStr(), false)
 }
 
-func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, url, infoUrl string, editUrl string) {
+func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, paramStr string, isEdit bool) {
 
 	table.RefreshTableList(ctx)
 	panel := table.Get(prefix)
@@ -40,9 +39,13 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 
 	user := auth.Auth(ctx)
 
+	infoUrl := routePathWithPrefix("info", prefix) + paramStr
+	editUrl := routePathWithPrefix("edit", prefix)
+	showEditUrl := routePathWithPrefix("show_edit", prefix) + paramStr
+
 	referer := ctx.Headers("Referer")
 
-	if referer != "" && !modules.IsInfoUrl(referer) && !modules.IsEditUrl(referer, ctx.Query("__prefix")) {
+	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query("__prefix")) {
 		infoUrl = referer
 	}
 
@@ -54,7 +57,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
-			SetUrl(url).
+			SetUrl(editUrl).
 			SetToken(authSrv().AddToken()).
 			SetInfoUrl(infoUrl).
 			SetOperationFooter(formFooter()).
@@ -66,8 +69,8 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 
 	ctx.HTML(http.StatusOK, buf.String())
 
-	if editUrl != "" {
-		ctx.AddHeader(constant.PjaxUrlHeader, editUrl)
+	if isEdit {
+		ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
 	}
 }
 
@@ -76,7 +79,7 @@ func EditForm(ctx *context.Context) {
 	param := guard.GetEditFormParam(ctx)
 
 	if param.HasAlert() {
-		showForm(ctx, param.Alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+		showForm(ctx, param.Alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
 		return
 	}
 
@@ -88,7 +91,7 @@ func EditForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showForm(ctx, alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+			showForm(ctx, alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
 			return
 		}
 	}
@@ -107,7 +110,7 @@ func EditForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		showForm(ctx, alert, param.Prefix, param.Id, param.GetUrl(), param.GetInfoUrl(), param.GetEditUrl())
+		showForm(ctx, alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
 		return
 	}
 

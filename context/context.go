@@ -40,6 +40,29 @@ type Path struct {
 	Method string
 }
 
+type RouterMap map[string]Router
+
+func (r RouterMap) Get(name string) Router {
+	return r[name]
+}
+
+type Router struct {
+	Methods []string
+	Patten  string
+}
+
+func (r Router) Method() string {
+	return r.Methods[0]
+}
+
+func (r Router) GetURL(value ...string) string {
+	u := r.Patten
+	for i := 0; i < len(value); i += 2 {
+		u = strings.Replace(u, ":__"+value[i], value[i+1], -1)
+	}
+	return u
+}
+
 type Node struct {
 	Path     string
 	Method   string
@@ -258,6 +281,10 @@ type App struct {
 	tree        *node
 	Middlewares Handlers
 	Prefix      string
+
+	Routers    RouterMap
+	routeIndex int
+	routeANY   bool
 }
 
 // NewApp return an empty app.
@@ -267,6 +294,8 @@ func NewApp() *App {
 		tree:        tree(),
 		Prefix:      "/",
 		Middlewares: make([]Handler, 0),
+		routeIndex:  -1,
+		Routers:     make(RouterMap),
 	}
 }
 
@@ -291,54 +320,84 @@ func (app *App) AppendReqAndResp(url, method string, handler []Handler) {
 		URL:    join(app.Prefix, url),
 		Method: method,
 	})
+	app.routeIndex++
 
 	app.tree.addPath(stringToArr(join(app.Prefix, slash(url))), method, append(app.Middlewares, handler...))
 }
 
 // Find is public helper method for findPath of tree.
 func (app *App) Find(url, method string) []Handler {
+	app.routeANY = false
 	return app.tree.findPath(stringToArr(url), method)
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
-func (app *App) POST(url string, handler ...Handler) {
+func (app *App) POST(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "post", handler)
+	return app
 }
 
 // GET is a shortcut for app.AppendReqAndResp(url, "get", handler).
-func (app *App) GET(url string, handler ...Handler) {
+func (app *App) GET(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "get", handler)
+	return app
 }
 
 // DELETE is a shortcut for app.AppendReqAndResp(url, "delete", handler).
-func (app *App) DELETE(url string, handler ...Handler) {
+func (app *App) DELETE(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "delete", handler)
+	return app
 }
 
 // PUT is a shortcut for app.AppendReqAndResp(url, "put", handler).
-func (app *App) PUT(url string, handler ...Handler) {
+func (app *App) PUT(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "put", handler)
+	return app
 }
 
 // OPTIONS is a shortcut for app.AppendReqAndResp(url, "options", handler).
-func (app *App) OPTIONS(url string, handler ...Handler) {
+func (app *App) OPTIONS(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "options", handler)
+	return app
 }
 
 // HEAD is a shortcut for app.AppendReqAndResp(url, "head", handler).
-func (app *App) HEAD(url string, handler ...Handler) {
+func (app *App) HEAD(url string, handler ...Handler) *App {
+	app.routeANY = false
 	app.AppendReqAndResp(url, "head", handler)
+	return app
 }
 
 // ANY registers a route that matches all the HTTP methods.
 // GET, POST, PUT, HEAD, OPTIONS, DELETE.
-func (app *App) ANY(url string, handler ...Handler) {
+func (app *App) ANY(url string, handler ...Handler) *App {
+	app.routeANY = true
 	app.AppendReqAndResp(url, "post", handler)
 	app.AppendReqAndResp(url, "get", handler)
 	app.AppendReqAndResp(url, "delete", handler)
 	app.AppendReqAndResp(url, "put", handler)
 	app.AppendReqAndResp(url, "options", handler)
 	app.AppendReqAndResp(url, "head", handler)
+	return app
+}
+
+func (app *App) Name(name string) {
+	if app.routeANY {
+		app.Routers[name] = Router{
+			Methods: []string{"POST", "GET", "DELETE", "PUT", "OPTIONS", "HEAD"},
+			Patten:  app.Requests[app.routeIndex].URL,
+		}
+	} else {
+		app.Routers[name] = Router{
+			Methods: []string{app.Requests[app.routeIndex].Method},
+			Patten:  app.Requests[app.routeIndex].URL,
+		}
+	}
 }
 
 // Group add middlewares and prefix for App.
@@ -372,6 +431,7 @@ func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 		URL:    join(g.Prefix, url),
 		Method: method,
 	})
+	g.app.routeIndex++
 
 	var h = make([]Handler, len(g.Middlewares))
 	copy(h, g.Middlewares)
@@ -379,44 +439,62 @@ func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
-func (g *RouterGroup) POST(url string, handler ...Handler) {
+func (g *RouterGroup) POST(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "post", handler)
+	return g
 }
 
 // GET is a shortcut for app.AppendReqAndResp(url, "get", handler).
-func (g *RouterGroup) GET(url string, handler ...Handler) {
+func (g *RouterGroup) GET(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "get", handler)
+	return g
 }
 
 // DELETE is a shortcut for app.AppendReqAndResp(url, "delete", handler).
-func (g *RouterGroup) DELETE(url string, handler ...Handler) {
+func (g *RouterGroup) DELETE(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "delete", handler)
+	return g
 }
 
 // PUT is a shortcut for app.AppendReqAndResp(url, "put", handler).
-func (g *RouterGroup) PUT(url string, handler ...Handler) {
+func (g *RouterGroup) PUT(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "put", handler)
+	return g
 }
 
 // OPTIONS is a shortcut for app.AppendReqAndResp(url, "options", handler).
-func (g *RouterGroup) OPTIONS(url string, handler ...Handler) {
+func (g *RouterGroup) OPTIONS(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "options", handler)
+	return g
 }
 
 // HEAD is a shortcut for app.AppendReqAndResp(url, "head", handler).
-func (g *RouterGroup) HEAD(url string, handler ...Handler) {
+func (g *RouterGroup) HEAD(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = false
 	g.AppendReqAndResp(url, "head", handler)
+	return g
 }
 
 // ANY registers a route that matches all the HTTP methods.
 // GET, POST, PUT, HEAD, OPTIONS, DELETE.
-func (g *RouterGroup) ANY(url string, handler ...Handler) {
+func (g *RouterGroup) ANY(url string, handler ...Handler) *RouterGroup {
+	g.app.routeANY = true
 	g.AppendReqAndResp(url, "post", handler)
 	g.AppendReqAndResp(url, "get", handler)
 	g.AppendReqAndResp(url, "delete", handler)
 	g.AppendReqAndResp(url, "put", handler)
 	g.AppendReqAndResp(url, "options", handler)
 	g.AppendReqAndResp(url, "head", handler)
+	return g
+}
+
+func (g *RouterGroup) Name(name string) {
+	g.app.Name(name)
 }
 
 // Group add middlewares and prefix for RouterGroup.
