@@ -64,7 +64,7 @@ func ShowDetail(ctx *context.Context) {
 		panel.GetInfo().GetSort()).GetRouteParamStr()
 
 	editUrl := modules.AorEmpty(panel.GetEditable(), routePathWithPrefix("show_edit", prefix)+paramStr+
-		"&"+constant.EditPKKey+"="+ctx.Query(constant.EditPKKey))
+		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))
 	deleteUrl := modules.AorEmpty(panel.GetDeletable(), routePathWithPrefix("delete", prefix)+paramStr)
 	infoUrl := routePathWithPrefix("info", prefix) + paramStr
 
