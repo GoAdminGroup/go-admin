@@ -338,6 +338,8 @@ func (tb DefaultTable) Copy() Table {
 		deletable:        tb.deletable,
 		exportable:       tb.exportable,
 		primaryKey:       tb.primaryKey,
+		sourceURL:        tb.sourceURL,
+		getDataFun:       tb.getDataFun,
 	}
 }
 
