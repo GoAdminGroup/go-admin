@@ -340,7 +340,7 @@ func (tb DefaultTable) GetForm() *types.FormPanel {
 }
 
 func (tb DefaultTable) GetCanAdd() bool {
-	return tb.canAdd && !tb.info.IsHideNewButton
+	return tb.canAdd
 }
 
 func (tb DefaultTable) GetPrimaryKey() PrimaryKey {
@@ -348,11 +348,11 @@ func (tb DefaultTable) GetPrimaryKey() PrimaryKey {
 }
 
 func (tb DefaultTable) GetEditable() bool {
-	return tb.editable && !tb.info.IsHideEditButton
+	return tb.editable
 }
 
 func (tb DefaultTable) GetDeletable() bool {
-	return tb.deletable && !tb.info.IsHideDeleteButton
+	return tb.deletable
 }
 
 func (tb DefaultTable) IsShowDetail() bool {
@@ -360,7 +360,7 @@ func (tb DefaultTable) IsShowDetail() bool {
 }
 
 func (tb DefaultTable) GetExportable() bool {
-	return tb.exportable && !tb.info.IsHideExportButton
+	return tb.exportable
 }
 
 // GetData query the data set.
