@@ -57,6 +57,7 @@ var en = map[string]string{
 
 	"avatar":     "Avatar",
 	"password":   "Password",
+	"username":   "Username",
 	"slug":       "Slug",
 	"permission": "Permission",
 	"userid":     "UserID",

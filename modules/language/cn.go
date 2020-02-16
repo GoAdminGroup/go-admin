@@ -63,6 +63,7 @@ var cn = map[string]string{
 
 	"avatar":     "头像",
 	"password":   "密码",
+	"username":   "用户名",
 	"slug":       "标志",
 	"permission": "权限",
 	"userid":     "用户ID",
