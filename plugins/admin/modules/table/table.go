@@ -1331,14 +1331,19 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
+	if tb.form.UpdateFn != nil {
+		return tb.form.UpdateFn(dataList)
+	}
+
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
 			return err
 		}
 	}
 
-	if tb.form.UpdateFn != nil {
-		return tb.form.UpdateFn(dataList)
+	if tb.form.PreProcessFn != nil {
+		dataList.Add("__go_admin_post_type", "0")
+		dataList = tb.form.PreProcessFn(dataList)
 	}
 
 	_, err := tb.sql().Table(tb.form.Table).
@@ -1381,14 +1386,19 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
+	if tb.form.InsertFn != nil {
+		return tb.form.InsertFn(dataList)
+	}
+
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
 			return err
 		}
 	}
 
-	if tb.form.InsertFn != nil {
-		return tb.form.InsertFn(dataList)
+	if tb.form.PreProcessFn != nil {
+		dataList.Add("__go_admin_post_type", "1")
+		dataList = tb.form.PreProcessFn(dataList)
 	}
 
 	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))

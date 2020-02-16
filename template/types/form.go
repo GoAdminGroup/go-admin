@@ -108,8 +108,9 @@ type FormPanel struct {
 	Title       string
 	Description string
 
-	Validator FormPostFn
-	PostHook  FormPostFn
+	Validator    FormPostFn
+	PostHook     FormPostFn
+	PreProcessFn FormPreProcessFn
 
 	Callbacks Callbacks
 
@@ -353,20 +354,27 @@ func (f *FormPanel) SetPostValidator(va FormPostFn) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) SetPostHook(po FormPostFn) *FormPanel {
-	f.PostHook = po
+func (f *FormPanel) SetPreProcessFn(fn FormPreProcessFn) *FormPanel {
+	f.PreProcessFn = fn
 	return f
 }
 
-func (f *FormPanel) SetUpdateFn(po FormPostFn) *FormPanel {
-	f.UpdateFn = po
+func (f *FormPanel) SetPostHook(fn FormPostFn) *FormPanel {
+	f.PostHook = fn
 	return f
 }
 
-func (f *FormPanel) SetInsertFn(po FormPostFn) *FormPanel {
-	f.InsertFn = po
+func (f *FormPanel) SetUpdateFn(fn FormPostFn) *FormPanel {
+	f.UpdateFn = fn
 	return f
 }
+
+func (f *FormPanel) SetInsertFn(fn FormPostFn) *FormPanel {
+	f.InsertFn = fn
+	return f
+}
+
+type FormPreProcessFn func(values form.Values) form.Values
 
 type FormPostFn func(values form.Values) error
 
