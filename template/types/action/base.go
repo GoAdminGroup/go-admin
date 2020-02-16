@@ -35,7 +35,7 @@ func (h Handler) Wrap() context.Handler {
 		defer func() {
 			if err := recover(); err != nil {
 				logger.Error(err)
-				ctx.JSON(http.StatusOK, map[string]interface{}{
+				ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 					"code": 500,
 					"data": "",
 					"msg":  "error",
