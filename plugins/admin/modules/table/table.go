@@ -1578,10 +1578,9 @@ func GetNewFormList(groupHeaders []string,
 	if len(group) == 0 {
 		var newForm []types.FormField
 		for _, v := range old {
-			v.Value = v.Default
 			if !v.NotAllowAdd {
 				v.Editable = true
-				newForm = append(newForm, v)
+				newForm = append(newForm, v.UpdateDefaultValue())
 			}
 		}
 		return newForm, [][]types.FormField{}, []string{}
@@ -1598,10 +1597,9 @@ func GetNewFormList(groupHeaders []string,
 		for i := 0; i < len(value); i++ {
 			for _, v := range old {
 				if v.Field == value[i] {
-					v.Value = v.Default
 					if !v.NotAllowAdd {
 						v.Editable = true
-						list = append(list, v)
+						list = append(list, v.UpdateDefaultValue())
 						break
 					}
 				}

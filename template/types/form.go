@@ -87,6 +87,14 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 	return f
 }
 
+func (f FormField) UpdateDefaultValue() FormField {
+	f.Value = f.Default
+	if f.FormType.IsSelect() {
+		f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
+	}
+	return f
+}
+
 // FormPanel
 type FormPanel struct {
 	FieldList         FormFields
