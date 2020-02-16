@@ -49,7 +49,7 @@ type BoxAttribute interface {
 }
 
 type ColAttribute interface {
-	SetSize(value map[string]string) ColAttribute
+	SetSize(value S) ColAttribute
 	SetContent(value template.HTML) ColAttribute
 	AddContent(value template.HTML) ColAttribute
 	GetContent() template.HTML

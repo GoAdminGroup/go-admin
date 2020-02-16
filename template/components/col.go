@@ -22,7 +22,7 @@ func (compo *ColAttribute) AddContent(value template.HTML) types.ColAttribute {
 	return compo
 }
 
-func (compo *ColAttribute) SetSize(value map[string]string) types.ColAttribute {
+func (compo *ColAttribute) SetSize(value types.S) types.ColAttribute {
 	compo.Size = ""
 	for key, size := range value {
 		compo.Size += "col-" + key + "-" + size + " "

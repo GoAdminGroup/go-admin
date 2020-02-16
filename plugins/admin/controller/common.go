@@ -121,7 +121,7 @@ func isPjax(ctx *context.Context) bool {
 }
 
 func formFooter() template2.HTML {
-	col1 := aCol().SetSize(map[string]string{"md": "2"}).GetContent()
+	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 	btn1 := aButton().SetType("submit").
 		SetContent(language.GetFromHtml("Save")).
 		SetThemePrimary().
@@ -132,13 +132,13 @@ func formFooter() template2.HTML {
 		SetThemeWarning().
 		SetOrientationLeft().
 		GetContent()
-	col2 := aCol().SetSize(map[string]string{"md": "8"}).
+	col2 := aCol().SetSize(types.SizeMD(8)).
 		SetContent(btn1 + btn2).GetContent()
 	return col1 + col2
 }
 
 func filterFormFooter(infoUrl string) template2.HTML {
-	col1 := aCol().SetSize(map[string]string{"md": "2"}).GetContent()
+	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 	btn1 := aButton().SetType("submit").
 		SetContent(icon.Icon(icon.Search, 2) + language.GetFromHtml("search")).
 		SetThemePrimary().
@@ -154,7 +154,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 		SetHref(infoUrl).
 		SetMarginLeft(12).
 		GetContent()
-	col2 := aCol().SetSize(map[string]string{"md": "8"}).
+	col2 := aCol().SetSize(types.SizeMD(8)).
 		SetContent(btn1 + btn2).GetContent()
 	return col1 + col2
 }

@@ -191,7 +191,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	header := aTree().GetTreeHeader()
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
-	col1 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(box).GetContent()
+	col1 := aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 
 	list := table.Get("menu")
 
@@ -210,7 +210,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		SetTabContents(groupFormList).
 		SetTabHeaders(groupHeaders))
 
-	col2 := aCol().SetSize(map[string]string{"md": "6"}).SetContent(newForm).GetContent()
+	col2 := aCol().SetSize(types.SizeMD(6)).SetContent(newForm).GetContent()
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
