@@ -76,26 +76,10 @@ func (g GeneratorList) CombineAll(ggg []GeneratorList) {
 	}
 }
 
-var (
-	generators = make(GeneratorList)
-	tableList  = map[string]Table{}
-)
+var generators = make(GeneratorList)
 
-func Get(key string) Table {
-	return tableList[key]
-}
-
-func InitTableList(ctx *context.Context) {
-	for prefix, generator := range generators {
-		tableList[prefix] = generator(ctx)
-	}
-}
-
-// RefreshTableList refresh the table list when the table relationship changed.
-func RefreshTableList(ctx *context.Context) {
-	for k, v := range generators {
-		tableList[k] = v(ctx)
-	}
+func Get(key string, ctx *context.Context) Table {
+	return generators[key](ctx)
 }
 
 // SetGenerators update generators.

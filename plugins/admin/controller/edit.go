@@ -24,8 +24,7 @@ func ShowForm(ctx *context.Context) {
 
 func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, paramStr string, isEdit bool) {
 
-	table.RefreshTableList(ctx)
-	panel := table.Get(prefix)
+	panel := table.Get(prefix, ctx)
 
 	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataWithId(id)
 
@@ -118,8 +117,6 @@ func EditForm(ctx *context.Context) {
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 		return
 	}
-
-	table.RefreshTableList(ctx)
 
 	buf := showTable(ctx, param.Prefix, param.Path, param.Param)
 

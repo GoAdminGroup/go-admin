@@ -16,7 +16,7 @@ type UpdateParam struct {
 
 func Update(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
-	panel := table.Get(prefix)
+	panel := table.Get(prefix, ctx)
 
 	pname := panel.GetPrimaryKey().Name
 

@@ -21,7 +21,7 @@ func Delete(ctx *context.Context) {
 	//	return
 	//}
 
-	if err := table.Get(param.Prefix).DeleteDataFromDatabase(param.Id); err != nil {
+	if err := table.Get(param.Prefix, ctx).DeleteDataFromDatabase(param.Id); err != nil {
 		logger.Error(err)
 		response.Error(ctx, "删除失败")
 		return

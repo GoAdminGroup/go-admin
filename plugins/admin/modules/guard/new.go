@@ -25,7 +25,7 @@ func ShowNewForm(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 
 		if !panel.GetCanAdd() {
 			alert(ctx, panel, "operation not allow", conn)
@@ -79,7 +79,7 @@ func NewForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue("_previous_")
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 
 		conn := db.GetConnection(srv)
 

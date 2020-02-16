@@ -25,7 +25,7 @@ func ShowMenu(ctx *context.Context) {
 // ShowNewMenu show new menu page.
 func ShowNewMenu(ctx *context.Context) {
 
-	panel := table.Get("menu")
+	panel := table.Get("menu", ctx)
 
 	formData, groupFormData, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders,
 		panel.GetForm().TabGroups,
@@ -71,7 +71,7 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu").GetDataWithId(ctx.Query("id"))
+	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu", ctx).GetDataWithId(ctx.Query("id"))
 
 	user := auth.Auth(ctx)
 
@@ -86,7 +86,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetTabContents(groupFormData).
 			SetTabHeaders(groupHeaders).
 			SetPrefix(config.PrefixFixSlash()).
-			SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
+			SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
 			SetOperationFooter(formFooter()).
 			SetToken(authSrv().AddToken()).
@@ -101,7 +101,6 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 // DeleteMenu delete the menu of given id.
 func DeleteMenu(ctx *context.Context) {
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).SetConn(db.GetConnection(services)).Delete()
-	table.RefreshTableList(ctx)
 	response.Ok(ctx)
 }
 
@@ -123,7 +122,6 @@ func EditMenu(ctx *context.Context) {
 	for _, roleId := range param.Roles {
 		menuModel.AddRole(roleId)
 	}
-	table.RefreshTableList(ctx)
 
 	menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
@@ -154,7 +152,6 @@ func NewMenu(ctx *context.Context) {
 	}
 
 	menu.GetGlobalMenu(user, conn).AddMaxOrder()
-	table.RefreshTableList(ctx)
 
 	getMenuInfoPanel(ctx, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -175,8 +172,6 @@ func MenuOrder(ctx *context.Context) {
 func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
-	table.RefreshTableList(ctx)
-
 	editUrl := config.Url("/menu/edit/show")
 	deleteUrl := config.Url("/menu/delete")
 	orderUrl := config.Url("/menu/order")
@@ -193,7 +188,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 
-	list := table.Get("menu")
+	list := table.Get("menu", ctx)
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
 		list.GetForm().FieldList)
@@ -201,7 +196,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	newForm := menuFormContent(aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
-		SetPrimaryKey(table.Get("menu").GetPrimaryKey().Name).
+		SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
 		SetToken(authSrv().AddToken()).
 		SetInfoUrl(config.Url("/menu")).
 		SetOperationFooter(formFooter()).

@@ -17,7 +17,7 @@ func Delete(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 		if !panel.GetDeletable() {
 			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()

@@ -19,7 +19,7 @@ func Export(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 		if !panel.GetExportable() {
 			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()

@@ -29,7 +29,7 @@ func ShowForm(conn db.Connection) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 
 		if !panel.GetEditable() {
 			alert(ctx, panel, "operation not allow", conn)
@@ -91,7 +91,7 @@ func EditForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue("_previous_")
-		panel := table.Get(prefix)
+		panel := table.Get(prefix, ctx)
 		multiForm := ctx.Request.MultipartForm
 
 		conn := db.GetConnection(srv)

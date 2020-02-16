@@ -20,7 +20,7 @@ import (
 func ShowDetail(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 	id := ctx.Query(constant.DetailPKKey)
-	panel := table.Get(prefix)
+	panel := table.Get(prefix, ctx)
 	user := auth.Auth(ctx)
 
 	newPanel := panel.Copy()

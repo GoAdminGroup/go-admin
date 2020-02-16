@@ -25,8 +25,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 
 	user := auth.Auth(ctx)
 
-	table.RefreshTableList(ctx)
-	panel := table.Get(prefix)
+	panel := table.Get(prefix, ctx)
 
 	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
@@ -106,8 +105,6 @@ func NewForm(ctx *context.Context) {
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 		return
 	}
-
-	table.RefreshTableList(ctx)
 
 	buf := showTable(ctx, param.Prefix, param.Path, param.Param)
 

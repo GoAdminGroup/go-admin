@@ -8,7 +8,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 )
 
@@ -34,9 +33,7 @@ func InitRouter(prefix string, srv service.List) *context.App {
 		route.GET("/assets"+path, controller.Assets)
 	}
 
-	authRoute := route.Group("/", auth.Middleware(db.GetConnection(srv)), func(ctx *context.Context) {
-		table.InitTableList(ctx)
-	})
+	authRoute := route.Group("/", auth.Middleware(db.GetConnection(srv)))
 
 	// auth
 	authRoute.GET("/logout", controller.Logout)
