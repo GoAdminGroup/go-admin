@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -63,7 +62,7 @@ func ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
 		getMenuInfoPanel(ctx, template.Get(config.Theme).Alert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> `+language.Get("error")+`!`)).
+			SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML("wrong id")).
 			GetContent())

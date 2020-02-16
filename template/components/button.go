@@ -2,6 +2,8 @@ package components
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
@@ -99,6 +101,10 @@ func (compo *ButtonAttribute) GetContent() template.HTML {
 
 	if compo.MarginRight != 0 {
 		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="margin-right:%dpx;"`, compo.MarginRight))
+	}
+
+	if compo.LoadingText == "" {
+		compo.LoadingText = icon.Icon(icon.Spinner, 1) + language.GetFromHtml(`Save`)
 	}
 
 	return ComposeHtml(compo.TemplateList, *compo, "button")

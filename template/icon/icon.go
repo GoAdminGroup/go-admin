@@ -1,5 +1,20 @@
 package icon
 
+import (
+	"github.com/GoAdminGroup/html"
+	"html/template"
+)
+
+func Icon(class string, num ...int) template.HTML {
+	space := template.HTML("")
+	if len(num) > 0 {
+		for i := 0; i < num[0]; i++ {
+			space += "&nbsp;"
+		}
+	}
+	return html.IEl().SetClass("icon fa", class).Get() + space
+}
+
 const (
 	Adjust                           = "fa-adjust"                              // https://fontawesome.com/icons/adjust
 	Adn                              = "fa-adn"                                 // https://fontawesome.com/icons/adn

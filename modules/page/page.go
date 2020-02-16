@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
 )
@@ -25,17 +26,18 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 	panel, err := c(ctx)
 
 	globalConfig := config.Get()
+	errMsg := language.Get("error")
 
 	if err != nil {
 		logger.Error("SetPageContent", err)
 		alert := template.Get(globalConfig.Theme).
 			Alert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTitle(icon.Icon(icon.Warning, 1) + template.HTML(errMsg) + `!`).
 			SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
 		panel = types.Panel{
 			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
+			Description: errMsg,
+			Title:       errMsg,
 		}
 	}
 

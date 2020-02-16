@@ -52,7 +52,7 @@ func ShowDetail(ctx *context.Context) {
 	var alert template2.HTML
 
 	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()

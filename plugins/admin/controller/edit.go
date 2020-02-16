@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
@@ -31,7 +30,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataWithId(id)
 
 	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
@@ -87,7 +86,7 @@ func EditForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
@@ -106,7 +105,7 @@ func EditForm(ctx *context.Context) {
 
 	err := param.Panel.UpdateDataFromDatabase(param.Value())
 	if err != nil {
-		alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()

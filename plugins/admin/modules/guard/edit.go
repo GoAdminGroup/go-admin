@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -153,7 +152,7 @@ func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn d
 
 func getAlert(msg string) template2.HTML {
 	return template.Get(config.Get().Theme).Alert().
-		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		SetTitle(constant.DefaultErrorMsg).
 		SetTheme("warning").
 		SetContent(template2.HTML(msg)).
 		GetContent()

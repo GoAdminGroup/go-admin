@@ -3,7 +3,6 @@ package controller
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -55,7 +54,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 		}
 
 		alert := aAlert().
-			SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+			SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML(errMsg)).
 			GetContent()
@@ -76,7 +75,7 @@ func GlobalDeferHandler(ctx *context.Context) {
 func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
 
 	alert := aAlert().
-		SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		SetTitle(constant.DefaultErrorMsg).
 		SetTheme("warning").
 		SetContent(template2.HTML(errMsg)).
 		GetContent()

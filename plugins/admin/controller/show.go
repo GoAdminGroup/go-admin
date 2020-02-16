@@ -16,8 +16,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
+	"github.com/GoAdminGroup/html"
 	template2 "html/template"
 	"net/http"
 	"path"
@@ -48,14 +50,15 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 	if err != nil {
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 		user := auth.Auth(ctx)
-		alert := aAlert().SetTitle(template2.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
+		errMsg := language.Get("error")
 		return template.Execute(tmpl, tmplName, user, types.Panel{
 			Content:     alert,
-			Description: language.Get("error"),
-			Title:       language.Get("error"),
+			Description: errMsg,
+			Title:       errMsg,
 		}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 	}
 
@@ -91,20 +94,20 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 	if actionBtns == template.HTML("") && len(info.ActionButtons) > 0 {
 		ext := template.HTML("")
 		if deleteUrl != "" {
-			ext = template.HTML(`<li class="divider"></li>`)
+			ext = html.LiEl().SetClass("divider").Get()
 			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%id}' style="cursor: pointer;"`,
 				ext, ""), "grid-row-delete")
 		}
 		ext = template.HTML("")
 		if detailUrl != "" {
 			if editUrl == "" && deleteUrl == "" {
-				ext = template.HTML(`<li class="divider"></li>`)
+				ext = html.LiEl().SetClass("divider").Get()
 			}
 			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&"+constant.DetailPKKey+"={%id}", ext))
 		}
 		if editUrl != "" {
 			if detailUrl == "" && deleteUrl == "" {
-				ext = template.HTML(`<li class="divider"></li>`)
+				ext = html.LiEl().SetClass("divider").Get()
 			}
 			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&"+constant.EditPKKey+"={%id}", ext))
 		}
@@ -112,9 +115,14 @@ func showTable(ctx *context.Context, prefix, path string, params parameter.Param
 		var content template2.HTML
 		content, actionJs = info.ActionButtons.Content()
 
-		actionBtns = template.HTML(`<div class="dropdown" style="text-align: center;"><a href="#" class="dropdown-toggle" 
-		data-toggle="dropdown" style="color: #676565;"><i class="fa fa-ellipsis-v"></i></a><ul class="dropdown-menu" role="menu" 
-		aria-labelledby="dLabel" style="min-width: 20px !important;left: -32px;overflow: hidden;">`) + content + template.HTML(`</ul></div>`)
+		actionBtns = html.Div(
+			html.A(icon.Icon(icon.EllipsisV),
+				html.M{"color": "#676565"},
+				html.M{"class": "dropdown-toggle", "href": "#", "data-toggle": "dropdown"},
+			)+html.Ul(content,
+				html.M{"min-width": "20px !important", "left": "-32px", "overflow": "hidden"},
+				html.M{"class": "dropdown-menu", "role": "menu", "aria-labelledby": "dLabel"}),
+			html.M{"text-align": "center"}, html.M{"class": "dropdown"})
 	}
 
 	if info.TabGroups.Valid() {
