@@ -179,6 +179,9 @@ type Config struct {
 	// Auth user table
 	AuthUserTable string `json:"auth_user_table",yaml:"auth_user_table",ini:"auth_user_table"`
 
+	// Extra config info
+	Extra map[string]interface{} `json:"extra",yaml:"extra",ini:"extra"`
+
 	prefix string
 }
 
