@@ -316,6 +316,77 @@ func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldOnChooseCustom(js template.HTML) *FormPanel {
+	f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	` + js + `
+})
+</script>`
+	return f
+}
+
+type LinkField struct {
+	Field string
+	Value template.HTML
+}
+
+func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
+
+	cm := template.HTML("")
+
+	for val, obejct := range m {
+		cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		$("#` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `")
+	}`
+	}
+
+	f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	` + cm + `
+})
+</script>`
+	return f
+}
+
+func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormPanel {
+	f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	if (e.params.data.text === "` + template.HTML(val) + `") {
+		$("#` + template.HTML(field) + `").val("` + value + `")
+	}
+})
+</script>`
+	return f
+}
+
+func (f *FormPanel) FieldOnChooseHide(value string, field ...string) *FormPanel {
+
+	if len(field) == 0 {
+		return f
+	}
+
+	hideText := template.HTML("")
+	showText := template.HTML("")
+
+	for _, f := range field {
+		hideText += `$("label[for='` + template.HTML(f) + `']").parent().hide()
+`
+		showText += `$("label[for='` + template.HTML(f) + `']").parent().show()
+`
+	}
+
+	f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	if (e.params.data.text === "` + template.HTML(value) + `") {
+		` + hideText + `
+	} else {
+		` + showText + `
+	}
+})
+</script>`
+	return f
+}
+
 // FormPanel attribute setting functions
 // ====================================================
 
@@ -340,12 +411,12 @@ func (f *FormPanel) SetDescription(desc string) *FormPanel {
 }
 
 func (f *FormPanel) SetHeaderHtml(header template.HTML) *FormPanel {
-	f.HeaderHtml = header
+	f.HeaderHtml += header
 	return f
 }
 
 func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
-	f.FooterHtml = footer
+	f.FooterHtml += footer
 	return f
 }
 
