@@ -379,7 +379,7 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 	return f
 }
 
-func (f *FormPanel) FieldOnChooseAjax(val, field, url string, handler Handler, isSelect ...bool) *FormPanel {
+func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler, isSelect ...bool) *FormPanel {
 
 	find := f.FieldList.FindByFieldName(field)
 	if find.FormType.IsSelect() || (len(isSelect) > 0 && isSelect[0]) {
