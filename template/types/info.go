@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
 	"html"
 	"html/template"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -438,6 +440,35 @@ type Where struct {
 type WhereRaw struct {
 	Raw  string
 	Args []interface{}
+}
+
+type Handler func(ctx *context.Context) (success bool, msg string, data interface{})
+
+func (h Handler) Wrap() context.Handler {
+	return func(ctx *context.Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error(err)
+				ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+					"code": 500,
+					"data": "",
+					"msg":  "error",
+				})
+			}
+		}()
+
+		code := 0
+		s, m, d := h(ctx)
+
+		if !s {
+			code = 500
+		}
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": code,
+			"data": d,
+			"msg":  m,
+		})
+	}
 }
 
 type Action interface {

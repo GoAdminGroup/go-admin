@@ -2,9 +2,10 @@ package action
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
 
@@ -18,7 +19,7 @@ type PopUpAction struct {
 	Handlers []context.Handler
 }
 
-func PopUp(url, title string, handler Handler) *PopUpAction {
+func PopUp(url, title string, handler types.Handler) *PopUpAction {
 	return &PopUpAction{
 		Url:      url,
 		Title:    title,
@@ -49,7 +50,7 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 		Path:     pop.Url,
 		Method:   pop.Method,
 		Handlers: pop.Handlers,
-		Value:    map[string]interface{}{auth.ContextNodeNeedAuth: 1},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
 	}
 }
 

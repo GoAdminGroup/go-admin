@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -38,14 +39,14 @@ func (g GeneratorList) InjectRoutes(app *context.App, srv service.List) {
 			URL: &url.URL{},
 		}))
 		for _, cb := range table.GetInfo().Callbacks {
-			if cb.Value[auth.ContextNodeNeedAuth] == 1 {
+			if cb.Value[constant.ContextNodeNeedAuth] == 1 {
 				app.AppendReqAndResp(cb.Path, cb.Method, append([]context.Handler{authHandler}, cb.Handlers...))
 			} else {
 				app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)
 			}
 		}
 		for _, cb := range table.GetForm().Callbacks {
-			if cb.Value[auth.ContextNodeNeedAuth] == 1 {
+			if cb.Value[constant.ContextNodeNeedAuth] == 1 {
 				app.AppendReqAndResp(cb.Path, cb.Method, append([]context.Handler{authHandler}, cb.Handlers...))
 			} else {
 				app.AppendReqAndResp(cb.Path, cb.Method, cb.Handlers)

@@ -2,7 +2,8 @@ package action
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
 
@@ -14,7 +15,7 @@ type AjaxAction struct {
 	Handlers []context.Handler
 }
 
-func Ajax(url string, handler Handler) *AjaxAction {
+func Ajax(url string, handler types.Handler) *AjaxAction {
 	return &AjaxAction{
 		Url:      url,
 		Method:   "post",
@@ -43,7 +44,7 @@ func (ajax *AjaxAction) GetCallbacks() context.Node {
 		Path:     ajax.Url,
 		Method:   ajax.Method,
 		Handlers: ajax.Handlers,
-		Value:    map[string]interface{}{auth.ContextNodeNeedAuth: 1},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
 	}
 }
 
@@ -62,9 +63,8 @@ func (ajax *AjaxAction) Js() template.JS {
                             url: "` + ajax.Url + `",
                             data: data,
                             success: function (data) { 
-                                if (typeof (data) === "string") {
-                                    data = JSON.parse(data);
-                                }
+                                
+
                                 if (data.code === 0) {
                                     swal(data.msg, '', 'success');
                                 } else {

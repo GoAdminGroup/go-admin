@@ -2,6 +2,8 @@ package types
 
 import (
 	"encoding/json"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -327,6 +329,7 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 
 type LinkField struct {
 	Field string
+	Type  int
 	Value template.HTML
 }
 
@@ -335,9 +338,15 @@ func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
 	cm := template.HTML("")
 
 	for val, obejct := range m {
-		cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		if obejct.Type == 0 {
+			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
 		$("#` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `")
 	}`
+		} else {
+			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		$(".` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `").select2()
+	}`
+		}
 	}
 
 	f.FooterHtml += `<script>
@@ -349,13 +358,101 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 }
 
 func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormPanel {
-	f.FooterHtml += `<script>
+	find := f.FieldList.FindByFieldName(field)
+	if find.FormType.IsSelect() {
+		f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	if (e.params.data.text === "` + template.HTML(val) + `") {
+		$(".` + template.HTML(field) + `").val("` + value + `").select2()
+	}
+})
+</script>`
+	} else {
+		f.FooterHtml += `<script>
 $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
 	if (e.params.data.text === "` + template.HTML(val) + `") {
 		$("#` + template.HTML(field) + `").val("` + value + `")
 	}
 })
 </script>`
+	}
+	return f
+}
+
+func (f *FormPanel) FieldOnChooseAjax(val, field, url string, handler Handler, isSelect ...bool) *FormPanel {
+
+	find := f.FieldList.FindByFieldName(field)
+	if find.FormType.IsSelect() || (len(isSelect) > 0 && isSelect[0]) {
+		f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	let value = $(this).val()
+	let id = '` + template.HTML(field) + `'
+	$("."+id).val("").select2()
+	$("."+id).html('<option value="" selected="selected"></option>')
+	$.ajax({
+		url:"` + template.HTML(url) + `",
+		type: 'post',
+		dataType: 'text',
+		data: {
+			'value':value
+		},
+		success: function (data)  {
+			if (typeof (data) === "string") {
+				data = JSON.parse(data);
+			}
+			if (data.code === 0) {
+				if (typeof(data.data) === "object") {
+					$('.' + id).select2({
+						data: data.data
+					});
+				} else {
+					$('.' + id).val(data.data).select2()
+				}
+			} else {
+				swal(data.msg, '', 'error');
+			}
+		},
+		error:function(){
+			alert('error')
+		}
+	})
+})
+</script>`
+	} else {
+		f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	$.ajax({
+		url:"` + template.HTML(url) + `",
+		type: 'post',
+		dataType: 'text',
+		data: {
+			'value':$(this).val()
+		},
+		success: function (data)  {
+			if (typeof (data) === "string") {
+				data = JSON.parse(data);
+			}
+			if (data.code === 0) {
+				$('#` + template.HTML(field) + `').val(data.data);
+			} else {
+				swal(data.msg, '', 'error');
+			}
+		},
+		error:function(){
+			alert('error')
+		}
+	})
+})
+</script>`
+	}
+
+	f.Callbacks = append(f.Callbacks, context.Node{
+		Path:     url,
+		Method:   "post",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	})
+
 	return f
 }
 

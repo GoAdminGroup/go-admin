@@ -9,4 +9,6 @@ const (
 
 	// Title is default title of the project.
 	Title = "GoAdmin"
+
+	ContextNodeNeedAuth = "need_auth"
 )
