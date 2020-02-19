@@ -62,18 +62,18 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddActionButton("审批", action.Ajax("/admin/audit",
-		func(ctx *context.Context) (success bool, data, msg string) {
+		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			fmt.Println("PostForm", ctx.PostForm())
-			return true, "", "success"
+			return true, "success", ""
 		}))
 	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
 	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
-		func(ctx *context.Context) (success bool, data, msg string) {
-			return true, "<h2>hello world</h2>", ""
+		func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			return true, "", "<h2>hello world</h2>"
 		}))
 	info.AddButton("ajax", icon.Android, action.Ajax("/admin/ajax",
-		func(ctx *context.Context) (success bool, data, msg string) {
-			return true, "", "success"
+		func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			return true, "success", ""
 		}))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
