@@ -451,6 +451,34 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 	return f
 }
 
+func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPanel {
+
+	if len(field) == 0 {
+		return f
+	}
+
+	disableText := template.HTML("")
+	enableText := template.HTML("")
+
+	for _, f := range field {
+		disableText += `$("#` + template.HTML(f) + `").prop('disabled', true);
+`
+		enableText += `$("#` + template.HTML(f) + `").prop('disabled', false);
+`
+	}
+
+	f.FooterHtml += `<script>
+$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	if (e.params.data.text === "` + template.HTML(value) + `") {
+		` + disableText + `
+	} else {
+		` + enableText + `
+	}
+})
+</script>`
+	return f
+}
+
 // FormPanel attribute setting functions
 // ====================================================
 
