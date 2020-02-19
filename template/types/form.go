@@ -328,8 +328,10 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 }
 
 type LinkField struct {
-	Field string
-	Value template.HTML
+	Field   string
+	Value   template.HTML
+	Hide    bool
+	Disable bool
 }
 
 func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
@@ -337,13 +339,27 @@ func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
 	cm := template.HTML("")
 
 	for val, obejct := range m {
-		cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		if obejct.Hide {
+			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		$("label[for='` + template.HTML(obejct.Field) + `']").parent().hide()
+	} else {
+		$("label[for='` + template.HTML(obejct.Field) + `']").parent().show()
+	}`
+		} else if obejct.Disable {
+			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
+		$("#` + template.HTML(obejct.Field) + `").prop('disabled', true);
+	} else {
+		$("#` + template.HTML(obejct.Field) + `").prop('disabled', false);
+	}`
+		} else {
+			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
 		if ($(".` + template.HTML(obejct.Field) + `").length > 0) {
 			$(".` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `").select2()
 		} else {
 			$("#` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `")
 		}	
 	}`
+		}
 	}
 
 	f.FooterHtml += `<script>
