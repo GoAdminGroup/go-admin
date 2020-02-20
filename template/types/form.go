@@ -2,14 +2,17 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html"
 	"html/template"
+	"strconv"
+	"strings"
 )
 
 type FieldOptions []map[string]string
@@ -18,7 +21,7 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOption
 
 	if valArr, ok := val.([]string); ok {
 		for _, v := range fo {
-			if modules.InArray(valArr, v["value"]) {
+			if utils.InArray(valArr, v["value"]) {
 				v["selected"] = labels[0]
 			} else {
 				v["selected"] = labels[1]
@@ -221,7 +224,21 @@ func (f *FormPanel) FieldHelpMsg(s template.HTML) *FormPanel {
 
 func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 	s, _ := json.Marshal(m)
-	f.FieldList[f.curFieldListIndex].OptionExt = template.JS(s)
+
+	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
+		ss := string(f.FieldList[f.curFieldListIndex].OptionExt)
+		ss = strings.Replace(ss, "}", ",", strings.Count(ss, "}"))
+		ss = strings.TrimRight(ss, " ")
+		ss += ","
+		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(ss)
+	}
+
+	f.FieldList[f.curFieldListIndex].OptionExt += template.JS(strings.Replace(string(s), "{", "", 1))
+	return f
+}
+
+func (f *FormPanel) FieldOptionExtJS(js template.JS) *FormPanel {
+	f.FieldList[f.curFieldListIndex].OptionExt = js
 	return f
 }
 
@@ -315,6 +332,52 @@ func (f *FormPanel) FieldCustomJs(js template.JS) *FormPanel {
 
 func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
 	f.FieldList[f.curFieldListIndex].CustomCss = css
+	return f
+}
+
+func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *FormPanel {
+
+	delayStr := "500"
+	if len(delay) > 0 {
+		delayStr = strconv.Itoa(delay[0])
+	}
+
+	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
+		s := string(f.FieldList[f.curFieldListIndex].OptionExt)
+		fmt.Println(`strings.Count(s, "}")`, strings.Count(s, "}"))
+		s = strings.Replace(s, "{", "", 1)
+		s = utils.ReplaceNth(s, "}", "", strings.Count(s, "}"))
+		s = strings.TrimRight(s, " ")
+		s += ","
+		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(s)
+	}
+
+	f.FieldList[f.curFieldListIndex].OptionExt = `{
+		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
+		ajax: {
+		    url: "`+url+`",
+		    dataType: 'json',
+		    data: function (params) {
+			      var query = {
+			        	search: params.term,
+						page: params.page || 1
+			      }
+			      return query;
+		    },
+		    delay: `+delayStr+`,
+		    processResults: function (data, params) {
+			      return data.data;
+	    	}
+	  	}
+	}`)
+
+	f.Callbacks = append(f.Callbacks, context.Node{
+		Path:     url,
+		Method:   "get",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	})
+
 	return f
 }
 
@@ -565,7 +628,7 @@ func (f FormFields) Copy() FormFields {
 	for i := 0; i < len(formList); i++ {
 		formList[i].Options = make([]map[string]string, len(f[i].Options))
 		for j := 0; j < len(f[i].Options); j++ {
-			formList[i].Options[j] = modules.CopyMap(f[i].Options[j])
+			formList[i].Options[j] = utils.CopyMap(f[i].Options[j])
 		}
 	}
 	return formList

@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/gob"
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
 	"strings"
@@ -42,4 +44,45 @@ func CompressedContent(h *template.HTML) {
 		}
 	}
 	*h = template.HTML(strings.Join(ss, "\n"))
+}
+
+func ReplaceNth(s, old, new string, n int) string {
+	i := 0
+	for m := 1; m <= n; m++ {
+		x := strings.Index(s[i:], old)
+		if x < 0 {
+			break
+		}
+		i += x
+		if m == n {
+			return s[:i] + new + s[i+len(old):]
+		}
+		i += len(old)
+	}
+	return s
+}
+
+func InArray(arr []string, str string) bool {
+	for _, v := range arr {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}
+
+func CopyMap(m map[string]string) map[string]string {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	dec := gob.NewDecoder(&buf)
+	err := enc.Encode(m)
+	if err != nil {
+		panic(err)
+	}
+	var cm map[string]string
+	err = dec.Decode(&cm)
+	if err != nil {
+		panic(err)
+	}
+	return cm
 }

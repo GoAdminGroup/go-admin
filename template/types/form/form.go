@@ -165,3 +165,21 @@ func DefaultHTML(value string) template.HTML {
 func HiddenInputHTML(field, value string) template.HTML {
 	return template.HTML(`<input type="hidden" name="` + field + `" value="` + value + `" class="form-control">`)
 }
+
+type SelectResponse struct {
+	Results    SelectOptions    `json:"results"`
+	Pagination SelectPagination `json:"pagination"`
+}
+
+type SelectPagination struct {
+	More bool `json:"more"`
+}
+
+type SelectOptions []SelectOption
+
+type SelectOption struct {
+	ID       interface{} `json:"id"`
+	Text     string      `json:"text"`
+	Selected bool        `json:"selected"`
+	Disabled bool        `json:"disabled"`
+}

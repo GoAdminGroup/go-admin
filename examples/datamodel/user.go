@@ -82,7 +82,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField("Ip", "ip", db.Varchar, form.Text)
 	formList.AddField("Name", "name", db.Varchar, form.Text)
-	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
+	formList.AddField("Gender", "gender", db.Tinyint, form.SelectSingle).
 		FieldOptions([]map[string]string{
 			{
 				"field":    "gender",
