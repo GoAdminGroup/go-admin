@@ -462,43 +462,7 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters) (Thead
 		headField = field.Field
 
 		if field.Filterable {
-
-			var value, value2 string
-
-			if field.FilterType.IsRange() {
-				value = params.GetFieldValue(headField + "_start__goadmin")
-				value2 = params.GetFieldValue(headField + "_end__goadmin")
-			} else {
-				if field.FilterOperator == types.FilterOperatorFree {
-					value2 = types.GetOperatorFromValue(params.GetFieldOperator(headField)).String()
-				}
-				value = params.GetFieldValue(headField)
-			}
-
-			filterForm = append(filterForm, types.FormField{
-				Field:     headField,
-				Head:      modules.AorB(field.FilterHead == "", field.Head, field.FilterHead),
-				TypeName:  field.TypeName,
-				HelpMsg:   field.FilterHelpMsg,
-				FormType:  field.FilterType,
-				Editable:  true,
-				Value:     template.HTML(value),
-				Value2:    value2,
-				Options:   field.FilterOptions.SetSelected(params.GetFieldValue(field.Field), field.FilterType.SelectedLabel()),
-				OptionExt: field.FilterOptionExt,
-				Label:     field.FilterOperator.Label(),
-			})
-
-			if field.FilterOperator.AddOrNot() {
-				filterForm = append(filterForm, types.FormField{
-					Field:    headField + "__operator__",
-					Head:     field.Head,
-					TypeName: field.TypeName,
-					Value:    template.HTML(field.FilterOperator.Value()),
-					FormType: field.FilterType,
-					Hide:     true,
-				})
-			}
+			filterForm = append(filterForm, field.FilterFormField(params, headField)...)
 		}
 
 		if field.Hide {
@@ -593,7 +557,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 		combineValue := db.GetValueFromDatabaseType(typeName, res[headField], len(columns) == 0).String()
 
 		var value interface{}
-		if len(columns) == 0 || inArray(columns, headField) || field.Join.Valid() {
+		if len(columns) == 0 || modules.InArray(columns, headField) || field.Join.Valid() {
 			value = field.ToDisplay(types.FieldModel{
 				ID:    primaryKeyValue.String(),
 				Value: combineValue,
@@ -620,53 +584,14 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
-		queryStatement = "select %s from %s %s %s order by " + delimiter(connection.GetDelimiter(), "%s") + " %s"
+		queryStatement = "select %s from %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
 	)
 
-	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
+	columns, _ := tb.getColumns(tb.info.Table)
 
-	columns, _ := tb.getColumns(columnsModel)
+	thead, fields, joins := tb.info.FieldList.GetThead(types.TableInfo{}, params, columns)
 
-	var (
-		fields     string
-		joins      string
-		headField  string
-		joinTables = make([]string, 0)
-		thead      = make([]map[string]string, 0)
-	)
-	for _, field := range tb.info.FieldList {
-		if field.Field != tb.primaryKey.Name && inArray(columns, field.Field) &&
-			!field.Join.Valid() {
-			fields += tb.info.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + ","
-		}
-
-		headField = field.Field
-
-		if field.Join.Valid() {
-			headField = field.Join.Table + "_" + field.Field
-			fields += field.Join.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + " as " + headField + ","
-			if !modules.InArray(joinTables, field.Join.Table) {
-				joinTables = append(joinTables, field.Join.Table)
-				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +
-					field.Join.Table + "." + filterFiled(field.Join.JoinField, connection.GetDelimiter()) + " = " +
-					tb.info.Table + "." + filterFiled(field.Join.Field, connection.GetDelimiter())
-			}
-		}
-
-		if field.Hide {
-			continue
-		}
-
-		thead = append(thead, map[string]string{
-			"head":       field.Head,
-			"field":      headField,
-			"edittype":   field.EditType.String(),
-			"editoption": field.GetEditOptions(),
-			"width":      strconv.Itoa(field.Width),
-		})
-	}
-
-	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
+	fields += tb.info.Table + "." + modules.FilterField(tb.primaryKey.Name, connection.GetDelimiter())
 
 	var (
 		wheres    = ""
@@ -674,169 +599,16 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 		existKeys = make([]string, 0)
 	)
 
-	if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 && tb.info.WhereRaws.Raw == "" {
-		wheres = ""
-	} else {
+	wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
+		tb.info.FieldList.GetFieldFilterProcessValue, tb.info.FieldList.GetFieldJoinTable)
+	wheres, whereArgs = tb.info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+	wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
 
-		wheres = " where "
-
-		for key, value := range params.Fields {
-
-			if modules.InArray(existKeys, key) {
-				continue
-			}
-
-			var op types.FilterOperator
-			if strings.Contains(key, "_end__goadmin") {
-				key = strings.Replace(key, "_end__goadmin", "", -1)
-				op = "<="
-			} else if strings.Contains(key, "_start__goadmin") {
-				key = strings.Replace(key, "_start__goadmin", "", -1)
-				op = ">="
-			} else if !strings.Contains(key, "__operator__") {
-				op = types.GetOperatorFromValue(params.GetFieldOperator(key))
-			}
-
-			if inArray(columns, key) {
-				wheres += filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
-				field := tb.info.FieldList.GetFieldByFieldName(key)
-				if field.FilterProcess != nil {
-					value = field.FilterProcess(value)
-				}
-				if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
-					whereArgs = append(whereArgs, "%"+value+"%")
-				} else {
-					whereArgs = append(whereArgs, value)
-				}
-			} else {
-				keys := strings.Split(key, "_goadmin_join_")
-				if len(keys) > 1 {
-					if field := tb.info.FieldList.GetFieldByFieldName(keys[1]); field.Exist() && field.Join.Table != "" {
-						if field.FilterProcess != nil {
-							value = field.FilterProcess(value)
-						}
-						wheres += field.Join.Table + "." + filterFiled(keys[1], connection.GetDelimiter()) + " " + op.String() + " ? and "
-						if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
-							whereArgs = append(whereArgs, "%"+value+"%")
-						} else {
-							whereArgs = append(whereArgs, value)
-						}
-					}
-				}
-			}
-
-			existKeys = append(existKeys, key)
-		}
-
-		for k, wh := range tb.info.Wheres {
-
-			whFieldArr := strings.Split(wh.Field, ".")
-			whField := ""
-			whTable := ""
-			if len(whFieldArr) > 1 {
-				whField = whFieldArr[1]
-				whTable = whFieldArr[0]
-			} else {
-				whField = whFieldArr[0]
-			}
-
-			if modules.InArray(existKeys, whField) {
-				continue
-			}
-
-			// TODO: support like operation and join table
-			if inArray(columns, whField) {
-
-				joinMark := "and"
-				if k != len(tb.info.Wheres)-1 {
-					joinMark = tb.info.Wheres[k+1].Join
-				}
-
-				if whTable != "" {
-					wheres += whTable + "." + filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
-				} else {
-					wheres += filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
-				}
-				whereArgs = append(whereArgs, wh.Arg)
-			}
-		}
-
-		if wheres != " where " {
-			wheres = wheres[:len(wheres)-4]
-			if tb.info.WhereRaws.Raw != "" {
-				checkGrammar := false
-				for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
-					if tb.info.WhereRaws.Raw[i] == ' ' {
-						continue
-					} else {
-						if tb.info.WhereRaws.Raw[i] == 'a' {
-							if len(tb.info.WhereRaws.Raw) < i+3 {
-								break
-							} else {
-								if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
-									checkGrammar = true
-								}
-							}
-						} else if tb.info.WhereRaws.Raw[i] == 'o' {
-							if len(tb.info.WhereRaws.Raw) < i+2 {
-								break
-							} else {
-								if tb.info.WhereRaws.Raw[i+1] == 'r' {
-									checkGrammar = true
-								}
-							}
-						} else {
-							break
-						}
-					}
-				}
-
-				if checkGrammar {
-					wheres += tb.info.WhereRaws.Raw + " "
-				} else {
-					wheres += " and " + tb.info.WhereRaws.Raw + " "
-				}
-
-				whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
-			}
-		} else {
-			if tb.info.WhereRaws.Raw != "" {
-				index := 0
-				for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
-					if tb.info.WhereRaws.Raw[i] == ' ' {
-						continue
-					} else {
-						if tb.info.WhereRaws.Raw[i] == 'a' {
-							if len(tb.info.WhereRaws.Raw) < i+3 {
-								break
-							} else {
-								if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
-									index = i + 3
-								}
-							}
-						} else if tb.info.WhereRaws.Raw[i] == 'o' {
-							if len(tb.info.WhereRaws.Raw) < i+2 {
-								break
-							} else {
-								if tb.info.WhereRaws.Raw[i+1] == 'r' {
-									index = i + 2
-								}
-							}
-						} else {
-							break
-						}
-					}
-				}
-				wheres += tb.info.WhereRaws.Raw[index:] + " "
-				whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
-			} else {
-				wheres = ""
-			}
-		}
-
+	if wheres != "" {
+		wheres = " where " + wheres[:len(wheres)-5]
 	}
 
-	if !inArray(columns, params.SortField) {
+	if !modules.InArray(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
 	}
 
@@ -868,7 +640,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	var (
 		connection     = tb.db()
-		placeholder    = delimiter(connection.GetDelimiter(), "%s")
+		placeholder    = modules.Delimiter(connection.GetDelimiter(), "%s")
 		queryStatement string
 		countStatement string
 	)
@@ -879,114 +651,28 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
 		countStatement = "select count(*) from " + placeholder + " %s where " + tb.primaryKey.Name + " in (%s)"
 	} else {
-		queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
-		countStatement = "select count(*) from " + placeholder + " %s %s"
 		if connection.Name() == "mssql" {
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " +
 				placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
 			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
+		} else {
+			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
+			countStatement = "select count(*) from " + placeholder + " %s %s"
 		}
 	}
 
-	thead := make([]map[string]string, 0)
-	fields := ""
+	columns, _ := tb.getColumns(tb.info.Table)
 
-	columnsModel, _ := tb.sql().Table(tb.info.Table).ShowColumns()
+	thead, fields, joins, joinTables, filterForm := tb.info.FieldList.GetTheadAndFilterForm(types.TableInfo{
+		Table:      tb.info.Table,
+		Delimiter:  connection.GetDelimiter(),
+		Driver:     tb.connectionDriver,
+		PrimaryKey: tb.primaryKey.Name,
+	}, params, columns)
 
-	columns, _ := tb.getColumns(columnsModel)
+	fields += tb.info.Table + "." + modules.FilterField(tb.primaryKey.Name, connection.GetDelimiter())
 
-	var (
-		sortable   string
-		editable   string
-		hide       string
-		joins      string
-		headField  string
-		joinTables = make([]string, 0)
-		filterForm = make([]types.FormField, 0)
-		hasJoin    = false
-	)
-	for _, field := range tb.info.FieldList {
-		if field.Field != tb.primaryKey.Name && inArray(columns, field.Field) &&
-			!field.Join.Valid() {
-			fields += tb.info.Table + "." + filterFiled(field.Field, connection.GetDelimiter()) + ","
-		}
-
-		headField = field.Field
-
-		if field.Join.Valid() {
-			hasJoin = true
-			headField = field.Join.Table + "_goadmin_join_" + field.Field
-			fields += getAggregationExpression(tb.connectionDriver, field.Join.Table+"."+
-				filterFiled(field.Field, connection.GetDelimiter()), headField, types.JoinFieldValueDelimiter) + ","
-			if !modules.InArray(joinTables, field.Join.Table) {
-				joinTables = append(joinTables, field.Join.Table)
-				joins += " left join " + filterFiled(field.Join.Table, connection.GetDelimiter()) + " on " +
-					field.Join.Table + "." + filterFiled(field.Join.JoinField, connection.GetDelimiter()) + " = " +
-					tb.info.Table + "." + filterFiled(field.Join.Field, connection.GetDelimiter())
-			}
-		}
-
-		if field.Filterable {
-
-			var value, value2 string
-
-			if field.FilterType.IsRange() {
-				value = params.GetFieldValue(headField + "_start__goadmin")
-				value2 = params.GetFieldValue(headField + "_end__goadmin")
-			} else {
-				if field.FilterOperator == types.FilterOperatorFree {
-					value2 = types.GetOperatorFromValue(params.GetFieldOperator(headField)).String()
-				}
-				value = params.GetFieldValue(headField)
-			}
-
-			filterForm = append(filterForm, types.FormField{
-				Field:     headField,
-				Head:      modules.AorB(field.FilterHead == "", field.Head, field.FilterHead),
-				TypeName:  field.TypeName,
-				HelpMsg:   field.FilterHelpMsg,
-				FormType:  field.FilterType,
-				Editable:  true,
-				Value:     template.HTML(value),
-				Value2:    value2,
-				Options:   field.FilterOptions.SetSelected(params.GetFieldValue(field.Field), field.FilterType.SelectedLabel()),
-				OptionExt: field.FilterOptionExt,
-				Label:     field.FilterOperator.Label(),
-			})
-
-			if field.FilterOperator.AddOrNot() {
-				filterForm = append(filterForm, types.FormField{
-					Field:    headField + "__operator__",
-					Head:     field.Head,
-					TypeName: field.TypeName,
-					Value:    template.HTML(field.FilterOperator.Value()),
-					FormType: field.FilterType,
-					Hide:     true,
-				})
-			}
-		}
-
-		if field.Hide {
-			continue
-		}
-		sortable = modules.AorB(field.Sortable, "1", "0")
-		editable = modules.AorB(field.EditAble, "true", "false")
-		hide = modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1")
-		thead = append(thead, map[string]string{
-			"head":       field.Head,
-			"sortable":   sortable,
-			"field":      headField,
-			"hide":       hide,
-			"editable":   editable,
-			"edittype":   field.EditType.String(),
-			"editoption": field.GetEditOptions(),
-			"width":      strconv.Itoa(field.Width),
-		})
-	}
-
-	fields += tb.info.Table + "." + filterFiled(tb.primaryKey.Name, connection.GetDelimiter())
-
-	if !inArray(columns, params.SortField) {
+	if !modules.InArray(columns, params.SortField) {
 		params.SortField = tb.primaryKey.Name
 	}
 
@@ -1006,184 +692,34 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		wheres = wheres[:len(wheres)-1]
 	} else {
 
-		if len(params.Fields) == 0 && len(tb.info.Wheres) == 0 && tb.info.WhereRaws.Raw == "" {
-			wheres = ""
-		} else {
+		wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
+			tb.info.FieldList.GetFieldFilterProcessValue, tb.info.FieldList.GetFieldJoinTable)
+		wheres, whereArgs = tb.info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+		wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
 
-			wheres = " where "
-
-			for key, value := range params.Fields {
-
-				if modules.InArray(existKeys, key) {
-					continue
-				}
-
-				var op types.FilterOperator
-				if strings.Contains(key, "_end__goadmin") {
-					key = strings.Replace(key, "_end__goadmin", "", -1)
-					op = "<="
-				} else if strings.Contains(key, "_start__goadmin") {
-					key = strings.Replace(key, "_start__goadmin", "", -1)
-					op = ">="
-				} else if !strings.Contains(key, "__operator__") {
-					op = types.GetOperatorFromValue(params.GetFieldOperator(key))
-				}
-
-				if inArray(columns, key) {
-					wheres += filterFiled(key, connection.GetDelimiter()) + " " + op.String() + " ? and "
-					field := tb.info.FieldList.GetFieldByFieldName(key)
-					if field.FilterProcess != nil {
-						value = field.FilterProcess(value)
-					}
-					if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
-						whereArgs = append(whereArgs, "%"+value+"%")
-					} else {
-						whereArgs = append(whereArgs, value)
-					}
-				} else {
-					keys := strings.Split(key, "_goadmin_join_")
-					if len(keys) > 1 {
-						if field := tb.info.FieldList.GetFieldByFieldName(keys[1]); field.Exist() && field.Join.Table != "" {
-							if field.FilterProcess != nil {
-								value = field.FilterProcess(value)
-							}
-							wheres += field.Join.Table + "." + filterFiled(keys[1], connection.GetDelimiter()) + " " + op.String() + " ? and "
-							if op == types.FilterOperatorLike && !strings.Contains(value, "%") {
-								whereArgs = append(whereArgs, "%"+value+"%")
-							} else {
-								whereArgs = append(whereArgs, value)
-							}
-						}
-					}
-				}
-
-				existKeys = append(existKeys, key)
-			}
-
-			for k, wh := range tb.info.Wheres {
-
-				whFieldArr := strings.Split(wh.Field, ".")
-				whField := ""
-				whTable := ""
-				if len(whFieldArr) > 1 {
-					whField = whFieldArr[1]
-					whTable = whFieldArr[0]
-				} else {
-					whField = whFieldArr[0]
-				}
-
-				if modules.InArray(existKeys, whField) {
-					continue
-				}
-
-				// TODO: support like operation and join table
-				if inArray(columns, whField) {
-
-					joinMark := "and"
-					if k != len(tb.info.Wheres)-1 {
-						joinMark = tb.info.Wheres[k+1].Join
-					}
-
-					if whTable != "" {
-						wheres += whTable + "." + filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
-					} else {
-						wheres += filterFiled(whField, connection.GetDelimiter()) + " " + wh.Operator + " ? " + joinMark + " "
-					}
-					whereArgs = append(whereArgs, wh.Arg)
-				}
-			}
-
-			if wheres != " where " {
-				wheres = wheres[:len(wheres)-4]
-				if tb.info.WhereRaws.Raw != "" {
-					checkGrammar := false
-					for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
-						if tb.info.WhereRaws.Raw[i] == ' ' {
-							continue
-						} else {
-							if tb.info.WhereRaws.Raw[i] == 'a' {
-								if len(tb.info.WhereRaws.Raw) < i+3 {
-									break
-								} else {
-									if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
-										checkGrammar = true
-									}
-								}
-							} else if tb.info.WhereRaws.Raw[i] == 'o' {
-								if len(tb.info.WhereRaws.Raw) < i+2 {
-									break
-								} else {
-									if tb.info.WhereRaws.Raw[i+1] == 'r' {
-										checkGrammar = true
-									}
-								}
-							} else {
-								break
-							}
-						}
-					}
-
-					if checkGrammar {
-						wheres += tb.info.WhereRaws.Raw + " "
-					} else {
-						wheres += " and " + tb.info.WhereRaws.Raw + " "
-					}
-
-					whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
-				}
-			} else {
-				if tb.info.WhereRaws.Raw != "" {
-					index := 0
-					for i := 0; i < len(tb.info.WhereRaws.Raw); i++ {
-						if tb.info.WhereRaws.Raw[i] == ' ' {
-							continue
-						} else {
-							if tb.info.WhereRaws.Raw[i] == 'a' {
-								if len(tb.info.WhereRaws.Raw) < i+3 {
-									break
-								} else {
-									if tb.info.WhereRaws.Raw[i+1] == 'n' && tb.info.WhereRaws.Raw[i+2] == 'd' {
-										index = i + 3
-									}
-								}
-							} else if tb.info.WhereRaws.Raw[i] == 'o' {
-								if len(tb.info.WhereRaws.Raw) < i+2 {
-									break
-								} else {
-									if tb.info.WhereRaws.Raw[i+1] == 'r' {
-										index = i + 2
-									}
-								}
-							} else {
-								break
-							}
-						}
-					}
-					wheres += tb.info.WhereRaws.Raw[index:] + " "
-					whereArgs = append(whereArgs, tb.info.WhereRaws.Args...)
-				} else {
-					wheres = ""
-				}
-			}
-
+		if wheres != "" {
+			wheres = " where " + wheres[:len(wheres)-5]
 		}
-		pageSize, _ := strconv.Atoi(params.PageSize)
+
 		if connection.Name() == "mssql" {
-			args = append(whereArgs, (modules.GetPage(params.Page)-1)*pageSize, modules.GetPage(params.Page)*pageSize)
+			args = append(whereArgs, (params.PageInt-1)*params.PageSizeInt, params.PageInt*params.PageSizeInt)
 		} else {
-			args = append(whereArgs, params.PageSize, (modules.GetPage(params.Page)-1)*pageSize)
+			args = append(whereArgs, params.PageSize, (params.PageInt-1)*params.PageSizeInt)
 		}
 	}
 
 	groupBy := ""
-	if hasJoin {
-		groupBy = " GROUP BY " + tb.info.Table + "." + filterFiled(tb.GetPrimaryKey().Name, connection.GetDelimiter())
+	if len(joinTables) > 0 {
+		groupBy = " GROUP BY " + tb.info.Table + "." + modules.FilterField(tb.GetPrimaryKey().Name, connection.GetDelimiter())
 	}
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
+	queryCmd := ""
 	if connection.Name() == "mssql" {
 		queryCmd = fmt.Sprintf(queryStatement, params.SortField, params.SortType, fields, tb.info.Table, joins, wheres, groupBy)
+	} else {
+		queryCmd = fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
 	}
+
 	logger.LogSQL(queryCmd, args)
 
 	res, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
@@ -1262,13 +798,10 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 			res = list[0]
 		}
 	} else {
-		columnsModel, err := tb.sql().Table(tb.form.Table).ShowColumns()
 
-		if err != nil {
-			return nil, nil, nil, "", "", err
-		}
+		columns, _ = tb.getColumns(tb.form.Table)
 
-		columns, _ = tb.getColumns(columnsModel)
+		var err error
 
 		res, err = tb.sql().
 			Table(tb.form.Table).Select(fields...).
@@ -1283,7 +816,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 	formList := tb.form.FieldList.Copy()
 
 	for i := 0; i < len(tb.form.FieldList); i++ {
-		if inArray(columns, formList[i].Field) {
+		if modules.InArray(columns, formList[i].Field) {
 			fields = append(fields, formList[i].Field)
 		}
 	}
@@ -1299,7 +832,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 			for j := 0; j < len(value); j++ {
 				for _, field := range tb.form.FieldList {
 					if value[j] == field.Field {
-						rowValue := modules.AorB(inArray(columns, field.Field) || len(columns) == 0,
+						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 						list[j] = field.UpdateValue(id, rowValue, res)
 						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
@@ -1317,7 +850,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 	}
 
 	for key, field := range formList {
-		rowValue := modules.AorB(inArray(columns, field.Field) || len(columns) == 0,
+		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 		formList[key] = field.UpdateValue(id, rowValue, res)
 
@@ -1438,14 +971,14 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 }
 
 func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect.H {
-	value := make(dialect.H)
 
-	columnsModel, _ := tb.sql().Table(tb.form.Table).ShowColumns()
-
-	columns, auto := tb.getColumns(columnsModel)
 	var (
-		fun          types.PostFieldFilterFn
+		value        = make(dialect.H)
 		exceptString = make([]string, 0)
+
+		columns, auto = tb.getColumns(tb.form.Table)
+
+		fun types.PostFieldFilterFn
 	)
 
 	if auto {
@@ -1469,7 +1002,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 	for k, v := range dataList {
 		k = strings.Replace(k, "[]", "", -1)
 		if !modules.InArray(exceptString, k) {
-			if inArray(columns, k) {
+			if modules.InArray(columns, k) {
 				delimiter := ","
 				for i := 0; i < len(tb.form.FieldList); i++ {
 					if k == tb.form.FieldList[i].Field {
@@ -1614,23 +1147,12 @@ func GetNewFormList(groupHeaders []string,
 // helper function for database operation
 // ***************************************
 
-func delimiter(del, s string) string {
-	if del == "[" {
-		return "[" + s + "]"
-	}
-	return del + s + del
-}
-
-func filterFiled(filed, delimiter string) string {
-	if delimiter == "[" {
-		return filed
-	}
-	return delimiter + filed + delimiter
-}
-
 type Columns []string
 
-func (tb DefaultTable) getColumns(columnsModel []map[string]interface{}) (Columns, bool) {
+func (tb DefaultTable) getColumns(table string) (Columns, bool) {
+
+	columnsModel, _ := tb.sql().Table(table).ShowColumns()
+
 	columns := make(Columns, len(columnsModel))
 	switch tb.connectionDriver {
 	case "postgresql":
@@ -1676,27 +1198,4 @@ func (tb DefaultTable) getColumns(columnsModel []map[string]interface{}) (Column
 	default:
 		panic("wrong driver")
 	}
-}
-
-func getAggregationExpression(driver, field, headField, delimiter string) string {
-	switch driver {
-	case "postgresql":
-		return fmt.Sprintf("string_agg(%s::character varying, '%s') as %s", field, delimiter, headField)
-	case "mysql":
-		return fmt.Sprintf("group_concat(%s separator '%s') as %s", field, delimiter, headField)
-	case "sqlite":
-		return fmt.Sprintf("group_concat(%s, '%s') as %s", field, delimiter, headField)
-	default:
-		panic("wrong driver")
-	}
-}
-
-// inArray checks the find string is in the columns or not.
-func inArray(columns []string, find string) bool {
-	for i := 0; i < len(columns); i++ {
-		if columns[i] == find {
-			return true
-		}
-	}
-	return false
 }

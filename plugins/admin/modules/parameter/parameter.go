@@ -9,13 +9,54 @@ import (
 )
 
 type Parameters struct {
-	Page      string
-	PageSize  string
-	SortField string
-	Columns   []string
-	SortType  string
-	Fields    map[string]string
+	Page        string
+	PageInt     int
+	PageSize    string
+	PageSizeInt int
+	SortField   string
+	Columns     []string
+	SortType    string
+	Fields      map[string]string
 }
+
+const (
+	Page     = "__page"
+	PageSize = "__pageSize"
+	Sort     = "__sort"
+	SortType = "__sort_type"
+	Columns  = "__columns"
+	Prefix   = "__prefix"
+	Pjax     = "_pjax"
+
+	operatorSuffix = "__operator__"
+
+	sortTypeDesc = "desc"
+	sortTypeAsc  = "asc"
+
+	IsAll      = "is_all"
+	PrimaryKey = "pk"
+
+	true  = "true"
+	false = "false"
+
+	FilterRangeParamStartSuffix = "_start__goadmin"
+	FilterRangeParamEndSuffix   = "_end__goadmin"
+	FilterParamJoinInfix        = "_goadmin_join_"
+	FilterParamOperatorSuffix   = "__operator__"
+)
+
+var operators = map[string]string{
+	"like": "like",
+	"gr":   ">",
+	"gq":   ">=",
+	"eq":   "=",
+	"ne":   "!=",
+	"le":   "<",
+	"lq":   "<=",
+	"free": "free",
+}
+
+var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax}
 
 func BaseParam() Parameters {
 	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string]string)}
@@ -27,40 +68,36 @@ func (param Parameters) WithPK(id ...string) Parameters {
 }
 
 func (param Parameters) PK() []string {
-	return strings.Split(param.Fields["pk"], ",")
+	return strings.Split(param.Fields[PrimaryKey], ",")
 }
 
 func (param Parameters) IsAll() bool {
-	return param.Fields["is_all"] == "true"
+	return param.Fields[IsAll] == true
 }
 
 func (param Parameters) WithIsAll(isAll bool) Parameters {
 	if isAll {
-		param.Fields["is_all"] = "true"
+		param.Fields[IsAll] = true
 	} else {
-		param.Fields["is_all"] = "false"
+		param.Fields[IsAll] = false
 	}
 	return param
 }
 
-var keys = []string{"__page", "__pageSize", "__sort", "__columns", "__prefix", "_pjax"}
-
-const operatorSuffix = "__operator__"
-
 func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
-	page := getDefault(values, "__page", "1")
-	pageSize := getDefault(values, "__pageSize", strconv.Itoa(defaultPageSize))
-	sortField := getDefault(values, "__sort", primaryKey)
-	sortType := getDefault(values, "__sort_type", defaultSort)
-	columns := getDefault(values, "__columns", "")
+	page := getDefault(values, Page, "1")
+	pageSize := getDefault(values, PageSize, strconv.Itoa(defaultPageSize))
+	sortField := getDefault(values, Sort, primaryKey)
+	sortType := getDefault(values, SortType, defaultSort)
+	columns := getDefault(values, Columns, "")
 
 	fields := make(map[string]string)
 
 	for key, value := range values {
 		if !modules.InArray(keys, key) && value[0] != "" {
-			if key == "__sort_type" {
-				if value[0] != "desc" && value[0] != "asc" {
-					fields[key] = "desc"
+			if key == SortType {
+				if value[0] != sortTypeDesc && value[0] != sortTypeAsc {
+					fields[key] = sortTypeDesc
 				}
 			} else {
 				if strings.Contains(key, operatorSuffix) &&
@@ -77,14 +114,27 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 		columnsArr = strings.Split(columns, ",")
 	}
 
+	pageInt, _ := strconv.Atoi(page)
+	pageSizeInt, _ := strconv.Atoi(pageSize)
+
 	return Parameters{
-		Page:      page,
-		PageSize:  pageSize,
-		SortField: sortField,
-		SortType:  sortType,
-		Fields:    fields,
-		Columns:   columnsArr,
+		Page:        page,
+		PageSize:    pageSize,
+		PageSizeInt: pageSizeInt,
+		PageInt:     pageInt,
+		SortField:   sortField,
+		SortType:    sortType,
+		Fields:      fields,
+		Columns:     columnsArr,
 	}
+}
+
+func (param Parameters) GetFilterFieldValueStart(field string) string {
+	return param.Fields[field] + FilterRangeParamStartSuffix
+}
+
+func (param Parameters) GetFilterFieldValueEnd(field string) string {
+	return param.Fields[field] + FilterRangeParamEndSuffix
 }
 
 func (param Parameters) GetFieldValue(field string) string {
@@ -118,15 +168,15 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 	for i := 0; i < len(paramArr); i++ {
 		arr := strings.Split(paramArr[i], "=")
 		switch arr[0] {
-		case "__pageSize":
+		case PageSize:
 			pageSize = arr[1]
-		case "__page":
+		case Page:
 			page = arr[1]
-		case "__sort":
+		case Sort:
 			sortField = arr[1]
-		case "__sort_type":
+		case SortType:
 			sortType = arr[1]
-		case "__columns":
+		case Columns:
 			columns = strings.Split(arr[1], ",")
 		}
 	}
@@ -142,20 +192,9 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 }
 
 func (param Parameters) Join() string {
-
-	fields := ""
-
-	for key, value := range param.Fields {
-		fields += "&" + key + "=" + value
-	}
-
-	join := ""
-
-	join += "__page=" + param.Page + "&__pageSize=" + param.PageSize +
-		"&__sort=" + param.SortField + "&__sort_type=" + param.SortType +
-		"&__columns=" + strings.Join(param.Columns, ",") + fields
-
-	return join
+	p := param.GetFixedParamStr()
+	p.Add(Page, param.Page)
+	return p.Encode()
 }
 
 func (param Parameters) SetPage(page string) Parameters {
@@ -164,50 +203,97 @@ func (param Parameters) SetPage(page string) Parameters {
 }
 
 func (param Parameters) GetRouteParamStr() string {
-	return "?__page=" + param.Page + param.GetFixedParamStr()
+	p := param.GetFixedParamStr()
+	p.Add(Page, param.Page)
+	return "?" + p.Encode()
 }
 
 func (param Parameters) GetRouteParamStrWithoutPageSize() string {
-	return "?__page=" + param.Page + param.GetFixedParamStrWithoutPageSize()
+	p := url.Values{}
+	p.Add(Sort, param.SortField)
+	p.Add(Page, param.Page)
+	p.Add(SortType, param.SortType)
+	if len(param.Columns) > 0 {
+		p.Add(Columns, strings.Join(param.Columns, ","))
+	}
+	for key, value := range param.Fields {
+		p.Add(key, value)
+	}
+	return "?" + p.Encode()
 }
 
 func (param Parameters) GetLastPageRouteParamStr() string {
-	pageInt, _ := strconv.Atoi(param.Page)
-	return "?__page=" + strconv.Itoa(pageInt-1) + param.GetFixedParamStr()
+	p := param.GetFixedParamStr()
+	p.Add(Page, strconv.Itoa(param.PageInt-1))
+	return "?" + p.Encode()
 }
 
 func (param Parameters) GetNextPageRouteParamStr() string {
-	pageInt, _ := strconv.Atoi(param.Page)
-	return "?__page=" + strconv.Itoa(pageInt+1) + param.GetFixedParamStr()
+	p := param.GetFixedParamStr()
+	p.Add(Page, strconv.Itoa(param.PageInt+1))
+	return "?" + p.Encode()
 }
 
-func (param Parameters) GetFixedParamStrWithoutPageSize() string {
-	str := "&"
-	for key, value := range param.Fields {
-		str += key + "=" + value + "&"
-	}
+func (param Parameters) GetFixedParamStr() url.Values {
+	p := url.Values{}
+	p.Add(Sort, param.SortField)
+	p.Add(PageSize, param.PageSize)
+	p.Add(SortType, param.SortType)
 	if len(param.Columns) > 0 {
-		return "&__columns=" + strings.Join(param.Columns, ",") + "&__sort=" + param.SortField +
-			"&__sort_type=" + param.SortType + str[:len(str)-1]
-	} else {
-		return "&__sort=" + param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+		p.Add(Columns, strings.Join(param.Columns, ","))
 	}
-}
-
-func (param Parameters) GetFixedParamStr() string {
-	str := "&"
 	for key, value := range param.Fields {
 		if key != constant.EditPKKey && key != constant.DetailPKKey {
-			str += key + "=" + value + "&"
+			p.Add(key, value)
 		}
 	}
-	if len(param.Columns) > 0 {
-		return "&__columns=" + strings.Join(param.Columns, ",") + "&__pageSize=" + param.PageSize + "&__sort=" +
-			param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
-	} else {
-		return "&__pageSize=" + param.PageSize + "&__sort=" +
-			param.SortField + "&__sort_type=" + param.SortType + str[:len(str)-1]
+	return p
+}
+
+func (param Parameters) Statement(wheres, delimiter string, whereArgs []interface{}, columns, existKeys []string,
+	filterProcess func(string, string) string, getJoinTable func(string) string) (string, []interface{}, []string) {
+	for key, value := range param.Fields {
+
+		if modules.InArray(existKeys, key) {
+			continue
+		}
+
+		var op string
+		if strings.Contains(key, FilterRangeParamEndSuffix) {
+			key = strings.Replace(key, FilterRangeParamEndSuffix, "", -1)
+			op = "<="
+		} else if strings.Contains(key, FilterRangeParamStartSuffix) {
+			key = strings.Replace(key, FilterRangeParamStartSuffix, "", -1)
+			op = ">="
+		} else if !strings.Contains(key, FilterParamOperatorSuffix) {
+			op = operators[param.GetFieldOperator(key)]
+		}
+
+		if modules.InArray(columns, key) {
+			wheres += modules.FilterField(key, delimiter) + " " + op + " ? and "
+			if op == "like" && !strings.Contains(value, "%") {
+				whereArgs = append(whereArgs, "%"+filterProcess(key, value)+"%")
+			} else {
+				whereArgs = append(whereArgs, value)
+			}
+		} else {
+			keys := strings.Split(key, FilterParamJoinInfix)
+			if len(keys) > 1 {
+				if joinTable := getJoinTable(key); joinTable != "" {
+					value := filterProcess(key, value)
+					wheres += joinTable + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
+					if op == "like" && !strings.Contains(value, "%") {
+						whereArgs = append(whereArgs, "%"+value+"%")
+					} else {
+						whereArgs = append(whereArgs, value)
+					}
+				}
+			}
+		}
+
+		existKeys = append(existKeys, key)
 	}
+	return wheres, whereArgs, existKeys
 }
 
 func getDefault(values url.Values, key, def string) string {

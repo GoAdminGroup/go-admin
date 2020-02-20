@@ -16,6 +16,20 @@ func InArray(arr []string, str string) bool {
 	return false
 }
 
+func Delimiter(del, s string) string {
+	if del == "[" {
+		return "[" + s + "]"
+	}
+	return del + s + del
+}
+
+func FilterField(filed, delimiter string) string {
+	if delimiter == "[" {
+		return filed
+	}
+	return delimiter + filed + delimiter
+}
+
 func InArrayWithoutEmpty(arr []string, str string) bool {
 	if len(arr) == 0 {
 		return true

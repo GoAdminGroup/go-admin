@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 )
@@ -93,4 +94,17 @@ func GetConnection(srvs service.List) Connection {
 		return v
 	}
 	panic("wrong service")
+}
+
+func GetAggregationExpression(driver, field, headField, delimiter string) string {
+	switch driver {
+	case "postgresql":
+		return fmt.Sprintf("string_agg(%s::character varying, '%s') as %s", field, delimiter, headField)
+	case "mysql":
+		return fmt.Sprintf("group_concat(%s separator '%s') as %s", field, delimiter, headField)
+	case "sqlite":
+		return fmt.Sprintf("group_concat(%s, '%s') as %s", field, delimiter, headField)
+	default:
+		panic("wrong driver")
+	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
@@ -305,6 +306,49 @@ type Field struct {
 	FieldDisplay
 }
 
+func (f Field) FilterFormField(params parameter.Parameters, headField string) []FormField {
+	var value, value2 string
+
+	if f.FilterType.IsRange() {
+		value = params.GetFilterFieldValueStart(headField)
+		value2 = params.GetFilterFieldValueEnd(headField)
+	} else {
+		if f.FilterOperator == FilterOperatorFree {
+			value2 = GetOperatorFromValue(params.GetFieldOperator(headField)).String()
+		}
+		value = params.GetFieldValue(headField)
+	}
+
+	var filterForm = make([]FormField, 0)
+
+	filterForm = append(filterForm, FormField{
+		Field:     headField,
+		Head:      modules.AorB(f.FilterHead == "", f.Head, f.FilterHead),
+		TypeName:  f.TypeName,
+		HelpMsg:   f.FilterHelpMsg,
+		FormType:  f.FilterType,
+		Editable:  true,
+		Value:     template.HTML(value),
+		Value2:    value2,
+		Options:   f.FilterOptions.SetSelected(params.GetFieldValue(f.Field), f.FilterType.SelectedLabel()),
+		OptionExt: f.FilterOptionExt,
+		Label:     f.FilterOperator.Label(),
+	})
+
+	if f.FilterOperator.AddOrNot() {
+		filterForm = append(filterForm, FormField{
+			Field:    headField + parameter.FilterParamOperatorSuffix,
+			Head:     f.Head,
+			TypeName: f.TypeName,
+			Value:    template.HTML(f.FilterOperator.Value()),
+			FormType: f.FilterType,
+			Hide:     true,
+		})
+	}
+
+	return filterForm
+}
+
 func (f Field) GetEditOptions() string {
 	if len(f.EditOptions) == 0 {
 		return ""
@@ -323,6 +367,125 @@ func (f Field) Exist() bool {
 }
 
 type FieldList []Field
+
+type TableInfo struct {
+	Table      string
+	PrimaryKey string
+	Delimiter  string
+	Driver     string
+}
+
+func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string) ([]map[string]string,
+	string, string, []string, []FormField) {
+	var (
+		thead      = make([]map[string]string, 0)
+		fields     = ""
+		joins      = ""
+		joinTables = make([]string, 0)
+		filterForm = make([]FormField, 0)
+	)
+	for _, field := range f {
+		if field.Field != info.PrimaryKey && modules.InArray(columns, field.Field) &&
+			!field.Join.Valid() {
+			fields += info.Table + "." + modules.FilterField(field.Field, info.Delimiter) + ","
+		}
+
+		headField := field.Field
+
+		if field.Join.Valid() {
+			headField = field.Join.Table + "_goadmin_join_" + field.Field
+			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
+				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
+			if !modules.InArray(joinTables, field.Join.Table) {
+				joinTables = append(joinTables, field.Join.Table)
+				joins += " left join " + modules.FilterField(field.Join.Table, info.Delimiter) + " on " +
+					field.Join.Table + "." + modules.FilterField(field.Join.JoinField, info.Delimiter) + " = " +
+					info.Table + "." + modules.FilterField(field.Join.Field, info.Delimiter)
+			}
+		}
+
+		if field.Filterable {
+			filterForm = append(filterForm, field.FilterFormField(params, headField)...)
+		}
+
+		if field.Hide {
+			continue
+		}
+		thead = append(thead, map[string]string{
+			"head":       field.Head,
+			"sortable":   modules.AorB(field.Sortable, "1", "0"),
+			"field":      headField,
+			"hide":       modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1"),
+			"editable":   modules.AorB(field.EditAble, "true", "false"),
+			"edittype":   field.EditType.String(),
+			"editoption": field.GetEditOptions(),
+			"width":      strconv.Itoa(field.Width),
+		})
+	}
+
+	return thead, fields, joins, joinTables, filterForm
+}
+
+func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns []string) ([]map[string]string, string, string) {
+	var (
+		thead      = make([]map[string]string, 0)
+		fields     = ""
+		joins      = ""
+		joinTables = make([]string, 0)
+	)
+	for _, field := range f {
+		if field.Field != info.PrimaryKey && modules.InArray(columns, field.Field) &&
+			!field.Join.Valid() {
+			fields += info.Table + "." + modules.FilterField(field.Field, info.Delimiter) + ","
+		}
+
+		headField := field.Field
+
+		if field.Join.Valid() {
+			headField = field.Join.Table + "_goadmin_join_" + field.Field
+			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
+				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
+			if !modules.InArray(joinTables, field.Join.Table) {
+				joinTables = append(joinTables, field.Join.Table)
+				joins += " left join " + modules.FilterField(field.Join.Table, info.Delimiter) + " on " +
+					field.Join.Table + "." + modules.FilterField(field.Join.JoinField, info.Delimiter) + " = " +
+					info.Table + "." + modules.FilterField(field.Join.Field, info.Delimiter)
+			}
+		}
+
+		if field.Hide {
+			continue
+		}
+		thead = append(thead, map[string]string{
+			"head":       field.Head,
+			"sortable":   modules.AorB(field.Sortable, "1", "0"),
+			"field":      headField,
+			"hide":       modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1"),
+			"editable":   modules.AorB(field.EditAble, "true", "false"),
+			"edittype":   field.EditType.String(),
+			"editoption": field.GetEditOptions(),
+			"width":      strconv.Itoa(field.Width),
+		})
+	}
+
+	return thead, fields, joins
+}
+
+func (f FieldList) GetFieldFilterProcessValue(key string, value string) string {
+	field := f.GetFieldByFieldName(key)
+	if field.FilterProcess != nil {
+		value = field.FilterProcess(value)
+	}
+	return value
+}
+
+func (f FieldList) GetFieldJoinTable(key string) string {
+	field := f.GetFieldByFieldName(key)
+	if field.Exist() {
+		return field.Join.Table
+	}
+	return ""
+}
 
 func (f FieldList) GetFieldByFieldName(name string) Field {
 	for _, field := range f {
@@ -407,7 +570,7 @@ type InfoPanel struct {
 	IsHideFilterArea   bool
 	FilterFormLayout   form.Layout
 
-	Wheres    []Where
+	Wheres    Wheres
 	WhereRaws WhereRaw
 
 	Callbacks Callbacks
@@ -437,9 +600,99 @@ type Where struct {
 	Arg      interface{}
 }
 
+type Wheres []Where
+
+func (whs Wheres) Statement(wheres, delimiter string, whereArgs []interface{}, existKeys, columns []string) (string, []interface{}) {
+	for k, wh := range whs {
+
+		whFieldArr := strings.Split(wh.Field, ".")
+		whField := ""
+		whTable := ""
+		if len(whFieldArr) > 1 {
+			whField = whFieldArr[1]
+			whTable = whFieldArr[0]
+		} else {
+			whField = whFieldArr[0]
+		}
+
+		if modules.InArray(existKeys, whField) {
+			continue
+		}
+
+		// TODO: support like operation and join table
+		if modules.InArray(columns, whField) {
+
+			joinMark := "and"
+			if k != len(whs)-1 {
+				joinMark = whs[k+1].Join
+			}
+
+			if whTable != "" {
+				wheres += whTable + "." + modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
+			} else {
+				wheres += modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
+			}
+			whereArgs = append(whereArgs, wh.Arg)
+		}
+	}
+	return wheres, whereArgs
+}
+
 type WhereRaw struct {
 	Raw  string
 	Args []interface{}
+}
+
+func (wh WhereRaw) check() int {
+	index := 0
+	for i := 0; i < len(wh.Raw); i++ {
+		if wh.Raw[i] == ' ' {
+			continue
+		} else {
+			if wh.Raw[i] == 'a' {
+				if len(wh.Raw) < i+3 {
+					break
+				} else {
+					if wh.Raw[i+1] == 'n' && wh.Raw[i+2] == 'd' {
+						index = i + 3
+					}
+				}
+			} else if wh.Raw[i] == 'o' {
+				if len(wh.Raw) < i+2 {
+					break
+				} else {
+					if wh.Raw[i+1] == 'r' {
+						index = i + 2
+					}
+				}
+			} else {
+				break
+			}
+		}
+	}
+	return index
+}
+
+func (wh WhereRaw) Statement(wheres string, whereArgs []interface{}) (string, []interface{}) {
+
+	if wh.Raw == "" {
+		return wheres, whereArgs
+	}
+
+	if wheres != "" {
+		if wh.check() != 0 {
+			wheres += wh.Raw + " "
+		} else {
+			wheres += " and " + wh.Raw + " "
+		}
+
+		whereArgs = append(whereArgs, wh.Args...)
+	} else {
+		wheres += wh.Raw[wh.check():] + " "
+		whereArgs = append(whereArgs, wh.Args...)
+	}
+
+	return wheres, whereArgs
 }
 
 type Handler func(ctx *context.Context) (success bool, msg string, data interface{})
