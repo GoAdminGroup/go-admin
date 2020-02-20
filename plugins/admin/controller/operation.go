@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -17,6 +16,6 @@ func RecordOperationLog(ctx *context.Context) {
 			input, _ = json.Marshal((*form).Value)
 		}
 
-		models.OperationLog().SetConn(db.GetConnection(services)).New(user.Id, ctx.Path(), ctx.Method(), ctx.LocalIP(), string(input))
+		models.OperationLog().SetConn(conn).New(user.Id, ctx.Path(), ctx.Method(), ctx.LocalIP(), string(input))
 	}
 }

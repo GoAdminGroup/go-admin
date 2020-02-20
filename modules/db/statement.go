@@ -107,6 +107,7 @@ func (sql *SQL) WithTx(tx *dbsql.Tx) *SQL {
 
 // TableName set table of SQL.
 func (sql *SQL) Table(table string) *SQL {
+	sql.clean()
 	sql.TableName = table
 	return sql
 }
@@ -590,25 +591,34 @@ func (sql *SQL) wrap(field string) string {
 	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter()
 }
 
-// RecycleSQL clear the SQL and put into the pool.
-func RecycleSQL(sql *SQL) {
-
-	logger.LogSQL(sql.Statement, sql.Args)
-
+func (sql *SQL) clean() {
+	sql.Functions = make([]string, 0)
+	sql.Group = ""
+	sql.Values = make(map[string]interface{})
 	sql.Fields = make([]string, 0)
 	sql.TableName = ""
 	sql.Wheres = make([]dialect.Where, 0)
 	sql.Leftjoins = make([]dialect.Join, 0)
 	sql.Args = make([]interface{}, 0)
 	sql.Order = ""
-	sql.conn = ""
-	sql.diver = nil
 	sql.Offset = ""
 	sql.Limit = ""
 	sql.WhereRaws = ""
 	sql.UpdateRaws = make([]dialect.RawUpdate, 0)
 	sql.Statement = ""
+}
+
+// RecycleSQL clear the SQL and put into the pool.
+func RecycleSQL(sql *SQL) {
+
+	logger.LogSQL(sql.Statement, sql.Args)
+
+	sql.clean()
+
+	sql.conn = ""
+	sql.diver = nil
 	sql.tx = nil
+	sql.dialect = nil
 
 	SQLPool.Put(sql)
 }
