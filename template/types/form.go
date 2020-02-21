@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -344,7 +343,6 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 
 	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
 		s := string(f.FieldList[f.curFieldListIndex].OptionExt)
-		fmt.Println(`strings.Count(s, "}")`, strings.Count(s, "}"))
 		s = strings.Replace(s, "{", "", 1)
 		s = utils.ReplaceNth(s, "}", "", strings.Count(s, "}"))
 		s = strings.TrimRight(s, " ")
