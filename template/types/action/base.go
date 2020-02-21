@@ -2,6 +2,7 @@ package action
 
 import (
 	"encoding/json"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"strings"
 )
 
@@ -24,3 +25,7 @@ func (a AjaxData) JSON() string {
 	s = strings.Replace(s, `"{%id}"`, "{%id}", -1)
 	return s
 }
+
+var _ types.Action = (*AjaxAction)(nil)
+var _ types.Action = (*PopUpAction)(nil)
+var _ types.Action = (*JumpAction)(nil)

@@ -750,6 +750,8 @@ func (def *DefaultAction) BtnClass() template.HTML     { return "" }
 func (def *DefaultAction) ExtContent() template.HTML   { return def.Ext }
 func (def *DefaultAction) GetCallbacks() context.Node  { return context.Node{} }
 
+var _ Action = (*DefaultAction)(nil)
+
 type Button interface {
 	Content() (template.HTML, template.JS)
 }
