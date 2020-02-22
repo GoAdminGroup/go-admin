@@ -23,7 +23,9 @@ const (
 	Smallint  DatabaseType = "SMALLINT"
 	Bigint    DatabaseType = "BIGINT"
 	Bit       DatabaseType = "BIT"
+	Int8      DatabaseType = "INT8"
 	Int4      DatabaseType = "INT4"
+	Int2      DatabaseType = "INT2"
 
 	Integer     DatabaseType = "INTEGER"
 	Numeric     DatabaseType = "NUMERIC"
@@ -38,6 +40,8 @@ const (
 
 	Real    DatabaseType = "REAL"
 	Float   DatabaseType = "FLOAT"
+	Float4  DatabaseType = "FLOAT4"
+	Float8  DatabaseType = "FLOAT8"
 	Double  DatabaseType = "DOUBLE"
 	Decimal DatabaseType = "DECIMAL"
 
@@ -60,6 +64,7 @@ const (
 
 	Varchar DatabaseType = "VARCHAR"
 	Char    DatabaseType = "CHAR"
+	Bpchar  DatabaseType = "BPCHAR"
 	JSON    DatabaseType = "JSON"
 
 	Blob       DatabaseType = "BLOB"
@@ -107,6 +112,7 @@ const (
 	UUID DatabaseType = "UUID"
 
 	Timestamptz DatabaseType = "TIMESTAMPTZ"
+	Timetz      DatabaseType = "TIMETZ"
 )
 
 // DT turn the string value into DatabaseType.
@@ -129,10 +135,10 @@ func GetDTAndCheck(s string) DatabaseType {
 
 var (
 	// StringTypeList is a DatabaseType list of string.
-	StringTypeList = []DatabaseType{Date, Time, Year, Datetime, Timestamptz, Timestamp,
+	StringTypeList = []DatabaseType{Date, Time, Year, Datetime, Timestamptz, Timestamp, Timetz,
 		Varchar, Char, Mediumtext, Longtext, Tinytext,
 		Text, JSON, Blob, Tinyblob, Mediumblob, Longblob,
-		Interval, Point,
+		Interval, Point, Bpchar,
 		Line, Lseg, Box, Path, Polygon, Circle, Cidr, Inet, Macaddr, Character, Varyingcharacter,
 		Nchar, Nativecharacter, Nvarchar, Clob, Binary, Varbinary, Enum, Set, Geometry, Multilinestring,
 		Multipolygon, Linestring, Multipoint, Geometrycollection, Name, UUID, Timestamptz,
@@ -142,7 +148,7 @@ var (
 	BoolTypeList = []DatabaseType{Bool, Boolean}
 
 	// IntTypeList is a DatabaseType list of integer.
-	IntTypeList = []DatabaseType{Int4,
+	IntTypeList = []DatabaseType{Int4, Int2, Int8,
 		Int,
 		Tinyint,
 		Mediumint,
@@ -152,7 +158,7 @@ var (
 		Bigint}
 
 	// FloatTypeList is a DatabaseType list of float.
-	FloatTypeList = []DatabaseType{Float, Double, Real, Doubleprecision}
+	FloatTypeList = []DatabaseType{Float, Float4, Float8, Double, Real, Doubleprecision}
 
 	// UintTypeList is a DatabaseType list of uint.
 	UintTypeList = []DatabaseType{Decimal, Bit, Money, Numeric}
