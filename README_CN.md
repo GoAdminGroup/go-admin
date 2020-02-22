@@ -154,6 +154,8 @@ GO111MODULE=on go run main.go
 
 访问：[http://localhost:9033/admin](http://localhost:9033/admin)
 
+账号: admin 密码: admin
+
 更多细节详见 [文档说明](https://book.go-admin.cn/zh)
 
 [这里一个超级简单上手的例子](https://github.com/GoAdminGroup/example)

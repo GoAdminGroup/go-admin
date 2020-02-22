@@ -161,6 +161,8 @@ GO111MODULE=on go run main.go
 
 visit: [http://localhost:9033/admin](http://localhost:9033/admin)
 
+account: admin password: admin
+
 [A super simple example here](https://github.com/GoAdminGroup/example)
 
 See the [docs](https://book.go-admin.cn) for more details.

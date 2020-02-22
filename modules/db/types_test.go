@@ -11,8 +11,47 @@ import (
 )
 
 const (
-	dbName    = "go-admin-type-test"
-	tableName = "all_types"
+	dbName            = "go-admin-type-test"
+	tableName         = "all_types"
+	postgresCreateSql = `CREATE TABLE public.%s
+(
+    id integer NOT NULL,
+    type_1 smallint,
+    type_2 bigint,
+    type_3 numeric,
+    type_4 real,
+    type_5 double precision,
+    type_6 smallint NOT NULL DEFAULT nextval('all_types_type_6_seq'::regclass),
+    type_7 integer NOT NULL DEFAULT nextval('all_types_type_7_seq'::regclass),
+    type_8 bigint NOT NULL DEFAULT nextval('all_types_type_8_seq'::regclass),
+    type_9 money,
+    type_10 character varying COLLATE pg_catalog."default",
+    type_11 character(1) COLLATE pg_catalog."default",
+    type_12 text COLLATE pg_catalog."default",
+    type_13 timestamp with time zone,
+    type_14 time with time zone,
+    type_15 date,
+    type_16 timestamp without time zone,
+    type_17 interval,
+    type_18 point,
+    type_19 line,
+    type_20 lseg,
+    type_21 box,
+    type_22 path,
+    type_23 polygon,
+    type_24 circle,
+    type_25 cidr,
+    type_26 inet,
+    type_27 macaddr,
+    CONSTRAINT all_types_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.all_types
+    OWNER to postgres;`
 )
 
 func TestMysqlGetTypeFromString(t *testing.T) {
@@ -23,7 +62,7 @@ func TestMysqlGetTypeFromString(t *testing.T) {
 	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", tableName))
 	assert.Equal(t, err, nil)
 	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE `+"`"+`%s`+"`"+` (
-  `+"`"+`id`+"`"+` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  id int(11) unsigned NOT NULL AUTO_INCREMENT,
   `+delimiter("type_1")+` tinyint(11) DEFAULT NULL,
   `+delimiter("type_2")+` smallint(11) DEFAULT NULL,
   `+delimiter("type_3")+` mediumint(11) DEFAULT NULL,
@@ -102,9 +141,9 @@ VALUES
 func TestPostgresqlGetTypeFromString(t *testing.T) {
 
 	// pg 11
-	//testPG(t, "5433")
+	testPG(t, "5433")
 	// pg 12
-	testPG(t, "5434")
+	//testPG(t, "5434")
 }
 
 func testPG(t *testing.T, port string) {
@@ -127,45 +166,7 @@ func testPG(t *testing.T, port string) {
 	_, err = conn.Exec(`CREATE SEQUENCE IF NOT EXISTS public.all_types_type_8_seq START 1;`)
 	assert.Equal(t, err, nil)
 	fmt.Println("create table")
-	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE public.%s
-(
-    id integer NOT NULL,
-    type_1 smallint,
-    type_2 bigint,
-    type_3 numeric,
-    type_4 real,
-    type_5 double precision,
-    type_6 smallint NOT NULL DEFAULT nextval('all_types_type_6_seq'::regclass),
-    type_7 integer NOT NULL DEFAULT nextval('all_types_type_7_seq'::regclass),
-    type_8 bigint NOT NULL DEFAULT nextval('all_types_type_8_seq'::regclass),
-    type_9 money,
-    type_10 character varying COLLATE pg_catalog."default",
-    type_11 character(1) COLLATE pg_catalog."default",
-    type_12 text COLLATE pg_catalog."default",
-    type_13 timestamp with time zone,
-    type_14 time with time zone,
-    type_15 date,
-    type_16 timestamp without time zone,
-    type_17 interval,
-    type_18 point,
-    type_19 line,
-    type_20 lseg,
-    type_21 box,
-    type_22 path,
-    type_23 polygon,
-    type_24 circle,
-    type_25 cidr,
-    type_26 inet,
-    type_27 macaddr,
-    CONSTRAINT all_types_pkey PRIMARY KEY (id)
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
-
-ALTER TABLE public.all_types
-    OWNER to postgres;`, tableName))
+	_, err = conn.Exec(fmt.Sprintf(postgresCreateSql, tableName))
 
 	assert.Equal(t, err, nil)
 
