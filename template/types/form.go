@@ -229,10 +229,11 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 		ss = strings.Replace(ss, "}", ",", strings.Count(ss, "}"))
 		ss = strings.TrimRight(ss, " ")
 		ss += ","
-		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(ss)
+		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(ss) + template.JS(strings.Replace(string(s), "{", "", 1))
+	} else {
+		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(string(s))
 	}
 
-	f.FieldList[f.curFieldListIndex].OptionExt += template.JS(strings.Replace(string(s), "{", "", 1))
 	return f
 }
 

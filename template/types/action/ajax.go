@@ -91,9 +91,9 @@ func (ajax *AjaxAction) Js() template.JS {
                             data: data,
                             success: function (data) { 
                                 if (data.code === 0) {
-                                    swal(data.msg, '', '` + language.Get("success") + `');
+                                    swal(data.msg, '', 'success');
                                 } else {
-                                    swal(data.msg, '', '` + language.Get("error") + `');
+                                    swal(data.msg, '', 'error');
                                 }
                             }
                         });`
