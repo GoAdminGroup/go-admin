@@ -293,7 +293,12 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 
 		existKeys = append(existKeys, key)
 	}
-	return wheres[:len(wheres)-4], whereArgs, existKeys
+
+	if len(wheres) > 3 {
+		wheres = wheres[:len(wheres)-4]
+	}
+
+	return wheres, whereArgs, existKeys
 }
 
 func getDefault(values url.Values, key, def string) string {
