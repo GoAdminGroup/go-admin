@@ -20,7 +20,7 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOption
 
 	if valArr, ok := val.([]string); ok {
 		for _, v := range fo {
-			if utils.InArray(valArr, v["value"]) {
+			if utils.InArray(valArr, v["value"]) || utils.InArray(valArr, v["field"]) {
 				v["selected"] = labels[0]
 			} else {
 				v["selected"] = labels[1]
@@ -28,7 +28,7 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOption
 		}
 	} else {
 		for _, v := range fo {
-			if v["value"] == val {
+			if v["value"] == val || v["field"] == val {
 				v["selected"] = labels[0]
 			} else {
 				v["selected"] = labels[1]
@@ -354,7 +354,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 	f.FieldList[f.curFieldListIndex].OptionExt = `{
 		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
 		ajax: {
-		    url: "`+url+`",
+		    url: "` + url + `",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -363,7 +363,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 			      }
 			      return query;
 		    },
-		    delay: `+delayStr+`,
+		    delay: ` + delayStr + `,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}
