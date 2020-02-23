@@ -406,7 +406,7 @@ func (whs Wheres) Statement(wheres, delimiter string, whereArgs []interface{}, e
 		// TODO: support like operation and join table
 		if modules.InArray(columns, whField) {
 
-			joinMark := "and"
+			joinMark := ""
 			if k != len(whs)-1 {
 				joinMark = whs[k+1].Join
 			}

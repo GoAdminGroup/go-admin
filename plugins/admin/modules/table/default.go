@@ -370,7 +370,7 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 	wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
 
 	if wheres != "" {
-		wheres = " where " + wheres[:len(wheres)-5]
+		wheres = " where " + wheres
 	}
 
 	if !modules.InArray(columns, params.SortField) {
@@ -458,7 +458,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
 
 		if wheres != "" {
-			wheres = " where " + wheres[:len(wheres)-5]
+			wheres = " where " + wheres
 		}
 
 		if connection.Name() == "mssql" {

@@ -73,8 +73,8 @@ type Configuration struct {
 type Function struct {
 	Format string
 	Args   []Arg
-	Next   Function
-	P      func(f string, args []Arg, next Function) string
+	Next   *Function
+	P      func(f string, args []Arg, next *Function) string
 }
 
 type ArgType int
@@ -123,7 +123,7 @@ func (s OperationArg) Type() ArgType {
 	return ArgOperation
 }
 
-func If(operation, arg Arg, next Function) Function {
+func If(operation, arg Arg, next *Function) Function {
 	return Function{
 		Format: `if (%s ` + operation.Wrap("%s") + " " + arg.Wrap("%s") + `) {
 	%s
@@ -131,7 +131,7 @@ func If(operation, arg Arg, next Function) Function {
 `,
 		Next: next,
 		Args: []Arg{operation, arg},
-		P: func(f string, args []Arg, next Function) string {
+		P: func(f string, args []Arg, next *Function) string {
 			return fmt.Sprintf(f, args[0], args[1], args[2],
 				next.P(next.Format, append([]Arg{args[0]}, next.Args...), next.Next))
 		},
@@ -141,7 +141,7 @@ func If(operation, arg Arg, next Function) Function {
 func Return() Function {
 	return Function{
 		Format: `return %s`,
-		P: func(f string, args []Arg, next Function) string {
+		P: func(f string, args []Arg, next *Function) string {
 			return fmt.Sprintf(f, args[0])
 		},
 	}
@@ -151,7 +151,7 @@ func Add(arg Arg) Function {
 	return Function{
 		Format: `%s += ` + arg.Wrap("%s"),
 		Args:   []Arg{arg},
-		P: func(f string, args []Arg, next Function) string {
+		P: func(f string, args []Arg, next *Function) string {
 			return fmt.Sprintf(f, args[0], args[1])
 		},
 	}
@@ -161,7 +161,7 @@ func AddFront(arg Arg) Function {
 	return Function{
 		Format: `%s = ` + arg.Wrap("%s") + ` + %s`,
 		Args:   []Arg{arg},
-		P: func(f string, args []Arg, next Function) string {
+		P: func(f string, args []Arg, next *Function) string {
 			return fmt.Sprintf(f, args[0], args[1], args[0])
 		},
 	}
