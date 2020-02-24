@@ -354,7 +354,12 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 
 	columns, _ := tb.getColumns(tb.info.Table)
 
-	thead, fields, joins := tb.info.FieldList.GetThead(types.TableInfo{}, params, columns)
+	thead, fields, joins := tb.info.FieldList.GetThead(types.TableInfo{
+		Table:      tb.info.Table,
+		Delimiter:  tb.db().GetDelimiter(),
+		Driver:     tb.connectionDriver,
+		PrimaryKey: tb.primaryKey.Name,
+	}, params, columns)
 
 	fields += tb.info.Table + "." + modules.FilterField(tb.primaryKey.Name, connection.GetDelimiter())
 
