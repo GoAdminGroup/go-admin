@@ -42,12 +42,12 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			return "women"
 		}
 		return "unknown"
-	}).FieldEditAble(editType.Select).FieldEditOptions([]map[string]string{
-		{"value": "0", "text": "men"},
-		{"value": "1", "text": "women"},
-	}).FieldFilterable(types.FilterType{FormType: form.SelectSingle}).FieldFilterOptions([]map[string]string{
-		{"value": "0", "field": "men"},
-		{"value": "1", "field": "women"},
+	}).FieldEditAble(editType.Select).FieldEditOptions(types.FieldOptions{
+		{Value: "0", Text: "men"},
+		{Value: "1", Text: "women"},
+	}).FieldFilterable(types.FilterType{FormType: form.SelectSingle}).FieldFilterOptions(types.FieldOptions{
+		{Value: "0", Text: "men"},
+		{Value: "1", Text: "women"},
 	})
 	info.AddField("Phone", "phone", db.Varchar).FieldFilterable()
 	info.AddField("City", "city", db.Varchar).FieldFilterable()
@@ -83,18 +83,9 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	formList.AddField("Ip", "ip", db.Varchar, form.Text)
 	formList.AddField("Name", "name", db.Varchar, form.Text)
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
-		FieldOptions([]map[string]string{
-			{
-				"field":    "gender",
-				"label":    "men",
-				"value":    "0",
-				"selected": "checked",
-			}, {
-				"field":    "gender",
-				"label":    "women",
-				"value":    "1",
-				"selected": "",
-			},
+		FieldOptions(types.FieldOptions{
+			{Text: "men", Value: "0"},
+			{Text: "women", Value: "1"},
 		})
 	formList.AddField("Phone", "phone", db.Varchar, form.Text)
 	formList.AddField("City", "city", db.Varchar, form.Text)

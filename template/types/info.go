@@ -77,7 +77,7 @@ type Field struct {
 	Hide       bool
 
 	EditType    table.Type
-	EditOptions []map[string]string
+	EditOptions FieldOptions
 
 	FilterType      form.Type
 	FilterOptions   FieldOptions
@@ -715,7 +715,7 @@ func (i *InfoPanel) FieldSortable() *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldEditOptions(options []map[string]string) *InfoPanel {
+func (i *InfoPanel) FieldEditOptions(options FieldOptions) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].EditOptions = options
 	return i
 }
@@ -757,7 +757,7 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldFilterOptions(options []map[string]string) *InfoPanel {
+func (i *InfoPanel) FieldFilterOptions(options FieldOptions) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterOptions = options
 	i.FieldList[i.curFieldListIndex].FilterOptionExt = `{"allowClear": "true"}`
 	return i

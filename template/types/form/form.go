@@ -104,14 +104,14 @@ func (t Type) IsRange() bool {
 	return t == DatetimeRange || t == NumberRange
 }
 
-func (t Type) SelectedLabel() []string {
+func (t Type) SelectedLabel() []template.HTML {
 	if t == Select || t == SelectSingle || t == SelectBox {
-		return []string{"selected", ""}
+		return []template.HTML{"selected", ""}
 	}
 	if t == Radio || t == Switch {
-		return []string{"checked", ""}
+		return []template.HTML{"checked", ""}
 	}
-	return []string{}
+	return []template.HTML{}
 }
 
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {

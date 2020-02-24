@@ -101,20 +101,20 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			return txErr
 		})
 
-	var roles, permissions []map[string]string
+	var roles, permissions types.FieldOptions
 	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
-		roles = append(roles, map[string]string{
-			"field": v["slug"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
+		roles = append(roles, types.FieldOption{
+			Text:  v["slug"].(string),
+			Value: strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
 	permissionsModel, _ := table("goadmin_permissions").Select("id", "slug").All()
 	for _, v := range permissionsModel {
-		permissions = append(permissions, map[string]string{
-			"field": v["slug"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
+		permissions = append(permissions, types.FieldOption{
+			Text:  v["slug"].(string),
+			Value: strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
 
@@ -529,14 +529,14 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
-		FieldOptions([]map[string]string{
-			{"value": "GET", "field": "GET"},
-			{"value": "PUT", "field": "PUT"},
-			{"value": "POST", "field": "POST"},
-			{"value": "DELETE", "field": "DELETE"},
-			{"value": "PATCH", "field": "PATCH"},
-			{"value": "OPTIONS", "field": "OPTIONS"},
-			{"value": "HEAD", "field": "HEAD"},
+		FieldOptions(types.FieldOptions{
+			{Value: "GET", Text: "GET"},
+			{Value: "PUT", Text: "PUT"},
+			{Value: "POST", Text: "POST"},
+			{Value: "DELETE", Text: "DELETE"},
+			{Value: "PATCH", Text: "PATCH"},
+			{Value: "OPTIONS", Text: "OPTIONS"},
+			{Value: "HEAD", Text: "HEAD"},
 		}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			return strings.Split(model.Value, ",")
@@ -639,12 +639,12 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	formList := RolesTable.GetForm().AddXssJsFilter()
 
 	permissionsModel, _ := table("goadmin_permissions").Select("id", "name").All()
-	var permissions = make([]map[string]string, len(permissionsModel))
+	var permissions = make(types.FieldOptions, len(permissionsModel))
 
 	for k, v := range permissionsModel {
-		permissions[k] = map[string]string{
-			"field": v["name"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
+		permissions[k] = types.FieldOption{
+			Text:  v["name"].(string),
+			Value: strconv.FormatInt(v["id"].(int64), 10),
 		}
 	}
 
@@ -803,13 +803,13 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 			return txErr
 		})
 
-	var roles, parents []map[string]string
+	var roles, parents types.FieldOptions
 	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
-		roles = append(roles, map[string]string{
-			"field": v["slug"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
+		roles = append(roles, types.FieldOption{
+			Text:  v["slug"].(string),
+			Value: strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
 
@@ -820,14 +820,14 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 		All()
 
 	for _, v := range parentsModel {
-		parents = append(parents, map[string]string{
-			"field": v["title"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
+		parents = append(parents, types.FieldOption{
+			Text:  v["title"].(string),
+			Value: strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	parents = append([]map[string]string{{
-		"field": "root",
-		"value": "0",
+	parents = append([]types.FieldOption{{
+		Text:  "root",
+		Value: "0",
 	}}, parents...)
 
 	formList := MenuTable.GetForm().AddXssJsFilter()

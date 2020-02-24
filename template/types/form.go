@@ -14,30 +14,52 @@ import (
 	"strings"
 )
 
-type FieldOptions []map[string]string
+type FieldOption struct {
+	Text          string
+	Value         string
+	Selected      bool
+	SelectedLabel template.HTML
+}
 
-func (fo FieldOptions) SetSelected(val interface{}, labels []string) FieldOptions {
+type FieldOptions []FieldOption
+
+func (fo FieldOptions) SetSelected(val interface{}, labels []template.HTML) FieldOptions {
 
 	if valArr, ok := val.([]string); ok {
-		for _, v := range fo {
-			if utils.InArray(valArr, v["value"]) || utils.InArray(valArr, v["field"]) {
-				v["selected"] = labels[0]
+		for k := range fo {
+			fo[k].Selected = utils.InArray(valArr, fo[k].Value) || utils.InArray(valArr, fo[k].Text)
+			if fo[k].Selected {
+				fo[k].SelectedLabel = labels[0]
 			} else {
-				v["selected"] = labels[1]
+				fo[k].SelectedLabel = labels[1]
 			}
 		}
 	} else {
-		for _, v := range fo {
-			if v["value"] == val || v["field"] == val {
-				v["selected"] = labels[0]
+		for k := range fo {
+			fo[k].Selected = fo[k].Value == val || fo[k].Text == val
+			if fo[k].Selected {
+				fo[k].SelectedLabel = labels[0]
 			} else {
-				v["selected"] = labels[1]
+				fo[k].SelectedLabel = labels[1]
 			}
 		}
 	}
 
 	return fo
 }
+
+func (fo FieldOptions) SetSelectedLabel(labels []template.HTML) FieldOptions {
+	for _, v := range fo {
+		if v.Selected {
+			v.SelectedLabel = labels[0]
+		} else {
+			v.SelectedLabel = labels[1]
+		}
+	}
+	return fo
+}
+
+type OptionInitFn func(val interface{}) FieldOptions
 
 // FormField is the form field with different options.
 type FormField struct {
@@ -62,8 +84,10 @@ type FormField struct {
 	Must        bool
 	Hide        bool
 
-	HelpMsg   template.HTML
-	OptionExt template.JS
+	HelpMsg template.HTML
+
+	OptionExt    template.JS
+	OptionInitFn OptionInitFn
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
@@ -71,11 +95,19 @@ type FormField struct {
 
 func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
 	if f.FormType.IsSelect() {
-		f.Options.SetSelected(f.ToDisplay(FieldModel{
-			ID:    id,
-			Value: val,
-			Row:   res,
-		}), f.FormType.SelectedLabel())
+		if len(f.Options) == 0 {
+			f.Options = f.OptionInitFn(f.ToDisplay(FieldModel{
+				ID:    id,
+				Value: val,
+				Row:   res,
+			})).SetSelectedLabel(f.FormType.SelectedLabel())
+		} else {
+			f.Options.SetSelected(f.ToDisplay(FieldModel{
+				ID:    id,
+				Value: val,
+				Row:   res,
+			}), f.FormType.SelectedLabel())
+		}
 	} else {
 		value := f.ToDisplay(FieldModel{
 			ID:    id,
@@ -94,7 +126,11 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 func (f FormField) UpdateDefaultValue() FormField {
 	f.Value = f.Default
 	if f.FormType.IsSelect() {
-		f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
+		if len(f.Options) == 0 {
+			f.Options = f.OptionInitFn(string(f.Value)).SetSelectedLabel(f.FormType.SelectedLabel())
+		} else {
+			f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
+		}
 	}
 	return f
 }
@@ -221,6 +257,11 @@ func (f *FormPanel) FieldHelpMsg(s template.HTML) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldOptionInitFn(fn OptionInitFn) *FormPanel {
+	f.FieldList[f.curFieldListIndex].OptionInitFn = fn
+	return f
+}
+
 func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 	s, _ := json.Marshal(m)
 
@@ -267,7 +308,7 @@ func (f *FormPanel) FieldValue(value string) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldOptions(options []map[string]string) *FormPanel {
+func (f *FormPanel) FieldOptions(options FieldOptions) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Options = options
 	return f
 }
@@ -354,7 +395,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 	f.FieldList[f.curFieldListIndex].OptionExt = `{
 		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
 		ajax: {
-		    url: "` + url + `",
+		    url: "`+url+`",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -363,7 +404,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 			      }
 			      return query;
 		    },
-		    delay: ` + delayStr + `,
+		    delay: `+delayStr+`,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}
@@ -625,9 +666,13 @@ func (f FormFields) Copy() FormFields {
 	formList := make(FormFields, len(f))
 	copy(formList, f)
 	for i := 0; i < len(formList); i++ {
-		formList[i].Options = make([]map[string]string, len(f[i].Options))
+		formList[i].Options = make(FieldOptions, len(f[i].Options))
 		for j := 0; j < len(f[i].Options); j++ {
-			formList[i].Options[j] = utils.CopyMap(f[i].Options[j])
+			formList[i].Options[j] = FieldOption{
+				Value:    f[i].Options[j].Value,
+				Text:     f[i].Options[j].Text,
+				Selected: f[i].Options[j].Selected,
+			}
 		}
 	}
 	return formList
