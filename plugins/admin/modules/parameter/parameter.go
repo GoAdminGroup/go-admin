@@ -181,13 +181,18 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 		}
 	}
 
+	pageInt, _ := strconv.Atoi(page)
+	pageSizeInt, _ := strconv.Atoi(pageSize)
+
 	return Parameters{
-		Page:      page,
-		PageSize:  pageSize,
-		SortField: sortField,
-		SortType:  sortType,
-		Columns:   columns,
-		Fields:    make(map[string]string),
+		Page:        page,
+		PageSize:    pageSize,
+		PageSizeInt: pageSizeInt,
+		PageInt:     pageInt,
+		SortField:   sortField,
+		SortType:    sortType,
+		Columns:     columns,
+		Fields:      make(map[string]string),
 	}
 }
 
