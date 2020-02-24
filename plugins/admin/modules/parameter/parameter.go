@@ -36,8 +36,8 @@ const (
 	IsAll      = "is_all"
 	PrimaryKey = "pk"
 
-	true  = "true"
-	false = "false"
+	True  = "true"
+	False = "false"
 
 	FilterRangeParamStartSuffix = "_start__goadmin"
 	FilterRangeParamEndSuffix   = "_end__goadmin"
@@ -62,50 +62,11 @@ func BaseParam() Parameters {
 	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string]string)}
 }
 
-func (param Parameters) WithPK(id ...string) Parameters {
-	param.Fields["pk"] = strings.Join(id, ",")
-	return param
-}
-
-func (param Parameters) PK() []string {
-	return strings.Split(param.Fields[PrimaryKey], ",")
-}
-
-func (param Parameters) IsAll() bool {
-	return param.Fields[IsAll] == true
-}
-
-func (param Parameters) WithIsAll(isAll bool) Parameters {
-	if isAll {
-		param.Fields[IsAll] = true
-	} else {
-		param.Fields[IsAll] = false
-	}
-	return param
-}
-
-func getParam(page, pageSize, sortField, sortType string, fields map[string]string, columnsArr []string) Parameters {
-
-	pageInt, _ := strconv.Atoi(page)
-	pageSizeInt, _ := strconv.Atoi(pageSize)
-
-	return Parameters{
-		Page:        page,
-		PageSize:    pageSize,
-		PageSizeInt: pageSizeInt,
-		PageInt:     pageInt,
-		SortField:   sortField,
-		SortType:    sortType,
-		Fields:      fields,
-		Columns:     columnsArr,
-	}
-}
-
-func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
+func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSortType string) Parameters {
 	page := getDefault(values, Page, "1")
 	pageSize := getDefault(values, PageSize, strconv.Itoa(defaultPageSize))
 	sortField := getDefault(values, Sort, primaryKey)
-	sortType := getDefault(values, SortType, defaultSort)
+	sortType := getDefault(values, SortType, defaultSortType)
 	columns := getDefault(values, Columns, "")
 
 	fields := make(map[string]string)
@@ -131,43 +92,62 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 		columnsArr = strings.Split(columns, ",")
 	}
 
-	return getParam(page, pageSize, sortField, sortType, fields, columnsArr)
+	pageInt, _ := strconv.Atoi(page)
+	pageSizeInt, _ := strconv.Atoi(pageSize)
+
+	return Parameters{
+		Page:        page,
+		PageSize:    pageSize,
+		PageSizeInt: pageSizeInt,
+		PageInt:     pageInt,
+		SortField:   sortField,
+		SortType:    sortType,
+		Fields:      fields,
+		Columns:     columnsArr,
+	}
 }
 
-func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {
+func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSortType string) Parameters {
 
 	if !fromList {
 		return BaseParam()
 	}
 
-	prevUrlArr := strings.Split(value, "?")
-	paramArr := strings.Split(prevUrlArr[1], "&")
+	varr := strings.Split(value, "?")
 
-	var (
-		page      = "1"
-		pageSize  = strconv.Itoa(defaultPageSize)
-		sortField = primaryKey
-		sortType  = defaultSort
-		columns   = make([]string, 0)
-	)
-
-	for i := 0; i < len(paramArr); i++ {
-		arr := strings.Split(paramArr[i], "=")
-		switch arr[0] {
-		case PageSize:
-			pageSize = arr[1]
-		case Page:
-			page = arr[1]
-		case Sort:
-			sortField = arr[1]
-		case SortType:
-			sortType = arr[1]
-		case Columns:
-			columns = strings.Split(arr[1], ",")
-		}
+	if len(varr) < 2 {
+		return BaseParam()
 	}
 
-	return getParam(page, pageSize, sortField, sortType, make(map[string]string), columns)
+	u, err := url.ParseQuery(varr[1])
+
+	if err != nil {
+		return BaseParam()
+	}
+
+	return GetParam(u, defaultPageSize, primaryKey, defaultSortType)
+}
+
+func (param Parameters) WithPK(id ...string) Parameters {
+	param.Fields["pk"] = strings.Join(id, ",")
+	return param
+}
+
+func (param Parameters) PK() []string {
+	return strings.Split(param.Fields[PrimaryKey], ",")
+}
+
+func (param Parameters) IsAll() bool {
+	return param.Fields[IsAll] == True
+}
+
+func (param Parameters) WithIsAll(isAll bool) Parameters {
+	if isAll {
+		param.Fields[IsAll] = True
+	} else {
+		param.Fields[IsAll] = False
+	}
+	return param
 }
 
 func (param Parameters) GetFilterFieldValueStart(field string) string {

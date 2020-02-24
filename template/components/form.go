@@ -129,14 +129,14 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
                 </div>`, language.Get("Delete"))
 	}
 
-	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>
+	return template.HTML(`<h3 class="box-title">`) + language.GetFromHtml(compo.Title) + template.HTML(`</h3>
             <div class="box-tools">
-				`+deleteBtn+editBtn+`
+				` + deleteBtn + editBtn + `
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='%s' class="btn btn-sm btn-default form-history-back"><i
-                                class="fa fa-arrow-left"></i> %s</a>
+                    <a href='` + compo.InfoUrl + `' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> ` + language.Get("Back") + `</a>
                 </div>
-            </div>`, language.GetFromHtml(compo.Title), compo.InfoUrl, language.Get("Back")))
+            </div>`)
 }
 
 func (compo *FormAttribute) GetBoxHeaderNoButton() template.HTML {
