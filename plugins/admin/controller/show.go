@@ -266,7 +266,7 @@ func Export(ctx *context.Context) {
 		err       error
 	)
 
-	if len(param.Id) == 1 {
+	if len(param.Id) == 0 {
 		params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 			panel.GetInfo().GetSort())
 		panelInfo, err = panel.GetData(ctx.Path(), params, param.IsAll)

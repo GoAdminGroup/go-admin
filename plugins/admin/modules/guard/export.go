@@ -26,9 +26,15 @@ func Export(conn db.Connection) context.Handler {
 			return
 		}
 
+		idStr := make([]string, 0)
+		ids := ctx.FormValue("id")
+		if ids != "" {
+			idStr = strings.Split(ctx.FormValue("id"), ",")
+		}
+
 		ctx.SetUserValue("export_param", &ExportParam{
 			Panel:  panel,
-			Id:     strings.Split(ctx.FormValue("id"), ","),
+			Id:     idStr,
 			Prefix: prefix,
 			IsAll:  ctx.FormValue("is_all") == "true",
 		})
