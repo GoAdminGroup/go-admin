@@ -84,6 +84,23 @@ func (param Parameters) WithIsAll(isAll bool) Parameters {
 	return param
 }
 
+func getParam(page, pageSize, sortField, sortType string, fields map[string]string, columnsArr []string) Parameters {
+
+	pageInt, _ := strconv.Atoi(page)
+	pageSizeInt, _ := strconv.Atoi(pageSize)
+
+	return Parameters{
+		Page:        page,
+		PageSize:    pageSize,
+		PageSizeInt: pageSizeInt,
+		PageInt:     pageInt,
+		SortField:   sortField,
+		SortType:    sortType,
+		Fields:      fields,
+		Columns:     columnsArr,
+	}
+}
+
 func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort string) Parameters {
 	page := getDefault(values, Page, "1")
 	pageSize := getDefault(values, PageSize, strconv.Itoa(defaultPageSize))
@@ -114,38 +131,7 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSort st
 		columnsArr = strings.Split(columns, ",")
 	}
 
-	pageInt, _ := strconv.Atoi(page)
-	pageSizeInt, _ := strconv.Atoi(pageSize)
-
-	return Parameters{
-		Page:        page,
-		PageSize:    pageSize,
-		PageSizeInt: pageSizeInt,
-		PageInt:     pageInt,
-		SortField:   sortField,
-		SortType:    sortType,
-		Fields:      fields,
-		Columns:     columnsArr,
-	}
-}
-
-func (param Parameters) GetFilterFieldValueStart(field string) string {
-	return param.Fields[field] + FilterRangeParamStartSuffix
-}
-
-func (param Parameters) GetFilterFieldValueEnd(field string) string {
-	return param.Fields[field] + FilterRangeParamEndSuffix
-}
-
-func (param Parameters) GetFieldValue(field string) string {
-	return param.Fields[field]
-}
-
-func (param Parameters) GetFieldOperator(field string) string {
-	if param.Fields[field+operatorSuffix] == "" {
-		return "eq"
-	}
-	return param.Fields[field+operatorSuffix]
+	return getParam(page, pageSize, sortField, sortType, fields, columnsArr)
 }
 
 func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSort string) Parameters {
@@ -181,19 +167,26 @@ func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKe
 		}
 	}
 
-	pageInt, _ := strconv.Atoi(page)
-	pageSizeInt, _ := strconv.Atoi(pageSize)
+	return getParam(page, pageSize, sortField, sortType, make(map[string]string), columns)
+}
 
-	return Parameters{
-		Page:        page,
-		PageSize:    pageSize,
-		PageSizeInt: pageSizeInt,
-		PageInt:     pageInt,
-		SortField:   sortField,
-		SortType:    sortType,
-		Columns:     columns,
-		Fields:      make(map[string]string),
+func (param Parameters) GetFilterFieldValueStart(field string) string {
+	return param.Fields[field] + FilterRangeParamStartSuffix
+}
+
+func (param Parameters) GetFilterFieldValueEnd(field string) string {
+	return param.Fields[field] + FilterRangeParamEndSuffix
+}
+
+func (param Parameters) GetFieldValue(field string) string {
+	return param.Fields[field]
+}
+
+func (param Parameters) GetFieldOperator(field string) string {
+	if param.Fields[field+operatorSuffix] == "" {
+		return "eq"
 	}
+	return param.Fields[field+operatorSuffix]
 }
 
 func (param Parameters) Join() string {
