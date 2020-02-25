@@ -49,11 +49,11 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []template.HTML) Fiel
 }
 
 func (fo FieldOptions) SetSelectedLabel(labels []template.HTML) FieldOptions {
-	for _, v := range fo {
-		if v.Selected {
-			v.SelectedLabel = labels[0]
+	for k := range fo {
+		if fo[k].Selected {
+			fo[k].SelectedLabel = labels[0]
 		} else {
-			v.SelectedLabel = labels[1]
+			fo[k].SelectedLabel = labels[1]
 		}
 	}
 	return fo
