@@ -1,5 +1,7 @@
 package form
 
+import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+
 // Values maps a string key to a list of values.
 // It is typically used for query parameters and form values.
 // Unlike in the http.Header map, the keys in a Values map
@@ -49,19 +51,19 @@ func (f Values) Delete(key string) {
 }
 
 func (f Values) IsUpdatePost() bool {
-	return f.Get("__go_admin_post_type") == "0"
+	return f.Get(constant.PostTypeKey) == "0"
 }
 
 func (f Values) IsInsertPost() bool {
-	return f.Get("__go_admin_post_type") == "1"
+	return f.Get(constant.PostTypeKey) == "1"
 }
 
 func (f Values) IsSingleUpdatePost() bool {
-	return f.Get("__go_admin_single_update") == "1"
+	return f.Get(constant.PostIsSingleUpdateKey) == "1"
 }
 
 func (f Values) RemoveRemark() Values {
-	f.Delete("__go_admin_post_type")
-	f.Delete("__go_admin_single_update")
+	f.Delete(constant.PostTypeKey)
+	f.Delete(constant.PostIsSingleUpdateKey)
 	return f
 }

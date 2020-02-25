@@ -31,7 +31,7 @@ func Update(ctx *context.Context) {
 	}
 
 	var f = make(form.Values)
-	f.Add("__go_admin_single_update", "1")
+	f.Add(constant.PostIsSingleUpdateKey, "1")
 	f.Add(pname, id)
 	f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
 

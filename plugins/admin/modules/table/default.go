@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -630,6 +631,8 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
+	dataList.Add(constant.PostTypeKey, "0")
+
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
 			return err
@@ -637,11 +640,11 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 	}
 
 	if tb.form.UpdateFn != nil {
-		return tb.form.UpdateFn(dataList)
+		dataList.Delete(constant.PostTypeKey)
+		return tb.form.UpdateFn(dataList.RemoveRemark())
 	}
 
 	if tb.form.PreProcessFn != nil {
-		dataList.Add("__go_admin_post_type", "0")
 		dataList = tb.form.PreProcessFn(dataList)
 	}
 
@@ -670,7 +673,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
-			dataList.Add("__go_admin_post_type", "0")
+			dataList.Add(constant.PostTypeKey, "0")
 
 			err := tb.form.PostHook(dataList)
 			if err != nil {
@@ -685,6 +688,8 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
+	dataList.Add(constant.PostTypeKey, "1")
+
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
 			return err
@@ -692,11 +697,11 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 	}
 
 	if tb.form.InsertFn != nil {
+		dataList.Delete(constant.PostTypeKey)
 		return tb.form.InsertFn(dataList)
 	}
 
 	if tb.form.PreProcessFn != nil {
-		dataList.Add("__go_admin_post_type", "1")
 		dataList = tb.form.PreProcessFn(dataList)
 	}
 
@@ -723,7 +728,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
-			dataList.Add("__go_admin_post_type", "1")
+			dataList.Add(constant.PostTypeKey, "1")
 
 			err := tb.form.PostHook(dataList)
 			if err != nil {
