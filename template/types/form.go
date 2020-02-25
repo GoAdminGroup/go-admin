@@ -15,10 +15,10 @@ import (
 )
 
 type FieldOption struct {
-	Text          string
-	Value         string
-	Selected      bool
-	SelectedLabel template.HTML
+	Text          string        `json:"text"`
+	Value         string        `json:"value"`
+	Selected      bool          `json:"-"`
+	SelectedLabel template.HTML `json:"-"`
 }
 
 type FieldOptions []FieldOption
@@ -395,7 +395,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 	f.FieldList[f.curFieldListIndex].OptionExt = `{
 		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
 		ajax: {
-		    url: "`+url+`",
+		    url: "` + url + `",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -404,7 +404,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 			      }
 			      return query;
 		    },
-		    delay: `+delayStr+`,
+		    delay: ` + delayStr + `,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}
