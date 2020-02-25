@@ -641,7 +641,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
 	if tb.form.UpdateFn != nil {
 		dataList.Delete(constant.PostTypeKey)
-		return tb.form.UpdateFn(dataList.RemoveRemark())
+		return tb.form.UpdateFn(dataList)
 	}
 
 	if tb.form.PreProcessFn != nil {
