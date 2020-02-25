@@ -95,7 +95,7 @@ type FormField struct {
 
 func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
 	if f.FormType.IsSelect() {
-		if len(f.Options) == 0 {
+		if len(f.Options) == 0 && f.OptionInitFn != nil {
 			f.Options = f.OptionInitFn(f.ToDisplay(FieldModel{
 				ID:    id,
 				Value: val,
@@ -126,7 +126,7 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 func (f FormField) UpdateDefaultValue() FormField {
 	f.Value = f.Default
 	if f.FormType.IsSelect() {
-		if len(f.Options) == 0 {
+		if len(f.Options) == 0 && f.OptionInitFn != nil {
 			f.Options = f.OptionInitFn(string(f.Value)).SetSelectedLabel(f.FormType.SelectedLabel())
 		} else {
 			f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
