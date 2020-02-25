@@ -257,7 +257,7 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 		} else {
 			keys := strings.Split(key, FilterParamJoinInfix)
 			if len(keys) > 1 {
-				if joinTable := getJoinTable(key); joinTable != "" {
+				if joinTable := getJoinTable(keys[1]); joinTable != "" {
 					value := filterProcess(key, value)
 					wheres += joinTable + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
 					if op == "like" && !strings.Contains(value, "%") {
