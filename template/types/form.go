@@ -59,7 +59,7 @@ func (fo FieldOptions) SetSelectedLabel(labels []template.HTML) FieldOptions {
 	return fo
 }
 
-type OptionInitFn func(val interface{}) FieldOptions
+type OptionInitFn func(val FieldModel) FieldOptions
 
 // FormField is the form field with different options.
 type FormField struct {
@@ -96,11 +96,11 @@ type FormField struct {
 func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
-			f.Options = f.OptionInitFn(f.ToDisplay(FieldModel{
+			f.Options = f.OptionInitFn(FieldModel{
 				ID:    id,
 				Value: val,
 				Row:   res,
-			})).SetSelectedLabel(f.FormType.SelectedLabel())
+			}).SetSelectedLabel(f.FormType.SelectedLabel())
 		} else {
 			f.Options.SetSelected(f.ToDisplay(FieldModel{
 				ID:    id,
@@ -127,7 +127,11 @@ func (f FormField) UpdateDefaultValue() FormField {
 	f.Value = f.Default
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
-			f.Options = f.OptionInitFn(string(f.Value)).SetSelectedLabel(f.FormType.SelectedLabel())
+			f.Options = f.OptionInitFn(FieldModel{
+				ID:    "",
+				Value: string(f.Value),
+				Row:   make(map[string]interface{}),
+			}).SetSelectedLabel(f.FormType.SelectedLabel())
 		} else {
 			f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
 		}
