@@ -915,7 +915,7 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, column
 	string, string, []string, []types.FormField) {
 	return tb.info.FieldList.GetTheadAndFilterForm(types.TableInfo{
 		Table:      tb.info.Table,
-		Delimiter:  tb.db().GetDelimiter(),
+		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.primaryKey.Name,
 	}, params, columns)
@@ -924,6 +924,17 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, column
 // db is a helper function return raw db connection.
 func (tb DefaultTable) db() db.Connection {
 	return db.GetConnectionFromService(services.Get(tb.connectionDriver))
+}
+
+func (tb DefaultTable) delimiter() string {
+	if tb.getDataFromDB() {
+		return tb.db().GetDelimiter()
+	}
+	return ""
+}
+
+func (tb DefaultTable) getDataFromDB() bool {
+	return tb.sourceURL == "" && tb.getDataFun == nil && tb.info.GetDataFn == nil && tb.detail.GetDataFn == nil
 }
 
 // sql is a helper function return db sql.
