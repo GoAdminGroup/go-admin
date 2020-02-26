@@ -28,8 +28,6 @@ const (
 	Prefix   = "__prefix"
 	Pjax     = "_pjax"
 
-	operatorSuffix = "__operator__"
-
 	sortTypeDesc = "desc"
 	sortTypeAsc  = "asc"
 
@@ -42,7 +40,8 @@ const (
 	FilterRangeParamStartSuffix = "_start__goadmin"
 	FilterRangeParamEndSuffix   = "_end__goadmin"
 	FilterParamJoinInfix        = "_goadmin_join_"
-	FilterParamOperatorSuffix   = "__operator__"
+	FilterParamOperatorSuffix   = "__goadmin_operator__"
+	FilterParamCountInfix       = "__goadmin_index__"
 )
 
 var operators = map[string]string{
@@ -78,8 +77,8 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSortTyp
 					fields[key] = sortTypeDesc
 				}
 			} else {
-				if strings.Contains(key, operatorSuffix) &&
-					values.Get(strings.Replace(key, operatorSuffix, "", -1)) == "" {
+				if strings.Contains(key, FilterParamOperatorSuffix) &&
+					values.Get(strings.Replace(key, FilterParamOperatorSuffix, "", -1)) == "" {
 					continue
 				}
 				fields[key] = value[0]
@@ -162,11 +161,11 @@ func (param Parameters) GetFieldValue(field string) string {
 	return param.Fields[field]
 }
 
-func (param Parameters) GetFieldOperator(field string) string {
-	if param.Fields[field+operatorSuffix] == "" {
+func (param Parameters) GetFieldOperator(field, suffix string) string {
+	if param.Fields[field+FilterParamOperatorSuffix+suffix] == "" {
 		return "eq"
 	}
-	return param.Fields[field+operatorSuffix]
+	return param.Fields[field+FilterParamOperatorSuffix+suffix]
 }
 
 func (param Parameters) Join() string {
@@ -229,10 +228,22 @@ func (param Parameters) GetFixedParamStr() url.Values {
 }
 
 func (param Parameters) Statement(wheres, delimiter string, whereArgs []interface{}, columns, existKeys []string,
-	filterProcess func(string, string) string, getJoinTable func(string) string) (string, []interface{}, []string) {
+	filterProcess func(string, string, string) string, getJoinTable func(string) string) (string, []interface{}, []string) {
+	var multiKey = make(map[string]uint8)
 	for key, value := range param.Fields {
 
-		if modules.InArray(existKeys, key) {
+		keyIndexSuffix := ""
+
+		keyArr := strings.Split(key, FilterParamCountInfix)
+
+		if len(keyArr) > 1 {
+			key = keyArr[0]
+			keyIndexSuffix = FilterParamCountInfix + keyArr[1]
+		}
+
+		if keyIndexSuffix != "" {
+			multiKey[key] = 0
+		} else if _, exist := multiKey[key]; !exist && modules.InArray(existKeys, key) {
 			continue
 		}
 
@@ -244,13 +255,13 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 			key = strings.Replace(key, FilterRangeParamStartSuffix, "", -1)
 			op = ">="
 		} else if !strings.Contains(key, FilterParamOperatorSuffix) {
-			op = operators[param.GetFieldOperator(key)]
+			op = operators[param.GetFieldOperator(key, keyIndexSuffix)]
 		}
 
 		if modules.InArray(columns, key) {
 			wheres += modules.FilterField(key, delimiter) + " " + op + " ? and "
 			if op == "like" && !strings.Contains(value, "%") {
-				whereArgs = append(whereArgs, "%"+filterProcess(key, value)+"%")
+				whereArgs = append(whereArgs, "%"+filterProcess(key, value, keyIndexSuffix)+"%")
 			} else {
 				whereArgs = append(whereArgs, value)
 			}
@@ -258,7 +269,7 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 			keys := strings.Split(key, FilterParamJoinInfix)
 			if len(keys) > 1 {
 				if joinTable := getJoinTable(keys[1]); joinTable != "" {
-					value := filterProcess(key, value)
+					value := filterProcess(key, value, keyIndexSuffix)
 					wheres += joinTable + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
 					if op == "like" && !strings.Contains(value, "%") {
 						whereArgs = append(whereArgs, "%"+value+"%")

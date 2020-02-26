@@ -399,7 +399,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 	f.FieldList[f.curFieldListIndex].OptionExt = `{
 		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
 		ajax: {
-		    url: "` + url + `",
+		    url: "`+url+`",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -408,7 +408,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 			      }
 			      return query;
 		    },
-		    delay: ` + delayStr + `,
+		    delay: `+delayStr+`,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}

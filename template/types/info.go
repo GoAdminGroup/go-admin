@@ -79,55 +79,67 @@ type Field struct {
 	EditType    table.Type
 	EditOptions FieldOptions
 
-	FilterType      form.Type
-	FilterOptions   FieldOptions
-	FilterOperator  FilterOperator
-	FilterOptionExt template.JS
-	FilterHead      string
-	FilterHelpMsg   template.HTML
-	FilterProcess   func(string) string
+	FilterFormFields []FilterFormField
 
 	FieldDisplay
 }
 
-func (f Field) FilterFormField(params parameter.Parameters, headField string) []FormField {
-	var value, value2 string
+type FilterFormField struct {
+	Type      form.Type
+	Options   FieldOptions
+	Operator  FilterOperator
+	OptionExt template.JS
+	Head      string
+	HelpMsg   template.HTML
+	ProcessFn func(string) string
+}
 
-	if f.FilterType.IsRange() {
-		value = params.GetFilterFieldValueStart(headField)
-		value2 = params.GetFilterFieldValueEnd(headField)
-	} else {
-		if f.FilterOperator == FilterOperatorFree {
-			value2 = GetOperatorFromValue(params.GetFieldOperator(headField)).String()
-		}
-		value = params.GetFieldValue(headField)
-	}
+func (f Field) GetFilterFormFields(params parameter.Parameters, headField string) []FormField {
 
 	var filterForm = make([]FormField, 0)
 
-	filterForm = append(filterForm, FormField{
-		Field:     headField,
-		Head:      modules.AorB(f.FilterHead == "", f.Head, f.FilterHead),
-		TypeName:  f.TypeName,
-		HelpMsg:   f.FilterHelpMsg,
-		FormType:  f.FilterType,
-		Editable:  true,
-		Value:     template.HTML(value),
-		Value2:    value2,
-		Options:   f.FilterOptions.SetSelected(params.GetFieldValue(f.Field), f.FilterType.SelectedLabel()),
-		OptionExt: f.FilterOptionExt,
-		Label:     f.FilterOperator.Label(),
-	})
+	var value, value2, keySuffix string
 
-	if f.FilterOperator.AddOrNot() {
+	for index, filter := range f.FilterFormFields {
+
+		if index > 0 {
+			keySuffix = parameter.FilterParamCountInfix + strconv.Itoa(index)
+		}
+
+		if filter.Type.IsRange() {
+			value = params.GetFilterFieldValueStart(headField)
+			value2 = params.GetFilterFieldValueEnd(headField)
+		} else {
+			if filter.Operator == FilterOperatorFree {
+				value2 = GetOperatorFromValue(params.GetFieldOperator(headField, keySuffix)).String()
+			}
+			value = params.GetFieldValue(headField + keySuffix)
+		}
+
 		filterForm = append(filterForm, FormField{
-			Field:    headField + parameter.FilterParamOperatorSuffix,
-			Head:     f.Head,
-			TypeName: f.TypeName,
-			Value:    template.HTML(f.FilterOperator.Value()),
-			FormType: f.FilterType,
-			Hide:     true,
+			Field:     headField + keySuffix,
+			Head:      modules.AorB(filter.Head == "", f.Head, filter.Head),
+			TypeName:  f.TypeName,
+			HelpMsg:   filter.HelpMsg,
+			FormType:  filter.Type,
+			Editable:  true,
+			Value:     template.HTML(value),
+			Value2:    value2,
+			Options:   filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel()),
+			OptionExt: filter.OptionExt,
+			Label:     filter.Operator.Label(),
 		})
+
+		if filter.Operator.AddOrNot() {
+			filterForm = append(filterForm, FormField{
+				Field:    headField + parameter.FilterParamOperatorSuffix + keySuffix,
+				Head:     f.Head,
+				TypeName: f.TypeName,
+				Value:    template.HTML(filter.Operator.Value()),
+				FormType: filter.Type,
+				Hide:     true,
+			})
+		}
 	}
 
 	return filterForm
@@ -189,7 +201,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		}
 
 		if field.Filterable {
-			filterForm = append(filterForm, field.FilterFormField(params, headField)...)
+			filterForm = append(filterForm, field.GetFilterFormFields(params, headField)...)
 		}
 
 		if field.Hide {
@@ -255,10 +267,14 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 	return thead, fields, joins
 }
 
-func (f FieldList) GetFieldFilterProcessValue(key string, value string) string {
+func (f FieldList) GetFieldFilterProcessValue(key, value, keyIndex string) string {
 	field := f.GetFieldByFieldName(key)
-	if field.FilterProcess != nil {
-		value = field.FilterProcess(value)
+	index := 0
+	if keyIndex != "" {
+		index, _ = strconv.Atoi(keyIndex)
+	}
+	if field.FilterFormFields[index].ProcessFn != nil {
+		value = field.FilterFormFields[index].ProcessFn(value)
 	}
 	return value
 }
@@ -734,43 +750,61 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 }
 
 type FilterType struct {
-	FormType form.Type
-	Operator FilterOperator
-	Head     string
-	HelpMsg  template.HTML
+	FormType  form.Type
+	Operator  FilterOperator
+	Head      string
+	HelpMsg   template.HTML
+	Options   FieldOptions
+	Process   func(string) string
+	OptionExt map[string]interface{}
 }
 
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Filterable = true
-	if len(filterType) > 0 {
-		i.FieldList[i.curFieldListIndex].FilterOperator = filterType[0].Operator
-		if uint8(filterType[0].FormType) == 0 {
-			i.FieldList[i.curFieldListIndex].FilterType = form.Text
-		} else {
-			i.FieldList[i.curFieldListIndex].FilterType = filterType[0].FormType
-		}
-		i.FieldList[i.curFieldListIndex].FilterHead = filterType[0].Head
-		i.FieldList[i.curFieldListIndex].FilterHelpMsg = filterType[0].HelpMsg
-	} else {
-		i.FieldList[i.curFieldListIndex].FilterType = form.Text
+
+	if len(filterType) == 0 {
+		i.FieldList[i.curFieldListIndex].FilterFormFields = append(i.FieldList[i.curFieldListIndex].FilterFormFields,
+			FilterFormField{
+				Type: form.Text,
+			})
 	}
+
+	for _, filter := range filterType {
+		var ff FilterFormField
+		ff.Operator = filter.Operator
+		if uint8(filter.FormType) == 0 {
+			ff.Type = form.Text
+		} else {
+			ff.Type = filter.FormType
+		}
+		ff.Head = filter.Head
+		ff.HelpMsg = filter.HelpMsg
+		ff.ProcessFn = filter.Process
+		ff.Options = filter.Options
+		if len(filter.OptionExt) > 0 {
+			s, _ := json.Marshal(filter.OptionExt)
+			ff.OptionExt = template.JS(s)
+		}
+		i.FieldList[i.curFieldListIndex].FilterFormFields = append(i.FieldList[i.curFieldListIndex].FilterFormFields, ff)
+	}
+
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOptions(options FieldOptions) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].FilterOptions = options
-	i.FieldList[i.curFieldListIndex].FilterOptionExt = `{"allowClear": "true"}`
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].Options = options
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = `{"allowClear": "true"}`
 	return i
 }
 
 func (i *InfoPanel) FieldFilterProcess(process func(string) string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].FilterProcess = process
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].ProcessFn = process
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOptionExt(m map[string]interface{}) *InfoPanel {
 	s, _ := json.Marshal(m)
-	i.FieldList[i.curFieldListIndex].FilterOptionExt = template.JS(s)
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = template.JS(s)
 	return i
 }
 

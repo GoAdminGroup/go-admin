@@ -161,7 +161,7 @@ func (compo *FormAttribute) GetContent() template.HTML {
 				compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i])
 			}
 			if i < len(compo.Content)-1 {
-				if strings.Contains(compo.Content[i+1].Field, "__operator__") {
+				if strings.Contains(compo.Content[i+1].Field, "__goadmin_operator__") {
 					if index%2 == 0 {
 						compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i+1])
 					} else {
