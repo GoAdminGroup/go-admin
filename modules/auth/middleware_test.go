@@ -41,6 +41,16 @@ func TestCheckPermissions(t *testing.T) {
 				Slug:       "/",
 				HttpMethod: []string{"GET"},
 				HttpPath:   []string{"/info/normal_manager/edit?id=2"},
+			}, {
+				Name:       "/info/user_list?user_type=10",
+				Slug:       "/",
+				HttpMethod: []string{"GET"},
+				HttpPath:   []string{"/info/user_list?user_type=10"},
+			}, {
+				Name:       "/info/user_list?user_type=20",
+				Slug:       "/",
+				HttpMethod: []string{"GET"},
+				HttpPath:   []string{"/info/user_list?user_type=20"},
 			},
 		},
 	}
@@ -61,4 +71,6 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user", "post", param), false)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user/edit?id=3", "get", param), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/logout?j=asdf", "post", param), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/user_list?user_type=20", "get", param), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/info/user_list?__goadmin_edit_pk=3&user_type=20", "get", param), true)
 }

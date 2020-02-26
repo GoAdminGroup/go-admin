@@ -127,7 +127,9 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 				matchPath, matchParam := getParam(matchPath)
 
 				if matchPath == path {
-					return checkParam(params, matchParam)
+					if checkParam(params, matchParam) {
+						return true
+					}
 				}
 
 				reg, err := regexp.Compile(matchPath)
@@ -138,7 +140,9 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 				}
 
 				if reg.FindString(path) == path {
-					return checkParam(params, matchParam)
+					if checkParam(params, matchParam) {
+						return true
+					}
 				}
 			}
 		}
