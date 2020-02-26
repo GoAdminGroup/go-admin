@@ -119,7 +119,12 @@ func (tb DefaultTable) Copy() Table {
 			SetTitle(tb.form.Title),
 		info: types.NewInfoPanel(tb.primaryKey.Name).SetTable(tb.info.Table).
 			SetDescription(tb.info.Description).
-			SetTitle(tb.info.Title),
+			SetTitle(tb.info.Title).
+			SetGetDataFn(tb.info.GetDataFn),
+		detail: types.NewInfoPanel(tb.primaryKey.Name).SetTable(tb.detail.Table).
+			SetDescription(tb.detail.Description).
+			SetTitle(tb.detail.Title).
+			SetGetDataFn(tb.detail.GetDataFn),
 		connectionDriver: tb.connectionDriver,
 		connection:       tb.connection,
 		canAdd:           tb.canAdd,
@@ -555,6 +560,11 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 		}
 	} else if tb.sourceURL != "" {
 		list, _ := tb.getDataFromURL("", parameter.BaseParam(), false, []string{id})
+		if len(list) > 0 {
+			res = list[0]
+		}
+	} else if tb.detail.GetDataFn != nil {
+		list, _ := tb.detail.GetDataFn(parameter.BaseParam().WithPK(id))
 		if len(list) > 0 {
 			res = list[0]
 		}
