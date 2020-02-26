@@ -163,6 +163,7 @@ func formContent(form types.FormAttribute) template2.HTML {
 	return aBox().
 		SetHeader(form.GetBoxHeader()).
 		WithHeadBorder().
+		SetStyle(" ").
 		SetBody(form.GetContent()).
 		GetContent()
 }

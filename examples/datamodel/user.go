@@ -149,7 +149,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		})
 
 	formList.AddField("UpdatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
-	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
+	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Datetime).FieldNotAllowAdd()
 
 	userTable.GetForm().SetTabGroups(types.
 		NewTabGroups("id", "ip", "name", "gender", "country", "city").
