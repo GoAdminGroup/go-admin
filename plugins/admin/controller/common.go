@@ -122,6 +122,33 @@ func isPjax(ctx *context.Context) bool {
 
 func formFooter() template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
+	checkBoxs := template.HTML(`
+			<label class="pull-right" style="margin: 5px 10px 0 0;">
+                <input type="checkbox" class="continue_edit" style="position: absolute; opacity: 0;"> ` + language.Get("continue editing") + `
+            </label>
+			<label class="pull-right" style="margin: 5px 10px 0 0;">
+                <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
+            </label>`)
+	checkBoxJs := template.HTML(`<script>
+	let previous_url_goadmin = $('input[name="_previous_"]').attr("value")
+	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+		if (this.checked) {
+			$('.continue_new').iCheck('uncheck');
+			$('input[name="_previous_"]').val(location.href)
+		} else {
+			$('input[name="_previous_"]').val(previous_url_goadmin)
+		}
+	});
+	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+		if (this.checked) {
+			$('.continue_edit').iCheck('uncheck');
+			$('input[name="_previous_"]').val(location.href.replace('/edit', '/new'))
+		} else {
+			$('input[name="_previous_"]').val(previous_url_goadmin)
+		}
+	});
+</script>
+`)
 	btn1 := aButton().SetType("submit").
 		SetContent(language.GetFromHtml("Save")).
 		SetThemePrimary().
@@ -133,7 +160,7 @@ func formFooter() template2.HTML {
 		SetOrientationLeft().
 		GetContent()
 	col2 := aCol().SetSize(types.SizeMD(8)).
-		SetContent(btn1 + btn2).GetContent()
+		SetContent(btn1 + checkBoxs + btn2 + checkBoxJs).GetContent()
 	return col1 + col2
 }
 

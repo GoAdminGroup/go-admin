@@ -82,6 +82,9 @@ var cn = map[string]string{
 	"menu":      "菜单",
 	"dashboard": "仪表盘",
 
+	"continue editing":  "继续编辑",
+	"continue creating": "继续新增",
+
 	"username and password can not be empty":        "用户名密码不能为空",
 	"operation not allow":                           "不允许的操作",
 	"password does not match":                       "密码不一致",
