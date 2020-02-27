@@ -10,7 +10,7 @@ import (
 )
 
 type PopUpAction struct {
-	BtnId    string
+	BaseAction
 	Url      string
 	Method   string
 	Id       string
@@ -53,9 +53,6 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
 	}
 }
-
-func (pop *PopUpAction) SetBtnId(btnId string)   { pop.BtnId = btnId }
-func (pop *PopUpAction) BtnClass() template.HTML { return "" }
 
 func (pop *PopUpAction) Js() template.JS {
 	return template.JS(`$('.` + pop.BtnId + `').on('click', function (event) {

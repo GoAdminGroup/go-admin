@@ -587,8 +587,24 @@ func (i *InfoPanel) WhereRaw(raw string, arg ...interface{}) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {
+func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, action Action, width ...int) *InfoPanel {
 	id := "info-btn-" + utils.Uuid(10)
+	action.SetBtnId(id)
+	w := 100
+	if len(width) > 0 {
+		w = width[0]
+	}
+	i.Buttons = append(i.Buttons, DefaultSelection{Width: w, Id: id, Placeholder: placeholder, Options: options, Action: action})
+	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
+	return i
+}
+
+func (i *InfoPanel) btnUUID() string {
+	return "info-btn-" + utils.Uuid(10)
+}
+
+func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {
+	id := i.btnUUID()
 	action.SetBtnId(id)
 	if len(color) == 0 {
 		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Id: id, Action: action, Icon: icon})

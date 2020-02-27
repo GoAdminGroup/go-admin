@@ -10,7 +10,7 @@ import (
 )
 
 type AjaxAction struct {
-	BtnId     string
+	BaseAction
 	Url       string
 	Method    string
 	Data      AjaxData
@@ -80,9 +80,6 @@ func (ajax *AjaxAction) GetCallbacks() context.Node {
 	}
 }
 
-func (ajax *AjaxAction) SetBtnId(btnId string)   { ajax.BtnId = btnId }
-func (ajax *AjaxAction) BtnClass() template.HTML { return "" }
-
 func (ajax *AjaxAction) Js() template.JS {
 
 	ajaxStatement := `$.ajax({
@@ -117,4 +114,3 @@ func (ajax *AjaxAction) Js() template.JS {
 }
 
 func (ajax *AjaxAction) BtnAttribute() template.HTML { return template.HTML(`href="javascript:;"`) }
-func (ajax *AjaxAction) ExtContent() template.HTML   { return template.HTML(``) }

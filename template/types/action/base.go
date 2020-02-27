@@ -2,7 +2,9 @@ package action
 
 import (
 	"encoding/json"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"html/template"
 	"strings"
 )
 
@@ -25,6 +27,18 @@ func (a AjaxData) JSON() string {
 	s = strings.Replace(s, `"{%id}"`, "{%id}", -1)
 	return s
 }
+
+type BaseAction struct {
+	BtnId string
+	JS    template.JS
+}
+
+func (base *BaseAction) SetBtnId(btnId string)       { base.BtnId = btnId }
+func (base *BaseAction) Js() template.JS             { return base.JS }
+func (base *BaseAction) BtnClass() template.HTML     { return "" }
+func (base *BaseAction) BtnAttribute() template.HTML { return "" }
+func (base *BaseAction) GetCallbacks() context.Node  { return context.Node{} }
+func (base *BaseAction) ExtContent() template.HTML   { return template.HTML(``) }
 
 var _ types.Action = (*AjaxAction)(nil)
 var _ types.Action = (*PopUpAction)(nil)

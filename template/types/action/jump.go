@@ -6,10 +6,9 @@ import (
 )
 
 type JumpAction struct {
-	BtnId       string
+	BaseAction
 	Url         string
 	Ext         template.HTML
-	JS          template.JS
 	NewTabTitle string
 }
 
@@ -29,14 +28,6 @@ func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
 
 func (jump *JumpAction) GetCallbacks() context.Node {
 	return context.Node{}
-}
-
-func (jump *JumpAction) SetBtnId(btnId string) {
-	jump.BtnId = btnId
-}
-
-func (jump *JumpAction) Js() template.JS {
-	return jump.JS
 }
 
 func (jump *JumpAction) BtnAttribute() template.HTML {
