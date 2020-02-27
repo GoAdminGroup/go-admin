@@ -29,8 +29,9 @@ func (a AjaxData) JSON() string {
 }
 
 type BaseAction struct {
-	BtnId string
-	JS    template.JS
+	BtnId   string
+	BtnData interface{}
+	JS      template.JS
 }
 
 func (base *BaseAction) SetBtnId(btnId string)       { base.BtnId = btnId }
@@ -39,7 +40,9 @@ func (base *BaseAction) BtnClass() template.HTML     { return "" }
 func (base *BaseAction) BtnAttribute() template.HTML { return "" }
 func (base *BaseAction) GetCallbacks() context.Node  { return context.Node{} }
 func (base *BaseAction) ExtContent() template.HTML   { return template.HTML(``) }
+func (base *BaseAction) SetBtnData(data interface{}) { base.BtnData = data }
 
 var _ types.Action = (*AjaxAction)(nil)
 var _ types.Action = (*PopUpAction)(nil)
 var _ types.Action = (*JumpAction)(nil)
+var _ types.Action = (*JumpSelectBoxAction)(nil)

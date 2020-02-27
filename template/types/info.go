@@ -530,6 +530,7 @@ type Action interface {
 	BtnClass() template.HTML
 	ExtContent() template.HTML
 	SetBtnId(btnId string)
+	SetBtnData(data interface{})
 	GetCallbacks() context.Node
 }
 
@@ -544,6 +545,7 @@ func NewDefaultAction(attr, ext template.HTML, js template.JS) *DefaultAction {
 }
 
 func (def *DefaultAction) SetBtnId(btnId string)       {}
+func (def *DefaultAction) SetBtnData(data interface{}) {}
 func (def *DefaultAction) Js() template.JS             { return def.JS }
 func (def *DefaultAction) BtnAttribute() template.HTML { return def.Attr }
 func (def *DefaultAction) BtnClass() template.HTML     { return "" }
@@ -588,8 +590,9 @@ func (i *InfoPanel) WhereRaw(raw string, arg ...interface{}) *InfoPanel {
 }
 
 func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, action Action, width ...int) *InfoPanel {
-	id := "info-btn-" + utils.Uuid(10)
+	id := i.btnUUID()
 	action.SetBtnId(id)
+	action.SetBtnData(options)
 	w := 100
 	if len(width) > 0 {
 		w = width[0]
@@ -601,6 +604,12 @@ func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, actio
 
 func (i *InfoPanel) btnUUID() string {
 	return "info-btn-" + utils.Uuid(10)
+}
+
+func (i *InfoPanel) AddButtonRaw(btn Button, action Action) *InfoPanel {
+	i.Buttons = append(i.Buttons, btn)
+	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
+	return i
 }
 
 func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {

@@ -22,6 +22,7 @@ func SelectBoxJump(options JumpOptions) *JumpSelectBoxAction {
 }
 
 func (jump *JumpSelectBoxAction) ExtContent() template.HTML {
+
 	cm := ``
 	for _, obejct := range jump.Options {
 		cm += `if (e.params.data.text === "` + obejct.Value + `") {

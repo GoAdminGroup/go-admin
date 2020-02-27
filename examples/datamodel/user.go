@@ -79,10 +79,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddSelectBox("gender", types.FieldOptions{
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
-	}, action.SelectBoxJump(action.JumpOptions{
-		{"men", "/admin/info/user?gender=0"},
-		{"women", "/admin/info/user?gender=1"},
-	}))
+	}, action.FieldFilter("user", "gender"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
