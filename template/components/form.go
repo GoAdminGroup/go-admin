@@ -131,10 +131,10 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
 
 	return template.HTML(`<h3 class="box-title">`) + language.GetFromHtml(compo.Title) + template.HTML(`</h3>
             <div class="box-tools">
-				`+deleteBtn+editBtn+`
+				` + deleteBtn + editBtn + `
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='`+compo.InfoUrl+`' class="btn btn-sm btn-default form-history-back"><i
-                                class="fa fa-arrow-left"></i> `+language.Get("Back")+`</a>
+                    <a href='` + compo.InfoUrl + `' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> ` + language.Get("Back") + `</a>
                 </div>
             </div>`)
 }
@@ -151,22 +151,15 @@ func (compo *FormAttribute) SetOperationFooter(value template.HTML) types.FormAt
 func (compo *FormAttribute) GetContent() template.HTML {
 	compo.CdnUrl = config.Get().AssetUrl
 
-	if compo.Layout == form.LayoutTwoCol {
-		compo.ContentList = make([][]types.FormField, 2)
+	if col := compo.Layout.Col(); col > 0 {
+		compo.ContentList = make([][]types.FormField, col)
 		index := 0
 		for i := 0; i < len(compo.Content); i++ {
-			if index%2 == 0 {
-				compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i])
-			} else {
-				compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i])
-			}
+			ii := index % col
+			compo.ContentList[ii] = append(compo.ContentList[ii], compo.Content[i])
 			if i < len(compo.Content)-1 {
 				if strings.Contains(compo.Content[i+1].Field, "__goadmin_operator__") {
-					if index%2 == 0 {
-						compo.ContentList[0] = append(compo.ContentList[0], compo.Content[i+1])
-					} else {
-						compo.ContentList[1] = append(compo.ContentList[1], compo.Content[i+1])
-					}
+					compo.ContentList[ii] = append(compo.ContentList[ii], compo.Content[i+1])
 					i++
 				}
 			}

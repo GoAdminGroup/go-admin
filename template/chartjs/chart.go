@@ -3,8 +3,8 @@ package chartjs
 import (
 	"bytes"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	template2 "github.com/GoAdminGroup/go-admin/template"
 	"html/template"
 )
 
@@ -830,19 +830,7 @@ func NewChart() *Chart {
 
 func (c *Chart) GetTemplate() (*template.Template, string) {
 	tmpl, err := template.New("chartjs").
-		Funcs(template.FuncMap{
-			"lang":     language.Get,
-			"langHtml": language.GetFromHtml,
-			"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
-				if cdnUrl == "" {
-					return prefixUrl + assetsUrl
-				}
-				return cdnUrl + assetsUrl
-			},
-			"isLinkUrl": func(s string) bool {
-				return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
-			},
-		}).
+		Funcs(template2.DefaultFuncMap).
 		Parse(List["chartjs"])
 
 	if err != nil {

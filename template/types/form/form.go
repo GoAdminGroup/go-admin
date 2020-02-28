@@ -37,9 +37,32 @@ type Layout uint8
 const (
 	LayoutDefault Layout = iota
 	LayoutTwoCol
+	LayoutThreeCol
+	LayoutFourCol
+	LayoutFiveCol
+	LayoutSixCol
 	LayoutFlow
 	LayoutTab
 )
+
+func (l Layout) Col() int {
+	if l == LayoutTwoCol {
+		return 2
+	}
+	if l == LayoutThreeCol {
+		return 3
+	}
+	if l == LayoutFourCol {
+		return 4
+	}
+	if l == LayoutFiveCol {
+		return 5
+	}
+	if l == LayoutSixCol {
+		return 6
+	}
+	return 0
+}
 
 func (t Type) String() string {
 	switch t {
