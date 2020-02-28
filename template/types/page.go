@@ -112,6 +112,7 @@ func (p Panel) GetContent(prod bool) Panel {
 
 	animation := template.HTML("")
 	style := template.HTML("")
+	remove := template.HTML("")
 
 	if ani := config.Get().Animation; ani.Type != "" {
 		animation = template.HTML(` class='animated ` + ani.Type + `'`)
@@ -124,9 +125,18 @@ func (p Panel) GetContent(prod bool) Panel {
 		if style != "" {
 			style = ` style="` + style + `"`
 		}
+		remove = template.HTML(`$('.modal.fade.in').on('show.bs.modal', function (event) {
+            // Fix Animate.css
+			$('.pjax-container-content').removeClass('` + ani.Type + `');
+        });
+
+        $('.modal.fade.in').on('hidden.bs.modal', function (e) {
+			// Fix Animate.css
+			$('.pjax-container-content').addClass('` + ani.Type + `');
+        });`)
 	}
 
-	p.Content = "<div" + animation + style + ">" + p.Content + "</div>"
+	p.Content = `<div class="pjax-container-content"` + animation + style + ">" + p.Content + "</div>"
 	if p.MiniSidebar {
 		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
 	}
@@ -138,8 +148,9 @@ func (p Panel) GetContent(prod bool) Panel {
 
 		p.Content += `<script>
 window.setTimeout(function(){
-	$.pjax.reload('#pjax-container');
+	$.pjax.reload('#pjax-container');	
 }, ` + template.HTML(strconv.Itoa(refreshTime*1000)) + `);
+` + remove + `
 </script>`
 	}
 	if prod {
