@@ -113,9 +113,9 @@ func (p Panel) GetContent(prod bool) Panel {
 	animation := template.HTML("")
 	style := template.HTML("")
 	remove := template.HTML("")
-
-	if ani := config.Get().Animation; ani.Type != "" {
-		animation = template.HTML(` class='animated ` + ani.Type + `'`)
+	ani := config.Get().Animation
+	if ani.Type != "" {
+		animation = template.HTML(` class='pjax-container-content animated ` + ani.Type + `'`)
 		if ani.Delay != 0 {
 			style = template.HTML(fmt.Sprintf(`animation-delay: %fs;-webkit-animation-delay: %fs;`, ani.Delay, ani.Delay))
 		}
@@ -125,18 +125,15 @@ func (p Panel) GetContent(prod bool) Panel {
 		if style != "" {
 			style = ` style="` + style + `"`
 		}
-		remove = template.HTML(`$('.modal.fade.in').on('show.bs.modal', function (event) {
+		remove = template.HTML(`<script>
+		$('.pjax-container-content .modal.fade').on('show.bs.modal', function (event) {
             // Fix Animate.css
 			$('.pjax-container-content').removeClass('` + ani.Type + `');
         });
-
-        $('.modal.fade.in').on('hidden.bs.modal', function (e) {
-			// Fix Animate.css
-			$('.pjax-container-content').addClass('` + ani.Type + `');
-        });`)
+		</script>`)
 	}
 
-	p.Content = `<div class="pjax-container-content"` + animation + style + ">" + p.Content + "</div>"
+	p.Content = `<div` + animation + style + ">" + p.Content + "</div>" + remove
 	if p.MiniSidebar {
 		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
 	}
@@ -150,7 +147,6 @@ func (p Panel) GetContent(prod bool) Panel {
 window.setTimeout(function(){
 	$.pjax.reload('#pjax-container');	
 }, ` + template.HTML(strconv.Itoa(refreshTime*1000)) + `);
-` + remove + `
 </script>`
 	}
 	if prod {
