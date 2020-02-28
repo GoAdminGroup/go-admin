@@ -31,7 +31,19 @@ func (jump *FieldFilterAction) ExtContent() template.HTML {
 $(".` + jump.BtnId + `").on("select2:select",function(e){
 	` + cm + `
 })
-vv = getQueryVariable("` + jump.Field + `")
+vv = ""
+if (getQueryVariable == undefined) {
+	query = window.location.search.substring(1);
+	vars = query.split("&");
+	for (let i = 0; i < vars.length; i++) {
+		pair = vars[i].split("=");
+		if (pair[0] === variable) {
+			vv = pair[1];
+		}
+	}
+} else {
+	vv = getQueryVariable("` + jump.Field + `")
+}
 if (vv !== "") {
 	$(".` + jump.BtnId + `").val(vv).select2()
 }
