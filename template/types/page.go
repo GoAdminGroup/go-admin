@@ -5,6 +5,7 @@
 package types
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/system"
@@ -108,6 +109,24 @@ type Panel struct {
 }
 
 func (p Panel) GetContent(prod bool) Panel {
+
+	animation := template.HTML("")
+	style := template.HTML("")
+
+	if ani := config.Get().Animation; ani.Type != "" {
+		animation = template.HTML(` class='animated ` + ani.Type + `'`)
+		if ani.Delay != 0 {
+			style = template.HTML(fmt.Sprintf(`animation-delay: %fs;-webkit-animation-delay: %fs;`, ani.Delay, ani.Delay))
+		}
+		if ani.Duration != 0 {
+			style = template.HTML(fmt.Sprintf(`animation-duration: %fs;-webkit-animation-duration: %fs;`, ani.Duration, ani.Duration))
+		}
+		if style != "" {
+			style = ` style="` + style + `"`
+		}
+	}
+
+	p.Content = "<div" + animation + style + ">" + p.Content + "</div>"
 	if p.MiniSidebar {
 		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
 	}
@@ -126,6 +145,7 @@ window.setTimeout(function(){
 	if prod {
 		utils.CompressedContent(&p.Content)
 	}
+
 	return p
 }
 

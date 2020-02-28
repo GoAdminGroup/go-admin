@@ -182,7 +182,16 @@ type Config struct {
 	// Extra config info
 	Extra map[string]interface{} `json:"extra",yaml:"extra",ini:"extra"`
 
+	// Page animation
+	Animation PageAnimation `json:"animation",yaml:"animation",ini:"animation"`
+
 	prefix string
+}
+
+type PageAnimation struct {
+	Type     string  `json:"type",yaml:"type",ini:"type"`
+	Duration float32 `json:"duration",yaml:"duration",ini:"duration"`
+	Delay    float32 `json:"delay",yaml:"delay",ini:"delay"`
 }
 
 // FileUploadEngine is a file upload engine.
