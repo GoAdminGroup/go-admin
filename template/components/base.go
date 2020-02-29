@@ -34,14 +34,14 @@ func (b Base) Col() types.ColAttribute {
 
 func (b Base) Form() types.FormAttribute {
 	return &FormAttribute{
-		Name:      "form",
-		Content:   []types.FormField{},
-		Url:       "/",
-		Method:    "post",
-		InfoUrl:   "",
-		Layout:    form.LayoutDefault,
-		Title:     "edit",
-		Attribute: b.Attribute,
+		Name:         "form",
+		Content:      []types.FormField{},
+		Url:          "/",
+		Method:       "post",
+		HiddenFields: make(map[string]string),
+		Layout:       form.LayoutDefault,
+		Title:        "edit",
+		Attribute:    b.Attribute,
 	}
 }
 

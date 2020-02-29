@@ -22,8 +22,7 @@ type FormAttribute struct {
 	Url             string
 	Method          string
 	PrimaryKey      string
-	InfoUrl         string
-	CSRFToken       string
+	HiddenFields    map[string]string
 	Title           template.HTML
 	OperationFooter template.HTML
 	Prefix          string
@@ -76,8 +75,8 @@ func (compo *FormAttribute) SetUrl(value string) types.FormAttribute {
 	return compo
 }
 
-func (compo *FormAttribute) SetInfoUrl(value string) types.FormAttribute {
-	compo.InfoUrl = value
+func (compo *FormAttribute) SetHiddenFields(fields map[string]string) types.FormAttribute {
+	compo.HiddenFields = fields
 	return compo
 }
 
@@ -91,19 +90,14 @@ func (compo *FormAttribute) SetTitle(value template.HTML) types.FormAttribute {
 	return compo
 }
 
-func (compo *FormAttribute) SetToken(value string) types.FormAttribute {
-	compo.CSRFToken = value
-	return compo
-}
-
-func (compo *FormAttribute) GetBoxHeader() template.HTML {
+func (compo *FormAttribute) GetDefaultBoxHeader() template.HTML {
 	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>
             <div class="box-tools">
                 <div class="btn-group pull-right" style="margin-right: 10px">
                     <a href='%s' class="btn btn-sm btn-default form-history-back"><i
                                 class="fa fa-arrow-left"></i> %s</a>
                 </div>
-            </div>`, language.GetFromHtml(compo.Title), compo.InfoUrl, language.Get("Back")))
+            </div>`, language.GetFromHtml(compo.Title), compo.HiddenFields["previous"], language.Get("Back")))
 }
 
 func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML {
@@ -133,7 +127,7 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
             <div class="box-tools">
 				`+deleteBtn+editBtn+`
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='`+compo.InfoUrl+`' class="btn btn-sm btn-default form-history-back"><i
+                    <a href='`+compo.HiddenFields["previous"]+`' class="btn btn-sm btn-default form-history-back"><i
                                 class="fa fa-arrow-left"></i> `+language.Get("Back")+`</a>
                 </div>
             </div>`)

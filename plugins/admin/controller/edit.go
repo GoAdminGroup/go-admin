@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -56,8 +57,10 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(editUrl).
-			SetToken(authSrv().AddToken()).
-			SetInfoUrl(infoUrl).
+			SetHiddenFields(map[string]string{
+				form2.TokenKey:    authSrv().AddToken(),
+				form2.PreviousKey: infoUrl,
+			}).
 			SetOperationFooter(formFooter()).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),

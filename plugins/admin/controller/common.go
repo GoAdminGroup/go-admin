@@ -188,7 +188,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 
 func formContent(form types.FormAttribute) template2.HTML {
 	return aBox().
-		SetHeader(form.GetBoxHeader()).
+		SetHeader(form.GetDefaultBoxHeader()).
 		WithHeadBorder().
 		SetStyle(" ").
 		SetBody(form.GetContent()).

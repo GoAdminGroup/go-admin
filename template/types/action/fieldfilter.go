@@ -2,6 +2,7 @@ package action
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
@@ -23,7 +24,8 @@ func (jump *FieldFilterAction) ExtContent() template.HTML {
 	cm := ``
 	for _, obejct := range options {
 		cm += `if (e.params.data.text === "` + obejct.Text + `") {
-		$.pjax({url: "` + config.Get().Url("/info/"+jump.Prefix+"?"+jump.Field+"="+obejct.Value) + `", container: '#pjax-container'});
+		$.pjax({url: "` + config.Get().Url("/info/"+jump.Prefix+"?"+jump.Field+"="+obejct.Value) + `&` + form.NoAnimationKey +
+			`=true", container: '#pjax-container'});
 	}`
 	}
 

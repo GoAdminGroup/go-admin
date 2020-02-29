@@ -11,6 +11,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -200,6 +201,9 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 				SetMethod("get").
 				SetLayout(info.FilterFormLayout).
 				SetUrl(infoUrl).
+				SetHiddenFields(map[string]string{
+					form.NoAnimationKey: "true",
+				}).
 				SetOperationFooter(filterFormFooter(infoUrl)).
 				GetContent())
 	}
@@ -212,7 +216,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())), params.Animation)
 }
 
 // Assets return front-end assets according the request path.

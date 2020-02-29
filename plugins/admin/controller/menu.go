@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -46,9 +47,11 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
-			SetToken(authSrv().AddToken()).
-			SetOperationFooter(formFooter()).
-			SetInfoUrl(config.Url("/menu"))) +
+			SetHiddenFields(map[string]string{
+				form2.TokenKey:    authSrv().AddToken(),
+				form2.PreviousKey: config.Url("/menu"),
+			}).
+			SetOperationFooter(formFooter())) +
 			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
@@ -89,8 +92,10 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
 			SetOperationFooter(formFooter()).
-			SetToken(authSrv().AddToken()).
-			SetInfoUrl(config.Url("/menu"))) + template2.HTML(js),
+			SetHiddenFields(map[string]string{
+				form2.TokenKey:    authSrv().AddToken(),
+				form2.PreviousKey: config.Url("/menu"),
+			})) + template2.HTML(js),
 		Description: description,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
@@ -197,8 +202,10 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
 		SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
-		SetToken(authSrv().AddToken()).
-		SetInfoUrl(config.Url("/menu")).
+		SetHiddenFields(map[string]string{
+			form2.TokenKey:    authSrv().AddToken(),
+			form2.PreviousKey: config.Url("/menu"),
+		}).
 		SetOperationFooter(formFooter()).
 		SetTitle("New").
 		SetContent(formList).

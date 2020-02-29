@@ -266,11 +266,11 @@ func Execute(tmpl *template.Template,
 	user models.UserModel,
 	panel types.Panel,
 	config c.Config,
-	globalMenu *menu.Menu) *bytes.Buffer {
+	globalMenu *menu.Menu, animation ...bool) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
 	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu,
-		panel.GetContent(config.IsProductionEnvironment()), config, GetComponentAssetListsHTML()))
+		panel.GetContent(append([]bool{config.IsProductionEnvironment()}, animation...)...), config, GetComponentAssetListsHTML()))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}

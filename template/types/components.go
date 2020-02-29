@@ -20,13 +20,12 @@ type FormAttribute interface {
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetPrimaryKey(value string) FormAttribute
-	SetInfoUrl(value string) FormAttribute
+	SetHiddenFields(fields map[string]string) FormAttribute
 	SetMethod(value string) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
 	SetLayout(layout form.Layout) FormAttribute
-	SetToken(value string) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute
-	GetBoxHeader() template.HTML
+	GetDefaultBoxHeader() template.HTML
 	GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML
 	GetBoxHeaderNoButton() template.HTML
 	GetContent() template.HTML

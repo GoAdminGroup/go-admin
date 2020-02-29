@@ -3,6 +3,7 @@ package parameter
 import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"net/url"
 	"strconv"
 	"strings"
@@ -16,6 +17,7 @@ type Parameters struct {
 	SortField   string
 	Columns     []string
 	SortType    string
+	Animation   bool
 	URLPath     string
 	Fields      map[string]string
 }
@@ -56,7 +58,7 @@ var operators = map[string]string{
 	"free": "free",
 }
 
-var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax}
+var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
 
 func BaseParam() Parameters {
 	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string]string)}
@@ -78,6 +80,11 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 	sortField := getDefault(values, Sort, primaryKey)
 	sortType := getDefault(values, SortType, defaultSortType)
 	columns := getDefault(values, Columns, "")
+
+	animation := true
+	if values.Get(form.NoAnimationKey) == "true" {
+		animation = false
+	}
 
 	fields := make(map[string]string)
 
@@ -114,6 +121,7 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 		SortField:   sortField,
 		SortType:    sortType,
 		Fields:      fields,
+		Animation:   animation,
 		Columns:     columnsArr,
 	}
 }

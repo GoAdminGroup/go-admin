@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -116,12 +117,14 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(config.PrefixFixSlash()).
+			SetHiddenFields(map[string]string{
+				form.TokenKey:    authSrv().AddToken(),
+				form.PreviousKey: config.Url("/info/" + prefix + queryParam),
+			}).
 			SetUrl(config.Url("/"+kind+"/"+prefix)).
-			SetToken(authSrv().AddToken()).
 			SetOperationFooter(formFooter()).
 			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml).
-			SetInfoUrl(config.Url("/info/"+prefix+queryParam))),
+			SetFooter(panel.GetForm().FooterHtml)),
 		Description: description,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))

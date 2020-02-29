@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -131,7 +132,9 @@ $('.delete-btn').on('click', function (event) {
 			SetTitle(template.HTML(title)).
 			SetContent(formData).
 			SetFooter(template.HTML(deleteJs)).
-			SetInfoUrl(infoUrl).
+			SetHiddenFields(map[string]string{
+				form2.PreviousKey: infoUrl,
+			}).
 			SetPrefix(config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: desc,
 		Title:       title,

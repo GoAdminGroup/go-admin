@@ -90,7 +90,7 @@ func (e EditFormParam) IsRole() bool {
 func EditForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
-		previous := ctx.FormValue("_previous_")
+		previous := ctx.FormValue(form.PreviousKey)
 		panel := table.Get(prefix, ctx)
 		multiForm := ctx.Request.MultipartForm
 

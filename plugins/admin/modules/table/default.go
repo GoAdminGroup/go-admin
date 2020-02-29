@@ -10,7 +10,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -616,7 +615,7 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 // UpdateDataFromDatabase update data.
 func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
-	dataList.Add(constant.PostTypeKey, "0")
+	dataList.Add(form.PostTypeKey, "0")
 
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
@@ -625,7 +624,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 	}
 
 	if tb.form.UpdateFn != nil {
-		dataList.Delete(constant.PostTypeKey)
+		dataList.Delete(form.PostTypeKey)
 		return tb.form.UpdateFn(dataList)
 	}
 
@@ -658,7 +657,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
-			dataList.Add(constant.PostTypeKey, "0")
+			dataList.Add(form.PostTypeKey, "0")
 
 			err := tb.form.PostHook(dataList)
 			if err != nil {
@@ -673,7 +672,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 // InsertDataFromDatabase insert data.
 func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
-	dataList.Add(constant.PostTypeKey, "1")
+	dataList.Add(form.PostTypeKey, "1")
 
 	if tb.form.Validator != nil {
 		if err := tb.form.Validator(dataList); err != nil {
@@ -682,7 +681,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 	}
 
 	if tb.form.InsertFn != nil {
-		dataList.Delete(constant.PostTypeKey)
+		dataList.Delete(form.PostTypeKey)
 		return tb.form.InsertFn(dataList)
 	}
 
@@ -713,7 +712,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 				}
 			}()
 
-			dataList.Add(constant.PostTypeKey, "1")
+			dataList.Add(form.PostTypeKey, "1")
 
 			err := tb.form.PostHook(dataList)
 			if err != nil {
@@ -737,9 +736,9 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 	)
 
 	if auto {
-		exceptString = []string{tb.primaryKey.Name, "_previous_", "_method", "_t"}
+		exceptString = []string{tb.primaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey}
 	} else {
-		exceptString = []string{"_previous_", "_method", "_t"}
+		exceptString = []string{form.PreviousKey, form.MethodKey, form.TokenKey}
 	}
 
 	if !dataList.IsSingleUpdatePost() {

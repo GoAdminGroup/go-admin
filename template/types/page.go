@@ -108,13 +108,19 @@ type Panel struct {
 	RefreshInterval []int
 }
 
-func (p Panel) GetContent(prod bool) Panel {
+func (p Panel) GetContent(params ...bool) Panel {
+
+	prod := false
+
+	if len(params) > 0 {
+		prod = params[0]
+	}
 
 	animation := template.HTML("")
 	style := template.HTML("")
 	remove := template.HTML("")
 	ani := config.Get().Animation
-	if ani.Type != "" {
+	if ani.Type != "" && (len(params) < 2 || params[1]) {
 		animation = template.HTML(` class='pjax-container-content animated ` + ani.Type + `'`)
 		if ani.Delay != 0 {
 			style = template.HTML(fmt.Sprintf(`animation-delay: %fs;-webkit-animation-delay: %fs;`, ani.Delay, ani.Delay))

@@ -16,9 +16,6 @@ const (
 	EditPKKey   = "__goadmin_edit_pk"
 	DetailPKKey = "__goadmin_detail_pk"
 	PrefixKey   = "__prefix"
-
-	PostTypeKey           = "__go_admin_post_type"
-	PostIsSingleUpdateKey = "__go_admin_is_single_update"
 )
 
 var (
