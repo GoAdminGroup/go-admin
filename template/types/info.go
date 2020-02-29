@@ -777,13 +777,13 @@ func (i *InfoPanel) FieldEditOptions(options FieldOptions, extra ...map[string]s
 	if i.FieldList[i.curFieldListIndex].EditType.IsSwitch() {
 		if len(extra) == 0 {
 			options[0].Extra = map[string]string{
-				"size":     "mini",
+				"size":     "small",
 				"onColor":  "primary",
 				"offColor": "default",
 			}
 		} else {
 			if extra[0]["size"] == "" {
-				extra[0]["size"] = "mini"
+				extra[0]["size"] = "small"
 			}
 			if extra[0]["onColor"] == "" {
 				extra[0]["onColor"] = "primary"
