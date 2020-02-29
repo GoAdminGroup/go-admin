@@ -36,6 +36,36 @@ type PostFieldModel struct {
 	Row   map[string]interface{}
 }
 
+type InfoList []map[string]InfoItem
+
+type InfoItem struct {
+	Content template.HTML
+	Value   string
+}
+
+func (i InfoList) GroupBy(groups TabGroups) []InfoList {
+
+	var res = make([]InfoList, len(groups))
+
+	for key, value := range groups {
+		var newInfoList = make(InfoList, len(i))
+
+		for index, info := range i {
+			var newRow = make(map[string]InfoItem)
+			for mk, m := range info {
+				if modules.InArray(value, mk) {
+					newRow[mk] = m
+				}
+			}
+			newInfoList[index] = newRow
+		}
+
+		res[key] = newInfoList
+	}
+
+	return res
+}
+
 type Callbacks []context.Node
 
 func (c Callbacks) AddCallback(node context.Node) Callbacks {
@@ -145,19 +175,6 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 	return filterForm
 }
 
-func (f Field) GetEditOptions() string {
-	if len(f.EditOptions) == 0 {
-		return ""
-	}
-	eo, err := json.Marshal(f.EditOptions)
-
-	if err != nil {
-		return ""
-	}
-
-	return string(eo)
-}
-
 func (f Field) Exist() bool {
 	return f.Field != ""
 }
@@ -171,10 +188,10 @@ type TableInfo struct {
 	Driver     string
 }
 
-func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string) ([]map[string]string,
+func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string) (Thead,
 	string, string, []string, []FormField) {
 	var (
-		thead      = make([]map[string]string, 0)
+		thead      = make(Thead, 0)
 		fields     = ""
 		joins      = ""
 		joinTables = make([]string, 0)
@@ -207,24 +224,24 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		if field.Hide {
 			continue
 		}
-		thead = append(thead, map[string]string{
-			"head":       field.Head,
-			"sortable":   modules.AorB(field.Sortable, "1", "0"),
-			"field":      headField,
-			"hide":       modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1"),
-			"editable":   modules.AorB(field.EditAble, "true", "false"),
-			"edittype":   field.EditType.String(),
-			"editoption": field.GetEditOptions(),
-			"width":      strconv.Itoa(field.Width),
+		thead = append(thead, TheadItem{
+			Head:       field.Head,
+			Sortable:   field.Sortable,
+			Field:      headField,
+			Hide:       !modules.InArrayWithoutEmpty(params.Columns, headField),
+			Editable:   field.EditAble,
+			EditType:   field.EditType.String(),
+			EditOption: field.EditOptions,
+			Width:      field.Width,
 		})
 	}
 
 	return thead, fields, joins, joinTables, filterForm
 }
 
-func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns []string) ([]map[string]string, string, string) {
+func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns []string) (Thead, string, string) {
 	var (
-		thead      = make([]map[string]string, 0)
+		thead      = make(Thead, 0)
 		fields     = ""
 		joins      = ""
 		joinTables = make([]string, 0)
@@ -252,15 +269,15 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 		if field.Hide {
 			continue
 		}
-		thead = append(thead, map[string]string{
-			"head":       field.Head,
-			"sortable":   modules.AorB(field.Sortable, "1", "0"),
-			"field":      headField,
-			"hide":       modules.AorB(modules.InArrayWithoutEmpty(params.Columns, headField), "0", "1"),
-			"editable":   modules.AorB(field.EditAble, "true", "false"),
-			"edittype":   field.EditType.String(),
-			"editoption": field.GetEditOptions(),
-			"width":      strconv.Itoa(field.Width),
+		thead = append(thead, TheadItem{
+			Head:       field.Head,
+			Sortable:   field.Sortable,
+			Field:      headField,
+			Hide:       !modules.InArrayWithoutEmpty(params.Columns, headField),
+			Editable:   field.EditAble,
+			EditType:   field.EditType.String(),
+			EditOption: field.EditOptions,
+			Width:      field.Width,
 		})
 	}
 
@@ -756,7 +773,27 @@ func (i *InfoPanel) FieldSortable() *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldEditOptions(options FieldOptions) *InfoPanel {
+func (i *InfoPanel) FieldEditOptions(options FieldOptions, extra ...map[string]string) *InfoPanel {
+	if i.FieldList[i.curFieldListIndex].EditType.IsSwitch() {
+		if len(extra) == 0 {
+			options[0].Extra = map[string]string{
+				"size":     "mini",
+				"onColor":  "primary",
+				"offColor": "default",
+			}
+		} else {
+			if extra[0]["size"] == "" {
+				extra[0]["size"] = "mini"
+			}
+			if extra[0]["onColor"] == "" {
+				extra[0]["onColor"] = "primary"
+			}
+			if extra[0]["offColor"] == "" {
+				extra[0]["offColor"] = "default"
+			}
+			options[0].Extra = extra[0]
+		}
+	}
 	i.FieldList[i.curFieldListIndex].EditOptions = options
 	return i
 }

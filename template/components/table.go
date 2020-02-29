@@ -7,8 +7,8 @@ import (
 
 type TableAttribute struct {
 	Name       string
-	Thead      []map[string]string
-	InfoList   []map[string]template.HTML
+	Thead      types.Thead
+	InfoList   []map[string]types.InfoItem
 	Type       string
 	PrimaryKey string
 	NoAction   bool
@@ -24,12 +24,12 @@ type TableAttribute struct {
 	types.Attribute
 }
 
-func (compo *TableAttribute) SetThead(value []map[string]string) types.TableAttribute {
+func (compo *TableAttribute) SetThead(value types.Thead) types.TableAttribute {
 	compo.Thead = value
 	return compo
 }
 
-func (compo *TableAttribute) SetInfoList(value []map[string]template.HTML) types.TableAttribute {
+func (compo *TableAttribute) SetInfoList(value []map[string]types.InfoItem) types.TableAttribute {
 	compo.InfoList = value
 	return compo
 }
@@ -81,7 +81,7 @@ func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
 	return ComposeHtml(compo.TemplateList, *compo, "table/box-header")
 }
 
-func (compo *DataTableAttribute) SetThead(value []map[string]string) types.DataTableAttribute {
+func (compo *DataTableAttribute) SetThead(value types.Thead) types.DataTableAttribute {
 	compo.Thead = value
 	return compo
 }
@@ -151,7 +151,7 @@ func (compo *DataTableAttribute) SetPrimaryKey(value string) types.DataTableAttr
 	return compo
 }
 
-func (compo *DataTableAttribute) SetInfoList(value []map[string]template.HTML) types.DataTableAttribute {
+func (compo *DataTableAttribute) SetInfoList(value []map[string]types.InfoItem) types.DataTableAttribute {
 	compo.InfoList = value
 	return compo
 }

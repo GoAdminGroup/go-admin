@@ -59,7 +59,7 @@ CREATE TABLE public.goadmin_menu (
     title character varying(50) NOT NULL,
     header character varying(100),
     icon character varying(50) NOT NULL,
-    uri character varying(50) NOT NULL,
+    uri character varying(3000) NOT NULL,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()
 );

@@ -121,8 +121,8 @@ func (b Base) Button() types.ButtonAttribute {
 func (b Base) Table() types.TableAttribute {
 	return &TableAttribute{
 		Name:      "table",
-		Thead:     []map[string]string{},
-		InfoList:  []map[string]template.HTML{},
+		Thead:     make(types.Thead, 0),
+		InfoList:  make([]map[string]types.InfoItem, 0),
 		Type:      "normal",
 		Layout:    "auto",
 		Attribute: b.Attribute,

@@ -42,57 +42,12 @@ type DefaultTable struct {
 type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int)
 
 type PanelInfo struct {
-	Thead       Thead
-	InfoList    InfoList
+	Thead       types.Thead
+	InfoList    types.InfoList
 	FormData    []types.FormField
 	Paginator   types.PaginatorAttribute
 	Title       string
 	Description string
-}
-
-type Thead []map[string]string
-
-func (t Thead) GroupBy(group [][]string) []Thead {
-	var res = make([]Thead, len(group))
-
-	for key, value := range group {
-		var newThead = make(Thead, len(t))
-
-		for index, info := range t {
-			if modules.InArray(value, info["field"]) {
-				newThead[index] = info
-			}
-		}
-
-		res[key] = newThead
-	}
-
-	return res
-}
-
-type InfoList []map[string]template.HTML
-
-func (i InfoList) GroupBy(groups types.TabGroups) []InfoList {
-
-	var res = make([]InfoList, len(groups))
-
-	for key, value := range groups {
-		var newInfoList = make(InfoList, len(i))
-
-		for index, info := range i {
-			var newRow = make(map[string]template.HTML)
-			for mk, m := range info {
-				if modules.InArray(value, mk) {
-					newRow[mk] = m
-				}
-			}
-			newInfoList[index] = newRow
-		}
-
-		res[key] = newInfoList
-	}
-
-	return res
 }
 
 func NewDefaultTable(cfg Config) Table {
@@ -174,7 +129,7 @@ func (tb DefaultTable) GetExportable() bool {
 }
 
 // GetData query the data set.
-func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error) {
+func (tb DefaultTable) GetData(params parameter.Parameters, isAll bool) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -183,18 +138,18 @@ func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll b
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(path, params, isAll, []string{})
+		data, size = tb.getDataFun(params.URLPath, params, isAll, []string{})
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(path, params, isAll, []string{})
+		data, size = tb.getDataFromURL(params.URLPath, params, isAll, []string{})
 	} else if tb.info.GetDataFn != nil {
 		data, size = tb.info.GetDataFn(params.WithIsAll(isAll))
 	} else if isAll {
-		return tb.getAllDataFromDatabase(path, params)
+		return tb.getAllDataFromDatabase(params.URLPath, params)
 	} else {
-		return tb.getDataFromDatabase(path, params, []string{})
+		return tb.getDataFromDatabase(params.URLPath, params, []string{})
 	}
 
-	infoList := make([]map[string]template.HTML, 0)
+	infoList := make(types.InfoList, 0)
 
 	for i := 0; i < len(data); i++ {
 		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
@@ -207,9 +162,12 @@ func (tb DefaultTable) GetData(path string, params parameter.Parameters, isAll b
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
-		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
-			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
-				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
+		Paginator: paginator.Get(paginator.Config{
+			Size:         size,
+			Param:        params,
+			PageSizeList: tb.info.GetPageSizeList(),
+		}).SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+			fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
 		Title:       tb.info.Title,
 		FormData:    filterForm,
 		Description: tb.info.Description,
@@ -257,7 +215,7 @@ func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, 
 }
 
 // GetDataWithIds query the data set.
-func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+func (tb DefaultTable) GetDataWithIds(params parameter.Parameters, ids []string) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -266,16 +224,16 @@ func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, 
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(path, params, false, ids)
+		data, size = tb.getDataFun(params.URLPath, params, false, ids)
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(path, params, false, ids)
+		data, size = tb.getDataFromURL(params.URLPath, params, false, ids)
 	} else if tb.info.GetDataFn != nil {
 		data, size = tb.info.GetDataFn(params.WithPK(ids...))
 	} else {
-		return tb.getDataFromDatabase(path, params, ids)
+		return tb.getDataFromDatabase(params.URLPath, params, ids)
 	}
 
-	infoList := make([]map[string]template.HTML, 0)
+	infoList := make([]map[string]types.InfoItem, 0)
 
 	for i := 0; i < len(data); i++ {
 		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
@@ -288,7 +246,11 @@ func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, 
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
-		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
+		Paginator: paginator.Get(paginator.Config{
+			Size:         size,
+			Param:        params,
+			PageSizeList: tb.info.GetPageSizeList(),
+		}).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
 		Title:       tb.info.Title,
@@ -297,9 +259,9 @@ func (tb DefaultTable) GetDataWithIds(path string, params parameter.Parameters, 
 	}, nil
 }
 
-func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]template.HTML {
+func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]types.InfoItem {
 
-	tempModelData := make(map[string]template.HTML)
+	var tempModelData = make(map[string]types.InfoItem)
 	headField := ""
 
 	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name], len(columns) == 0)
@@ -342,13 +304,22 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 			})
 		}
 		if valueStr, ok := value.(string); ok {
-			tempModelData[headField] = template.HTML(valueStr)
+			tempModelData[headField] = types.InfoItem{
+				Content: template.HTML(valueStr),
+				Value:   combineValue,
+			}
 		} else {
-			tempModelData[headField] = value.(template.HTML)
+			tempModelData[headField] = types.InfoItem{
+				Content: value.(template.HTML),
+				Value:   combineValue,
+			}
 		}
 	}
 
-	tempModelData[tb.primaryKey.Name] = template.HTML(primaryKeyValue.String())
+	tempModelData[tb.primaryKey.Name] = types.InfoItem{
+		Content: template.HTML(primaryKeyValue.String()),
+		Value:   primaryKeyValue.String(),
+	}
 	return tempModelData
 }
 
@@ -398,7 +369,7 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 		return PanelInfo{}, err
 	}
 
-	infoList := make([]map[string]template.HTML, 0)
+	infoList := make([]map[string]types.InfoItem, 0)
 
 	for i := 0; i < len(res); i++ {
 		infoList = append(infoList, tb.getTempModelData(res[i], params, columns))
@@ -499,7 +470,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		return PanelInfo{}, err
 	}
 
-	infoList := make([]map[string]template.HTML, 0)
+	infoList := make([]map[string]types.InfoItem, 0)
 
 	for i := 0; i < len(res); i++ {
 		infoList = append(infoList, tb.getTempModelData(res[i], params, columns))
@@ -535,7 +506,11 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
-		Paginator: paginator.Get(path, params, size, tb.info.GetPageSizeList()).
+		Paginator: paginator.Get(paginator.Config{
+			Size:         size,
+			Param:        params,
+			PageSizeList: tb.info.GetPageSizeList(),
+		}).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
 		Title:       tb.info.Title,
@@ -911,7 +886,7 @@ func (tb DefaultTable) delete(table, key, id string) {
 		Delete()
 }
 
-func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) ([]map[string]string,
+func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
 	string, string, []string, []types.FormField) {
 	return tb.info.FieldList.GetTheadAndFilterForm(types.TableInfo{
 		Table:      tb.info.Table,

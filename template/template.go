@@ -298,6 +298,9 @@ var DefaultFuncMap = template.FuncMap{
 	"divide": func(a, b int) int {
 		return a / b
 	},
+	"js": func(s string) template.JS {
+		return template.JS(s)
+	},
 }
 
 type BaseComponent struct{}

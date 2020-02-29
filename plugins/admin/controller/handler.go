@@ -102,7 +102,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		description = panel.GetForm().Description
 	}
 
-	queryParam := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize,
+	queryParam := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize,
 		panel.GetInfo().SortField, panel.GetInfo().GetSort()).GetRouteParamStr()
 
 	user := auth.Auth(ctx)

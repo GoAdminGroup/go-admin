@@ -34,18 +34,18 @@ func ShowInfo(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 	panel := table.Get(prefix, ctx)
 
-	params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
+	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	buf := showTable(ctx, prefix, ctx.Path(), params)
+	buf := showTable(ctx, prefix, params)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func showTable(ctx *context.Context, prefix, path string, params parameter.Parameters) *bytes.Buffer {
+func showTable(ctx *context.Context, prefix string, params parameter.Parameters) *bytes.Buffer {
 
 	panel := table.Get(prefix, ctx)
 
-	panelInfo, err := panel.GetData(path, params, false)
+	panelInfo, err := panel.GetData(params, false)
 
 	if err != nil {
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
@@ -267,13 +267,13 @@ func Export(ctx *context.Context) {
 	)
 
 	if len(param.Id) == 0 {
-		params := parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
+		params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 			panel.GetInfo().GetSort())
-		panelInfo, err = panel.GetData(ctx.Path(), params, param.IsAll)
+		panelInfo, err = panel.GetData(params, param.IsAll)
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(),
 			params.Page, params.PageSize)
 	} else {
-		panelInfo, err = panel.GetDataWithIds(ctx.Path(), parameter.GetParam(ctx.Request.URL.Query(),
+		panelInfo, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
 			panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField, panel.GetInfo().GetSort()), param.Id)
 		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), strings.Join(param.Id, "_"))
 	}
@@ -285,8 +285,8 @@ func Export(ctx *context.Context) {
 
 	columnIndex := 0
 	for _, head := range panelInfo.Thead {
-		if head["hide"] != "1" {
-			f.SetCellValue(tableName, orders[columnIndex]+"1", head["head"])
+		if !head.Hide {
+			f.SetCellValue(tableName, orders[columnIndex]+"1", head.Head)
 			columnIndex++
 		}
 	}
@@ -295,8 +295,8 @@ func Export(ctx *context.Context) {
 	for _, info := range panelInfo.InfoList {
 		columnIndex = 0
 		for _, head := range panelInfo.Thead {
-			if head["hide"] != "1" {
-				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head["field"]])
+			if !head.Hide {
+				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field])
 				columnIndex++
 			}
 		}

@@ -32,7 +32,7 @@ CREATE TABLE `goadmin_menu` (
   `order` int(11) unsigned NOT NULL DEFAULT '0',
   `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `uri` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
+  `uri` varchar(3000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `header` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,

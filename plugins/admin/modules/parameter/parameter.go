@@ -16,6 +16,7 @@ type Parameters struct {
 	SortField   string
 	Columns     []string
 	SortType    string
+	URLPath     string
 	Fields      map[string]string
 }
 
@@ -61,7 +62,17 @@ func BaseParam() Parameters {
 	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string]string)}
 }
 
-func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSortType string) Parameters {
+func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
+	values := u.Query()
+
+	primaryKey := "id"
+	defaultSortType := "desc"
+
+	if len(p) > 0 {
+		primaryKey = p[0]
+		defaultSortType = p[1]
+	}
+
 	page := getDefault(values, Page, "1")
 	pageSize := getDefault(values, PageSize, strconv.Itoa(defaultPageSize))
 	sortField := getDefault(values, Sort, primaryKey)
@@ -99,6 +110,7 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSortTyp
 		PageSize:    pageSize,
 		PageSizeInt: pageSizeInt,
 		PageInt:     pageInt,
+		URLPath:     u.Path,
 		SortField:   sortField,
 		SortType:    sortType,
 		Fields:      fields,
@@ -106,19 +118,13 @@ func GetParam(values url.Values, defaultPageSize int, primaryKey, defaultSortTyp
 	}
 }
 
-func GetParamFromUrl(value string, fromList bool, defaultPageSize int, primaryKey, defaultSortType string) Parameters {
+func GetParamFromUrl(urlStr string, defaultPageSize int, defaultSortType, primaryKey string, fromList ...bool) Parameters {
 
-	if !fromList {
+	if len(fromList) > 0 && !fromList[0] {
 		return BaseParam()
 	}
 
-	varr := strings.Split(value, "?")
-
-	if len(varr) < 2 {
-		return BaseParam()
-	}
-
-	u, err := url.ParseQuery(varr[1])
+	u, err := url.Parse(urlStr)
 
 	if err != nil {
 		return BaseParam()

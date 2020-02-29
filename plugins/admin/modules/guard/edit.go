@@ -48,7 +48,7 @@ func ShowForm(conn db.Connection) context.Handler {
 			Panel:  panel,
 			Id:     id,
 			Prefix: prefix,
-			Param: parameter.GetParam(ctx.Request.URL.Query(), panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
+			Param: parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 				panel.GetInfo().GetSort()),
 		})
 		ctx.Next()
@@ -111,8 +111,8 @@ func EditForm(srv service.List) context.Handler {
 
 		fromList := isInfoUrl(previous)
 
-		param := parameter.GetParamFromUrl(previous, fromList, panel.GetInfo().DefaultPageSize,
-			panel.GetPrimaryKey().Name, panel.GetInfo().GetSort())
+		param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize,
+			panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
 
 		if fromList {
 			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())

@@ -58,7 +58,7 @@ func ShowDetail(ctx *context.Context) {
 			GetContent()
 	}
 
-	paramStr := parameter.GetParam(ctx.Request.URL.Query(),
+	paramStr := parameter.GetParam(ctx.Request.URL,
 		panel.GetInfo().DefaultPageSize,
 		panel.GetInfo().SortField,
 		panel.GetInfo().GetSort()).GetRouteParamStr()

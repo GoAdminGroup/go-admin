@@ -11,6 +11,7 @@ const (
 	Year
 	Month
 	Day
+	Switch
 )
 
 func (t Type) String() string {
@@ -23,6 +24,8 @@ func (t Type) String() string {
 		return "textarea"
 	case Date:
 		return "date"
+	case Switch:
+		return "switch"
 	case Year:
 		return "year"
 	case Month:
@@ -34,4 +37,8 @@ func (t Type) String() string {
 	default:
 		panic("wrong form type")
 	}
+}
+
+func (t Type) IsSwitch() bool {
+	return t == Switch
 }

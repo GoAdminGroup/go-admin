@@ -6,6 +6,7 @@ package types
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 )
@@ -95,8 +96,8 @@ type ButtonAttribute interface {
 }
 
 type TableAttribute interface {
-	SetThead(value []map[string]string) TableAttribute
-	SetInfoList(value []map[string]template.HTML) TableAttribute
+	SetThead(value Thead) TableAttribute
+	SetInfoList(value []map[string]InfoItem) TableAttribute
 	SetType(value string) TableAttribute
 	SetMinWidth(value int) TableAttribute
 	SetLayout(value string) TableAttribute
@@ -105,8 +106,8 @@ type TableAttribute interface {
 
 type DataTableAttribute interface {
 	GetDataTableHeader() template.HTML
-	SetThead(value []map[string]string) DataTableAttribute
-	SetInfoList(value []map[string]template.HTML) DataTableAttribute
+	SetThead(value Thead) DataTableAttribute
+	SetInfoList(value []map[string]InfoItem) DataTableAttribute
 	SetEditUrl(value string) DataTableAttribute
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
@@ -179,4 +180,35 @@ type PopupAttribute interface {
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute
 	GetContent() template.HTML
+}
+
+type Thead []TheadItem
+
+type TheadItem struct {
+	Head       string
+	Sortable   bool
+	Field      string
+	Hide       bool
+	Editable   bool
+	EditType   string
+	EditOption FieldOptions
+	Width      int
+}
+
+func (t Thead) GroupBy(group [][]string) []Thead {
+	var res = make([]Thead, len(group))
+
+	for key, value := range group {
+		var newThead = make(Thead, len(t))
+
+		for index, info := range t {
+			if modules.InArray(value, info.Field) {
+				newThead[index] = info
+			}
+		}
+
+		res[key] = newThead
+	}
+
+	return res
 }

@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"net/http"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 )
 
 // Update update the table row of given id.
@@ -14,13 +14,9 @@ func Update(ctx *context.Context) {
 	err := param.Panel.UpdateDataFromDatabase(param.Value)
 
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"msg": err.Error(),
-		})
+		response.Error(ctx, err.Error())
 		return
 	}
 
-	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"msg": "ok",
-	})
+	response.Ok(ctx)
 }

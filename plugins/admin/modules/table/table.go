@@ -88,8 +88,8 @@ type Table interface {
 
 	GetPrimaryKey() PrimaryKey
 
-	GetData(path string, params parameter.Parameters, isAll bool) (PanelInfo, error)
-	GetDataWithIds(path string, params parameter.Parameters, ids []string) (PanelInfo, error)
+	GetData(params parameter.Parameters, isAll bool) (PanelInfo, error)
+	GetDataWithIds(params parameter.Parameters, ids []string) (PanelInfo, error)
 	GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
 	UpdateDataFromDatabase(dataList form.Values) error
 	InsertDataFromDatabase(dataList form.Values) error

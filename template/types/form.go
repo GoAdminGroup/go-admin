@@ -15,10 +15,11 @@ import (
 )
 
 type FieldOption struct {
-	Text          string        `json:"text"`
-	Value         string        `json:"value"`
-	Selected      bool          `json:"-"`
-	SelectedLabel template.HTML `json:"-"`
+	Text          string            `json:"text"`
+	Value         string            `json:"value"`
+	Selected      bool              `json:"-"`
+	SelectedLabel template.HTML     `json:"-"`
+	Extra         map[string]string `json:"-"`
 }
 
 type FieldOptions []FieldOption
@@ -57,6 +58,19 @@ func (fo FieldOptions) SetSelectedLabel(labels []template.HTML) FieldOptions {
 		}
 	}
 	return fo
+}
+
+func (fo FieldOptions) Marshal() string {
+	if len(fo) == 0 {
+		return ""
+	}
+	eo, err := json.Marshal(fo)
+
+	if err != nil {
+		return ""
+	}
+
+	return string(eo)
 }
 
 type OptionInitFn func(val FieldModel) FieldOptions
