@@ -198,6 +198,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 			SetSecondHeader(aForm().
 				SetContent(panelInfo.FormData).
 				SetPrefix(config.PrefixFixSlash()).
+				SetInputWidth(10).
 				SetMethod("get").
 				SetLayout(info.FilterFormLayout).
 				SetUrl(infoUrl).

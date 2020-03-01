@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -115,13 +116,15 @@ type Field struct {
 }
 
 type FilterFormField struct {
-	Type      form.Type
-	Options   FieldOptions
-	Operator  FilterOperator
-	OptionExt template.JS
-	Head      string
-	HelpMsg   template.HTML
-	ProcessFn func(string) string
+	Type        form.Type
+	Options     FieldOptions
+	Width       int
+	Operator    FilterOperator
+	OptionExt   template.JS
+	Head        string
+	Placeholder string
+	HelpMsg     template.HTML
+	ProcessFn   func(string) string
 }
 
 func (f Field) GetFilterFormFields(params parameter.Parameters, headField string) []FormField {
@@ -147,17 +150,19 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 		}
 
 		filterForm = append(filterForm, FormField{
-			Field:     headField + keySuffix,
-			Head:      modules.AorB(filter.Head == "", f.Head, filter.Head),
-			TypeName:  f.TypeName,
-			HelpMsg:   filter.HelpMsg,
-			FormType:  filter.Type,
-			Editable:  true,
-			Value:     template.HTML(value),
-			Value2:    value2,
-			Options:   filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel()),
-			OptionExt: filter.OptionExt,
-			Label:     filter.Operator.Label(),
+			Field:       headField + keySuffix,
+			Head:        filter.Head,
+			TypeName:    f.TypeName,
+			HelpMsg:     filter.HelpMsg,
+			FormType:    filter.Type,
+			Editable:    true,
+			Width:       filter.Width,
+			Placeholder: filter.Placeholder,
+			Value:       template.HTML(value),
+			Value2:      value2,
+			Options:     filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel()),
+			OptionExt:   filter.OptionExt,
+			Label:       filter.Operator.Label(),
 		})
 
 		if filter.Operator.AddOrNot() {
@@ -812,13 +817,16 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 }
 
 type FilterType struct {
-	FormType  form.Type
-	Operator  FilterOperator
-	Head      string
-	HelpMsg   template.HTML
-	Options   FieldOptions
-	Process   func(string) string
-	OptionExt map[string]interface{}
+	FormType    form.Type
+	Operator    FilterOperator
+	Head        string
+	Placeholder string
+	NoHead      bool
+	Width       int
+	HelpMsg     template.HTML
+	Options     FieldOptions
+	Process     func(string) string
+	OptionExt   map[string]interface{}
 }
 
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
@@ -827,7 +835,9 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	if len(filterType) == 0 {
 		i.FieldList[i.curFieldListIndex].FilterFormFields = append(i.FieldList[i.curFieldListIndex].FilterFormFields,
 			FilterFormField{
-				Type: form.Text,
+				Type:        form.Text,
+				Head:        i.FieldList[i.curFieldListIndex].Head,
+				Placeholder: language.Get("input") + " " + i.FieldList[i.curFieldListIndex].Head,
 			})
 	}
 
@@ -839,9 +849,19 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 		} else {
 			ff.Type = filter.FormType
 		}
-		ff.Head = filter.Head
+		if !filter.NoHead && filter.Head == "" {
+			ff.Head = i.FieldList[i.curFieldListIndex].Head
+		} else {
+			ff.Head = filter.Head
+		}
+		ff.Width = filter.Width
 		ff.HelpMsg = filter.HelpMsg
 		ff.ProcessFn = filter.Process
+		if filter.Placeholder == "" {
+			ff.Placeholder = language.Get("input") + " " + ff.Head
+		} else {
+			ff.Placeholder = filter.Placeholder
+		}
 		ff.Options = filter.Options
 		if len(filter.OptionExt) > 0 {
 			s, _ := json.Marshal(filter.OptionExt)

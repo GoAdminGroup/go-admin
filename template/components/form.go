@@ -23,6 +23,8 @@ type FormAttribute struct {
 	Url             string
 	Method          string
 	PrimaryKey      string
+	HeadWidth       int
+	InputWidth      int
 	HiddenFields    map[string]string
 	Title           template.HTML
 	OperationFooter template.HTML
@@ -53,6 +55,16 @@ func (compo *FormAttribute) SetTabContents(value [][]types.FormField) types.Form
 
 func (compo *FormAttribute) SetTabHeaders(value []string) types.FormAttribute {
 	compo.TabHeaders = value
+	return compo
+}
+
+func (compo *FormAttribute) SetHeadWidth(width int) types.FormAttribute {
+	compo.HeadWidth = width
+	return compo
+}
+
+func (compo *FormAttribute) SetInputWidth(width int) types.FormAttribute {
+	compo.InputWidth = width
 	return compo
 }
 
@@ -126,10 +138,10 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
 
 	return template.HTML(`<h3 class="box-title">`) + language.GetFromHtml(compo.Title) + template.HTML(`</h3>
             <div class="box-tools">
-				` + deleteBtn + editBtn + `
+				`+deleteBtn+editBtn+`
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='` + compo.HiddenFields[form2.PreviousKey] + `' class="btn btn-sm btn-default form-history-back"><i
-                                class="fa fa-arrow-left"></i> ` + language.Get("Back") + `</a>
+                    <a href='`+compo.HiddenFields[form2.PreviousKey]+`' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> `+language.Get("Back")+`</a>
                 </div>
             </div>`)
 }
@@ -168,5 +180,5 @@ func (compo *FormAttribute) GetContent() template.HTML {
 		"form/password", "form/select", "form/singleselect", "form/datetime_range",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number", "form/number_range",
 		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components",
-		"form_layout_default", "form_layout_two_col", "form_layout_tab")
+		"form_layout_default", "form_layout_two_col", "form_layout_tab", "form_components_layout", "form_layout_flow")
 }

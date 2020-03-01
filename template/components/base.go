@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -42,6 +43,9 @@ func (b Base) Form() types.FormAttribute {
 		Layout:       form.LayoutDefault,
 		Title:        "edit",
 		Attribute:    b.Attribute,
+		CdnUrl:       config.Get().AssetUrl,
+		HeadWidth:    2,
+		InputWidth:   8,
 	}
 }
 

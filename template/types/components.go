@@ -22,6 +22,8 @@ type FormAttribute interface {
 	SetPrimaryKey(value string) FormAttribute
 	SetHiddenFields(fields map[string]string) FormAttribute
 	SetMethod(value string) FormAttribute
+	SetHeadWidth(width int) FormAttribute
+	SetInputWidth(width int) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
 	SetLayout(layout form.Layout) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute

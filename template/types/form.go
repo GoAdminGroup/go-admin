@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
@@ -89,6 +90,8 @@ type FormField struct {
 	DefaultOptionDelimiter string
 	Label                  template.HTML
 
+	Placeholder string
+
 	CustomContent template.HTML
 	CustomJs      template.JS
 	CustomCss     template.CSS
@@ -97,6 +100,8 @@ type FormField struct {
 	NotAllowAdd bool
 	Must        bool
 	Hide        bool
+
+	Width int
 
 	HelpMsg template.HTML
 
@@ -230,12 +235,13 @@ func (f *FormPanel) AddXssJsFilter() *FormPanel {
 
 func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form2.Type) *FormPanel {
 	f.FieldList = append(f.FieldList, FormField{
-		Head:     head,
-		Field:    field,
-		TypeName: filedType,
-		Editable: true,
-		Hide:     false,
-		FormType: formType,
+		Head:        head,
+		Field:       field,
+		TypeName:    filedType,
+		Editable:    true,
+		Hide:        false,
+		Placeholder: language.Get("input") + " " + head,
+		FormType:    formType,
 		FieldDisplay: FieldDisplay{
 			Display: func(value FieldModel) interface{} {
 				return value.Value
@@ -267,6 +273,16 @@ func (f *FormPanel) FieldMust() *FormPanel {
 
 func (f *FormPanel) FieldHide() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Hide = true
+	return f
+}
+
+func (f *FormPanel) FieldPlaceholder(placeholder string) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Placeholder = placeholder
+	return f
+}
+
+func (f *FormPanel) FieldWidth(width int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Width = width
 	return f
 }
 

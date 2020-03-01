@@ -64,6 +64,10 @@ func (l Layout) Col() int {
 	return 0
 }
 
+func (l Layout) Flow() bool {
+	return l == LayoutFlow
+}
+
 func (t Type) String() string {
 	switch t {
 	case Default:
