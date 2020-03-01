@@ -218,9 +218,21 @@ func (sql *SQL) Count() (int64, error) {
 		res map[string]interface{}
 		err error
 	)
+	if sql.diver.Name() == DriverMssql {
+		if res, err = sql.Select("count(*) as [size]").First(); err != nil {
+			return 0, err
+		}
+		return res["size"].(int64), nil
+	}
+
 	if res, err = sql.Select("count(*)").First(); err != nil {
 		return 0, err
 	}
+
+	if sql.diver.Name() == DriverPostgresql {
+		return res["count"].(int64), nil
+	}
+
 	return res["count(*)"].(int64), nil
 }
 
