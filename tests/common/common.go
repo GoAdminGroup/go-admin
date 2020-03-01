@@ -2,12 +2,13 @@ package common
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 	"github.com/mgutz/ansi"
 	"regexp"
 )
 
-var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"_t\" value='(.*?)'>")
+var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"" + form.TokenKey + "\" value='(.*?)'>")
 
 // Test contains unit test sections of the GoAdmin admin plugin.
 func Test(e *httpexpect.Expect) {

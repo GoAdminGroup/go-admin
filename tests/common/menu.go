@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 	"net/http"
 )
@@ -34,13 +35,13 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
-			"parent_id":  0,
-			"title":      "test menu",
-			"header":     "",
-			"icon":       "fa-angellist",
-			"uri":        "/example/test",
-			"_previous_": "/admin/menu",
-			"_t":         token[1],
+			"parent_id":      0,
+			"title":          "test menu",
+			"header":         "",
+			"icon":           "fa-angellist",
+			"uri":            "/example/test",
+			form.PreviousKey: "/admin/menu",
+			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/menu"))
 	res.Body().Contains("test menu").Contains("/example/test")
@@ -70,14 +71,14 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
-			"parent_id":  0,
-			"title":      "test2 menu",
-			"header":     "",
-			"icon":       "fa-angellist",
-			"uri":        "/example/test",
-			"_previous_": "/admin/menu",
-			"_t":         token[1],
-			"id":         "3",
+			"parent_id":      0,
+			"title":          "test2 menu",
+			"header":         "",
+			"icon":           "fa-angellist",
+			"uri":            "/example/test",
+			form.PreviousKey: "/admin/menu",
+			form.TokenKey:    token[1],
+			"id":             "3",
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/menu"))
 	res.Body().Contains("test2 menu").Contains("/example/test")
@@ -90,13 +91,13 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		WithFormField("roles[]", "1").
 		WithForm(map[string]interface{}{
-			"parent_id":  0,
-			"title":      "test2 menu",
-			"header":     "",
-			"icon":       "fa-angellist",
-			"uri":        "/example/test2",
-			"_previous_": "/admin/menu",
-			"_t":         token[1],
+			"parent_id":      0,
+			"title":          "test2 menu",
+			"header":         "",
+			"icon":           "fa-angellist",
+			"uri":            "/example/test2",
+			form.PreviousKey: "/admin/menu",
+			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 
 	// delete tester2
