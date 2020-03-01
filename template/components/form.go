@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
@@ -97,7 +98,7 @@ func (compo *FormAttribute) GetDefaultBoxHeader() template.HTML {
                     <a href='%s' class="btn btn-sm btn-default form-history-back"><i
                                 class="fa fa-arrow-left"></i> %s</a>
                 </div>
-            </div>`, language.GetFromHtml(compo.Title), compo.HiddenFields["previous"], language.Get("Back")))
+            </div>`, language.GetFromHtml(compo.Title), compo.HiddenFields[form2.PreviousKey], language.Get("Back")))
 }
 
 func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML {
@@ -125,10 +126,10 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
 
 	return template.HTML(`<h3 class="box-title">`) + language.GetFromHtml(compo.Title) + template.HTML(`</h3>
             <div class="box-tools">
-				`+deleteBtn+editBtn+`
+				` + deleteBtn + editBtn + `
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='`+compo.HiddenFields["previous"]+`' class="btn btn-sm btn-default form-history-back"><i
-                                class="fa fa-arrow-left"></i> `+language.Get("Back")+`</a>
+                    <a href='` + compo.HiddenFields["previous"] + `' class="btn btn-sm btn-default form-history-back"><i
+                                class="fa fa-arrow-left"></i> ` + language.Get("Back") + `</a>
                 </div>
             </div>`)
 }
