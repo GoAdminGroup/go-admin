@@ -78,7 +78,7 @@ func (e NewFormParam) IsRole() bool {
 func NewForm(srv service.List) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
-		previous := ctx.FormValue("_previous_")
+		previous := ctx.FormValue(form.PreviousKey)
 		panel := table.Get(prefix, ctx)
 
 		conn := db.GetConnection(srv)
