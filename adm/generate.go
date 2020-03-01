@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go/format"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -459,14 +460,20 @@ func Get` + strings.Title(tableCamel) + `Table(ctx *context.Context) table.Table
 	return ` + tableCamel + `Table
 }`
 
-	err := ioutil.WriteFile(outputPath+"/"+table+".go", []byte(content), 0644)
+	c, err := format.Source([]byte(content))
 	checkError(err)
+
+	checkError(ioutil.WriteFile(outputPath+"/"+table+".go", c, 0644))
 }
 
 func generateTables(outputPath string, tables []string, packageName string) {
 
 	tableStr := ""
 	commentStr := ""
+	const (
+		commentStrEnd = "example end"
+		tablesEnd     = "generators end"
+	)
 
 	for i := 0; i < len(tables); i++ {
 		tableStr += `
@@ -474,8 +481,24 @@ func generateTables(outputPath string, tables []string, packageName string) {
 		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
 `
 	}
+	commentStr += `//
+// ` + commentStrEnd + `
+`
+	tableStr += `
 
-	content := `package ` + packageName + `
+	// ` + tablesEnd
+
+	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
+	tablesContent := string(tablesContentByte)
+
+	content := ""
+
+	if err == nil && tablesContent != "" && strings.Index(tablesContent, "/") != -1 {
+		tablesContent = strings.Replace(tablesContent, commentStrEnd+`
+//`, commentStr[3:]+"//", -1)
+		content = strings.Replace(tablesContent, "// "+tablesEnd, tableStr, -1)
+	} else {
+		content = `package ` + packageName + `
 
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
@@ -490,8 +513,12 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 var Generators = map[string]table.Generator{` + tableStr + `
 }
 `
-	err := ioutil.WriteFile(outputPath+"/tables.go", []byte(content), 0644)
+	}
+
+	c, err := format.Source([]byte(content))
+
 	checkError(err)
+	checkError(ioutil.WriteFile(outputPath+"/tables.go", c, 0644))
 }
 
 func getType(typeName string) string {
