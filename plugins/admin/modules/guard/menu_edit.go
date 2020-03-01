@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"html/template"
 	"strconv"
 )
@@ -33,7 +34,7 @@ func MenuEdit(srv service.List) context.Handler {
 
 		var (
 			parentIdInt, _ = strconv.Atoi(parentId)
-			token          = ctx.FormValue("_t")
+			token          = ctx.FormValue(form.TokenKey)
 			alert          template.HTML
 		)
 
