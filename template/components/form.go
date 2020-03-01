@@ -128,7 +128,7 @@ func (compo *FormAttribute) GetDetailBoxHeader(editUrl, deleteUrl string) templa
             <div class="box-tools">
 				` + deleteBtn + editBtn + `
                 <div class="btn-group pull-right" style="margin-right: 10px">
-                    <a href='` + compo.HiddenFields["previous"] + `' class="btn btn-sm btn-default form-history-back"><i
+                    <a href='` + compo.HiddenFields[form2.PreviousKey] + `' class="btn btn-sm btn-default form-history-back"><i
                                 class="fa fa-arrow-left"></i> ` + language.Get("Back") + `</a>
                 </div>
             </div>`)
