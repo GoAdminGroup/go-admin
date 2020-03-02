@@ -266,21 +266,22 @@ func Export(ctx *context.Context) {
 		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
 	var (
-		panelInfo table.PanelInfo
+		infoData  table.PanelInfo
 		fileName  string
 		err       error
+		tableInfo = panel.GetInfo()
 	)
 
 	if len(param.Id) == 0 {
-		params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
-			panel.GetInfo().GetSort())
-		panelInfo, err = panel.GetData(params, param.IsAll)
-		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(),
+		params := parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
+			tableInfo.GetSort())
+		infoData, err = panel.GetData(params, param.IsAll)
+		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", tableInfo.Title, time.Now().Unix(),
 			params.Page, params.PageSize)
 	} else {
-		panelInfo, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
-			panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField, panel.GetInfo().GetSort()), param.Id)
-		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", panel.GetInfo().Title, time.Now().Unix(), strings.Join(param.Id, "_"))
+		infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
+			tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()), param.Id)
+		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
 	}
 
 	if err != nil {
@@ -289,7 +290,7 @@ func Export(ctx *context.Context) {
 	}
 
 	columnIndex := 0
-	for _, head := range panelInfo.Thead {
+	for _, head := range infoData.Thead {
 		if !head.Hide {
 			f.SetCellValue(tableName, orders[columnIndex]+"1", head.Head)
 			columnIndex++
@@ -297,11 +298,15 @@ func Export(ctx *context.Context) {
 	}
 
 	count := 2
-	for _, info := range panelInfo.InfoList {
+	for _, info := range infoData.InfoList {
 		columnIndex = 0
-		for _, head := range panelInfo.Thead {
+		for _, head := range infoData.Thead {
 			if !head.Hide {
-				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field].Content)
+				if tableInfo.IsExportValue() {
+					f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field].Value)
+				} else {
+					f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field].Content)
+				}
 				columnIndex++
 			}
 		}

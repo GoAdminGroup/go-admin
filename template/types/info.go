@@ -381,6 +381,8 @@ type InfoPanel struct {
 	PageSizeList    []int
 	DefaultPageSize int
 
+	ExportType int
+
 	IsHideNewButton    bool
 	IsHideExportButton bool
 	IsHideEditButton   bool
@@ -622,6 +624,15 @@ func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, actio
 	i.Buttons = append(i.Buttons, DefaultSelection{Width: w, Id: id, Placeholder: placeholder, Options: options, Action: action})
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
+}
+
+func (i *InfoPanel) ExportValue() *InfoPanel {
+	i.ExportType = 1
+	return i
+}
+
+func (i *InfoPanel) IsExportValue() bool {
+	return i.ExportType == 1
 }
 
 func (i *InfoPanel) btnUUID() string {
