@@ -56,7 +56,7 @@ ALTER TABLE public.all_types
 
 func TestMysqlGetTypeFromString(t *testing.T) {
 
-	conn := connection(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s", dbName))
+	conn := testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s", dbName))
 	_, err := conn.Exec(fmt.Sprintf("create database if not exists `%s`", dbName))
 	assert.Equal(t, err, nil)
 	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", tableName))
@@ -121,7 +121,7 @@ VALUES
 	typeField := "Type"
 	fieldField := "Field"
 
-	conn = connection(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s?charset=utf8mb4", dbName))
+	conn = testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s?charset=utf8mb4", dbName))
 
 	config.Set(config.Config{
 		SqlLog: true,
@@ -131,7 +131,7 @@ VALUES
 	item, err := WithDriver(conn).Table(tableName).First()
 
 	for _, model := range columnsModel {
-		fieldTypeName := strings.ToUpper(getType(model[typeField].(string)))
+		fieldTypeName := strings.ToUpper(testGetType(model[typeField].(string)))
 		GetDTAndCheck(fieldTypeName)
 		GetValueFromSQLOfDatabaseType(DatabaseType(fieldTypeName), item[model[fieldField].(string)])
 	}
@@ -149,7 +149,7 @@ func TestPostgresqlGetTypeFromString(t *testing.T) {
 func testPG(t *testing.T, port string) {
 	connStatement := "host=127.0.0.1 port=" + port + " user=postgres password=root dbname=%s sslmode=disable"
 
-	conn := connection(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
+	conn := testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
 	fmt.Println("creating database")
 	_, err := conn.Exec(fmt.Sprintf(`SELECT 'CREATE DATABASE %s' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%s')`, dbName, dbName))
 	assert.Equal(t, err, nil)
@@ -180,7 +180,7 @@ func testPG(t *testing.T, port string) {
 	typeField := "udt_name"
 	fieldField := "column_name"
 
-	conn = connection(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
+	conn = testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
 
 	config.Set(config.Config{
 		SqlLog: true,
@@ -190,7 +190,7 @@ func testPG(t *testing.T, port string) {
 	item, err := WithDriver(conn).Table(tableName).First()
 
 	for _, model := range columnsModel {
-		fieldTypeName := strings.ToUpper(getType(model[typeField].(string)))
+		fieldTypeName := strings.ToUpper(testGetType(model[typeField].(string)))
 		GetDTAndCheck(fieldTypeName)
 		fmt.Println(model[fieldField].(string), GetValueFromSQLOfDatabaseType(DatabaseType(fieldTypeName), item[model[fieldField].(string)]))
 	}
@@ -199,18 +199,27 @@ func testPG(t *testing.T, port string) {
 }
 
 // *******************************
-// helper method
+// test helper methods
 // *******************************
 
-func getType(typeName string) string {
+func testGetType(typeName string) string {
 	r, _ := regexp.Compile(`\((.*?)\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	return strings.ToLower(strings.Replace(typeName, " unsigned", "", -1))
 }
 
-func connection(driver, dsn string) Connection {
+func testConnDSN(driver, dsn string) Connection {
 	return GetConnectionByDriver(driver).InitDB(map[string]config.Database{
 		"default": {Dsn: dsn},
+	})
+}
+
+func testConn(driver string, cfg config.Database) Connection {
+	cfg.Driver = driver
+	cfg.MaxIdleCon = 10
+	cfg.MaxOpenCon = 80
+	return GetConnectionByDriver(driver).InitDB(map[string]config.Database{
+		"default": cfg,
 	})
 }
 
