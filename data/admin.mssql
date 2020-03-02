@@ -7,7 +7,7 @@ CREATE TABLE [goadmin_menu] (
  [order] int   NOT NULL DEFAULT '0',
  [title] varchar(50)   NOT NULL,
  [icon] varchar(50)   NOT NULL,
- [uri] varchar(50)   NOT NULL DEFAULT '',
+ [uri] varchar(3000)   NOT NULL DEFAULT '',
  [header] varchar(150)   DEFAULT NULL,
  [created_at] datetime NULL DEFAULT GETDATE(),
  [updated_at] datetime NULL DEFAULT GETDATE(),
