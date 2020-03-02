@@ -301,7 +301,7 @@ func Export(ctx *context.Context) {
 		columnIndex = 0
 		for _, head := range panelInfo.Thead {
 			if !head.Hide {
-				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field])
+				f.SetCellValue(tableName, orders[columnIndex]+strconv.Itoa(count), info[head.Field].Content)
 				columnIndex++
 			}
 		}
