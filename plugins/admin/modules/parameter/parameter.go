@@ -199,6 +199,14 @@ func (param Parameters) GetRouteParamStr() string {
 	return "?" + p.Encode()
 }
 
+func (param Parameters) URL(page string) string {
+	return param.URLPath + param.SetPage(page).GetRouteParamStr()
+}
+
+func (param Parameters) URLNoAnimation(page string) string {
+	return param.URLPath + param.SetPage(page).GetRouteParamStr() + "&" + form.NoAnimationKey + "=true"
+}
+
 func (param Parameters) GetRouteParamStrWithoutPageSize() string {
 	p := url.Values{}
 	p.Add(Sort, param.SortField)

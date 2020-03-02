@@ -1,6 +1,7 @@
 package paginator
 
 import (
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/components"
@@ -37,7 +38,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 		paginator.NextClass = ""
 		paginator.NextUrl = cfg.Param.URLPath + cfg.Param.GetNextPageRouteParamStr()
 	}
-	paginator.Url = cfg.Param.URLPath + cfg.Param.GetRouteParamStrWithoutPageSize()
+	paginator.Url = cfg.Param.URLPath + cfg.Param.GetRouteParamStrWithoutPageSize() + "&" + form.NoAnimationKey + "=true"
 	paginator.CurPageEndIndex = strconv.Itoa((cfg.Param.PageInt) * cfg.Param.PageSizeInt)
 	paginator.CurPageStartIndex = strconv.Itoa((cfg.Param.PageInt - 1) * cfg.Param.PageSizeInt)
 	paginator.Total = strconv.Itoa(cfg.Size)
@@ -60,17 +61,18 @@ func Get(cfg Config) types.PaginatorAttribute {
 		for i := 1; i < totalPage+1; i++ {
 			if i == cfg.Param.PageInt {
 				pagesArr = append(pagesArr, map[string]string{
-					"page":    strconv.Itoa(i),
+					"page":    cfg.Param.Page,
 					"active":  "active",
 					"isSplit": "0",
-					"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+					"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
 				})
 			} else {
+				page := strconv.Itoa(i)
 				pagesArr = append(pagesArr, map[string]string{
-					"page":    strconv.Itoa(i),
+					"page":    page,
 					"active":  "",
 					"isSplit": "0",
-					"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+					"url":     cfg.Param.URLNoAnimation(page),
 				})
 			}
 		}
@@ -82,17 +84,18 @@ func Get(cfg Config) types.PaginatorAttribute {
 
 				if i == cfg.Param.PageInt {
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    cfg.Param.Page,
 						"active":  "active",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
 					})
 				} else {
+					page := strconv.Itoa(i)
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    page,
 						"active":  "",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(page),
 					})
 				}
 
@@ -101,7 +104,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation("6"),
 					})
 					i = totalPage - 1
 				}
@@ -111,17 +114,18 @@ func Get(cfg Config) types.PaginatorAttribute {
 
 				if i == cfg.Param.PageInt {
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    cfg.Param.Page,
 						"active":  "active",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
 					})
 				} else {
+					page := strconv.Itoa(i)
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    page,
 						"active":  "",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(page),
 					})
 				}
 
@@ -130,7 +134,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation("2"),
 					})
 					if cfg.Param.PageInt < 7 {
 						i = 5
@@ -145,7 +149,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 							"page":    "",
 							"active":  "",
 							"isSplit": "1",
-							"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+							"url":     cfg.Param.URLNoAnimation(strconv.Itoa(i)),
 						})
 						i = totalPage - 1
 					}
@@ -155,7 +159,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 							"page":    "",
 							"active":  "",
 							"isSplit": "1",
-							"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+							"url":     cfg.Param.URLNoAnimation(strconv.Itoa(i)),
 						})
 						i = totalPage - 1
 					}
@@ -166,17 +170,18 @@ func Get(cfg Config) types.PaginatorAttribute {
 
 				if i == cfg.Param.PageInt {
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    cfg.Param.Page,
 						"active":  "active",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
 					})
 				} else {
+					page := strconv.Itoa(i)
 					pagesArr = append(pagesArr, map[string]string{
-						"page":    strconv.Itoa(i),
+						"page":    page,
 						"active":  "",
 						"isSplit": "0",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation(page),
 					})
 				}
 
@@ -185,7 +190,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 						"page":    "",
 						"active":  "",
 						"isSplit": "1",
-						"url":     cfg.Param.URLPath + cfg.Param.SetPage(strconv.Itoa(i)).GetRouteParamStr(),
+						"url":     cfg.Param.URLNoAnimation("2"),
 					})
 					i = totalPage - 4
 				}

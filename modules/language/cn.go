@@ -97,4 +97,5 @@ var cn = map[string]string{
 	"a path a line":                                 "一行一个路径，换行输入新路径",
 	"slug or http_path or name should not be empty": "标志或路径或权限名不能为空",
 	"no roles":                                      "无角色",
+	"no permission":                                 "没有权限",
 }

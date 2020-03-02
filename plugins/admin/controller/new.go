@@ -55,7 +55,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 				form2.PreviousKey: infoUrl,
 			}).
 			SetTitle("New").
-			SetOperationFooter(formFooter()).
+			SetOperationFooter(formFooter("new")).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: panel.GetForm().Description,

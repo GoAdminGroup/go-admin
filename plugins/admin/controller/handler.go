@@ -121,8 +121,8 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 				form.TokenKey:    authSrv().AddToken(),
 				form.PreviousKey: config.Url("/info/" + prefix + queryParam),
 			}).
-			SetUrl(config.Url("/"+kind+"/"+prefix)).
-			SetOperationFooter(formFooter()).
+			SetUrl(config.Url("/" + kind + "/" + prefix)).
+			SetOperationFooter(formFooter(kind)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: description,

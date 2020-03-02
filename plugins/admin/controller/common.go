@@ -121,35 +121,76 @@ func isPjax(ctx *context.Context) bool {
 	return ctx.Headers(constant.PjaxHeader) == "true"
 }
 
-func formFooter() template2.HTML {
+func formFooter(page string) template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
-	checkBoxs := template.HTML(`
+
+	var (
+		checkBoxs  template2.HTML
+		checkBoxJS template2.HTML
+	)
+
+	if page == "edit" {
+		checkBoxs = template.HTML(`
 			<label class="pull-right" style="margin: 5px 10px 0 0;">
                 <input type="checkbox" class="continue_edit" style="position: absolute; opacity: 0;"> ` + language.Get("continue editing") + `
             </label>
 			<label class="pull-right" style="margin: 5px 10px 0 0;">
                 <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
             </label>`)
-	checkBoxJs := template.HTML(`<script>
+		checkBoxJS = template.HTML(`<script>	
 	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
 	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_new').iCheck('uncheck');
-			$('input[name="` + form.PreviousKey + `]').val(location.href)
+			$('input[name="` + form.PreviousKey + `"]').val(location.href)
 		} else {
-			$('input[name="` + form.PreviousKey + `]').val(previous_url_goadmin)
+			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
 		}
-	});
+	});	
 	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_edit').iCheck('uncheck');
-			$('input[name="` + form.PreviousKey + `]').val(location.href.replace('/edit', '/new'))
+			$('input[name="` + form.PreviousKey + `"]').val(location.href.replace('/edit', '/new'))
 		} else {
-			$('input[name="` + form.PreviousKey + `]').val(previous_url_goadmin)
+			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
 		}
 	});
 </script>
 `)
+	} else if page == "edit_only" {
+		checkBoxs = template.HTML(`
+			<label class="pull-right" style="margin: 5px 10px 0 0;">
+                <input type="checkbox" class="continue_edit" style="position: absolute; opacity: 0;"> ` + language.Get("continue editing") + `
+            </label>`)
+		checkBoxJS = template.HTML(`	<script>
+	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
+	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+		if (this.checked) {
+			$('input[name="` + form.PreviousKey + `"]').val(location.href)
+		} else {
+			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
+		}
+	});
+</script>
+`)
+	} else if page == "new" {
+		checkBoxs = template.HTML(`
+			<label class="pull-right" style="margin: 5px 10px 0 0;">
+                <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
+            </label>`)
+		checkBoxJS = template.HTML(`	<script>
+	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
+	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+		if (this.checked) {
+			$('input[name="` + form.PreviousKey + `"]').val(location.href)
+		} else {
+			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
+		}
+	});
+</script>
+`)
+	}
+
 	btn1 := aButton().SetType("submit").
 		SetContent(language.GetFromHtml("Save")).
 		SetThemePrimary().
@@ -161,7 +202,7 @@ func formFooter() template2.HTML {
 		SetOrientationLeft().
 		GetContent()
 	col2 := aCol().SetSize(types.SizeMD(8)).
-		SetContent(btn1 + checkBoxs + btn2 + checkBoxJs).GetContent()
+		SetContent(btn1 + checkBoxs + btn2 + checkBoxJS).GetContent()
 	return col1 + col2
 }
 

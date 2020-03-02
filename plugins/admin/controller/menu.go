@@ -51,7 +51,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 				form2.TokenKey:    authSrv().AddToken(),
 				form2.PreviousKey: config.Url("/menu"),
 			}).
-			SetOperationFooter(formFooter())) +
+			SetOperationFooter(formFooter("new"))) +
 			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
@@ -91,7 +91,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
-			SetOperationFooter(formFooter()).
+			SetOperationFooter(formFooter("edit")).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    authSrv().AddToken(),
 				form2.PreviousKey: config.Url("/menu"),
@@ -206,7 +206,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 			form2.TokenKey:    authSrv().AddToken(),
 			form2.PreviousKey: config.Url("/menu"),
 		}).
-		SetOperationFooter(formFooter()).
+		SetOperationFooter(formFooter("menu")).
 		SetTitle("New").
 		SetContent(formList).
 		SetTabContents(groupFormList).

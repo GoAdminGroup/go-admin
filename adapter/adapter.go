@@ -162,6 +162,6 @@ func getErrorAlert(msg string) template2.HTML {
 	return template.Default().Alert().
 		SetTitle(html.IEl().SetClass("icon fa fa-warning").Get() + template.HTML(` `+language.Get("error")+`!`)).
 		SetTheme("warning").
-		SetContent(template.HTML(msg)).
+		SetContent(language.GetFromHtml(template.HTML(msg))).
 		GetContent()
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
@@ -15,6 +16,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
 	"net/http"
+	"net/url"
 )
 
 // ShowForm show form page.
@@ -48,6 +50,12 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 		infoUrl = referer
 	}
 
+	newUrl := modules.AorEmpty(panel.GetCanAdd(), routePathWithPrefix("show_new", prefix)+paramStr)
+	footerKind := "edit"
+	if newUrl == "" || !user.CheckPermissionByUrlMethod(newUrl, route("show_new").Method(), url.Values{}) {
+		footerKind = "edit_only"
+	}
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
@@ -61,7 +69,7 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 				form2.TokenKey:    authSrv().AddToken(),
 				form2.PreviousKey: infoUrl,
 			}).
-			SetOperationFooter(formFooter()).
+			SetOperationFooter(formFooter(footerKind)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: description,
