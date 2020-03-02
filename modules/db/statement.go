@@ -219,12 +219,6 @@ func (sql *SQL) Count() (int64, error) {
 		err    error
 		driver = sql.diver.Name()
 	)
-	if driver == DriverMssql {
-		if res, err = sql.Select("count(*) as [size]").First(); err != nil {
-			return 0, err
-		}
-		return res["size"].(int64), nil
-	}
 
 	if res, err = sql.Select("count(*)").First(); err != nil {
 		return 0, err
@@ -232,6 +226,8 @@ func (sql *SQL) Count() (int64, error) {
 
 	if driver == DriverPostgresql {
 		return res["count"].(int64), nil
+	} else if driver == DriverMssql {
+		return res[""].(int64), nil
 	}
 
 	return res["count(*)"].(int64), nil
