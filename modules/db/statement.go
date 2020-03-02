@@ -215,10 +215,11 @@ func (sql *SQL) Find(arg interface{}) (map[string]interface{}, error) {
 // Count query the count of query results.
 func (sql *SQL) Count() (int64, error) {
 	var (
-		res map[string]interface{}
-		err error
+		res    map[string]interface{}
+		err    error
+		driver = sql.diver.Name()
 	)
-	if sql.diver.Name() == DriverMssql {
+	if driver == DriverMssql {
 		if res, err = sql.Select("count(*) as [size]").First(); err != nil {
 			return 0, err
 		}
@@ -229,7 +230,7 @@ func (sql *SQL) Count() (int64, error) {
 		return 0, err
 	}
 
-	if sql.diver.Name() == DriverPostgresql {
+	if driver == DriverPostgresql {
 		return res["count"].(int64), nil
 	}
 
