@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -130,21 +131,21 @@ func formFooter() template2.HTML {
                 <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
             </label>`)
 	checkBoxJs := template.HTML(`<script>
-	let previous_url_goadmin = $('input[name="_previous_"]').attr("value")
+	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
 	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_new').iCheck('uncheck');
-			$('input[name="_previous_"]').val(location.href)
+			$('input[name="` + form.PreviousKey + `]').val(location.href)
 		} else {
-			$('input[name="_previous_"]').val(previous_url_goadmin)
+			$('input[name="` + form.PreviousKey + `]').val(previous_url_goadmin)
 		}
 	});
 	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_edit').iCheck('uncheck');
-			$('input[name="_previous_"]').val(location.href.replace('/edit', '/new'))
+			$('input[name="` + form.PreviousKey + `]').val(location.href.replace('/edit', '/new'))
 		} else {
-			$('input[name="_previous_"]').val(previous_url_goadmin)
+			$('input[name="` + form.PreviousKey + `]').val(previous_url_goadmin)
 		}
 	});
 </script>
