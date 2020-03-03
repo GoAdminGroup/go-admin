@@ -45,7 +45,7 @@ func main() {
 			Prefix: "uploads",
 		},
 		Debug:    true,
-		Language: language.EN,
+		Language: language.CN,
 	}
 
 	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
