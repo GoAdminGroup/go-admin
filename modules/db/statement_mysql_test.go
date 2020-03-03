@@ -14,7 +14,7 @@ func init() {
 		Port: "3306",
 		User: "root",
 		Pwd:  "root",
-		Name: "goadmin",
+		Name: "godmin",
 	})
 }
 
