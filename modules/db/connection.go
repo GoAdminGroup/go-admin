@@ -60,7 +60,7 @@ type Connection interface {
 
 	Close() []error
 
-	// GetDelimiter get the default delimiter.
+	// GetDelimiter get the default testDelimiter.
 	GetDelimiter() string
 
 	GetDB(key string) *sql.DB

@@ -188,6 +188,7 @@ type Config struct {
 	prefix string
 }
 
+// see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
 	Type     string  `json:"type",yaml:"type",ini:"type"`
 	Duration float32 `json:"duration",yaml:"duration",ini:"duration"`

@@ -5,15 +5,16 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	"github.com/magiconair/properties/assert"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
 )
 
 const (
-	dbName            = "go-admin-type-test"
-	tableName         = "all_types"
-	postgresCreateSql = `CREATE TABLE public.%s
+	typeTestdbName            = "go-admin-type-test"
+	typeTesttableName         = "all_types"
+	typeTestpostgresCreateSql = `CREATE TABLE public.%s
 (
     id integer NOT NULL,
     type_1 smallint,
@@ -56,63 +57,63 @@ ALTER TABLE public.all_types
 
 func TestMysqlGetTypeFromString(t *testing.T) {
 
-	conn := testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s", dbName))
-	_, err := conn.Exec(fmt.Sprintf("create database if not exists `%s`", dbName))
+	conn := testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s", typeTestdbName))
+	_, err := conn.Exec(fmt.Sprintf("create database if not exists `%s`", typeTestdbName))
 	assert.Equal(t, err, nil)
-	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", tableName))
+	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", typeTesttableName))
 	assert.Equal(t, err, nil)
 	_, err = conn.Exec(fmt.Sprintf(`CREATE TABLE `+"`"+`%s`+"`"+` (
   id int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `+delimiter("type_1")+` tinyint(11) DEFAULT NULL,
-  `+delimiter("type_2")+` smallint(11) DEFAULT NULL,
-  `+delimiter("type_3")+` mediumint(11) DEFAULT NULL,
-  `+delimiter("type_4")+` bigint(11) DEFAULT NULL,
-  `+delimiter("type_5")+` float DEFAULT NULL,
-  `+delimiter("type_6")+` double(5,3) DEFAULT NULL,
-  `+delimiter("type_7")+` double DEFAULT NULL,
-  `+delimiter("type_8")+` double(5,3) DEFAULT NULL,
-  `+delimiter("type_9")+` decimal(11,0) DEFAULT NULL,
-  `+delimiter("type_10")+` bit(11) DEFAULT NULL,
-  `+delimiter("type_11")+` tinyint(1) DEFAULT NULL,
-  `+delimiter("type_12")+` tinyint(1) DEFAULT NULL,
-  `+delimiter("type_13")+` decimal(10,5) DEFAULT NULL,
-  `+delimiter("type_14")+` decimal(10,0) DEFAULT NULL,
-  `+delimiter("type_15")+` decimal(10,0) DEFAULT NULL,
-  `+delimiter("type_16")+` char(11) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `+delimiter("type_17")+` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `+delimiter("type_18")+` tinytext COLLATE utf8mb4_unicode_ci,
-  `+delimiter("type_19")+` text COLLATE utf8mb4_unicode_ci,
-  `+delimiter("type_20")+` mediumtext COLLATE utf8mb4_unicode_ci,
-  `+delimiter("type_21")+` longtext COLLATE utf8mb4_unicode_ci,
-  `+delimiter("type_22")+` tinyblob,
-  `+delimiter("type_23")+` mediumblob,
-  `+delimiter("type_24")+` blob,
-  `+delimiter("type_25")+` longblob,
-  `+delimiter("type_26")+` binary(1) DEFAULT NULL,
-  `+delimiter("type_27")+` varbinary(1) DEFAULT NULL,
-  `+delimiter("type_28")+` enum('RED','GREEN','BLUE') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `+delimiter("type_29")+` set('RED','GREEN','BLUE') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `+delimiter("type_30")+` date DEFAULT NULL,
-  `+delimiter("type_31")+` datetime DEFAULT NULL,
-  `+delimiter("type_32")+` timestamp NULL DEFAULT NULL,
-  `+delimiter("type_33")+` time DEFAULT NULL,
-  `+delimiter("type_34")+` year(4) DEFAULT NULL,
-  `+delimiter("type_35")+` geometry DEFAULT NULL,
-  `+delimiter("type_36")+` point DEFAULT NULL,
-  `+delimiter("type_39")+` multilinestring DEFAULT NULL,
-  `+delimiter("type_41")+` multipolygon DEFAULT NULL,
-  `+delimiter("type_37")+` linestring DEFAULT NULL,
-  `+delimiter("type_38")+` polygon DEFAULT NULL,
-  `+delimiter("type_40")+` multipoint DEFAULT NULL,
-  `+delimiter("type_42")+` geometrycollection DEFAULT NULL,
-  `+delimiter("type_50")+` double(5,2) DEFAULT NULL,
-  `+delimiter("type_51")+` json DEFAULT NULL,
+  `+testDelimiter("type_1")+` tinyint(11) DEFAULT NULL,
+  `+testDelimiter("type_2")+` smallint(11) DEFAULT NULL,
+  `+testDelimiter("type_3")+` mediumint(11) DEFAULT NULL,
+  `+testDelimiter("type_4")+` bigint(11) DEFAULT NULL,
+  `+testDelimiter("type_5")+` float DEFAULT NULL,
+  `+testDelimiter("type_6")+` double(5,3) DEFAULT NULL,
+  `+testDelimiter("type_7")+` double DEFAULT NULL,
+  `+testDelimiter("type_8")+` double(5,3) DEFAULT NULL,
+  `+testDelimiter("type_9")+` decimal(11,0) DEFAULT NULL,
+  `+testDelimiter("type_10")+` bit(11) DEFAULT NULL,
+  `+testDelimiter("type_11")+` tinyint(1) DEFAULT NULL,
+  `+testDelimiter("type_12")+` tinyint(1) DEFAULT NULL,
+  `+testDelimiter("type_13")+` decimal(10,5) DEFAULT NULL,
+  `+testDelimiter("type_14")+` decimal(10,0) DEFAULT NULL,
+  `+testDelimiter("type_15")+` decimal(10,0) DEFAULT NULL,
+  `+testDelimiter("type_16")+` char(11) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `+testDelimiter("type_17")+` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `+testDelimiter("type_18")+` tinytext COLLATE utf8mb4_unicode_ci,
+  `+testDelimiter("type_19")+` text COLLATE utf8mb4_unicode_ci,
+  `+testDelimiter("type_20")+` mediumtext COLLATE utf8mb4_unicode_ci,
+  `+testDelimiter("type_21")+` longtext COLLATE utf8mb4_unicode_ci,
+  `+testDelimiter("type_22")+` tinyblob,
+  `+testDelimiter("type_23")+` mediumblob,
+  `+testDelimiter("type_24")+` blob,
+  `+testDelimiter("type_25")+` longblob,
+  `+testDelimiter("type_26")+` binary(1) DEFAULT NULL,
+  `+testDelimiter("type_27")+` varbinary(1) DEFAULT NULL,
+  `+testDelimiter("type_28")+` enum('RED','GREEN','BLUE') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `+testDelimiter("type_29")+` set('RED','GREEN','BLUE') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `+testDelimiter("type_30")+` date DEFAULT NULL,
+  `+testDelimiter("type_31")+` datetime DEFAULT NULL,
+  `+testDelimiter("type_32")+` timestamp NULL DEFAULT NULL,
+  `+testDelimiter("type_33")+` time DEFAULT NULL,
+  `+testDelimiter("type_34")+` year(4) DEFAULT NULL,
+  `+testDelimiter("type_35")+` geometry DEFAULT NULL,
+  `+testDelimiter("type_36")+` point DEFAULT NULL,
+  `+testDelimiter("type_39")+` multilinestring DEFAULT NULL,
+  `+testDelimiter("type_41")+` multipolygon DEFAULT NULL,
+  `+testDelimiter("type_37")+` linestring DEFAULT NULL,
+  `+testDelimiter("type_38")+` polygon DEFAULT NULL,
+  `+testDelimiter("type_40")+` multipoint DEFAULT NULL,
+  `+testDelimiter("type_42")+` geometrycollection DEFAULT NULL,
+  `+testDelimiter("type_50")+` double(5,2) DEFAULT NULL,
+  `+testDelimiter("type_51")+` json DEFAULT NULL,
   PRIMARY KEY (`+"`"+`id`+"`"+`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, tableName))
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;`, typeTesttableName))
 
 	assert.Equal(t, err, nil)
 
-	_, err = conn.Exec(`INSERT INTO ` + delimiter(tableName) + ` (id, type_1, type_2, type_3, type_4, type_5, type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13, type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21, type_22, type_23, type_24, type_25, type_26, type_27, type_28, type_29, type_30, type_31, type_32, type_33, type_34, type_35, type_36, type_39, type_41, type_37, type_38, type_40, type_42, type_50, type_51)
+	_, err = conn.Exec(`INSERT INTO ` + testDelimiter(typeTesttableName) + ` (id, type_1, type_2, type_3, type_4, type_5, type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13, type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21, type_22, type_23, type_24, type_25, type_26, type_27, type_28, type_29, type_30, type_31, type_32, type_33, type_34, type_35, type_36, type_39, type_41, type_37, type_38, type_40, type_42, type_50, type_51)
 VALUES
 	(1, 1, 1, 1, 1, 1, 1.000, 1, 1.000, 1, 0, 1, 1, 1.00000, 1, 1, '1', '1', '1', '1', '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2001', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);`)
 
@@ -121,14 +122,14 @@ VALUES
 	typeField := "Type"
 	fieldField := "Field"
 
-	conn = testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s?charset=utf8mb4", dbName))
+	conn = testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s?charset=utf8mb4", typeTestdbName))
 
 	config.Set(config.Config{
 		SqlLog: true,
 	})
 
-	columnsModel, _ := WithDriver(conn).Table(tableName).ShowColumns()
-	item, err := WithDriver(conn).Table(tableName).First()
+	columnsModel, _ := WithDriver(conn).Table(typeTesttableName).ShowColumns()
+	item, err := WithDriver(conn).Table(typeTesttableName).First()
 
 	for _, model := range columnsModel {
 		fieldTypeName := strings.ToUpper(testGetType(model[typeField].(string)))
@@ -149,12 +150,12 @@ func TestPostgresqlGetTypeFromString(t *testing.T) {
 func testPG(t *testing.T, port string) {
 	connStatement := "host=127.0.0.1 port=" + port + " user=postgres password=root dbname=%s sslmode=disable"
 
-	conn := testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
+	conn := testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, typeTestdbName))
 	fmt.Println("creating database")
-	_, err := conn.Exec(fmt.Sprintf(`SELECT 'CREATE DATABASE %s' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%s')`, dbName, dbName))
+	_, err := conn.Exec(fmt.Sprintf(`SELECT 'CREATE DATABASE %s' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = '%s')`, typeTestdbName, typeTestdbName))
 	assert.Equal(t, err, nil)
 	fmt.Println("drop table")
-	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", tableName))
+	_, err = conn.Exec(fmt.Sprintf("DROP TABLE IF EXISTS `%s`;", typeTesttableName))
 	assert.Equal(t, err, nil)
 	fmt.Println("create sequence all_types_type_6_seq")
 	_, err = conn.Exec(`CREATE SEQUENCE IF NOT EXISTS public.all_types_type_6_seq START 1;`)
@@ -166,12 +167,12 @@ func testPG(t *testing.T, port string) {
 	_, err = conn.Exec(`CREATE SEQUENCE IF NOT EXISTS public.all_types_type_8_seq START 1;`)
 	assert.Equal(t, err, nil)
 	fmt.Println("create table")
-	_, err = conn.Exec(fmt.Sprintf(postgresCreateSql, tableName))
+	_, err = conn.Exec(fmt.Sprintf(typeTestpostgresCreateSql, typeTesttableName))
 
 	assert.Equal(t, err, nil)
 
 	fmt.Println("insert data")
-	_, err = conn.Exec(`INSERT INTO public.` + tableName + `(
+	_, err = conn.Exec(`INSERT INTO public.` + typeTesttableName + `(
 	id, type_1, type_2, type_3, type_4, type_5, type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13, type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21, type_22, type_23, type_24, type_25, type_26, type_27)
 	VALUES (1, 1, 1, 0.3, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);`)
 
@@ -180,14 +181,14 @@ func testPG(t *testing.T, port string) {
 	typeField := "udt_name"
 	fieldField := "column_name"
 
-	conn = testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, dbName))
+	conn = testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, typeTestdbName))
 
 	config.Set(config.Config{
 		SqlLog: true,
 	})
 
-	columnsModel, _ := WithDriver(conn).Table(tableName).ShowColumns()
-	item, err := WithDriver(conn).Table(tableName).First()
+	columnsModel, _ := WithDriver(conn).Table(typeTesttableName).ShowColumns()
+	item, err := WithDriver(conn).Table(typeTesttableName).First()
 
 	for _, model := range columnsModel {
 		fieldTypeName := strings.ToUpper(testGetType(model[typeField].(string)))
@@ -223,6 +224,14 @@ func testConn(driver string, cfg config.Database) Connection {
 	})
 }
 
-func delimiter(s string) string {
+func testDelimiter(s string) string {
 	return "`" + s + "`"
+}
+
+func testCurrentPath() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	return dir
 }

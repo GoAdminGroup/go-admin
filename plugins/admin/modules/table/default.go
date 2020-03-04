@@ -812,6 +812,7 @@ func (tb DefaultTable) DeleteDataFromDatabase(id string) error {
 		}
 	}
 
+	// TODO: use where in
 	for _, id := range idArr {
 		tb.delete(tb.form.Table, tb.primaryKey.Name, id)
 	}
