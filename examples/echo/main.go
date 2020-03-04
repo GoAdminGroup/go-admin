@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/labstack/echo/v4"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/labstack/echo"
 )
 
 func main() {
