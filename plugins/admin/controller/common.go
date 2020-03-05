@@ -9,12 +9,15 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
 	"regexp"
 	"strings"
+	"sync"
+	"sync/atomic"
 )
 
 var (
@@ -23,26 +26,39 @@ var (
 	services      service.List
 	conn          db.Connection
 	routes        context.RouterMap
+	generators    table.GeneratorList
+
+	count uint32
+	lock  sync.Mutex
 )
 
-func SetRoutes(r context.RouterMap) {
-	routes = r
+type InitConfiguration struct {
+	RouterMap  context.RouterMap
+	Config     c.Config
+	Services   service.List
+	Generators table.GeneratorList
 }
 
-// SetConfig set the config.
+func Init(cfg InitConfiguration) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if atomic.LoadUint32(&count) != 0 {
+		panic("can not initialize twice")
+	}
+	routes = cfg.RouterMap
+	config = cfg.Config
+	services = cfg.Services
+	conn = db.GetConnection(services)
+	generators = cfg.Generators
+}
+
 func SetCaptcha(cap map[string]string) {
 	captchaConfig = cap
 }
 
-// SetConfig set the config.
-func SetConfig(cfg c.Config) {
-	config = cfg
-}
-
-// SetServices set the services.
-func SetServices(l service.List) {
-	services = l
-	conn = db.GetConnection(services)
+func getTable(prefix string, ctx *context.Context) table.Table {
+	return generators[prefix](ctx)
 }
 
 func route(name string) context.Router {

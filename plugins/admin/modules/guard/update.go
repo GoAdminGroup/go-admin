@@ -14,33 +14,35 @@ type UpdateParam struct {
 	Value  form.Values
 }
 
-func Update(ctx *context.Context) {
-	prefix := ctx.Query(constant.PrefixKey)
-	panel := table.Get(prefix, ctx)
+func Update(list table.GeneratorList) context.Handler {
+	return func(ctx *context.Context) {
+		prefix := ctx.Query(constant.PrefixKey)
+		panel := list[prefix](ctx)
 
-	pname := panel.GetPrimaryKey().Name
+		pname := panel.GetPrimaryKey().Name
 
-	id := ctx.FormValue("pk")
+		id := ctx.FormValue("pk")
 
-	if id == "" {
-		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-			"msg": "wrong " + pname,
+		if id == "" {
+			ctx.JSON(http.StatusBadRequest, map[string]interface{}{
+				"msg": "wrong " + pname,
+			})
+			ctx.Abort()
+			return
+		}
+
+		var f = make(form.Values)
+		f.Add(form.PostIsSingleUpdateKey, "1")
+		f.Add(pname, id)
+		f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
+
+		ctx.SetUserValue("update_param", &UpdateParam{
+			Panel:  panel,
+			Prefix: prefix,
+			Value:  f,
 		})
-		ctx.Abort()
-		return
+		ctx.Next()
 	}
-
-	var f = make(form.Values)
-	f.Add(form.PostIsSingleUpdateKey, "1")
-	f.Add(pname, id)
-	f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
-
-	ctx.SetUserValue("update_param", &UpdateParam{
-		Panel:  panel,
-		Prefix: prefix,
-		Value:  f,
-	})
-	ctx.Next()
 }
 
 func GetUpdateParam(ctx *context.Context) *UpdateParam {

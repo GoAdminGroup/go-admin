@@ -33,7 +33,7 @@ import (
 func ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query(constant.PrefixKey)
-	panel := table.Get(prefix, ctx)
+	panel := getTable(prefix, ctx)
 
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
@@ -44,7 +44,7 @@ func ShowInfo(ctx *context.Context) {
 
 func showTable(ctx *context.Context, prefix string, params parameter.Parameters) *bytes.Buffer {
 
-	panel := table.Get(prefix, ctx)
+	panel := getTable(prefix, ctx)
 
 	panelInfo, err := panel.GetData(params.WithIsAll(false))
 
@@ -255,7 +255,7 @@ func Export(ctx *context.Context) {
 
 	tableName := "Sheet1"
 	prefix := ctx.Query(constant.PrefixKey)
-	panel := table.Get(prefix, ctx)
+	panel := getTable(prefix, ctx)
 
 	f := excelize.NewFile()
 	index := f.NewSheet(tableName)

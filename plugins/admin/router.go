@@ -8,11 +8,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 )
 
-// InitRouter initialize the router and return the context.
-func InitRouter(prefix string, srv service.List) *context.App {
+// initRouter initialize the router and return the context.
+func initRouter(prefix string, srv service.List, list table.GeneratorList) *context.App {
 	app := context.NewApp()
 
 	route := app.Group(prefix, globalErrorHandler)
@@ -51,15 +52,15 @@ func InitRouter(prefix string, srv service.List) *context.App {
 
 	// add delete modify query
 	authRoute.GET("/info/:__prefix/detail", controller.ShowDetail).Name("detail")
-	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn), controller.ShowForm).Name("show_edit")
-	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn), controller.ShowNewForm).Name("show_new")
-	authRoute.POST("/edit/:__prefix", guard.EditForm(srv), controller.EditForm).Name("edit")
-	authRoute.POST("/new/:__prefix", guard.NewForm(srv), controller.NewForm).Name("new")
-	authRoute.POST("/delete/:__prefix", guard.Delete(conn), controller.Delete).Name("delete")
-	authRoute.POST("/export/:__prefix", guard.Export(conn), controller.Export).Name("export")
+	authRoute.GET("/info/:__prefix/edit", guard.ShowForm(conn, list), controller.ShowForm).Name("show_edit")
+	authRoute.GET("/info/:__prefix/new", guard.ShowNewForm(conn, list), controller.ShowNewForm).Name("show_new")
+	authRoute.POST("/edit/:__prefix", guard.EditForm(srv, list), controller.EditForm).Name("edit")
+	authRoute.POST("/new/:__prefix", guard.NewForm(srv, list), controller.NewForm).Name("new")
+	authRoute.POST("/delete/:__prefix", guard.Delete(conn, list), controller.Delete).Name("delete")
+	authRoute.POST("/export/:__prefix", guard.Export(conn, list), controller.Export).Name("export")
 	authRoute.GET("/info/:__prefix", controller.ShowInfo).Name("info")
 
-	authRoute.POST("/update/:__prefix", guard.Update, controller.Update).Name("update")
+	authRoute.POST("/update/:__prefix", guard.Update(list), controller.Update).Name("update")
 
 	return app
 }

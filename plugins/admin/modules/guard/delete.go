@@ -13,11 +13,11 @@ type DeleteParam struct {
 	Prefix string
 }
 
-func Delete(conn db.Connection) context.Handler {
+func Delete(conn db.Connection, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 		if !panel.GetDeletable() {
 			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()

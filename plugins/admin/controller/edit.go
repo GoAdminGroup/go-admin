@@ -10,7 +10,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -27,7 +26,7 @@ func ShowForm(ctx *context.Context) {
 
 func showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, paramStr string, isEdit bool) {
 
-	panel := table.Get(prefix, ctx)
+	panel := getTable(prefix, ctx)
 
 	user := auth.Auth(ctx)
 

@@ -12,8 +12,8 @@ import (
 
 // Admin is a GoAdmin plugin.
 type Admin struct {
-	app      *context.App
-	tableCfg table.GeneratorList
+	app       *context.App
+	tableList table.GeneratorList
 }
 
 // InitPlugin implements Plugin.InitPlugin.
@@ -21,34 +21,37 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	cfg := config.Get()
 
-	// Init router
-	App.app = InitRouter(cfg.Prefix(), services)
-	admin.tableCfg.InjectRoutes(App.app, services)
-
-	table.SetGenerators(table.GeneratorList{
+	generatorList := table.GeneratorList{
 		"manager":        table.GetManagerTable,
 		"permission":     table.GetPermissionTable,
 		"roles":          table.GetRolesTable,
 		"op":             table.GetOpTable,
 		"menu":           table.GetMenuTable,
 		"normal_manager": table.GetNormalManagerTable,
-	})
-	table.SetServices(services)
-	table.SetGenerators(admin.tableCfg)
+	}.Combine(admin.tableList)
 
-	controller.SetConfig(cfg)
-	controller.SetRoutes(App.app.Routers)
-	controller.SetServices(services)
+	// Init router
+	App.app = initRouter(cfg.Prefix(), services, generatorList)
+	admin.tableList.InjectRoutes(App.app, services)
+
+	table.SetServices(services)
+
+	controller.Init(controller.InitConfiguration{
+		Config:     cfg,
+		RouterMap:  App.app.Routers,
+		Services:   services,
+		Generators: generatorList,
+	})
 }
 
 // App is the global Admin plugin.
 var App = &Admin{
-	tableCfg: make(table.GeneratorList),
+	tableList: make(table.GeneratorList),
 }
 
 // NewAdmin return the global Admin plugin.
 func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
-	App.tableCfg.CombineAll(tableCfg)
+	App.tableList.CombineAll(tableCfg)
 	return App
 }
 
@@ -60,7 +63,7 @@ func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 
 // AddGenerator add table model generator.
 func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
-	admin.tableCfg.Add(key, g)
+	admin.tableList.Add(key, g)
 	return admin
 }
 

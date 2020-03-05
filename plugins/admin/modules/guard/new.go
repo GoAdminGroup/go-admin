@@ -21,11 +21,11 @@ type ShowNewFormParam struct {
 	Param  parameter.Parameters
 }
 
-func ShowNewForm(conn db.Connection) context.Handler {
+func ShowNewForm(conn db.Connection, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 
 		if !panel.GetCanAdd() {
 			alert(ctx, panel, "operation not allow", conn)
@@ -75,11 +75,11 @@ func (e NewFormParam) IsRole() bool {
 	return e.Prefix == "roles"
 }
 
-func NewForm(srv service.List) context.Handler {
+func NewForm(srv service.List, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue(form.PreviousKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 
 		conn := db.GetConnection(srv)
 

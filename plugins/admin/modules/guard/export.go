@@ -15,11 +15,11 @@ type ExportParam struct {
 	IsAll  bool
 }
 
-func Export(conn db.Connection) context.Handler {
+func Export(conn db.Connection, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 		if !panel.GetExportable() {
 			alert(ctx, panel, "operation not allow", conn)
 			ctx.Abort()

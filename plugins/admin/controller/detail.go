@@ -13,7 +13,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -22,7 +21,7 @@ import (
 func ShowDetail(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 	id := ctx.Query(constant.DetailPKKey)
-	panel := table.Get(prefix, ctx)
+	panel := getTable(prefix, ctx)
 	user := auth.Auth(ctx)
 
 	newPanel := panel.Copy()

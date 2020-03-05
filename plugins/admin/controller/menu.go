@@ -26,7 +26,7 @@ func ShowMenu(ctx *context.Context) {
 // ShowNewMenu show new menu page.
 func ShowNewMenu(ctx *context.Context) {
 
-	panel := table.Get("menu", ctx)
+	panel := getTable("menu", ctx)
 
 	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders,
 		panel.GetForm().TabGroups,
@@ -74,7 +74,7 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formInfo, err := table.Get("menu", ctx).GetDataWithId(ctx.Query("id"))
+	formInfo, err := getTable("menu", ctx).GetDataWithId(ctx.Query("id"))
 
 	var alert template2.HTML
 
@@ -98,7 +98,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(config.PrefixFixSlash()).
-			SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
+			SetPrimaryKey(getTable("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
 			SetOperationFooter(formFooter("edit")).
 			SetHiddenFields(map[string]string{
@@ -202,7 +202,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 
-	list := table.Get("menu", ctx)
+	list := getTable("menu", ctx)
 
 	formInfo := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
 		list.GetForm().FieldList)
@@ -210,7 +210,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	newForm := menuFormContent(aForm().
 		SetPrefix(config.PrefixFixSlash()).
 		SetUrl(config.Url("/menu/new")).
-		SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
+		SetPrimaryKey(getTable("menu", ctx).GetPrimaryKey().Name).
 		SetHiddenFields(map[string]string{
 			form2.TokenKey:    authSrv().AddToken(),
 			form2.PreviousKey: config.Url("/menu"),

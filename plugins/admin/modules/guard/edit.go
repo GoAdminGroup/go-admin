@@ -25,11 +25,11 @@ type ShowFormParam struct {
 	Param  parameter.Parameters
 }
 
-func ShowForm(conn db.Connection) context.Handler {
+func ShowForm(conn db.Connection, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 
 		prefix := ctx.Query(constant.PrefixKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 
 		if !panel.GetEditable() {
 			alert(ctx, panel, "operation not allow", conn)
@@ -87,11 +87,11 @@ func (e EditFormParam) IsRole() bool {
 	return e.Prefix == "roles"
 }
 
-func EditForm(srv service.List) context.Handler {
+func EditForm(srv service.List, list table.GeneratorList) context.Handler {
 	return func(ctx *context.Context) {
 		prefix := ctx.Query(constant.PrefixKey)
 		previous := ctx.FormValue(form.PreviousKey)
-		panel := table.Get(prefix, ctx)
+		panel := list[prefix](ctx)
 		multiForm := ctx.Request.MultipartForm
 
 		conn := db.GetConnection(srv)

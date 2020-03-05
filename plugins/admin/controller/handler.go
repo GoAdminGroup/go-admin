@@ -84,7 +84,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	var (
 		formInfo table.FormInfo
 		prefix   = ctx.Query(constant.PrefixKey)
-		panel    = table.Get(prefix, ctx)
+		panel    = getTable(prefix, ctx)
 	)
 
 	if kind == "edit" {
@@ -92,7 +92,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
 		}
-		formInfo, _ = table.Get(prefix, ctx).GetDataWithId(id)
+		formInfo, _ = getTable(prefix, ctx).GetDataWithId(id)
 	} else {
 		formInfo = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 			panel.GetForm().FieldList)

@@ -13,6 +13,8 @@ import (
 	"html/template"
 	"net/http"
 	"net/url"
+	"sync"
+	"sync/atomic"
 )
 
 type Generator func(ctx *context.Context) Table
@@ -46,15 +48,16 @@ func (g GeneratorList) Add(key string, gen Generator) {
 	g[key] = gen
 }
 
-func (g GeneratorList) Combine(gg GeneratorList) {
+func (g GeneratorList) Combine(gg GeneratorList) GeneratorList {
 	for key, gen := range gg {
 		if _, ok := g[key]; !ok {
 			g[key] = gen
 		}
 	}
+	return g
 }
 
-func (g GeneratorList) CombineAll(ggg []GeneratorList) {
+func (g GeneratorList) CombineAll(ggg []GeneratorList) GeneratorList {
 	for _, gg := range ggg {
 		for key, gen := range gg {
 			if _, ok := g[key]; !ok {
@@ -62,19 +65,7 @@ func (g GeneratorList) CombineAll(ggg []GeneratorList) {
 			}
 		}
 	}
-}
-
-var generators = make(GeneratorList)
-
-func Get(key string, ctx *context.Context) Table {
-	return generators[key](ctx)
-}
-
-// SetGenerators update generators.
-func SetGenerators(gens map[string]Generator) {
-	for key, gen := range gens {
-		generators[key] = gen
-	}
+	return g
 }
 
 type Table interface {
@@ -189,8 +180,19 @@ const (
 	DefaultConnectionName = "default"
 )
 
-var services service.List
+var (
+	services service.List
+	count    uint32
+	lock     sync.Mutex
+)
 
 func SetServices(srv service.List) {
+	lock.Lock()
+	defer lock.Unlock()
+
+	if atomic.LoadUint32(&count) != 0 {
+		panic("can not initialize twice")
+	}
+
 	services = srv
 }
