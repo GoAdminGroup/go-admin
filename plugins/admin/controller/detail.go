@@ -2,6 +2,9 @@ package controller
 
 import (
 	"fmt"
+	template2 "html/template"
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -14,8 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	template2 "html/template"
-	"net/http"
 )
 
 func ShowDetail(ctx *context.Context) {
@@ -46,17 +47,6 @@ func ShowDetail(ctx *context.Context) {
 			FormType:     form.Default,
 			FieldDisplay: field.FieldDisplay,
 		}
-	}
-
-	formData, _, _, _, _, err := newPanel.GetDataWithId(id)
-
-	var alert template2.HTML
-
-	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
 	}
 
 	paramStr := parameter.GetParam(ctx.Request.URL,
@@ -126,11 +116,22 @@ $('.delete-btn').on('click', function (event) {
 		desc = panel.GetInfo().Description + language.Get("Detail")
 	}
 
+	formInfo, err := newPanel.GetDataWithId(id)
+
+	var alert template2.HTML
+
+	if err != nil && alert == "" {
+		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+	}
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + detailContent(aForm().
 			SetTitle(template.HTML(title)).
-			SetContent(formData).
+			SetContent(formInfo.FieldList).
 			SetFooter(template.HTML(deleteJs)).
 			SetHiddenFields(map[string]string{
 				form2.PreviousKey: infoUrl,

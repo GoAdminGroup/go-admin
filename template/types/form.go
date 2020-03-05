@@ -696,6 +696,9 @@ type FormPostFn func(values form.Values) error
 
 type FormFields []FormField
 
+type GroupFormFields [][]FormField
+type GroupFieldHeaders []string
+
 func (f FormFields) Copy() FormFields {
 	formList := make(FormFields, len(f))
 	copy(formList, f)

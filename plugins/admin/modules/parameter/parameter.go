@@ -34,8 +34,8 @@ const (
 	sortTypeDesc = "desc"
 	sortTypeAsc  = "asc"
 
-	IsAll      = "is_all"
-	PrimaryKey = "pk"
+	IsAll      = "__is_all"
+	PrimaryKey = "__pk"
 
 	True  = "true"
 	False = "false"
@@ -141,12 +141,12 @@ func GetParamFromUrl(urlStr string, defaultPageSize int, defaultSortType, primar
 	return GetParam(u, defaultPageSize, primaryKey, defaultSortType)
 }
 
-func (param Parameters) WithPK(id ...string) Parameters {
+func (param Parameters) WithPKs(id ...string) Parameters {
 	param.Fields["pk"] = strings.Join(id, ",")
 	return param
 }
 
-func (param Parameters) PK() []string {
+func (param Parameters) PKs() []string {
 	return strings.Split(param.Fields[PrimaryKey], ",")
 }
 

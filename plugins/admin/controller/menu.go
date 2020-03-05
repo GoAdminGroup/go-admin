@@ -28,7 +28,7 @@ func ShowNewMenu(ctx *context.Context) {
 
 	panel := table.Get("menu", ctx)
 
-	formData, groupFormData, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders,
+	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders,
 		panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
 
@@ -41,9 +41,9 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: formContent(aForm().
-			SetContent(formData).
-			SetTabContents(groupFormData).
-			SetTabHeaders(groupHeaders).
+			SetContent(formInfo.FieldList).
+			SetTabContents(formInfo.GroupFieldList).
+			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
@@ -74,7 +74,16 @@ func ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formData, groupFormData, groupHeaders, title, description, _ := table.Get("menu", ctx).GetDataWithId(ctx.Query("id"))
+	formInfo, err := table.Get("menu", ctx).GetDataWithId(ctx.Query("id"))
+
+	var alert template2.HTML
+
+	if err != nil {
+		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+	}
 
 	user := auth.Auth(ctx)
 
@@ -84,10 +93,10 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: formContent(aForm().
-			SetContent(formData).
-			SetTabContents(groupFormData).
-			SetTabHeaders(groupHeaders).
+		Content: alert + formContent(aForm().
+			SetContent(formInfo.FieldList).
+			SetTabContents(formInfo.GroupFieldList).
+			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(table.Get("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(config.Url("/menu/edit")).
@@ -96,8 +105,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 				form2.TokenKey:    authSrv().AddToken(),
 				form2.PreviousKey: config.Url("/menu"),
 			})) + template2.HTML(js),
-		Description: description,
-		Title:       title,
+		Description: formInfo.Description,
+		Title:       formInfo.Title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
@@ -195,7 +204,7 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	list := table.Get("menu", ctx)
 
-	formList, groupFormList, groupHeaders := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
+	formInfo := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
 		list.GetForm().FieldList)
 
 	newForm := menuFormContent(aForm().
@@ -208,9 +217,9 @@ func getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		}).
 		SetOperationFooter(formFooter("menu")).
 		SetTitle("New").
-		SetContent(formList).
-		SetTabContents(groupFormList).
-		SetTabHeaders(groupHeaders))
+		SetContent(formInfo.FieldList).
+		SetTabContents(formInfo.GroupFieldList).
+		SetTabHeaders(formInfo.GroupFieldHeaders))
 
 	col2 := aCol().SetSize(types.SizeMD(6)).SetContent(newForm).GetContent()
 

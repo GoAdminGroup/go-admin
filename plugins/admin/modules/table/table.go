@@ -7,8 +7,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"html/template"
 	"net/http"
 	"net/url"
 )
@@ -88,14 +90,93 @@ type Table interface {
 
 	GetPrimaryKey() PrimaryKey
 
-	GetData(params parameter.Parameters, isAll bool) (PanelInfo, error)
-	GetDataWithIds(params parameter.Parameters, ids []string) (PanelInfo, error)
-	GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error)
-	UpdateDataFromDatabase(dataList form.Values) error
-	InsertDataFromDatabase(dataList form.Values) error
-	DeleteDataFromDatabase(id string) error
+	GetData(params parameter.Parameters) (PanelInfo, error)
+	GetDataWithIds(params parameter.Parameters) (PanelInfo, error)
+	GetDataWithId(id string) (FormInfo, error)
+	UpdateData(dataList form.Values) error
+	InsertData(dataList form.Values) error
+	DeleteData(id string) error
 
 	Copy() Table
+}
+
+type BaseTable struct {
+	Info       *types.InfoPanel
+	Form       *types.FormPanel
+	Detail     *types.InfoPanel
+	CanAdd     bool
+	Editable   bool
+	Deletable  bool
+	Exportable bool
+	PrimaryKey PrimaryKey
+}
+
+func (base *BaseTable) GetInfo() *types.InfoPanel {
+	return base.Info
+}
+
+func (base *BaseTable) GetDetail() *types.InfoPanel {
+	return base.Detail
+}
+
+func (base *BaseTable) GetForm() *types.FormPanel {
+	return base.Form
+}
+
+func (base *BaseTable) GetCanAdd() bool {
+	return base.CanAdd && !base.Info.IsHideNewButton
+}
+
+func (base *BaseTable) GetPrimaryKey() PrimaryKey {
+	return base.PrimaryKey
+}
+
+func (base *BaseTable) GetEditable() bool {
+	return base.Editable && !base.Info.IsHideEditButton
+}
+
+func (base *BaseTable) GetDeletable() bool {
+	return base.Deletable && !base.Info.IsHideDeleteButton
+}
+
+func (base *BaseTable) IsShowDetail() bool {
+	return !base.Info.IsHideDetailButton
+}
+
+func (base *BaseTable) GetExportable() bool {
+	return base.Exportable && !base.Info.IsHideExportButton
+}
+
+func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extraHtml ...template.HTML) types.PaginatorAttribute {
+
+	var eh template.HTML
+
+	if len(extraHtml) > 0 {
+		eh = extraHtml[0]
+	}
+
+	return paginator.Get(paginator.Config{
+		Size:         size,
+		Param:        params,
+		PageSizeList: base.Info.GetPageSizeList(),
+	}).SetExtraInfo(eh)
+}
+
+type PanelInfo struct {
+	Thead          types.Thead
+	InfoList       types.InfoList
+	FilterFormData types.FormFields
+	Paginator      types.PaginatorAttribute
+	Title          string
+	Description    string
+}
+
+type FormInfo struct {
+	FieldList         types.FormFields
+	GroupFieldList    types.GroupFormFields
+	GroupFieldHeaders types.GroupFieldHeaders
+	Title             string
+	Description       string
 }
 
 type PrimaryKey struct {

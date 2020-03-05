@@ -11,7 +11,7 @@ func Update(ctx *context.Context) {
 
 	param := guard.GetUpdateParam(ctx)
 
-	err := param.Panel.UpdateDataFromDatabase(param.Value)
+	err := param.Panel.UpdateData(param.Value)
 
 	if err != nil {
 		response.Error(ctx, err.Error())

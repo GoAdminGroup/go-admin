@@ -28,7 +28,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 
 	panel := table.Get(prefix, ctx)
 
-	formList, groupFormList, groupHeaders := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
+	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
 
 	infoUrl := routePathWithPrefix("info", prefix) + paramStr
@@ -45,9 +45,9 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetPrefix(config.PrefixFixSlash()).
-			SetContent(formList).
-			SetTabContents(groupFormList).
-			SetTabHeaders(groupHeaders).
+			SetContent(formInfo.FieldList).
+			SetTabContents(formInfo.GroupFieldList).
+			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetUrl(newUrl).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetHiddenFields(map[string]string{
@@ -93,7 +93,7 @@ func NewForm(ctx *context.Context) {
 		}
 	}
 
-	err := param.Panel.InsertDataFromDatabase(param.Value())
+	err := param.Panel.InsertData(param.Value())
 	if err != nil {
 		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").

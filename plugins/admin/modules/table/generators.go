@@ -135,7 +135,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
 		}
 		return roles
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/roles/new">` +
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/roles/new">` +
 		lg("Create here.") + `</a>`))
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
@@ -146,7 +146,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
 		}
 		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/permission/new">` +
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/permission/new">` +
 		lg("Create here.") + `</a>`))
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
@@ -662,7 +662,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 			permissions[k] = strconv.FormatInt(v["permission_id"].(int64), 10)
 		}
 		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/info/permission/new">` +
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/permission/new">` +
 		lg("Create here.") + `</a>`))
 
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()

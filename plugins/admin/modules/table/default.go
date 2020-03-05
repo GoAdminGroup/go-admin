@@ -24,43 +24,29 @@ import (
 )
 
 type DefaultTable struct {
-	info             *types.InfoPanel
-	form             *types.FormPanel
-	detail           *types.InfoPanel
+	*BaseTable
 	connectionDriver string
 	connection       string
-	canAdd           bool
-	editable         bool
-	deletable        bool
-	exportable       bool
-	primaryKey       PrimaryKey
 	sourceURL        string
 	getDataFun       GetDataFun
 }
 
 type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int)
 
-type PanelInfo struct {
-	Thead       types.Thead
-	InfoList    types.InfoList
-	FormData    []types.FormField
-	Paginator   types.PaginatorAttribute
-	Title       string
-	Description string
-}
-
 func NewDefaultTable(cfg Config) Table {
 	return DefaultTable{
-		info:             types.NewInfoPanel(cfg.PrimaryKey.Name),
-		form:             types.NewFormPanel(),
-		detail:           types.NewInfoPanel(cfg.PrimaryKey.Name),
+		BaseTable: &BaseTable{
+			Info:       types.NewInfoPanel(cfg.PrimaryKey.Name),
+			Form:       types.NewFormPanel(),
+			Detail:     types.NewInfoPanel(cfg.PrimaryKey.Name),
+			CanAdd:     cfg.CanAdd,
+			Editable:   cfg.Editable,
+			Deletable:  cfg.Deletable,
+			Exportable: cfg.Exportable,
+			PrimaryKey: cfg.PrimaryKey,
+		},
 		connectionDriver: cfg.Driver,
 		connection:       cfg.Connection,
-		canAdd:           cfg.CanAdd,
-		editable:         cfg.Editable,
-		deletable:        cfg.Deletable,
-		exportable:       cfg.Exportable,
-		primaryKey:       cfg.PrimaryKey,
 		sourceURL:        cfg.SourceURL,
 		getDataFun:       cfg.GetDataFun,
 	}
@@ -68,67 +54,33 @@ func NewDefaultTable(cfg Config) Table {
 
 func (tb DefaultTable) Copy() Table {
 	return DefaultTable{
-		form: types.NewFormPanel().SetTable(tb.form.Table).
-			SetDescription(tb.form.Description).
-			SetTitle(tb.form.Title),
-		info: types.NewInfoPanel(tb.primaryKey.Name).SetTable(tb.info.Table).
-			SetDescription(tb.info.Description).
-			SetTitle(tb.info.Title).
-			SetGetDataFn(tb.info.GetDataFn),
-		detail: types.NewInfoPanel(tb.primaryKey.Name).SetTable(tb.detail.Table).
-			SetDescription(tb.detail.Description).
-			SetTitle(tb.detail.Title).
-			SetGetDataFn(tb.detail.GetDataFn),
+		BaseTable: &BaseTable{
+			Form: types.NewFormPanel().SetTable(tb.Form.Table).
+				SetDescription(tb.Form.Description).
+				SetTitle(tb.Form.Title),
+			Info: types.NewInfoPanel(tb.PrimaryKey.Name).SetTable(tb.Info.Table).
+				SetDescription(tb.Info.Description).
+				SetTitle(tb.Info.Title).
+				SetGetDataFn(tb.Info.GetDataFn),
+			Detail: types.NewInfoPanel(tb.PrimaryKey.Name).SetTable(tb.Detail.Table).
+				SetDescription(tb.Detail.Description).
+				SetTitle(tb.Detail.Title).
+				SetGetDataFn(tb.Detail.GetDataFn),
+			CanAdd:     tb.CanAdd,
+			Editable:   tb.Editable,
+			Deletable:  tb.Deletable,
+			Exportable: tb.Exportable,
+			PrimaryKey: tb.PrimaryKey,
+		},
 		connectionDriver: tb.connectionDriver,
 		connection:       tb.connection,
-		canAdd:           tb.canAdd,
-		editable:         tb.editable,
-		deletable:        tb.deletable,
-		exportable:       tb.exportable,
-		primaryKey:       tb.primaryKey,
 		sourceURL:        tb.sourceURL,
 		getDataFun:       tb.getDataFun,
 	}
 }
 
-func (tb DefaultTable) GetInfo() *types.InfoPanel {
-	return tb.info
-}
-
-func (tb DefaultTable) GetDetail() *types.InfoPanel {
-	return tb.detail
-}
-
-func (tb DefaultTable) GetForm() *types.FormPanel {
-	return tb.form
-}
-
-func (tb DefaultTable) GetCanAdd() bool {
-	return tb.canAdd && !tb.info.IsHideNewButton
-}
-
-func (tb DefaultTable) GetPrimaryKey() PrimaryKey {
-	return tb.primaryKey
-}
-
-func (tb DefaultTable) GetEditable() bool {
-	return tb.editable && !tb.info.IsHideEditButton
-}
-
-func (tb DefaultTable) GetDeletable() bool {
-	return tb.deletable && !tb.info.IsHideDeleteButton
-}
-
-func (tb DefaultTable) IsShowDetail() bool {
-	return !tb.info.IsHideDetailButton
-}
-
-func (tb DefaultTable) GetExportable() bool {
-	return tb.exportable && !tb.info.IsHideExportButton
-}
-
 // GetData query the data set.
-func (tb DefaultTable) GetData(params parameter.Parameters, isAll bool) (PanelInfo, error) {
+func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -137,12 +89,12 @@ func (tb DefaultTable) GetData(params parameter.Parameters, isAll bool) (PanelIn
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(params.URLPath, params, isAll, []string{})
+		data, size = tb.getDataFun(params.URLPath, params, params.IsAll(), []string{})
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(params.URLPath, params, isAll, []string{})
-	} else if tb.info.GetDataFn != nil {
-		data, size = tb.info.GetDataFn(params.WithIsAll(isAll))
-	} else if isAll {
+		data, size = tb.getDataFromURL(params.URLPath, params, params.IsAll(), []string{})
+	} else if tb.Info.GetDataFn != nil {
+		data, size = tb.Info.GetDataFn(params)
+	} else if params.IsAll() {
 		return tb.getAllDataFromDatabase(params.URLPath, params)
 	} else {
 		return tb.getDataFromDatabase(params.URLPath, params, []string{})
@@ -164,12 +116,12 @@ func (tb DefaultTable) GetData(params parameter.Parameters, isAll bool) (PanelIn
 		Paginator: paginator.Get(paginator.Config{
 			Size:         size,
 			Param:        params,
-			PageSizeList: tb.info.GetPageSizeList(),
+			PageSizeList: tb.Info.GetPageSizeList(),
 		}).SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 			fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
-		Title:       tb.info.Title,
-		FormData:    filterForm,
-		Description: tb.info.Description,
+		Title:          tb.Info.Title,
+		FilterFormData: filterForm,
+		Description:    tb.Info.Description,
 	}, nil
 }
 
@@ -214,7 +166,7 @@ func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, 
 }
 
 // GetDataWithIds query the data set.
-func (tb DefaultTable) GetDataWithIds(params parameter.Parameters, ids []string) (PanelInfo, error) {
+func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -223,13 +175,13 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters, ids []string)
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(params.URLPath, params, false, ids)
+		data, size = tb.getDataFun(params.URLPath, params, false, params.PKs())
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(params.URLPath, params, false, ids)
-	} else if tb.info.GetDataFn != nil {
-		data, size = tb.info.GetDataFn(params.WithPK(ids...))
+		data, size = tb.getDataFromURL(params.URLPath, params, false, params.PKs())
+	} else if tb.Info.GetDataFn != nil {
+		data, size = tb.Info.GetDataFn(params)
 	} else {
-		return tb.getDataFromDatabase(params.URLPath, params, ids)
+		return tb.getDataFromDatabase(params.URLPath, params, params.PKs())
 	}
 
 	infoList := make([]map[string]types.InfoItem, 0)
@@ -248,13 +200,13 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters, ids []string)
 		Paginator: paginator.Get(paginator.Config{
 			Size:         size,
 			Param:        params,
-			PageSizeList: tb.info.GetPageSizeList(),
+			PageSizeList: tb.Info.GetPageSizeList(),
 		}).
 			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
-		Title:       tb.info.Title,
-		FormData:    filterForm,
-		Description: tb.info.Description,
+		Title:          tb.Info.Title,
+		FilterFormData: filterForm,
+		Description:    tb.Info.Description,
 	}, nil
 }
 
@@ -263,9 +215,9 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 	var tempModelData = make(map[string]types.InfoItem)
 	headField := ""
 
-	primaryKeyValue := db.GetValueFromDatabaseType(tb.primaryKey.Type, res[tb.primaryKey.Name], len(columns) == 0)
+	primaryKeyValue := db.GetValueFromDatabaseType(tb.PrimaryKey.Type, res[tb.PrimaryKey.Name], len(columns) == 0)
 
-	for _, field := range tb.info.FieldList {
+	for _, field := range tb.Info.FieldList {
 
 		headField = field.Field
 
@@ -315,7 +267,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 		}
 	}
 
-	tempModelData[tb.primaryKey.Name] = types.InfoItem{
+	tempModelData[tb.PrimaryKey.Name] = types.InfoItem{
 		Content: template.HTML(primaryKeyValue.String()),
 		Value:   primaryKeyValue.String(),
 	}
@@ -328,16 +280,16 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 		queryStatement = "select %s from %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
 	)
 
-	columns, _ := tb.getColumns(tb.info.Table)
+	columns, _ := tb.getColumns(tb.Info.Table)
 
-	thead, fields, joins := tb.info.FieldList.GetThead(types.TableInfo{
-		Table:      tb.info.Table,
+	thead, fields, joins := tb.Info.FieldList.GetThead(types.TableInfo{
+		Table:      tb.Info.Table,
 		Delimiter:  tb.db().GetDelimiter(),
 		Driver:     tb.connectionDriver,
-		PrimaryKey: tb.primaryKey.Name,
+		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns)
 
-	fields += tb.info.Table + "." + modules.FilterField(tb.primaryKey.Name, connection.GetDelimiter())
+	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter())
 
 	var (
 		wheres    = ""
@@ -346,19 +298,19 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 	)
 
 	wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
-		tb.info.FieldList.GetFieldFilterProcessValue, tb.info.FieldList.GetFieldJoinTable)
-	wheres, whereArgs = tb.info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
-	wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
+		tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
+	wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+	wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
 	if wheres != "" {
 		wheres = " where " + wheres
 	}
 
 	if !modules.InArray(columns, params.SortField) {
-		params.SortField = tb.primaryKey.Name
+		params.SortField = tb.PrimaryKey.Name
 	}
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, params.SortField, params.SortType)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, params.SortField, params.SortType)
 
 	logger.LogSQL(queryCmd, []interface{}{})
 
@@ -377,8 +329,8 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 	return PanelInfo{
 		InfoList:    infoList,
 		Thead:       thead,
-		Title:       tb.info.Title,
-		Description: tb.info.Description,
+		Title:       tb.Info.Title,
+		Description: tb.Info.Description,
 	}, nil
 }
 
@@ -394,8 +346,8 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
-		queryStatement = "select %s from %s %s where " + tb.primaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
-		countStatement = "select count(*) from " + placeholder + " %s where " + tb.primaryKey.Name + " in (%s)"
+		queryStatement = "select %s from %s %s where " + tb.PrimaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
+		countStatement = "select count(*) from " + placeholder + " %s where " + tb.PrimaryKey.Name + " in (%s)"
 	} else {
 		if connection.Name() == "mssql" {
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " +
@@ -407,14 +359,14 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		}
 	}
 
-	columns, _ := tb.getColumns(tb.info.Table)
+	columns, _ := tb.getColumns(tb.Info.Table)
 
 	thead, fields, joins, joinTables, filterForm := tb.getTheadAndFilterForm(params, columns)
 
-	fields += tb.info.Table + "." + modules.FilterField(tb.primaryKey.Name, connection.GetDelimiter())
+	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter())
 
 	if !modules.InArray(columns, params.SortField) {
-		params.SortField = tb.primaryKey.Name
+		params.SortField = tb.PrimaryKey.Name
 	}
 
 	var (
@@ -434,9 +386,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	} else {
 
 		wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
-			tb.info.FieldList.GetFieldFilterProcessValue, tb.info.FieldList.GetFieldJoinTable)
-		wheres, whereArgs = tb.info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
-		wheres, whereArgs = tb.info.WhereRaws.Statement(wheres, whereArgs)
+			tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
+		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+		wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
 		if wheres != "" {
 			wheres = " where " + wheres
@@ -451,14 +403,14 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	groupBy := ""
 	if len(joinTables) > 0 {
-		groupBy = " GROUP BY " + tb.info.Table + "." + modules.FilterField(tb.GetPrimaryKey().Name, connection.GetDelimiter())
+		groupBy = " GROUP BY " + tb.Info.Table + "." + modules.FilterField(tb.GetPrimaryKey().Name, connection.GetDelimiter())
 	}
 
 	queryCmd := ""
 	if connection.Name() == "mssql" {
-		queryCmd = fmt.Sprintf(queryStatement, params.SortField, params.SortType, fields, tb.info.Table, joins, wheres, groupBy)
+		queryCmd = fmt.Sprintf(queryStatement, params.SortField, params.SortType, fields, tb.Info.Table, joins, wheres, groupBy)
 	} else {
-		queryCmd = fmt.Sprintf(queryStatement, fields, tb.info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
+		queryCmd = fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
 	}
 
 	logger.LogSQL(queryCmd, args)
@@ -481,7 +433,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		joins = ""
 	}
 
-	countCmd := fmt.Sprintf(countStatement, tb.info.Table, joins, wheres)
+	countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres)
 
 	total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
 
@@ -505,21 +457,17 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
-		Paginator: paginator.Get(paginator.Config{
-			Size:         size,
-			Param:        params,
-			PageSizeList: tb.info.GetPageSizeList(),
-		}).
-			SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+		Paginator: tb.GetPaginator(size, params,
+			template.HTML(fmt.Sprintf("<b>"+language.Get("query time")+": </b>"+
 				fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
-		Title:       tb.info.Title,
-		FormData:    filterForm,
-		Description: tb.info.Description,
+		Title:          tb.Info.Title,
+		FilterFormData: filterForm,
+		Description:    tb.Info.Description,
 	}, nil
 }
 
 // GetDataWithId query the single row of data.
-func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.FormField, []string, string, string, error) {
+func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 
 	var (
 		res     map[string]interface{}
@@ -537,35 +485,35 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 		if len(list) > 0 {
 			res = list[0]
 		}
-	} else if tb.detail.GetDataFn != nil {
-		list, _ := tb.detail.GetDataFn(parameter.BaseParam().WithPK(id))
+	} else if tb.Detail.GetDataFn != nil {
+		list, _ := tb.Detail.GetDataFn(parameter.BaseParam().WithPKs(id))
 		if len(list) > 0 {
 			res = list[0]
 		}
-	} else if tb.info.GetDataFn != nil {
-		list, _ := tb.info.GetDataFn(parameter.BaseParam().WithPK(id))
+	} else if tb.Info.GetDataFn != nil {
+		list, _ := tb.Info.GetDataFn(parameter.BaseParam().WithPKs(id))
 		if len(list) > 0 {
 			res = list[0]
 		}
 	} else {
 
-		columns, _ = tb.getColumns(tb.form.Table)
+		columns, _ = tb.getColumns(tb.Form.Table)
 
 		var err error
 
 		res, err = tb.sql().
-			Table(tb.form.Table).Select(fields...).
-			Where(tb.primaryKey.Name, "=", id).
+			Table(tb.Form.Table).Select(fields...).
+			Where(tb.PrimaryKey.Name, "=", id).
 			First()
 
 		if err != nil {
-			return nil, nil, nil, "", "", err
+			return FormInfo{Title: tb.Form.Title, Description: tb.Form.Description}, err
 		}
 	}
 
-	formList := tb.form.FieldList.Copy()
+	formList := tb.Form.FieldList.Copy()
 
-	for i := 0; i < len(tb.form.FieldList); i++ {
+	for i := 0; i < len(tb.Form.FieldList); i++ {
 		if modules.InArray(columns, formList[i].Field) {
 			fields = append(fields, formList[i].Field)
 		}
@@ -576,11 +524,11 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 		groupHeaders  = make([]string, 0)
 	)
 
-	if len(tb.form.TabGroups) > 0 {
-		for key, value := range tb.form.TabGroups {
+	if len(tb.Form.TabGroups) > 0 {
+		for key, value := range tb.Form.TabGroups {
 			list := make([]types.FormField, len(value))
 			for j := 0; j < len(value); j++ {
-				for _, field := range tb.form.FieldList {
+				for _, field := range tb.Form.FieldList {
 					if value[j] == field.Field {
 						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
@@ -594,9 +542,15 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 			}
 
 			groupFormList = append(groupFormList, list)
-			groupHeaders = append(groupHeaders, tb.form.TabHeaders[key])
+			groupHeaders = append(groupHeaders, tb.Form.TabHeaders[key])
 		}
-		return tb.form.FieldList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
+		return FormInfo{
+			FieldList:         tb.Form.FieldList,
+			GroupFieldList:    groupFormList,
+			GroupFieldHeaders: groupHeaders,
+			Title:             tb.Form.Title,
+			Description:       tb.Form.Description,
+		}, nil
 	}
 
 	for key, field := range formList {
@@ -609,31 +563,37 @@ func (tb DefaultTable) GetDataWithId(id string) ([]types.FormField, [][]types.Fo
 		}
 	}
 
-	return formList, groupFormList, groupHeaders, tb.form.Title, tb.form.Description, nil
+	return FormInfo{
+		FieldList:         formList,
+		GroupFieldList:    groupFormList,
+		GroupFieldHeaders: groupHeaders,
+		Title:             tb.Form.Title,
+		Description:       tb.Form.Description,
+	}, nil
 }
 
-// UpdateDataFromDatabase update data.
-func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
+// UpdateData update data.
+func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "0")
 
-	if tb.form.Validator != nil {
-		if err := tb.form.Validator(dataList); err != nil {
+	if tb.Form.Validator != nil {
+		if err := tb.Form.Validator(dataList); err != nil {
 			return err
 		}
 	}
 
-	if tb.form.UpdateFn != nil {
+	if tb.Form.UpdateFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		return tb.form.UpdateFn(dataList)
+		return tb.Form.UpdateFn(dataList)
 	}
 
-	if tb.form.PreProcessFn != nil {
-		dataList = tb.form.PreProcessFn(dataList)
+	if tb.Form.PreProcessFn != nil {
+		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
-	_, err := tb.sql().Table(tb.form.Table).
-		Where(tb.primaryKey.Name, "=", dataList.Get(tb.primaryKey.Name)).
+	_, err := tb.sql().Table(tb.Form.Table).
+		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
@@ -648,7 +608,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
 	// NOTE: Database Transaction may be considered here.
 
-	if tb.form.PostHook != nil {
+	if tb.Form.PostHook != nil {
 		go func() {
 
 			defer func() {
@@ -659,7 +619,7 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 
 			dataList.Add(form.PostTypeKey, "0")
 
-			err := tb.form.PostHook(dataList)
+			err := tb.Form.PostHook(dataList)
 			if err != nil {
 				logger.Error(err)
 			}
@@ -669,27 +629,27 @@ func (tb DefaultTable) UpdateDataFromDatabase(dataList form.Values) error {
 	return nil
 }
 
-// InsertDataFromDatabase insert data.
-func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
+// InsertData insert data.
+func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "1")
 
-	if tb.form.Validator != nil {
-		if err := tb.form.Validator(dataList); err != nil {
+	if tb.Form.Validator != nil {
+		if err := tb.Form.Validator(dataList); err != nil {
 			return err
 		}
 	}
 
-	if tb.form.InsertFn != nil {
+	if tb.Form.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		return tb.form.InsertFn(dataList)
+		return tb.Form.InsertFn(dataList)
 	}
 
-	if tb.form.PreProcessFn != nil {
-		dataList = tb.form.PreProcessFn(dataList)
+	if tb.Form.PreProcessFn != nil {
+		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
-	id, err := tb.sql().Table(tb.form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
+	id, err := tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
 	// TODO: some errors should be ignored.
 	if err != nil {
@@ -703,7 +663,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 
-	if tb.form.PostHook != nil {
+	if tb.Form.PostHook != nil {
 		go func() {
 
 			defer func() {
@@ -714,7 +674,7 @@ func (tb DefaultTable) InsertDataFromDatabase(dataList form.Values) error {
 
 			dataList.Add(form.PostTypeKey, "1")
 
-			err := tb.form.PostHook(dataList)
+			err := tb.Form.PostHook(dataList)
 			if err != nil {
 				logger.Error(err)
 			}
@@ -730,19 +690,19 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		value        = make(dialect.H)
 		exceptString = make([]string, 0)
 
-		columns, auto = tb.getColumns(tb.form.Table)
+		columns, auto = tb.getColumns(tb.Form.Table)
 
 		fun types.PostFieldFilterFn
 	)
 
 	if auto {
-		exceptString = []string{tb.primaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey}
+		exceptString = []string{tb.PrimaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey}
 	} else {
 		exceptString = []string{form.PreviousKey, form.MethodKey, form.TokenKey}
 	}
 
 	if !dataList.IsSingleUpdatePost() {
-		for _, field := range tb.form.FieldList {
+		for _, field := range tb.Form.FieldList {
 			if field.FormType.IsMultiSelect() {
 				if _, ok := dataList[field.Field+"[]"]; !ok {
 					dataList[field.Field+"[]"] = []string{""}
@@ -758,16 +718,16 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		if !modules.InArray(exceptString, k) {
 			if modules.InArray(columns, k) {
 				delimiter := ","
-				for i := 0; i < len(tb.form.FieldList); i++ {
-					if k == tb.form.FieldList[i].Field {
-						fun = tb.form.FieldList[i].PostFilterFn
-						delimiter = modules.SetDefault(tb.form.FieldList[i].DefaultOptionDelimiter, ",")
+				for i := 0; i < len(tb.Form.FieldList); i++ {
+					if k == tb.Form.FieldList[i].Field {
+						fun = tb.Form.FieldList[i].PostFilterFn
+						delimiter = modules.SetDefault(tb.Form.FieldList[i].DefaultOptionDelimiter, ",")
 					}
 				}
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
 					value[k] = fun(types.PostFieldModel{
-						ID:    dataList.Get(tb.primaryKey.Name),
+						ID:    dataList.Get(tb.PrimaryKey.Name),
 						Value: vv,
 					})
 				} else {
@@ -780,10 +740,10 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 					}
 				}
 			} else {
-				fun := tb.form.FieldList.FindByFieldName(k).PostFilterFn
+				fun := tb.Form.FieldList.FindByFieldName(k).PostFilterFn
 				if fun != nil {
 					fun(types.PostFieldModel{
-						ID:    dataList.Get(tb.primaryKey.Name),
+						ID:    dataList.Get(tb.PrimaryKey.Name),
 						Value: modules.RemoveBlankFromArray(v),
 					})
 				}
@@ -793,31 +753,31 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 	return value
 }
 
-// DeleteDataFromDatabase delete data.
-func (tb DefaultTable) DeleteDataFromDatabase(id string) error {
+// DeleteData delete data.
+func (tb DefaultTable) DeleteData(id string) error {
 	idArr := strings.Split(id, ",")
 
-	if tb.info.DeleteFn != nil {
+	if tb.Info.DeleteFn != nil {
 
 		if len(idArr) == 0 {
 			return errors.New("wrong parameter")
 		}
 
-		return tb.info.DeleteFn(idArr)
+		return tb.Info.DeleteFn(idArr)
 	}
 
-	if tb.info.PreDeleteFn != nil && len(idArr) > 0 {
-		if err := tb.info.PreDeleteFn(idArr); err != nil {
+	if tb.Info.PreDeleteFn != nil && len(idArr) > 0 {
+		if err := tb.Info.PreDeleteFn(idArr); err != nil {
 			return err
 		}
 	}
 
 	// TODO: use where in
 	for _, id := range idArr {
-		tb.delete(tb.form.Table, tb.primaryKey.Name, id)
+		tb.delete(tb.Form.Table, tb.PrimaryKey.Name, id)
 	}
 
-	if tb.info.DeleteHook != nil && len(idArr) > 0 {
+	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
 		go func() {
 			defer func() {
 				if err := recover(); err != nil {
@@ -825,7 +785,7 @@ func (tb DefaultTable) DeleteDataFromDatabase(id string) error {
 				}
 			}()
 
-			if err := tb.info.DeleteHook(idArr); err != nil {
+			if err := tb.Info.DeleteHook(idArr); err != nil {
 				logger.Error(err)
 			}
 		}()
@@ -836,7 +796,7 @@ func (tb DefaultTable) DeleteDataFromDatabase(id string) error {
 
 func GetNewFormList(groupHeaders []string,
 	group [][]string,
-	old []types.FormField) ([]types.FormField, [][]types.FormField, []string) {
+	old []types.FormField) FormInfo {
 
 	if len(group) == 0 {
 		var newForm []types.FormField
@@ -846,7 +806,7 @@ func GetNewFormList(groupHeaders []string,
 				newForm = append(newForm, v.UpdateDefaultValue())
 			}
 		}
-		return newForm, [][]types.FormField{}, []string{}
+		return FormInfo{FieldList: newForm}
 	}
 
 	var (
@@ -873,7 +833,7 @@ func GetNewFormList(groupHeaders []string,
 		headers = append(headers, groupHeaders[key])
 	}
 
-	return []types.FormField{}, newForm, headers
+	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}
 }
 
 // ***************************************
@@ -888,11 +848,11 @@ func (tb DefaultTable) delete(table, key, id string) {
 
 func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
 	string, string, []string, []types.FormField) {
-	return tb.info.FieldList.GetTheadAndFilterForm(types.TableInfo{
-		Table:      tb.info.Table,
+	return tb.Info.FieldList.GetTheadAndFilterForm(types.TableInfo{
+		Table:      tb.Info.Table,
 		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
-		PrimaryKey: tb.primaryKey.Name,
+		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns)
 }
 
@@ -909,7 +869,7 @@ func (tb DefaultTable) delimiter() string {
 }
 
 func (tb DefaultTable) getDataFromDB() bool {
-	return tb.sourceURL == "" && tb.getDataFun == nil && tb.info.GetDataFn == nil && tb.detail.GetDataFn == nil
+	return tb.sourceURL == "" && tb.getDataFun == nil && tb.Info.GetDataFn == nil && tb.Detail.GetDataFn == nil
 }
 
 // sql is a helper function return db sql.
@@ -929,7 +889,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["column_name"].(string)
-			if columns[key] == tb.primaryKey.Name {
+			if columns[key] == tb.PrimaryKey.Name {
 				if v, ok := model["column_default"].(string); ok {
 					if strings.Contains(v, "nextval") {
 						auto = true
@@ -942,7 +902,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["Field"].(string)
-			if columns[key] == tb.primaryKey.Name {
+			if columns[key] == tb.PrimaryKey.Name {
 				if v, ok := model["Extra"].(string); ok {
 					if v == "auto_increment" {
 						auto = true

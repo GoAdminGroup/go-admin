@@ -29,15 +29,6 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 
 	panel := table.Get(prefix, ctx)
 
-	formData, groupFormData, groupHeaders, title, description, err := panel.GetDataWithId(id)
-
-	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
-	}
-
 	user := auth.Auth(ctx)
 
 	infoUrl := routePathWithPrefix("info", prefix) + paramStr
@@ -56,12 +47,21 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 		footerKind = "edit_only"
 	}
 
+	formInfo, err := panel.GetDataWithId(id)
+
+	if err != nil && alert == "" {
+		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
+			SetTheme("warning").
+			SetContent(template2.HTML(err.Error())).
+			GetContent()
+	}
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
-			SetContent(formData).
-			SetTabContents(groupFormData).
-			SetTabHeaders(groupHeaders).
+			SetContent(formInfo.FieldList).
+			SetTabContents(formInfo.GroupFieldList).
+			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(editUrl).
@@ -72,8 +72,8 @@ func showForm(ctx *context.Context, alert template2.HTML, prefix string, id stri
 			SetOperationFooter(formFooter(footerKind)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),
-		Description: description,
-		Title:       title,
+		Description: formInfo.Description,
+		Title:       formInfo.Title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
@@ -113,7 +113,7 @@ func EditForm(ctx *context.Context) {
 		}
 	}
 
-	err := param.Panel.UpdateDataFromDatabase(param.Value())
+	err := param.Panel.UpdateData(param.Value())
 	if err != nil {
 		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 			SetTheme("warning").

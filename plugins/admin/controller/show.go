@@ -46,7 +46,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 
 	panel := table.Get(prefix, ctx)
 
-	panelInfo, err := panel.GetData(params, false)
+	panelInfo, err := panel.GetData(params.WithIsAll(false))
 
 	if err != nil {
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
@@ -147,7 +147,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 					SetInfoUrl(infoUrl).
 					SetButtons(btns).
 					SetActionJs(btnsJs + actionJs).
-					SetHasFilter(len(panelInfo.FormData) > 0).
+					SetHasFilter(len(panelInfo.FilterFormData) > 0).
 					SetAction(actionBtns).
 					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
@@ -172,7 +172,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 			SetLayout(info.TableLayout).
 			SetActionJs(btnsJs + actionJs).
 			SetAction(actionBtns).
-			SetHasFilter(len(panelInfo.FormData) > 0).
+			SetHasFilter(len(panelInfo.FilterFormData) > 0).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).
 			SetExportUrl(exportUrl).
@@ -193,10 +193,10 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 		WithHeadBorder().
 		SetFooter(panelInfo.Paginator.GetContent())
 
-	if len(panelInfo.FormData) > 0 {
+	if len(panelInfo.FilterFormData) > 0 {
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").
 			SetSecondHeader(aForm().
-				SetContent(panelInfo.FormData).
+				SetContent(panelInfo.FilterFormData).
 				SetPrefix(config.PrefixFixSlash()).
 				SetInputWidth(10).
 				SetMethod("get").
@@ -275,12 +275,12 @@ func Export(ctx *context.Context) {
 	if len(param.Id) == 0 {
 		params := parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
 			tableInfo.GetSort())
-		infoData, err = panel.GetData(params, param.IsAll)
+		infoData, err = panel.GetData(params.WithIsAll(param.IsAll))
 		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", tableInfo.Title, time.Now().Unix(),
 			params.Page, params.PageSize)
 	} else {
 		infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
-			tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()), param.Id)
+			tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()).WithPKs(param.Id...))
 		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
 	}
 
