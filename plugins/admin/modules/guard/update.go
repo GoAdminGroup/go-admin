@@ -2,7 +2,6 @@ package guard
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"net/http"
@@ -14,35 +13,32 @@ type UpdateParam struct {
 	Value  form.Values
 }
 
-func Update(list table.GeneratorList) context.Handler {
-	return func(ctx *context.Context) {
-		prefix := ctx.Query(constant.PrefixKey)
-		panel := list[prefix](ctx)
+func (g *Guard) Update(ctx *context.Context) {
+	panel, prefix := g.table(ctx)
 
-		pname := panel.GetPrimaryKey().Name
+	pname := panel.GetPrimaryKey().Name
 
-		id := ctx.FormValue("pk")
+	id := ctx.FormValue("pk")
 
-		if id == "" {
-			ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-				"msg": "wrong " + pname,
-			})
-			ctx.Abort()
-			return
-		}
-
-		var f = make(form.Values)
-		f.Add(form.PostIsSingleUpdateKey, "1")
-		f.Add(pname, id)
-		f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
-
-		ctx.SetUserValue("update_param", &UpdateParam{
-			Panel:  panel,
-			Prefix: prefix,
-			Value:  f,
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, map[string]interface{}{
+			"msg": "wrong " + pname,
 		})
-		ctx.Next()
+		ctx.Abort()
+		return
 	}
+
+	var f = make(form.Values)
+	f.Add(form.PostIsSingleUpdateKey, "1")
+	f.Add(pname, id)
+	f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
+
+	ctx.SetUserValue("update_param", &UpdateParam{
+		Panel:  panel,
+		Prefix: prefix,
+		Value:  f,
+	})
+	ctx.Next()
 }
 
 func GetUpdateParam(ctx *context.Context) *UpdateParam {

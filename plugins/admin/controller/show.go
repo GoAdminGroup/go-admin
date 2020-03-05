@@ -30,21 +30,21 @@ import (
 )
 
 // ShowInfo show info page.
-func ShowInfo(ctx *context.Context) {
+func (h *Handler) ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query(constant.PrefixKey)
-	panel := getTable(prefix, ctx)
+	panel := h.table(prefix, ctx)
 
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	buf := showTable(ctx, prefix, params)
+	buf := h.showTable(ctx, prefix, params)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func showTable(ctx *context.Context, prefix string, params parameter.Parameters) *bytes.Buffer {
+func (h *Handler) showTable(ctx *context.Context, prefix string, params parameter.Parameters) *bytes.Buffer {
 
-	panel := getTable(prefix, ctx)
+	panel := h.table(prefix, ctx)
 
 	panelInfo, err := panel.GetData(params.WithIsAll(false))
 
@@ -60,27 +60,27 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 			Content:     alert,
 			Description: errMsg,
 			Title:       errMsg,
-		}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 	}
 
 	paramStr := params.GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(panel.GetEditable(), routePathWithPrefix("show_edit", prefix)+paramStr)
-	newUrl := modules.AorEmpty(panel.GetCanAdd(), routePathWithPrefix("show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(panel.GetDeletable(), routePathWithPrefix("delete", prefix))
-	exportUrl := modules.AorEmpty(panel.GetExportable(), routePathWithPrefix("export", prefix)+paramStr)
-	detailUrl := modules.AorEmpty(panel.IsShowDetail(), routePathWithPrefix("detail", prefix)+paramStr)
+	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr)
+	newUrl := modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(panel.GetDeletable(), h.routePathWithPrefix("delete", prefix))
+	exportUrl := modules.AorEmpty(panel.GetExportable(), h.routePathWithPrefix("export", prefix)+paramStr)
+	detailUrl := modules.AorEmpty(panel.IsShowDetail(), h.routePathWithPrefix("detail", prefix)+paramStr)
 
-	infoUrl := routePathWithPrefix("info", prefix)
-	updateUrl := routePathWithPrefix("update", prefix)
+	infoUrl := h.routePathWithPrefix("info", prefix)
+	updateUrl := h.routePathWithPrefix("update", prefix)
 
 	user := auth.Auth(ctx)
 
-	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, route("show_edit").Method())
-	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, route("show_new").Method())
-	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, route("delete").Method())
-	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, route("export").Method())
-	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, route("detail").Method())
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
+	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route("show_new").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route("delete").Method())
+	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, h.route("export").Method())
+	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, h.route("detail").Method())
 
 	var (
 		body       template2.HTML
@@ -197,7 +197,7 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").
 			SetSecondHeader(aForm().
 				SetContent(panelInfo.FilterFormData).
-				SetPrefix(config.PrefixFixSlash()).
+				SetPrefix(h.config.PrefixFixSlash()).
 				SetInputWidth(10).
 				SetMethod("get").
 				SetLayout(info.FilterFormLayout).
@@ -217,12 +217,12 @@ func showTable(ctx *context.Context, prefix string, params parameter.Parameters)
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())), params.Animation)
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), params.Animation)
 }
 
 // Assets return front-end assets according the request path.
-func Assets(ctx *context.Context) {
-	filepath := config.URLRemovePrefix(ctx.Path())
+func (h *Handler) Assets(ctx *context.Context) {
+	filepath := h.config.URLRemovePrefix(ctx.Path())
 	data, err := aTemplate().GetAsset(filepath)
 
 	if err != nil {
@@ -250,12 +250,12 @@ func Assets(ctx *context.Context) {
 }
 
 // Export export table rows as excel object.
-func Export(ctx *context.Context) {
+func (h *Handler) Export(ctx *context.Context) {
 	param := guard.GetExportParam(ctx)
 
 	tableName := "Sheet1"
 	prefix := ctx.Query(constant.PrefixKey)
-	panel := getTable(prefix, ctx)
+	panel := h.table(prefix, ctx)
 
 	f := excelize.NewFile()
 	index := f.NewSheet(tableName)

@@ -17,23 +17,23 @@ import (
 )
 
 // ShowNewForm show a new form page.
-func ShowNewForm(ctx *context.Context) {
+func (h *Handler) ShowNewForm(ctx *context.Context) {
 	param := guard.GetShowNewFormParam(ctx)
-	showNewForm(ctx, "", param.Prefix, param.Param.GetRouteParamStr(), false)
+	h.showNewForm(ctx, "", param.Prefix, param.Param.GetRouteParamStr(), false)
 }
 
-func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, paramStr string, isNew bool) {
+func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix string, paramStr string, isNew bool) {
 
 	user := auth.Auth(ctx)
 
-	panel := getTable(prefix, ctx)
+	panel := h.table(prefix, ctx)
 
 	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 		panel.GetForm().FieldList)
 
-	infoUrl := routePathWithPrefix("info", prefix) + paramStr
-	newUrl := routePathWithPrefix("new", prefix)
-	showNewUrl := routePathWithPrefix("show_new", prefix) + paramStr
+	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
+	newUrl := h.routePathWithPrefix("new", prefix)
+	showNewUrl := h.routePathWithPrefix("show_new", prefix) + paramStr
 
 	referer := ctx.Headers("Referer")
 
@@ -44,14 +44,14 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
-			SetPrefix(config.PrefixFixSlash()).
+			SetPrefix(h.config.PrefixFixSlash()).
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetUrl(newUrl).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetHiddenFields(map[string]string{
-				form2.TokenKey:    authSrv().AddToken(),
+				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: infoUrl,
 			}).
 			SetTitle("New").
@@ -60,7 +60,7 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 	ctx.HTML(http.StatusOK, buf.String())
 
 	if isNew {
@@ -69,26 +69,26 @@ func showNewForm(ctx *context.Context, alert template2.HTML, prefix string, para
 }
 
 // NewForm insert a table row into database.
-func NewForm(ctx *context.Context) {
+func (h *Handler) NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
 	paramStr := param.Param.GetRouteParamStr()
 
 	if param.HasAlert() {
-		showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
+		h.showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
 		return
 	}
 
 	// process uploading files, only support local storage
 	if len(param.MultiForm.File) > 0 {
-		err := file.GetFileEngine(config.FileUploadEngine.Name).Upload(param.MultiForm)
+		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
 			alert := aAlert().SetTitle(constant.DefaultErrorMsg).
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			showNewForm(ctx, alert, param.Prefix, paramStr, true)
+			h.showNewForm(ctx, alert, param.Prefix, paramStr, true)
 			return
 		}
 	}
@@ -99,19 +99,19 @@ func NewForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		showNewForm(ctx, alert, param.Prefix, paramStr, true)
+		h.showNewForm(ctx, alert, param.Prefix, paramStr, true)
 		return
 	}
 
 	if !param.FromList {
 
 		if isNewUrl(param.PreviousPath, param.Prefix) {
-			showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
+			h.showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
 			return
 		}
 
 		if isEditUrl(param.PreviousPath, param.Prefix) {
-			showForm(ctx, param.Alert, param.Prefix, param.Id, paramStr, true)
+			h.showForm(ctx, param.Alert, param.Prefix, param.Id, paramStr, true)
 			return
 		}
 
@@ -120,8 +120,8 @@ func NewForm(ctx *context.Context) {
 		return
 	}
 
-	buf := showTable(ctx, param.Prefix, param.Param)
+	buf := h.showTable(ctx, param.Prefix, param.Param)
 
 	ctx.HTML(http.StatusOK, buf.String())
-	ctx.AddHeader(constant.PjaxUrlHeader, routePathWithPrefix("info", param.Prefix)+paramStr)
+	ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("info", param.Prefix)+paramStr)
 }

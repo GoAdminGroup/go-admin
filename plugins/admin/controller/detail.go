@@ -18,10 +18,10 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
-func ShowDetail(ctx *context.Context) {
+func (h *Handler) ShowDetail(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 	id := ctx.Query(constant.DetailPKKey)
-	panel := getTable(prefix, ctx)
+	panel := h.table(prefix, ctx)
 	user := auth.Auth(ctx)
 
 	newPanel := panel.Copy()
@@ -53,13 +53,13 @@ func ShowDetail(ctx *context.Context) {
 		panel.GetInfo().SortField,
 		panel.GetInfo().GetSort()).GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(panel.GetEditable(), routePathWithPrefix("show_edit", prefix)+paramStr+
+	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr+
 		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))
-	deleteUrl := modules.AorEmpty(panel.GetDeletable(), routePathWithPrefix("delete", prefix)+paramStr)
-	infoUrl := routePathWithPrefix("info", prefix) + paramStr
+	deleteUrl := modules.AorEmpty(panel.GetDeletable(), h.routePathWithPrefix("delete", prefix)+paramStr)
+	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
 
-	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, route("show_edit").Method())
-	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, route("delete").Method())
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route("delete").Method())
 
 	deleteJs := ""
 
@@ -135,10 +135,10 @@ $('.delete-btn').on('click', function (event) {
 			SetHiddenFields(map[string]string{
 				form2.PreviousKey: infoUrl,
 			}).
-			SetPrefix(config.PrefixFixSlash()), editUrl, deleteUrl),
+			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: desc,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

@@ -8,7 +8,7 @@ import (
 )
 
 // Delete delete the row from database.
-func Delete(ctx *context.Context) {
+func (h *Handler) Delete(ctx *context.Context) {
 
 	param := guard.GetDeleteParam(ctx)
 
@@ -20,13 +20,13 @@ func Delete(ctx *context.Context) {
 	//	return
 	//}
 
-	if err := getTable(param.Prefix, ctx).DeleteData(param.Id); err != nil {
+	if err := h.table(param.Prefix, ctx).DeleteData(param.Id); err != nil {
 		logger.Error(err)
 		response.Error(ctx, "删除失败")
 		return
 	}
 
-	newToken := authSrv().AddToken()
+	newToken := h.authSrv().AddToken()
 
 	response.OkWithData(ctx, map[string]interface{}{
 		"token": newToken,

@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -25,34 +24,31 @@ type ShowFormParam struct {
 	Param  parameter.Parameters
 }
 
-func ShowForm(conn db.Connection, list table.GeneratorList) context.Handler {
-	return func(ctx *context.Context) {
+func (g *Guard) ShowForm(ctx *context.Context) {
 
-		prefix := ctx.Query(constant.PrefixKey)
-		panel := list[prefix](ctx)
+	panel, prefix := g.table(ctx)
 
-		if !panel.GetEditable() {
-			alert(ctx, panel, "operation not allow", conn)
-			ctx.Abort()
-			return
-		}
-
-		id := ctx.Query(constant.EditPKKey)
-		if id == "" {
-			alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, conn)
-			ctx.Abort()
-			return
-		}
-
-		ctx.SetUserValue("show_form_param", &ShowFormParam{
-			Panel:  panel,
-			Id:     id,
-			Prefix: prefix,
-			Param: parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
-				panel.GetInfo().GetSort()),
-		})
-		ctx.Next()
+	if !panel.GetEditable() {
+		alert(ctx, panel, "operation not allow", g.conn)
+		ctx.Abort()
+		return
 	}
+
+	id := ctx.Query(constant.EditPKKey)
+	if id == "" {
+		alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, g.conn)
+		ctx.Abort()
+		return
+	}
+
+	ctx.SetUserValue("show_form_param", &ShowFormParam{
+		Panel:  panel,
+		Id:     id,
+		Prefix: prefix,
+		Param: parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
+			panel.GetInfo().GetSort()),
+	})
+	ctx.Next()
 }
 
 func GetShowFormParam(ctx *context.Context) *ShowFormParam {
@@ -87,49 +83,44 @@ func (e EditFormParam) IsRole() bool {
 	return e.Prefix == "roles"
 }
 
-func EditForm(srv service.List, list table.GeneratorList) context.Handler {
-	return func(ctx *context.Context) {
-		prefix := ctx.Query(constant.PrefixKey)
-		previous := ctx.FormValue(form.PreviousKey)
-		panel := list[prefix](ctx)
-		multiForm := ctx.Request.MultipartForm
+func (g *Guard) EditForm(ctx *context.Context) {
+	previous := ctx.FormValue(form.PreviousKey)
+	panel, prefix := g.table(ctx)
+	multiForm := ctx.Request.MultipartForm
 
-		conn := db.GetConnection(srv)
-
-		if !panel.GetEditable() {
-			alert(ctx, panel, "operation not allow", conn)
-			ctx.Abort()
-			return
-		}
-		token := ctx.FormValue(form.TokenKey)
-
-		if !auth.GetTokenService(srv.Get(auth.TokenServiceKey)).CheckToken(token) {
-			alert(ctx, panel, "edit fail, wrong token", conn)
-			ctx.Abort()
-			return
-		}
-
-		fromList := isInfoUrl(previous)
-
-		param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize,
-			panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
-
-		if fromList {
-			previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
-		}
-
-		ctx.SetUserValue("edit_form_param", &EditFormParam{
-			Panel:        panel,
-			Id:           multiForm.Value[panel.GetPrimaryKey().Name][0],
-			Prefix:       prefix,
-			Param:        param,
-			Path:         strings.Split(previous, "?")[0],
-			MultiForm:    multiForm,
-			PreviousPath: previous,
-			FromList:     fromList,
-		})
-		ctx.Next()
+	if !panel.GetEditable() {
+		alert(ctx, panel, "operation not allow", g.conn)
+		ctx.Abort()
+		return
 	}
+	token := ctx.FormValue(form.TokenKey)
+
+	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
+		alert(ctx, panel, "edit fail, wrong token", g.conn)
+		ctx.Abort()
+		return
+	}
+
+	fromList := isInfoUrl(previous)
+
+	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize,
+		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
+
+	if fromList {
+		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
+	}
+
+	ctx.SetUserValue("edit_form_param", &EditFormParam{
+		Panel:        panel,
+		Id:           multiForm.Value[panel.GetPrimaryKey().Name][0],
+		Prefix:       prefix,
+		Param:        param,
+		Path:         strings.Split(previous, "?")[0],
+		MultiForm:    multiForm,
+		PreviousPath: previous,
+		FromList:     fromList,
+	})
+	ctx.Next()
 }
 
 func isInfoUrl(s string) bool {

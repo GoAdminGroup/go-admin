@@ -16,61 +16,55 @@ import (
 	template2 "html/template"
 	"regexp"
 	"strings"
-	"sync"
-	"sync/atomic"
 )
 
-var (
+type Handler struct {
 	config        c.Config
 	captchaConfig map[string]string
 	services      service.List
 	conn          db.Connection
 	routes        context.RouterMap
 	generators    table.GeneratorList
+}
 
-	count uint32
-	lock  sync.Mutex
-)
+func New(cfg Config) *Handler {
+	return &Handler{
+		config:     cfg.Config,
+		services:   cfg.Services,
+		conn:       cfg.Connection,
+		generators: cfg.Generators,
+	}
+}
 
-type InitConfiguration struct {
-	RouterMap  context.RouterMap
+type Config struct {
 	Config     c.Config
 	Services   service.List
+	Connection db.Connection
 	Generators table.GeneratorList
 }
 
-func Init(cfg InitConfiguration) {
-	lock.Lock()
-	defer lock.Unlock()
-
-	if atomic.LoadUint32(&count) != 0 {
-		panic("can not initialize twice")
-	}
-	routes = cfg.RouterMap
-	config = cfg.Config
-	services = cfg.Services
-	conn = db.GetConnection(services)
-	generators = cfg.Generators
+func (h *Handler) SetCaptcha(cap map[string]string) {
+	h.captchaConfig = cap
 }
 
-func SetCaptcha(cap map[string]string) {
-	captchaConfig = cap
+func (h *Handler) SetRoutes(r context.RouterMap) {
+	h.routes = r
 }
 
-func getTable(prefix string, ctx *context.Context) table.Table {
-	return generators[prefix](ctx)
+func (h *Handler) table(prefix string, ctx *context.Context) table.Table {
+	return h.generators[prefix](ctx)
 }
 
-func route(name string) context.Router {
-	return routes.Get(name)
+func (h *Handler) route(name string) context.Router {
+	return h.routes.Get(name)
 }
 
-func routePath(name string, value ...string) string {
-	return routes.Get(name).GetURL(value...)
+func (h *Handler) routePath(name string, value ...string) string {
+	return h.routes.Get(name).GetURL(value...)
 }
 
-func routePathWithPrefix(name string, prefix string) string {
-	return routePath(name, "prefix", prefix)
+func (h *Handler) routePathWithPrefix(name string, prefix string) string {
+	return h.routePath(name, "prefix", prefix)
 }
 
 func isInfoUrl(s string) bool {
@@ -89,8 +83,8 @@ func isEditUrl(s string, p string) bool {
 	return reg.MatchString(s)
 }
 
-func authSrv() *auth.TokenService {
-	return auth.GetTokenService(services.Get(auth.TokenServiceKey))
+func (h *Handler) authSrv() *auth.TokenService {
+	return auth.GetTokenService(h.services.Get(auth.TokenServiceKey))
 }
 
 func aAlert() types.AlertAttribute {
@@ -130,7 +124,7 @@ func aTab() types.TabsAttribute {
 }
 
 func aTemplate() template.Template {
-	return template.Get(config.Theme)
+	return template.Get(c.Get().Theme)
 }
 
 func isPjax(ctx *context.Context) bool {

@@ -19,11 +19,11 @@ import (
 )
 
 // GlobalDeferHandler is a global error handler of admin plugin.
-func GlobalDeferHandler(ctx *context.Context) {
+func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 	logger.Access(ctx)
 
-	RecordOperationLog(ctx)
+	h.RecordOperationLog(ctx)
 
 	if err := recover(); err != nil {
 		logger.Error(err)
@@ -46,11 +46,11 @@ func GlobalDeferHandler(ctx *context.Context) {
 		}
 
 		if ok, _ = regexp.MatchString("/edit(.*)", ctx.Path()); ok {
-			setFormWithReturnErrMessage(ctx, errMsg, "edit")
+			h.setFormWithReturnErrMessage(ctx, errMsg, "edit")
 			return
 		}
 		if ok, _ = regexp.MatchString("/new(.*)", ctx.Path()); ok {
-			setFormWithReturnErrMessage(ctx, errMsg, "new")
+			h.setFormWithReturnErrMessage(ctx, errMsg, "new")
 			return
 		}
 
@@ -67,13 +67,13 @@ func GlobalDeferHandler(ctx *context.Context) {
 			Content:     alert,
 			Description: "error",
 			Title:       "error",
-		}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 		ctx.HTML(http.StatusOK, buf.String())
 		return
 	}
 }
 
-func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
+func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
 
 	alert := aAlert().
 		SetTitle(constant.DefaultErrorMsg).
@@ -84,7 +84,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 	var (
 		formInfo table.FormInfo
 		prefix   = ctx.Query(constant.PrefixKey)
-		panel    = getTable(prefix, ctx)
+		panel    = h.table(prefix, ctx)
 	)
 
 	if kind == "edit" {
@@ -92,7 +92,7 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
 		}
-		formInfo, _ = getTable(prefix, ctx).GetDataWithId(id)
+		formInfo, _ = h.table(prefix, ctx).GetDataWithId(id)
 	} else {
 		formInfo = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
 			panel.GetForm().FieldList)
@@ -113,18 +113,18 @@ func setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind strin
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetTitle(template2.HTML(strings.Title(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
-			SetPrefix(config.PrefixFixSlash()).
+			SetPrefix(h.config.PrefixFixSlash()).
 			SetHiddenFields(map[string]string{
-				form.TokenKey:    authSrv().AddToken(),
-				form.PreviousKey: config.Url("/info/" + prefix + queryParam),
+				form.TokenKey:    h.authSrv().AddToken(),
+				form.PreviousKey: h.config.Url("/info/" + prefix + queryParam),
 			}).
-			SetUrl(config.Url("/"+kind+"/"+prefix)).
+			SetUrl(h.config.Url("/"+kind+"/"+prefix)).
 			SetOperationFooter(formFooter(kind)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 	ctx.HTML(http.StatusOK, buf.String())
-	ctx.AddHeader(constant.PjaxUrlHeader, config.Url("/info/"+prefix+"/"+kind+queryParam))
+	ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

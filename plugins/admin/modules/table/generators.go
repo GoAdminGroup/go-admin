@@ -20,12 +20,20 @@ import (
 	"time"
 )
 
-func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
+type SystemTable struct {
+	conn db.Connection
+}
+
+func NewSystemTable(conn db.Connection) *SystemTable {
+	return &SystemTable{conn: conn}
+}
+
+func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
-	labelModels, _ := table("goadmin_role_users").
+	labelModels, _ := s.table("goadmin_role_users").
 		Select("goadmin_roles.name", "user_id").
 		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
 		All()
@@ -66,9 +74,9 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 
 			var ids = interfaces(idArr)
 
-			_, txErr := connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-				deleteUserRoleErr := connection().WithTx(tx).
+				deleteUserRoleErr := s.connection().WithTx(tx).
 					Table("goadmin_role_users").
 					WhereIn("user_id", ids).
 					Delete()
@@ -77,7 +85,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 					return deleteUserRoleErr, map[string]interface{}{}
 				}
 
-				deleteUserPermissionErr := connection().WithTx(tx).
+				deleteUserPermissionErr := s.connection().WithTx(tx).
 					Table("goadmin_user_permissions").
 					WhereIn("user_id", ids).
 					Delete()
@@ -86,7 +94,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 					return deleteUserPermissionErr, map[string]interface{}{}
 				}
 
-				deleteUserErr := connection().WithTx(tx).
+				deleteUserErr := s.connection().WithTx(tx).
 					Table("goadmin_users").
 					WhereIn("id", ids).
 					Delete()
@@ -102,7 +110,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 		})
 
 	var roles, permissions types.FieldOptions
-	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
+	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
 		roles = append(roles, types.FieldOption{
@@ -110,7 +118,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			Value: strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := table("goadmin_permissions").Select("id", "slug").All()
+	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "slug").All()
 	for _, v := range permissionsModel {
 		permissions = append(permissions, types.FieldOption{
 			Text:  v["slug"].(string),
@@ -128,7 +136,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
 		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
-		roleModel, _ := table("goadmin_role_users").Select("role_id").
+		roleModel, _ := s.table("goadmin_role_users").Select("role_id").
 			Where("user_id", "=", model.ID).All()
 		var roles []string
 		for _, v := range roleModel {
@@ -139,7 +147,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 		lg("Create here.") + `</a>`))
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
-		permissionModel, _ := table("goadmin_user_permissions").
+		permissionModel, _ := s.table("goadmin_user_permissions").
 			Select("permission_id").Where("user_id", "=", model.ID).All()
 		var permissions []string
 		for _, v := range permissionModel {
@@ -164,7 +172,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			return errors.New("username and password can not be empty")
 		}
 
-		user := models.UserWithId(values.Get("id")).SetConn(conn())
+		user := models.UserWithId(values.Get("id")).SetConn(s.conn)
 
 		password := values.Get("password")
 
@@ -202,7 +210,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 			return errors.New("password does not match")
 		}
 
-		user := models.User().SetConn(conn()).New(values.Get("username"),
+		user := models.User().SetConn(s.conn).New(values.Get("username"),
 			encodePassword([]byte(values.Get("password"))),
 			values.Get("name"),
 			values.Get("avatar"))
@@ -235,7 +243,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 	detail.AddField(lg("Nickname"), "name", db.Varchar)
 	detail.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			labelModels, _ := table("goadmin_role_users").
+			labelModels, _ := s.table("goadmin_role_users").
 				Select("goadmin_roles.name").
 				LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
 				Where("user_id", "=", model.ID).
@@ -260,7 +268,7 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 		})
 	detail.AddField(lg("permission"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			permissionModel, _ := table("goadmin_user_permissions").
+			permissionModel, _ := s.table("goadmin_user_permissions").
 				Select("goadmin_permissions.name").
 				LeftJoin("goadmin_permissions", "goadmin_permissions.id", "=", "goadmin_user_permissions.permission_id").
 				Where("user_id", "=", model.ID).
@@ -285,12 +293,12 @@ func GetManagerTable(ctx *context.Context) (ManagerTable Table) {
 	return
 }
 
-func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
+func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
-	labelModels, _ := table("goadmin_role_users").
+	labelModels, _ := s.table("goadmin_role_users").
 		Select("goadmin_roles.name", "user_id").
 		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
 		All()
@@ -330,9 +338,9 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 
 			var ids = interfaces(idArr)
 
-			_, txErr := connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-				deleteUserRoleErr := connection().WithTx(tx).
+				deleteUserRoleErr := s.connection().WithTx(tx).
 					Table("goadmin_role_users").
 					WhereIn("user_id", ids).
 					Delete()
@@ -341,7 +349,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 					return deleteUserRoleErr, map[string]interface{}{}
 				}
 
-				deleteUserPermissionErr := connection().WithTx(tx).
+				deleteUserPermissionErr := s.connection().WithTx(tx).
 					Table("goadmin_user_permissions").
 					WhereIn("user_id", ids).
 					Delete()
@@ -350,7 +358,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 					return deleteUserPermissionErr, map[string]interface{}{}
 				}
 
-				deleteUserErr := connection().WithTx(tx).
+				deleteUserErr := s.connection().WithTx(tx).
 					Table("goadmin_users").
 					WhereIn("id", ids).
 					Delete()
@@ -366,7 +374,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 		})
 
 	var roles, permissions []map[string]string
-	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
+	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
 		roles = append(roles, map[string]string{
@@ -374,7 +382,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 			"value": strconv.FormatInt(v["id"].(int64), 10),
 		})
 	}
-	permissionsModel, _ := table("goadmin_permissions").Select("id", "slug").All()
+	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "slug").All()
 	for _, v := range permissionsModel {
 		permissions = append(permissions, map[string]string{
 			"field": v["slug"].(string),
@@ -404,7 +412,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 			return errors.New("username and password can not be empty")
 		}
 
-		user := models.UserWithId(values.Get("id")).SetConn(conn())
+		user := models.UserWithId(values.Get("id")).SetConn(s.conn)
 
 		if values.Has("permission", "role") {
 			return errors.New("no permission")
@@ -440,7 +448,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 			return errors.New("no permission")
 		}
 
-		models.User().SetConn(conn()).New(values.Get("username"),
+		models.User().SetConn(s.conn).New(values.Get("username"),
 			encodePassword([]byte(values.Get("password"))),
 			values.Get("name"),
 			values.Get("avatar"))
@@ -451,7 +459,7 @@ func GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
 	return
 }
 
-func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
+func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := PermissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -488,9 +496,9 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 
 			var ids = interfaces(idArr)
 
-			_, txErr := connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-				deleteRolePermissionErr := connection().WithTx(tx).
+				deleteRolePermissionErr := s.connection().WithTx(tx).
 					Table("goadmin_role_permissions").
 					WhereIn("permission_id", ids).
 					Delete()
@@ -499,7 +507,7 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 					return deleteRolePermissionErr, map[string]interface{}{}
 				}
 
-				deleteUserPermissionErr := connection().WithTx(tx).
+				deleteUserPermissionErr := s.connection().WithTx(tx).
 					Table("goadmin_user_permissions").
 					WhereIn("permission_id", ids).
 					Delete()
@@ -508,7 +516,7 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 					return deleteUserPermissionErr, map[string]interface{}{}
 				}
 
-				deletePermissionsErr := connection().WithTx(tx).
+				deletePermissionsErr := s.connection().WithTx(tx).
 					Table("goadmin_permissions").
 					WhereIn("id", ids).
 					Delete()
@@ -559,12 +567,12 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 				return errors.New("slug or http_path or name should not be empty")
 			}
 
-			if models.Permission().SetConn(conn()).IsSlugExist(values.Get("slug"), values.Get("id")) {
+			if models.Permission().SetConn(s.conn).IsSlugExist(values.Get("slug"), values.Get("id")) {
 				return errors.New("slug exists")
 			}
 			return nil
 		}).SetPostHook(func(values form2.Values) error {
-		_, err := connection().Table("goadmin_permissions").
+		_, err := s.connection().Table("goadmin_permissions").
 			Where("id", "=", values.Get("id")).Update(dialect.H{
 			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
 		})
@@ -574,7 +582,7 @@ func GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
 	return
 }
 
-func GetRolesTable(ctx *context.Context) (RolesTable Table) {
+func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := RolesTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -592,9 +600,9 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 			var ids = interfaces(idArr)
 
-			_, txErr := connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-				deleteRoleUserErr := connection().WithTx(tx).
+				deleteRoleUserErr := s.connection().WithTx(tx).
 					Table("goadmin_role_users").
 					WhereIn("role_id", ids).
 					Delete()
@@ -603,7 +611,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					return deleteRoleUserErr, map[string]interface{}{}
 				}
 
-				deleteRoleMenuErr := connection().WithTx(tx).
+				deleteRoleMenuErr := s.connection().WithTx(tx).
 					Table("goadmin_role_menu").
 					WhereIn("role_id", ids).
 					Delete()
@@ -612,7 +620,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					return deleteRoleMenuErr, map[string]interface{}{}
 				}
 
-				deleteRolePermissionErr := connection().WithTx(tx).
+				deleteRolePermissionErr := s.connection().WithTx(tx).
 					Table("goadmin_role_permissions").
 					WhereIn("role_id", ids).
 					Delete()
@@ -621,7 +629,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					return deleteRolePermissionErr, map[string]interface{}{}
 				}
 
-				deleteRolesErr := connection().WithTx(tx).
+				deleteRolesErr := s.connection().WithTx(tx).
 					Table("goadmin_roles").
 					WhereIn("id", ids).
 					Delete()
@@ -638,7 +646,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 	formList := RolesTable.GetForm().AddXssJsFilter()
 
-	permissionsModel, _ := table("goadmin_permissions").Select("id", "name").All()
+	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "name").All()
 	var permissions = make(types.FieldOptions, len(permissionsModel))
 
 	for k, v := range permissionsModel {
@@ -653,7 +661,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
-		perModel, _ := table("goadmin_role_permissions").
+		perModel, _ := s.table("goadmin_role_permissions").
 			Select("permission_id").
 			Where("role_id", "=", model.ID).
 			All()
@@ -674,11 +682,11 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 	formList.SetUpdateFn(func(values form2.Values) error {
 
-		if models.Role().SetConn(conn()).IsSlugExist(values.Get("slug"), values.Get("id")) {
+		if models.Role().SetConn(s.conn).IsSlugExist(values.Get("slug"), values.Get("id")) {
 			return errors.New("slug exists")
 		}
 
-		role := models.RoleWithId(values.Get("id")).SetConn(conn())
+		role := models.RoleWithId(values.Get("id")).SetConn(s.conn)
 
 		role.Update(values.Get("name"), values.Get("slug"))
 
@@ -692,11 +700,11 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 	formList.SetInsertFn(func(values form2.Values) error {
 
-		if models.Role().SetConn(conn()).IsSlugExist(values.Get("slug"), "") {
+		if models.Role().SetConn(s.conn).IsSlugExist(values.Get("slug"), "") {
 			return errors.New("slug exists")
 		}
 
-		role := models.Role().SetConn(conn()).New(values.Get("name"), values.Get("slug"))
+		role := models.Role().SetConn(s.conn).New(values.Get("name"), values.Get("slug"))
 
 		for i := 0; i < len(values["permission_id[]"]); i++ {
 			role.AddPermission(values["permission_id[]"][i])
@@ -708,7 +716,7 @@ func GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	return
 }
 
-func GetOpTable(ctx *context.Context) (OpTable Table) {
+func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	OpTable = NewDefaultTable(Config{
 		Driver:     config.Get().Databases.GetDefault().Driver,
 		CanAdd:     false,
@@ -755,7 +763,7 @@ func GetOpTable(ctx *context.Context) (OpTable Table) {
 	return
 }
 
-func GetMenuTable(ctx *context.Context) (MenuTable Table) {
+func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
 
 	info := MenuTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -777,9 +785,9 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 
 			var ids = interfaces(idArr)
 
-			_, txErr := connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-				deleteRoleMenuErr := connection().WithTx(tx).
+				deleteRoleMenuErr := s.connection().WithTx(tx).
 					Table("goadmin_role_menu").
 					WhereIn("menu_id", ids).
 					Delete()
@@ -788,7 +796,7 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 					return deleteRoleMenuErr, map[string]interface{}{}
 				}
 
-				deleteMenusErr := connection().WithTx(tx).
+				deleteMenusErr := s.connection().WithTx(tx).
 					Table("goadmin_menu").
 					WhereIn("id", ids).
 					Delete()
@@ -804,7 +812,7 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 		})
 
 	var roles, parents types.FieldOptions
-	rolesModel, _ := table("goadmin_roles").Select("id", "slug").All()
+	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
 
 	for _, v := range rolesModel {
 		roles = append(roles, types.FieldOption{
@@ -813,7 +821,7 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 		})
 	}
 
-	parentsModel, _ := table("goadmin_menu").
+	parentsModel, _ := s.table("goadmin_menu").
 		Select("id", "title").
 		Where("id", ">", 0).
 		OrderBy("order", "asc").
@@ -834,7 +842,7 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptions(parents).FieldDisplay(func(model types.FieldModel) interface{} {
-		menuModel, _ := table("goadmin_menu").Select("parent_id").Find(model.ID)
+		menuModel, _ := s.table("goadmin_menu").Select("parent_id").Find(model.ID)
 
 		var menuItem []string
 		menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
@@ -846,7 +854,7 @@ func GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)
 	formList.AddField(lg("role"), "roles", db.Int, form.Select).
 		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
-		roleModel, _ := table("goadmin_role_menu").
+		roleModel, _ := s.table("goadmin_role_menu").
 			Select("role_id").
 			Where("menu_id", "=", model.ID).
 			All()
@@ -887,16 +895,12 @@ func lg(v string) string {
 	return language.Get(v)
 }
 
-func table(table string) *db.SQL {
-	return connection().Table(table)
+func (s *SystemTable) table(table string) *db.SQL {
+	return s.connection().Table(table)
 }
 
-func connection() *db.SQL {
-	return db.WithDriver(db.GetConnection(services))
-}
-
-func conn() db.Connection {
-	return db.GetConnection(services)
+func (s *SystemTable) connection() *db.SQL {
+	return db.WithDriver(s.conn)
 }
 
 func interfaces(arr []string) []interface{} {

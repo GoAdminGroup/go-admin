@@ -7,7 +7,7 @@ import (
 )
 
 // Update update the table row of given id.
-func Update(ctx *context.Context) {
+func (h *Handler) Update(ctx *context.Context) {
 
 	param := guard.GetUpdateParam(ctx)
 

@@ -17,9 +17,9 @@ import (
 )
 
 // Auth check the input password and username for authentication.
-func Auth(ctx *context.Context) {
+func (h *Handler) Auth(ctx *context.Context) {
 
-	s, exist := services.GetOrNot(auth.ServiceKey)
+	s, exist := h.services.GetOrNot(auth.ServiceKey)
 
 	var (
 		user models.UserModel
@@ -34,14 +34,14 @@ func Auth(ctx *context.Context) {
 			response.BadRequest(ctx, "wrong password or username")
 			return
 		}
-		user, ok = auth.Check(password, username, conn)
+		user, ok = auth.Check(password, username, h.conn)
 	} else {
 		user, ok = auth.GetService(s).P(ctx)
 	}
 
 	if ok {
 
-		cd, ok := captcha.Get(captchaConfig["driver"])
+		cd, ok := captcha.Get(h.captchaConfig["driver"])
 
 		if ok {
 			if !cd.Validate(ctx.FormValue("token")) {
@@ -49,10 +49,10 @@ func Auth(ctx *context.Context) {
 			}
 		}
 
-		auth.SetCookie(ctx, user, conn)
+		auth.SetCookie(ctx, user, h.conn)
 
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": config.GetIndexURL(),
+			"url": h.config.GetIndexURL(),
 		})
 		return
 	}
@@ -60,14 +60,14 @@ func Auth(ctx *context.Context) {
 }
 
 // Logout delete the cookie.
-func Logout(ctx *context.Context) {
-	auth.DelCookie(ctx, db.GetConnection(services))
-	ctx.AddHeader("Location", config.Url("/login"))
+func (h *Handler) Logout(ctx *context.Context) {
+	auth.DelCookie(ctx, db.GetConnection(h.services))
+	ctx.AddHeader("Location", h.config.Url("/login"))
 	ctx.SetStatusCode(302)
 }
 
 // ShowLogin show the login page.
-func ShowLogin(ctx *context.Context) {
+func (h *Handler) ShowLogin(ctx *context.Context) {
 
 	tmpl, name := template.GetComp("login").GetTemplate()
 	buf := new(bytes.Buffer)
@@ -78,13 +78,13 @@ func ShowLogin(ctx *context.Context) {
 		CdnUrl    string
 		System    types.SystemInfo
 	}{
-		UrlPrefix: config.AssertPrefix(),
-		Title:     config.LoginTitle,
-		Logo:      config.LoginLogo,
+		UrlPrefix: h.config.AssertPrefix(),
+		Title:     h.config.LoginTitle,
+		Logo:      h.config.LoginLogo,
 		System: types.SystemInfo{
 			Version: system.Version(),
 		},
-		CdnUrl: config.AssetUrl,
+		CdnUrl: h.config.AssetUrl,
 	}); err == nil {
 		ctx.HTML(http.StatusOK, buf.String())
 	} else {
