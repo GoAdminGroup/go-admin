@@ -1,9 +1,9 @@
-GOCMD=go
-GOBUILD=$(GOCMD) build
-BINARY_NAME=adm
-LASTVERSION=v1.2.3
-VERSION=v1.2.4
-CLI=adm
+GOCMD = go
+GOBUILD = $(GOCMD) build
+BINARY_NAME = adm
+LAST_VERSION = v1.2.3
+VERSION = v1.2.4
+CLI = adm
 
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
@@ -139,11 +139,11 @@ cli:
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm $(GOBUILD) -o ./adm/build/linux/armel/$(BINARY_NAME) ./adm/...
 	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o ./adm/build/windows/x86_64/$(BINARY_NAME).exe ./adm/...
 	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=386 $(GOBUILD) -o ./adm/build/windows/i386/$(BINARY_NAME).exe ./adm/...
-	rm -rf ./adm/build/linux/armel/adm_linux_armel_$(LASTVERSION).zip
-	rm -rf ./adm/build/linux/x86_64/adm_linux_x86_64_$(LASTVERSION).zip
-	rm -rf ./adm/build/windows/x86_64/adm_windows_x86_64_$(LASTVERSION).zip
-	rm -rf ./adm/build/windows/i386/adm_windows_i386_$(LASTVERSION).zip
-	rm -rf ./adm/build/mac/adm_darwin_x86_64_$(LASTVERSION).zip
+	rm -rf ./adm/build/linux/armel/adm_linux_armel_$(LAST_VERSION).zip
+	rm -rf ./adm/build/linux/x86_64/adm_linux_x86_64_$(LAST_VERSION).zip
+	rm -rf ./adm/build/windows/x86_64/adm_windows_x86_64_$(LAST_VERSION).zip
+	rm -rf ./adm/build/windows/i386/adm_windows_i386_$(LAST_VERSION).zip
+	rm -rf ./adm/build/mac/adm_darwin_x86_64_$(LAST_VERSION).zip
 	zip -qj ./adm/build/linux/armel/adm_linux_armel_$(VERSION).zip ./adm/build/linux/armel/adm
 	zip -qj ./adm/build/linux/x86_64/adm_linux_x86_64_$(VERSION).zip ./adm/build/linux/x86_64/adm
 	zip -qj ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/windows/x86_64/adm.exe
@@ -155,3 +155,5 @@ cli:
 	cp ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/zip/
 	cp ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/zip/
 	cp ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/zip/
+
+.PHONY: all tmpl fmt golint govet deps test mysql-test sqlite-test import-sqlite import-mysql import-postgresql pg-test fix-gf lint cli

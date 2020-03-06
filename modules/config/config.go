@@ -155,7 +155,7 @@ type Config struct {
 	// Color scheme.
 	ColorScheme string `json:"color_scheme",yaml:"color_scheme",ini:"color_scheme"`
 
-	// Session valid time duration,units are seconds.
+	// Session valid time duration,units are seconds. Default 7200.
 	SessionLifeTime int `json:"session_life_time",yaml:"session_life_time",ini:"session_life_time"`
 
 	// Assets visit link.

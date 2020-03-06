@@ -901,6 +901,45 @@ func (i *InfoPanel) FieldFilterOptionExt(m map[string]interface{}) *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) FieldFilterOnSearch(url string, handler Handler, delay ...int) *InfoPanel {
+	ext, callback := searchJS(i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt, url, handler, delay...)
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = ext
+	i.Callbacks = append(i.Callbacks, callback)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChooseCustom(js template.HTML) *InfoPanel {
+	i.FooterHtml += chooseCustomJS(i.FieldList[i.curFieldListIndex].Field, js)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChooseMap(m map[string]LinkField) *InfoPanel {
+	i.FooterHtml += chooseMapJS(i.FieldList[i.curFieldListIndex].Field, m)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChoose(val, field string, value template.HTML) *InfoPanel {
+	i.FooterHtml += chooseJS(i.FieldList[i.curFieldListIndex].Field, field, val, value)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) *InfoPanel {
+	js, callback := chooseAjax(i.FieldList[i.curFieldListIndex].Field, field, url, handler)
+	i.FooterHtml += js
+	i.Callbacks = append(i.Callbacks, callback)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChooseHide(value string, field ...string) *InfoPanel {
+	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *InfoPanel {
+	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	return i
+}
+
 func (i *InfoPanel) FieldHide() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Hide = true
 	return i

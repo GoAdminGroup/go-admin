@@ -503,23 +503,68 @@ func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
 }
 
 func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *FormPanel {
+	ext, callback := searchJS(f.FieldList[f.curFieldListIndex].OptionExt, url, handler, delay...)
+	f.FieldList[f.curFieldListIndex].OptionExt = ext
+	f.Callbacks = append(f.Callbacks, callback)
+	return f
+}
 
+func (f *FormPanel) FieldOnChooseCustom(js template.HTML) *FormPanel {
+	f.FooterHtml += chooseCustomJS(f.FieldList[f.curFieldListIndex].Field, js)
+	return f
+}
+
+type LinkField struct {
+	Field   string
+	Value   template.HTML
+	Hide    bool
+	Disable bool
+}
+
+func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
+	f.FooterHtml += chooseMapJS(f.FieldList[f.curFieldListIndex].Field, m)
+	return f
+}
+
+func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormPanel {
+	f.FooterHtml += chooseJS(f.FieldList[f.curFieldListIndex].Field, field, val, value)
+	return f
+}
+
+func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler) *FormPanel {
+	js, callback := chooseAjax(f.FieldList[f.curFieldListIndex].Field, field, url, handler)
+	f.FooterHtml += js
+	f.Callbacks = append(f.Callbacks, callback)
+	return f
+}
+
+func (f *FormPanel) FieldOnChooseHide(value string, field ...string) *FormPanel {
+	f.FooterHtml += chooseHideJS(f.FieldList[f.curFieldListIndex].Field, value, field...)
+	return f
+}
+
+func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPanel {
+	f.FooterHtml += chooseDisableJS(f.FieldList[f.curFieldListIndex].Field, value, field...)
+	return f
+}
+
+func searchJS(ext template.JS, url string, handler Handler, delay ...int) (template.JS, context.Node) {
 	delayStr := "500"
 	if len(delay) > 0 {
 		delayStr = strconv.Itoa(delay[0])
 	}
 
-	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
-		s := string(f.FieldList[f.curFieldListIndex].OptionExt)
+	if ext != template.JS("") {
+		s := string(ext)
 		s = strings.Replace(s, "{", "", 1)
 		s = utils.ReplaceNth(s, "}", "", strings.Count(s, "}"))
 		s = strings.TrimRight(s, " ")
 		s += ","
-		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(s)
+		ext = template.JS(s)
 	}
 
-	f.FieldList[f.curFieldListIndex].OptionExt = `{
-		` + f.FieldList[f.curFieldListIndex].OptionExt + template.JS(`
+	return template.JS(`{
+		`) + ext + template.JS(`
 		ajax: {
 		    url: "`+url+`",
 		    dataType: 'json',
@@ -535,36 +580,23 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 			      return data.data;
 	    	}
 	  	}
-	}`)
-
-	f.Callbacks = append(f.Callbacks, context.Node{
-		Path:     url,
-		Method:   "get",
-		Handlers: context.Handlers{handler.Wrap()},
-		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-	})
-
-	return f
+	}`), context.Node{
+			Path:     url,
+			Method:   "get",
+			Handlers: context.Handlers{handler.Wrap()},
+			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+		}
 }
 
-func (f *FormPanel) FieldOnChooseCustom(js template.HTML) *FormPanel {
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+func chooseCustomJS(field string, js template.HTML) template.HTML {
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
 	` + js + `
 })
 </script>`
-	return f
 }
 
-type LinkField struct {
-	Field   string
-	Value   template.HTML
-	Hide    bool
-	Disable bool
-}
-
-func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
-
+func chooseMapJS(field string, m map[string]LinkField) template.HTML {
 	cm := template.HTML("")
 
 	for val, obejct := range m {
@@ -591,34 +623,31 @@ func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
 		}
 	}
 
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
 	` + cm + `
 })
 </script>`
-	return f
 }
 
-func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormPanel {
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+func chooseJS(field, chooseField, val string, value template.HTML) template.HTML {
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
 	if (e.params.data.text === "` + template.HTML(val) + `") {
-		if ($(".` + template.HTML(field) + `").length > 0) {
-			$(".` + template.HTML(field) + `").val("` + value + `").select2()
+		if ($(".` + template.HTML(chooseField) + `").length > 0) {
+			$(".` + template.HTML(chooseField) + `").val("` + value + `").select2()
 		} else {
-			$("#` + template.HTML(field) + `").val("` + value + `")
+			$("#` + template.HTML(chooseField) + `").val("` + value + `")
 		}	
 	}
 })
 </script>`
-	return f
 }
 
-func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler) *FormPanel {
-
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
-	let id = '` + template.HTML(field) + `'
+func chooseAjax(field, chooseField, url string, handler Handler) (template.HTML, context.Node) {
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
+	let id = '` + template.HTML(chooseField) + `'
 	let selectObj = $("."+id)
 	if (selectObj.length > 0) {
 		selectObj.val("").select2()
@@ -645,7 +674,7 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 						$('.' + id).val(data.data).select2()
 					}
 				} else {
-					$('#` + template.HTML(field) + `').val(data.data);
+					$('#` + template.HTML(chooseField) + `').val(data.data);
 				}
 			} else {
 				swal(data.msg, '', 'error');
@@ -656,36 +685,31 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 		}
 	})
 })
-</script>`
-
-	f.Callbacks = append(f.Callbacks, context.Node{
-		Path:     url,
-		Method:   "post",
-		Handlers: context.Handlers{handler.Wrap()},
-		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-	})
-
-	return f
+</script>`, context.Node{
+			Path:     url,
+			Method:   "post",
+			Handlers: context.Handlers{handler.Wrap()},
+			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+		}
 }
 
-func (f *FormPanel) FieldOnChooseHide(value string, field ...string) *FormPanel {
-
-	if len(field) == 0 {
-		return f
+func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
+	if len(chooseFields) == 0 {
+		return ""
 	}
 
 	hideText := template.HTML("")
 	showText := template.HTML("")
 
-	for _, f := range field {
+	for _, f := range chooseFields {
 		hideText += `$("label[for='` + template.HTML(f) + `']").parent().hide()
 `
 		showText += `$("label[for='` + template.HTML(f) + `']").parent().show()
 `
 	}
 
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
 	if (e.params.data.text === "` + template.HTML(value) + `") {
 		` + hideText + `
 	} else {
@@ -693,27 +717,25 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 	}
 })
 </script>`
-	return f
 }
 
-func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPanel {
-
-	if len(field) == 0 {
-		return f
+func chooseDisableJS(field, value string, chooseFields ...string) template.HTML {
+	if len(chooseFields) == 0 {
+		return ""
 	}
 
 	disableText := template.HTML("")
 	enableText := template.HTML("")
 
-	for _, f := range field {
+	for _, f := range chooseFields {
 		disableText += `$("#` + template.HTML(f) + `").prop('disabled', true);
 `
 		enableText += `$("#` + template.HTML(f) + `").prop('disabled', false);
 `
 	}
 
-	f.FooterHtml += `<script>
-$(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:select",function(e){
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
 	if (e.params.data.text === "` + template.HTML(value) + `") {
 		` + disableText + `
 	} else {
@@ -721,7 +743,6 @@ $(".` + template.HTML(f.FieldList[f.curFieldListIndex].Field) + `").on("select2:
 	}
 })
 </script>`
-	return f
 }
 
 // FormPanel attribute setting functions
