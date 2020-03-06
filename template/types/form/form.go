@@ -32,6 +32,19 @@ const (
 	Switch
 )
 
+var allType = []Type{Default, Text, SelectSingle, Select, IconPicker, SelectBox, File, Password,
+	RichText, Datetime, DatetimeRange, Radio, Email, Url, Ip, Color, Currency, Number, NumberRange,
+	TextArea, Custom, Switch}
+
+func CheckType(t, def Type) Type {
+	for _, item := range allType {
+		if t == item {
+			return t
+		}
+	}
+	return def
+}
+
 type Layout uint8
 
 const (
@@ -138,7 +151,7 @@ func (t Type) SelectedLabel() []template.HTML {
 	if t == Radio || t == Switch {
 		return []template.HTML{"checked", ""}
 	}
-	return []template.HTML{}
+	return []template.HTML{"", ""}
 }
 
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {

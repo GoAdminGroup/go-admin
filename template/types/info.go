@@ -129,9 +129,12 @@ type FilterFormField struct {
 
 func (f Field) GetFilterFormFields(params parameter.Parameters, headField string) []FormField {
 
-	var filterForm = make([]FormField, 0)
+	var (
+		filterForm = make([]FormField, 0)
+		options    = make(FieldOptions, 0)
 
-	var value, value2, keySuffix string
+		value, value2, keySuffix string
+	)
 
 	for index, filter := range f.FilterFormFields {
 
@@ -149,6 +152,12 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			value = params.GetFieldValue(headField + keySuffix)
 		}
 
+		options = make(FieldOptions, 0)
+
+		if filter.Type.IsSelect() {
+			options = filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
+		}
+
 		filterForm = append(filterForm, FormField{
 			Field:       headField + keySuffix,
 			Head:        filter.Head,
@@ -160,7 +169,7 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Placeholder: filter.Placeholder,
 			Value:       template.HTML(value),
 			Value2:      value2,
-			Options:     filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel()),
+			Options:     options,
 			OptionExt:   filter.OptionExt,
 			Label:       filter.Operator.Label(),
 		})
@@ -855,24 +864,13 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	for _, filter := range filterType {
 		var ff FilterFormField
 		ff.Operator = filter.Operator
-		if uint8(filter.FormType) == 0 {
-			ff.Type = form.Text
-		} else {
-			ff.Type = filter.FormType
-		}
-		if !filter.NoHead && filter.Head == "" {
-			ff.Head = i.FieldList[i.curFieldListIndex].Head
-		} else {
-			ff.Head = filter.Head
-		}
+		ff.Type = form.CheckType(filter.FormType, form.Text)
+		ff.Head = modules.AorB(!filter.NoHead && filter.Head == "",
+			i.FieldList[i.curFieldListIndex].Head, filter.Head)
 		ff.Width = filter.Width
 		ff.HelpMsg = filter.HelpMsg
 		ff.ProcessFn = filter.Process
-		if filter.Placeholder == "" {
-			ff.Placeholder = language.Get("input") + " " + ff.Head
-		} else {
-			ff.Placeholder = filter.Placeholder
-		}
+		ff.Placeholder = modules.AorB(filter.Placeholder == "", language.Get("input")+" "+ff.Head, filter.Placeholder)
 		ff.Options = filter.Options
 		if len(filter.OptionExt) > 0 {
 			s, _ := json.Marshal(filter.OptionExt)
