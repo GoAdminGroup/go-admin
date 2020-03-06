@@ -211,7 +211,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		headField := field.Field
 
 		if field.Join.Valid() {
-			headField = field.Join.Table + "_goadmin_join_" + field.Field
+			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
 			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
 			if !modules.InArray(joinTables, field.Join.Table) {
@@ -260,7 +260,7 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 		headField := field.Field
 
 		if field.Join.Valid() {
-			headField = field.Join.Table + "_goadmin_join_" + field.Field
+			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
 			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
 			if !modules.InArray(joinTables, field.Join.Table) {

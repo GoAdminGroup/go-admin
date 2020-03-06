@@ -231,7 +231,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 		headField = field.Field
 
 		if field.Join.Valid() {
-			headField = field.Join.Table + "_goadmin_join_" + field.Field
+			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
 		}
 
 		if field.Hide {
