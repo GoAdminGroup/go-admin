@@ -541,7 +541,7 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 					if value[j] == field.Field {
 						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
-						list[j] = field.UpdateValue(id, rowValue, res)
+						list[j] = field.UpdateValue(id, rowValue, res, tb.sql())
 						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
 							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
 						}
@@ -565,7 +565,7 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 	for key, field := range formList {
 		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
-		formList[key] = field.UpdateValue(id, rowValue, res)
+		formList[key] = field.UpdateValue(id, rowValue, res, tb.sql())
 
 		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
 			formList[key].Value2 = "/" + config.Get().Store.Prefix + "/" + string(formList[key].Value)
@@ -803,16 +803,14 @@ func (tb DefaultTable) DeleteData(id string) error {
 	return nil
 }
 
-func GetNewFormList(groupHeaders []string,
-	group [][]string,
-	old []types.FormField) FormInfo {
+func (tb DefaultTable) GetNewForm() FormInfo {
 
-	if len(group) == 0 {
+	if len(tb.Form.TabGroups) == 0 {
 		var newForm []types.FormField
-		for _, v := range old {
+		for _, v := range tb.Form.FieldList {
 			if !v.NotAllowAdd {
 				v.Editable = true
-				newForm = append(newForm, v.UpdateDefaultValue())
+				newForm = append(newForm, v.UpdateDefaultValue(tb.sql()))
 			}
 		}
 		return FormInfo{FieldList: newForm}
@@ -823,15 +821,15 @@ func GetNewFormList(groupHeaders []string,
 		headers = make([]string, 0)
 	)
 
-	for key, value := range group {
+	for key, value := range tb.Form.TabGroups {
 		list := make([]types.FormField, 0)
 
 		for i := 0; i < len(value); i++ {
-			for _, v := range old {
+			for _, v := range tb.Form.FieldList {
 				if v.Field == value[i] {
 					if !v.NotAllowAdd {
 						v.Editable = true
-						list = append(list, v.UpdateDefaultValue())
+						list = append(list, v.UpdateDefaultValue(tb.sql()))
 						break
 					}
 				}
@@ -839,7 +837,7 @@ func GetNewFormList(groupHeaders []string,
 		}
 
 		newForm = append(newForm, list)
-		headers = append(headers, groupHeaders[key])
+		headers = append(headers, tb.Form.TabHeaders[key])
 	}
 
 	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}

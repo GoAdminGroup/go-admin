@@ -9,7 +9,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
@@ -28,8 +27,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 
 	panel := h.table(prefix, ctx)
 
-	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
-		panel.GetForm().FieldList)
+	formInfo := panel.GetNewForm()
 
 	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
 	newUrl := h.routePathWithPrefix("new", prefix)

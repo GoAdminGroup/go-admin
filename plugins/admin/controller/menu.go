@@ -10,7 +10,6 @@ import (
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
@@ -27,9 +26,7 @@ func (h *Handler) ShowNewMenu(ctx *context.Context) {
 
 	panel := h.table("menu", ctx)
 
-	formInfo := table.GetNewFormList(panel.GetForm().TabHeaders,
-		panel.GetForm().TabGroups,
-		panel.GetForm().FieldList)
+	formInfo := panel.GetNewForm()
 
 	user := auth.Auth(ctx)
 
@@ -203,8 +200,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	list := h.table("menu", ctx)
 
-	formInfo := table.GetNewFormList(list.GetForm().TabHeaders, list.GetForm().TabGroups,
-		list.GetForm().FieldList)
+	formInfo := list.GetNewForm()
 
 	newForm := menuFormContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).

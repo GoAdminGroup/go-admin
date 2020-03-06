@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -76,6 +77,12 @@ func (fo FieldOptions) Marshal() string {
 
 type OptionInitFn func(val FieldModel) FieldOptions
 
+type OptionTable struct {
+	Table      string
+	TextField  string
+	ValueField string
+}
+
 // FormField is the form field with different options.
 type FormField struct {
 	Field    string
@@ -107,12 +114,13 @@ type FormField struct {
 
 	OptionExt    template.JS
 	OptionInitFn OptionInitFn
+	OptionTable  OptionTable
 
 	FieldDisplay
 	PostFilterFn PostFieldFilterFn
 }
 
-func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormField {
+func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sql *db.SQL) FormField {
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
 			f.Options = f.OptionInitFn(FieldModel{
@@ -120,6 +128,18 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 				Value: val,
 				Row:   res,
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
+			res, err := sql.Table(f.OptionTable.Table).
+				Select(f.OptionTable.ValueField, f.OptionTable.TextField).
+				All()
+			if err == nil {
+				for _, item := range res {
+					f.Options = append(f.Options, FieldOption{
+						Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
+						Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
+					})
+				}
+			}
 		} else {
 			f.Options.SetSelected(f.ToDisplay(FieldModel{
 				ID:    id,
@@ -142,7 +162,7 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}) FormF
 	return f
 }
 
-func (f FormField) UpdateDefaultValue() FormField {
+func (f FormField) UpdateDefaultValue(sql *db.SQL) FormField {
 	f.Value = f.Default
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
@@ -151,6 +171,18 @@ func (f FormField) UpdateDefaultValue() FormField {
 				Value: string(f.Value),
 				Row:   make(map[string]interface{}),
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
+			res, err := sql.Table(f.OptionTable.Table).
+				Select(f.OptionTable.ValueField, f.OptionTable.TextField).
+				All()
+			if err == nil {
+				for _, item := range res {
+					f.Options = append(f.Options, FieldOption{
+						Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
+						Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
+					})
+				}
+			}
 		} else {
 			f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
 		}
@@ -339,6 +371,15 @@ func (f *FormPanel) FieldFormType(formType form2.Type) *FormPanel {
 
 func (f *FormPanel) FieldValue(value string) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Value = template.HTML(value)
+	return f
+}
+
+func (f *FormPanel) FieldOptionsFromTable(table, textFieldName, valueFieldName string) *FormPanel {
+	f.FieldList[f.curFieldListIndex].OptionTable = OptionTable{
+		Table:      table,
+		TextField:  textFieldName,
+		ValueField: valueFieldName,
+	}
 	return f
 }
 

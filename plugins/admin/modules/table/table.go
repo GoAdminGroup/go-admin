@@ -88,6 +88,8 @@ type Table interface {
 	InsertData(dataList form.Values) error
 	DeleteData(id string) error
 
+	GetNewForm() FormInfo
+
 	Copy() Table
 }
 

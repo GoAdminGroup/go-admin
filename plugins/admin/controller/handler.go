@@ -94,8 +94,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		}
 		formInfo, _ = h.table(prefix, ctx).GetDataWithId(id)
 	} else {
-		formInfo = table.GetNewFormList(panel.GetForm().TabHeaders, panel.GetForm().TabGroups,
-			panel.GetForm().FieldList)
+		formInfo = panel.GetNewForm()
 		formInfo.Title = panel.GetForm().Title
 		formInfo.Description = panel.GetForm().Description
 	}
