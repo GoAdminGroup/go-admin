@@ -864,7 +864,11 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	for _, filter := range filterType {
 		var ff FilterFormField
 		ff.Operator = filter.Operator
-		ff.Type = form.CheckType(filter.FormType, form.Text)
+		if filter.FormType == form.Default {
+			ff.Type = form.Text
+		} else {
+			ff.Type = filter.FormType
+		}
 		ff.Head = modules.AorB(!filter.NoHead && filter.Head == "",
 			i.FieldList[i.curFieldListIndex].Head, filter.Head)
 		ff.Width = filter.Width
