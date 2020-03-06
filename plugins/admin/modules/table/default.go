@@ -33,7 +33,16 @@ type DefaultTable struct {
 
 type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int)
 
-func NewDefaultTable(cfg Config) Table {
+func NewDefaultTable(cfgs ...Config) Table {
+
+	var cfg Config
+
+	if len(cfgs) > 0 && cfgs[0].PrimaryKey.Name != "" {
+		cfg = cfgs[0]
+	} else {
+		cfg = DefaultConfig()
+	}
+
 	return DefaultTable{
 		BaseTable: &BaseTable{
 			Info:       types.NewInfoPanel(cfg.PrimaryKey.Name),
