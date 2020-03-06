@@ -14,7 +14,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/GoAdminGroup/html"
 	"golang.org/x/crypto/bcrypt"
+	tmpl "html/template"
 	"strconv"
 	"strings"
 	"time"
@@ -143,8 +145,9 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
 		}
 		return roles
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/roles/new">` +
-		lg("Create here.") + `</a>`))
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		link("/admin/info/roles/new", "Create here."))
+
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
 		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
 		permissionModel, _ := s.table("goadmin_user_permissions").
@@ -154,8 +157,9 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
 		}
 		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/permission/new">` +
-		lg("Create here.") + `</a>`))
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		link("/admin/info/permission/new", "Create here."))
+
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
@@ -670,8 +674,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 			permissions[k] = strconv.FormatInt(v["permission_id"].(int64), 10)
 		}
 		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?") + `<a href="/admin/Info/permission/new">` +
-		lg("Create here.") + `</a>`))
+	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		link("/admin/info/permission/new", "Create here."))
 
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
@@ -893,6 +897,13 @@ func label() types.LabelAttribute {
 
 func lg(v string) string {
 	return language.Get(v)
+}
+
+func link(url, content string) tmpl.HTML {
+	return html.AEl().
+		SetAttr("href", url).
+		SetContent(template.HTML(lg(content))).
+		Get()
 }
 
 func (s *SystemTable) table(table string) *db.SQL {
