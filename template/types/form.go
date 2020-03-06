@@ -78,10 +78,16 @@ func (fo FieldOptions) Marshal() string {
 type OptionInitFn func(val FieldModel) FieldOptions
 
 type OptionTable struct {
-	Table      string
-	TextField  string
-	ValueField string
+	Table          string
+	TextField      string
+	ValueField     string
+	QueryProcessFn OptionTableQueryProcessFn
+	ProcessFn      OptionProcessFn
 }
+
+type OptionTableQueryProcessFn func(sql *db.SQL) *db.SQL
+
+type OptionProcessFn func(options FieldOptions) FieldOptions
 
 // FormField is the form field with different options.
 type FormField struct {
@@ -129,17 +135,34 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sql *
 				Row:   res,
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
 		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
-			res, err := sql.Table(f.OptionTable.Table).
-				Select(f.OptionTable.ValueField, f.OptionTable.TextField).
-				All()
+
+			query := sql.Table(f.OptionTable.Table).
+				Select(f.OptionTable.ValueField, f.OptionTable.TextField)
+
+			if f.OptionTable.QueryProcessFn != nil {
+				query = f.OptionTable.QueryProcessFn(query)
+			}
+
+			queryRes, err := query.All()
 			if err == nil {
-				for _, item := range res {
+				for _, item := range queryRes {
 					f.Options = append(f.Options, FieldOption{
 						Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
 						Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
 					})
 				}
 			}
+
+			if f.OptionTable.ProcessFn != nil {
+				f.Options = f.OptionTable.ProcessFn(f.Options)
+			}
+
+			f.Options.SetSelected(f.ToDisplay(FieldModel{
+				ID:    id,
+				Value: val,
+				Row:   res,
+			}), f.FormType.SelectedLabel())
+
 		} else {
 			f.Options.SetSelected(f.ToDisplay(FieldModel{
 				ID:    id,
@@ -172,9 +195,14 @@ func (f FormField) UpdateDefaultValue(sql *db.SQL) FormField {
 				Row:   make(map[string]interface{}),
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
 		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
-			res, err := sql.Table(f.OptionTable.Table).
-				Select(f.OptionTable.ValueField, f.OptionTable.TextField).
-				All()
+			query := sql.Table(f.OptionTable.Table).
+				Select(f.OptionTable.ValueField, f.OptionTable.TextField)
+
+			if f.OptionTable.QueryProcessFn != nil {
+				query = f.OptionTable.QueryProcessFn(query)
+			}
+			res, err := query.All()
+
 			if err == nil {
 				for _, item := range res {
 					f.Options = append(f.Options, FieldOption{
@@ -183,6 +211,17 @@ func (f FormField) UpdateDefaultValue(sql *db.SQL) FormField {
 					})
 				}
 			}
+
+			if f.OptionTable.ProcessFn != nil {
+				f.Options = f.OptionTable.ProcessFn(f.Options)
+			}
+
+			f.Options.SetSelected(f.ToDisplay(FieldModel{
+				ID:    "",
+				Value: string(f.Value),
+				Row:   make(map[string]interface{}),
+			}), f.FormType.SelectedLabel())
+
 		} else {
 			f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
 		}
@@ -374,11 +413,23 @@ func (f *FormPanel) FieldValue(value string) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldOptionsFromTable(table, textFieldName, valueFieldName string) *FormPanel {
+func (f *FormPanel) FieldOptionsFromTable(table, textFieldName, valueFieldName string, process ...OptionTableQueryProcessFn) *FormPanel {
+	var fn OptionTableQueryProcessFn
+	if len(process) > 0 {
+		fn = process[0]
+	}
 	f.FieldList[f.curFieldListIndex].OptionTable = OptionTable{
-		Table:      table,
-		TextField:  textFieldName,
-		ValueField: valueFieldName,
+		Table:          table,
+		TextField:      textFieldName,
+		ValueField:     valueFieldName,
+		QueryProcessFn: fn,
+	}
+	return f
+}
+
+func (f *FormPanel) FieldOptionsTableProcessFn(fn OptionProcessFn) *FormPanel {
+	f.FieldList[f.curFieldListIndex].OptionTable = OptionTable{
+		ProcessFn: fn,
 	}
 	return f
 }

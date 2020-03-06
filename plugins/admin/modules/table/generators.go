@@ -111,23 +111,6 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			return txErr
 		})
 
-	var roles, permissions types.FieldOptions
-	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
-
-	for _, v := range rolesModel {
-		roles = append(roles, types.FieldOption{
-			Text:  v["slug"].(string),
-			Value: strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
-	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "slug").All()
-	for _, v := range permissionsModel {
-		permissions = append(permissions, types.FieldOption{
-			Text:  v["slug"].(string),
-			Value: strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
-
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
@@ -137,27 +120,37 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 		FieldHelpMsg(template.HTML(lg("used to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
-		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
-		roleModel, _ := s.table("goadmin_role_users").Select("role_id").
-			Where("user_id", "=", model.ID).All()
-		var roles []string
-		for _, v := range roleModel {
-			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
-		}
-		return roles
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		FieldOptionsFromTable("goadmin_roles", "slug", "id").
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			var roles []string
+
+			if model.Value == "" {
+				return roles
+			}
+			roleModel, _ := s.table("goadmin_role_users").Select("role_id").
+				Where("user_id", "=", model.ID).All()
+			for _, v := range roleModel {
+				roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
+			}
+			return roles
+		}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
 		link("/admin/info/roles/new", "Create here."))
 
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.Select).
-		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
-		permissionModel, _ := s.table("goadmin_user_permissions").
-			Select("permission_id").Where("user_id", "=", model.ID).All()
-		var permissions []string
-		for _, v := range permissionModel {
-			permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
-		}
-		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		FieldOptionsFromTable("goadmin_permissions", "slug", "id").
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			var permissions []string
+
+			if model.Value == "" {
+				return permissions
+			}
+			permissionModel, _ := s.table("goadmin_user_permissions").
+				Select("permission_id").Where("user_id", "=", model.ID).All()
+			for _, v := range permissionModel {
+				permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+			}
+			return permissions
+		}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
 		link("/admin/info/permission/new", "Create here."))
 
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
@@ -234,16 +227,17 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 	detail := ManagerTable.GetDetail()
 	detail.AddField("ID", "id", db.Int)
 	detail.AddField(lg("Name"), "username", db.Varchar)
-	detail.AddField(lg("Avatar"), "avatar", db.Varchar).FieldDisplay(func(model types.FieldModel) interface{} {
-		if model.Value == "" || config.Get().Store.Prefix == "" {
-			model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
-		} else {
-			model.Value = "/" + config.Get().Store.Prefix + "/" + model.Value
-		}
-		return template.Default().Image().
-			SetSrc(template.HTML(model.Value)).
-			SetHeight("120").SetWidth("120").WithModal().GetContent()
-	})
+	detail.AddField(lg("Avatar"), "avatar", db.Varchar).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			if model.Value == "" || config.Get().Store.Prefix == "" {
+				model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
+			} else {
+				model.Value = "/" + config.Get().Store.Prefix + "/" + model.Value
+			}
+			return template.Default().Image().
+				SetSrc(template.HTML(model.Value)).
+				SetHeight("120").SetWidth("120").WithModal().GetContent()
+		})
 	detail.AddField(lg("Nickname"), "name", db.Varchar)
 	detail.AddField(lg("role"), "roles", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
@@ -376,23 +370,6 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 
 			return txErr
 		})
-
-	var roles, permissions []map[string]string
-	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
-
-	for _, v := range rolesModel {
-		roles = append(roles, map[string]string{
-			"field": v["slug"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
-	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "slug").All()
-	for _, v := range permissionsModel {
-		permissions = append(permissions, map[string]string{
-			"field": v["slug"].(string),
-			"value": strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
 
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
@@ -650,31 +627,26 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 	formList := RolesTable.GetForm().AddXssJsFilter()
 
-	permissionsModel, _ := s.table("goadmin_permissions").Select("id", "name").All()
-	var permissions = make(types.FieldOptions, len(permissionsModel))
-
-	for k, v := range permissionsModel {
-		permissions[k] = types.FieldOption{
-			Text:  v["name"].(string),
-			Value: strconv.FormatInt(v["id"].(int64), 10),
-		}
-	}
-
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
-		FieldOptions(permissions).FieldDisplay(func(model types.FieldModel) interface{} {
-		perModel, _ := s.table("goadmin_role_permissions").
-			Select("permission_id").
-			Where("role_id", "=", model.ID).
-			All()
-		var permissions = make([]string, len(perModel))
-		for k, v := range perModel {
-			permissions[k] = strconv.FormatInt(v["permission_id"].(int64), 10)
-		}
-		return permissions
-	}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
+		FieldOptionsFromTable("goadmin_permissions", "name", "id").
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			var permissions = make([]string, 0)
+
+			if model.Value == "" {
+				return permissions
+			}
+			perModel, _ := s.table("goadmin_role_permissions").
+				Select("permission_id").
+				Where("role_id", "=", model.ID).
+				All()
+			for _, v := range perModel {
+				permissions = append(permissions, strconv.FormatInt(v["permission_id"].(int64), 10))
+			}
+			return permissions
+		}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
 		link("/admin/info/permission/new", "Create here."))
 
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
@@ -815,59 +787,52 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 			return txErr
 		})
 
-	var roles, parents types.FieldOptions
-	rolesModel, _ := s.table("goadmin_roles").Select("id", "slug").All()
-
-	for _, v := range rolesModel {
-		roles = append(roles, types.FieldOption{
-			Text:  v["slug"].(string),
-			Value: strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
-
-	parentsModel, _ := s.table("goadmin_menu").
-		Select("id", "title").
-		Where("id", ">", 0).
-		OrderBy("order", "asc").
-		All()
-
-	for _, v := range parentsModel {
-		parents = append(parents, types.FieldOption{
-			Text:  v["title"].(string),
-			Value: strconv.FormatInt(v["id"].(int64), 10),
-		})
-	}
-	parents = append([]types.FieldOption{{
-		Text:  "root",
-		Value: "0",
-	}}, parents...)
-
 	formList := MenuTable.GetForm().AddXssJsFilter()
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
-		FieldOptions(parents).FieldDisplay(func(model types.FieldModel) interface{} {
-		menuModel, _ := s.table("goadmin_menu").Select("parent_id").Find(model.ID)
+		FieldOptionsFromTable("goadmin_menu", "title", "id", func(sql *db.SQL) *db.SQL {
+			return sql.OrderBy("order", "asc")
+		}).
+		FieldOptionsTableProcessFn(func(options types.FieldOptions) types.FieldOptions {
+			return append([]types.FieldOption{{
+				Text:  "root",
+				Value: "0",
+			}}, options...)
+		}).
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			var menuItem []string
 
-		var menuItem []string
-		menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
-		return menuItem
-	})
+			if model.Value == "" {
+				return menuItem
+			}
+
+			menuModel, _ := s.table("goadmin_menu").Select("parent_id").Find(model.ID)
+			menuItem = append(menuItem, strconv.FormatInt(menuModel["parent_id"].(int64), 10))
+			return menuItem
+		})
 	formList.AddField(lg("menu name"), "title", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("header"), "header", db.Varchar, form.Text)
 	formList.AddField(lg("icon"), "icon", db.Varchar, form.IconPicker)
 	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)
 	formList.AddField(lg("role"), "roles", db.Int, form.Select).
-		FieldOptions(roles).FieldDisplay(func(model types.FieldModel) interface{} {
-		roleModel, _ := s.table("goadmin_role_menu").
-			Select("role_id").
-			Where("menu_id", "=", model.ID).
-			All()
-		var roles []string
-		for _, v := range roleModel {
-			roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
-		}
-		return roles
-	})
+		FieldOptionsFromTable("goadmin_roles", "slug", "id").
+		FieldDisplay(func(model types.FieldModel) interface{} {
+			var roles []string
+
+			if model.Value == "" {
+				return roles
+			}
+
+			roleModel, _ := s.table("goadmin_role_menu").
+				Select("role_id").
+				Where("menu_id", "=", model.ID).
+				All()
+
+			for _, v := range roleModel {
+				roles = append(roles, strconv.FormatInt(v["role_id"].(int64), 10))
+			}
+			return roles
+		})
 
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
