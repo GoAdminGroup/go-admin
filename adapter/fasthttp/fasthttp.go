@@ -69,7 +69,7 @@ func (fast *Fasthttp) SetApp(app interface{}) error {
 	return nil
 }
 
-func (fast *Fasthttp) AddHandler(method, path string, plug plugins.Plugin) {
+func (fast *Fasthttp) AddHandler(method, path string, handlers context.Handlers) {
 	fast.app.Handle(strings.ToUpper(method), path, func(c *fasthttp.RequestCtx) {
 		httpreq := convertCtx(c)
 		ctx := context.NewContext(httpreq)
@@ -89,7 +89,7 @@ func (fast *Fasthttp) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(string(c.Path()), strings.ToLower(string(c.Method())))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Response.Header.Set(key, head[0])
 		}

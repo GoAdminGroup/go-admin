@@ -36,6 +36,6 @@ func (example *Example) GetRequest() []context.Path {
 	return example.app.Requests
 }
 
-func (example *Example) GetHandler(url, method string) context.Handlers {
-	return plugins.GetHandler(url, method, example.app)
+func (example *Example) GetHandler() context.HandlerMap {
+	return plugins.GetHandler(example.app)
 }

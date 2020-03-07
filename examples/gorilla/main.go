@@ -8,14 +8,12 @@ import (
 	"os"
 	"os/signal"
 
-	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -77,11 +75,7 @@ func main() {
 
 	app.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
-	app.Handle("/admin", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		eng.Content(ada.Context{Request: request, Response: writer}, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})).Methods("get")
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	log.Println("Listening 9033")
 	go func() {

@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gobuffalo/buffalo"
 	"net/http"
@@ -89,12 +88,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	bu.GET("/admin", func(ctx buffalo.Context) error {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-		return nil
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
 		_ = bu.Serve()

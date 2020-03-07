@@ -16,7 +16,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
@@ -83,11 +82,7 @@ func main() {
 
 	router.ServeFiles("/uploads/*filepath", "./uploads")
 
-	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
 		_ = fasthttp.ListenAndServe(":8897", router.Handler)

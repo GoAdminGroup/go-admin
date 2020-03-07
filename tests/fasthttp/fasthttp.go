@@ -17,7 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 	"os"
@@ -39,11 +38,7 @@ func newHandler() fasthttp.RequestHandler {
 		panic(err)
 	}
 
-	router.GET("/admin", func(ctx *fasthttp.RequestCtx) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	return func(ctx *fasthttp.RequestCtx) {
 		router.Handler(ctx)

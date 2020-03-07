@@ -1,6 +1,8 @@
 package gorilla
 
 import (
+	// add gorilla adapter
+	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -10,15 +12,12 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-
-	ada "github.com/GoAdminGroup/go-admin/adapter/gorilla"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gorilla/mux"
 	"net/http"
 	"os"
@@ -38,11 +37,7 @@ func newGorillaHandler() http.Handler {
 		panic(err)
 	}
 
-	app.Handle("/admin", http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
-		engine.Content(ada.Context{Request: request, Response: writer}, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})).Methods("get")
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	return app
 }

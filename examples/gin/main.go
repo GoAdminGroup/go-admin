@@ -1,6 +1,11 @@
 package main
 
 import (
+	"io/ioutil"
+	"log"
+	"os"
+	"os/signal"
+
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -11,13 +16,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
-	"log"
-	"os"
-	"os/signal"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
 
-	eng := engine.Default()
+	e := engine.Default()
 
 	cfg := config.Config{
 		Databases: config.DatabaseList{
@@ -81,9 +81,9 @@ func main() {
 
 	// load config from json file
 	//
-	// eng.AddConfigFromJSON("../datamodel/config.json")
+	// e.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := eng.AddConfig(cfg).
+	if err := e.AddConfig(cfg).
 		AddPlugins(adminPlugin, examplePlugin).
 		Use(r); err != nil {
 		panic(err)
@@ -93,11 +93,7 @@ func main() {
 
 	// customize your pages
 
-	r.GET("/admin", func(ctx *gin.Context) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	e.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
 		_ = r.Run(":9033")
@@ -107,5 +103,5 @@ func main() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
-	eng.MysqlConnection().Close()
+	e.MysqlConnection().Close()
 }

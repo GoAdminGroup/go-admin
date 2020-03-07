@@ -19,9 +19,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/context"
 	"net/http"
 	"os"
 )
@@ -43,11 +41,7 @@ func newBeegoHandler() http.Handler {
 
 	template.AddComp(chartjs.NewChart())
 
-	app.Handlers.Get("/admin", func(ctx *context.Context) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

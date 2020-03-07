@@ -17,7 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 func main() {
@@ -84,12 +83,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	e.GET("/admin", func(context echo.Context) error {
-		eng.Content(context, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-		return nil
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	// Start server
 	go e.Logger.Fatal(e.Start(":1323"))

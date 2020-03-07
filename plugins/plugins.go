@@ -19,22 +19,12 @@ import (
 // something like init the database and set the config and register
 // the routes. The Plugin must implement the three methods.
 type Plugin interface {
-	GetRequest() []context.Path
-	GetHandler(url, method string) context.Handlers
+	GetHandler() context.HandlerMap
 	InitPlugin(services service.List)
 }
 
 // GetHandler is a help method for Plugin GetHandler.
-func GetHandler(url, method string, app *context.App) context.Handlers {
-
-	handler := app.Find(url, method)
-
-	if len(handler) == 0 {
-		panic("handler not found")
-	}
-
-	return handler
-}
+func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
 
 func LoadFromPlugin(mod string) Plugin {
 

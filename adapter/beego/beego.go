@@ -67,7 +67,7 @@ func (bee *Beego) SetApp(app interface{}) error {
 	return nil
 }
 
-func (bee *Beego) AddHandler(method, path string, plug plugins.Plugin) {
+func (bee *Beego) AddHandler(method, path string, handlers gctx.Handlers) {
 	bee.app.Handlers.AddMethod(method, path, func(c *context.Context) {
 		for key, value := range c.Input.Params() {
 			if c.Request.URL.RawQuery == "" {
@@ -77,7 +77,7 @@ func (bee *Beego) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 		ctx := gctx.NewContext(c.Request)
-		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.ResponseWriter.Header().Add(key, head[0])
 		}

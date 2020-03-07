@@ -19,7 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gobuffalo/buffalo"
 	"net/http"
 	"os"
@@ -45,12 +44,7 @@ func newBuffaloHandler() http.Handler {
 		panic(err)
 	}
 
-	bu.GET("/admin", func(ctx buffalo.Context) error {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-		return nil
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	bu.ServeFiles("/uploads", http.Dir("./uploads"))
 

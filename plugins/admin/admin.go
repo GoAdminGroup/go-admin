@@ -76,8 +76,8 @@ func (admin *Admin) GetRequest() []context.Path {
 }
 
 // GetHandler implements Plugin.GetHandler.
-func (admin *Admin) GetHandler(url, method string) context.Handlers {
-	return plugins.GetHandler(url, method, admin.app)
+func (admin *Admin) GetHandler() context.HandlerMap {
+	return plugins.GetHandler(admin.app)
 }
 
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn

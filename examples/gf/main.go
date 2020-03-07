@@ -11,10 +11,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
 	"log"
 	"os"
 	"os/signal"
@@ -90,11 +88,7 @@ func main() {
 
 	// customize your pages
 
-	s.BindHandler("GET:/admin", func(ctx *ghttp.Request) {
-		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	s.SetPort(9033)
 	go s.Run()

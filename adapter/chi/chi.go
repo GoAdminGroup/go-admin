@@ -71,7 +71,7 @@ func (ch *Chi) SetApp(app interface{}) error {
 	return nil
 }
 
-func (ch *Chi) AddHandler(method, path string, plug plugins.Plugin) {
+func (ch *Chi) AddHandler(method, path string, handlers context.Handlers) {
 	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
@@ -100,7 +100,7 @@ func (ch *Chi) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(r.URL.Path, strings.ToLower(r.Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			w.Header().Set(key, head[0])
 		}

@@ -67,7 +67,7 @@ func (gf *Gf) SetApp(app interface{}) error {
 	return nil
 }
 
-func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
+func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 	gf.app.BindHandler(strings.ToUpper(method)+":"+path, func(c *ghttp.Request) {
 		ctx := context.NewContext(c.Request)
 
@@ -91,7 +91,7 @@ func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Response.Header().Add(key, head[0])
 		}

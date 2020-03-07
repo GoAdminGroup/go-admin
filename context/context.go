@@ -187,8 +187,8 @@ func (ctx *Context) HTML(code int, body string) {
 }
 
 // WriteString save the given body string into the response.
-func (ctx *Context) WriteString(Body string) {
-	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
+func (ctx *Context) WriteString(body string) {
+	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(body))
 }
 
 // SetStatusCode save the given status code into the response.
@@ -273,12 +273,14 @@ func (ctx *Context) User() interface{} {
 	return ctx.UserValue["user"]
 }
 
+type HandlerMap map[Path]Handlers
+
 // App is the key struct of the package. App as a member of plugin
 // entity contains the request and the corresponding handler. Prefix
 // is the url prefix and MiddlewareList is for control flow.
 type App struct {
 	Requests    []Path
-	tree        *node
+	Handlers    HandlerMap
 	Middlewares Handlers
 	Prefix      string
 
@@ -291,7 +293,7 @@ type App struct {
 func NewApp() *App {
 	return &App{
 		Requests:    make([]Path, 0),
-		tree:        tree(),
+		Handlers:    make(HandlerMap),
 		Prefix:      "/",
 		Middlewares: make([]Handler, 0),
 		routeIndex:  -1,
@@ -322,13 +324,16 @@ func (app *App) AppendReqAndResp(url, method string, handler []Handler) {
 	})
 	app.routeIndex++
 
-	app.tree.addPath(stringToArr(join(app.Prefix, slash(url))), method, append(app.Middlewares, handler...))
+	app.Handlers[Path{
+		URL:    join(app.Prefix, url),
+		Method: method,
+	}] = append(app.Middlewares, handler...)
 }
 
 // Find is public helper method for findPath of tree.
 func (app *App) Find(url, method string) []Handler {
 	app.routeANY = false
-	return app.tree.findPath(stringToArr(url), method)
+	return app.Handlers[Path{URL: url, Method: method}]
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
@@ -435,7 +440,11 @@ func (g *RouterGroup) AppendReqAndResp(url, method string, handler []Handler) {
 
 	var h = make([]Handler, len(g.Middlewares))
 	copy(h, g.Middlewares)
-	g.app.tree.addPath(stringToArr(join(g.Prefix, slash(url))), method, append(h, handler...))
+
+	g.app.Handlers[Path{
+		URL:    join(g.Prefix, url),
+		Method: method,
+	}] = append(h, handler...)
 }
 
 // POST is a shortcut for app.AppendReqAndResp(url, "post", handler).
@@ -504,10 +513,6 @@ func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 		Middlewares: append(g.Middlewares, middleware...),
 		Prefix:      join(slash(g.Prefix), slash(prefix)),
 	}
-}
-
-func (g *RouterGroup) Print() {
-	g.app.tree.printLeafChildren()
 }
 
 // slash fix the path which has wrong format problem.

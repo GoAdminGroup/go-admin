@@ -66,7 +66,7 @@ func (gins *Gin) SetApp(app interface{}) error {
 	return nil
 }
 
-func (gins *Gin) AddHandler(method, path string, plug plugins.Plugin) {
+func (gins *Gin) AddHandler(method, path string, handlers context.Handlers) {
 	gins.app.Handle(strings.ToUpper(method), path, func(c *gin.Context) {
 		ctx := context.NewContext(c.Request)
 
@@ -78,7 +78,7 @@ func (gins *Gin) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Header(key, head[0])
 		}

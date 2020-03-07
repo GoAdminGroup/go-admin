@@ -6,6 +6,7 @@ package types
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/system"
@@ -87,6 +88,15 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 	}
 }
 
+func NewPagePanel(panel Panel) Page {
+	return Page{
+		Panel: panel,
+		System: SystemInfo{
+			Version: system.Version(),
+		},
+	}
+}
+
 // SystemInfo contains basic info of system.
 type SystemInfo struct {
 	Version string
@@ -163,3 +173,5 @@ window.setTimeout(function(){
 }
 
 type GetPanelFn func(ctx interface{}) (Panel, error)
+
+type GetPanelInfoFn func(ctx *context.Context) (Panel, error)

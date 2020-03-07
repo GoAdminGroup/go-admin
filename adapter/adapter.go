@@ -7,6 +7,7 @@ package adapter
 import (
 	"bytes"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -16,13 +17,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/html"
 	template2 "html/template"
 	"net/url"
 )
 
-// WebFrameWork is a interface which is used as an adapter of
+// WebFrameWork is an interface which is used as an adapter of
 // framework and goAdmin. It must implement two methods. Use registers
 // the routes and the corresponding handlers. Content writes the
 // response to the corresponding context of framework.
@@ -45,7 +46,7 @@ type WebFrameWork interface {
 	Name() string
 	User(ci interface{}) (models.UserModel, bool)
 	SetApp(app interface{}) error
-	AddHandler(method, path string, plug plugins.Plugin)
+	AddHandler(method, path string, handlers context.Handlers)
 }
 
 type BaseAdapter struct {
@@ -85,9 +86,8 @@ func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf 
 	}
 
 	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			wf.AddHandler(req.Method, req.URL, plugCopy)
+		for path, handlers := range plug.GetHandler() {
+			wf.AddHandler(path.Method, path.URL, handlers)
 		}
 	}
 
@@ -160,7 +160,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 func getErrorAlert(msg string) template2.HTML {
 
 	return template.Default().Alert().
-		SetTitle(html.IEl().SetClass("icon fa fa-warning").Get() + template.HTML(` `+language.Get("error")+`!`)).
+		SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
 		SetTheme("warning").
 		SetContent(language.GetFromHtml(template.HTML(msg))).
 		GetContent()

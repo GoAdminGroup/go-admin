@@ -22,8 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
-
 	"github.com/kataras/iris/v12"
 )
 
@@ -42,11 +40,7 @@ func newIrisHandler() http.Handler {
 		panic(err)
 	}
 
-	app.Get("/admin", func(context iris.Context) {
-		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	return app
 }

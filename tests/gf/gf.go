@@ -41,11 +41,7 @@ func newHandler() http.Handler {
 		panic(err)
 	}
 
-	s.BindHandler("GET:/admin", func(ctx *ghttp.Request) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	return new(httpHandler).SetSrv(s)
 }

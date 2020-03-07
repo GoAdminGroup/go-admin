@@ -19,7 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
@@ -41,12 +40,7 @@ func newEchoHandler() http.Handler {
 		panic(err)
 	}
 
-	e.GET("/admin", func(context echo.Context) error {
-		engine.Content(context, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-		return nil
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	return e
 }

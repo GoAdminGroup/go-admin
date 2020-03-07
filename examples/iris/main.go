@@ -16,8 +16,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
-
 	"github.com/kataras/iris/v12"
 )
 
@@ -89,11 +87,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	app.Get("/admin", func(context iris.Context) {
-		eng.Content(context, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
 		_ = app.Run(iris.Addr(":8099"))
