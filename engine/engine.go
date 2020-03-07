@@ -290,6 +290,24 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 	}))
 }
 
+func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, files ...string) {
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+
+		buf := new(bytes.Buffer)
+
+		t, err := template2.ParseFiles(files...)
+		if err != nil {
+			eng.errorPanelHTML(ctx, buf, err)
+		} else {
+			if err := t.Execute(buf, data); err != nil {
+				eng.errorPanelHTML(ctx, buf, err)
+			}
+		}
+
+		ctx.Data(http.StatusOK, "text/html; charset=utf-8", buf.Bytes())
+	}))
+}
+
 func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err error) {
 	alert := template.Default().Alert().
 		SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
