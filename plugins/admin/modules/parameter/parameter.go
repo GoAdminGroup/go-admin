@@ -91,7 +91,7 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 	fields := make(map[string][]string)
 
 	for key, value := range values {
-		if !modules.InArray(keys, key) && value[0] != "" {
+		if !modules.InArray(keys, key) && len(value) > 0 && value[0] != "" {
 			if key == SortType {
 				if value[0] != sortTypeDesc && value[0] != sortTypeAsc {
 					fields[key] = []string{sortTypeDesc}
@@ -144,16 +144,16 @@ func GetParamFromURL(urlStr string, defaultPageSize int, defaultSortType, primar
 }
 
 func (param Parameters) WithPKs(id ...string) Parameters {
-	param.Fields["pk"] = []string{strings.Join(id, ",")}
+	param.Fields[PrimaryKey] = []string{strings.Join(id, ",")}
 	return param
 }
 
 func (param Parameters) PKs() []string {
-	return strings.Split(param.Fields[PrimaryKey][0], ",")
+	return strings.Split(param.GetFieldValue(PrimaryKey), ",")
 }
 
 func (param Parameters) IsAll() bool {
-	return param.Fields[IsAll][0] == True
+	return param.GetFieldValue(IsAll) == True
 }
 
 func (param Parameters) WithIsAll(isAll bool) Parameters {
