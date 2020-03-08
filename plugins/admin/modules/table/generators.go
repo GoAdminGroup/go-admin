@@ -3,6 +3,7 @@ package table
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -13,6 +14,7 @@ import (
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/html"
 	"golang.org/x/crypto/bcrypt"
@@ -713,9 +715,24 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable()
 	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable()
 	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable()
-	info.AddField(lg("content"), "input", db.Varchar)
+	info.AddField(lg("content"), "input", db.Varchar).FieldWidth(230)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
-	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
+
+	users, _ := s.table("goadmin_users").Select("id", "name").All()
+	options := make(types.FieldOptions, len(users))
+	for k, user := range users {
+		options[k].Value = fmt.Sprintf("%v", user["id"])
+		options[k].Text = fmt.Sprintf("%v", user["name"])
+	}
+	info.AddSelectBox(language.Get("user"), options, action.FieldFilter("user_id"))
+	info.AddSelectBox(language.Get("method"), types.FieldOptions{
+		{Value: "GET", Text: "GET"},
+		{Value: "POST", Text: "POST"},
+		{Value: "OPTIONS", Text: "OPTIONS"},
+		{Value: "PUT", Text: "PUT"},
+		{Value: "HEAD", Text: "HEAD"},
+		{Value: "DELETE", Text: "DELETE"},
+	}, action.FieldFilter("method"))
 
 	info.SetTable("goadmin_operation_log").
 		SetTitle(lg("operation log")).
