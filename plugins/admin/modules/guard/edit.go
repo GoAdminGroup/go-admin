@@ -103,7 +103,7 @@ func (g *Guard) EditForm(ctx *context.Context) {
 
 	fromList := isInfoUrl(previous)
 
-	param := parameter.GetParamFromUrl(previous, panel.GetInfo().DefaultPageSize,
+	param := parameter.GetParamFromURL(previous, panel.GetInfo().DefaultPageSize,
 		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
 
 	if fromList {

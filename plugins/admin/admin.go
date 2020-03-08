@@ -47,6 +47,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 	})
 	admin.initRouter(cfg.Prefix())
 	admin.handler.SetRoutes(admin.app.Routers)
+	admin.tableList.InjectRoutes(admin.app, admin.services)
 
 	table.SetServices(services)
 }

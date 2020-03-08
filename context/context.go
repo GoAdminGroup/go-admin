@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"io/ioutil"
 	"math"
 	"net"
@@ -261,6 +262,11 @@ func (ctx *Context) PostForm() url.Values {
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
 	ctx.Response.Header.Add(key, value)
+}
+
+// PjaxUrl add pjax url header.
+func (ctx *Context) PjaxUrl(url string) {
+	ctx.Response.Header.Add(constant.PjaxUrlHeader, url)
 }
 
 // SetHeader set the key, value pair to the header.

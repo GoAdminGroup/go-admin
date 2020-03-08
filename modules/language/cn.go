@@ -33,6 +33,7 @@ var cn = map[string]string{
 	"home":            "首页",
 	"all":             "全部",
 	"more":            "更多",
+	"browse":          "打开",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",

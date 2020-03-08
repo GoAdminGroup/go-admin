@@ -145,6 +145,8 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 		if filter.Type.IsRange() {
 			value = params.GetFilterFieldValueStart(headField)
 			value2 = params.GetFilterFieldValueEnd(headField)
+		} else if filter.Type.IsMultiSelect() {
+			value = params.GetFieldValuesStr(headField)
 		} else {
 			if filter.Operator == FilterOperatorFree {
 				value2 = GetOperatorFromValue(params.GetFieldOperator(headField, keySuffix)).String()
@@ -154,8 +156,12 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 
 		options = make(FieldOptions, 0)
 
-		if filter.Type.IsSelect() {
+		if filter.Type.IsSingleSelect() {
 			options = filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
+		}
+
+		if filter.Type.IsMultiSelect() {
+			options = filter.Options.SetSelected(params.GetFieldValues(f.Field), filter.Type.SelectedLabel())
 		}
 
 		filterForm = append(filterForm, FormField{

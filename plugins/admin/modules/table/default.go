@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -14,7 +13,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 	"io/ioutil"
 	"net/http"
@@ -481,7 +479,6 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 	var (
 		res     map[string]interface{}
 		columns Columns
-		fields  = make([]string, 0)
 	)
 
 	if tb.getDataFun != nil {
@@ -508,7 +505,16 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 
 		columns, _ = tb.getColumns(tb.Form.Table)
 
-		var err error
+		var (
+			err    error
+			fields = make([]string, 0)
+		)
+
+		for i := 0; i < len(tb.Form.FieldList); i++ {
+			if modules.InArray(columns, tb.Form.FieldList[i].Field) {
+				fields = append(fields, tb.Form.FieldList[i].Field)
+			}
+		}
 
 		res, err = tb.sql().
 			Table(tb.Form.Table).Select(fields...).
@@ -520,39 +526,13 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 		}
 	}
 
-	formList := tb.Form.FieldList.Copy()
-
-	for i := 0; i < len(tb.Form.FieldList); i++ {
-		if modules.InArray(columns, formList[i].Field) {
-			fields = append(fields, formList[i].Field)
-		}
-	}
-
 	var (
-		groupFormList = make([][]types.FormField, 0)
+		groupFormList = make([]types.FormFields, 0)
 		groupHeaders  = make([]string, 0)
 	)
 
 	if len(tb.Form.TabGroups) > 0 {
-		for key, value := range tb.Form.TabGroups {
-			list := make([]types.FormField, len(value))
-			for j := 0; j < len(value); j++ {
-				for _, field := range tb.Form.FieldList {
-					if value[j] == field.Field {
-						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
-							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
-						list[j] = field.UpdateValue(id, rowValue, res, tb.sql())
-						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
-							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
-						}
-						break
-					}
-				}
-			}
-
-			groupFormList = append(groupFormList, list)
-			groupHeaders = append(groupHeaders, tb.Form.TabHeaders[key])
-		}
+		groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res, tb.sql)
 		return FormInfo{
 			FieldList:         tb.Form.FieldList,
 			GroupFieldList:    groupFormList,
@@ -562,18 +542,8 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 		}, nil
 	}
 
-	for key, field := range formList {
-		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
-			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
-		formList[key] = field.UpdateValue(id, rowValue, res, tb.sql())
-
-		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
-			formList[key].Value2 = "/" + config.Get().Store.Prefix + "/" + string(formList[key].Value)
-		}
-	}
-
 	return FormInfo{
-		FieldList:         formList,
+		FieldList:         tb.Form.FieldsWithValue(id, columns, res, tb.sql),
 		GroupFieldList:    groupFormList,
 		GroupFieldHeaders: groupHeaders,
 		Title:             tb.Form.Title,
@@ -806,39 +776,10 @@ func (tb DefaultTable) DeleteData(id string) error {
 func (tb DefaultTable) GetNewForm() FormInfo {
 
 	if len(tb.Form.TabGroups) == 0 {
-		var newForm []types.FormField
-		for _, v := range tb.Form.FieldList {
-			if !v.NotAllowAdd {
-				v.Editable = true
-				newForm = append(newForm, v.UpdateDefaultValue(tb.sql()))
-			}
-		}
-		return FormInfo{FieldList: newForm}
+		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql)}
 	}
 
-	var (
-		newForm = make([][]types.FormField, 0)
-		headers = make([]string, 0)
-	)
-
-	for key, value := range tb.Form.TabGroups {
-		list := make([]types.FormField, 0)
-
-		for i := 0; i < len(value); i++ {
-			for _, v := range tb.Form.FieldList {
-				if v.Field == value[i] {
-					if !v.NotAllowAdd {
-						v.Editable = true
-						list = append(list, v.UpdateDefaultValue(tb.sql()))
-						break
-					}
-				}
-			}
-		}
-
-		newForm = append(newForm, list)
-		headers = append(headers, tb.Form.TabHeaders[key])
-	}
+	newForm, headers := tb.Form.GroupField(tb.sql)
 
 	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}
 }

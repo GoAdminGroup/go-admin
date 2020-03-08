@@ -62,18 +62,18 @@ func Upload(c UploadFun, form *multipart.Form) error {
 	)
 
 	for k := range form.File {
-		fileObj := form.File[k][0]
+		for _, fileObj := range form.File[k] {
+			suffix = path.Ext(fileObj.Filename)
+			filename = modules.Uuid() + suffix
 
-		suffix = path.Ext(fileObj.Filename)
-		filename = modules.Uuid() + suffix
+			pathStr, err := c(fileObj, filename)
 
-		pathStr, err := c(fileObj, filename)
+			if err != nil {
+				return err
+			}
 
-		if err != nil {
-			return err
+			form.Value[k] = append(form.Value[k], pathStr)
 		}
-
-		form.Value[k] = []string{pathStr}
 	}
 
 	return nil

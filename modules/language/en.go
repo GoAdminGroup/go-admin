@@ -58,6 +58,7 @@ var en = map[string]string{
 	"continue editing":  "Continue editing",
 	"continue creating": "Continue creating",
 
+	"browse":     "Browse",
 	"avatar":     "Avatar",
 	"password":   "Password",
 	"username":   "Username",

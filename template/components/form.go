@@ -14,10 +14,10 @@ import (
 type FormAttribute struct {
 	Name            string
 	Header          template.HTML
-	Content         []types.FormField
-	ContentList     [][]types.FormField
+	Content         types.FormFields
+	ContentList     []types.FormFields
 	Layout          form.Layout
-	TabContents     [][]types.FormField
+	TabContents     []types.FormFields
 	TabHeaders      []string
 	Footer          template.HTML
 	Url             string
@@ -43,12 +43,12 @@ func (compo *FormAttribute) SetPrimaryKey(value string) types.FormAttribute {
 	return compo
 }
 
-func (compo *FormAttribute) SetContent(value []types.FormField) types.FormAttribute {
+func (compo *FormAttribute) SetContent(value types.FormFields) types.FormAttribute {
 	compo.Content = value
 	return compo
 }
 
-func (compo *FormAttribute) SetTabContents(value [][]types.FormField) types.FormAttribute {
+func (compo *FormAttribute) SetTabContents(value []types.FormFields) types.FormAttribute {
 	compo.TabContents = value
 	return compo
 }
@@ -159,7 +159,7 @@ func (compo *FormAttribute) GetContent() template.HTML {
 	compo.CdnUrl = config.Get().AssetUrl
 
 	if col := compo.Layout.Col(); col > 0 {
-		compo.ContentList = make([][]types.FormField, col)
+		compo.ContentList = make([]types.FormFields, col)
 		index := 0
 		for i := 0; i < len(compo.Content); i++ {
 			ii := index % col
@@ -175,7 +175,7 @@ func (compo *FormAttribute) GetContent() template.HTML {
 	}
 
 	return ComposeHtml(compo.TemplateList, *compo, "form",
-		"form/default", "form/file", "form/textarea", "form/custom",
+		"form/default", "form/file", "form/multi_file", "form/textarea", "form/custom",
 		"form/selectbox", "form/text", "form/radio", "form/switch",
 		"form/password", "form/select", "form/singleselect", "form/datetime_range",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number", "form/number_range",

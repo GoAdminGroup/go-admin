@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"html"
@@ -126,7 +128,7 @@ type FormField struct {
 	PostFilterFn PostFieldFilterFn
 }
 
-func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sql *db.SQL) FormField {
+func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sqls ...*db.SQL) FormField {
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
 			f.Options = f.OptionInitFn(FieldModel{
@@ -134,16 +136,15 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sql *
 				Value: val,
 				Row:   res,
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
-		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 {
 
-			query := sql.Table(f.OptionTable.Table).
-				Select(f.OptionTable.ValueField, f.OptionTable.TextField)
+			sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
 
 			if f.OptionTable.QueryProcessFn != nil {
-				query = f.OptionTable.QueryProcessFn(query)
+				f.OptionTable.QueryProcessFn(sqls[0])
 			}
 
-			queryRes, err := query.All()
+			queryRes, err := sqls[0].All()
 			if err == nil {
 				for _, item := range queryRes {
 					f.Options = append(f.Options, FieldOption{
@@ -185,7 +186,7 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sql *
 	return f
 }
 
-func (f FormField) UpdateDefaultValue(sql *db.SQL) FormField {
+func (f FormField) UpdateDefaultValue(sqls ...*db.SQL) FormField {
 	f.Value = f.Default
 	if f.FormType.IsSelect() {
 		if len(f.Options) == 0 && f.OptionInitFn != nil {
@@ -194,14 +195,13 @@ func (f FormField) UpdateDefaultValue(sql *db.SQL) FormField {
 				Value: string(f.Value),
 				Row:   make(map[string]interface{}),
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
-		} else if len(f.Options) == 0 && f.OptionTable.Table != "" {
-			query := sql.Table(f.OptionTable.Table).
-				Select(f.OptionTable.ValueField, f.OptionTable.TextField)
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 {
+			sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
 
 			if f.OptionTable.QueryProcessFn != nil {
-				query = f.OptionTable.QueryProcessFn(query)
+				f.OptionTable.QueryProcessFn(sqls[0])
 			}
-			res, err := query.All()
+			res, err := sqls[0].All()
 
 			if err == nil {
 				for _, item := range res {
@@ -305,6 +305,7 @@ func (f *FormPanel) AddXssJsFilter() *FormPanel {
 }
 
 func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form2.Type) *FormPanel {
+
 	f.FieldList = append(f.FieldList, FormField{
 		Head:        head,
 		Field:       field,
@@ -321,6 +322,19 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 		},
 	})
 	f.curFieldListIndex++
+
+	if formType == form2.File || formType == form2.Multifile {
+		f.FieldOptionExt(map[string]interface{}{
+			"overwriteInitial":     true,
+			"initialPreviewAsData": true,
+			"browseLabel":          language.Get("Browse"),
+			"showRemove":           false,
+			"previewClass":         "preview-" + field,
+			"showUpload":           false,
+			"allowedFileTypes":     []string{"image"},
+		})
+	}
+
 	return f
 }
 
@@ -372,7 +386,7 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 
 	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
 		ss := string(f.FieldList[f.curFieldListIndex].OptionExt)
-		ss = strings.Replace(ss, "}", ",", strings.Count(ss, "}"))
+		ss = strings.Replace(ss, "}", "", strings.Count(ss, "}"))
 		ss = strings.TrimRight(ss, " ")
 		ss += ","
 		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(ss) + template.JS(strings.Replace(string(s), "{", "", 1))
@@ -803,13 +817,112 @@ func (f *FormPanel) SetInsertFn(fn FormPostFn) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) ([]FormFields, []string) {
+	var (
+		groupFormList = make([]FormFields, 0)
+		groupHeaders  = make([]string, 0)
+	)
+
+	if len(f.TabGroups) > 0 {
+		for key, value := range f.TabGroups {
+			list := make(FormFields, len(value))
+			for j := 0; j < len(value); j++ {
+				for _, field := range f.FieldList {
+					if value[j] == field.Field {
+						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
+							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
+						if len(sql) > 0 {
+							list[j] = field.UpdateValue(id, rowValue, res, sql[0]())
+						} else {
+							list[j] = field.UpdateValue(id, rowValue, res)
+						}
+						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
+							list[j].Value2 = "/" + config.Get().Store.Prefix + "/" + string(list[j].Value)
+						}
+						break
+					}
+				}
+			}
+
+			groupFormList = append(groupFormList, list)
+			groupHeaders = append(groupHeaders, f.TabHeaders[key])
+		}
+	}
+
+	return groupFormList, groupHeaders
+}
+
+func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
+	var (
+		groupFormList = make([]FormFields, 0)
+		groupHeaders  = make([]string, 0)
+	)
+
+	if len(f.TabGroups) > 0 {
+		for key, value := range f.TabGroups {
+			list := make(FormFields, 0)
+			for i := 0; i < len(value); i++ {
+				for _, v := range f.FieldList {
+					if v.Field == value[i] {
+						if !v.NotAllowAdd {
+							v.Editable = true
+							if len(sql) > 0 {
+								list = append(list, v.UpdateDefaultValue(sql[0]()))
+							} else {
+								list = append(list, v.UpdateDefaultValue())
+							}
+							break
+						}
+					}
+				}
+			}
+			groupFormList = append(groupFormList, list)
+			groupHeaders = append(groupHeaders, f.TabHeaders[key])
+		}
+	}
+	return groupFormList, groupHeaders
+}
+
+func (f *FormPanel) FieldsWithValue(id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) FormFields {
+	formList := f.FieldList.Copy()
+	for key, field := range formList {
+		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
+			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
+		if len(sql) > 0 {
+			formList[key] = field.UpdateValue(id, rowValue, res, sql[0]())
+		} else {
+			formList[key] = field.UpdateValue(id, rowValue, res)
+		}
+
+		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
+			formList[key].Value2 = "/" + config.Get().Store.Prefix + "/" + string(formList[key].Value)
+		}
+	}
+	return formList
+}
+
+func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
+	var newForm FormFields
+	for _, v := range f.FieldList {
+		if !v.NotAllowAdd {
+			v.Editable = true
+			if len(sql) > 0 {
+				newForm = append(newForm, v.UpdateDefaultValue(sql[0]()))
+			} else {
+				newForm = append(newForm, v.UpdateDefaultValue())
+			}
+		}
+	}
+	return newForm
+}
+
 type FormPreProcessFn func(values form.Values) form.Values
 
 type FormPostFn func(values form.Values) error
 
 type FormFields []FormField
 
-type GroupFormFields [][]FormField
+type GroupFormFields []FormFields
 type GroupFieldHeaders []string
 
 func (f FormFields) Copy() FormFields {

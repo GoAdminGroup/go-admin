@@ -15,6 +15,7 @@ const (
 	IconPicker
 	SelectBox
 	File
+	Multifile
 	Password
 	RichText
 	Datetime
@@ -32,7 +33,7 @@ const (
 	Switch
 )
 
-var allType = []Type{Default, Text, SelectSingle, Select, IconPicker, SelectBox, File, Password,
+var allType = []Type{Default, Text, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
 	RichText, Datetime, DatetimeRange, Radio, Email, Url, Ip, Color, Currency, Number, NumberRange,
 	TextArea, Custom, Switch}
 
@@ -97,6 +98,8 @@ func (t Type) String() string {
 		return "selectbox"
 	case File:
 		return "file"
+	case Multifile:
+		return "multi_file"
 	case Password:
 		return "password"
 	case RichText:
@@ -134,6 +137,10 @@ func (t Type) String() string {
 
 func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
+}
+
+func (t Type) IsSingleSelect() bool {
+	return t == SelectSingle
 }
 
 func (t Type) IsMultiSelect() bool {

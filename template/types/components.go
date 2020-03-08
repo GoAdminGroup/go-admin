@@ -13,8 +13,8 @@ import (
 
 type FormAttribute interface {
 	SetHeader(value template.HTML) FormAttribute
-	SetContent(value []FormField) FormAttribute
-	SetTabContents(value [][]FormField) FormAttribute
+	SetContent(value FormFields) FormAttribute
+	SetTabContents(value []FormFields) FormAttribute
 	SetTabHeaders(value []string) FormAttribute
 	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
