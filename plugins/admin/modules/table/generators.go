@@ -124,7 +124,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var roles []string
 
-			if model.Value == "" {
+			if model.ID == "" {
 				return roles
 			}
 			roleModel, _ := s.table("goadmin_role_users").Select("role_id").
@@ -141,7 +141,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var permissions []string
 
-			if model.Value == "" {
+			if model.ID == "" {
 				return permissions
 			}
 			permissionModel, _ := s.table("goadmin_user_permissions").
@@ -635,7 +635,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var permissions = make([]string, 0)
 
-			if model.Value == "" {
+			if model.ID == "" {
 				return permissions
 			}
 			perModel, _ := s.table("goadmin_role_permissions").
@@ -819,7 +819,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var roles []string
 
-			if model.Value == "" {
+			if model.ID == "" {
 				return roles
 			}
 

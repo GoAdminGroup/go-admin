@@ -166,11 +166,11 @@ func (param Parameters) WithIsAll(isAll bool) Parameters {
 }
 
 func (param Parameters) GetFilterFieldValueStart(field string) string {
-	return param.GetFieldValue(field) + FilterRangeParamStartSuffix
+	return param.GetFieldValue(field + FilterRangeParamStartSuffix)
 }
 
 func (param Parameters) GetFilterFieldValueEnd(field string) string {
-	return param.GetFieldValue(field) + FilterRangeParamEndSuffix
+	return param.GetFieldValue(field + FilterRangeParamEndSuffix)
 }
 
 func (param Parameters) GetFieldValue(field string) string {
