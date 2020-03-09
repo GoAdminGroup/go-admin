@@ -479,6 +479,7 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 	var (
 		res     map[string]interface{}
 		columns Columns
+		custom  = false
 	)
 
 	if tb.getDataFun != nil {
@@ -486,21 +487,25 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 		if len(list) > 0 {
 			res = list[0]
 		}
+		custom = true
 	} else if tb.sourceURL != "" {
 		list, _ := tb.getDataFromURL("", parameter.BaseParam(), false, []string{id})
 		if len(list) > 0 {
 			res = list[0]
 		}
+		custom = true
 	} else if tb.Detail.GetDataFn != nil {
 		list, _ := tb.Detail.GetDataFn(parameter.BaseParam().WithPKs(id))
 		if len(list) > 0 {
 			res = list[0]
 		}
+		custom = true
 	} else if tb.Info.GetDataFn != nil {
 		list, _ := tb.Info.GetDataFn(parameter.BaseParam().WithPKs(id))
 		if len(list) > 0 {
 			res = list[0]
 		}
+		custom = true
 	} else {
 
 		columns, _ = tb.getColumns(tb.Form.Table)
@@ -532,7 +537,11 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 	)
 
 	if len(tb.Form.TabGroups) > 0 {
-		groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res, tb.sql)
+		if custom {
+			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res)
+		} else {
+			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res, tb.sql)
+		}
 		return FormInfo{
 			FieldList:         tb.Form.FieldList,
 			GroupFieldList:    groupFormList,
@@ -542,8 +551,15 @@ func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
 		}, nil
 	}
 
+	var fieldList types.FormFields
+	if custom {
+		fieldList = tb.Form.FieldsWithValue(id, columns, res)
+	} else {
+		fieldList = tb.Form.FieldsWithValue(id, columns, res, tb.sql)
+	}
+
 	return FormInfo{
-		FieldList:         tb.Form.FieldsWithValue(id, columns, res, tb.sql),
+		FieldList:         fieldList,
 		GroupFieldList:    groupFormList,
 		GroupFieldHeaders: groupHeaders,
 		Title:             tb.Form.Title,
@@ -822,7 +838,10 @@ func (tb DefaultTable) getDataFromDB() bool {
 
 // sql is a helper function return db sql.
 func (tb DefaultTable) sql() *db.SQL {
-	return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
+	if tb.connectionDriver != "" {
+		return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
+	}
+	return nil
 }
 
 type Columns []string

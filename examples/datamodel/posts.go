@@ -37,7 +37,7 @@ func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField("Title", "title", db.Varchar, form.Text)
 	formList.AddField("Description", "description", db.Varchar, form.Text)
-	formList.AddField("Content", "content", db.Varchar, form.Text)
+	formList.AddField("Content", "content", db.Varchar, form.RichText)
 	formList.AddField("Date", "date", db.Varchar, form.Datetime)
 
 	formList.SetTable("posts").SetTitle("Posts").SetDescription("Posts")

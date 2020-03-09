@@ -136,7 +136,7 @@ func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sqls 
 				Value: val,
 				Row:   res,
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
-		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 {
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
 
 			sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
 
@@ -195,7 +195,7 @@ func (f FormField) UpdateDefaultValue(sqls ...*db.SQL) FormField {
 				Value: string(f.Value),
 				Row:   make(map[string]interface{}),
 			}).SetSelectedLabel(f.FormType.SelectedLabel())
-		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 {
+		} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
 			sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
 
 			if f.OptionTable.QueryProcessFn != nil {
@@ -580,7 +580,7 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 	return template.JS(`{
 		`) + ext + template.JS(`
 		ajax: {
-		    url: "`+url+`",
+		    url: "` + url + `",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -589,17 +589,17 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 			      }
 			      return query;
 		    },
-		    delay: `+delayStr+`,
+		    delay: ` + delayStr + `,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}
 	  	}
 	}`), context.Node{
-			Path:     url,
-			Method:   "get",
-			Handlers: context.Handlers{handler.Wrap()},
-			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-		}
+		Path:     url,
+		Method:   "get",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	}
 }
 
 func chooseCustomJS(field string, js template.HTML) template.HTML {
@@ -700,11 +700,11 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 	})
 })
 </script>`, context.Node{
-			Path:     url,
-			Method:   "post",
-			Handlers: context.Handlers{handler.Wrap()},
-			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-		}
+		Path:     url,
+		Method:   "post",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	}
 }
 
 func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
