@@ -822,7 +822,10 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, column
 
 // db is a helper function return raw db connection.
 func (tb DefaultTable) db() db.Connection {
-	return db.GetConnectionFromService(services.Get(tb.connectionDriver))
+	if tb.connectionDriver != "" && !tb.getDataFromDB() {
+		return db.GetConnectionFromService(services.Get(tb.connectionDriver))
+	}
+	return nil
 }
 
 func (tb DefaultTable) delimiter() string {
@@ -838,7 +841,7 @@ func (tb DefaultTable) getDataFromDB() bool {
 
 // sql is a helper function return db sql.
 func (tb DefaultTable) sql() *db.SQL {
-	if tb.connectionDriver != "" {
+	if tb.connectionDriver != "" && !tb.getDataFromDB() {
 		return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
 	}
 	return nil

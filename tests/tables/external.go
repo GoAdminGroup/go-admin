@@ -11,7 +11,7 @@ import (
 // GetExternalTable return the model from external data source.
 func GetExternalTable(ctx *context.Context) (externalTable table.Table) {
 
-	externalTable = table.NewDefaultTable(table.DefaultConfig())
+	externalTable = table.NewDefaultTable()
 
 	info := externalTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
