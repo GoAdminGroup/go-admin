@@ -79,7 +79,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddSelectBox("gender", types.FieldOptions{
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
-	}, action.FieldFilter("user", "gender"))
+	}, action.FieldFilter("gender"))
 
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
