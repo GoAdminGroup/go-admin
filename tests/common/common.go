@@ -15,12 +15,23 @@ func Test(e *httpexpect.Expect) {
 
 	cookie := authTest(e)
 
+	// permission check
 	permissionTest(e, cookie)
+	// role check
 	roleTest(e, cookie)
+	// manager check
 	managerTest(e, cookie)
+	// menu check
 	menuTest(e, cookie)
+	// operation log check
 	operationLogTest(e, cookie)
-	userTest(e, cookie)
+	// get data from outside source check
+	externalTest(e, cookie)
+
+	// TODO: selections check
+	// TODO: add buttons check
+	// TODO: export functions check
+	// TODO: filter functions check
 }
 
 func printlnWithColor(msg string, color string) {

@@ -3,7 +3,6 @@ package gf
 import (
 	// add gf adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
-	"net/http"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -14,12 +13,13 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
+	"net/http"
 	"os"
 )
 
@@ -28,11 +28,11 @@ func newHandler() http.Handler {
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
+	adminPlugin := admin.NewAdmin(tables.Generators).AddDisplayFilterXssJsFilter()
 
 	template.AddComp(chartjs.NewChart())
 
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin).
@@ -40,7 +40,7 @@ func newHandler() http.Handler {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", datamodel.GetContent)
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	return new(httpHandler).SetSrv(s)
 }

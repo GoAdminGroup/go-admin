@@ -13,11 +13,11 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
@@ -28,8 +28,8 @@ func newEchoHandler() http.Handler {
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
 	template.AddComp(chartjs.NewChart())
 
 	examplePlugin := example.NewExample()
@@ -39,7 +39,7 @@ func newEchoHandler() http.Handler {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", datamodel.GetContent)
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	return e
 }

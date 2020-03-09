@@ -1,9 +1,6 @@
 package iris
 
 import (
-	"net/http"
-	"os"
-
 	// add iris adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"
 	// add mysql driver
@@ -19,10 +16,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/kataras/iris/v12"
+	"net/http"
+	"os"
 )
 
 func newIrisHandler() http.Handler {
@@ -30,8 +29,8 @@ func newIrisHandler() http.Handler {
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
 	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
@@ -40,7 +39,7 @@ func newIrisHandler() http.Handler {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", datamodel.GetContent)
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	return app
 }

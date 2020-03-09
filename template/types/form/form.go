@@ -140,7 +140,7 @@ func (t Type) IsSelect() bool {
 }
 
 func (t Type) IsSingleSelect() bool {
-	return t == SelectSingle
+	return t == SelectSingle || t == Radio || t == Switch
 }
 
 func (t Type) IsMultiSelect() bool {

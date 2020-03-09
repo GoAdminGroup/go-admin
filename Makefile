@@ -95,16 +95,16 @@ sqlite-test:
 
 import-sqlite:
 	rm -rf ./tests/common/admin.db
-	cp ./data/admin.db ./tests/common/admin.db
+	cp ./tests/data/admin.db ./tests/common/admin.db
 
 import-mysql:
 	mysql -uroot -proot -e "create database if not exists \`go-admin-test\`"
-	mysql -uroot -proot go-admin-test < ./data/admin.sql
+	mysql -uroot -proot go-admin-test < ./tests/data/admin.sql
 
 import-postgresql:
 	dropdb -U postgres go-admin-test
 	createdb -U postgres go-admin-test
-	psql -d go-admin-test -U postgres -f ./data/admin.pgsql
+	psql -d go-admin-test -U postgres -f ./tests/data/admin.pgsql
 
 pg-test:
 	make import-postgresql

@@ -13,11 +13,11 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/gorilla/mux"
 	"net/http"
 	"os"
@@ -31,13 +31,13 @@ func newGorillaHandler() http.Handler {
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(admin.NewAdmin(datamodel.Generators).
-			AddGenerator("user", datamodel.GetUserTable), examplePlugin).
+		AddPlugins(admin.NewAdmin(tables.Generators).
+			AddGenerator("user", tables.GetUserTable), examplePlugin).
 		Use(app); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", datamodel.GetContent)
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	return app
 }
