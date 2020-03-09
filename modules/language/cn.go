@@ -78,6 +78,7 @@ var cn = map[string]string{
 	"login fail": "登录失败",
 
 	"admin":     "管理",
+	"user":      "用户",
 	"users":     "用户",
 	"roles":     "角色",
 	"menu":      "菜单",
