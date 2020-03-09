@@ -29,6 +29,7 @@ func Test(e *httpexpect.Expect) {
 	externalTest(e, cookie)
 
 	// TODO: selections check
+	selectionsTest(e, cookie)
 	// TODO: add buttons check
 	// TODO: export functions check
 	// TODO: filter functions check

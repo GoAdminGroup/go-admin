@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Pro SQL dump
-# Version 4468
+# Version 4541
 #
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
 # Host: 127.0.0.1 (MySQL 5.7.19)
-# Database: godmin
-# Generation Time: 2019-09-12 04:16:47 +0000
+# Database: go-admin-test
+# Generation Time: 2020-03-09 07:25:22 +0000
 # ************************************************************
 
 
@@ -279,6 +279,44 @@ VALUES
 	(2,'operator','$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.','Operator','',NULL,'2019-09-10 00:00:00','2019-09-10 00:00:00');
 
 /*!40000 ALTER TABLE `goadmin_users` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table users
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `homepage` varchar(3000) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `birthday` timestamp NULL DEFAULT NULL,
+  `country` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ip` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `certificate` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `money` int(10) unsigned DEFAULT NULL,
+  `resume` text COLLATE utf8mb4_unicode_ci,
+  `gender` tinyint(4) unsigned DEFAULT NULL,
+  `fruit` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `drink` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `experience` tinyint(3) unsigned DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+
+INSERT INTO `users` (`id`, `name`, `homepage`, `email`, `birthday`, `country`, `city`, `password`, `ip`, `certificate`, `money`, `resume`, `gender`, `fruit`, `drink`, `experience`, `created_at`, `updated_at`)
+VALUES
+	(1,'jack','http://jack.me','jack@163.com','1993-10-21 00:00:00','china','guangzhou','123456','127.0.0.1',NULL,10,'<h1>Jack`s Resume</h1>',1,'apple','water',0,'2020-03-09 15:24:00','2020-03-09 15:24:00');
+
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
 

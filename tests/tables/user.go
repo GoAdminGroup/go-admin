@@ -3,6 +3,7 @@ package tables
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -11,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"github.com/GoAdminGroup/go-admin/template/types/form/select"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 
@@ -19,7 +19,7 @@ import (
 func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	userTable = table.NewDefaultTable(table.Config{
-		Driver:     db.DriverMysql,
+		Driver:     config.Get().Databases.GetDefault().Driver,
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
@@ -50,7 +50,20 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
 	})
-	info.AddField("Phone", "phone", db.Varchar).FieldFilterable()
+	info.AddField("Experience", "experience", db.Tinyint).
+		FieldFilterable(types.FilterType{FormType: form.Radio}).
+		FieldFilterOptions(types.FieldOptions{
+			{Value: "0", Text: "one"},
+			{Value: "1", Text: "two"},
+			{Value: "3", Text: "three"},
+		}).FieldHide()
+	info.AddField("Drink", "drink", db.Tinyint).
+		FieldFilterable(types.FilterType{FormType: form.Select}).
+		FieldFilterOptions(types.FieldOptions{
+			{Value: "water", Text: "water"},
+			{Value: "juice", Text: "juice"},
+			{Value: "red bull", Text: "red bull"},
+		}).FieldHide()
 	info.AddField("City", "city", db.Varchar).FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
@@ -60,6 +73,10 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddField("CreatedAt", "created_at", db.Timestamp).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
+
+	// ===========================
+	// Buttons
+	// ===========================
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
 	info.AddActionButton("审批", action.Ajax("/admin/audit",
@@ -84,81 +101,61 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
 	formList := userTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField("Ip", "ip", db.Varchar, form.Text)
-	formList.AddField("Name", "name", db.Varchar, form.Text)
-	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
-		FieldOptions(types.FieldOptions{
-			{Text: "men", Value: "0"},
-			{Text: "women", Value: "1"},
-		})
-	formList.AddField("Country", "country", db.Tinyint, form.SelectSingle).
-		FieldOptions(types.FieldOptions{
-			{Text: "China", Value: "0"},
-			{Text: "America", Value: "1"},
-			{Text: "England", Value: "2"},
-			{Text: "Canada", Value: "3"},
-		}).FieldDefault("0").FieldOnChooseAjax("city", "/choose/country",
-		func(ctx *context.Context) (bool, string, interface{}) {
-			country := ctx.FormValue("value")
-			var data = make(selection.Options, 0)
-			switch country {
-			case "0":
-				data = selection.Options{
-					{Text: "Beijing", ID: "beijing"},
-					{Text: "ShangHai", ID: "shangHai"},
-					{Text: "GuangZhou", ID: "guangZhou"},
-					{Text: "ShenZhen", ID: "shenZhen"},
-				}
-			case "1":
-				data = selection.Options{
-					{Text: "Los Angeles", ID: "los angeles"},
-					{Text: "Washington, dc", ID: "washington, dc"},
-					{Text: "New York", ID: "new york"},
-					{Text: "Las Vegas", ID: "las vegas"},
-				}
-			case "2":
-				data = selection.Options{
-					{Text: "London", ID: "london"},
-					{Text: "Cambridge", ID: "cambridge"},
-					{Text: "Manchester", ID: "manchester"},
-					{Text: "Liverpool", ID: "liverpool"},
-				}
-			case "3":
-				data = selection.Options{
-					{Text: "Vancouver", ID: "vancouver"},
-					{Text: "Toronto", ID: "toronto"},
-				}
-			default:
-				data = selection.Options{
-					{Text: "Beijing", ID: "beijing"},
-					{Text: "ShangHai", ID: "shangHai"},
-					{Text: "GuangZhou", ID: "guangZhou"},
-					{Text: "ShenZhen", ID: "shenZhen"},
-				}
-			}
-			return true, "ok", data
-		})
-	formList.AddField("Phone", "phone", db.Varchar, form.Text)
-	formList.AddField("City", "city", db.Varchar, form.SelectSingle).
-		FieldOptionInitFn(func(val types.FieldModel) types.FieldOptions {
-			return types.FieldOptions{
-				{Value: val.Value, Text: val.Value, Selected: true},
-			}
-		})
-	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
-		FieldPostFilterFn(func(value types.PostFieldModel) interface{} {
-			fmt.Println("user custom field", value)
-			return ""
-		})
 
-	formList.AddField("UpdatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
-	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Datetime).FieldNotAllowAdd()
+	formList.AddField("名字", "name", db.Varchar, form.Text)
+	formList.AddField("年龄", "age", db.Int, form.Number)
+	formList.AddField("主页", "homepage", db.Varchar, form.Url).FieldDefault("http://google.com")
+	formList.AddField("邮箱", "email", db.Varchar, form.Email).FieldDefault("xxxx@xxx.com")
+	formList.AddField("生日", "birthday", db.Varchar, form.Datetime).FieldDefault("2010-09-05")
+	formList.AddField("密码", "password", db.Varchar, form.Password)
+	formList.AddField("IP", "ip", db.Varchar, form.Ip)
+	formList.AddField("证件", "certificate", db.Varchar, form.Multifile).FieldOptionExt(map[string]interface{}{
+		"maxFileCount": 10,
+	})
+	formList.AddField("金额", "currency", db.Int, form.Currency)
+	formList.AddField("内容", "content", db.Text, form.RichText).
+		FieldDefault(`<h1>343434</h1><p>34344433434</p><ol><li>23234</li><li>2342342342</li><li>asdfads</li></ol><ul><li>3434334</li><li>34343343434</li><li>44455</li></ul><p><span style="color: rgb(194, 79, 74);">343434</span></p><p><span style="background-color: rgb(194, 79, 74); color: rgb(0, 0, 0);">434434433434</span></p><table border="0" width="100%" cellpadding="0" cellspacing="0"><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table><p><br></p><p><span style="color: rgb(194, 79, 74);"><br></span></p>`)
 
-	userTable.GetForm().SetTabGroups(types.
-		NewTabGroups("id", "ip", "name", "gender", "country", "city").
-		AddGroup("phone", "role", "created_at", "updated_at")).
-		SetTabHeaders("profile1", "profile2")
+	formList.AddField("站点开关", "website", db.Tinyint, form.Switch).
+		FieldHelpMsg("站点关闭后将不能访问，后台可正常登录").
+		FieldOptions(types.FieldOptions{
+			{Value: "0"},
+			{Value: "1"},
+		})
+	formList.AddField("水果", "fruit", db.Varchar, form.SelectBox).
+		FieldOptions(types.FieldOptions{
+			{Text: "苹果", Value: "apple"},
+			{Text: "香蕉", Value: "banana"},
+			{Text: "西瓜", Value: "watermelon"},
+			{Text: "梨", Value: "pear"},
+		}).
+		FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{"梨"}
+		})
+	formList.AddField("性别", "gender", db.Tinyint, form.Radio).
+		FieldOptions(types.FieldOptions{
+			{Text: "男生", Value: "0"},
+			{Text: "女生", Value: "1"},
+		})
+	formList.AddField("饮料", "drink", db.Tinyint, form.Select).
+		FieldOptions(types.FieldOptions{
+			{Text: "啤酒", Value: "beer"},
+			{Text: "果汁", Value: "juice"},
+			{Text: "白开水", Value: "water"},
+			{Text: "红牛", Value: "red bull"},
+		}).FieldDefault("beer")
+	formList.AddField("工作经验", "experience", db.Tinyint, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "两年", Value: "0"},
+			{Text: "三年", Value: "1"},
+			{Text: "四年", Value: "2"},
+			{Text: "五年", Value: "3"},
+		}).FieldDefault("beer")
+	formList.SetTabGroups(types.TabGroups{
+		{"name", "age", "homepage", "email", "birthday", "password", "ip", "certificate", "currency", "content"},
+		{"website", "fruit", "gender", "drink", "experience"},
+	})
+	formList.SetTabHeaders("input", "select")
 
 	formList.SetTable("users").SetTitle("Users").SetDescription("Users")
 

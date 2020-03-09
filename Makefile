@@ -104,7 +104,7 @@ import-mysql:
 import-postgresql:
 	dropdb -U postgres go-admin-test
 	createdb -U postgres go-admin-test
-	psql -d go-admin-test -U postgres -f ./tests/data/admin.pgsql
+	psql -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
 
 pg-test:
 	make import-postgresql
