@@ -84,7 +84,7 @@ func (g *Guard) NewForm(ctx *context.Context) {
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert(ctx, panel, "edit fail, wrong token", conn)
+		alert(ctx, panel, "create fail, wrong token", conn)
 		ctx.Abort()
 		return
 	}
@@ -92,7 +92,7 @@ func (g *Guard) NewForm(ctx *context.Context) {
 	fromList := isInfoUrl(previous)
 
 	param := parameter.GetParamFromURL(previous, panel.GetInfo().DefaultPageSize,
-		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
+		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
 
 	if fromList {
 		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())

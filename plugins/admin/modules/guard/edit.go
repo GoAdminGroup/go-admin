@@ -104,7 +104,7 @@ func (g *Guard) EditForm(ctx *context.Context) {
 	fromList := isInfoUrl(previous)
 
 	param := parameter.GetParamFromURL(previous, panel.GetInfo().DefaultPageSize,
-		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name, fromList)
+		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
 
 	if fromList {
 		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())

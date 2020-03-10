@@ -298,8 +298,14 @@ var DefaultFuncMap = template.FuncMap{
 	"divide": func(a, b int) int {
 		return a / b
 	},
-	"js": func(s string) template.JS {
-		return template.JS(s)
+	"js": func(s interface{}) template.JS {
+		if ss, ok := s.(string); ok {
+			return template.JS(ss)
+		}
+		if ss, ok := s.(template.HTML); ok {
+			return template.JS(ss)
+		}
+		return ""
 	},
 }
 

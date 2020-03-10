@@ -128,11 +128,7 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 	}
 }
 
-func GetParamFromURL(urlStr string, defaultPageSize int, defaultSortType, primaryKey string, fromList ...bool) Parameters {
-
-	if len(fromList) > 0 && !fromList[0] {
-		return BaseParam()
-	}
+func GetParamFromURL(urlStr string, defaultPageSize int, defaultSortType, primaryKey string) Parameters {
 
 	u, err := url.Parse(urlStr)
 
