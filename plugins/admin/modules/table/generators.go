@@ -234,7 +234,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			if model.Value == "" || config.Get().Store.Prefix == "" {
 				model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
 			} else {
-				model.Value = "/" + config.Get().Store.Prefix + "/" + model.Value
+				model.Value = config.Get().Store.URL(model.Value)
 			}
 			return template.Default().Image().
 				SetSrc(template.HTML(model.Value)).

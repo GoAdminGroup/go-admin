@@ -151,6 +151,10 @@ func (t Type) IsRange() bool {
 	return t == DatetimeRange || t == NumberRange
 }
 
+func (t Type) IsFile() bool {
+	return t == File || t == Multifile
+}
+
 func (t Type) SelectedLabel() []template.HTML {
 	if t == Select || t == SelectSingle || t == SelectBox {
 		return []template.HTML{"selected", ""}

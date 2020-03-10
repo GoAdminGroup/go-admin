@@ -93,6 +93,25 @@ type Store struct {
 	Prefix string
 }
 
+func (s Store) URL(suffix string) string {
+	if s.Prefix == "" {
+		if suffix[0] == '/' {
+			return suffix
+		}
+		return "/" + suffix
+	}
+	if s.Prefix[0] == '/' {
+		if suffix[0] == '/' {
+			return s.Prefix + suffix
+		}
+		return s.Prefix + "/" + suffix
+	}
+	if suffix[0] == '/' {
+		return "/" + s.Prefix + suffix
+	}
+	return "/" + s.Prefix + "/" + suffix
+}
+
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
 type Config struct {

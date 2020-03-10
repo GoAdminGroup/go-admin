@@ -71,6 +71,12 @@ type Callbacks []context.Node
 
 func (c Callbacks) AddCallback(node context.Node) Callbacks {
 	if node.Path != "" && node.Method != "" && len(node.Handlers) > 0 {
+		for _, item := range c {
+			if strings.ToUpper(item.Path) == strings.ToUpper(node.Path) &&
+				strings.ToUpper(item.Method) == strings.ToUpper(node.Method) {
+				return c
+			}
+		}
 		return append(c, node)
 	}
 	return c

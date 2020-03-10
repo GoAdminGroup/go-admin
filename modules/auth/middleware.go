@@ -167,7 +167,7 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 	if user.Avatar == "" || config.Get().Store.Prefix == "" {
 		user.Avatar = ""
 	} else {
-		user.Avatar = "/" + config.Get().Store.Prefix + "/" + user.Avatar
+		user.Avatar = config.Get().Store.URL(user.Avatar)
 	}
 
 	user = user.WithRoles().WithPermissions().WithMenus()
