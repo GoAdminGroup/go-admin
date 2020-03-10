@@ -142,6 +142,14 @@ func (sql *SQL) OrderBy(fields ...string) *SQL {
 	return sql
 }
 
+// OrderByRaw set order by.
+func (sql *SQL) OrderByRaw(order string) *SQL {
+	if order != "" {
+		sql.Order += " " + order
+	}
+	return sql
+}
+
 func (sql *SQL) GroupBy(fields ...string) *SQL {
 	if len(fields) == 0 {
 		panic("wrong group by field")
