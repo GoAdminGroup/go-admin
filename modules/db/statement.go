@@ -164,6 +164,14 @@ func (sql *SQL) GroupBy(fields ...string) *SQL {
 	return sql
 }
 
+// GroupByRaw set group by.
+func (sql *SQL) GroupByRaw(group string) *SQL {
+	if group != "" {
+		sql.Group += " " + group
+	}
+	return sql
+}
+
 // Skip set offset value.
 func (sql *SQL) Skip(offset int) *SQL {
 	sql.Offset = strconv.Itoa(offset)
