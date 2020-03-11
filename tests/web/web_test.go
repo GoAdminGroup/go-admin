@@ -83,7 +83,8 @@ func TestMain(m *testing.M) {
 
 	var err error
 
-	driver = agouti.ChromeDriver(agouti.ChromeOptions("args", optionList),
+	driver = agouti.NewWebDriver("http://{{.Address}}", []string{"chromedriver", "--remote-debugging-port={{.Port}}"},
+		agouti.ChromeOptions("args", optionList),
 		agouti.Desired(
 			agouti.Capabilities{
 				"loggingPrefs": map[string]string{
