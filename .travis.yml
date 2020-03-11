@@ -29,4 +29,5 @@ before_script:
 
 script:
   - chromedriver --version
+  - chromedriver --port=1231
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
