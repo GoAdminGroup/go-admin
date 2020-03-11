@@ -12,16 +12,13 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/context"
 	"net/http"
 	"os"
 )
@@ -31,8 +28,8 @@ func newBeegoHandler() http.Handler {
 	app := beego.NewApp()
 
 	eng := engine.Default()
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
 
 	examplePlugin := example.NewExample()
 
@@ -43,11 +40,7 @@ func newBeegoHandler() http.Handler {
 
 	template.AddComp(chartjs.NewChart())
 
-	app.Handlers.Get("/admin", func(ctx *context.Context) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = 9087

@@ -9,7 +9,7 @@ import (
 )
 
 // ShowInstall show install page.
-func ShowInstall(ctx *context.Context) {
+func (h *Handler) ShowInstall(ctx *context.Context) {
 
 	buffer := new(bytes.Buffer)
 	//template.GetInstallPage(buffer)
@@ -24,7 +24,7 @@ func ShowInstall(ctx *context.Context) {
 }
 
 // CheckDatabase check the database connection.
-func CheckDatabase(ctx *context.Context) {
+func (h *Handler) CheckDatabase(ctx *context.Context) {
 
 	ip := ctx.FormValue("h")
 	port := ctx.FormValue("po")

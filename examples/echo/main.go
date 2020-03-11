@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/labstack/echo/v4"
 	"log"
 	"os"
 	"os/signal"
@@ -16,8 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/labstack/echo"
 )
 
 func main() {
@@ -68,7 +67,7 @@ func main() {
 	// examplePlugin := plugins.LoadFromPlugin("../datamodel/example.so")
 
 	// customize the login page
-	// example: https://github.com/GoAdminGroup/go-admin/blob/master/demo/main.go#L30
+	// example: https://github.com/GoAdminGroup/demo.go-admin.cn/blob/master/main.go#L39
 	//
 	// template.AddComp("login", datamodel.LoginPage)
 
@@ -84,12 +83,7 @@ func main() {
 
 	// you can custom your pages like:
 
-	e.GET("/admin", func(context echo.Context) error {
-		eng.Content(context, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-		return nil
-	})
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	// Start server
 	go e.Logger.Fatal(e.Start(":1323"))

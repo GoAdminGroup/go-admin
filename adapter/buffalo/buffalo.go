@@ -68,7 +68,7 @@ func (bu *Buffalo) SetApp(app interface{}) error {
 	return nil
 }
 
-func (bu *Buffalo) AddHandler(method, path string, plug plugins.Plugin) {
+func (bu *Buffalo) AddHandler(method, path string, handlers context.Handlers) {
 	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
@@ -93,7 +93,7 @@ func (bu *Buffalo) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Response().Header().Set(key, head[0])
 		}
@@ -171,6 +171,11 @@ func (bu *Buffalo) Path() string {
 
 func (bu *Buffalo) Method() string {
 	return bu.ctx.Request().Method
+}
+
+func (bu *Buffalo) FormParam() neturl.Values {
+	_ = bu.ctx.Request().ParseMultipartForm(32 << 20)
+	return bu.ctx.Request().PostForm
 }
 
 func (bu *Buffalo) PjaxHeader() string {

@@ -7,6 +7,7 @@ package adapter
 import (
 	"bytes"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -16,11 +17,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
+	"net/url"
 )
 
-// WebFrameWork is a interface which is used as an adapter of
+// WebFrameWork is an interface which is used as an adapter of
 // framework and goAdmin. It must implement two methods. Use registers
 // the routes and the corresponding handlers. Content writes the
 // response to the corresponding context of framework.
@@ -33,6 +36,7 @@ type WebFrameWork interface {
 	GetCookie() (string, error)
 	Path() string
 	Method() string
+	FormParam() url.Values
 	PjaxHeader() string
 	Redirect()
 	SetContentType()
@@ -42,7 +46,7 @@ type WebFrameWork interface {
 	Name() string
 	User(ci interface{}) (models.UserModel, bool)
 	SetApp(app interface{}) error
-	AddHandler(method, path string, plug plugins.Plugin)
+	AddHandler(method, path string, handlers context.Handlers)
 }
 
 type BaseAdapter struct {
@@ -82,9 +86,8 @@ func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf 
 	}
 
 	for _, plug := range plugin {
-		var plugCopy = plug
-		for _, req := range plug.GetRequest() {
-			wf.AddHandler(req.Method, req.URL, plugCopy)
+		for path, handlers := range plug.GetHandler() {
+			wf.AddHandler(path.Method, path.URL, handlers)
 		}
 	}
 
@@ -114,7 +117,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		err   error
 	)
 
-	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method()) {
+	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
 		alert := getErrorAlert("no permission")
 		errTitle := language.Get("error")
 
@@ -139,10 +142,12 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 
 	tmpl, tmplName := template.Default().GetTemplate(newBase.PjaxHeader() == "true")
 
+	cfg := config.Get()
+
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(newBase.Path()))),
-		panel, config.Get(), template.GetComponentAssetListsHTML()))
+		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path()))),
+		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), err)
@@ -153,9 +158,10 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 }
 
 func getErrorAlert(msg string) template2.HTML {
+
 	return template.Default().Alert().
-		SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
+		SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
 		SetTheme("warning").
-		SetContent(template.HTML(msg)).
+		SetContent(language.GetFromHtml(template.HTML(msg))).
 		GetContent()
 }

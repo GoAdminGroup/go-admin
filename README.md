@@ -9,8 +9,8 @@
 </p>
 
 <p align="center">
-    <a href="https://www.go-admin.com/docs">Documentation</a> | 
-    <a href="./README_CN.md">中文文档</a> |
+    <a href="https://book.go-admin.cn/en">Documentation</a> | 
+    <a href="./README_CN.md">中文介绍</a> |
     <a href="https://demo.go-admin.com">DEMO</a>
 </p>
 
@@ -32,12 +32,11 @@
 
 GoAdmin is a toolkit to help you build a data visualization admin panel for your golang app.
 
-demo: [https://demo.go-admin.com](https://demo.go-admin.com)
-account: admin  password: admin
+Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
-demo source code: https://github.com/GoAdminGroup/demo.go-admin.cn
+Quick follow up example: [https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
 
-![interface](http://file.go-admin.cn/introduction/interface_en_2.png)
+![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
 ## Features
 
@@ -60,9 +59,9 @@ Following three steps to run it.
 
 ### Step 1: import sql
 
-[mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
-[postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
-[sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
+- [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+- [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
+- [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
 
 ### Step 2: create main.go
 
@@ -100,7 +99,7 @@ func main() {
 				Port:         "3306",
 				User:         "root",
 				Pwd:          "root",
-				Name:         "godmin",
+				Name:         "goadmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
 				Driver:       "mysql",
@@ -152,7 +151,7 @@ func main() {
 </p>
 </details>
 
-More Examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
+More framework examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
 
 ### Step 3: run
 
@@ -162,9 +161,11 @@ GO111MODULE=on go run main.go
 
 visit: [http://localhost:9033/admin](http://localhost:9033/admin)
 
+account: admin password: admin
+
 [A super simple example here](https://github.com/GoAdminGroup/example)
 
-See the [docs](https://www.go-admin.com/docs) for more details.
+See the [docs](https://book.go-admin.cn) for more details.
 
 ## Backers
 

@@ -5,13 +5,25 @@
 package engine
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/adapter"
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	template2 "html/template"
+	"net/http"
 )
 
 // Engine is the core component of goAdmin. It has two attributes.
@@ -52,6 +64,11 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 	}
 
 	eng.PluginList = append(eng.PluginList, plugs...)
+	return eng
+}
+
+func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
+	eng.Services.Add("auth", auth.NewService(processor))
 	return eng
 }
 
@@ -113,7 +130,7 @@ func Register(ada adapter.WebFrameWork) {
 	defaultAdapter = ada
 }
 
-// Content call the Content method of adapter of engine.
+// Content call the Content method of engine adapter.
 // If adapter is nil, it will panic.
 func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
@@ -136,7 +153,7 @@ func User(ci interface{}) (models.UserModel, bool) {
 	return defaultAdapter.User(ci)
 }
 
-// User call the User method of defaultAdapter.
+// User call the User method of engine adapter.
 func (eng *Engine) User(ci interface{}) (models.UserModel, bool) {
 	return eng.Adapter.User(ci)
 }
@@ -144,6 +161,10 @@ func (eng *Engine) User(ci interface{}) (models.UserModel, bool) {
 // db return the db connection of given driver.
 func (eng *Engine) DB(driver string) db.Connection {
 	return db.GetConnectionFromService(eng.Services.Get(driver))
+}
+
+func (eng *Engine) DefaultConnection() db.Connection {
+	return eng.DB(eng.config.Databases.GetDefault().Driver)
 }
 
 // MysqlConnection return the mysql db connection of given driver.
@@ -203,4 +224,114 @@ func (eng *Engine) Clone(e *Engine) *Engine {
 func (eng *Engine) ClonedBySetter(setter Setter) *Engine {
 	setter(eng)
 	return eng
+}
+
+func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
+	return []context.Handler{auth.Middleware(db.GetConnection(eng.Services)), handler}
+}
+
+func (eng *Engine) Data(method, url string, handler context.Handler) {
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+}
+
+func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
+
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+		panel, err := fn(ctx)
+		if err != nil {
+
+			alert := template.Default().Alert().
+				SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
+				SetTheme("warning").
+				SetContent(language.GetFromHtml(template.HTML(err.Error()))).
+				GetContent()
+			errTitle := language.Get("error")
+
+			panel = types.Panel{
+				Content:     alert,
+				Description: errTitle,
+				Title:       errTitle,
+			}
+		}
+
+		tmpl, tmplName := template.Default().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+
+		user := auth.Auth(ctx)
+		cfg := config.Get()
+
+		buf := new(bytes.Buffer)
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
+			*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
+			panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
+
+		if hasError != nil {
+			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
+		}
+
+		ctx.Data(http.StatusOK, "text/html; charset=utf-8", buf.Bytes())
+	}))
+}
+
+func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{}) {
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+
+		buf := new(bytes.Buffer)
+
+		t, err := template2.ParseFiles(path)
+		if err != nil {
+			eng.errorPanelHTML(ctx, buf, err)
+		} else {
+			if err := t.Execute(buf, data); err != nil {
+				eng.errorPanelHTML(ctx, buf, err)
+			}
+		}
+
+		ctx.Data(http.StatusOK, "text/html; charset=utf-8", buf.Bytes())
+	}))
+}
+
+func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, files ...string) {
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+
+		buf := new(bytes.Buffer)
+
+		t, err := template2.ParseFiles(files...)
+		if err != nil {
+			eng.errorPanelHTML(ctx, buf, err)
+		} else {
+			if err := t.Execute(buf, data); err != nil {
+				eng.errorPanelHTML(ctx, buf, err)
+			}
+		}
+
+		ctx.Data(http.StatusOK, "text/html; charset=utf-8", buf.Bytes())
+	}))
+}
+
+func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err error) {
+	alert := template.Default().Alert().
+		SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
+		SetTheme("warning").
+		SetContent(language.GetFromHtml(template.HTML(err.Error()))).
+		GetContent()
+	errTitle := language.Get("error")
+
+	panel := types.Panel{
+		Content:     alert,
+		Description: errTitle,
+		Title:       errTitle,
+	}
+
+	user := auth.Auth(ctx)
+	cfg := config.Get()
+
+	tmpl, tmplName := template.Default().GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+
+	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
+		*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
+		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
+
+	if hasError != nil {
+		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
+	}
 }

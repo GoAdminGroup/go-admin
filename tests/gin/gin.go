@@ -16,9 +16,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -33,8 +32,8 @@ func newHandler() http.Handler {
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
 
 	template.AddComp(chartjs.NewChart())
 
@@ -44,11 +43,7 @@ func newHandler() http.Handler {
 		panic(err)
 	}
 
-	r.GET("/admin", func(ctx *gin.Context) {
-		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-			return datamodel.GetContent()
-		})
-	})
+	eng.HTML("GET", "/admin", tables.GetContent)
 
 	r.Static("/uploads", "./uploads")
 

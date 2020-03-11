@@ -15,8 +15,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -66,7 +67,7 @@ func (e *Echo) SetApp(app interface{}) error {
 	return nil
 }
 
-func (e *Echo) AddHandler(method, path string, plug plugins.Plugin) {
+func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 	e.app.Add(strings.ToUpper(method), path, func(c echo.Context) error {
 		ctx := context.NewContext(c.Request())
 
@@ -78,7 +79,7 @@ func (e *Echo) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(c.Request().URL.Path, strings.ToLower(c.Request().Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Response().Header().Set(key, head[0])
 		}
@@ -133,6 +134,11 @@ func (e *Echo) Path() string {
 
 func (e *Echo) Method() string {
 	return e.ctx.Request().Method
+}
+
+func (e *Echo) FormParam() url.Values {
+	_ = e.ctx.Request().ParseMultipartForm(32 << 20)
+	return e.ctx.Request().PostForm
 }
 
 func (e *Echo) PjaxHeader() string {

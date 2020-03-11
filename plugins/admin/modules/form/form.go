@@ -1,5 +1,16 @@
 package form
 
+const (
+	PostTypeKey           = "__go_admin_post_type"
+	PostIsSingleUpdateKey = "__go_admin_is_single_update"
+
+	PreviousKey = "__go_admin_previous_"
+	TokenKey    = "__go_admin_t_"
+	MethodKey   = "__go_admin_method_"
+
+	NoAnimationKey = "__go_admin_no_animation_"
+)
+
 // Values maps a string key to a list of values.
 // It is typically used for query parameters and form values.
 // Unlike in the http.Header map, the keys in a Values map
@@ -49,19 +60,19 @@ func (f Values) Delete(key string) {
 }
 
 func (f Values) IsUpdatePost() bool {
-	return f.Get("__go_admin_post_type") == "0"
+	return f.Get(PostTypeKey) == "0"
 }
 
 func (f Values) IsInsertPost() bool {
-	return f.Get("__go_admin_post_type") == "1"
+	return f.Get(PostTypeKey) == "1"
 }
 
 func (f Values) IsSingleUpdatePost() bool {
-	return f.Get("__go_admin_single_update") == "1"
+	return f.Get(PostIsSingleUpdateKey) == "1"
 }
 
 func (f Values) RemoveRemark() Values {
-	f.Delete("__go_admin_post_type")
-	f.Delete("__go_admin_single_update")
+	f.Delete(PostTypeKey)
+	f.Delete(PostIsSingleUpdateKey)
 	return f
 }

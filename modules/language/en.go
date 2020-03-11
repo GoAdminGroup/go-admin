@@ -55,8 +55,13 @@ var en = map[string]string{
 	"roles manage":      "Roles manage",
 	"operation log":     "Operation log",
 
+	"continue editing":  "Continue editing",
+	"continue creating": "Continue creating",
+
+	"browse":     "Browse",
 	"avatar":     "Avatar",
 	"password":   "Password",
+	"username":   "Username",
 	"slug":       "Slug",
 	"permission": "Permission",
 	"userid":     "UserID",

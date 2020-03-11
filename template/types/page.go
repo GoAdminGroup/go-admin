@@ -5,11 +5,15 @@
 package types
 
 import (
+	"fmt"
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"html/template"
+	"strconv"
 )
 
 // Attribute is the component interface of template. Every component of
@@ -84,6 +88,15 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 	}
 }
 
+func NewPagePanel(panel Panel) Page {
+	return Page{
+		Panel: panel,
+		System: SystemInfo{
+			Version: system.Version(),
+		},
+	}
+}
+
 // SystemInfo contains basic info of system.
 type SystemInfo struct {
 	Version string
@@ -91,10 +104,74 @@ type SystemInfo struct {
 
 // Panel contains the main content of the template which used as pjax.
 type Panel struct {
-	Content     template.HTML
 	Title       string
 	Description string
+	Content     template.HTML
 	Url         string
+
+	// Whether to toggle the sidebar
+	MiniSidebar bool
+
+	// Auto refresh page switch.
+	AutoRefresh bool
+	// Refresh page intervals, the unit is second.
+	RefreshInterval []int
+}
+
+func (p Panel) GetContent(params ...bool) Panel {
+
+	prod := false
+
+	if len(params) > 0 {
+		prod = params[0]
+	}
+
+	animation := template.HTML("")
+	style := template.HTML("")
+	remove := template.HTML("")
+	ani := config.Get().Animation
+	if ani.Type != "" && (len(params) < 2 || params[1]) {
+		animation = template.HTML(` class='pjax-container-content animated ` + ani.Type + `'`)
+		if ani.Delay != 0 {
+			style = template.HTML(fmt.Sprintf(`animation-delay: %fs;-webkit-animation-delay: %fs;`, ani.Delay, ani.Delay))
+		}
+		if ani.Duration != 0 {
+			style = template.HTML(fmt.Sprintf(`animation-duration: %fs;-webkit-animation-duration: %fs;`, ani.Duration, ani.Duration))
+		}
+		if style != "" {
+			style = ` style="` + style + `"`
+		}
+		remove = template.HTML(`<script>
+		$('.pjax-container-content .modal.fade').on('show.bs.modal', function (event) {
+            // Fix Animate.css
+			$('.pjax-container-content').removeClass('` + ani.Type + `');
+        });
+		</script>`)
+	}
+
+	p.Content = `<div` + animation + style + ">" + p.Content + "</div>" + remove
+	if p.MiniSidebar {
+		p.Content += `<script>$("body").addClass("sidebar-collapse")</script>`
+	}
+	if p.AutoRefresh {
+		refreshTime := 60
+		if len(p.RefreshInterval) > 0 {
+			refreshTime = p.RefreshInterval[0]
+		}
+
+		p.Content += `<script>
+window.setTimeout(function(){
+	$.pjax.reload('#pjax-container');	
+}, ` + template.HTML(strconv.Itoa(refreshTime*1000)) + `);
+</script>`
+	}
+	if prod {
+		utils.CompressedContent(&p.Content)
+	}
+
+	return p
 }
 
 type GetPanelFn func(ctx interface{}) (Panel, error)
+
+type GetPanelInfoFn func(ctx *context.Context) (Panel, error)

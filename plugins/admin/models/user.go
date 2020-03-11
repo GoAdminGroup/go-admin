@@ -1,9 +1,15 @@
 package models
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"net/url"
+	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -29,13 +35,13 @@ type UserModel struct {
 
 // User return a default user model.
 func User() UserModel {
-	return UserModel{Base: Base{TableName: "goadmin_users"}}
+	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}}
 }
 
 // UserWithId return a default user model of given id.
 func UserWithId(id string) UserModel {
 	idInt, _ := strconv.Atoi(id)
-	return UserModel{Base: Base{TableName: "goadmin_users"}, Id: int64(idInt)}
+	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}, Id: int64(idInt)}
 }
 
 func (t UserModel) SetConn(con db.Connection) UserModel {
@@ -69,6 +75,123 @@ func (t UserModel) HasMenu() bool {
 func (t UserModel) IsSuperAdmin() bool {
 	for _, per := range t.Permissions {
 		if len(per.HttpPath) > 0 && per.HttpPath[0] == "*" {
+			return true
+		}
+	}
+	return false
+}
+
+func (t UserModel) GetCheckPermissionByUrlMethod(path, method string) string {
+	if !t.CheckPermissionByUrlMethod(path, "GET", url.Values{}) {
+		return ""
+	}
+	return path
+}
+
+func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams url.Values) bool {
+	logoutCheck, _ := regexp.Compile(config.Get().Url("/logout") + "(.*?)")
+
+	if logoutCheck.MatchString(path) {
+		return true
+	}
+
+	if path == "" {
+		return false
+	}
+
+	if path != "/" && path[len(path)-1] == '/' {
+		path = path[:len(path)-1]
+	}
+
+	path = strings.Replace(path, constant.EditPKKey, "id", -1)
+	path = strings.Replace(path, constant.DetailPKKey, "id", -1)
+
+	path, params := getParam(path)
+	for key, value := range formParams {
+		if len(value) > 0 {
+			params.Add(key, value[0])
+		}
+	}
+
+	for _, v := range t.Permissions {
+
+		if v.HttpMethod[0] == "" || inMethodArr(v.HttpMethod, method) {
+
+			if v.HttpPath[0] == "*" {
+				return true
+			}
+
+			for i := 0; i < len(v.HttpPath); i++ {
+
+				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
+				matchPath, matchParam := getParam(matchPath)
+
+				if matchPath == path {
+					if checkParam(params, matchParam) {
+						return true
+					}
+				}
+
+				reg, err := regexp.Compile(matchPath)
+
+				if err != nil {
+					logger.Error("CheckPermissions error: ", err)
+					continue
+				}
+
+				if reg.FindString(path) == path {
+					if checkParam(params, matchParam) {
+						return true
+					}
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+func getParam(u string) (string, url.Values) {
+	m := make(url.Values)
+	urr := strings.Split(u, "?")
+	if len(urr) > 1 {
+		m, _ = url.ParseQuery(urr[1])
+	}
+	return urr[0], m
+}
+
+func checkParam(src, comp url.Values) bool {
+	if len(comp) == 0 {
+		return true
+	}
+	if len(src) == 0 {
+		return false
+	}
+	for key, value := range comp {
+		v, find := src[key]
+		if !find {
+			return false
+		}
+		if len(value) == 0 {
+			continue
+		}
+		if len(v) == 0 {
+			return false
+		}
+		for i := 0; i < len(v); i++ {
+			if v[i] == value[i] {
+				continue
+			} else {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func inMethodArr(arr []string, str string) bool {
+	for i := 0; i < len(arr); i++ {
+		if strings.EqualFold(arr[i], str) {
 			return true
 		}
 	}

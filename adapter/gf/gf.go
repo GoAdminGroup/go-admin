@@ -17,6 +17,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gogf/gf/net/ghttp"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -66,7 +67,7 @@ func (gf *Gf) SetApp(app interface{}) error {
 	return nil
 }
 
-func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
+func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 	gf.app.BindHandler(strings.ToUpper(method)+":"+path, func(c *ghttp.Request) {
 		ctx := context.NewContext(c.Request)
 
@@ -90,7 +91,7 @@ func (gf *Gf) AddHandler(method, path string, plug plugins.Plugin) {
 			}
 		}
 
-		ctx.SetHandlers(plug.GetHandler(c.Request.URL.Path, strings.ToLower(c.Request.Method))).Next()
+		ctx.SetHandlers(handlers).Next()
 		for key, head := range ctx.Response.Header {
 			c.Response.Header().Add(key, head[0])
 		}
@@ -143,6 +144,10 @@ func (gf *Gf) Path() string {
 
 func (gf *Gf) Method() string {
 	return gf.ctx.Method
+}
+
+func (gf *Gf) FormParam() url.Values {
+	return gf.ctx.Form
 }
 
 func (gf *Gf) PjaxHeader() string {

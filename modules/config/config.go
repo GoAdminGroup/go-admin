@@ -7,8 +7,8 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 	"html/template"
@@ -93,6 +93,25 @@ type Store struct {
 	Prefix string
 }
 
+func (s Store) URL(suffix string) string {
+	if s.Prefix == "" {
+		if suffix[0] == '/' {
+			return suffix
+		}
+		return "/" + suffix
+	}
+	if s.Prefix[0] == '/' {
+		if suffix[0] == '/' {
+			return s.Prefix + suffix
+		}
+		return s.Prefix + "/" + suffix
+	}
+	if suffix[0] == '/' {
+		return "/" + s.Prefix + suffix
+	}
+	return "/" + s.Prefix + "/" + suffix
+}
+
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
 type Config struct {
@@ -155,7 +174,7 @@ type Config struct {
 	// Color scheme.
 	ColorScheme string `json:"color_scheme",yaml:"color_scheme",ini:"color_scheme"`
 
-	// Session valid time duration,units are seconds.
+	// Session valid time duration,units are seconds. Default 7200.
 	SessionLifeTime int `json:"session_life_time",yaml:"session_life_time",ini:"session_life_time"`
 
 	// Assets visit link.
@@ -176,7 +195,23 @@ type Config struct {
 	// Login page logo
 	LoginLogo template.HTML `json:"login_logo",yaml:"login_logo",ini:"login_logo"`
 
+	// Auth user table
+	AuthUserTable string `json:"auth_user_table",yaml:"auth_user_table",ini:"auth_user_table"`
+
+	// Extra config info
+	Extra map[string]interface{} `json:"extra",yaml:"extra",ini:"extra"`
+
+	// Page animation
+	Animation PageAnimation `json:"animation",yaml:"animation",ini:"animation"`
+
 	prefix string
+}
+
+// see more: https://daneden.github.io/animate.css/
+type PageAnimation struct {
+	Type     string  `json:"type",yaml:"type",ini:"type"`
+	Duration float32 `json:"duration",yaml:"duration",ini:"duration"`
+	Delay    float32 `json:"delay",yaml:"delay",ini:"delay"`
 }
 
 // FileUploadEngine is a file upload engine.
@@ -351,6 +386,7 @@ func Set(cfg Config) Config {
 	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
 	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")
 	cfg.IndexUrl = setDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.AuthUserTable = setDefault(cfg.AuthUserTable, "", "goadmin_users")
 	cfg.ColorScheme = setDefault(cfg.ColorScheme, "", "skin-black")
 	cfg.FileUploadEngine.Name = setDefault(cfg.FileUploadEngine.Name, "", "local")
 	cfg.Env = setDefault(cfg.Env, "", EnvProd)

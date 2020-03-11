@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"html/template"
+	"strings"
 )
 
 type Login struct {
@@ -31,6 +32,15 @@ func (l *Login) GetTemplate() (*template.Template, string) {
 			},
 			"isLinkUrl": func(s string) bool {
 				return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
+			},
+			"render": func(s, old, repl template.HTML) template.HTML {
+				return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+			},
+			"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
+				return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
+			},
+			"divide": func(a, b int) int {
+				return a / b
 			},
 		}).
 		Parse(List["login/theme1"])

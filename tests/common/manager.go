@@ -3,6 +3,8 @@ package common
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 	"net/http"
 )
@@ -35,9 +37,9 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 			"password_again":  "admin",
 			"role_id[]":       1,
 			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey:  config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"id":              "1",
-			"_t":              "123",
+			form.TokenKey:     "123",
 		}).Expect().Status(200).Body().Contains("edit fail, wrong token")
 
 	// show form: without id
@@ -51,7 +53,7 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody := e.GET(config.Get().Url("/info/manager/edit")).
-		WithQuery("__goadmin_edit_pk", "1").
+		WithQuery(constant.EditPKKey, "1").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -64,16 +66,16 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithForm(map[string]interface{}{
-			"username":        "admin",
-			"name":            "admin1",
-			"password":        "admin",
-			"password_again":  "admin",
-			"avatar":          "",
-			"role_id[]":       1,
-			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
-			"id":              "1",
-			"_t":              token[1],
+			"username":            "admin",
+			"name":                "admin1",
+			"password":            "admin",
+			"password_again":      "admin",
+			"avatar__delete_flag": "0",
+			"role_id[]":           1,
+			"permission_id[]":     1,
+			form.PreviousKey:      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			"id":                  "1",
+			form.TokenKey:         token[1],
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
 	res.Body().Contains("admin1")
@@ -94,16 +96,16 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithForm(map[string]interface{}{
-			"username":        "tester",
-			"name":            "tester",
-			"password":        "tester",
-			"password_again":  "tester",
-			"avatar":          "",
-			"role_id[]":       1,
-			"permission_id[]": 1,
-			"_previous_":      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
-			"id":              "1",
-			"_t":              token[1],
+			"username":            "tester",
+			"name":                "tester",
+			"password":            "tester",
+			"password_again":      "tester",
+			"avatar__delete_flag": "0",
+			"role_id[]":           1,
+			"permission_id[]":     1,
+			form.PreviousKey:      config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			"id":                  "1",
+			form.TokenKey:         token[1],
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
 	res.Body().Contains("tester")

@@ -1,6 +1,7 @@
 package context
 
 import (
+	"fmt"
 	"github.com/magiconair/properties/assert"
 	"testing"
 )
@@ -24,17 +25,47 @@ func TestJoin(t *testing.T) {
 
 func TestTree(t *testing.T) {
 	tree := tree()
-	tree.addPath(stringToArr("/adm"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admi"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/info/menu"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/info/me"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/info/mefr"), "GET", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/info/user"), "POST", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/menu/new"), "POST", []Handler{func(ctx *Context) {}})
-	tree.addPath(stringToArr("/admin/menu/new"), "GET", []Handler{func(ctx *Context) {}})
-	assert.Equal(t, tree.findPath(stringToArr("/admin/menu/new"), "GET") != nil, true)
-	assert.Equal(t, tree.findPath(stringToArr("/admin/menu/new"), "POST") != nil, true)
-	assert.Equal(t, tree.findPath(stringToArr("/admin/me/new"), "POST") == nil, true)
+	tree.addPath(stringToArr("/adm"), "GET", []Handler{func(ctx *Context) { fmt.Println(1) }})
+	tree.addPath(stringToArr("/admi"), "GET", []Handler{func(ctx *Context) { fmt.Println(1) }})
+	tree.addPath(stringToArr("/admin"), "GET", []Handler{func(ctx *Context) { fmt.Println(1) }})
+	tree.addPath(stringToArr("/admin/menu/new"), "POST", []Handler{func(ctx *Context) { fmt.Println(1) }})
+	tree.addPath(stringToArr("/admin/menu/new"), "GET", []Handler{func(ctx *Context) { fmt.Println(1) }})
+	tree.addPath(stringToArr("/admin/info/:__prefix"), "GET", []Handler{
+		func(ctx *Context) { fmt.Println("auth") },
+		func(ctx *Context) { fmt.Println("init") },
+		func(ctx *Context) { fmt.Println("info") },
+	})
+	tree.addPath(stringToArr("/admin/info/:__prefix/detail"), "GET", []Handler{
+		func(ctx *Context) { fmt.Println("auth") },
+		func(ctx *Context) { fmt.Println("detail") },
+	})
+
+	fmt.Println("/admin/menu/new", "GET")
+	h := tree.findPath(stringToArr("/admin/menu/new"), "GET")
+	assert.Equal(t, h != nil, true)
+	printHandler(h)
+	fmt.Println("/admin/menu/new", "POST")
+	h = tree.findPath(stringToArr("/admin/menu/new"), "POST")
+	assert.Equal(t, h != nil, true)
+	printHandler(h)
+	fmt.Println("/admin/me/new", "POST")
+	h = tree.findPath(stringToArr("/admin/me/new"), "POST")
+	assert.Equal(t, h == nil, true)
+	printHandler(h)
+	fmt.Println("/admin/info/user", "GET")
+	h = tree.findPath(stringToArr("/admin/info/user"), "GET")
+	assert.Equal(t, h != nil, true)
+	printHandler(h)
+	fmt.Println("/admin/info/user/detail", "GET")
+	h = tree.findPath(stringToArr("/admin/info/user/detail"), "GET")
+	assert.Equal(t, h != nil, true)
+	printHandler(h)
+	fmt.Println("=========== printChildren ===========")
 	tree.printChildren()
+}
+
+func printHandler(h []Handler) {
+	for _, value := range h {
+		value(&Context{})
+	}
 }

@@ -33,6 +33,7 @@ var cn = map[string]string{
 	"home":            "首页",
 	"all":             "全部",
 	"more":            "更多",
+	"browse":          "打开",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",
@@ -47,6 +48,7 @@ var cn = map[string]string{
 
 	"permission denied": "没有权限",
 	"error":             "错误",
+	"success":           "成功",
 	"current page":      "当前页",
 
 	"are you sure to delete": "你确定要删除吗",
@@ -63,6 +65,7 @@ var cn = map[string]string{
 
 	"avatar":     "头像",
 	"password":   "密码",
+	"username":   "用户名",
 	"slug":       "标志",
 	"permission": "权限",
 	"userid":     "用户ID",
@@ -75,10 +78,14 @@ var cn = map[string]string{
 	"login fail": "登录失败",
 
 	"admin":     "管理",
+	"user":      "用户",
 	"users":     "用户",
 	"roles":     "角色",
 	"menu":      "菜单",
 	"dashboard": "仪表盘",
+
+	"continue editing":  "继续编辑",
+	"continue creating": "继续新增",
 
 	"username and password can not be empty":        "用户名密码不能为空",
 	"operation not allow":                           "不允许的操作",
@@ -92,4 +99,5 @@ var cn = map[string]string{
 	"a path a line":                                 "一行一个路径，换行输入新路径",
 	"slug or http_path or name should not be empty": "标志或路径或权限名不能为空",
 	"no roles":                                      "无角色",
+	"no permission":                                 "没有权限",
 }

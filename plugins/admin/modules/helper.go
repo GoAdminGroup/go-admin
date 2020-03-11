@@ -1,12 +1,8 @@
 package modules
 
 import (
-	"bytes"
-	"encoding/gob"
 	"github.com/satori/go.uuid"
-	"regexp"
 	"strconv"
-	"strings"
 )
 
 func InArray(arr []string, str string) bool {
@@ -16,6 +12,20 @@ func InArray(arr []string, str string) bool {
 		}
 	}
 	return false
+}
+
+func Delimiter(del, s string) string {
+	if del == "[" {
+		return "[" + s + "]"
+	}
+	return del + s + del
+}
+
+func FilterField(filed, delimiter string) string {
+	if delimiter == "[" {
+		return filed
+	}
+	return delimiter + filed + delimiter
 }
 
 func InArrayWithoutEmpty(arr []string, str string) bool {
@@ -40,22 +50,6 @@ func RemoveBlankFromArray(s []string) []string {
 	return r
 }
 
-func IsInfoUrl(s string) bool {
-	reg, _ := regexp.Compile("(.*?)info/(.*?)$")
-	sub := reg.FindStringSubmatch(s)
-	return len(sub) > 2 && !strings.Contains(sub[2], "/")
-}
-
-func IsNewUrl(s string, p string) bool {
-	reg, _ := regexp.Compile("(.*?)info/" + p + "/new")
-	return reg.MatchString(s)
-}
-
-func IsEditUrl(s string, p string) bool {
-	reg, _ := regexp.Compile("(.*?)info/" + p + "/edit")
-	return reg.MatchString(s)
-}
-
 func Uuid() string {
 	return uuid.NewV4().String()
 }
@@ -76,25 +70,16 @@ func GetPage(page string) (pageInt int) {
 	return
 }
 
-func CopyMap(m map[string]string) map[string]string {
-	var buf bytes.Buffer
-	enc := gob.NewEncoder(&buf)
-	dec := gob.NewDecoder(&buf)
-	err := enc.Encode(m)
-	if err != nil {
-		panic(err)
-	}
-	var cm map[string]string
-	err = dec.Decode(&cm)
-	if err != nil {
-		panic(err)
-	}
-	return cm
-}
-
 func AorB(condition bool, a string, b string) string {
 	if condition {
 		return a
 	}
 	return b
+}
+
+func AorEmpty(condition bool, a string) string {
+	if condition {
+		return a
+	}
+	return ""
 }

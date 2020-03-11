@@ -18,7 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -41,6 +40,7 @@ type Template interface {
 	Tree() types.TreeAttribute
 	Tabs() types.TabsAttribute
 	Alert() types.AlertAttribute
+	Link() types.LinkAttribute
 
 	Paginator() types.PaginatorAttribute
 	Popup() types.PopupAttribute
@@ -266,42 +266,50 @@ func Execute(tmpl *template.Template,
 	user models.UserModel,
 	panel types.Panel,
 	config c.Config,
-	globalMenu *menu.Menu) *bytes.Buffer {
+	globalMenu *menu.Menu, animation ...bool) *bytes.Buffer {
 
-	if !config.Debug {
-		utils.CompressedContent(&panel.Content)
-	}
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu, panel, config, GetComponentAssetListsHTML()))
+	err := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user, *globalMenu,
+		panel.GetContent(append([]bool{config.IsProductionEnvironment()}, animation...)...), config, GetComponentAssetListsHTML()))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}
 	return buf
 }
 
-func DefaultFuncMap() template.FuncMap {
-	return template.FuncMap{
-		"lang":     language.Get,
-		"langHtml": language.GetFromHtml,
-		"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
-			if cdnUrl == "" {
-				return prefixUrl + assetsUrl
-			}
-			return cdnUrl + assetsUrl
-		},
-		"isLinkUrl": func(s string) bool {
-			return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
-		},
-	}
+var DefaultFuncMap = template.FuncMap{
+	"lang":     language.Get,
+	"langHtml": language.GetFromHtml,
+	"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
+		if cdnUrl == "" {
+			return prefixUrl + assetsUrl
+		}
+		return cdnUrl + assetsUrl
+	},
+	"isLinkUrl": func(s string) bool {
+		return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
+	},
+	"render": func(s, old, repl template.HTML) template.HTML {
+		return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+	},
+	"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
+		return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
+	},
+	"divide": func(a, b int) int {
+		return a / b
+	},
+	"js": func(s interface{}) template.JS {
+		if ss, ok := s.(string); ok {
+			return template.JS(ss)
+		}
+		if ss, ok := s.(template.HTML); ok {
+			return template.JS(ss)
+		}
+		return ""
+	},
 }
 
-type BaseComponent struct {
-}
+type BaseComponent struct{}
 
-func (b BaseComponent) GetAssetList() []string {
-	return make([]string, 0)
-}
-
-func (b BaseComponent) GetAsset(name string) ([]byte, error) {
-	return nil, nil
-}
+func (b BaseComponent) GetAssetList() []string               { return make([]string, 0) }
+func (b BaseComponent) GetAsset(name string) ([]byte, error) { return nil, nil }

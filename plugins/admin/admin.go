@@ -3,17 +3,23 @@ package admin
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 // Admin is a GoAdmin plugin.
 type Admin struct {
-	app      *context.App
-	tableCfg table.GeneratorList
+	app       *context.App
+	tableList table.GeneratorList
+	services  service.List
+	conn      db.Connection
+	guardian  *guard.Guard
+	handler   *controller.Handler
 }
 
 // InitPlugin implements Plugin.InitPlugin.
@@ -21,45 +27,47 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	cfg := config.Get()
 
-	// Init router
-	App.app = InitRouter(cfg.Prefix(), services)
-
-	table.SetGenerators(table.GeneratorList{
-		"manager":        table.GetManagerTable,
-		"permission":     table.GetPermissionTable,
-		"roles":          table.GetRolesTable,
-		"op":             table.GetOpTable,
-		"menu":           table.GetMenuTable,
-		"normal_manager": table.GetNormalManagerTable,
+	admin.services = services
+	admin.conn = db.GetConnection(admin.services)
+	st := table.NewSystemTable(admin.conn)
+	admin.tableList.Combine(table.GeneratorList{
+		"manager":        st.GetManagerTable,
+		"permission":     st.GetPermissionTable,
+		"roles":          st.GetRolesTable,
+		"op":             st.GetOpTable,
+		"menu":           st.GetMenuTable,
+		"normal_manager": st.GetNormalManagerTable,
 	})
+	admin.guardian = guard.New(admin.services, admin.conn, admin.tableList)
+	admin.handler = controller.New(controller.Config{
+		Config:     cfg,
+		Services:   services,
+		Generators: admin.tableList,
+		Connection: admin.conn,
+	})
+	admin.initRouter(cfg.Prefix())
+	admin.handler.SetRoutes(admin.app.Routers)
+	admin.tableList.InjectRoutes(admin.app, admin.services)
+
 	table.SetServices(services)
-	table.SetGenerators(admin.tableCfg)
-	table.InitTableList()
-
-	controller.SetConfig(cfg)
-	controller.SetServices(services)
-}
-
-// App is the global Admin plugin.
-var App = &Admin{
-	tableCfg: make(table.GeneratorList),
 }
 
 // NewAdmin return the global Admin plugin.
 func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
-	App.tableCfg.CombineAll(tableCfg)
-	return App
+	return &Admin{
+		tableList: make(table.GeneratorList).CombineAll(tableCfg),
+	}
 }
 
 // SetCaptcha set captcha driver.
 func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
-	controller.SetCaptcha(captcha)
+	admin.handler.SetCaptcha(captcha)
 	return admin
 }
 
 // AddGenerator add table model generator.
 func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
-	admin.tableCfg.Add(key, g)
+	admin.tableList.Add(key, g)
 	return admin
 }
 
@@ -69,8 +77,8 @@ func (admin *Admin) GetRequest() []context.Path {
 }
 
 // GetHandler implements Plugin.GetHandler.
-func (admin *Admin) GetHandler(url, method string) context.Handlers {
-	return plugins.GetHandler(url, method, admin.app)
+func (admin *Admin) GetHandler() context.HandlerMap {
+	return plugins.GetHandler(admin.app)
 }
 
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn

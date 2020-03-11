@@ -1,30 +1,49 @@
 package action
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"html/template"
 )
 
 type JumpAction struct {
-	BtnId string
-	Url   string
+	BaseAction
+	Url         string
+	Ext         template.HTML
+	NewTabTitle string
 }
 
-func Jump(url string) *JumpAction {
-	return &JumpAction{Url: url}
+func Jump(url string, ext ...template.HTML) *JumpAction {
+	if len(ext) > 0 {
+		return &JumpAction{Url: url, Ext: ext[0]}
+	}
+	return &JumpAction{Url: url, NewTabTitle: ""}
 }
 
-func (pop *JumpAction) SetBtnId(btnId string) {
-	pop.BtnId = btnId
+func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
+	if len(ext) > 0 {
+		return &JumpAction{Url: url, NewTabTitle: title, Ext: ext[0]}
+	}
+	return &JumpAction{Url: url, NewTabTitle: title}
 }
 
-func (pop *JumpAction) Js() template.JS {
-	return template.JS(``)
+func (jump *JumpAction) GetCallbacks() context.Node {
+	return context.Node{}
 }
 
-func (pop *JumpAction) BtnAttribute() template.HTML {
-	return template.HTML(`href="` + pop.Url + `"`)
+func (jump *JumpAction) BtnAttribute() template.HTML {
+	if jump.NewTabTitle != "" {
+		return template.HTML(`href="` + jump.Url + `" data-title="` + jump.NewTabTitle + `"`)
+	}
+	return template.HTML(`href="` + jump.Url + `"`)
 }
 
-func (pop *JumpAction) ExtContent() template.HTML {
-	return ``
+func (jump *JumpAction) BtnClass() template.HTML {
+	if jump.NewTabTitle != "" {
+		return "new-tab-link"
+	}
+	return ""
+}
+
+func (jump *JumpAction) ExtContent() template.HTML {
+	return jump.Ext
 }

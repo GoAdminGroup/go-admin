@@ -33,7 +33,7 @@ func checkError(err error) {
 }
 
 func getLatestVersion() string {
-	http.DefaultClient.Timeout = time.Duration(time.Second * 3)
+	http.DefaultClient.Timeout = 3 * time.Second
 	res, err := http.Get("https://goproxy.cn/github.com/!go!admin!group/go-admin/@v/list")
 
 	if err != nil || res.Body == nil {

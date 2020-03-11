@@ -6,26 +6,28 @@ package types
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html/template"
 )
 
 type FormAttribute interface {
 	SetHeader(value template.HTML) FormAttribute
-	SetContent(value []FormField) FormAttribute
-	SetTabContents(value [][]FormField) FormAttribute
+	SetContent(value FormFields) FormAttribute
+	SetTabContents(value []FormFields) FormAttribute
 	SetTabHeaders(value []string) FormAttribute
 	SetFooter(value template.HTML) FormAttribute
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetPrimaryKey(value string) FormAttribute
-	SetInfoUrl(value string) FormAttribute
+	SetHiddenFields(fields map[string]string) FormAttribute
 	SetMethod(value string) FormAttribute
+	SetHeadWidth(width int) FormAttribute
+	SetInputWidth(width int) FormAttribute
 	SetTitle(value template.HTML) FormAttribute
 	SetLayout(layout form.Layout) FormAttribute
-	SetToken(value string) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute
-	GetBoxHeader() template.HTML
+	GetDefaultBoxHeader() template.HTML
 	GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML
 	GetBoxHeaderNoButton() template.HTML
 	GetContent() template.HTML
@@ -38,6 +40,7 @@ type BoxAttribute interface {
 	SetFooter(value template.HTML) BoxAttribute
 	SetTitle(value template.HTML) BoxAttribute
 	WithHeadBorder() BoxAttribute
+	SetStyle(value template.HTMLAttr) BoxAttribute
 	SetHeadColor(value string) BoxAttribute
 	SetTheme(value string) BoxAttribute
 	SetSecondHeader(value template.HTML) BoxAttribute
@@ -48,7 +51,7 @@ type BoxAttribute interface {
 }
 
 type ColAttribute interface {
-	SetSize(value map[string]string) ColAttribute
+	SetSize(value S) ColAttribute
 	SetContent(value template.HTML) ColAttribute
 	AddContent(value template.HTML) ColAttribute
 	GetContent() template.HTML
@@ -94,23 +97,25 @@ type ButtonAttribute interface {
 }
 
 type TableAttribute interface {
-	SetThead(value []map[string]string) TableAttribute
-	SetInfoList(value []map[string]template.HTML) TableAttribute
+	SetThead(value Thead) TableAttribute
+	SetInfoList(value []map[string]InfoItem) TableAttribute
 	SetType(value string) TableAttribute
 	SetMinWidth(value int) TableAttribute
+	SetLayout(value string) TableAttribute
 	GetContent() template.HTML
 }
 
 type DataTableAttribute interface {
 	GetDataTableHeader() template.HTML
-	SetThead(value []map[string]string) DataTableAttribute
-	SetInfoList(value []map[string]template.HTML) DataTableAttribute
+	SetThead(value Thead) DataTableAttribute
+	SetInfoList(value []map[string]InfoItem) DataTableAttribute
 	SetEditUrl(value string) DataTableAttribute
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
 	SetPrimaryKey(value string) DataTableAttribute
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
+	SetLayout(value string) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
 	SetHideFilterArea(value bool) DataTableAttribute
 	SetHideRowSelector(value bool) DataTableAttribute
@@ -161,6 +166,14 @@ type AlertAttribute interface {
 	GetContent() template.HTML
 }
 
+type LinkAttribute interface {
+	OpenInNewTab() LinkAttribute
+	SetURL(value string) LinkAttribute
+	SetTabTitle(value template.HTML) LinkAttribute
+	SetContent(value template.HTML) LinkAttribute
+	GetContent() template.HTML
+}
+
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
@@ -168,4 +181,35 @@ type PopupAttribute interface {
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute
 	GetContent() template.HTML
+}
+
+type Thead []TheadItem
+
+type TheadItem struct {
+	Head       string
+	Sortable   bool
+	Field      string
+	Hide       bool
+	Editable   bool
+	EditType   string
+	EditOption FieldOptions
+	Width      int
+}
+
+func (t Thead) GroupBy(group [][]string) []Thead {
+	var res = make([]Thead, len(group))
+
+	for key, value := range group {
+		var newThead = make(Thead, len(t))
+
+		for index, info := range t {
+			if modules.InArray(value, info.Field) {
+				newThead[index] = info
+			}
+		}
+
+		res[key] = newThead
+	}
+
+	return res
 }

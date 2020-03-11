@@ -3,6 +3,8 @@ package common
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 	"net/http"
 )
@@ -39,10 +41,10 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
-			"name":       "tester",
-			"slug":       "tester",
-			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
-			"_t":         token[1],
+			"name":           "tester",
+			"slug":           "tester",
+			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
 	res.Body().Contains("tester")
@@ -58,7 +60,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	formBody = e.GET(config.Get().Url("/info/roles/edit")).
-		WithQuery("__goadmin_edit_pk", "3").
+		WithQuery(constant.EditPKKey, "3").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -73,11 +75,11 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithFormField("permission_id[]", "3").
 		WithFormField("permission_id[]", "2").
 		WithForm(map[string]interface{}{
-			"name":       "tester",
-			"slug":       "tester",
-			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
-			"_t":         token[1],
-			"id":         "3",
+			"name":           "tester",
+			"slug":           "tester",
+			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.TokenKey:    token[1],
+			"id":             "3",
 		}).Expect().Status(200)
 	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
 	res.Body().Contains("tester")
@@ -99,10 +101,10 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
-			"name":       "tester2",
-			"slug":       "tester2",
-			"_previous_": config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
-			"_t":         token[1],
+			"name":           "tester2",
+			"slug":           "tester2",
+			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 
 	// delete tester2

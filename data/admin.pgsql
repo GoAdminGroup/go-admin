@@ -59,7 +59,7 @@ CREATE TABLE public.goadmin_menu (
     title character varying(50) NOT NULL,
     header character varying(100),
     icon character varying(50) NOT NULL,
-    uri character varying(50) NOT NULL,
+    uri character varying(3000) NOT NULL,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()
 );
@@ -264,9 +264,9 @@ ALTER TABLE public.goadmin_users_myid_seq OWNER TO postgres;
 
 CREATE TABLE public.goadmin_users (
     id integer DEFAULT nextval('public.goadmin_users_myid_seq'::regclass) NOT NULL,
-    username character varying(190) NOT NULL,
-    password character varying(80) NOT NULL,
-    name character varying(255) NOT NULL,
+    username character varying(100) NOT NULL,
+    password character varying(100) NOT NULL,
+    name character varying(100) NOT NULL,
     avatar character varying(255),
     remember_token character varying(100),
     created_at timestamp without time zone DEFAULT now(),
