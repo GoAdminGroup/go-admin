@@ -183,6 +183,10 @@ func (driver *DBDriver) Update(sid string, values map[string]interface{}) {
 		valuesByte, _ := json.Marshal(values)
 		sesModel, _ := driver.table("goadmin_session").Where("sid", "=", sid).First()
 		if sesModel == nil {
+			cmd := "delete from `goadmin_session` where `values`='" + string(valuesByte) + "'"
+			logger.LogSQL(cmd, nil)
+			_, _ = driver.conn.Query(cmd)
+			
 			_, _ = driver.table("goadmin_session").Insert(dialect.H{
 				"values": string(valuesByte),
 				"sid":    sid,
