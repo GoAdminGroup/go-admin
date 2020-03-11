@@ -25,7 +25,7 @@ var (
 	driver     *agouti.WebDriver
 	page       *agouti.Page
 	optionList = []string{
-		//"--headless",
+		"--headless",
 		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
 		"--window-size=1000,900",
 		"--incognito",
