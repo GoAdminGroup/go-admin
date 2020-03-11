@@ -808,7 +808,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptionsFromTable("goadmin_menu", "title", "id", func(sql *db.SQL) *db.SQL {
-			return sql.OrderBy("order", "asc")
+			return sql.Where("parent_id", "=", 0).OrderBy("order", "asc")
 		}).
 		FieldOptionsTableProcessFn(func(options types.FieldOptions) types.FieldOptions {
 			return append([]types.FieldOption{{

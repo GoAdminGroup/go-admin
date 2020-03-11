@@ -503,9 +503,7 @@ func (f *FormPanel) FieldOptionsFromTable(table, textFieldName, valueFieldName s
 }
 
 func (f *FormPanel) FieldOptionsTableProcessFn(fn OptionProcessFn) *FormPanel {
-	f.FieldList[f.curFieldListIndex].OptionTable = OptionTable{
-		ProcessFn: fn,
-	}
+	f.FieldList[f.curFieldListIndex].OptionTable.ProcessFn = fn
 	return f
 }
 
