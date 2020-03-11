@@ -57,6 +57,7 @@ test:
 	make mysql-test
 	make pg-test
 	make sqlite-test
+	make web-test
 
 mysql-test:
 	make import-mysql
@@ -126,6 +127,7 @@ pg-test:
 	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
 
 web-test:
+	make import-mysql
 	gotest -v ./tests/web/... -args $(WEB_TEST_CONFIG_PATH)
 
 fix-gf:

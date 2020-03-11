@@ -7,6 +7,9 @@ go:
 env:
   - GO111MODULE=on PGPASSWORD=root GOPROXY=https://goproxy.io,https://goproxy.cn,direct
 
+addons:
+  chrome: stable
+
 services:
   - mysql
   - postgresql
@@ -16,6 +19,7 @@ before_install:
   - createdb -U postgres go-admin-test
 
 before_script:
+  - mkdir /tmp/google-chrome-bin && ln -s /usr/bin/google-chrome-stable /tmp/google-chrome-bin/chromedriver && export PATH=/tmp/google-chrome-bin:$PATH
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
   - go get -u github.com/rakyll/gotest
