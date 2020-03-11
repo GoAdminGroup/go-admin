@@ -29,4 +29,5 @@ before_script:
 
 script:
   - chromedriver --version
+  - chromedriver --headless --disable-gpu -port==9222 &
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
