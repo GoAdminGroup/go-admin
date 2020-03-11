@@ -8,6 +8,7 @@ CLI = adm
 TEST_CONFIG_PATH=./../common/config.json
 TEST_CONFIG_PQ_PATH=./../common/config_pg.json
 TEST_CONFIG_SQLITE_PATH=./../common/config_sqlite.json
+WEB_TEST_CONFIG_PATH=./config.json
 
 all: run
 
@@ -123,6 +124,9 @@ pg-test:
 	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
 	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
+
+web-test:
+	gotest -v ./tests/web/... -args $(WEB_TEST_CONFIG_PATH)
 
 fix-gf:
 	go get -u -v github.com/gogf/gf@v1.9.10

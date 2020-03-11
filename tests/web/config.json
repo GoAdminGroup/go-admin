@@ -1,0 +1,25 @@
+{
+  "database": {
+    "default": {
+      "host": "127.0.0.1",
+      "port": "3306",
+      "user": "root",
+      "pwd": "root",
+      "name": "go-admin-test",
+      "max_idle_con": 50,
+      "max_open_con": 150,
+      "driver": "mysql"
+    }
+  },
+  "domain": "localhost",
+  "prefix": "admin",
+  "store": {
+    "path": "./uploads",
+    "prefix": "uploads"
+  },
+  "language": "en",
+  "index": "/",
+  "access_log_off": true,
+  "debug": false,
+  "color_scheme": "skin-black"
+}
