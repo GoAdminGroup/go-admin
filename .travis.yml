@@ -28,4 +28,5 @@ before_script:
   - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
 
 script:
+  - chromedriver --version
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
