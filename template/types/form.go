@@ -1,6 +1,7 @@
 package types
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
@@ -229,6 +230,28 @@ func (f FormField) UpdateDefaultValue(sqls ...*db.SQL) FormField {
 		}
 	}
 	return f
+}
+
+func (f FormField) FillCustomContent() FormField {
+	// TODO: optimize
+	if f.CustomContent != "" {
+		f.CustomContent = template.HTML(f.fillCustom(string(f.CustomContent)))
+	}
+	if f.CustomJs != "" {
+		f.CustomJs = template.JS(f.fillCustom(string(f.CustomJs)))
+	}
+	if f.CustomCss != "" {
+		f.CustomCss = template.CSS(f.fillCustom(string(f.CustomCss)))
+	}
+	return f
+}
+
+func (f FormField) fillCustom(src string) string {
+	t := template.New("temp.html")
+	t, _ = t.Parse(src)
+	buf := new(bytes.Buffer)
+	_ = t.Execute(buf, f)
+	return buf.String()
 }
 
 // FormPanel
@@ -903,7 +926,7 @@ func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[str
 				}
 			}
 
-			groupFormList = append(groupFormList, list)
+			groupFormList = append(groupFormList, list.FillCustomContent())
 			groupHeaders = append(groupHeaders, f.TabHeaders[key])
 		}
 	}
@@ -926,7 +949,7 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 						if !v.NotAllowAdd {
 							v.Editable = true
 							if len(sql) > 0 {
-								list = append(list, v.UpdateDefaultValue(sql[0]()))
+								list = append(list, v.UpdateDefaultValue(sql[0]()).FillCustomContent())
 							} else {
 								list = append(list, v.UpdateDefaultValue())
 							}
@@ -1007,4 +1030,13 @@ func (f FormFields) FindByFieldName(field string) FormField {
 		}
 	}
 	return FormField{}
+}
+
+func (f FormFields) FillCustomContent() FormFields {
+	for _, field := range f {
+		if field.FormType.IsCustom() {
+			field.FillCustomContent()
+		}
+	}
+	return f
 }
