@@ -83,7 +83,7 @@ func TestMain(m *testing.M) {
 
 	var err error
 
-	driver = agouti.NewWebDriver("http://{{.Address}}", []string{"chromedriver", "--headless --disable-gpu -port={{.Port}}"},
+	driver = agouti.ChromeDriver(
 		agouti.ChromeOptions("args", optionList),
 		agouti.Desired(
 			agouti.Capabilities{

@@ -19,6 +19,8 @@ before_install:
   - createdb -U postgres go-admin-test
 
 before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
   - mkdir /tmp/google-chrome-bin && ln -s /usr/bin/google-chrome-stable /tmp/google-chrome-bin/chromedriver && export PATH=/tmp/google-chrome-bin:$PATH
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
@@ -29,5 +31,4 @@ before_script:
 
 script:
   - chromedriver --version
-  - chromedriver --headless --disable-gpu -port==9222 &
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
