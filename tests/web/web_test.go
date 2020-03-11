@@ -1,132 +1,73 @@
 package web
 
 import (
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-	"runtime/debug"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/stretchr/testify/assert"
+	"strings"
 	"testing"
-
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	_ "github.com/GoAdminGroup/themes/adminlte"
-
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/tests/tables"
-	"github.com/gin-gonic/gin"
-	"github.com/sclevine/agouti"
+	"time"
 )
 
-var (
-	driver     *agouti.WebDriver
-	page       *agouti.Page
-	optionList = []string{
-		"--headless",
-		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-		"--window-size=1000,900",
-		"--incognito", // 隐身模式
-		"--blink-settings=imagesEnabled=true",
-		"--no-default-browser-check",
-		"--ignore-ssl-errors=true",
-		"--ssl-protocol=any",
-		"--no-sandbox",
-		"--disable-breakpad",
-		"--disable-gpu",
-		"--disable-logging",
-		"--no-zygote",
-		"--allow-running-insecure-content",
-	}
-	quit    = make(chan uint8)
-	baseURL = "http://localhost:9033"
-	port    = ":9033"
-)
+func TestLogin(t *testing.T) {
+	defer StopDriverOnPanic(t)
 
-func startServer() {
-	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = ioutil.Discard
+	assert.Equal(t, page.Navigate(url("/admin")), nil)
+	assert.Equal(t, page.Find("#username").Fill("admin"), nil)
+	assert.Equal(t, page.Find("#password").Fill("admin"), nil)
+	assert.Equal(t, page.FindByButton("login").Click(), nil)
 
-	r := gin.New()
+	time.Sleep(time.Second * 3)
 
-	eng := engine.Default()
-
-	adminPlugin := admin.NewAdmin(tables.Generators)
-	adminPlugin.AddGenerator("user", tables.GetUserTable)
-
-	template.AddComp(chartjs.NewChart())
-
-	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(adminPlugin).
-		Use(r); err != nil {
-		panic(err)
-	}
-
-	eng.HTML("GET", "/admin", tables.GetContent)
-
-	r.Static("/uploads", "./uploads")
-
-	go func() {
-		_ = r.Run(port)
-	}()
-
-	<-quit
-	log.Print("closing database connection")
-	eng.MysqlConnection().Close()
+	content, err := page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, "main-header"), true)
 }
 
-func TestMain(m *testing.M) {
+func TestButtons(t *testing.T) {
+	assert.Equal(t, page.Navigate(url(config.Get().Url("/info/user"))), nil)
+	time.Sleep(time.Second * 2)
 
-	go startServer()
+	content, err := page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, "Users"), true)
+	assert.Equal(t, page.FindByXPath(`//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[5]/a`).Click(), nil)
+	time.Sleep(time.Second * 1)
+	popup := page.FindByXPath(`//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[6]`)
+	display, err := popup.CSS("display")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, display, "block")
 
-	var err error
+	time.Sleep(time.Second * 1)
 
-	driver = agouti.ChromeDriver(
-		agouti.ChromeOptions("args", optionList),
-		agouti.Desired(
-			agouti.Capabilities{
-				"loggingPrefs": map[string]string{
-					"performance": "ALL",
-				},
-				"acceptSslCerts":      true,
-				"acceptInsecureCerts": true,
-			},
-		))
-	err = driver.Start()
-	if err != nil {
-		panic("failed to start driver, error: " + err.Error())
-	}
-	defer func() {
-		_ = driver.Stop()
-	}()
+	content, err = page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, "hello world"), true)
+	assert.Equal(t, page.FindByButton("Close").Click(), nil)
+	time.Sleep(time.Second * 1)
+	popup = page.FindByXPath(`//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[6]`)
+	display, err = popup.CSS("display")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, display, "none")
 
-	page, err = driver.NewPage()
-	if err != nil {
-		panic("failed to open page, error: " + err.Error())
-	}
-	defer func() {
-		_ = page.Destroy()
-	}()
+	assert.Equal(t, page.FindByXPath(`//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[7]/a`).Click(), nil)
+	time.Sleep(time.Second * 1)
 
-	test := m.Run()
+	content, err = page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, "Oh li get"), true)
 
-	quit <- 0
-	os.Exit(test)
-}
+	alert := page.FindByXPath("/html/body/div[3]")
+	display, err = alert.CSS("display")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, display, "block")
 
-func StopDriverOnPanic(t *testing.T) {
-	if r := recover(); r != nil {
-		debug.PrintStack()
-		fmt.Println("Recovered in f", r)
-		_ = page.Destroy()
-		_ = driver.Stop()
-		t.Fail()
-		quit <- 0
-	}
-}
+	assert.Equal(t, page.FindByButton("OK").Click(), nil)
 
-func url(suffix string) string {
-	return baseURL + suffix
+	time.Sleep(time.Second * 1)
+
+	alert = page.FindByXPath("/html/body/div[3]")
+	display, err = alert.CSS("display")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, display, "none")
+
 }

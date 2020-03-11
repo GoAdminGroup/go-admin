@@ -91,7 +91,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		}))
 	info.AddButton("ajax", icon.Android, action.Ajax("/admin/ajax",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
-			return true, "success", ""
+			return true, "Oh li get", ""
 		}))
 	info.AddSelectBox("gender", types.FieldOptions{
 		{Value: "0", Text: "men"},
