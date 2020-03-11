@@ -819,7 +819,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var menuItem []string
 
-			if model.Value == "" {
+			if model.ID == "" {
 				return menuItem
 			}
 
