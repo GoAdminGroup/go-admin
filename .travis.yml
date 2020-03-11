@@ -29,6 +29,4 @@ before_script:
 
 script:
   - chromedriver --version
-  - chromedriver --remote-debugging-port=9011
-  - chromedriver --headless --disable-gpu --remote-debugging-port=9222
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
