@@ -448,9 +448,7 @@ type Where struct {
 type Wheres []Where
 
 func (whs Wheres) Statement(wheres, delimiter string, whereArgs []interface{}, existKeys, columns []string) (string, []interface{}) {
-	if wheres != "" {
-		wheres += " and "
-	}
+	pwheres := ""
 	for k, wh := range whs {
 
 		whFieldArr := strings.Split(wh.Field, ".")
@@ -476,14 +474,17 @@ func (whs Wheres) Statement(wheres, delimiter string, whereArgs []interface{}, e
 			}
 
 			if whTable != "" {
-				wheres += whTable + "." + modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
+				pwheres += whTable + "." + modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
 			} else {
-				wheres += modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
+				pwheres += modules.FilterField(whField, delimiter) + " " + wh.Operator + " ? " + joinMark + " "
 			}
 			whereArgs = append(whereArgs, wh.Arg)
 		}
 	}
-	return wheres, whereArgs
+	if wheres != "" && pwheres != "" {
+		wheres += " and "
+	}
+	return wheres + pwheres, whereArgs
 }
 
 type WhereRaw struct {

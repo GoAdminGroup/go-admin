@@ -58,7 +58,7 @@ func TestInfoTablePageOperations(t *testing.T) {
 	// Buttons Check
 	// =============================
 
-	printlnWithColor("buttons check", colorBlue)
+	printlnWithColor("> buttons check", colorBlue)
 
 	click(t, popupBtn)
 	sleep(1)
@@ -89,7 +89,7 @@ func TestInfoTablePageOperations(t *testing.T) {
 	// Filter Area Check
 	// =============================
 
-	printlnWithColor("filter area check", colorBlue)
+	printlnWithColor("> filter area check", colorBlue)
 
 	click(t, selectionDropDown)
 
@@ -131,7 +131,7 @@ func TestInfoTablePageOperations(t *testing.T) {
 	// Row Selector Check
 	// =============================
 
-	printlnWithColor("row selector check", colorBlue)
+	printlnWithColor("> row selector check", colorBlue)
 
 	click(t, rowSelector)
 	click(t, rowSelectCityCheckbox)
@@ -151,13 +151,25 @@ func TestInfoTablePageOperations(t *testing.T) {
 	// Export Check
 	// =============================
 
-	printlnWithColor("row selector check", colorBlue)
+	printlnWithColor("> row export check", colorBlue)
 
 	assert.Equal(t, page.FindByXPath(actionDropDown).Click(), nil)
 	assert.Equal(t, page.FindByXPath(exportBtn).Click(), nil)
 	assert.Equal(t, page.FindByClass(`grid-batch-1`).Click(), nil)
 
-	// Action Check
+	// Action Button Check
 	// =============================
+
+}
+
+func testNewPageOperations(t *testing.T) {
+
+}
+
+func testDetailPageOperations(t *testing.T) {
+
+}
+
+func testEditPageOperations(t *testing.T) {
 
 }
