@@ -105,17 +105,11 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic("failed to start driver, error: " + err.Error())
 	}
-	defer func() {
-		_ = driver.Stop()
-	}()
 
 	page, err = driver.NewPage()
 	if err != nil {
 		panic("failed to open page, error: " + err.Error())
 	}
-	defer func() {
-		_ = page.Destroy()
-	}()
 
 	fmt.Println()
 	fmt.Println("============================================")
@@ -126,6 +120,21 @@ func TestMain(m *testing.M) {
 	test := m.Run()
 
 	sleep(2)
+
+	err = page.CloseWindow()
+	if err != nil {
+		fmt.Println("failed to close page, error: ", err)
+	}
+
+	err = page.Destroy()
+	if err != nil {
+		fmt.Println("failed to destroy page, error: ", err)
+	}
+
+	err = driver.Stop()
+	if err != nil {
+		fmt.Println("failed to stop driver, error: ", err)
+	}
 
 	quit <- 0
 	os.Exit(test)
@@ -190,5 +199,5 @@ func printlnWithColor(msg string, color string) {
 
 const (
 	colorBlue  = "blue"
-	colorGrees = "green"
+	colorGreen = "green"
 )

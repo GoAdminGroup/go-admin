@@ -129,6 +129,7 @@ pg-test:
 web-test:
 	make import-mysql
 	gotest -v ./tests/web/... -args $(WEB_TEST_CONFIG_PATH)
+	rm -rf ./tests/web/User*
 
 fix-gf:
 	go get -u -v github.com/gogf/gf@v1.9.10
