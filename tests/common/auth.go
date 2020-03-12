@@ -63,7 +63,7 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	e.GET(config.Get().Url("/")).
 		WithCookie(auth.DefaultCookieKey, cookie1.Value).Expect().
 		Status(200).
-		Body().Contains("Dashboard")
+		Body().Contains("login")
 
 	printlnWithColor("login success", "green")
 	e.GET(config.Get().Url("/")).
