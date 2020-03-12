@@ -448,6 +448,9 @@ type Where struct {
 type Wheres []Where
 
 func (whs Wheres) Statement(wheres, delimiter string, whereArgs []interface{}, existKeys, columns []string) (string, []interface{}) {
+	if wheres != "" {
+		wheres += " and "
+	}
 	for k, wh := range whs {
 
 		whFieldArr := strings.Split(wh.Field, ".")

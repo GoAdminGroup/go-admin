@@ -392,8 +392,10 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 		wheres = wheres[:len(wheres)-1]
 	} else {
 
+		// parameter
 		wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
 			tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
+		// pre query
 		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
 		wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
