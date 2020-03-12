@@ -574,28 +574,31 @@ type Action interface {
 	BtnAttribute() template.HTML
 	BtnClass() template.HTML
 	ExtContent() template.HTML
+	FooterContent() template.HTML
 	SetBtnId(btnId string)
 	SetBtnData(data interface{})
 	GetCallbacks() context.Node
 }
 
 type DefaultAction struct {
-	Attr template.HTML
-	JS   template.JS
-	Ext  template.HTML
+	Attr   template.HTML
+	JS     template.JS
+	Ext    template.HTML
+	Footer template.HTML
 }
 
-func NewDefaultAction(attr, ext template.HTML, js template.JS) *DefaultAction {
-	return &DefaultAction{Attr: attr, Ext: ext, JS: js}
+func NewDefaultAction(attr, ext, footer template.HTML, js template.JS) *DefaultAction {
+	return &DefaultAction{Attr: attr, Ext: ext, Footer: footer, JS: js}
 }
 
-func (def *DefaultAction) SetBtnId(btnId string)       {}
-func (def *DefaultAction) SetBtnData(data interface{}) {}
-func (def *DefaultAction) Js() template.JS             { return def.JS }
-func (def *DefaultAction) BtnAttribute() template.HTML { return def.Attr }
-func (def *DefaultAction) BtnClass() template.HTML     { return "" }
-func (def *DefaultAction) ExtContent() template.HTML   { return def.Ext }
-func (def *DefaultAction) GetCallbacks() context.Node  { return context.Node{} }
+func (def *DefaultAction) SetBtnId(btnId string)        {}
+func (def *DefaultAction) SetBtnData(data interface{})  {}
+func (def *DefaultAction) Js() template.JS              { return def.JS }
+func (def *DefaultAction) BtnAttribute() template.HTML  { return def.Attr }
+func (def *DefaultAction) BtnClass() template.HTML      { return "" }
+func (def *DefaultAction) ExtContent() template.HTML    { return def.Ext }
+func (def *DefaultAction) FooterContent() template.HTML { return def.Footer }
+func (def *DefaultAction) GetCallbacks() context.Node   { return context.Node{} }
 
 var _ Action = (*DefaultAction)(nil)
 
@@ -643,6 +646,7 @@ func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, actio
 		w = width[0]
 	}
 	i.Buttons = append(i.Buttons, DefaultSelection{Width: w, Id: id, Placeholder: placeholder, Options: options, Action: action})
+	i.FooterHtml += action.FooterContent()
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
@@ -662,6 +666,7 @@ func (i *InfoPanel) btnUUID() string {
 
 func (i *InfoPanel) AddButtonRaw(btn Button, action Action) *InfoPanel {
 	i.Buttons = append(i.Buttons, btn)
+	i.FooterHtml += action.FooterContent()
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
@@ -678,6 +683,7 @@ func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, c
 	if len(color) >= 2 {
 		i.Buttons = append(i.Buttons, DefaultButton{Title: title, Color: color[0], TextColor: color[1], Id: id, Action: action, Icon: icon})
 	}
+	i.FooterHtml += action.FooterContent()
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
@@ -691,6 +697,7 @@ func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...s
 	}
 	action.SetBtnId(id)
 	i.ActionButtons = append(i.ActionButtons, ActionButton{Title: title, Id: id, Action: action})
+	i.FooterHtml += action.FooterContent()
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }
@@ -704,6 +711,7 @@ func (i *InfoPanel) AddActionButtonFront(title template.HTML, action Action, ids
 	}
 	action.SetBtnId(id)
 	i.ActionButtons = append([]Button{ActionButton{Title: title, Id: id, Action: action}}, i.ActionButtons...)
+	i.FooterHtml += action.FooterContent()
 	i.Callbacks = i.Callbacks.AddCallback(action.GetCallbacks())
 	return i
 }

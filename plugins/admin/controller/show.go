@@ -97,7 +97,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		if deleteUrl != "" {
 			ext = html.LiEl().SetClass("divider").Get()
 			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%id}' style="cursor: pointer;"`,
-				ext, ""), "grid-row-delete")
+				ext, "", ""), "grid-row-delete")
 		}
 		ext = template.HTML("")
 		if detailUrl != "" {
@@ -191,7 +191,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
 		WithHeadBorder().
-		SetFooter(panelInfo.Paginator.GetContent())
+		SetFooter(panelInfo.Paginator.GetContent() + info.FooterHtml)
 
 	if len(panelInfo.FilterFormData) > 0 {
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").

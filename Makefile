@@ -5,9 +5,9 @@ LAST_VERSION = v1.2.4
 VERSION = v1.2.5
 CLI = adm
 
-TEST_CONFIG_PATH=./../common/config.json
-TEST_CONFIG_PQ_PATH=./../common/config_pg.json
-TEST_CONFIG_SQLITE_PATH=./../common/config_sqlite.json
+TEST_CONFIG_PATH=./../../common/config.json
+TEST_CONFIG_PQ_PATH=./../../common/config_pg.json
+TEST_CONFIG_SQLITE_PATH=./../../common/config_sqlite.json
 WEB_TEST_CONFIG_PATH=./config.json
 
 all: run
@@ -61,39 +61,39 @@ test:
 
 mysql-test:
 	make import-mysql
-	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/gin/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/beego/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/buffalo/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/buffalo/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/chi/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/chi/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/echo/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/echo/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/gorilla/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/gf/... -args $(TEST_CONFIG_PATH)
 	make import-mysql
-	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PATH)
+	gotest -v ./tests/frameworks/fasthttp/... -args $(TEST_CONFIG_PATH)
 
 sqlite-test:
 	make import-sqlite
-	gotest -v ./tests/gin/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/gin/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/beego/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/beego/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/buffalo/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/buffalo/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/chi/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/chi/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/echo/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/echo/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/gorilla/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/gf/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/gf/... -args $(TEST_CONFIG_SQLITE_PATH)
 	make import-sqlite
-	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_SQLITE_PATH)
+	gotest -v ./tests/frameworks/fasthttp/... -args $(TEST_CONFIG_SQLITE_PATH)
 
 import-sqlite:
 	rm -rf ./tests/common/admin.db
@@ -110,21 +110,21 @@ import-postgresql:
 
 pg-test:
 	make import-postgresql
-	gotest -v ./tests/gin/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/gin/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/beego/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/beego/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/buffalo/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/buffalo/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/chi/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/chi/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/echo/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/echo/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/gorilla/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/gorilla/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/gf/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/gf/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
-	gotest -v ./tests/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
+	gotest -v ./tests/frameworks/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
 
 web-test:
 	make import-mysql

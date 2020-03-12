@@ -83,7 +83,7 @@ func (pop *PopUpAction) BtnAttribute() template.HTML {
 	return template.HTML(`data-toggle="modal" data-target="#` + pop.Id + ` "`)
 }
 
-func (pop *PopUpAction) ExtContent() template.HTML {
+func (pop *PopUpAction) FooterContent() template.HTML {
 	return template2.Default().Popup().SetID(pop.Id).
 		SetTitle(template.HTML(pop.Title)).
 		SetBody(template.HTML(``)).

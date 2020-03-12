@@ -13,6 +13,10 @@ var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"" + form.TokenKey + "
 // Test contains unit test sections of the GoAdmin admin plugin.
 func Test(e *httpexpect.Expect) {
 
+	fmt.Println("============================================")
+	printlnWithColor("Basic Function Black-Box Testing", "blue")
+	fmt.Println("============================================")
+
 	cookie := authTest(e)
 
 	// permission check
@@ -27,12 +31,8 @@ func Test(e *httpexpect.Expect) {
 	operationLogTest(e, cookie)
 	// get data from outside source check
 	externalTest(e, cookie)
-
-	// TODO: selections check
-	selectionsTest(e, cookie)
-	// TODO: add buttons check
-	// TODO: export functions check
-	// TODO: filter functions check
+	// normal table tests
+	normalTest(e, cookie)
 }
 
 func printlnWithColor(msg string, color string) {

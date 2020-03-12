@@ -62,10 +62,14 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
-	info.AddActionButton("审批", action.Ajax("/admin/audit",
+	info.AddActionButton("Audit", action.Ajax("/admin/audit",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			fmt.Println("PostForm", ctx.PostForm())
 			return true, "success", ""
+		}))
+	info.AddActionButton("Preview", action.PopUp("/admin/preview", "Preview",
+		func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			return true, "", "<h2>hello world</h2>"
 		}))
 	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
 	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",

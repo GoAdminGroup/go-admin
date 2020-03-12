@@ -8,10 +8,10 @@ import (
 	"net/http"
 )
 
-func selectionsTest(e *httpexpect.Expect, sesID *http.Cookie) {
+func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	fmt.Println()
-	printlnWithColor("Selections", "blue")
+	printlnWithColor("Normal Table", "blue")
 	fmt.Println("============================")
 
 	// show

@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"github.com/mgutz/ansi"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
@@ -116,6 +117,10 @@ func TestMain(m *testing.M) {
 		_ = page.Destroy()
 	}()
 
+	fmt.Println("============================================")
+	printlnWithColor("User Acceptance Testing", "blue")
+	fmt.Println("============================================")
+
 	test := m.Run()
 
 	sleep(2)
@@ -166,3 +171,22 @@ func text(t *testing.T, s *agouti.Selection, text string) {
 	assert.Equal(t, err, nil)
 	assert.Equal(t, mli1, text)
 }
+
+func click(t *testing.T, xpath string) {
+	assert.Equal(t, page.FindByXPath(xpath).Click(), nil)
+}
+
+func attr(t *testing.T, s *agouti.Selection, attr, res string) {
+	style, err := s.Attribute(attr)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, style, res)
+}
+
+func printlnWithColor(msg string, color string) {
+	fmt.Println(ansi.Color(msg, color))
+}
+
+const (
+	colorBlue  = "blue"
+	colorGrees = "green"
+)
