@@ -46,19 +46,31 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	// login again
 
 	printlnWithColor("login again", "green")
-	cookie := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
+	cookie1 := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
+		"username": "admin",
+		"password": "admin",
+	}).Expect().Status(200).Cookie(auth.DefaultCookieKey).Raw()
+
+	printlnWithColor("login again：restrict users from logging in at the same time", "green")
+	cookie2 := e.POST(config.Get().Url("/signin")).WithForm(map[string]string{
 		"username": "admin",
 		"password": "admin",
 	}).Expect().Status(200).Cookie(auth.DefaultCookieKey).Raw()
 
 	// login success
 
+	printlnWithColor("cookie failure", "green")
+	e.GET(config.Get().Url("/")).
+		WithCookie(auth.DefaultCookieKey, cookie1.Value).Expect().
+		Status(200).
+		Body().Contains("login")
+
 	printlnWithColor("login success", "green")
 	e.GET(config.Get().Url("/")).
-		WithCookie(auth.DefaultCookieKey, cookie.Value).Expect().
+		WithCookie(auth.DefaultCookieKey, cookie2.Value).Expect().
 		Status(200).
 		Body().Contains("Dashboard")
 
-	return cookie
+	return cookie2
 
 }
