@@ -247,7 +247,7 @@ func (f FormField) FillCustomContent() FormField {
 }
 
 func (f FormField) fillCustom(src string) string {
-	t := template.New("temp.html")
+	t := template.New("custom")
 	t, _ = t.Parse(src)
 	buf := new(bytes.Buffer)
 	_ = t.Execute(buf, f)

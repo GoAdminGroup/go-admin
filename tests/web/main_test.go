@@ -117,9 +117,11 @@ func TestMain(m *testing.M) {
 		_ = page.Destroy()
 	}()
 
+	fmt.Println()
 	fmt.Println("============================================")
 	printlnWithColor("User Acceptance Testing", "blue")
 	fmt.Println("============================================")
+	fmt.Println()
 
 	test := m.Run()
 

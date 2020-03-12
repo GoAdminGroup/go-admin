@@ -79,10 +79,14 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	// ===========================
 
 	info.AddActionButton("google", action.Jump("https://google.com"))
-	info.AddActionButton("审批", action.Ajax("/admin/audit",
+	info.AddActionButton("Audit", action.Ajax("/admin/audit",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			fmt.Println("PostForm", ctx.PostForm())
 			return true, "success", ""
+		}))
+	info.AddActionButton("Preview", action.PopUp("/admin/preview", "Preview",
+		func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			return true, "", "<h2>hello world</h2>"
 		}))
 	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
 	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
@@ -102,54 +106,54 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	formList := userTable.GetForm()
 
-	formList.AddField("名字", "name", db.Varchar, form.Text)
-	formList.AddField("年龄", "age", db.Int, form.Number)
-	formList.AddField("主页", "homepage", db.Varchar, form.Url).FieldDefault("http://google.com")
-	formList.AddField("邮箱", "email", db.Varchar, form.Email).FieldDefault("xxxx@xxx.com")
-	formList.AddField("生日", "birthday", db.Varchar, form.Datetime).FieldDefault("2010-09-05")
-	formList.AddField("密码", "password", db.Varchar, form.Password)
+	formList.AddField("Name", "name", db.Varchar, form.Text)
+	formList.AddField("Age", "age", db.Int, form.Number)
+	formList.AddField("Homepage", "homepage", db.Varchar, form.Url).FieldDefault("http://google.com")
+	formList.AddField("Email", "email", db.Varchar, form.Email).FieldDefault("xxxx@xxx.com")
+	formList.AddField("Birthday", "birthday", db.Varchar, form.Datetime).FieldDefault("2010-09-05")
+	formList.AddField("Password", "password", db.Varchar, form.Password)
 	formList.AddField("IP", "ip", db.Varchar, form.Ip)
-	formList.AddField("证件", "certificate", db.Varchar, form.Multifile).FieldOptionExt(map[string]interface{}{
+	formList.AddField("Cert", "certificate", db.Varchar, form.Multifile).FieldOptionExt(map[string]interface{}{
 		"maxFileCount": 10,
 	})
-	formList.AddField("金额", "currency", db.Int, form.Currency)
-	formList.AddField("内容", "content", db.Text, form.RichText).
+	formList.AddField("Amout", "currency", db.Int, form.Currency)
+	formList.AddField("Content", "content", db.Text, form.RichText).
 		FieldDefault(`<h1>343434</h1><p>34344433434</p><ol><li>23234</li><li>2342342342</li><li>asdfads</li></ol><ul><li>3434334</li><li>34343343434</li><li>44455</li></ul><p><span style="color: rgb(194, 79, 74);">343434</span></p><p><span style="background-color: rgb(194, 79, 74); color: rgb(0, 0, 0);">434434433434</span></p><table border="0" width="100%" cellpadding="0" cellspacing="0"><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table><p><br></p><p><span style="color: rgb(194, 79, 74);"><br></span></p>`)
 
-	formList.AddField("站点开关", "website", db.Tinyint, form.Switch).
-		FieldHelpMsg("站点关闭后将不能访问，后台可正常登录").
+	formList.AddField("Switch", "website", db.Tinyint, form.Switch).
+		FieldHelpMsg("Will not be able to access when the site was off").
 		FieldOptions(types.FieldOptions{
 			{Value: "0"},
 			{Value: "1"},
 		})
-	formList.AddField("水果", "fruit", db.Varchar, form.SelectBox).
+	formList.AddField("Fruit", "fruit", db.Varchar, form.SelectBox).
 		FieldOptions(types.FieldOptions{
-			{Text: "苹果", Value: "apple"},
-			{Text: "香蕉", Value: "banana"},
-			{Text: "西瓜", Value: "watermelon"},
-			{Text: "梨", Value: "pear"},
+			{Text: "Apple", Value: "apple"},
+			{Text: "Banana", Value: "banana"},
+			{Text: "Watermelon", Value: "watermelon"},
+			{Text: "Pear", Value: "pear"},
 		}).
 		FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{"梨"}
+			return []string{"Pear"}
 		})
-	formList.AddField("性别", "gender", db.Tinyint, form.Radio).
+	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
 		FieldOptions(types.FieldOptions{
-			{Text: "男生", Value: "0"},
-			{Text: "女生", Value: "1"},
+			{Text: "Boy", Value: "0"},
+			{Text: "Girl", Value: "1"},
 		})
-	formList.AddField("饮料", "drink", db.Tinyint, form.Select).
+	formList.AddField("Drink", "drink", db.Tinyint, form.Select).
 		FieldOptions(types.FieldOptions{
-			{Text: "啤酒", Value: "beer"},
-			{Text: "果汁", Value: "juice"},
-			{Text: "白开水", Value: "water"},
-			{Text: "红牛", Value: "red bull"},
+			{Text: "Beer", Value: "beer"},
+			{Text: "Juice", Value: "juice"},
+			{Text: "Water", Value: "water"},
+			{Text: "Red bull", Value: "red bull"},
 		}).FieldDefault("beer")
-	formList.AddField("工作经验", "experience", db.Tinyint, form.SelectSingle).
+	formList.AddField("Work Experience", "experience", db.Tinyint, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "两年", Value: "0"},
-			{Text: "三年", Value: "1"},
-			{Text: "四年", Value: "2"},
-			{Text: "五年", Value: "3"},
+			{Text: "two years", Value: "0"},
+			{Text: "three years", Value: "1"},
+			{Text: "four years", Value: "2"},
+			{Text: "five years", Value: "3"},
 		}).FieldDefault("beer")
 	formList.SetTabGroups(types.TabGroups{
 		{"name", "age", "homepage", "email", "birthday", "password", "ip", "certificate", "currency", "content"},

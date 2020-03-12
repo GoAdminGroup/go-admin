@@ -27,8 +27,9 @@ func TestInfoTablePageOperations(t *testing.T) {
 
 	const (
 		popupBtn                = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[5]/a`
-		popup                   = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[6]`
-		ajaxBtn                 = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[7]/a`
+		popup                   = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]`
+		popupCloseBtn           = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]/div/div/div[3]/button`
+		ajaxBtn                 = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[6]/a`
 		ajaxAlert               = `/html/body/div[3]`
 		selectionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[2]/div/div/div[1]/div/span/span[1]/span/span[2]`
 		selectionLi1            = `/html/body/span/span/span[2]/ul/li[1]`
@@ -67,7 +68,7 @@ func TestInfoTablePageOperations(t *testing.T) {
 	sleep(1)
 
 	contain(t, "hello world")
-	assert.Equal(t, page.FindByButton("Close").Click(), nil)
+	click(t, popupCloseBtn)
 	sleep(1)
 
 	css(t, page.FindByXPath(popup), "display", "none")
