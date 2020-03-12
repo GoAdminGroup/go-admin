@@ -2,11 +2,14 @@ package web
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"log"
 	"os"
 	"runtime/debug"
+	"strings"
 	"testing"
+	"time"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -40,7 +43,10 @@ var (
 		"--no-zygote",
 		"--allow-running-insecure-content",
 	}
-	quit    = make(chan uint8)
+	quit = make(chan uint8)
+)
+
+const (
 	baseURL = "http://localhost:9033"
 	port    = ":9033"
 )
@@ -112,6 +118,8 @@ func TestMain(m *testing.M) {
 
 	test := m.Run()
 
+	sleep(2)
+
 	quit <- 0
 	os.Exit(test)
 }
@@ -129,4 +137,32 @@ func StopDriverOnPanic(t *testing.T) {
 
 func url(suffix string) string {
 	return baseURL + suffix
+}
+
+func sleep(t int) {
+	time.Sleep(time.Duration(t) * time.Second)
+}
+
+func contain(t *testing.T, s string) {
+	content, err := page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, s), true)
+}
+
+func noContain(t *testing.T, s string) {
+	content, err := page.HTML()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, strings.Contains(content, s), false)
+}
+
+func css(t *testing.T, s *agouti.Selection, css, res string) {
+	style, err := s.CSS(css)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, style, res)
+}
+
+func text(t *testing.T, s *agouti.Selection, text string) {
+	mli1, err := s.Text()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, mli1, text)
 }
