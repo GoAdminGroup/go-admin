@@ -2,7 +2,7 @@
   "database": {
     "default": {
       "driver": "sqlite",
-      "file": "./../common/admin.db"
+      "file": "./../../common/admin.db"
     }
   },
   "domain": "localhost",

@@ -157,4 +157,7 @@ func TestInfoTablePageOperations(t *testing.T) {
 	assert.Equal(t, page.FindByXPath(exportBtn).Click(), nil)
 	assert.Equal(t, page.FindByClass(`grid-batch-1`).Click(), nil)
 
+	// Action Check
+	// =============================
+
 }
