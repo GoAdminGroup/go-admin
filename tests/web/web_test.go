@@ -48,6 +48,13 @@ func TestInfoTablePageOperations(t *testing.T) {
 		rowSelectAvatarCheckbox = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[1]/ul/li[1]/ul/li[5]/label/div`
 		actionDropDown          = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[1]/div`
 		exportBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/span/div/button`
+		rowActionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[7]/div/a`
+		previewAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[7]/div/ul/li[7]/a`
+		closePreviewAction      = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[2]/div/div/div[3]/button`
+		previewPopup            = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[2]`
+		rowAjaxAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[7]/div/ul/li[6]/a`
+		rowAjaxPopup            = `/html/body/div[3]`
+		closeRowAjaxPopup       = `/html/body/div[3]/div[7]/div/button`
 	)
 
 	assert.Equal(t, page.Navigate(url(config.Get().Url("/info/user"))), nil)
@@ -160,10 +167,90 @@ func TestInfoTablePageOperations(t *testing.T) {
 	// Action Button Check
 	// =============================
 
+	click(t, rowActionDropDown)
+	sleep(1)
+	click(t, previewAction)
+	sleep(1)
+	contain(t, "preview content")
+	sleep(1)
+	click(t, closePreviewAction)
+	css(t, page.FindByXPath(previewPopup), "display", "block")
+
+	click(t, closePreviewAction)
+
+	sleep(1)
+
+	css(t, page.FindByXPath(previewPopup), "display", "none")
+
+	click(t, rowActionDropDown)
+	click(t, rowAjaxAction)
+
+	css(t, page.FindByXPath(rowAjaxPopup), "display", "block")
+
+	click(t, closeRowAjaxPopup)
+
+	sleep(1)
+
+	css(t, page.FindByXPath(rowAjaxPopup), "display", "none")
+
+	sleep(2)
 }
 
-func testNewPageOperations(t *testing.T) {
+func TestNewPageOperations(t *testing.T) {
+	const (
+		newPageBtn         = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[3]/a`
+		saveBtn            = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
+		resetBtn           = `//*[@id="pjax-container"]/section[2]/div/div[2]/div[2]/form/div[2]/div[2]/div[2]/button`
+		nameField          = `//*[@id="name"]`
+		ageField           = `//*[@id="age"]`
+		passwordField      = `//*[@id="password"]`
+		ipField            = `//*[@id="ip"]`
+		amountField        = `//*[@id="currency"]`
+		fruitOptField      = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
+		genderBoyCheckBox  = `//*[@id="tab-form-1"]/div[3]/div/div[1]`
+		experienceDropDown = `//*[@id="tab-form-1"]/div[5]/div/span/span[1]/span/span[2]`
+		twoYearsSelection  = `/html/body/span/span/span[2]/ul/li[1]`
+		inputTab           = `//*[@id="pjax-container"]/section[2]/div/div[2]/div[2]/form/div[1]/div/div/ul/li[1]`
+	)
 
+	click(t, newPageBtn)
+	sleep(2)
+
+	click(t, saveBtn)
+	contain(t, "error")
+	fillNewForm(t)
+	click(t, resetBtn)
+	click(t, inputTab)
+	text(t, page.FindByXPath(ipField), "")
+	fillNewForm(t)
+	click(t, saveBtn)
+}
+
+func fillNewForm(t *testing.T) {
+	const (
+		nameField          = `//*[@id="name"]`
+		ageField           = `//*[@id="age"]`
+		passwordField      = `//*[@id="password"]`
+		ipField            = `//*[@id="ip"]`
+		amountField        = `//*[@id="currency"]`
+		fruitOptField      = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
+		genderGirlCheckBox = `//*[@id="tab-form-1"]/div[3]/div/div[2]`
+		experienceDropDown = `//*[@id="tab-form-1"]/div[5]/div/span/span[1]/span/span[2]`
+		twoYearsSelection  = `/html/body/span/span/span[2]/ul/li[1]`
+		selectTab          = `//*[@id="pjax-container"]/section[2]/div/div[2]/div[2]/form/div[1]/div/div/ul/li[2]`
+	)
+
+	fill(t, nameField, "jane")
+	fill(t, ageField, "15")
+	fill(t, passwordField, "12345678")
+	fill(t, ipField, "127.0.0.1")
+	fill(t, amountField, "15")
+	click(t, selectTab)
+	click(t, fruitOptField)
+	click(t, genderGirlCheckBox)
+	click(t, experienceDropDown)
+	sleep(1)
+	click(t, twoYearsSelection)
 }
 
 func testDetailPageOperations(t *testing.T) {

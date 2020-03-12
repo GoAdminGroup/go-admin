@@ -197,6 +197,10 @@ func printlnWithColor(msg string, color string) {
 	fmt.Println(ansi.Color(msg, color))
 }
 
+func fill(t *testing.T, xpath, content string) {
+	assert.Equal(t, page.FindByXPath(xpath).Fill(content), nil)
+}
+
 const (
 	colorBlue  = "blue"
 	colorGreen = "green"

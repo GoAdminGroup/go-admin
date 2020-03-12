@@ -27,6 +27,8 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	cfg := config.Get()
 
+	// TODO: find a better way to manage the dependencies
+
 	admin.services = services
 	admin.conn = db.GetConnection(admin.services)
 	st := table.NewSystemTable(admin.conn)

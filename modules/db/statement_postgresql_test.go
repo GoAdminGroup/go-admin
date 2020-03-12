@@ -1,9 +1,11 @@
 package db
 
 import (
+	"fmt"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
-	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
+	"os"
 	"os/exec"
+	"path"
 	"testing"
 )
 
@@ -11,19 +13,16 @@ var driverTestPgConn Connection
 
 func init() {
 
-	conn := testConnDSN(DriverPostgresql, fmt.Sprintf("host=127.0.0.1 port=5433 user=postgres "+
-		"password=root dbname=%s sslmode=disable", driverTestDBName))
+	cmd := exec.Command("createdb -p 5433 -U postgres " + driverTestDBName)
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "PGPASSWORD=root")
+	_ = cmd.Run()
 
-	_, err := conn.Exec(fmt.Sprintf("SELECT 'CREATE DATABASE %s' WHERE NOT EXISTS "+
-		"(SELECT FROM pg_database WHERE datname = '%s')", driverTestDBName, driverTestDBName))
-
-	if err != nil {
-		panic(err)
-	}
-
-	cmd := exec.Command("export PGPASSWORD=root psql", "-h", "localhost", "-U", "root", "-proot", "-d", driverTestDBName,
-		"-f", testCurrentPath()+"/../../data/admin.pgsql")
-	err = cmd.Run()
+	cmd = exec.Command("psql", "-h", "localhost", "-U", "root", "-proot", "-d", driverTestDBName,
+		"-f", path.Dir(path.Dir(testCurrentPath()))+"/data/admin.pgsql")
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "PGPASSWORD=root")
+	err := cmd.Run()
 	if err != nil {
 		panic(err)
 	}

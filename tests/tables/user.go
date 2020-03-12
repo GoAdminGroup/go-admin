@@ -86,7 +86,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		}))
 	info.AddActionButton("Preview", action.PopUp("/admin/preview", "Preview",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
-			return true, "", "<h2>hello world</h2>"
+			return true, "", "<h2>preview content</h2>"
 		}))
 	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
 	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
