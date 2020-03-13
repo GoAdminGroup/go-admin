@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
@@ -37,9 +38,10 @@ func OkWithData(ctx *context.Context, data map[string]interface{}) {
 }
 
 func BadRequest(ctx *context.Context, msg string) {
+	user := ctx.UserValue["user"].(models.UserModel)
 	ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 		"code": http.StatusBadRequest,
-		"msg":  language.Get(msg),
+		"msg":  language.GetUser(msg, user.Id),
 	})
 }
 
@@ -75,9 +77,10 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, bt
 }
 
 func Error(ctx *context.Context, msg string, datas ...map[string]interface{}) {
+	user := ctx.UserValue["user"].(models.UserModel)
 	res := map[string]interface{}{
 		"code": http.StatusInternalServerError,
-		"msg":  language.Get(msg),
+		"msg":  language.GetUser(msg, user.Id),
 	}
 	if len(datas) > 0 {
 		res["data"] = datas[0]
@@ -86,9 +89,10 @@ func Error(ctx *context.Context, msg string, datas ...map[string]interface{}) {
 }
 
 func Denied(ctx *context.Context, msg string) {
+	user := ctx.UserValue["user"].(models.UserModel)
 	ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
 		"code": http.StatusForbidden,
-		"msg":  language.Get(msg),
+		"msg":  language.GetUser(msg, user.Id),
 	})
 }
 

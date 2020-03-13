@@ -137,7 +137,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			ext := template2.HTML("")
 			if deleteUrl != "" {
 				ext = html.LiEl().SetClass("divider").Get()
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("delete", user.Id),
 					types.NewDefaultAction(`data-id='{{.Id}}' data-param='{{(index .Value "__goadmin_delete_params").Content}}' style="cursor: pointer;"`,
 						ext, "", ""), "grid-row-delete")}, allActionBtns...)
 			}
@@ -146,14 +146,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				if editUrl == "" && deleteUrl == "" {
 					ext = html.LiEl().SetClass("divider").Get()
 				}
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("detail"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("detail", user.Id),
 					action.Jump(detailUrl+"&"+constant.DetailPKKey+`={{.Id}}{{(index .Value "__goadmin_detail_params").Content}}`, ext))}, allActionBtns...)
 			}
 			if editUrl != "" {
 				if detailUrl == "" && deleteUrl == "" {
 					ext = html.LiEl().SetClass("divider").Get()
 				}
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("edit"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("edit", user.Id),
 					action.Jump(editUrl+"&"+constant.EditPKKey+`={{.Id}}{{(index .Value "__goadmin_edit_params").Content}}`, ext))}, allActionBtns...)
 			}
 
