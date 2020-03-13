@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"strings"
 	"testing"
 	"time"
@@ -288,17 +289,20 @@ func checkSelectionsInForm(t *testing.T) {
 	text(t, bananaOptField, "Banana")
 	text(t, watermelonOptField, "Watermelon")
 	text(t, pearOptField, "Pear")
+	clickS(t, page.FindByClass("select2-selection__arrow"))
+	content, _ := page.HTML()
+	_ = ioutil.WriteFile("./page.html", []byte(content), 0644)
+	text(t, twoYearsSelection, "two years")
+	text(t, threeYearsSelection, "three years")
+	text(t, fourYearsSelection, "four years")
+	text(t, fiveYearsSelection, "five years")
+	click(t, selectTab)
 	attr(t, page.FindByXPath(multiSelectedOpt), "title", "Beer")
 	click(t, multiSelectionInput)
 	text(t, multiBeerOpt, "Beer")
 	text(t, multiJuiceOpt, "Juice")
 	text(t, multiWaterOpt, "Water")
 	text(t, multiRedBullOpt, "Red bull")
-	click(t, experienceDropDown)
-	text(t, twoYearsSelection, "two years")
-	text(t, threeYearsSelection, "three years")
-	text(t, fourYearsSelection, "four years")
-	text(t, fiveYearsSelection, "five years")
 	click(t, inputTab)
 }
 

@@ -32,7 +32,7 @@ var (
 	page       *agouti.Page
 	optionList = []string{
 		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-		"--window-size=1200,900",
+		"--window-size=1000,900",
 		"--incognito",
 		"--blink-settings=imagesEnabled=true",
 		"--no-default-browser-check",
@@ -201,6 +201,12 @@ func css(t *testing.T, s *agouti.Selection, css, res string) {
 
 func text(t *testing.T, xpath, text string) {
 	mli1, err := page.FindByXPath(xpath).Text()
+	assert.Equal(t, err, nil)
+	assert.Equal(t, mli1, text)
+}
+
+func textS(t *testing.T, s *agouti.Selection, text string) {
+	mli1, err := s.Text()
 	assert.Equal(t, err, nil)
 	assert.Equal(t, mli1, text)
 }
