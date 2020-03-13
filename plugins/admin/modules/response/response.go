@@ -38,7 +38,11 @@ func OkWithData(ctx *context.Context, data map[string]interface{}) {
 }
 
 func BadRequest(ctx *context.Context, msg string) {
-	user := ctx.UserValue["user"].(models.UserModel)
+	var user = models.UserModel{}
+	var ok bool
+	if user, ok = ctx.UserValue["user"].(models.UserModel); !ok {
+		user.Id = -1
+	}
 	ctx.JSON(http.StatusBadRequest, map[string]interface{}{
 		"code": http.StatusBadRequest,
 		"msg":  language.GetUser(msg, user.Id),
