@@ -470,7 +470,7 @@ type UserConfig struct {
 
 var userConfig []UserConfig
 
-// Get gets the config.
+// Set SetUserConfig the config.
 func SetUserConfig(uConf UserConfig) {
 	// insert or update to database, If there is a database
 	for i := 0; i < len(userConfig); i++ {
