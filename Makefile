@@ -8,7 +8,6 @@ CLI = adm
 TEST_CONFIG_PATH=./../../common/config.json
 TEST_CONFIG_PQ_PATH=./../../common/config_pg.json
 TEST_CONFIG_SQLITE_PATH=./../../common/config_sqlite.json
-WEB_TEST_CONFIG_PATH=./config.json
 
 all: run
 
@@ -128,7 +127,12 @@ pg-test:
 
 web-test:
 	make import-mysql
-	gotest -v ./tests/web/... -args $(WEB_TEST_CONFIG_PATH)
+	gotest -v ./tests/web/...
+	rm -rf ./tests/web/User*
+
+web-test-debug:
+	make import-mysql
+	gotest -v ./tests/web/... -args true
 	rm -rf ./tests/web/User*
 
 unit-test:

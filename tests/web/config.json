@@ -20,7 +20,6 @@
   "language": "en",
   "index": "/",
   "access_log_off": true,
-  "debug": true,
-  "sql_log": true,
+  "debug": false,
   "color_scheme": "skin-black"
 }

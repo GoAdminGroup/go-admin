@@ -300,6 +300,7 @@ CREATE TABLE `users` (
   `ip` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `certificate` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `money` int(10) unsigned DEFAULT NULL,
+  `age` int(10) unsigned DEFAULT NULL,
   `resume` text COLLATE utf8mb4_unicode_ci,
   `gender` tinyint(4) unsigned DEFAULT NULL,
   `fruit` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

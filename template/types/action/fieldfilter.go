@@ -38,14 +38,15 @@ $(".` + jump.BtnId + `").on("select2:select",function(e){
 			if (pair[0] === field) {
 				has = true
 				params += field + "=" + value + "&"
-			} else {
+			} else if (pair[0] !== "` + form.NoAnimationKey + `") {
 				params += vars[i] + "&"
 			}
 		}
+
 		if (!has) {
 			params += field + "=" + value + "&` + form.NoAnimationKey + `=true"
 		} else {
-			params += "` + form.NoAnimationKey + `=true"
+			params +=  "` + form.NoAnimationKey + `=true"
 		}
 
 		return window.location.pathname + "?" + params

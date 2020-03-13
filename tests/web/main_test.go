@@ -2,6 +2,7 @@ package web
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/mgutz/ansi"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
@@ -26,12 +27,12 @@ import (
 )
 
 var (
+	debugMode  = false
 	driver     *agouti.WebDriver
 	page       *agouti.Page
 	optionList = []string{
-		"--headless",
 		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-		"--window-size=1000,900",
+		"--window-size=1200,900",
 		"--incognito",
 		"--blink-settings=imagesEnabled=true",
 		"--no-default-browser-check",
@@ -52,9 +53,21 @@ const (
 	port    = ":9033"
 )
 
+func init() {
+	if os.Args[len(os.Args)-1] == "true" {
+		debugMode = true
+	}
+	if !debugMode {
+		optionList = append(optionList, "--headless")
+	}
+}
+
 func startServer() {
-	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = ioutil.Discard
+
+	if !debugMode {
+		gin.SetMode(gin.ReleaseMode)
+		gin.DefaultWriter = ioutil.Discard
+	}
 
 	r := gin.New()
 
@@ -65,7 +78,14 @@ func startServer() {
 
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
+	cfg := config.ReadFromJson("./config.json")
+	if debugMode {
+		cfg.SqlLog = true
+		cfg.Debug = true
+		cfg.AccessLogOff = false
+	}
+
+	if err := eng.AddConfig(cfg).
 		AddPlugins(adminPlugin).
 		Use(r); err != nil {
 		panic(err)
@@ -119,21 +139,23 @@ func TestMain(m *testing.M) {
 
 	test := m.Run()
 
-	sleep(2)
+	wait(2)
 
-	err = page.CloseWindow()
-	if err != nil {
-		fmt.Println("failed to close page, error: ", err)
-	}
+	if !debugMode {
+		err = page.CloseWindow()
+		if err != nil {
+			fmt.Println("failed to close page, error: ", err)
+		}
 
-	err = page.Destroy()
-	if err != nil {
-		fmt.Println("failed to destroy page, error: ", err)
-	}
+		err = page.Destroy()
+		if err != nil {
+			fmt.Println("failed to destroy page, error: ", err)
+		}
 
-	err = driver.Stop()
-	if err != nil {
-		fmt.Println("failed to stop driver, error: ", err)
+		err = driver.Stop()
+		if err != nil {
+			fmt.Println("failed to stop driver, error: ", err)
+		}
 	}
 
 	quit <- 0
@@ -155,7 +177,7 @@ func url(suffix string) string {
 	return baseURL + suffix
 }
 
-func sleep(t int) {
+func wait(t int) {
 	time.Sleep(time.Duration(t) * time.Second)
 }
 
@@ -177,14 +199,34 @@ func css(t *testing.T, s *agouti.Selection, css, res string) {
 	assert.Equal(t, style, res)
 }
 
-func text(t *testing.T, s *agouti.Selection, text string) {
-	mli1, err := s.Text()
+func text(t *testing.T, xpath, text string) {
+	mli1, err := page.FindByXPath(xpath).Text()
 	assert.Equal(t, err, nil)
 	assert.Equal(t, mli1, text)
 }
 
-func click(t *testing.T, xpath string) {
+func value(t *testing.T, xpath, value string) {
+	val, err := page.FindByXPath(xpath).Attribute("value")
+	assert.Equal(t, err, nil)
+	assert.Equal(t, val, value)
+}
+
+func click(t *testing.T, xpath string, intervals ...int) {
 	assert.Equal(t, page.FindByXPath(xpath).Click(), nil)
+	interval := 1
+	if len(intervals) > 0 {
+		interval = intervals[0]
+	}
+	wait(interval)
+}
+
+func clickS(t *testing.T, s *agouti.Selection, intervals ...int) {
+	assert.Equal(t, s.Click(), nil)
+	interval := 1
+	if len(intervals) > 0 {
+		interval = intervals[0]
+	}
+	wait(interval)
 }
 
 func attr(t *testing.T, s *agouti.Selection, attr, res string) {
@@ -199,6 +241,15 @@ func printlnWithColor(msg string, color string) {
 
 func fill(t *testing.T, xpath, content string) {
 	assert.Equal(t, page.FindByXPath(xpath).Fill(content), nil)
+}
+
+func navigate(t *testing.T, path string) {
+	assert.Equal(t, page.Navigate(url(config.Get().Url(path))), nil)
+	wait(2)
+}
+
+func printPart(part string) {
+	printlnWithColor("> "+part, colorBlue)
 }
 
 const (

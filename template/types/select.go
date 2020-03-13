@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"html/template"
 	"strconv"
 )
@@ -15,18 +16,18 @@ type DefaultSelection struct {
 
 func (b DefaultSelection) Content() (template.HTML, template.JS) {
 
-	optionsHtml := ``
+	optionsHtml := `<option value='__go_admin_all__'>` + language.Get("All") + `</option>`
 
 	for _, op := range b.Options {
 		optionsHtml += `<option value='` + op.Value + `'>` + op.Text + `</option>`
 	}
 
 	h := template.HTML(`<div class="btn-group pull-right" style="margin-right: 10px">
-<div style="width:`+strconv.Itoa(b.Width)+`px;">
-<select style="width:100%;height:30px;" class="`+b.Id+` select2-hidden-accessible" name="`+b.Id+`"
-            data-multiple="false"  data-placeholder="`+b.Placeholder+`" tabindex="-1" aria-hidden="true">
+<div style="width:` + strconv.Itoa(b.Width) + `px;">
+<select style="width:100%;height:30px;" class="` + b.Id + ` select2-hidden-accessible" name="` + b.Id + `"
+            data-multiple="false"  data-placeholder="` + b.Placeholder + `" tabindex="-1" aria-hidden="true">
 	<option></option>
-    `+optionsHtml+`
+    ` + optionsHtml + `
 </select>
 </div>
 </div>
@@ -42,5 +43,6 @@ func (b DefaultSelection) Content() (template.HTML, template.JS) {
 </style>`) + b.Action.ExtContent()
 
 	return h, b.Action.Js() + template.JS(`
-	$(".`+b.Id+`").select2();`)
+	$(".` + b.Id + `").select2();
+`)
 }

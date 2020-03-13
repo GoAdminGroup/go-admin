@@ -34,6 +34,8 @@ func (admin *Admin) initRouter(prefix string) *Admin {
 	// auth
 	authRoute.GET("/logout", admin.handler.Logout)
 
+	authPrefixRoute := route.Group("/", auth.Middleware(admin.conn), admin.guardian.CheckPrefix)
+
 	// menus
 	authRoute.POST("/menu/delete", admin.guardian.MenuDelete, admin.handler.DeleteMenu)
 	authRoute.POST("/menu/new", admin.guardian.MenuNew, admin.handler.NewMenu)
@@ -44,16 +46,16 @@ func (admin *Admin) initRouter(prefix string) *Admin {
 	authRoute.GET("/menu/new", admin.handler.ShowNewMenu)
 
 	// add delete modify query
-	authRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")
-	authRoute.GET("/info/:__prefix/edit", admin.guardian.ShowForm, admin.handler.ShowForm).Name("show_edit")
-	authRoute.GET("/info/:__prefix/new", admin.guardian.ShowNewForm, admin.handler.ShowNewForm).Name("show_new")
-	authRoute.POST("/edit/:__prefix", admin.guardian.EditForm, admin.handler.EditForm).Name("edit")
-	authRoute.POST("/new/:__prefix", admin.guardian.NewForm, admin.handler.NewForm).Name("new")
-	authRoute.POST("/delete/:__prefix", admin.guardian.Delete, admin.handler.Delete).Name("delete")
-	authRoute.POST("/export/:__prefix", admin.guardian.Export, admin.handler.Export).Name("export")
-	authRoute.GET("/info/:__prefix", admin.handler.ShowInfo).Name("info")
+	authPrefixRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")
+	authPrefixRoute.GET("/info/:__prefix/edit", admin.guardian.ShowForm, admin.handler.ShowForm).Name("show_edit")
+	authPrefixRoute.GET("/info/:__prefix/new", admin.guardian.ShowNewForm, admin.handler.ShowNewForm).Name("show_new")
+	authPrefixRoute.POST("/edit/:__prefix", admin.guardian.EditForm, admin.handler.EditForm).Name("edit")
+	authPrefixRoute.POST("/new/:__prefix", admin.guardian.NewForm, admin.handler.NewForm).Name("new")
+	authPrefixRoute.POST("/delete/:__prefix", admin.guardian.Delete, admin.handler.Delete).Name("delete")
+	authPrefixRoute.POST("/export/:__prefix", admin.guardian.Export, admin.handler.Export).Name("export")
+	authPrefixRoute.GET("/info/:__prefix", admin.handler.ShowInfo).Name("info")
 
-	authRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
+	authPrefixRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
 
 	admin.app = app
 	return admin

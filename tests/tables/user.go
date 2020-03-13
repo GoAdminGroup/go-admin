@@ -13,6 +13,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
+	"strings"
 )
 
 // GetUserTable return the model of table user.
@@ -116,8 +117,8 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	formList.AddField("Cert", "certificate", db.Varchar, form.Multifile).FieldOptionExt(map[string]interface{}{
 		"maxFileCount": 10,
 	})
-	formList.AddField("Amout", "currency", db.Int, form.Currency)
-	formList.AddField("Content", "content", db.Text, form.RichText).
+	formList.AddField("Amount", "money", db.Int, form.Currency)
+	formList.AddField("Content", "resume", db.Text, form.RichText).
 		FieldDefault(`<h1>343434</h1><p>34344433434</p><ol><li>23234</li><li>2342342342</li><li>asdfads</li></ol><ul><li>3434334</li><li>34343343434</li><li>44455</li></ul><p><span style="color: rgb(194, 79, 74);">343434</span></p><p><span style="background-color: rgb(194, 79, 74); color: rgb(0, 0, 0);">434434433434</span></p><table border="0" width="100%" cellpadding="0" cellspacing="0"><tbody><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table><p><br></p><p><span style="color: rgb(194, 79, 74);"><br></span></p>`)
 
 	formList.AddField("Switch", "website", db.Tinyint, form.Switch).
@@ -141,13 +142,20 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			{Text: "Boy", Value: "0"},
 			{Text: "Girl", Value: "1"},
 		})
-	formList.AddField("Drink", "drink", db.Tinyint, form.Select).
+	formList.AddField("Drink", "drink", db.Varchar, form.Select).
 		FieldOptions(types.FieldOptions{
 			{Text: "Beer", Value: "beer"},
 			{Text: "Juice", Value: "juice"},
 			{Text: "Water", Value: "water"},
 			{Text: "Red bull", Value: "red bull"},
-		}).FieldDefault("beer")
+		}).
+		FieldDefault("beer").
+		FieldDisplay(func(value types.FieldModel) interface{} {
+			return strings.Split(value.Value, ",")
+		}).
+		FieldPostFilterFn(func(value types.PostFieldModel) interface{} {
+			return strings.Join(value.Value, ",")
+		})
 	formList.AddField("Work Experience", "experience", db.Tinyint, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
 			{Text: "two years", Value: "0"},
@@ -156,7 +164,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			{Text: "five years", Value: "3"},
 		}).FieldDefault("beer")
 	formList.SetTabGroups(types.TabGroups{
-		{"name", "age", "homepage", "email", "birthday", "password", "ip", "certificate", "currency", "content"},
+		{"name", "age", "homepage", "email", "birthday", "password", "ip", "certificate", "money", "resume"},
 		{"website", "fruit", "gender", "drink", "experience"},
 	})
 	formList.SetTabHeaders("input", "select")

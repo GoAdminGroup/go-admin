@@ -644,6 +644,7 @@ func (i *InfoPanel) WhereRaw(raw string, arg ...interface{}) *InfoPanel {
 func (i *InfoPanel) AddSelectBox(placeholder string, options FieldOptions, action Action, width ...int) *InfoPanel {
 	id := i.btnUUID()
 	action.SetBtnId(id)
+	options = append(FieldOptions{{Value: "", Text: language.Get("All")}}, options...)
 	action.SetBtnData(options)
 	w := 100
 	if len(width) > 0 {
