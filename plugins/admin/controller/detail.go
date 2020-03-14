@@ -48,10 +48,12 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 		}
 	}
 
-	paramStr := parameter.GetParam(ctx.Request.URL,
+	param := parameter.GetParam(ctx.Request.URL,
 		panel.GetInfo().DefaultPageSize,
 		panel.GetInfo().SortField,
-		panel.GetInfo().GetSort()).GetRouteParamStr()
+		panel.GetInfo().GetSort())
+
+	paramStr := param.GetRouteParamStr()
 
 	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr+
 		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))
@@ -115,7 +117,7 @@ $('.delete-btn').on('click', function (event) {
 		desc = panel.GetInfo().Description + language.Get("Detail")
 	}
 
-	formInfo, err := newPanel.GetDataWithId(id)
+	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
 
 	var alert template2.HTML
 

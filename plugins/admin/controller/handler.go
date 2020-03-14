@@ -92,7 +92,10 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
 		}
-		formInfo, _ = h.table(prefix, ctx).GetDataWithId(id)
+		formInfo, _ = h.table(prefix, ctx).GetDataWithId(parameter.GetParam(ctx.Request.URL,
+			panel.GetInfo().DefaultPageSize,
+			panel.GetInfo().SortField,
+			panel.GetInfo().GetSort()).WithPKs(id))
 	} else {
 		formInfo = panel.GetNewForm()
 		formInfo.Title = panel.GetForm().Title

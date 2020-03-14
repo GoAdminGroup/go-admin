@@ -29,7 +29,7 @@ type DefaultTable struct {
 	getDataFun       GetDataFun
 }
 
-type GetDataFun func(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int)
+type GetDataFun func(params parameter.Parameters) ([]map[string]interface{}, int)
 
 func NewDefaultTable(cfgs ...Config) Table {
 
@@ -96,13 +96,13 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(params.URLPath, params, params.IsAll(), []string{})
+		data, size = tb.getDataFun(params)
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(params.URLPath, params, params.IsAll(), []string{})
+		data, size = tb.getDataFromURL(params)
 	} else if tb.Info.GetDataFn != nil {
 		data, size = tb.Info.GetDataFn(params)
 	} else if params.IsAll() {
-		return tb.getAllDataFromDatabase(params.URLPath, params)
+		return tb.getAllDataFromDatabase(params)
 	} else {
 		return tb.getDataFromDatabase(params.URLPath, params, []string{})
 	}
@@ -137,7 +137,7 @@ type GetDataFromURLRes struct {
 	Size int
 }
 
-func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, isAll bool, ids []string) ([]map[string]interface{}, int) {
+func (tb DefaultTable) getDataFromURL(params parameter.Parameters) ([]map[string]interface{}, int) {
 
 	u := ""
 	if strings.Contains(tb.sourceURL, "?") {
@@ -145,7 +145,7 @@ func (tb DefaultTable) getDataFromURL(path string, params parameter.Parameters, 
 	} else {
 		u = tb.sourceURL + "?" + params.Join()
 	}
-	res, err := http.Get(u + "&pk=" + strings.Join(ids, ","))
+	res, err := http.Get(u + "&pk=" + strings.Join(params.PKs(), ","))
 
 	if err != nil {
 		return []map[string]interface{}{}, 0
@@ -182,9 +182,9 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, e
 	)
 
 	if tb.getDataFun != nil {
-		data, size = tb.getDataFun(params.URLPath, params, false, params.PKs())
+		data, size = tb.getDataFun(params)
 	} else if tb.sourceURL != "" {
-		data, size = tb.getDataFromURL(params.URLPath, params, false, params.PKs())
+		data, size = tb.getDataFromURL(params)
 	} else if tb.Info.GetDataFn != nil {
 		data, size = tb.Info.GetDataFn(params)
 	} else {
@@ -281,7 +281,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 	return tempModelData
 }
 
-func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Parameters) (PanelInfo, error) {
+func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
 		queryStatement = "select %s from %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
@@ -304,7 +304,7 @@ func (tb DefaultTable) getAllDataFromDatabase(path string, params parameter.Para
 		existKeys = make([]string, 0)
 	)
 
-	wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
+	wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
 		tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
 	wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
 	wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
@@ -353,8 +353,9 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
-		queryStatement = "select %s from %s %s where " + tb.PrimaryKey.Name + " in (%s) %s order by " + placeholder + " %s"
-		countStatement = "select count(*) from " + placeholder + " %s where " + tb.PrimaryKey.Name + " in (%s)"
+		pk := tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
+		queryStatement = "select %s from %s %s where " + pk + " in (%s) %s order by " + placeholder + " %s"
+		countStatement = "select count(*) from " + placeholder + " %s where " + pk + " in (%s)"
 	} else {
 		if connection.Name() == "mssql" {
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " +
@@ -393,7 +394,7 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 	} else {
 
 		// parameter
-		wheres, whereArgs, existKeys = params.Statement(wheres, connection.GetDelimiter(), whereArgs, columns, existKeys,
+		wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
 			tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
 		// pre query
 		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
@@ -476,34 +477,35 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 }
 
 // GetDataWithId query the single row of data.
-func (tb DefaultTable) GetDataWithId(id string) (FormInfo, error) {
+func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, error) {
 
 	var (
 		res     map[string]interface{}
 		columns Columns
 		custom  = false
+		id      = param.PK()
 	)
 
 	if tb.getDataFun != nil {
-		list, _ := tb.getDataFun("", parameter.BaseParam(), false, []string{id})
+		list, _ := tb.getDataFun(param)
 		if len(list) > 0 {
 			res = list[0]
 		}
 		custom = true
 	} else if tb.sourceURL != "" {
-		list, _ := tb.getDataFromURL("", parameter.BaseParam(), false, []string{id})
+		list, _ := tb.getDataFromURL(param)
 		if len(list) > 0 {
 			res = list[0]
 		}
 		custom = true
 	} else if tb.Detail.GetDataFn != nil {
-		list, _ := tb.Detail.GetDataFn(parameter.BaseParam().WithPKs(id))
+		list, _ := tb.Detail.GetDataFn(param)
 		if len(list) > 0 {
 			res = list[0]
 		}
 		custom = true
 	} else if tb.Info.GetDataFn != nil {
-		list, _ := tb.Info.GetDataFn(parameter.BaseParam().WithPKs(id))
+		list, _ := tb.Info.GetDataFn(param)
 		if len(list) > 0 {
 			res = list[0]
 		}

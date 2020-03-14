@@ -46,7 +46,7 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 		Id:     id,
 		Prefix: prefix,
 		Param: parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
-			panel.GetInfo().GetSort()),
+			panel.GetInfo().GetSort()).WithPKs(id),
 	})
 	ctx.Next()
 }
@@ -110,11 +110,13 @@ func (g *Guard) EditForm(ctx *context.Context) {
 		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
+	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
+
 	ctx.SetUserValue("edit_form_param", &EditFormParam{
 		Panel:        panel,
-		Id:           multiForm.Value[panel.GetPrimaryKey().Name][0],
+		Id:           id,
 		Prefix:       prefix,
-		Param:        param,
+		Param:        param.WithPKs(id),
 		Path:         strings.Split(previous, "?")[0],
 		MultiForm:    multiForm,
 		PreviousPath: previous,

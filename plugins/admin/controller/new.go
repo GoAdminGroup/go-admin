@@ -108,11 +108,6 @@ func (h *Handler) NewForm(ctx *context.Context) {
 			return
 		}
 
-		if isEditUrl(param.PreviousPath, param.Prefix) {
-			h.showForm(ctx, param.Alert, param.Prefix, param.Id, paramStr, true)
-			return
-		}
-
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
 		return

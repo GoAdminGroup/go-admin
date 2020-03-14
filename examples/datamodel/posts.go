@@ -8,12 +8,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
+	template2 "html/template"
 )
 
 // GetPostsTable return the model of table posts.
 func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 
-	postsTable = table.NewDefaultTable(table.DefaultConfig())
+	postsTable = table.NewDefaultTable(table.DefaultConfig().SetExportable(true))
 
 	info := postsTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
@@ -21,15 +22,34 @@ func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 	info.AddField("AuthorID", "author_id", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().
 			Link().
-			SetURL("/admin/info/authors/detail?__goadmin_detail_pk=100").
-			SetContent("100").
+			SetURL("/admin/info/authors/detail?__goadmin_detail_pk=" + value.Value).
+			SetContent(template2.HTML(value.Value)).
 			OpenInNewTab().
 			SetTabTitle("Author Detail").
 			GetContent()
 	})
+	info.AddField("AuthorName", "name", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
+		return value.Row["authors_goadmin_join_first_name"].(string) + " " + value.Row["authors_goadmin_join_last_name"].(string)
+	})
+	info.AddField("AuthorFirstName", "first_name", db.Varchar).FieldJoin(types.Join{
+		Field:     "author_id",
+		JoinField: "id",
+		Table:     "authors",
+	}).FieldHide()
+	info.AddField("AuthorLastName", "last_name", db.Varchar).FieldJoin(types.Join{
+		Field:     "author_id",
+		JoinField: "id",
+		Table:     "authors",
+	}).FieldHide()
 	info.AddField("Description", "description", db.Varchar)
 	info.AddField("Content", "content", db.Varchar).FieldEditAble(editType.Textarea)
 	info.AddField("Date", "date", db.Varchar)
+	info.AddField("AuthorCreatedAt", "created_at", db.Varchar).FieldJoin(types.Join{
+		Field:     "author_id",
+		JoinField: "id",
+		Table:     "authors",
+	})
+	info.AddField("Created_at", "created_at", db.Varchar).FieldFilterable()
 
 	info.SetTable("posts").SetTitle("Posts").SetDescription("Posts")
 

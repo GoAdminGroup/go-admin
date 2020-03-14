@@ -83,7 +83,7 @@ type Table interface {
 
 	GetData(params parameter.Parameters) (PanelInfo, error)
 	GetDataWithIds(params parameter.Parameters) (PanelInfo, error)
-	GetDataWithId(id string) (FormInfo, error)
+	GetDataWithId(params parameter.Parameters) (FormInfo, error)
 	UpdateData(dataList form.Values) error
 	InsertData(dataList form.Values) error
 	DeleteData(id string) error

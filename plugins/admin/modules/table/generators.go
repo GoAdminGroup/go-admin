@@ -117,9 +117,9 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).
-		FieldHelpMsg(template.HTML(lg("used for login"))).FieldMust()
+		FieldHelpMsg(template.HTML(lg("use for login"))).FieldMust()
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).
-		FieldHelpMsg(template.HTML(lg("used to display"))).FieldMust()
+		FieldHelpMsg(template.HTML(lg("use to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("role"), "role_id", db.Varchar, form.Select).
 		FieldOptionsFromTable("goadmin_roles", "slug", "id").
@@ -376,8 +376,8 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 	formList := ManagerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
-	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used for login"))).FieldMust()
-	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("used to display"))).FieldMust()
+	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("use for login"))).FieldMust()
+	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("use to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
 	formList.AddField(lg("password"), "password", db.Varchar, form.Password).
 		FieldDisplay(func(value types.FieldModel) interface{} {

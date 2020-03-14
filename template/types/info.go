@@ -335,6 +335,9 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 		if field.Field == name {
 			return field
 		}
+		if JoinField(field.Join.Table, field.Field) == name {
+			return field
+		}
 	}
 	return Field{}
 }
@@ -343,6 +346,14 @@ type Join struct {
 	Table     string
 	Field     string
 	JoinField string
+}
+
+func JoinField(table, field string) string {
+	return table + parameter.FilterParamJoinInfix + field
+}
+
+func GetJoinField(field string) string {
+	return strings.Split(field, parameter.FilterParamJoinInfix)[1]
 }
 
 func (j Join) Valid() bool {

@@ -32,7 +32,7 @@ var (
 	page       *agouti.Page
 	optionList = []string{
 		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
-		"--window-size=1000,900",
+		"--window-size=1500,900",
 		"--incognito",
 		"--blink-settings=imagesEnabled=true",
 		"--no-default-browser-check",
@@ -193,7 +193,13 @@ func noContain(t *testing.T, s string) {
 	assert.Equal(t, strings.Contains(content, s), false)
 }
 
-func css(t *testing.T, s *agouti.Selection, css, res string) {
+func css(t *testing.T, xpath, css, res string) {
+	style, err := page.FindByXPath(xpath).CSS(css)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, style, res)
+}
+
+func cssS(t *testing.T, s *agouti.Selection, css, res string) {
 	style, err := s.CSS(css)
 	assert.Equal(t, err, nil)
 	assert.Equal(t, style, res)
@@ -205,10 +211,12 @@ func text(t *testing.T, xpath, text string) {
 	assert.Equal(t, mli1, text)
 }
 
-func textS(t *testing.T, s *agouti.Selection, text string) {
-	mli1, err := s.Text()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, mli1, text)
+func display(t *testing.T, xpath string) {
+	css(t, xpath, "display", "block")
+}
+
+func nondisplay(t *testing.T, xpath string) {
+	css(t, xpath, "display", "none")
 }
 
 func value(t *testing.T, xpath, value string) {

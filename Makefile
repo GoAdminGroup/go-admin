@@ -133,7 +133,6 @@ web-test:
 web-test-debug:
 	make import-mysql
 	gotest -v ./tests/web/... -args true
-	rm -rf ./tests/web/User*
 
 unit-test:
 	gotest -v ./adm/...

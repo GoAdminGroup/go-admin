@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	selection "github.com/GoAdminGroup/go-admin/template/types/form/select"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 	"strings"
 )
@@ -32,7 +33,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		},
 	})
 
-	info := userTable.GetInfo().SetFilterFormLayout(form.LayoutThreeCol).Where("gender", "=", 1)
+	info := userTable.GetInfo().SetFilterFormLayout(form.LayoutThreeCol).Where("gender", "=", 0)
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Name", "name", db.Varchar).FieldEditAble(editType.Text).
 		FieldFilterable(types.FilterType{Operator: types.FilterOperatorLike})
@@ -66,6 +67,11 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			{Value: "red bull", Text: "red bull"},
 		}).FieldHide()
 	info.AddField("City", "city", db.Varchar).FieldFilterable()
+	info.AddField("Book", "name", db.Varchar).FieldJoin(types.Join{
+		JoinField: "user_id",
+		Field:     "id",
+		Table:     "user_like_books",
+	})
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
@@ -137,6 +143,59 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return []string{"Pear"}
 		})
+	formList.AddField("Country", "country", db.Tinyint, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "China", Value: "china"},
+			{Text: "America", Value: "america"},
+			{Text: "England", Value: "england"},
+			{Text: "Canada", Value: "canada"},
+		}).FieldDefault("china").FieldOnChooseAjax("city", "/choose/country",
+		func(ctx *context.Context) (bool, string, interface{}) {
+			country := ctx.FormValue("value")
+			var data = make(selection.Options, 0)
+			switch country {
+			case "china":
+				data = selection.Options{
+					{Text: "Beijing", ID: "beijing"},
+					{Text: "ShangHai", ID: "shanghai"},
+					{Text: "GuangZhou", ID: "guangzhou"},
+					{Text: "ShenZhen", ID: "shenzhen"},
+				}
+			case "america":
+				data = selection.Options{
+					{Text: "Los Angeles", ID: "los angeles"},
+					{Text: "Washington, dc", ID: "washington, dc"},
+					{Text: "New York", ID: "new york"},
+					{Text: "Las Vegas", ID: "las vegas"},
+				}
+			case "england":
+				data = selection.Options{
+					{Text: "London", ID: "london"},
+					{Text: "Cambridge", ID: "cambridge"},
+					{Text: "Manchester", ID: "manchester"},
+					{Text: "Liverpool", ID: "liverpool"},
+				}
+			case "canada":
+				data = selection.Options{
+					{Text: "Vancouver", ID: "vancouver"},
+					{Text: "Toronto", ID: "toronto"},
+				}
+			default:
+				data = selection.Options{
+					{Text: "Beijing", ID: "beijing"},
+					{Text: "ShangHai", ID: "shangHai"},
+					{Text: "GuangZhou", ID: "guangzhou"},
+					{Text: "ShenZhen", ID: "shenZhen"},
+				}
+			}
+			return true, "ok", data
+		})
+	formList.AddField("City", "city", db.Varchar, form.SelectSingle).
+		FieldOptionInitFn(func(val types.FieldModel) types.FieldOptions {
+			return types.FieldOptions{
+				{Value: val.Value, Text: val.Value, Selected: true},
+			}
+		})
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
 		FieldOptions(types.FieldOptions{
 			{Text: "Boy", Value: "0"},
@@ -165,7 +224,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		}).FieldDefault("beer")
 	formList.SetTabGroups(types.TabGroups{
 		{"name", "age", "homepage", "email", "birthday", "password", "ip", "certificate", "money", "resume"},
-		{"website", "fruit", "gender", "drink", "experience"},
+		{"website", "fruit", "country", "city", "gender", "drink", "experience"},
 	})
 	formList.SetTabHeaders("input", "select")
 

@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -21,14 +22,16 @@ import (
 // ShowForm show form page.
 func (h *Handler) ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
-	h.showForm(ctx, "", param.Prefix, param.Id, param.Param.GetRouteParamStr(), false)
+	h.showForm(ctx, "", param.Prefix, param.Param, false)
 }
 
-func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix string, id string, paramStr string, isEdit bool) {
+func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix string, param parameter.Parameters, isEdit bool) {
 
 	panel := h.table(prefix, ctx)
 
 	user := auth.Auth(ctx)
+
+	paramStr := param.GetRouteParamStr()
 
 	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
 	editUrl := h.routePathWithPrefix("edit", prefix)
@@ -46,7 +49,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		footerKind = "edit_only"
 	}
 
-	formInfo, err := panel.GetDataWithId(id)
+	formInfo, err := panel.GetDataWithId(param)
 
 	if err != nil && alert == "" {
 		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
@@ -87,7 +90,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	param := guard.GetEditFormParam(ctx)
 
 	if param.HasAlert() {
-		h.showForm(ctx, param.Alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
+		h.showForm(ctx, param.Alert, param.Prefix, param.Param, true)
 		return
 	}
 
@@ -99,7 +102,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			h.showForm(ctx, alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
+			h.showForm(ctx, alert, param.Prefix, param.Param, true)
 			return
 		}
 	}
@@ -118,7 +121,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		h.showForm(ctx, alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
+		h.showForm(ctx, alert, param.Prefix, param.Param, true)
 		return
 	}
 
@@ -130,7 +133,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		}
 
 		if isEditUrl(param.PreviousPath, param.Prefix) {
-			h.showForm(ctx, param.Alert, param.Prefix, param.Id, param.Param.GetRouteParamStr(), true)
+			h.showForm(ctx, param.Alert, param.Prefix, param.Param, true)
 			return
 		}
 

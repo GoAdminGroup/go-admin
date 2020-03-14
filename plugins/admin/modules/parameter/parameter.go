@@ -63,7 +63,7 @@ var operators = map[string]string{
 var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
 
 func BaseParam() Parameters {
-	return Parameters{Page: "1", PageSize: "1", Fields: make(map[string][]string)}
+	return Parameters{Page: "1", PageSize: "10", Fields: make(map[string][]string)}
 }
 
 func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
@@ -148,8 +148,17 @@ func (param Parameters) PKs() []string {
 	return strings.Split(param.GetFieldValue(PrimaryKey), ",")
 }
 
+func (param Parameters) PK() string {
+	return param.PKs()[0]
+}
+
 func (param Parameters) IsAll() bool {
 	return param.GetFieldValue(IsAll) == True
+}
+
+func (param Parameters) WithURLPath(path string) Parameters {
+	param.URLPath = path
+	return param
 }
 
 func (param Parameters) WithIsAll(isAll bool) Parameters {
@@ -260,7 +269,7 @@ func (param Parameters) GetFixedParamStr() url.Values {
 	return p
 }
 
-func (param Parameters) Statement(wheres, delimiter string, whereArgs []interface{}, columns, existKeys []string,
+func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []interface{}, columns, existKeys []string,
 	filterProcess func(string, string, string) string, getJoinTable func(string) string) (string, []interface{}, []string) {
 	var multiKey = make(map[string]uint8)
 	for key, value := range param.Fields {
@@ -287,7 +296,7 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 		} else if strings.Contains(key, FilterRangeParamStartSuffix) {
 			key = strings.Replace(key, FilterRangeParamStartSuffix, "", -1)
 			op = ">="
-		} else if len(value) > 0 {
+		} else if len(value) > 1 {
 			op = "in"
 		} else if !strings.Contains(key, FilterParamOperatorSuffix) {
 			op = operators[param.GetFieldOperator(key, keyIndexSuffix)]
@@ -299,9 +308,9 @@ func (param Parameters) Statement(wheres, delimiter string, whereArgs []interfac
 				for range value {
 					qmark += "?,"
 				}
-				wheres += modules.FilterField(key, delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+				wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 			} else {
-				wheres += modules.FilterField(key, delimiter) + " " + op + " ? and "
+				wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " ? and "
 			}
 			if op == "like" && !strings.Contains(value[0], "%") {
 				whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")

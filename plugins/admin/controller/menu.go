@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -70,7 +71,7 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	formInfo, err := h.table("menu", ctx).GetDataWithId(ctx.Query("id"))
+	formInfo, err := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(ctx.Query("id")))
 
 	var alert template2.HTML
 
