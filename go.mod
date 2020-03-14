@@ -7,9 +7,7 @@ require (
 	github.com/GoAdminGroup/html v0.0.1
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
 	github.com/denisenkom/go-mssqldb v0.0.0-20200206145737-bbfc9a55622e
-	github.com/gin-gonic/gin v1.5.0
 	github.com/go-sql-driver/mysql v1.5.0
-	github.com/gogf/gf v1.11.6
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/magiconair/properties v1.8.1
