@@ -104,6 +104,8 @@ func GetAggregationExpression(driver, field, headField, delimiter string) string
 		return fmt.Sprintf("group_concat(%s separator '%s') as %s", field, delimiter, headField)
 	case "sqlite":
 		return fmt.Sprintf("group_concat(%s, '%s') as %s", field, delimiter, headField)
+	case "mssql":
+		return fmt.Sprintf("string_agg(%s, '%s') as [%s]", field, delimiter, headField)
 	default:
 		panic("wrong driver")
 	}

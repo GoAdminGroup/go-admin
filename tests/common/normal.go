@@ -23,6 +23,15 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		Status(200).
 		Body().Contains("Users")
 
+	// export
+
+	printlnWithColor("export test", "green")
+	e.POST(config.Get().Url("/export/user")).
+		WithCookie(sesID.Name, sesID.Value).
+		WithMultipart().
+		WithFormField("id", "1").
+		Expect().Status(200)
+
 	// show form: without id
 
 	printlnWithColor("show form: without id", "green")

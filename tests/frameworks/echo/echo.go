@@ -9,6 +9,8 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	// add sqlite driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	// add mssql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 

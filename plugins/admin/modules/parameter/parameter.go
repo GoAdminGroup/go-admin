@@ -145,7 +145,16 @@ func (param Parameters) WithPKs(id ...string) Parameters {
 }
 
 func (param Parameters) PKs() []string {
+	pk := param.GetFieldValue(PrimaryKey)
+	if pk == "" {
+		return []string{}
+	}
 	return strings.Split(param.GetFieldValue(PrimaryKey), ",")
+}
+
+func (param Parameters) DeletePK() Parameters {
+	delete(param.Fields, PrimaryKey)
+	return param
 }
 
 func (param Parameters) PK() string {

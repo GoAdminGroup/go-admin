@@ -34,7 +34,7 @@ func Test(e *httpexpect.Expect) {
 	// get data from outside source check
 	externalTest(e, cookie)
 	// normal table tests
-	// normalTest(e, cookie)
+	normalTest(e, cookie)
 }
 
 func printlnWithColor(msg string, color string) {

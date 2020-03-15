@@ -1,0 +1,25 @@
+{
+  "database": {
+    "default": {
+      "host": "127.0.0.1",
+      "port": "1433",
+      "user": "sa",
+      "pwd": "Aa123456",
+      "name": "goadmin",
+      "max_idle_con": 50,
+      "max_open_con": 150,
+      "driver": "mssql"
+    }
+  },
+  "domain": "localhost",
+  "prefix": "admin",
+  "store": {
+    "path": "./uploads",
+    "prefix": "uploads"
+  },
+  "language": "en",
+  "index": "/",
+  "debug": true,
+  "color_scheme": "skin-black",
+  "sql_log": true
+}

@@ -91,7 +91,7 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	// new manager tester
 
-	printlnWithColor("new manager tester", "green")
+	printlnWithColor("new manager test", "green")
 	res = e.POST(config.Get().Url("/new/manager")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().

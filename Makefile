@@ -8,6 +8,7 @@ CLI = adm
 TEST_CONFIG_PATH=./../../common/config.json
 TEST_CONFIG_PQ_PATH=./../../common/config_pg.json
 TEST_CONFIG_SQLITE_PATH=./../../common/config_sqlite.json
+TEST_CONFIG_MS_PATH=./../../common/config_ms.json
 
 all: run
 
@@ -107,6 +108,12 @@ import-postgresql:
 	createdb -U postgres go-admin-test
 	psql -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
 
+import-mssql:
+	sqlcmd -S localhost -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/var/opt/mssql/data/goadmin.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
+
+backup-mssql:
+	sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/var/opt/mssql/data/goadmin.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
+
 pg-test:
 	make import-postgresql
 	gotest -v ./tests/frameworks/gin/... -args $(TEST_CONFIG_PQ_PATH)
@@ -124,6 +131,24 @@ pg-test:
 	gotest -v ./tests/frameworks/gf/... -args $(TEST_CONFIG_PQ_PATH)
 	make import-postgresql
 	gotest -v ./tests/frameworks/fasthttp/... -args $(TEST_CONFIG_PQ_PATH)
+
+ms-test:
+	make import-mssql
+	gotest -v ./tests/frameworks/gin/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/beego/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/buffalo/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/chi/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/echo/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/gorilla/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/gf/... -args $(TEST_CONFIG_MS_PATH)
+	make import-mssql
+	gotest -v ./tests/frameworks/fasthttp/... -args $(TEST_CONFIG_MS_PATH)
 
 web-test:
 	make import-mysql

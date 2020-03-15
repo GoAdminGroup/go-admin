@@ -22,7 +22,8 @@ const DefaultCookieKey = "go_admin_session"
 // NewDBDriver return the default PersistenceDriver.
 func newDBDriver(conn db.Connection) *DBDriver {
 	return &DBDriver{
-		conn: conn,
+		conn:      conn,
+		tableName: "goadmin_session",
 	}
 }
 
@@ -125,12 +126,13 @@ func InitSession(ctx *context.Context, conn db.Connection) *Session {
 
 // DBDriver is a driver which uses database as a persistence tool.
 type DBDriver struct {
-	conn db.Connection
+	conn      db.Connection
+	tableName string
 }
 
 // Load implements the PersistenceDriver.Load.
 func (driver *DBDriver) Load(sid string) map[string]interface{} {
-	sesModel, _ := driver.table("goadmin_session").Where("sid", "=", sid).First()
+	sesModel, _ := driver.table().Where("sid", "=", sid).First()
 
 	if sesModel == nil {
 		return map[string]interface{}{}
@@ -141,7 +143,7 @@ func (driver *DBDriver) Load(sid string) map[string]interface{} {
 	return values
 }
 
-func deleteOverdueSession(conn db.Connection) {
+func (driver *DBDriver) deleteOverdueSession() {
 
 	defer func() {
 		if err := recover(); err != nil {
@@ -151,56 +153,55 @@ func deleteOverdueSession(conn db.Connection) {
 	}()
 
 	var (
-		duration = strconv.Itoa(config.Get().SessionLifeTime + 1000)
-		driver   = config.Get().Databases.GetDefault().Driver
-		cmd      = ``
+		duration   = strconv.Itoa(config.Get().SessionLifeTime + 1000)
+		driverName = config.Get().Databases.GetDefault().Driver
+		raw        = ``
 	)
 
-	// TODO: use dialect module
-	if db.DriverPostgresql == driver {
-		cmd = `delete from goadmin_session where extract(epoch from now()) - ` + duration + ` > extract(epoch from created_at)`
-	} else if db.DriverMysql == driver {
-		cmd = `delete from goadmin_session where unix_timestamp(created_at) < unix_timestamp() - ` + duration
-	} else if db.DriverSqlite == driver {
-		cmd = `delete from goadmin_session where strftime('%s', created_at) < strftime('%s', 'now') - ` + duration
+	if db.DriverPostgresql == driverName {
+		raw = `extract(epoch from now()) - ` + duration + ` > extract(epoch from created_at)`
+	} else if db.DriverMysql == driverName {
+		raw = `unix_timestamp(created_at) < unix_timestamp() - ` + duration
+	} else if db.DriverSqlite == driverName {
+		raw = `strftime('%s', created_at) < strftime('%s', 'now') - ` + duration
+	} else if db.DriverMssql == driverName {
+		raw = `DATEDIFF(second, [created_at], GETDATE()) > ` + duration
 	}
 
-	logger.LogSQL(cmd, nil)
-
-	_, _ = conn.Query(cmd)
+	if raw != "" {
+		_ = driver.table().WhereRaw(raw).Delete()
+	}
 }
 
 // Update implements the PersistenceDriver.Update.
 func (driver *DBDriver) Update(sid string, values map[string]interface{}) {
 
-	go deleteOverdueSession(driver.conn)
+	go driver.deleteOverdueSession()
 
 	if sid != "" {
 		if len(values) == 0 {
-			_ = driver.table("goadmin_session").Where("sid", "=", sid).Delete()
+			_ = driver.table().Where("sid", "=", sid).Delete()
 			return
 		}
 		valuesByte, _ := json.Marshal(values)
-		sesModel, _ := driver.table("goadmin_session").Where("sid", "=", sid).First()
+		sesValue := string(valuesByte)
+		sesModel, _ := driver.table().Where("sid", "=", sid).First()
 		if sesModel == nil {
-			cmd := "delete from `goadmin_session` where `values`='" + string(valuesByte) + "'"
-			logger.LogSQL(cmd, nil)
-			_, _ = driver.conn.Query(cmd)
-			
-			_, _ = driver.table("goadmin_session").Insert(dialect.H{
-				"values": string(valuesByte),
+			_ = driver.table().Where("values", "=", sesValue).Delete()
+			_, _ = driver.table().Insert(dialect.H{
+				"values": sesValue,
 				"sid":    sid,
 			})
 		} else {
-			_, _ = driver.table("goadmin_session").
+			_, _ = driver.table().
 				Where("sid", "=", sid).
 				Update(dialect.H{
-					"values": string(valuesByte),
+					"values": sesValue,
 				})
 		}
 	}
 }
 
-func (driver *DBDriver) table(table string) *db.SQL {
-	return db.Table(table).WithDriver(driver.conn)
+func (driver *DBDriver) table() *db.SQL {
+	return db.Table(driver.tableName).WithDriver(driver.conn)
 }

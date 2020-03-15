@@ -215,10 +215,11 @@ type TableInfo struct {
 }
 
 func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string) (Thead,
-	string, string, []string, []FormField) {
+	string, string, string, []string, []FormField) {
 	var (
 		thead      = make(Thead, 0)
 		fields     = ""
+		joinFields = ""
 		joins      = ""
 		joinTables = make([]string, 0)
 		filterForm = make([]FormField, 0)
@@ -233,7 +234,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 
 		if field.Join.Valid() {
 			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
-			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
+			joinFields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
 			if !modules.InArray(joinTables, field.Join.Table) {
 				joinTables = append(joinTables, field.Join.Table)
@@ -262,7 +263,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		})
 	}
 
-	return thead, fields, joins, joinTables, filterForm
+	return thead, fields, joinFields, joins, joinTables, filterForm
 }
 
 func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns []string) (Thead, string, string) {

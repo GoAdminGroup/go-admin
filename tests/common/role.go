@@ -35,7 +35,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	// new roles tester
 
-	printlnWithColor("new roles tester", "green")
+	printlnWithColor("new roles test", "green")
 	res := e.POST(config.Get().Url("/new/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().

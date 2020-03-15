@@ -142,7 +142,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param)
+	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK())
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

@@ -104,7 +104,7 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 	} else if params.IsAll() {
 		return tb.getAllDataFromDatabase(params)
 	} else {
-		return tb.getDataFromDatabase(params.URLPath, params, []string{})
+		return tb.getDataFromDatabase(params)
 	}
 
 	infoList := make(types.InfoList, 0)
@@ -113,7 +113,7 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
 	}
 
-	thead, _, _, _, filterForm := tb.getTheadAndFilterForm(params, []string{})
+	thead, _, _, _, _, filterForm := tb.getTheadAndFilterForm(params, []string{})
 
 	endTime := time.Now()
 
@@ -188,7 +188,7 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, e
 	} else if tb.Info.GetDataFn != nil {
 		data, size = tb.Info.GetDataFn(params)
 	} else {
-		return tb.getDataFromDatabase(params.URLPath, params, params.PKs())
+		return tb.getDataFromDatabase(params)
 	}
 
 	infoList := make([]map[string]types.InfoItem, 0)
@@ -197,7 +197,7 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, e
 		infoList = append(infoList, tb.getTempModelData(data[i], params, []string{}))
 	}
 
-	thead, _, _, _, filterForm := tb.getTheadAndFilterForm(params, []string{})
+	thead, _, _, _, _, filterForm := tb.getTheadAndFilterForm(params, []string{})
 
 	endTime := time.Now()
 
@@ -341,37 +341,58 @@ func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pane
 	}, nil
 }
 
-func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Parameters, ids []string) (PanelInfo, error) {
+// TODO: refactor
+func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		connection     = tb.db()
 		placeholder    = modules.Delimiter(connection.GetDelimiter(), "%s")
 		queryStatement string
 		countStatement string
+		ids            = params.PKs()
+		pk             = tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
 	)
 
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
-		pk := tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
-		queryStatement = "select %s from %s %s where " + pk + " in (%s) %s order by " + placeholder + " %s"
-		countStatement = "select count(*) from " + placeholder + " %s where " + pk + " in (%s)"
+		if connection.Name() == "mssql" {
+			// %s means: fields, table, join table, pk values, group by, order by field, order by type
+			queryStatement = "SELECT %s from " + placeholder + "%s where " + pk + " in (%s) %s ORDER BY %s." + placeholder + " %s"
+			// %s means: table, join table, pk values
+			countStatement = "select count(*) as [size] from " + placeholder + " %s where " + pk + " in (%s)"
+		} else {
+			// %s means: fields, table, join table, pk values, group by, order by field,  order by type
+			queryStatement = "select %s from %s %s where " + pk + " in (%s) %s order by %s." + placeholder + " %s"
+			// %s means: table, join table, pk values
+			countStatement = "select count(*) from " + placeholder + " %s where " + pk + " in (%s)"
+		}
 	} else {
 		if connection.Name() == "mssql" {
-			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY " + placeholder + " %s) as ROWNUMBER_, %s from " +
+			// %s means: order by field, order by type, fields, table, join table, wheres, group by
+			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s." + placeholder + " %s) as ROWNUMBER_, %s from " +
 				placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
+			// %s means: table, join table, wheres
 			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
 		} else {
-			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + " %s LIMIT ? OFFSET ?"
+			// %s means: fields, table, join table, wheres, group by, order by field, order by type
+			queryStatement = "select %s from " + placeholder + "%s %s %s order by %s." + placeholder + " %s LIMIT ? OFFSET ?"
+			// %s means: table, join table, wheres
 			countStatement = "select count(*) from " + placeholder + " %s %s"
 		}
 	}
 
 	columns, _ := tb.getColumns(tb.Info.Table)
 
-	thead, fields, joins, joinTables, filterForm := tb.getTheadAndFilterForm(params, columns)
+	thead, fields, joinFields, joins, joinTables, filterForm := tb.getTheadAndFilterForm(params, columns)
 
-	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter())
+	fields += pk
+
+	allFields := fields
+
+	if joinFields != "" {
+		allFields += "," + joinFields[:len(joinFields)-1]
+	}
 
 	if !modules.InArray(columns, params.SortField) {
 		params.SortField = tb.PrimaryKey.Name
@@ -413,14 +434,20 @@ func (tb DefaultTable) getDataFromDatabase(path string, params parameter.Paramet
 
 	groupBy := ""
 	if len(joinTables) > 0 {
-		groupBy = " GROUP BY " + tb.Info.Table + "." + modules.FilterField(tb.GetPrimaryKey().Name, connection.GetDelimiter())
+		if connection.Name() == "mssql" {
+			groupBy = " GROUP BY " + fields
+		} else {
+			groupBy = " GROUP BY " + pk
+		}
 	}
 
 	queryCmd := ""
-	if connection.Name() == "mssql" {
-		queryCmd = fmt.Sprintf(queryStatement, params.SortField, params.SortType, fields, tb.Info.Table, joins, wheres, groupBy)
+	if connection.Name() == "mssql" && len(ids) == 0 {
+		queryCmd = fmt.Sprintf(queryStatement, tb.Info.Table, params.SortField, params.SortType,
+			allFields, tb.Info.Table, joins, wheres, groupBy)
 	} else {
-		queryCmd = fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
+		queryCmd = fmt.Sprintf(queryStatement, allFields, tb.Info.Table, joins, wheres, groupBy,
+			tb.Info.Table, params.SortField, params.SortType)
 	}
 
 	logger.LogSQL(queryCmd, args)
@@ -600,7 +627,8 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
 			return err
 		}
-		if !strings.Contains(err.Error(), "LastInsertId is not supported") {
+		if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
+			!strings.Contains(err.Error(), "There is no generated identity value") {
 			return err
 		}
 	}
@@ -655,7 +683,8 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
 			return err
 		}
-		if !strings.Contains(err.Error(), "LastInsertId is not supported") {
+		if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
+			!strings.Contains(err.Error(), "There is no generated identity value") {
 			return err
 		}
 	}
@@ -771,9 +800,11 @@ func (tb DefaultTable) DeleteData(id string) error {
 		}
 	}
 
+	tableName := modules.AorB(tb.Info.Table == "", tb.Form.Table, tb.Info.Table)
+
 	// TODO: use where in
 	for _, id := range idArr {
-		tb.delete(tb.Form.Table, tb.PrimaryKey.Name, id)
+		tb.delete(tableName, tb.PrimaryKey.Name, id)
 	}
 
 	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
@@ -815,7 +846,7 @@ func (tb DefaultTable) delete(table, key, id string) {
 }
 
 func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
-	string, string, []string, []types.FormField) {
+	string, string, string, []string, []types.FormField) {
 	return tb.Info.FieldList.GetTheadAndFilterForm(types.TableInfo{
 		Table:      tb.Info.Table,
 		Delimiter:  tb.delimiter(),

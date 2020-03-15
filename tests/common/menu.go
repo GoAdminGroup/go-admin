@@ -29,7 +29,7 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	// new menu tester
 
-	printlnWithColor("new menu tester", "green")
+	printlnWithColor("new menu test", "green")
 	res := e.POST(config.Get().Url("/menu/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().

@@ -35,7 +35,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	// new permission tester
 
-	printlnWithColor("new permission tester", "green")
+	printlnWithColor("new permission test", "green")
 	res := e.POST(config.Get().Url("/new/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
