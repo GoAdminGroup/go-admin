@@ -207,6 +207,47 @@ type Config struct {
 	prefix string
 }
 
+// UserConfig type is the user config of goAdmin.
+type UserConfig struct {
+	// user id
+	UserId int64 `json:"userid",yaml:"userid",ini:"userid"`
+
+	// Used to set as the user language which show in the
+	// interface.
+	Language string `json:"language",yaml:"language",ini:"language"`
+
+	// Extend
+	// ...
+}
+
+var userConfig []UserConfig
+
+// Set SetUserConfig the config.
+func SetUserConfig(uConf UserConfig) {
+	// insert or update to database, If there is a database
+	for i := 0;i < len(userConfig);i++ {
+		if userConfig[i].UserId == uConf.UserId {
+			userConfig[i] = uConf
+			return
+		}
+	}
+	userConfig = append(userConfig, uConf)
+}
+
+// Get GetUserConf the config.
+func GetUserConf(uId int64) *UserConfig {
+	for i := 0;i < len(userConfig);i++ {
+		if userConfig[i].UserId == uId {
+			return &userConfig[i]
+		}
+	}
+	SetUserConfig(UserConfig{
+		UserId:   uId,
+		Language: globalCfg.Language,
+	})
+	return &userConfig[len(userConfig)-1]
+}
+
 // see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
 	Type     string  `json:"type",yaml:"type",ini:"type"`

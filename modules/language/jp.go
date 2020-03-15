@@ -92,4 +92,6 @@ var jp = map[string]string{
 	"a path a line":                                 "パスを１行ずつ入力してください",
 	"slug or http_path or name should not be empty": "スラッグ、http_pathまたユーザー名が正しく入力されていることを確認してください",
 	"no roles":                                      "ロールなし",
+
+	"language":	"言語",
 }

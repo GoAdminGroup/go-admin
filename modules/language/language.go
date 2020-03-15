@@ -100,3 +100,34 @@ func JoinScopes(scopes []string) string {
 	}
 	return j
 }
+
+// GetUser return the value of user scope.
+func GetUser(value string, uid int64) string {
+	return GetUserWithScope(value, uid)
+}
+
+// GetUserWithScope return the value of given scopes.
+func GetUserWithScope(value string, uid int64, scopes ...string) string {
+	if config.GetUserConf(uid).Language == "" {
+		return value
+	}
+
+	if locale, ok := Lang[config.GetUserConf(uid).Language][JoinScopes(scopes)+strings.ToLower(value)]; ok {
+		return locale
+	}
+
+	return value
+}
+
+// GetUserFromHtml return the value of given scopes and template.HTML value.
+func GetUserFromHtml(value template.HTML, uid int64, scopes ...string) template.HTML {
+	if config.GetUserConf(uid).Language == "" {
+		return value
+	}
+
+	if locale, ok := Lang[config.GetUserConf(uid).Language][JoinScopes(scopes)+strings.ToLower(string(value))]; ok {
+		return template.HTML(locale)
+	}
+
+	return value
+}

@@ -132,7 +132,7 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
 	for i := 0; i < len(menus); i++ {
 
 		if menus[i]["type"].(int64) == 1 {
-			title = language.Get(menus[i]["title"].(string))
+			title = language.GetUser(menus[i]["title"].(string), user.Id)
 		} else {
 			title = menus[i]["title"].(string)
 		}
@@ -143,7 +143,7 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
 		})
 	}
 
-	menuList := constructMenuTree(menus, 0)
+	menuList := constructMenuTree(menus, 0, user.Id)
 
 	return &Menu{
 		List:     menuList,
@@ -152,7 +152,7 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
 	}
 }
 
-func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
+func constructMenuTree(menus []map[string]interface{}, parentID int64, uid int64) []Item {
 
 	branch := make([]Item, 0)
 
@@ -160,10 +160,10 @@ func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
 	for j := 0; j < len(menus); j++ {
 		if parentID == menus[j]["parent_id"].(int64) {
 
-			childList := constructMenuTree(menus, menus[j]["id"].(int64))
+			childList := constructMenuTree(menus, menus[j]["id"].(int64), uid)
 
 			if menus[j]["type"].(int64) == 1 {
-				title = language.Get(menus[j]["title"].(string))
+				title = language.GetUser(menus[j]["title"].(string), uid)
 			} else {
 				title = menus[j]["title"].(string)
 			}

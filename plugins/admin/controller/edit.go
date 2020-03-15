@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -88,6 +90,16 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 func (h *Handler) EditForm(ctx *context.Context) {
 
 	param := guard.GetEditFormParam(ctx)
+
+	language := ctx.FormValue("language")
+	if language != "" {
+		if user, ok := ctx.UserValue["user"].(models.UserModel);ok {
+			config.SetUserConfig(config.UserConfig{
+				UserId:   user.Id,
+				Language: language,
+			})
+		}
+	}
 
 	if param.HasAlert() {
 		h.showForm(ctx, param.Alert, param.Prefix, param.Param, true)

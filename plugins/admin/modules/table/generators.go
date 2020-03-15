@@ -387,6 +387,21 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			return ""
 		})
+	m := []types.FieldOption{}
+	m = append(m, types.FieldOption{
+		Text: 	language.CN,
+		Value: "zh",
+	}, types.FieldOption{
+		Text: 	language.EN,
+		Value: "en",
+	}, types.FieldOption{
+		Text: 	language.JP,
+		Value: "jp",
+	}, types.FieldOption{
+		Text: 	language.TC,
+		Value: "tc",
+	})
+	formList.AddField(lg("language"), "language", db.Varchar, form.SelectSingle).FieldOptions(m).FieldNotAllowAdd()
 
 	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
 	formList.SetUpdateFn(func(values form2.Values) error {

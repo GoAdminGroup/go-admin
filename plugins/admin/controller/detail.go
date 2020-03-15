@@ -102,19 +102,19 @@ $('.delete-btn').on('click', function (event) {
 	DeletePost(%s)
 });
 
-</script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
+</script>`, language.GetUser("are you sure to delete", user.Id), language.GetUser("yes", user.Id), language.GetUser("cancel", user.Id), deleteUrl, infoUrl, id)
 	}
 
 	title := panel.GetDetail().Title
 
 	if title == "" {
-		title = panel.GetInfo().Title + language.Get("Detail")
+		title = panel.GetInfo().Title + language.GetUser("Detail", user.Id)
 	}
 
 	desc := panel.GetDetail().Description
 
 	if desc == "" {
-		desc = panel.GetInfo().Description + language.Get("Detail")
+		desc = panel.GetInfo().Description + language.GetUser("Detail", user.Id)
 	}
 
 	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))

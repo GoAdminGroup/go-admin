@@ -55,4 +55,6 @@ var tc = map[string]string{
 	"roles":     "角色",
 	"menu":      "菜單",
 	"dashboard": "儀表盤",
+
+	"language":	"語言",
 }

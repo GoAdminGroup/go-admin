@@ -78,4 +78,6 @@ var en = map[string]string{
 	"menu":      "Menu",
 	"dashboard": "Dashboard",
 	"home":      "Home",
+
+	"language":	"Language",
 }
