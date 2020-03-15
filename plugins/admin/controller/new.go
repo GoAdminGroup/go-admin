@@ -21,7 +21,7 @@ func (h *Handler) ShowNewForm(ctx *context.Context) {
 	h.showNewForm(ctx, "", param.Prefix, param.Param.GetRouteParamStr(), false)
 }
 
-func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix string, paramStr string, isNew bool) {
+func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix, paramStr string, isNew bool) {
 
 	user := auth.Auth(ctx)
 
@@ -40,6 +40,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 	}
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	hasAnimation := alert == ""
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetPrefix(h.config.PrefixFixSlash()).
@@ -58,7 +59,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation)
 	ctx.HTML(http.StatusOK, buf.String())
 
 	if isNew {
@@ -71,10 +72,8 @@ func (h *Handler) NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
-	paramStr := param.Param.GetRouteParamStr()
-
 	if param.HasAlert() {
-		h.showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
+		h.showNewForm(ctx, param.Alert, param.Prefix, param.Param.GetRouteParamStr(), true)
 		return
 	}
 
@@ -86,7 +85,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent()
-			h.showNewForm(ctx, alert, param.Prefix, paramStr, true)
+			h.showNewForm(ctx, alert, param.Prefix, param.Param.GetRouteParamStr(), true)
 			return
 		}
 	}
@@ -97,14 +96,14 @@ func (h *Handler) NewForm(ctx *context.Context) {
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		h.showNewForm(ctx, alert, param.Prefix, paramStr, true)
+		h.showNewForm(ctx, alert, param.Prefix, param.Param.GetRouteParamStr(), true)
 		return
 	}
 
 	if !param.FromList {
 
 		if isNewUrl(param.PreviousPath, param.Prefix) {
-			h.showNewForm(ctx, param.Alert, param.Prefix, paramStr, true)
+			h.showNewForm(ctx, param.Alert, param.Prefix, param.Param.GetRouteParamStr(), true)
 			return
 		}
 
@@ -116,5 +115,5 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	buf := h.showTable(ctx, param.Prefix, param.Param)
 
 	ctx.HTML(http.StatusOK, buf.String())
-	ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("info", param.Prefix)+paramStr)
+	ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("info", param.Prefix)+param.Param.GetRouteParamStr())
 }

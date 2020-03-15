@@ -195,6 +195,26 @@ func (param Parameters) GetFieldValue(field string) string {
 	return ""
 }
 
+func (param Parameters) AddField(field, value string) Parameters {
+	param.Fields[field] = []string{value}
+	return param
+}
+
+func (param Parameters) DeleteField(field string) Parameters {
+	delete(param.Fields, field)
+	return param
+}
+
+func (param Parameters) DeleteEditPk() Parameters {
+	delete(param.Fields, constant.EditPKKey)
+	return param
+}
+
+func (param Parameters) DeleteDetailPk() Parameters {
+	delete(param.Fields, constant.DetailPKKey)
+	return param
+}
+
 func (param Parameters) GetFieldValues(field string) []string {
 	return param.Fields[field]
 }
@@ -271,9 +291,7 @@ func (param Parameters) GetFixedParamStr() url.Values {
 		p.Add(Columns, strings.Join(param.Columns, ","))
 	}
 	for key, value := range param.Fields {
-		if key != constant.EditPKKey && key != constant.DetailPKKey {
-			p[key] = value
-		}
+		p[key] = value
 	}
 	return p
 }

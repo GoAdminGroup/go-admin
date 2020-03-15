@@ -100,4 +100,7 @@ var cn = map[string]string{
 	"slug or http_path or name should not be empty": "标志或路径或权限名不能为空",
 	"no roles":                                      "无角色",
 	"no permission":                                 "没有权限",
+	"fixed the sidebar":                             "固定侧边栏",
+	"enter fullscreen":                              "进入全屏",
+	"exit fullscreen":                               "退出全屏",
 }

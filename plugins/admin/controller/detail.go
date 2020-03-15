@@ -53,7 +53,7 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 		panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	paramStr := param.GetRouteParamStr()
+	paramStr := param.DeleteDetailPk().GetRouteParamStr()
 
 	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr+
 		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))

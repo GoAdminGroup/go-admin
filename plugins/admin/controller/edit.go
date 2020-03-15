@@ -25,23 +25,13 @@ func (h *Handler) ShowForm(ctx *context.Context) {
 	h.showForm(ctx, "", param.Prefix, param.Param, false)
 }
 
-func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix string, param parameter.Parameters, isEdit bool) {
+func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix string, param parameter.Parameters, isEdit bool, animation ...bool) {
 
 	panel := h.table(prefix, ctx)
 
 	user := auth.Auth(ctx)
 
 	paramStr := param.GetRouteParamStr()
-
-	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
-	editUrl := h.routePathWithPrefix("edit", prefix)
-	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + paramStr
-
-	referer := ctx.Headers("Referer")
-
-	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query(constant.PrefixKey)) {
-		infoUrl = referer
-	}
 
 	newUrl := modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
 	footerKind := "edit"
@@ -58,7 +48,18 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			GetContent()
 	}
 
+	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
+	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey).GetRouteParamStr()
+	editUrl := h.routePathWithPrefix("edit", prefix)
+
+	referer := ctx.Headers("Referer")
+
+	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query(constant.PrefixKey)) {
+		infoUrl = referer
+	}
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	hasAnimation := alert == "" || ((len(animation) > 0) && animation[0])
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
@@ -76,7 +77,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation)
 
 	ctx.HTML(http.StatusOK, buf.String())
 
@@ -128,12 +129,12 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if !param.FromList {
 
 		if isNewUrl(param.PreviousPath, param.Prefix) {
-			h.showNewForm(ctx, param.Alert, param.Prefix, param.Param.GetRouteParamStr(), true)
+			h.showNewForm(ctx, param.Alert, param.Prefix, param.Param.DeleteEditPk().GetRouteParamStr(), true)
 			return
 		}
 
 		if isEditUrl(param.PreviousPath, param.Prefix) {
-			h.showForm(ctx, param.Alert, param.Prefix, param.Param, true)
+			h.showForm(ctx, param.Alert, param.Prefix, param.Param, true, false)
 			return
 		}
 
@@ -142,7 +143,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK())
+	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK().DeleteEditPk())
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

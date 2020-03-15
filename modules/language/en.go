@@ -48,7 +48,10 @@ var en = map[string]string{
 	"use to display":            "Use to display",
 	"a path a line":             "A path a line",
 	"slug or http_path or name should not be empty": "slug or http_path or name should not be empty",
-	"no roles": "no roles",
+	"no roles":          "no roles",
+	"fixed the sidebar": "Fixed the sidebar",
+	"enter fullscreen":  "Enter fullscreen",
+	"exit fullscreen":   "Exit fullscreen",
 
 	"permission manage": "Permission Manage",
 	"menus manage":      "Menus Manage",
