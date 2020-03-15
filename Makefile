@@ -57,6 +57,7 @@ test:
 	make mysql-test
 	make pg-test
 	make sqlite-test
+	make ms-test
 	make web-test
 
 mysql-test:
@@ -109,10 +110,10 @@ import-postgresql:
 	psql -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
 
 import-mssql:
-	sqlcmd -S localhost -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/var/opt/mssql/data/goadmin.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
+	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/home/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
 
 backup-mssql:
-	sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/var/opt/mssql/data/goadmin.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
+	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/home/data/admin_ms.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
 
 pg-test:
 	make import-postgresql

@@ -16,6 +16,7 @@ addons:
 services:
   - mysql
   - postgresql
+  - docker
 
 before_install:
   - mysql -e 'create database `go-admin-test`;'
@@ -30,6 +31,7 @@ before_script:
   - go get -u -v github.com/gogf/gf@v1.9.10
   - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
   - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
 
 script:
   - chromedriver --version
