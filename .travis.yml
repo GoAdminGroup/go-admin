@@ -22,34 +22,17 @@ before_install:
   - mysql -e 'create database `go-admin-test`;'
   - createdb -U postgres go-admin-test
 
-jobs:
-  include:
-    - name: "set-up chromedriver"
-      script:
-        - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
-        - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
-    - name: "set-up mysql and postgresql and mssql"
-      script:
-        - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-        - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
-        - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
-    - name: "go test tool"
-      script:
-        - go get -u github.com/rakyll/gotest
-        - go get github.com/ugorji/go/codec@none
-    - name: "gf framework fixed"
-      script:
-        - go get -u -v github.com/gogf/gf@v1.9.10
-        - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
-        - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
-        - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin
-    - name: "mysql tests"
-      script: make mysql-test
-    - name: "postgresql tests"
-      script: make pg-test
-    - name: "sqlite tests"
-      script: make sqlite-test
-    - name: "mssql tests"
-      script: make ms-test
-    - name: "acceptance tests"
-      script: make web-test
+before_script:
+  - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
+  - go get -u github.com/rakyll/gotest
+  - go get -u -v github.com/gogf/gf@v1.9.10
+  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+
+script:
+  - chromedriver --version
+  - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test
