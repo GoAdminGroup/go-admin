@@ -26,20 +26,23 @@ jobs:
   include:
     - stage: "Preparation"
       name: "set-up chromedriver"
-      script: ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
-    - script: google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+      script:
+        - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
+        - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
     - name: "set-up mysql and postgresql and mssql"
-      script: echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
-    - script: psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
-    - script: - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+      script:
+        - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+        - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
+        - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
     - name: "go test tool"
       script: go get -u github.com/rakyll/gotest
     - script: go get github.com/ugorji/go/codec@none
     - name: "gf framework fixed"
-      script: go get -u -v github.com/gogf/gf@v1.9.10
-    - script: sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
-    - script: sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
-    - script: cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin
+      script:
+        - go get -u -v github.com/gogf/gf@v1.9.10
+        - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+        - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+        - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin
     - stage: "BlackBoxTests"
       name: "mysql tests"
       script: make mysql-test
@@ -52,8 +55,3 @@ jobs:
     - stage: "UserAcceptanceTests"
       name: "acceptance tests"
       script: make web-test
-
-stages:
-  - Preparation
-  - BlackBoxTests
-  - UserAcceptanceTests
