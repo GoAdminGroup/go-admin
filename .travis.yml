@@ -35,15 +35,16 @@ jobs:
         - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
         - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
     - name: "go test tool"
-      script: go get -u github.com/rakyll/gotest
-    - script: go get github.com/ugorji/go/codec@none
+      script:
+        - go get -u github.com/rakyll/gotest
+        - go get github.com/ugorji/go/codec@none
     - name: "gf framework fixed"
       script:
         - go get -u -v github.com/gogf/gf@v1.9.10
         - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
         - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
         - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin
-    - stage: "BlackBoxTests"
+    - stage: "Black Box Tests"
       name: "mysql tests"
       script: make mysql-test
     - name: "postgresql tests"
@@ -52,6 +53,6 @@ jobs:
       script: make sqlite-test
     - name: "mssql tests"
       script: make ms-test
-    - stage: "UserAcceptanceTests"
+    - stage: "User Acceptance Tests"
       name: "acceptance tests"
       script: make web-test
