@@ -24,8 +24,7 @@ before_install:
 
 jobs:
   include:
-    - stage: "Preparation"
-      name: "set-up chromedriver"
+    - name: "set-up chromedriver"
       script:
         - ln --symbolic /usr/lib/chromium-browser/chromedriver "${HOME}/bin/chromedriver"
         - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
@@ -44,8 +43,7 @@ jobs:
         - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
         - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
         - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin
-    - stage: "Black Box Tests"
-      name: "mysql tests"
+    - name: "mysql tests"
       script: make mysql-test
     - name: "postgresql tests"
       script: make pg-test
@@ -53,6 +51,5 @@ jobs:
       script: make sqlite-test
     - name: "mssql tests"
       script: make ms-test
-    - stage: "User Acceptance Tests"
-      name: "acceptance tests"
+    - name: "acceptance tests"
       script: make web-test
