@@ -49,9 +49,12 @@ func main() {
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Language:    language.CN,
-		IndexUrl:    "/",
-		Debug:       true,
+		Language: language.CN,
+		IndexUrl: "/",
+		Debug:    true,
+		Animation: config.PageAnimation{
+			Type: "fadeInUp",
+		},
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 

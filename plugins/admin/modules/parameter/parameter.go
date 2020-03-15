@@ -179,6 +179,11 @@ func (param Parameters) WithIsAll(isAll bool) Parameters {
 	return param
 }
 
+func (param Parameters) DeleteIsAll() Parameters {
+	delete(param.Fields, IsAll)
+	return param
+}
+
 func (param Parameters) GetFilterFieldValueStart(field string) string {
 	return param.GetFieldValue(field + FilterRangeParamStartSuffix)
 }

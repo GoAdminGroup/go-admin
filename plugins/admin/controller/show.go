@@ -63,7 +63,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 	}
 
-	paramStr := params.GetRouteParamStr()
+	paramStr := params.DeleteIsAll().GetRouteParamStr()
 
 	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr)
 	newUrl := modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
