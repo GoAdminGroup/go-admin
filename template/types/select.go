@@ -2,19 +2,44 @@ package types
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"html/template"
 	"strconv"
 )
 
 type DefaultSelection struct {
-	Id          string
+	*BaseButton
 	Options     FieldOptions
 	Placeholder string
 	Width       int
-	Action      Action
 }
 
-func (b DefaultSelection) Content() (template.HTML, template.JS) {
+func btnUUID() string {
+	return "info-btn-" + utils.Uuid(10)
+}
+
+func GetDefaultSelection(placeholder string, options FieldOptions, action Action, widths ...int) *DefaultSelection {
+
+	id := btnUUID()
+	action.SetBtnId(id)
+
+	var width = 100
+	if len(widths) > 0 {
+		width = widths[0]
+	}
+	return &DefaultSelection{
+		BaseButton: &BaseButton{
+			Id:     id,
+			Action: action,
+		},
+		Placeholder: placeholder,
+		Width:       width,
+		Options:     options,
+	}
+
+}
+
+func (b *DefaultSelection) Content() (template.HTML, template.JS) {
 
 	optionsHtml := `<option value='__go_admin_all__'>` + language.Get("All") + `</option>`
 

@@ -80,7 +80,7 @@ func (pop *PopUpAction) Js() template.JS {
 }
 
 func (pop *PopUpAction) BtnAttribute() template.HTML {
-	return template.HTML(`data-toggle="modal" data-target="#` + pop.Id + ` "`)
+	return template.HTML(`data-toggle="modal" data-target="#` + pop.Id + ` " data-id="{{.Id}}"`)
 }
 
 func (pop *PopUpAction) FooterContent() template.HTML {

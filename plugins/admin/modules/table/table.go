@@ -86,7 +86,7 @@ type Table interface {
 	GetDataWithId(params parameter.Parameters) (FormInfo, error)
 	UpdateData(dataList form.Values) error
 	InsertData(dataList form.Values) error
-	DeleteData(id string) error
+	DeleteData(pk string) error
 
 	GetNewForm() FormInfo
 
@@ -105,15 +105,15 @@ type BaseTable struct {
 }
 
 func (base *BaseTable) GetInfo() *types.InfoPanel {
-	return base.Info
+	return base.Info.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
 }
 
 func (base *BaseTable) GetDetail() *types.InfoPanel {
-	return base.Detail
+	return base.Detail.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
 }
 
 func (base *BaseTable) GetForm() *types.FormPanel {
-	return base.Form
+	return base.Form.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
 }
 
 func (base *BaseTable) GetCanAdd() bool {

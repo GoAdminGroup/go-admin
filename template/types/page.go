@@ -5,6 +5,7 @@
 package types
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -100,6 +101,34 @@ func NewPagePanel(panel Panel) Page {
 // SystemInfo contains basic info of system.
 type SystemInfo struct {
 	Version string
+}
+
+type TableRowData struct {
+	Id  template.HTML
+	Ids template.JS
+}
+
+func ParseTableDataTmpl(content interface{}) string {
+	var (
+		c  string
+		ok bool
+	)
+	if c, ok = content.(string); !ok {
+		c = string(content.(template.HTML))
+	}
+	t := template.New("row_data_tmpl")
+	t, _ = t.Parse(c)
+	buf := new(bytes.Buffer)
+	_ = t.Execute(buf, TableRowData{Ids: "selectedRows().join()"})
+	return buf.String()
+}
+
+func ParseTableDataTmplWithID(id template.HTML, content string) string {
+	t := template.New("row_data_tmpl")
+	t, _ = t.Parse(content)
+	buf := new(bytes.Buffer)
+	_ = t.Execute(buf, TableRowData{Id: id, Ids: "selectedRows().join()"})
+	return buf.String()
 }
 
 // Panel contains the main content of the template which used as pjax.

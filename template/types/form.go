@@ -273,6 +273,8 @@ type FormPanel struct {
 
 	Callbacks Callbacks
 
+	primaryKey primaryKey
+
 	UpdateFn FormPostFn
 	InsertFn FormPostFn
 
@@ -326,6 +328,11 @@ func (f *FormPanel) AddXssFilter() *FormPanel {
 
 func (f *FormPanel) AddXssJsFilter() *FormPanel {
 	f.processChains = addXssJsFilter(f.processChains)
+	return f
+}
+
+func (f *FormPanel) SetPrimaryKey(name string, typ db.DatabaseType) *FormPanel {
+	f.primaryKey = primaryKey{Name: name, Type: typ}
 	return f
 }
 

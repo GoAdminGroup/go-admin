@@ -96,7 +96,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		ext := template.HTML("")
 		if deleteUrl != "" {
 			ext = html.LiEl().SetClass("divider").Get()
-			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{%id}' style="cursor: pointer;"`,
+			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
 				ext, "", ""), "grid-row-delete")
 		}
 		ext = template.HTML("")
@@ -104,13 +104,13 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			if editUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()
 			}
-			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&"+constant.DetailPKKey+"={%id}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&"+constant.DetailPKKey+"={{.Id}}", ext))
 		}
 		if editUrl != "" {
 			if detailUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()
 			}
-			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&"+constant.EditPKKey+"={%id}", ext))
+			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&"+constant.EditPKKey+"={{.Id}}", ext))
 		}
 
 		var content template2.HTML

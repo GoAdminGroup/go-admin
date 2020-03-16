@@ -1,21 +1,66 @@
 package types
 
-import "html/template"
+import (
+	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"html/template"
+)
 
 type Button interface {
 	Content() (template.HTML, template.JS)
+	GetAction() Action
+	ID() string
+}
+
+type BaseButton struct {
+	Id     string
+	Title  template.HTML
+	Action Action
+}
+
+func (b *BaseButton) Content() (template.HTML, template.JS) {
+	return "", ""
+}
+
+func (b *BaseButton) GetAction() Action {
+	return b.Action
+}
+
+func (b *BaseButton) ID() string {
+	return b.Id
 }
 
 type DefaultButton struct {
-	Id        string
-	Title     template.HTML
+	*BaseButton
 	Color     template.HTML
 	TextColor template.HTML
-	Action    Action
 	Icon      string
 }
 
-func (b DefaultButton) Content() (template.HTML, template.JS) {
+func GetDefaultButton(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
+
+	id := btnUUID()
+	action.SetBtnId(id)
+
+	var color, textColor template.HTML
+	if len(colors) > 0 {
+		color = colors[1]
+	}
+	if len(colors) > 1 {
+		textColor = colors[2]
+	}
+	return &DefaultButton{
+		BaseButton: &BaseButton{
+			Id:     id,
+			Title:  title,
+			Action: action,
+		},
+		Color:     color,
+		TextColor: textColor,
+		Icon:      icon,
+	}
+}
+
+func (b *DefaultButton) Content() (template.HTML, template.JS) {
 
 	color := template.HTML("")
 	if b.Color != template.HTML("") {
@@ -42,13 +87,31 @@ func (b DefaultButton) Content() (template.HTML, template.JS) {
 }
 
 type ActionButton struct {
-	Id     string
-	Title  template.HTML
-	Action Action
+	*BaseButton
 }
 
-func (b ActionButton) Content() (template.HTML, template.JS) {
-	h := template.HTML(`<li style="cursor: pointer;"><a data-id="{%id}" class="`+template.HTML(b.Id)+`" `+b.Action.BtnAttribute()+`>`+b.Title+`</a></li>`) + b.Action.ExtContent()
+func GetActionButton(title template.HTML, action Action, ids ...string) *ActionButton {
+
+	id := ""
+	if len(ids) > 0 {
+		id = ids[0]
+	} else {
+		id = "action-info-btn-" + utils.Uuid(10)
+	}
+
+	action.SetBtnId(id)
+
+	return &ActionButton{
+		BaseButton: &BaseButton{
+			Id:     id,
+			Title:  title,
+			Action: action,
+		},
+	}
+}
+
+func (b *ActionButton) Content() (template.HTML, template.JS) {
+	h := template.HTML(`<li style="cursor: pointer;"><a data-id="{{.Id}}" class="`+template.HTML(b.Id)+`" `+b.Action.BtnAttribute()+`>`+b.Title+`</a></li>`) + b.Action.ExtContent()
 	return h, b.Action.Js()
 }
 
