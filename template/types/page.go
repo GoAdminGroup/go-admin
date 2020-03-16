@@ -66,10 +66,13 @@ type Page struct {
 
 	// Components assets
 	AssetsList template.HTML
+
+	// Top Nav Buttons
+	NavButtons Buttons
 }
 
-func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML) Page {
-	return Page{
+func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML, buttons ...Button) *Page {
+	return &Page{
 		User:  user,
 		Menu:  menu,
 		Panel: panel,
@@ -86,11 +89,18 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		CustomHeadHtml: cfg.CustomHeadHtml,
 		CustomFootHtml: cfg.CustomFootHtml,
 		AssetsList:     assetsList,
+		NavButtons:     buttons,
 	}
 }
 
-func NewPagePanel(panel Panel) Page {
-	return Page{
+func (page *Page) AddButton(title template.HTML, icon string, action Action) *Page {
+	page.NavButtons = append(page.NavButtons, GetNavButton(title, icon, action))
+	page.CustomFootHtml += action.FooterContent()
+	return page
+}
+
+func NewPagePanel(panel Panel) *Page {
+	return &Page{
 		Panel: panel,
 		System: SystemInfo{
 			Version: system.Version(),

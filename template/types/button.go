@@ -43,10 +43,10 @@ func GetDefaultButton(title template.HTML, icon string, action Action, colors ..
 
 	var color, textColor template.HTML
 	if len(colors) > 0 {
-		color = colors[1]
+		color = colors[0]
 	}
 	if len(colors) > 1 {
-		textColor = colors[2]
+		textColor = colors[1]
 	}
 	return &DefaultButton{
 		BaseButton: &BaseButton{
@@ -127,4 +127,46 @@ func (b Buttons) Content() (template.HTML, template.JS) {
 		j += jj
 	}
 	return h, j
+}
+
+type NavButton struct {
+	*BaseButton
+	Icon string
+}
+
+func GetNavButton(title template.HTML, icon string, action Action) *NavButton {
+
+	id := btnUUID()
+	action.SetBtnId(id)
+
+	return &NavButton{
+		BaseButton: &BaseButton{
+			Id:     id,
+			Title:  title,
+			Action: action,
+		},
+		Icon: icon,
+	}
+}
+
+func (n *NavButton) Content() (template.HTML, template.JS) {
+
+	icon := template.HTML("")
+	title := template.HTML("")
+
+	if n.Icon != "" {
+		icon = template.HTML(`<i class="fa ` + n.Icon + `"></i>`)
+	}
+
+	if n.Title != "" {
+		title = `<span>` + n.Title + `</span>`
+	}
+
+	h := template.HTML(`<li>
+    <a class="` + template.HTML(n.Id) + `" ` + n.Action.BtnAttribute() + `>
+      ` + icon + `
+      ` + title + `
+    </a>
+</li>`) + n.Action.ExtContent()
+	return h, n.Action.Js()
 }

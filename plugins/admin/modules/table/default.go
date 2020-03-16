@@ -503,40 +503,31 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	}, nil
 }
 
+func getDataRes(list []map[string]interface{}, i int) map[string]interface{} {
+	if len(list) > 0 {
+		return list[0]
+	}
+	return nil
+}
+
 // GetDataWithId query the single row of data.
 func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, error) {
 
 	var (
 		res     map[string]interface{}
 		columns Columns
-		custom  = false
+		custom  = tb.getDataFun != nil || tb.sourceURL != "" || tb.Info.GetDataFn != nil
 		id      = param.PK()
 	)
 
 	if tb.getDataFun != nil {
-		list, _ := tb.getDataFun(param)
-		if len(list) > 0 {
-			res = list[0]
-		}
-		custom = true
+		res = getDataRes(tb.getDataFun(param))
 	} else if tb.sourceURL != "" {
-		list, _ := tb.getDataFromURL(param)
-		if len(list) > 0 {
-			res = list[0]
-		}
-		custom = true
+		res = getDataRes(tb.getDataFromURL(param))
 	} else if tb.Detail.GetDataFn != nil {
-		list, _ := tb.Detail.GetDataFn(param)
-		if len(list) > 0 {
-			res = list[0]
-		}
-		custom = true
+		res = getDataRes(tb.Detail.GetDataFn(param))
 	} else if tb.Info.GetDataFn != nil {
-		list, _ := tb.Info.GetDataFn(param)
-		if len(list) > 0 {
-			res = list[0]
-		}
-		custom = true
+		res = getDataRes(tb.Info.GetDataFn(param))
 	} else {
 
 		columns, _ = tb.getColumns(tb.Form.Table)
