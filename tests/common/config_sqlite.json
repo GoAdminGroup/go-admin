@@ -13,7 +13,6 @@
   },
   "language": "en",
   "index": "/",
-  "debug": true,
-  "color_scheme": "skin-black",
-  "sql_log": true
+  "debug": false,
+  "color_scheme": "skin-black"
 }

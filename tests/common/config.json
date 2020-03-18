@@ -19,6 +19,6 @@
   },
   "language": "en",
   "index": "/",
-  "debug": true,
+  "debug": false,
   "color_scheme": "skin-black"
 }
