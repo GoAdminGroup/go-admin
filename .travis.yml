@@ -28,9 +28,9 @@ before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
   - go get -u github.com/rakyll/gotest
-  - go get -u -v github.com/gogf/gf@v1.9.10
-  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
-  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.9.10/net/ghttp/ghttp_server_handler.go
+  - go get -u -v github.com/gogf/gf@v1.11.7
+  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.11.7/net/ghttp/ghttp_server_handler.go
+  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.11.7/net/ghttp/ghttp_server_handler.go
   - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && go get github.com/GoAdminGroup/themes@master
 

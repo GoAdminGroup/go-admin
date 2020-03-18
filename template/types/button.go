@@ -163,9 +163,9 @@ func (n *NavButton) Content() (template.HTML, template.JS) {
 	}
 
 	h := template.HTML(`<li>
-    <a class="` + template.HTML(n.Id) + `" ` + n.Action.BtnAttribute() + `>
-      ` + icon + `
-      ` + title + `
+    <a class="`+template.HTML(n.Id)+`" `+n.Action.BtnAttribute()+`>
+      `+icon+`
+      `+title+`
     </a>
 </li>`) + n.Action.ExtContent()
 	return h, n.Action.Js()

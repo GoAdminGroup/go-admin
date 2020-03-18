@@ -9,7 +9,6 @@ import (
 )
 
 func TestIris(t *testing.T) {
-	// TODO: BUG: invalid memory address or nil pointer dereference
 	common.Test(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
 			Transport: httpexpect.NewBinder(newIrisHandler()),
