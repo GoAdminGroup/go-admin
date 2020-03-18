@@ -107,7 +107,13 @@ func (s Store) URL(suffix string) string {
 		return s.Prefix + "/" + suffix
 	}
 	if suffix[0] == '/' {
+		if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
+			return s.Prefix + suffix
+		}
 		return "/" + s.Prefix + suffix
+	}
+	if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
+		return s.Prefix + "/" + suffix
 	}
 	return "/" + s.Prefix + "/" + suffix
 }

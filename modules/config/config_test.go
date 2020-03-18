@@ -13,16 +13,14 @@ func TestConfig_GetIndexUrl(t *testing.T) {
 
 	assert.Equal(t, Get().GetIndexURL(), "/admin")
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
 
 	assert.Equal(t, Get().GetIndexURL(), "/admin")
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
@@ -31,8 +29,7 @@ func TestConfig_GetIndexUrl(t *testing.T) {
 }
 
 func TestConfig_Index(t *testing.T) {
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 	})
@@ -41,16 +38,14 @@ func TestConfig_Index(t *testing.T) {
 }
 
 func TestConfig_Prefix(t *testing.T) {
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 	})
 
 	assert.Equal(t, Get().Prefix(), "/admin")
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
@@ -59,16 +54,14 @@ func TestConfig_Prefix(t *testing.T) {
 }
 
 func TestConfig_Url(t *testing.T) {
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 	})
 
 	assert.Equal(t, Get().Url("/info/user"), "/admin/info/user")
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
@@ -79,8 +72,7 @@ func TestConfig_Url(t *testing.T) {
 
 func TestConfig_UrlRemovePrefix(t *testing.T) {
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
@@ -90,16 +82,14 @@ func TestConfig_UrlRemovePrefix(t *testing.T) {
 
 func TestConfig_PrefixFixSlash(t *testing.T) {
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "/admin",
 		IndexUrl:  "/",
 	})
 
 	assert.Equal(t, Get().PrefixFixSlash(), "/admin")
 
-	count = 0
-	Set(Config{
+	testSetCfg(Config{
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 	})
@@ -113,9 +103,32 @@ func TestSetDefault(t *testing.T) {
 }
 
 func TestSet(t *testing.T) {
-	count = 0
-	Set(Config{Theme: "abc"})
-	count = 0
-	Set(Config{Theme: "bcd"})
+	testSetCfg(Config{Theme: "abc"})
+	testSetCfg(Config{Theme: "bcd"})
 	assert.Equal(t, Get().Theme, "bcd")
+}
+
+func TestStore_URL(t *testing.T) {
+	testSetCfg(Config{
+		Store: Store{
+			Prefix: "/file",
+			Path:   "./uploads",
+		},
+	})
+
+	assert.Equal(t, Get().Store.URL("/xxxxxx.png"), "/file/xxxxxx.png")
+
+	testSetCfg(Config{
+		Store: Store{
+			Prefix: "http://xxxxx.com/xxxx/file",
+			Path:   "./uploads",
+		},
+	})
+
+	assert.Equal(t, Get().Store.URL("/xxxxxx.png"), "http://xxxxx.com/xxxx/file/xxxxxx.png")
+}
+
+func testSetCfg(cfg Config) {
+	count = 0
+	Set(cfg)
 }
