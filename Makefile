@@ -15,55 +15,49 @@ all: test
 
 ## tests
 
-test: black-box-test web-test
+test: cp-mod black-box-test web-test restore-mod
 
 ## tests: black box tests
 
 black-box-test: mysql-test pg-test sqlite-test ms-test
 
-mysql-test: cp-mod $(TEST_FRAMEWORK_DIR)/*
+mysql-test: $(TEST_FRAMEWORK_DIR)/*
 	go get github.com/ugorji/go/codec@none
 	for file in $^ ; do \
 	make import-mysql ; \
 	gotest -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
 	done
-	make restore-mod
 
-sqlite-test: cp-mod $(TEST_FRAMEWORK_DIR)/*
+sqlite-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-sqlite ; \
 	gotest -v ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
 	done
-	make restore-mod
 
-pg-test: cp-mod $(TEST_FRAMEWORK_DIR)/*
+pg-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-postgresql ; \
 	gotest -v ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
 	done
-	make restore-mod
 
-ms-test: cp-mod $(TEST_FRAMEWORK_DIR)/*
+ms-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-mssql ; \
 	gotest -v ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
 	done
-	make restore-mod
 
 ## tests: user acceptance tests
 
-web-test: cp-mod import-mysql
+web-test: import-mysql
 	gotest -v ./tests/web/...
 	rm -rf ./tests/web/User*
-	make restore-mod
 
-web-test-debug: cp-mod import-mysql
+web-test-debug: import-mysql
 	gotest -v ./tests/web/... -args true
-	make restore-mod
 
 ## tests: unit tests
 
-unit-test: cp-mod
+unit-test:
 	gotest -v ./adm/...
 	gotest -v ./context/...
 	gotest -v ./modules/...
@@ -71,7 +65,6 @@ unit-test: cp-mod
 	gotest -v ./plugins/admin/modules/parameter/...
 	gotest -v ./plugins/admin/modules/table/...
 	gotest -v ./plugins/admin/modules/...
-	make restore-mod
 
 ## tests: helpers
 
