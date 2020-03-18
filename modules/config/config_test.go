@@ -126,6 +126,15 @@ func TestStore_URL(t *testing.T) {
 	})
 
 	assert.Equal(t, Get().Store.URL("/xxxxxx.png"), "http://xxxxx.com/xxxx/file/xxxxxx.png")
+
+	testSetCfg(Config{
+		Store: Store{
+			Prefix: "/file",
+			Path:   "./uploads",
+		},
+	})
+
+	assert.Equal(t, Get().Store.URL("http://xxxxx.com/xxxx/file/xxxx.png"), "http://xxxxx.com/xxxx/file/xxxx.png")
 }
 
 func testSetCfg(cfg Config) {
