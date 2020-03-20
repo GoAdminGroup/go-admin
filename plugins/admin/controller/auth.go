@@ -26,6 +26,17 @@ func (h *Handler) Auth(ctx *context.Context) {
 		s, exist = h.services.GetOrNot(auth.ServiceKey)
 	)
 
+	if capDriver, ok := h.captchaConfig["driver"]; ok {
+		capt, ok := captcha.Get(capDriver)
+
+		if ok {
+			if !capt.Validate(ctx.FormValue("token")) {
+				response.BadRequest(ctx, "wrong captcha")
+				return
+			}
+		}
+	}
+
 	if !exist {
 		password := ctx.FormValue("password")
 		username := ctx.FormValue("username")
@@ -41,18 +52,6 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 	if !ok {
 		response.BadRequest(ctx, errMsg)
-		return
-	}
-
-	capt, ok := captcha.Get(h.captchaConfig["driver"])
-
-	if !ok {
-		response.BadRequest(ctx, "fail")
-		return
-	}
-
-	if !capt.Validate(ctx.FormValue("token")) {
-		response.BadRequest(ctx, "wrong captcha")
 		return
 	}
 
