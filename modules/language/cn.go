@@ -103,4 +103,5 @@ var cn = map[string]string{
 	"fixed the sidebar":                             "固定侧边栏",
 	"enter fullscreen":                              "进入全屏",
 	"exit fullscreen":                               "退出全屏",
+	"wrong captcha":                                 "错误的验证码",
 }

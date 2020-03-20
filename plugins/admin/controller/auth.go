@@ -19,12 +19,11 @@ import (
 // Auth check the input password and username for authentication.
 func (h *Handler) Auth(ctx *context.Context) {
 
-	s, exist := h.services.GetOrNot(auth.ServiceKey)
-
 	var (
-		user   models.UserModel
-		ok     bool
-		errMsg = "fail"
+		user     models.UserModel
+		ok       bool
+		errMsg   = "fail"
+		s, exist = h.services.GetOrNot(auth.ServiceKey)
 	)
 
 	if !exist {
