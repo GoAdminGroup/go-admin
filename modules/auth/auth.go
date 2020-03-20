@@ -117,7 +117,7 @@ func (s *TokenService) CheckToken(toCheckToken string) bool {
 // CSRFToken is type of a csrf token list.
 type CSRFToken []string
 
-type Processor func(ctx *context.Context) (model models.UserModel, exist bool)
+type Processor func(ctx *context.Context) (model models.UserModel, exist bool, msg string)
 
 type Service struct {
 	P Processor

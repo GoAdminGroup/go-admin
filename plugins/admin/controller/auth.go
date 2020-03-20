@@ -22,8 +22,9 @@ func (h *Handler) Auth(ctx *context.Context) {
 	s, exist := h.services.GetOrNot(auth.ServiceKey)
 
 	var (
-		user models.UserModel
-		ok   bool
+		user   models.UserModel
+		ok     bool
+		errMsg = "fail"
 	)
 
 	if !exist {
@@ -36,31 +37,33 @@ func (h *Handler) Auth(ctx *context.Context) {
 		}
 		user, ok = auth.Check(password, username, h.conn)
 	} else {
-		user, ok = auth.GetService(s).P(ctx)
+		user, ok, errMsg = auth.GetService(s).P(ctx)
 	}
 
-	if ok {
-
-		cd, ok := captcha.Get(h.captchaConfig["driver"])
-
-		if !ok {
-			response.BadRequest(ctx, "fail")
-			return
-		}
-
-		if !cd.Validate(ctx.FormValue("token")) {
-			response.BadRequest(ctx, "wrong captcha")
-			return
-		}
-
-		auth.SetCookie(ctx, user, h.conn)
-
-		response.OkWithData(ctx, map[string]interface{}{
-			"url": h.config.GetIndexURL(),
-		})
+	if !ok {
+		response.BadRequest(ctx, errMsg)
 		return
 	}
-	response.BadRequest(ctx, "fail")
+
+	capt, ok := captcha.Get(h.captchaConfig["driver"])
+
+	if !ok {
+		response.BadRequest(ctx, "fail")
+		return
+	}
+
+	if !capt.Validate(ctx.FormValue("token")) {
+		response.BadRequest(ctx, "wrong captcha")
+		return
+	}
+
+	auth.SetCookie(ctx, user, h.conn)
+
+	response.OkWithData(ctx, map[string]interface{}{
+		"url": h.config.GetIndexURL(),
+	})
+	return
+
 }
 
 // Logout delete the cookie.
