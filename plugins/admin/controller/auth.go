@@ -43,10 +43,14 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 		cd, ok := captcha.Get(h.captchaConfig["driver"])
 
-		if ok {
-			if !cd.Validate(ctx.FormValue("token")) {
-				response.BadRequest(ctx, "wrong captcha")
-			}
+		if !ok {
+			response.BadRequest(ctx, "fail")
+			return
+		}
+
+		if !cd.Validate(ctx.FormValue("token")) {
+			response.BadRequest(ctx, "wrong captcha")
+			return
 		}
 
 		auth.SetCookie(ctx, user, h.conn)

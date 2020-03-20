@@ -70,11 +70,11 @@ type TokenService struct {
 }
 
 func (s *TokenService) Name() string {
-	return "token_csrf_helper"
+	return TokenServiceKey
 }
 
 func init() {
-	service.Register("token_csrf_helper", func() (service.Service, error) {
+	service.Register(TokenServiceKey, func() (service.Service, error) {
 		return &TokenService{
 			tokens: make(CSRFToken, 0),
 		}, nil
