@@ -187,7 +187,9 @@ func (driver *DBDriver) Update(sid string, values map[string]interface{}) {
 		sesValue := string(valuesByte)
 		sesModel, _ := driver.table().Where("sid", "=", sid).First()
 		if sesModel == nil {
-			_ = driver.table().Where("values", "=", sesValue).Delete()
+			if !config.Get().NoLimitLoginIP {
+				_ = driver.table().Where("values", "=", sesValue).Delete()
+			}
 			_, _ = driver.table().Insert(dialect.H{
 				"values": sesValue,
 				"sid":    sid,

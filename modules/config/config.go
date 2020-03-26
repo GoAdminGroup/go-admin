@@ -213,6 +213,9 @@ type Config struct {
 	// Page animation
 	Animation PageAnimation `json:"animation",yaml:"animation",ini:"animation"`
 
+	// Limit login with different IPs
+	NoLimitLoginIP bool `json:"no_limit_login_ip",yaml:"no_limit_login_ip",ini:"no_limit_login_ip"`
+
 	prefix string
 }
 
