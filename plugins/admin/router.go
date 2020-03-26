@@ -57,6 +57,8 @@ func (admin *Admin) initRouter(prefix string) *Admin {
 
 	authPrefixRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
 
+	route.ANY("/operation/:__id", admin.handler.Operation)
+
 	admin.app = app
 	return admin
 }

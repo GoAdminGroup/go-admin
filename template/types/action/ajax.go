@@ -29,9 +29,9 @@ type AlertData struct {
 	CancelButtonText   string `json:"cancelButtonText"`
 }
 
-func Ajax(url string, handler types.Handler) *AjaxAction {
+func Ajax(id string, handler types.Handler) *AjaxAction {
 	return &AjaxAction{
-		Url:      url,
+		Url:      URL(id),
 		Method:   "post",
 		Data:     NewAjaxData(),
 		Handlers: context.Handlers{handler.Wrap()},

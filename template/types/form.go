@@ -438,7 +438,7 @@ func (f *FormPanel) FieldOptionExtJS(js template.JS) *FormPanel {
 
 func (f *FormPanel) FieldEnableFileUpload(data ...interface{}) *FormPanel {
 
-	url := config.Get().Url("/file/upload")
+	url := f.OperationURL("/file/upload")
 
 	if len(data) > 0 {
 		url = data[0].(string)
@@ -608,7 +608,7 @@ func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
 }
 
 func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *FormPanel {
-	ext, callback := searchJS(f.FieldList[f.curFieldListIndex].OptionExt, url, handler, delay...)
+	ext, callback := searchJS(f.FieldList[f.curFieldListIndex].OptionExt, f.OperationURL(url), handler, delay...)
 	f.FieldList[f.curFieldListIndex].OptionExt = ext
 	f.Callbacks = f.Callbacks.AddCallback(callback)
 	return f
@@ -636,8 +636,12 @@ func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormP
 	return f
 }
 
+func (f *FormPanel) OperationURL(id string) string {
+	return config.Get().Url("/operation/" + utils.WrapURL(id))
+}
+
 func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler) *FormPanel {
-	js, callback := chooseAjax(f.FieldList[f.curFieldListIndex].Field, field, url, handler)
+	js, callback := chooseAjax(f.FieldList[f.curFieldListIndex].Field, field, f.OperationURL(url), handler)
 	f.FooterHtml += js
 	f.Callbacks = f.Callbacks.AddCallback(callback)
 	return f
@@ -671,7 +675,7 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 	return template.JS(`{
 		`) + ext + template.JS(`
 		ajax: {
-		    url: "`+url+`",
+		    url: "` + url + `",
 		    dataType: 'json',
 		    data: function (params) {
 			      var query = {
@@ -680,17 +684,17 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 			      }
 			      return query;
 		    },
-		    delay: `+delayStr+`,
+		    delay: ` + delayStr + `,
 		    processResults: function (data, params) {
 			      return data.data;
 	    	}
 	  	}
 	}`), context.Node{
-			Path:     url,
-			Method:   "get",
-			Handlers: context.Handlers{handler.Wrap()},
-			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-		}
+		Path:     url,
+		Method:   "get",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	}
 }
 
 func chooseCustomJS(field string, js template.HTML) template.HTML {
@@ -791,11 +795,11 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 	})
 })
 </script>`, context.Node{
-			Path:     url,
-			Method:   "post",
-			Handlers: context.Handlers{handler.Wrap()},
-			Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
-		}
+		Path:     url,
+		Method:   "post",
+		Handlers: context.Handlers{handler.Wrap()},
+		Value:    map[string]interface{}{constant.ContextNodeNeedAuth: 1},
+	}
 }
 
 func chooseHideJS(field, value string, chooseFields ...string) template.HTML {

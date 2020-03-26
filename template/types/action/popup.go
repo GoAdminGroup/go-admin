@@ -19,9 +19,9 @@ type PopUpAction struct {
 	Handlers []context.Handler
 }
 
-func PopUp(url, title string, handler types.Handler) *PopUpAction {
+func PopUp(id, title string, handler types.Handler) *PopUpAction {
 	return &PopUpAction{
-		Url:      url,
+		Url:      URL(id),
 		Title:    title,
 		Method:   "post",
 		Data:     NewAjaxData(),

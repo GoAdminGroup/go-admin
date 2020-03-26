@@ -3,6 +3,8 @@ package action
 import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"strings"
@@ -47,3 +49,7 @@ var _ types.Action = (*AjaxAction)(nil)
 var _ types.Action = (*PopUpAction)(nil)
 var _ types.Action = (*JumpAction)(nil)
 var _ types.Action = (*JumpSelectBoxAction)(nil)
+
+func URL(id string) string {
+	return config.Get().Url("/operation/" + utils.WrapURL(id))
+}

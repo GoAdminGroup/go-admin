@@ -16,6 +16,8 @@ const (
 	EditPKKey   = "__goadmin_edit_pk"
 	DetailPKKey = "__goadmin_detail_pk"
 	PrefixKey   = "__prefix"
+
+	ContextNodeNeedAuth = constant.ContextNodeNeedAuth
 )
 
 var (

@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
+	"net/url"
 	"strings"
 )
 
@@ -69,6 +70,10 @@ func InArray(arr []string, str string) bool {
 		}
 	}
 	return false
+}
+
+func WrapURL(u string) string {
+	return url.QueryEscape(strings.Replace(u, "/", "_", -1))
 }
 
 func CopyMap(m map[string]string) map[string]string {

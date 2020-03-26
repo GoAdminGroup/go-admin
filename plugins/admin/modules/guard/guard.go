@@ -36,7 +36,11 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 
 	if _, ok := g.tableList[prefix]; !ok {
 		errMsg := language.Get("error")
-		response.Alert(ctx, config.Get(), errMsg, errMsg, "table model not found", g.conn)
+		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() == "POST" {
+			response.BadRequest(ctx, errMsg)
+		} else {
+			response.Alert(ctx, config.Get(), errMsg, errMsg, "table model not found", g.conn)
+		}
 		ctx.Abort()
 		return
 	}

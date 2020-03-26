@@ -16,6 +16,7 @@ import (
 	template2 "html/template"
 	"regexp"
 	"strings"
+	"sync"
 )
 
 type Handler struct {
@@ -25,6 +26,8 @@ type Handler struct {
 	conn          db.Connection
 	routes        context.RouterMap
 	generators    table.GeneratorList
+	operations    []context.Node
+	operationLock sync.Mutex
 }
 
 func New(cfg Config) *Handler {
@@ -33,6 +36,7 @@ func New(cfg Config) *Handler {
 		services:   cfg.Services,
 		conn:       cfg.Connection,
 		generators: cfg.Generators,
+		operations: make([]context.Node, 0),
 	}
 }
 
@@ -52,7 +56,31 @@ func (h *Handler) SetRoutes(r context.RouterMap) {
 }
 
 func (h *Handler) table(prefix string, ctx *context.Context) table.Table {
-	return h.generators[prefix](ctx)
+	t := h.generators[prefix](ctx)
+	authHandler := auth.Middleware(db.GetConnection(h.services))
+	for _, cb := range t.GetInfo().Callbacks {
+		if cb.Value[constant.ContextNodeNeedAuth] == 1 {
+			h.addOperation(context.Node{
+				Path:     cb.Path,
+				Method:   cb.Method,
+				Handlers: append([]context.Handler{authHandler}, cb.Handlers...),
+			})
+		} else {
+			h.addOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
+		}
+	}
+	for _, cb := range t.GetForm().Callbacks {
+		if cb.Value[constant.ContextNodeNeedAuth] == 1 {
+			h.addOperation(context.Node{
+				Path:     cb.Path,
+				Method:   cb.Method,
+				Handlers: append([]context.Handler{authHandler}, cb.Handlers...),
+			})
+		} else {
+			h.addOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
+		}
+	}
+	return t
 }
 
 func (h *Handler) route(name string) context.Router {
@@ -65,6 +93,41 @@ func (h *Handler) routePath(name string, value ...string) string {
 
 func (h *Handler) routePathWithPrefix(name string, prefix string) string {
 	return h.routePath(name, "prefix", prefix)
+}
+
+func (h *Handler) addOperation(nodes ...context.Node) {
+	h.operationLock.Lock()
+	defer h.operationLock.Unlock()
+	// TODO: 避免重复增加，第一次加入后，后面大部分会存在重复情况，以下循环可以优化
+	addNodes := make([]context.Node, 0)
+	for _, node := range nodes {
+		if h.searchOperation(node.Path, node.Method) {
+			continue
+		}
+		addNodes = append(addNodes, node)
+	}
+	h.operations = append(h.operations, addNodes...)
+}
+
+func (h *Handler) searchOperation(path, method string) bool {
+	for _, node := range h.operations {
+		if node.Path == path && node.Method == method {
+			return true
+		}
+	}
+	return false
+}
+
+func (h *Handler) OperationHandler(path string, ctx *context.Context) bool {
+	for _, node := range h.operations {
+		if node.Path == path {
+			for _, handler := range node.Handlers {
+				handler(ctx)
+			}
+			return true
+		}
+	}
+	return false
 }
 
 func isInfoUrl(s string) bool {
