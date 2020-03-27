@@ -37,13 +37,13 @@ func (admin *Admin) initRouter(prefix string) *Admin {
 	authPrefixRoute := route.Group("/", auth.Middleware(admin.conn), admin.guardian.CheckPrefix)
 
 	// menus
-	authRoute.POST("/menu/delete", admin.guardian.MenuDelete, admin.handler.DeleteMenu)
-	authRoute.POST("/menu/new", admin.guardian.MenuNew, admin.handler.NewMenu)
-	authRoute.POST("/menu/edit", admin.guardian.MenuEdit, admin.handler.EditMenu)
-	authRoute.POST("/menu/order", admin.handler.MenuOrder)
-	authRoute.GET("/menu", admin.handler.ShowMenu)
-	authRoute.GET("/menu/edit/show", admin.handler.ShowEditMenu)
-	authRoute.GET("/menu/new", admin.handler.ShowNewMenu)
+	authRoute.POST("/menu/delete", admin.guardian.MenuDelete, admin.handler.DeleteMenu).Name("menu_delete")
+	authRoute.POST("/menu/new", admin.guardian.MenuNew, admin.handler.NewMenu).Name("menu_new")
+	authRoute.POST("/menu/edit", admin.guardian.MenuEdit, admin.handler.EditMenu).Name("menu_edit")
+	authRoute.POST("/menu/order", admin.handler.MenuOrder).Name("menu_order")
+	authRoute.GET("/menu", admin.handler.ShowMenu).Name("menu")
+	authRoute.GET("/menu/edit/show", admin.handler.ShowEditMenu).Name("menu_edit_show")
+	authRoute.GET("/menu/new", admin.handler.ShowNewMenu).Name("menu_new_show")
 
 	// add delete modify query
 	authPrefixRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")

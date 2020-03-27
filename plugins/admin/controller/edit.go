@@ -39,11 +39,21 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 
 	formInfo, err := panel.GetDataWithId(param)
 
-	if err != nil && alert == "" {
-		alert = aAlert().Warning(err.Error())
+	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
+
+	if err != nil {
+		h.HTML(ctx, user, types.Panel{
+			Content:     aAlert().Warning(err.Error()),
+			Description: panel.GetForm().Description,
+			Title:       panel.GetForm().Title,
+		}, alert == "" || ((len(animation) > 0) && animation[0]))
+
+		if isEdit {
+			ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
+		}
+		return
 	}
 
-	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
 	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey).GetRouteParamStr()
 	editUrl := h.routePathWithPrefix("edit", prefix)
 

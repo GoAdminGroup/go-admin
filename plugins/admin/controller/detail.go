@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	template2 "html/template"
 )
 
 func (h *Handler) ShowDetail(ctx *context.Context) {
@@ -117,14 +116,17 @@ $('.delete-btn').on('click', function (event) {
 
 	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
 
-	var alert template2.HTML
-
-	if err != nil && alert == "" {
-		alert = aAlert().Warning(err.Error())
+	if err != nil {
+		h.HTML(ctx, user, types.Panel{
+			Content:     aAlert().Warning(err.Error()),
+			Description: desc,
+			Title:       title,
+		})
+		return
 	}
 
 	h.HTML(ctx, user, types.Panel{
-		Content: alert + detailContent(aForm().
+		Content: detailContent(aForm().
 			SetTitle(template.HTML(title)).
 			SetContent(formInfo.FieldList).
 			SetFooter(template.HTML(deleteJs)).
