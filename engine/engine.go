@@ -295,7 +295,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 			cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
 
 		if hasError != nil {
-			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
+			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())
@@ -351,7 +351,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 		cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
 
 	if hasError != nil {
-		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
+		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
 	}
 }
 

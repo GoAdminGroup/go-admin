@@ -133,7 +133,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML(), btns...))
 
 	if hasError != nil {
-		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), err)
+		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), hasError)
 	}
 
 	newBase.SetContentType()
