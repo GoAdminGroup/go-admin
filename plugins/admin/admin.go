@@ -10,7 +10,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
 )
 
 // Admin is a GoAdmin plugin.
@@ -89,11 +88,11 @@ func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 }
 
 // AddNavButtons add nav buttons.
-func (admin *Admin) AddNavButtons(title template.HTML, icon string, action types.Action) *Admin {
+func (admin *Admin) AddNavButtons(btn types.Button) *Admin {
 	if admin.handler == nil {
 		admin.handler = controller.New()
 	}
-	admin.handler.AddNavButtons(title, icon, action)
+	admin.handler.AddNavButtons(btn)
 	return admin
 }
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"io/ioutil"
@@ -88,6 +89,10 @@ func main() {
 		AddGenerator("user", datamodel.GetUserTable).
 		AddDisplayFilterXssJsFilter().
 		AddPlugins(examplePlugin).
+		AddNavButtons("Website Info", icon.Info, action.PopUp("/website/info", "Website Info",
+			func(ctx *context.Context) (success bool, msg string, data interface{}) {
+				return true, "ok", `<p>created by <a href="https://github.com/chenhg5">cg33<a/></p>`
+			})).
 		AddNavButtons("Google", icon.Google, action.Jump("https://www.google.com")).
 		Use(r); err != nil {
 		panic(err)

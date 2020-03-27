@@ -246,8 +246,8 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 // ============================
 
 func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
-	eng.AdminPlugin().AddNavButtons(title, icon, action)
 	btn := types.GetNavButton(title, icon, action)
+	eng.AdminPlugin().AddNavButtons(btn)
 	eng.NavButtons = append(eng.NavButtons, btn)
 	navButtons = append(navButtons, btn)
 	return eng

@@ -100,10 +100,10 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		IndexUrl:       cfg.GetIndexURL(),
 		CdnUrl:         cfg.AssetUrl,
 		CustomHeadHtml: cfg.CustomHeadHtml,
-		CustomFootHtml: footer + template.HTML(`<script>`+btnJS+`</script>`),
+		CustomFootHtml: footer + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`)),
 		AssetsList:     assetsList,
 		navButtons:     buttons,
-		NavButtonsHTML: navBtn,
+		NavButtonsHTML: template.HTML(ParseTableDataTmpl(navBtn)),
 	}
 }
 
@@ -138,7 +138,11 @@ func ParseTableDataTmpl(content interface{}) string {
 		ok bool
 	)
 	if c, ok = content.(string); !ok {
-		c = string(content.(template.HTML))
+		if cc, ok := content.(template.HTML); ok {
+			c = string(cc)
+		} else {
+			c = string(content.(template.JS))
+		}
 	}
 	t := template.New("row_data_tmpl")
 	t, _ = t.Parse(c)

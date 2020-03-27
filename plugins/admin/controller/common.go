@@ -124,9 +124,9 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 	h.operations = append(h.operations, addNodes...)
 }
 
-func (h *Handler) AddNavButtons(title template2.HTML, icon string, action types.Action) {
-	h.navButtons = append(h.navButtons, types.GetNavButton(title, icon, action))
-	h.addOperation(action.GetCallbacks())
+func (h *Handler) AddNavButtons(btn types.Button) {
+	h.navButtons = append(h.navButtons, btn)
+	h.addOperation(btn.GetAction().GetCallbacks())
 }
 
 func (h *Handler) searchOperation(path, method string) bool {

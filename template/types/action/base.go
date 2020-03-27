@@ -51,5 +51,8 @@ var _ types.Action = (*JumpAction)(nil)
 var _ types.Action = (*JumpSelectBoxAction)(nil)
 
 func URL(id string) string {
+	if id == "" {
+		return config.Get().Url("/operation/" + utils.Uuid(25))
+	}
 	return config.Get().Url("/operation/" + utils.WrapURL(id))
 }
