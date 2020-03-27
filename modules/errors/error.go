@@ -17,6 +17,7 @@ const (
 	OperationNotAllow    = "operation not allow"
 	EditFailWrongToken   = "edit fail, wrong token"
 	CreateFailWrongToken = "create fail, wrong token"
+	NoPermission         = "no permission"
 )
 
 func WrongPK(pk string) string {

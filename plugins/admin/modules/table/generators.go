@@ -4,11 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	tmpl "html/template"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	errs "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -18,10 +24,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/html"
 	"golang.org/x/crypto/bcrypt"
-	tmpl "html/template"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type SystemTable struct {
@@ -398,7 +400,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 		user := models.UserWithId(values.Get("id")).SetConn(s.conn)
 
 		if values.Has("permission", "role") {
-			return errors.New("no permission")
+			return errors.New(errs.NoPermission)
 		}
 
 		password := values.Get("password")
@@ -428,7 +430,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 		}
 
 		if values.Has("permission", "role") {
-			return errors.New("no permission")
+			return errors.New(errs.NoPermission)
 		}
 
 		models.User().SetConn(s.conn).New(values.Get("username"),
