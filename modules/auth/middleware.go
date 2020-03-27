@@ -8,12 +8,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
 	"net/url"
 )
 
@@ -42,15 +41,7 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
 			page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
-				alert := template2.Get(config.Get().Theme).Alert().
-					SetTitle(template.HTML(`<i class="icon fa fa-warning"></i> ` + language.Get("error") + `!`)).
-					SetTheme("warning").SetContent(template.HTML("permission denied")).GetContent()
-
-				return types.Panel{
-					Content:     alert,
-					Description: "Error",
-					Title:       "Error",
-				}, nil
+				return template2.WarningPanel(errors.PermissionDenied), nil
 			}, conn)
 		},
 		conn: conn,

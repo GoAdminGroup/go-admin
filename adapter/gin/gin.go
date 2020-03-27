@@ -139,6 +139,6 @@ func (gins *Gin) FormParam() url.Values {
 	return gins.ctx.Request.PostForm
 }
 
-func (gins *Gin) PjaxHeader() string {
-	return gins.ctx.Request.Header.Get(constant.PjaxHeader)
+func (gins *Gin) IsPjax() bool {
+	return gins.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

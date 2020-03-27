@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
@@ -40,14 +41,14 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 			form.PreviousKey:  config.Get().Url("/info/manager?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			"id":              "1",
 			form.TokenKey:     "123",
-		}).Expect().Status(200).Body().Contains("edit fail, wrong token")
+		}).Expect().Status(200).Body().Contains(errors.EditFailWrongToken)
 
 	// show form: without id
 
 	printlnWithColor("show form: without id", "green")
 	e.GET(config.Get().Url("/info/manager/edit")).
 		WithCookie(sesID.Name, sesID.Value).
-		Expect().Status(200).Body().Contains("wrong id")
+		Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 

@@ -20,6 +20,7 @@ type Admin struct {
 	conn      db.Connection
 	guardian  *guard.Guard
 	handler   *controller.Handler
+	name      string
 }
 
 // InitPlugin implements Plugin.InitPlugin.
@@ -57,7 +58,22 @@ func (admin *Admin) InitPlugin(services service.List) {
 func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
 	return &Admin{
 		tableList: make(table.GeneratorList).CombineAll(tableCfg),
+		name:      "admin",
 	}
+}
+
+func (admin *Admin) Name() string {
+	return admin.name
+}
+
+// GetRequest implements Plugin.GetRequest.
+func (admin *Admin) GetRequest() []context.Path {
+	return admin.app.Requests
+}
+
+// GetHandler implements Plugin.GetHandler.
+func (admin *Admin) GetHandler() context.HandlerMap {
+	return plugins.GetHandler(admin.app)
 }
 
 // SetCaptcha set captcha driver.
@@ -70,16 +86,6 @@ func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
 	admin.tableList.Add(key, g)
 	return admin
-}
-
-// GetRequest implements Plugin.GetRequest.
-func (admin *Admin) GetRequest() []context.Path {
-	return admin.app.Requests
-}
-
-// GetHandler implements Plugin.GetHandler.
-func (admin *Admin) GetHandler() context.HandlerMap {
-	return plugins.GetHandler(admin.app)
 }
 
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn

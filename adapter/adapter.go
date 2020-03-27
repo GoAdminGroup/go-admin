@@ -11,15 +11,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
 	"net/url"
 )
 
@@ -37,7 +34,7 @@ type WebFrameWork interface {
 	Path() string
 	Method() string
 	FormParam() url.Values
-	PjaxHeader() string
+	IsPjax() bool
 	Redirect()
 	SetContentType()
 	Write(body []byte)
@@ -118,29 +115,15 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 	)
 
 	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
-		alert := getErrorAlert("no permission")
-		errTitle := language.Get("error")
-
-		panel = types.Panel{
-			Content:     alert,
-			Description: errTitle,
-			Title:       errTitle,
-		}
+		panel = template.WarningPanel("no permission")
 	} else {
 		panel, err = getPanelFn(ctx)
 		if err != nil {
-			alert := getErrorAlert(err.Error())
-			errTitle := language.Get("error")
-
-			panel = types.Panel{
-				Content:     alert,
-				Description: errTitle,
-				Title:       errTitle,
-			}
+			panel = template.WarningPanel(err.Error())
 		}
 	}
 
-	tmpl, tmplName := template.Default().GetTemplate(newBase.PjaxHeader() == "true")
+	tmpl, tmplName := template.Default().GetTemplate(newBase.IsPjax())
 
 	cfg := config.Get()
 
@@ -155,13 +138,4 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 
 	newBase.SetContentType()
 	newBase.Write(buf.Bytes())
-}
-
-func getErrorAlert(msg string) template2.HTML {
-
-	return template.Default().Alert().
-		SetTitle(icon.Icon("fa-warning") + template.HTML(` `+language.Get("error")+`!`)).
-		SetTheme("warning").
-		SetContent(language.GetFromHtml(template.HTML(msg))).
-		GetContent()
 }

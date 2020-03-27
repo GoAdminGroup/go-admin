@@ -1,20 +1,22 @@
 package guard
 
 import (
+	tmpl "html/template"
+	"mime/multipart"
+	"regexp"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
-	template2 "html/template"
-	"mime/multipart"
-	"regexp"
-	"strings"
 )
 
 type ShowFormParam struct {
@@ -29,19 +31,19 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetEditable() {
-		alert(ctx, panel, "operation not allow", g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn)
 		ctx.Abort()
 		return
 	}
 
 	id := ctx.Query(constant.EditPKKey)
 	if id == "" {
-		alert(ctx, panel, "wrong "+panel.GetPrimaryKey().Name, g.conn)
+		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn)
 		ctx.Abort()
 		return
 	}
 
-	ctx.SetUserValue("show_form_param", &ShowFormParam{
+	ctx.SetUserValue(showFormParamKey, &ShowFormParam{
 		Panel:  panel,
 		Id:     id,
 		Prefix: prefix,
@@ -52,7 +54,7 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 }
 
 func GetShowFormParam(ctx *context.Context) *ShowFormParam {
-	return ctx.UserValue["show_form_param"].(*ShowFormParam)
+	return ctx.UserValue[showFormParamKey].(*ShowFormParam)
 }
 
 type EditFormParam struct {
@@ -63,7 +65,7 @@ type EditFormParam struct {
 	Path         string
 	MultiForm    *multipart.Form
 	PreviousPath string
-	Alert        template2.HTML
+	Alert        tmpl.HTML
 	FromList     bool
 }
 
@@ -72,7 +74,7 @@ func (e EditFormParam) Value() form.Values {
 }
 
 func (e EditFormParam) HasAlert() bool {
-	return e.Alert != template2.HTML("")
+	return e.Alert != tmpl.HTML("")
 }
 
 func (e EditFormParam) IsManage() bool {
@@ -89,14 +91,14 @@ func (g *Guard) EditForm(ctx *context.Context) {
 	multiForm := ctx.Request.MultipartForm
 
 	if !panel.GetEditable() {
-		alert(ctx, panel, "operation not allow", g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn)
 		ctx.Abort()
 		return
 	}
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert(ctx, panel, "edit fail, wrong token", g.conn)
+		alert(ctx, panel, errors.EditFailWrongToken, g.conn)
 		ctx.Abort()
 		return
 	}
@@ -112,7 +114,7 @@ func (g *Guard) EditForm(ctx *context.Context) {
 
 	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
 
-	ctx.SetUserValue("edit_form_param", &EditFormParam{
+	ctx.SetUserValue(editFormParamKey, &EditFormParam{
 		Panel:        panel,
 		Id:           id,
 		Prefix:       prefix,
@@ -132,7 +134,7 @@ func isInfoUrl(s string) bool {
 }
 
 func GetEditFormParam(ctx *context.Context) *EditFormParam {
-	return ctx.UserValue["edit_form_param"].(*EditFormParam)
+	return ctx.UserValue[editFormParamKey].(*EditFormParam)
 }
 
 func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection) {
@@ -143,10 +145,6 @@ func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn d
 	response.Alert(ctx, config.Get(), desc, title, msg, conn)
 }
 
-func getAlert(msg string) template2.HTML {
-	return template.Get(config.Get().Theme).Alert().
-		SetTitle(constant.DefaultErrorMsg).
-		SetTheme("warning").
-		SetContent(template2.HTML(msg)).
-		GetContent()
+func getAlert(msg string) tmpl.HTML {
+	return template.Get(config.Get().Theme).Alert().Warning(msg)
 }

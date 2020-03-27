@@ -3,6 +3,7 @@ package guard
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"html/template"
 	"strconv"
@@ -37,7 +38,7 @@ func (g *Guard) MenuEdit(ctx *context.Context) {
 	)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert = getAlert("edit fail, wrong token")
+		alert = getAlert(errors.EditFailWrongToken)
 	}
 
 	if alert == "" {
@@ -46,7 +47,7 @@ func (g *Guard) MenuEdit(ctx *context.Context) {
 
 	// TODO: check the user permission
 
-	ctx.SetUserValue("edit_menu_param", &MenuEditParam{
+	ctx.SetUserValue(editMenuParamKey, &MenuEditParam{
 		Id:       ctx.FormValue("id"),
 		Title:    ctx.FormValue("title"),
 		Header:   ctx.FormValue("header"),
@@ -60,7 +61,7 @@ func (g *Guard) MenuEdit(ctx *context.Context) {
 }
 
 func GetMenuEditParam(ctx *context.Context) *MenuEditParam {
-	return ctx.UserValue["edit_menu_param"].(*MenuEditParam)
+	return ctx.UserValue[editMenuParamKey].(*MenuEditParam)
 }
 
 func checkEmpty(ctx *context.Context, key ...string) template.HTML {

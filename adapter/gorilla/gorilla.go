@@ -171,6 +171,6 @@ func (g *Gorilla) FormParam() url.Values {
 	return g.ctx.Request.PostForm
 }
 
-func (g *Gorilla) PjaxHeader() string {
-	return g.ctx.Request.Header.Get(constant.PjaxHeader)
+func (g *Gorilla) IsPjax() bool {
+	return g.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

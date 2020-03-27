@@ -134,6 +134,6 @@ func (bee *Beego) FormParam() url.Values {
 	return bee.ctx.Request.PostForm
 }
 
-func (bee *Beego) PjaxHeader() string {
-	return bee.ctx.Request.Header.Get(constant.PjaxHeader)
+func (bee *Beego) IsPjax() bool {
+	return bee.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

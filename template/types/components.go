@@ -163,6 +163,7 @@ type AlertAttribute interface {
 	SetTheme(value string) AlertAttribute
 	SetTitle(value template.HTML) AlertAttribute
 	SetContent(value template.HTML) AlertAttribute
+	Warning(msg string) template.HTML
 	GetContent() template.HTML
 }
 

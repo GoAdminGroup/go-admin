@@ -9,15 +9,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
 )
 
 // SetPageContent set and return the panel of page content.
@@ -26,22 +22,13 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 	panel, err := c(ctx)
 
 	globalConfig := config.Get()
-	errMsg := language.Get("error")
 
 	if err != nil {
 		logger.Error("SetPageContent", err)
-		alert := template.Get(globalConfig.Theme).
-			Alert().
-			SetTitle(icon.Icon(icon.Warning, 1) + template.HTML(errMsg) + `!`).
-			SetTheme("warning").SetContent(template2.HTML(err.Error())).GetContent()
-		panel = types.Panel{
-			Content:     alert,
-			Description: errMsg,
-			Title:       errMsg,
-		}
+		panel = template.WarningPanel(err.Error())
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.IsPjax())
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 

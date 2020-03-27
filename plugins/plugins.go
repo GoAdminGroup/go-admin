@@ -21,6 +21,7 @@ import (
 type Plugin interface {
 	GetHandler() context.HandlerMap
 	InitPlugin(services service.List)
+	Name() string
 }
 
 // GetHandler is a help method for Plugin GetHandler.

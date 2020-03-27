@@ -8,7 +8,8 @@ import (
 )
 
 type Example struct {
-	app *context.App
+	app  *context.App
+	name string
 }
 
 func NewExample() *Example {
@@ -38,4 +39,8 @@ func (example *Example) GetRequest() []context.Path {
 
 func (example *Example) GetHandler() context.HandlerMap {
 	return plugins.GetHandler(example.app)
+}
+
+func (example *Example) Name() string {
+	return example.name
 }

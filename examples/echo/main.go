@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 )
 
@@ -47,15 +46,6 @@ func main() {
 		Language: language.CN,
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
-
-	// add generator, first parameter is the url prefix of table when visit.
-	// example:
-	//
-	// "user" => http://localhost:1323/admin/info/user
-	//
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
-
 	template.AddComp(chartjs.NewChart())
 
 	// customize a plugin
@@ -75,7 +65,17 @@ func main() {
 	//
 	// eng.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := eng.AddConfig(cfg).AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
+	if err := eng.AddConfig(cfg).
+		AddGenerators(datamodel.Generators).
+		AddDisplayFilterXssJsFilter().
+		// add generator, first parameter is the url prefix of table when visit.
+		// example:
+		//
+		// "user" => http://localhost:9033/admin/info/user
+		//
+		AddGenerator("user", datamodel.GetUserTable).
+		AddPlugins(examplePlugin).
+		Use(e); err != nil {
 		panic(err)
 	}
 

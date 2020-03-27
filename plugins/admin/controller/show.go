@@ -6,6 +6,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -51,15 +52,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	if err != nil {
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 		user := auth.Auth(ctx)
-		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
+		alert := aAlert().SetTitle(errors.MsgWithIcon).
 			SetTheme("warning").
 			SetContent(template2.HTML(err.Error())).
 			GetContent()
-		errMsg := language.Get("error")
 		return template.Execute(tmpl, tmplName, user, types.Panel{
 			Content:     alert,
-			Description: errMsg,
-			Title:       errMsg,
+			Description: errors.Msg,
+			Title:       errors.Msg,
 		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 	}
 

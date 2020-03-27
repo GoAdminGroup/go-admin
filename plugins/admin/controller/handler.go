@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -54,19 +55,13 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		alert := aAlert().
-			SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(errMsg)).
-			GetContent()
-
 		user := auth.Auth(ctx)
 
 		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 		buf := template.Execute(tmpl, tmplName, user, types.Panel{
-			Content:     alert,
-			Description: "error",
-			Title:       "error",
+			Content:     aAlert().Warning(errMsg),
+			Description: errors.Msg,
+			Title:       errors.Msg,
 		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
 		ctx.HTML(http.StatusOK, buf.String())
 		return
@@ -74,12 +69,6 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 }
 
 func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg string, kind string) {
-
-	alert := aAlert().
-		SetTitle(constant.DefaultErrorMsg).
-		SetTheme("warning").
-		SetContent(template2.HTML(errMsg)).
-		GetContent()
 
 	var (
 		formInfo table.FormInfo
@@ -109,7 +98,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content: alert + formContent(aForm().
+		Content: aAlert().Warning(errMsg) + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).

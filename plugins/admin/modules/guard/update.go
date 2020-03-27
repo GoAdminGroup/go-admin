@@ -33,7 +33,7 @@ func (g *Guard) Update(ctx *context.Context) {
 	f.Add(pname, id)
 	f.Add(ctx.FormValue("name"), ctx.FormValue("value"))
 
-	ctx.SetUserValue("update_param", &UpdateParam{
+	ctx.SetUserValue(updateParamKey, &UpdateParam{
 		Panel:  panel,
 		Prefix: prefix,
 		Value:  f,
@@ -42,5 +42,5 @@ func (g *Guard) Update(ctx *context.Context) {
 }
 
 func GetUpdateParam(ctx *context.Context) *UpdateParam {
-	return ctx.UserValue["update_param"].(*UpdateParam)
+	return ctx.UserValue[updateParamKey].(*UpdateParam)
 }

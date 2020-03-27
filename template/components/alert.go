@@ -1,6 +1,8 @@
 package components
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/errors"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 )
@@ -26,6 +28,13 @@ func (compo *AlertAttribute) SetTitle(value template.HTML) types.AlertAttribute 
 func (compo *AlertAttribute) SetContent(value template.HTML) types.AlertAttribute {
 	compo.Content = value
 	return compo
+}
+
+func (compo *AlertAttribute) Warning(msg string) template.HTML {
+	return compo.SetTitle(errors.MsgWithIcon).
+		SetTheme("warning").
+		SetContent(language.GetFromHtml(template.HTML(msg))).
+		GetContent()
 }
 
 func (compo *AlertAttribute) GetContent() template.HTML {

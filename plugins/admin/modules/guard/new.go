@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -24,12 +25,12 @@ func (g *Guard) ShowNewForm(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetCanAdd() {
-		alert(ctx, panel, "operation not allow", g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn)
 		ctx.Abort()
 		return
 	}
 
-	ctx.SetUserValue("show_new_form_param", &ShowNewFormParam{
+	ctx.SetUserValue(showNewFormParam, &ShowNewFormParam{
 		Panel:  panel,
 		Prefix: prefix,
 		Param: parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
@@ -39,7 +40,7 @@ func (g *Guard) ShowNewForm(ctx *context.Context) {
 }
 
 func GetShowNewFormParam(ctx *context.Context) *ShowNewFormParam {
-	return ctx.UserValue["show_new_form_param"].(*ShowNewFormParam)
+	return ctx.UserValue[showNewFormParam].(*ShowNewFormParam)
 }
 
 type NewFormParam struct {
@@ -77,14 +78,14 @@ func (g *Guard) NewForm(ctx *context.Context) {
 	conn := db.GetConnection(g.services)
 
 	if !panel.GetCanAdd() {
-		alert(ctx, panel, "operation not allow", conn)
+		alert(ctx, panel, errors.OperationNotAllow, conn)
 		ctx.Abort()
 		return
 	}
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert(ctx, panel, "create fail, wrong token", conn)
+		alert(ctx, panel, errors.CreateFailWrongToken, conn)
 		ctx.Abort()
 		return
 	}
@@ -98,7 +99,7 @@ func (g *Guard) NewForm(ctx *context.Context) {
 		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
-	ctx.SetUserValue("new_form_param", &NewFormParam{
+	ctx.SetUserValue(newFormParamKey, &NewFormParam{
 		Panel:        panel,
 		Id:           "",
 		Prefix:       prefix,
@@ -112,5 +113,5 @@ func (g *Guard) NewForm(ctx *context.Context) {
 }
 
 func GetNewFormParam(ctx *context.Context) *NewFormParam {
-	return ctx.UserValue["new_form_param"].(*NewFormParam)
+	return ctx.UserValue[newFormParamKey].(*NewFormParam)
 }

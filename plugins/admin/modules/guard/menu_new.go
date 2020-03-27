@@ -3,6 +3,7 @@ package guard
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"html/template"
 	"strconv"
@@ -35,7 +36,7 @@ func (g *Guard) MenuNew(ctx *context.Context) {
 	)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert = getAlert("edit fail, wrong token")
+		alert = getAlert(errors.EditFailWrongToken)
 	}
 
 	if alert == "" {
@@ -44,7 +45,7 @@ func (g *Guard) MenuNew(ctx *context.Context) {
 
 	parentIdInt, _ := strconv.Atoi(parentId)
 
-	ctx.SetUserValue("new_menu_param", &MenuNewParam{
+	ctx.SetUserValue(newMenuParamKey, &MenuNewParam{
 		Title:    ctx.FormValue("title"),
 		Header:   ctx.FormValue("header"),
 		ParentId: int64(parentIdInt),
@@ -57,5 +58,5 @@ func (g *Guard) MenuNew(ctx *context.Context) {
 }
 
 func GetMenuNewParam(ctx *context.Context) *MenuNewParam {
-	return ctx.UserValue["new_menu_param"].(*MenuNewParam)
+	return ctx.UserValue[newMenuParamKey].(*MenuNewParam)
 }

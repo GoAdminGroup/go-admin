@@ -150,6 +150,6 @@ func (gf *Gf) FormParam() url.Values {
 	return gf.ctx.Form
 }
 
-func (gf *Gf) PjaxHeader() string {
-	return gf.ctx.Header.Get(constant.PjaxHeader)
+func (gf *Gf) IsPjax() bool {
+	return gf.ctx.Header.Get(constant.PjaxHeader) == "true"
 }

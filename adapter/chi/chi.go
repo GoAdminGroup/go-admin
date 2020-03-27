@@ -194,6 +194,6 @@ func (ch *Chi) FormParam() url.Values {
 	return ch.ctx.Request.PostForm
 }
 
-func (ch *Chi) PjaxHeader() string {
-	return ch.ctx.Request.Header.Get(constant.PjaxHeader)
+func (ch *Chi) IsPjax() bool {
+	return ch.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

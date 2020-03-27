@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/gavv/httpexpect"
 	"net/http"
@@ -37,7 +38,7 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	printlnWithColor("show form: without id", "green")
 	e.GET(config.Get().Url("/info/user/edit")).
 		WithCookie(sesID.Name, sesID.Value).
-		Expect().Status(200).Body().Contains("wrong id")
+		Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 

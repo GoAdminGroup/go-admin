@@ -141,6 +141,6 @@ func (e *Echo) FormParam() url.Values {
 	return e.ctx.Request().PostForm
 }
 
-func (e *Echo) PjaxHeader() string {
-	return e.ctx.Request().Header.Get(constant.PjaxHeader)
+func (e *Echo) IsPjax() bool {
+	return e.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
 }

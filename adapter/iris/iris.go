@@ -141,6 +141,6 @@ func (is *Iris) FormParam() url.Values {
 	return is.ctx.FormValues()
 }
 
-func (is *Iris) PjaxHeader() string {
-	return is.ctx.GetHeader(constant.PjaxHeader)
+func (is *Iris) IsPjax() bool {
+	return is.ctx.GetHeader(constant.PjaxHeader) == "true"
 }

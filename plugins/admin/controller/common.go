@@ -191,7 +191,7 @@ func aTemplate() template.Template {
 }
 
 func isPjax(ctx *context.Context) bool {
-	return ctx.Headers(constant.PjaxHeader) == "true"
+	return ctx.IsPjax()
 }
 
 func formFooter(page string) template2.HTML {

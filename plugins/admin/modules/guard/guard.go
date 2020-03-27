@@ -4,7 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -35,11 +35,10 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 
 	if _, ok := g.tableList[prefix]; !ok {
-		errMsg := language.Get("error")
 		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() == "POST" {
-			response.BadRequest(ctx, errMsg)
+			response.BadRequest(ctx, errors.Msg)
 		} else {
-			response.Alert(ctx, config.Get(), errMsg, errMsg, "table model not found", g.conn)
+			response.Alert(ctx, config.Get(), errors.Msg, errors.Msg, "table model not found", g.conn)
 		}
 		ctx.Abort()
 		return
@@ -47,3 +46,16 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 
 	ctx.Next()
 }
+
+const (
+	editFormParamKey   = "edit_form_param"
+	deleteParamKey     = "delete_param"
+	exportParamKey     = "export_param"
+	deleteMenuParamKey = "delete_menu_param"
+	editMenuParamKey   = "edit_menu_param"
+	newMenuParamKey    = "new_menu_param"
+	newFormParamKey    = "new_form_param"
+	updateParamKey     = "update_param"
+	showFormParamKey   = "show_form_param"
+	showNewFormParam   = "show_new_form_param"
+)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -61,11 +62,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 func (h *Handler) ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
-		h.getMenuInfoPanel(ctx, template.Get(h.config.Theme).Alert().
-			SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML("wrong id")).
-			GetContent())
+		h.getMenuInfoPanel(ctx, template.Get(h.config.Theme).Alert().Warning(errors.WrongID))
+
 		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 		ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/menu"))
 		return
@@ -76,10 +74,8 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	var alert template2.HTML
 
 	if err != nil {
-		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
+		alert = aAlert().Warning(err.Error())
+
 	}
 
 	user := auth.Auth(ctx)

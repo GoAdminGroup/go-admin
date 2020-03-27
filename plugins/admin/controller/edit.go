@@ -42,10 +42,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	formInfo, err := panel.GetDataWithId(param)
 
 	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
+		alert = aAlert().Warning(err.Error())
 	}
 
 	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
@@ -99,10 +96,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			alert := aAlert().SetTitle(constant.DefaultErrorMsg).
-				SetTheme("warning").
-				SetContent(template2.HTML(err.Error())).
-				GetContent()
+			alert := aAlert().Warning(err.Error())
 			h.showForm(ctx, alert, param.Prefix, param.Param, true)
 			return
 		}
@@ -118,10 +112,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	err := param.Panel.UpdateData(param.Value())
 	if err != nil {
-		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
+		alert := aAlert().Warning(err.Error())
 		h.showForm(ctx, alert, param.Prefix, param.Param, true)
 		return
 	}

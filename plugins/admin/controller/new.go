@@ -81,22 +81,14 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			alert := aAlert().SetTitle(constant.DefaultErrorMsg).
-				SetTheme("warning").
-				SetContent(template2.HTML(err.Error())).
-				GetContent()
-			h.showNewForm(ctx, alert, param.Prefix, param.Param.GetRouteParamStr(), true)
+			h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
 			return
 		}
 	}
 
 	err := param.Panel.InsertData(param.Value())
 	if err != nil {
-		alert := aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
-		h.showNewForm(ctx, alert, param.Prefix, param.Param.GetRouteParamStr(), true)
+		h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
 		return
 	}
 

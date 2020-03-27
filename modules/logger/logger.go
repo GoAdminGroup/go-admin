@@ -6,7 +6,6 @@ package logger
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/mgutz/ansi"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -100,7 +99,7 @@ func Warn(info ...interface{}) {
 // Access print the access message.
 func Access(ctx *context.Context) {
 	if !accessLogOff {
-		manager["access"].Println("["+constant.Title+"]",
+		manager["access"].Println("[GoAdmin]",
 			ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 			ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 			ctx.Path())
@@ -110,6 +109,6 @@ func Access(ctx *context.Context) {
 // LogSQL print the sql info message.
 func LogSQL(statement string, args []interface{}) {
 	if sqlLogOpen && statement != "" {
-		manager["info"].Infoln("["+constant.Title+"]", "statement", statement, "args", args)
+		manager["info"].Infoln("[GoAdmin]", "statement", statement, "args", args)
 	}
 }

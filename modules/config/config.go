@@ -7,7 +7,6 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
@@ -392,8 +391,8 @@ func Set(cfg Config) Config {
 	}
 	atomic.StoreUint32(&count, 1)
 
-	cfg.Title = setDefault(cfg.Title, "", constant.Title)
-	cfg.LoginTitle = setDefault(cfg.LoginTitle, "", constant.Title)
+	cfg.Title = setDefault(cfg.Title, "", "GoAdmin")
+	cfg.LoginTitle = setDefault(cfg.LoginTitle, "", "GoAdmin")
 	cfg.Logo = template.HTML(setDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
 	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
 	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")

@@ -7,10 +7,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
 	"net/http"
 )
 
@@ -39,15 +37,9 @@ func BadRequest(ctx *context.Context, msg string) {
 func Alert(ctx *context.Context, config config.Config, desc, title, msg string, conn db.Connection) {
 	user := auth.Auth(ctx)
 
-	alert := template.Get(config.Theme).Alert().
-		SetTitle(constant.DefaultErrorMsg).
-		SetTheme("warning").
-		SetContent(template2.HTML(msg)).
-		GetContent()
-
-	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.Headers(constant.PjaxHeader) == "true")
+	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.IsPjax())
 	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content:     alert,
+		Content:     template.Get(config.Theme).Alert().Warning(msg),
 		Description: desc,
 		Title:       title,
 	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))

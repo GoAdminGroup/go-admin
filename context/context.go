@@ -187,6 +187,13 @@ func (ctx *Context) HTML(code int, body string) {
 	ctx.WriteString(body)
 }
 
+// HTMLByte output html response.
+func (ctx *Context) HTMLByte(code int, body []byte) {
+	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.SetStatusCode(code)
+	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+}
+
 // WriteString save the given body string into the response.
 func (ctx *Context) WriteString(body string) {
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(body))
@@ -267,6 +274,11 @@ func (ctx *Context) AddHeader(key, value string) {
 // PjaxUrl add pjax url header.
 func (ctx *Context) PjaxUrl(url string) {
 	ctx.Response.Header.Add(constant.PjaxUrlHeader, url)
+}
+
+// IsPjax check request is pjax or not.
+func (ctx *Context) IsPjax() bool {
+	return ctx.Headers(constant.PjaxUrlHeader) == "true"
 }
 
 // SetHeader set the key, value pair to the header.

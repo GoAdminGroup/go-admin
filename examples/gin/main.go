@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
@@ -58,16 +57,7 @@ func main() {
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
-	adminPlugin := admin.NewAdmin(datamodel.Generators).AddDisplayFilterXssJsFilter()
-
 	template.AddComp(chartjs.NewChart())
-
-	// add generator, first parameter is the url prefix of table when visit.
-	// example:
-	//
-	// "user" => http://localhost:9033/admin/info/user
-	//
-	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
 
 	// customize a plugin
 
@@ -87,7 +77,15 @@ func main() {
 	// e.AddConfigFromJSON("../datamodel/config.json")
 
 	if err := e.AddConfig(cfg).
-		AddPlugins(adminPlugin, examplePlugin).
+		AddGenerators(datamodel.Generators).
+		// add generator, first parameter is the url prefix of table when visit.
+		// example:
+		//
+		// "user" => http://localhost:9033/admin/info/user
+		//
+		AddGenerator("user", datamodel.GetUserTable).
+		AddDisplayFilterXssJsFilter().
+		AddPlugins(examplePlugin).
 		Use(r); err != nil {
 		panic(err)
 	}

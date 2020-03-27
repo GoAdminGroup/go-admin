@@ -123,10 +123,7 @@ $('.delete-btn').on('click', function (event) {
 	var alert template2.HTML
 
 	if err != nil && alert == "" {
-		alert = aAlert().SetTitle(constant.DefaultErrorMsg).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
+		alert = aAlert().Warning(err.Error())
 	}
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))

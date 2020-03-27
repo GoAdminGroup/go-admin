@@ -203,6 +203,6 @@ func (fast *Fasthttp) FormParam() url.Values {
 	return url.Values{}
 }
 
-func (fast *Fasthttp) PjaxHeader() string {
-	return string(fast.ctx.Request.Header.Peek(constant.PjaxHeader))
+func (fast *Fasthttp) IsPjax() bool {
+	return string(fast.ctx.Request.Header.Peek(constant.PjaxHeader)) == "true"
 }

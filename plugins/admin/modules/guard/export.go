@@ -2,6 +2,7 @@ package guard
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"strings"
 )
@@ -16,7 +17,7 @@ type ExportParam struct {
 func (g *Guard) Export(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 	if !panel.GetExportable() {
-		alert(ctx, panel, "operation not allow", g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn)
 		ctx.Abort()
 		return
 	}
@@ -27,7 +28,7 @@ func (g *Guard) Export(ctx *context.Context) {
 		idStr = strings.Split(ctx.FormValue("id"), ",")
 	}
 
-	ctx.SetUserValue("export_param", &ExportParam{
+	ctx.SetUserValue(exportParamKey, &ExportParam{
 		Panel:  panel,
 		Id:     idStr,
 		Prefix: prefix,
@@ -37,5 +38,5 @@ func (g *Guard) Export(ctx *context.Context) {
 }
 
 func GetExportParam(ctx *context.Context) *ExportParam {
-	return ctx.UserValue["export_param"].(*ExportParam)
+	return ctx.UserValue[exportParamKey].(*ExportParam)
 }

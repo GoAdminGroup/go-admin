@@ -15,6 +15,7 @@ import (
 	"sync"
 
 	c "github.com/GoAdminGroup/go-admin/modules/config"
+	e "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -275,6 +276,14 @@ func Execute(tmpl *template.Template,
 		fmt.Println("Execute err", err)
 	}
 	return buf
+}
+
+func WarningPanel(msg string) types.Panel {
+	return types.Panel{
+		Content:     Default().Alert().Warning(msg),
+		Description: e.Msg,
+		Title:       e.Msg,
+	}
 }
 
 var DefaultFuncMap = template.FuncMap{
