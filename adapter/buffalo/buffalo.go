@@ -41,8 +41,8 @@ func (bu *Buffalo) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bu.GetUse(router, plugs, bu)
 }
 
-func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	bu.GetContent(ctx, getPanelFn, bu)
+func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
+	bu.GetContent(ctx, getPanelFn, bu, btns...)
 }
 
 type HandlerFunc func(ctx buffalo.Context) (types.Panel, error)

@@ -26,7 +26,7 @@ import (
 // response to the corresponding context of framework.
 type WebFrameWork interface {
 	Use(interface{}, []plugins.Plugin) error
-	Content(interface{}, types.GetPanelFn)
+	Content(interface{}, types.GetPanelFn, ...types.Button)
 	SetConnection(db.Connection)
 	GetConnection() db.Connection
 	SetContext(ctx interface{}) WebFrameWork
@@ -91,7 +91,7 @@ func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf 
 	return nil
 }
 
-func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork) {
+func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, btns ...types.Button) {
 
 	newBase := wf.SetContext(ctx)
 
@@ -130,7 +130,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
 		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path()))),
-		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
+		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML(), btns...))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), err)

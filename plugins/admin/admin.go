@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"html/template"
 )
 
 // Admin is a GoAdmin plugin.
@@ -42,12 +43,17 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"normal_manager": st.GetNormalManagerTable,
 	})
 	admin.guardian = guard.New(admin.services, admin.conn, admin.tableList)
-	admin.handler = controller.New(controller.Config{
+	handlerCfg := controller.Config{
 		Config:     cfg,
 		Services:   services,
 		Generators: admin.tableList,
 		Connection: admin.conn,
-	})
+	}
+	if admin.handler == nil {
+		admin.handler = controller.New(handlerCfg)
+	} else {
+		admin.handler.UpdateCfg(handlerCfg)
+	}
 	admin.initRouter(cfg.Prefix())
 	admin.handler.SetRoutes(admin.app.Routers)
 
@@ -79,6 +85,15 @@ func (admin *Admin) GetHandler() context.HandlerMap {
 // SetCaptcha set captcha driver.
 func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 	admin.handler.SetCaptcha(captcha)
+	return admin
+}
+
+// AddNavButtons add nav buttons.
+func (admin *Admin) AddNavButtons(title template.HTML, icon string, action types.Action) *Admin {
+	if admin.handler == nil {
+		admin.handler = controller.New()
+	}
+	admin.handler.AddNavButtons(title, icon, action)
 	return admin
 }
 

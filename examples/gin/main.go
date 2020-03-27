@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/GoAdminGroup/go-admin/template/icon"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"io/ioutil"
 	"log"
 	"os"
@@ -86,6 +88,7 @@ func main() {
 		AddGenerator("user", datamodel.GetUserTable).
 		AddDisplayFilterXssJsFilter().
 		AddPlugins(examplePlugin).
+		AddNavButtons("Google", icon.Google, action.Jump("https://www.google.com")).
 		Use(r); err != nil {
 		panic(err)
 	}

@@ -27,16 +27,24 @@ type Handler struct {
 	routes        context.RouterMap
 	generators    table.GeneratorList
 	operations    []context.Node
+	navButtons    []types.Button
 	operationLock sync.Mutex
 }
 
-func New(cfg Config) *Handler {
+func New(cfg ...Config) *Handler {
+	if len(cfg) == 0 {
+		return &Handler{
+			operations: make([]context.Node, 0),
+			navButtons: make([]types.Button, 0),
+		}
+	}
 	return &Handler{
-		config:     cfg.Config,
-		services:   cfg.Services,
-		conn:       cfg.Connection,
-		generators: cfg.Generators,
+		config:     cfg[0].Config,
+		services:   cfg[0].Services,
+		conn:       cfg[0].Connection,
+		generators: cfg[0].Generators,
 		operations: make([]context.Node, 0),
+		navButtons: make([]types.Button, 0),
 	}
 }
 
@@ -45,6 +53,13 @@ type Config struct {
 	Services   service.List
 	Connection db.Connection
 	Generators table.GeneratorList
+}
+
+func (h *Handler) UpdateCfg(cfg Config) {
+	h.config = cfg.Config
+	h.services = cfg.Services
+	h.conn = cfg.Connection
+	h.generators = cfg.Generators
 }
 
 func (h *Handler) SetCaptcha(cap map[string]string) {
@@ -107,6 +122,11 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 		addNodes = append(addNodes, node)
 	}
 	h.operations = append(h.operations, addNodes...)
+}
+
+func (h *Handler) AddNavButtons(title template2.HTML, icon string, action types.Action) {
+	h.navButtons = append(h.navButtons, types.GetNavButton(title, icon, action))
+	h.addOperation(action.GetCallbacks())
 }
 
 func (h *Handler) searchOperation(path, method string) bool {

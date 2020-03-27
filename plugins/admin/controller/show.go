@@ -60,7 +60,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			Content:     alert,
 			Description: errors.Msg,
 			Title:       errors.Msg,
-		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+			true, h.navButtons...)
 	}
 
 	paramStr := params.DeleteIsAll().GetRouteParamStr()
@@ -217,7 +218,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), params.Animation)
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		params.Animation, h.navButtons...)
 }
 
 // Assets return front-end assets according the request path.

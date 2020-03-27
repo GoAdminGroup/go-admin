@@ -41,8 +41,8 @@ func (gf *Gf) Use(router interface{}, plugs []plugins.Plugin) error {
 	return gf.GetUse(router, plugs, gf)
 }
 
-func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	gf.GetContent(ctx, getPanelFn, gf)
+func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
+	gf.GetContent(ctx, getPanelFn, gf, btns...)
 }
 
 type HandlerFunc func(ctx *ghttp.Request) (types.Panel, error)

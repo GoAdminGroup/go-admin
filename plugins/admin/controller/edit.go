@@ -74,7 +74,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation)
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation, h.navButtons...)
 
 	ctx.HTML(http.StatusOK, buf.String())
 

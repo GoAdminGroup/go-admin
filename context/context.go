@@ -278,7 +278,7 @@ func (ctx *Context) PjaxUrl(url string) {
 
 // IsPjax check request is pjax or not.
 func (ctx *Context) IsPjax() bool {
-	return ctx.Headers(constant.PjaxUrlHeader) == "true"
+	return ctx.Headers(constant.PjaxHeader) == "true"
 }
 
 // SetHeader set the key, value pair to the header.

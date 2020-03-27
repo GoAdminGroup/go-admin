@@ -34,6 +34,7 @@ type Engine struct {
 	PluginList []plugins.Plugin
 	Adapter    adapter.WebFrameWork
 	Services   service.List
+	NavButtons []types.Button
 
 	config config.Config
 }
@@ -76,13 +77,13 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 	return eng
 }
 
-func (eng *Engine) FindPluginByName(name string) plugins.Plugin {
+func (eng *Engine) FindPluginByName(name string) (plugins.Plugin, bool) {
 	for _, plug := range eng.PluginList {
 		if plug.Name() == name {
-			return plug
+			return plug, true
 		}
 	}
-	panic("wrong plugin name")
+	return nil, false
 }
 
 func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
@@ -143,6 +144,8 @@ func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 
 // defaultAdapter is the default adapter of engine.
 var defaultAdapter adapter.WebFrameWork
+
+var navButtons = make([]types.Button, 0)
 
 // Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
@@ -242,13 +245,21 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 // HTML Content Render APIs
 // ============================
 
+func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
+	eng.AdminPlugin().AddNavButtons(title, icon, action)
+	btn := types.GetNavButton(title, icon, action)
+	eng.NavButtons = append(eng.NavButtons, btn)
+	navButtons = append(navButtons, btn)
+	return eng
+}
+
 // Content call the Content method of engine adapter.
 // If adapter is nil, it will panic.
 func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
 		panic("adapter is nil")
 	}
-	eng.Adapter.Content(ctx, panel)
+	eng.Adapter.Content(ctx, panel, eng.NavButtons...)
 }
 
 // Content call the Content method of defaultAdapter.
@@ -257,7 +268,7 @@ func Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	defaultAdapter.Content(ctx, panel)
+	defaultAdapter.Content(ctx, panel, navButtons...)
 }
 
 func (eng *Engine) Data(method, url string, handler context.Handler) {
@@ -280,7 +291,8 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
 			*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
-			panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
+			panel.GetContent(cfg.IsProductionEnvironment()),
+			cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
 
 		if hasError != nil {
 			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
@@ -335,7 +347,8 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 
 	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
 		*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
-		template.WarningPanel(err.Error()).GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML()))
+		template.WarningPanel(err.Error()).GetContent(cfg.IsProductionEnvironment()),
+		cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), err)
@@ -352,7 +365,13 @@ func (eng *Engine) AddGenerators(list ...table.GeneratorList) *Engine {
 }
 
 func (eng *Engine) AdminPlugin() *admin.Admin {
-	return eng.FindPluginByName("admin").(*admin.Admin)
+	plug, exist := eng.FindPluginByName("admin")
+	if exist {
+		return plug.(*admin.Admin)
+	}
+	adm := admin.NewAdmin()
+	eng.PluginList = append(eng.PluginList, adm)
+	return adm
 }
 
 // AddGenerator add table model generator.

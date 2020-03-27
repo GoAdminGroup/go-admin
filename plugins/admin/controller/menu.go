@@ -53,7 +53,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		true, h.navButtons...)
 
 	ctx.HTML(http.StatusOK, buf.String())
 }
@@ -100,7 +101,8 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			})) + template2.HTML(js),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		true, h.navButtons...)
 
 	ctx.HTML(http.StatusOK, buf.String())
 }
@@ -222,7 +224,8 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		true, h.navButtons...)
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

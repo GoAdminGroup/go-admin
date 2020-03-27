@@ -42,7 +42,8 @@ func Alert(ctx *context.Context, config config.Config, desc, title, msg string, 
 		Content:     template.Get(config.Theme).Alert().Warning(msg),
 		Description: desc,
 		Title:       title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())))
+	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		true)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 

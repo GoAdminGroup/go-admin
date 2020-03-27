@@ -138,7 +138,8 @@ $('.delete-btn').on('click', function (event) {
 			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: desc,
 		Title:       title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())))
+	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		true, h.navButtons...)
 
 	ctx.HTML(http.StatusOK, buf.String())
 }

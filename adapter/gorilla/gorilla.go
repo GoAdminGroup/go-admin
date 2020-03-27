@@ -41,8 +41,8 @@ func (g *Gorilla) Use(router interface{}, plugs []plugins.Plugin) error {
 	return g.GetUse(router, plugs, g)
 }
 
-func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	g.GetContent(ctx, getPanelFn, g)
+func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
+	g.GetContent(ctx, getPanelFn, g, btns...)
 }
 
 type HandlerFunc func(ctx Context) (types.Panel, error)

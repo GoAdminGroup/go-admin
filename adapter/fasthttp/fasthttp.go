@@ -42,8 +42,8 @@ func (fast *Fasthttp) Use(router interface{}, plugs []plugins.Plugin) error {
 	return fast.GetUse(router, plugs, fast)
 }
 
-func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	fast.GetContent(ctx, getPanelFn, fast)
+func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
+	fast.GetContent(ctx, getPanelFn, fast, btns...)
 }
 
 type HandlerFunc func(ctx *fasthttp.RequestCtx) (types.Panel, error)

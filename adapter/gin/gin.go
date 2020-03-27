@@ -40,8 +40,8 @@ func (gins *Gin) Use(router interface{}, plugs []plugins.Plugin) error {
 	return gins.GetUse(router, plugs, gins)
 }
 
-func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
-	gins.GetContent(ctx, getPanelFn, gins)
+func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
+	gins.GetContent(ctx, getPanelFn, gins, btns...)
 }
 
 type HandlerFunc func(ctx *gin.Context) (types.Panel, error)

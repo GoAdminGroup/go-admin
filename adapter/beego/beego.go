@@ -41,7 +41,7 @@ func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(router, plugs, bee)
 }
 
-func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn) {
+func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	bee.GetContent(ctx, getPanelFn, bee)
 }
 

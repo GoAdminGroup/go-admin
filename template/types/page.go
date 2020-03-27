@@ -68,10 +68,23 @@ type Page struct {
 	AssetsList template.HTML
 
 	// Top Nav Buttons
-	NavButtons Buttons
+	navButtons     Buttons
+	NavButtonsHTML template.HTML
 }
 
 func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML, buttons ...Button) *Page {
+
+	footer := cfg.CustomFootHtml
+	navBtn := template.HTML("")
+	btnJS := template.JS("")
+
+	for _, btn := range buttons {
+		footer += btn.GetAction().FooterContent()
+		content, js := btn.Content()
+		navBtn += content
+		btnJS += js
+	}
+
 	return &Page{
 		User:  user,
 		Menu:  menu,
@@ -87,14 +100,15 @@ func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Conf
 		IndexUrl:       cfg.GetIndexURL(),
 		CdnUrl:         cfg.AssetUrl,
 		CustomHeadHtml: cfg.CustomHeadHtml,
-		CustomFootHtml: cfg.CustomFootHtml,
+		CustomFootHtml: footer + template.HTML(`<script>`+btnJS+`</script>`),
 		AssetsList:     assetsList,
-		NavButtons:     buttons,
+		navButtons:     buttons,
+		NavButtonsHTML: navBtn,
 	}
 }
 
 func (page *Page) AddButton(title template.HTML, icon string, action Action) *Page {
-	page.NavButtons = append(page.NavButtons, GetNavButton(title, icon, action))
+	page.navButtons = append(page.navButtons, GetNavButton(title, icon, action))
 	page.CustomFootHtml += action.FooterContent()
 	return page
 }
