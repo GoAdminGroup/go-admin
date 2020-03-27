@@ -138,11 +138,11 @@ func GetEditFormParam(ctx *context.Context) *EditFormParam {
 }
 
 func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection) {
-	response.Alert(ctx, config.Get(), panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
+	response.Alert(ctx, panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
 }
 
 func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn db.Connection) {
-	response.Alert(ctx, config.Get(), desc, title, msg, conn)
+	response.Alert(ctx, desc, title, msg, conn)
 }
 
 func getAlert(msg string) tmpl.HTML {

@@ -34,16 +34,23 @@ func BadRequest(ctx *context.Context, msg string) {
 	})
 }
 
-func Alert(ctx *context.Context, config config.Config, desc, title, msg string, conn db.Connection) {
+func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.Theme).GetTemplate(ctx.IsPjax())
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
-		Content:     template.Get(config.Theme).Alert().Warning(msg),
-		Description: desc,
-		Title:       title,
-	}, config, menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
-		true)
+	tmpl, tmplName := template.Get(config.Get().Theme).GetTemplate(ctx.IsPjax())
+	buf := template.Execute(template.ExecuteParam{
+		User:     user,
+		TmplName: tmplName,
+		Tmpl:     tmpl,
+		Panel: types.Panel{
+			Content:     template.Get(config.Get().Theme).Alert().Warning(msg),
+			Description: desc,
+			Title:       title,
+		},
+		Config:    config.Get(),
+		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+		Animation: true,
+	})
 	ctx.HTML(http.StatusOK, buf.String())
 }
 

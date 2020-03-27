@@ -5,13 +5,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	template2 "html/template"
@@ -55,9 +53,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		infoUrl = referer
 	}
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	hasAnimation := alert == "" || ((len(animation) > 0) && animation[0])
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -74,9 +70,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation, h.navButtons...)
-
-	ctx.HTML(http.StatusOK, buf.String())
+	}, alert == "" || ((len(animation) > 0) && animation[0]))
 
 	if isEdit {
 		ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)

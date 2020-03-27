@@ -286,13 +286,15 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
 		user := auth.Auth(ctx)
-		cfg := config.Get()
 
 		buf := new(bytes.Buffer)
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-			*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
-			panel.GetContent(cfg.IsProductionEnvironment()),
-			cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+			User:    user,
+			Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+			Panel:   panel.GetContent(config.Get().IsProductionEnvironment()),
+			Assets:  template.GetComponentAssetListsHTML(),
+			Buttons: eng.NavButtons,
+		}))
 
 		if hasError != nil {
 			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
@@ -345,10 +347,13 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
-	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path()))),
-		template.WarningPanel(err.Error()).GetContent(cfg.IsProductionEnvironment()),
-		cfg, template.GetComponentAssetListsHTML(), eng.NavButtons...))
+	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		User:    user,
+		Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path())),
+		Panel:   template.WarningPanel(err.Error()).GetContent(cfg.IsProductionEnvironment()),
+		Assets:  template.GetComponentAssetListsHTML(),
+		Buttons: eng.NavButtons,
+	}))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)

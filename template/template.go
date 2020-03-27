@@ -262,23 +262,28 @@ func SetComp(name string, comp Component) {
 	}
 }
 
-func Execute(tmpl *template.Template,
-	tmplName string,
-	user models.UserModel,
-	panel types.Panel,
-	config c.Config,
-	globalMenu *menu.Menu,
-	animation bool, btns ...types.Button) *bytes.Buffer {
+type ExecuteParam struct {
+	User      models.UserModel
+	Tmpl      *template.Template
+	TmplName  string
+	Panel     types.Panel
+	Config    c.Config
+	Menu      *menu.Menu
+	Animation bool
+	Buttons   types.Buttons
+}
+
+func Execute(param ExecuteParam) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
-	err := tmpl.ExecuteTemplate(buf, tmplName,
-		types.NewPage(user,
-			*globalMenu,
-			panel.GetContent(append([]bool{config.IsProductionEnvironment()}, animation)...),
-			config,
-			GetComponentAssetListsHTML(),
-			btns...,
-		))
+	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
+		types.NewPage(types.NewPageParam{
+			User:    param.User,
+			Menu:    param.Menu,
+			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment()}, param.Animation)...),
+			Assets:  GetComponentAssetListsHTML(),
+			Buttons: param.Buttons,
+		}))
 	if err != nil {
 		fmt.Println("Execute err", err)
 	}

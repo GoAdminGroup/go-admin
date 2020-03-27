@@ -9,7 +9,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -50,18 +49,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	panelInfo, err := panel.GetData(params.WithIsAll(false))
 
 	if err != nil {
-		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-		user := auth.Auth(ctx)
-		alert := aAlert().SetTitle(errors.MsgWithIcon).
-			SetTheme("warning").
-			SetContent(template2.HTML(err.Error())).
-			GetContent()
-		return template.Execute(tmpl, tmplName, user, types.Panel{
-			Content:     alert,
+		return h.Execute(ctx, auth.Auth(ctx), types.Panel{
+			Content: aAlert().SetTitle(errors.MsgWithIcon).
+				SetTheme("warning").
+				SetContent(template2.HTML(err.Error())).
+				GetContent(),
 			Description: errors.Msg,
 			Title:       errors.Msg,
-		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-			true, h.navButtons...)
+		})
 	}
 
 	paramStr := params.DeleteIsAll().GetRouteParamStr()
@@ -212,14 +207,11 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	box := boxModel.GetContent()
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-
-	return template.Execute(tmpl, tmplName, user, types.Panel{
+	return h.Execute(ctx, user, types.Panel{
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		params.Animation, h.navButtons...)
+	})
 }
 
 // Assets return front-end assets according the request path.

@@ -2,7 +2,6 @@ package guard
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -38,7 +37,7 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() == "POST" {
 			response.BadRequest(ctx, errors.Msg)
 		} else {
-			response.Alert(ctx, config.Get(), errors.Msg, errors.Msg, "table model not found", g.conn)
+			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn)
 		}
 		ctx.Abort()
 		return

@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
-	"net/http"
 )
 
 // ShowMenu show menu info page.
@@ -36,8 +35,7 @@ func (h *Handler) ShowNewMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -53,10 +51,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			template2.HTML(js),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		true, h.navButtons...)
-
-	ctx.HTML(http.StatusOK, buf.String())
+	})
 }
 
 // ShowEditMenu show edit menu page.
@@ -76,7 +71,6 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 
 	if err != nil {
 		alert = aAlert().Warning(err.Error())
-
 	}
 
 	user := auth.Auth(ctx)
@@ -85,8 +79,7 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 $('.icon').iconpicker({placement: 'bottomLeft'});
 </script>`
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -101,10 +94,7 @@ $('.icon').iconpicker({placement: 'bottomLeft'});
 			})) + template2.HTML(js),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		true, h.navButtons...)
-
-	ctx.HTML(http.StatusOK, buf.String())
+	})
 }
 
 // DeleteMenu delete the menu of given id.
@@ -219,13 +209,9 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		true, h.navButtons...)
-
-	ctx.HTML(http.StatusOK, buf.String())
+	})
 }

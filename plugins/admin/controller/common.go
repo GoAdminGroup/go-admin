@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -14,6 +17,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
+	"net/http"
 	"regexp"
 	"strings"
 	"sync"
@@ -148,6 +152,26 @@ func (h *Handler) OperationHandler(path string, ctx *context.Context) bool {
 		}
 	}
 	return false
+}
+
+func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) {
+	buf := h.Execute(ctx, user, panel, animation...)
+	ctx.HTML(http.StatusOK, buf.String())
+}
+
+func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) *bytes.Buffer {
+	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+
+	return template.Execute(template.ExecuteParam{
+		User:      user,
+		TmplName:  tmplName,
+		Tmpl:      tmpl,
+		Panel:     panel,
+		Config:    h.config,
+		Menu:      menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
+		Buttons:   h.navButtons,
+	})
 }
 
 func isInfoUrl(s string) bool {

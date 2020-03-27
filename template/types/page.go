@@ -72,38 +72,53 @@ type Page struct {
 	NavButtonsHTML template.HTML
 }
 
-func NewPage(user models.UserModel, menu menu.Menu, panel Panel, cfg config.Config, assetsList template.HTML, buttons ...Button) *Page {
+type NewPageParam struct {
+	User    models.UserModel
+	Menu    *menu.Menu
+	Panel   Panel
+	Assets  template.HTML
+	Buttons Buttons
+}
 
-	footer := cfg.CustomFootHtml
+func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
+	navBtnFooter := template.HTML("")
 	navBtn := template.HTML("")
 	btnJS := template.JS("")
 
-	for _, btn := range buttons {
-		footer += btn.GetAction().FooterContent()
+	for _, btn := range param.Buttons {
+		navBtnFooter += btn.GetAction().FooterContent()
 		content, js := btn.Content()
 		navBtn += content
 		btnJS += js
 	}
 
+	return template.HTML(ParseTableDataTmpl(navBtn)),
+		navBtnFooter + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`))
+}
+
+func NewPage(param NewPageParam) *Page {
+
+	navBtn, btnJS := param.NavButtonsAndJS()
+
 	return &Page{
-		User:  user,
-		Menu:  menu,
-		Panel: panel,
+		User:  param.User,
+		Menu:  *param.Menu,
+		Panel: param.Panel,
 		System: SystemInfo{
 			Version: system.Version(),
 		},
-		UrlPrefix:      cfg.AssertPrefix(),
-		Title:          cfg.Title,
-		Logo:           cfg.Logo,
-		MiniLogo:       cfg.MiniLogo,
-		ColorScheme:    cfg.ColorScheme,
-		IndexUrl:       cfg.GetIndexURL(),
-		CdnUrl:         cfg.AssetUrl,
-		CustomHeadHtml: cfg.CustomHeadHtml,
-		CustomFootHtml: footer + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`)),
-		AssetsList:     assetsList,
-		navButtons:     buttons,
-		NavButtonsHTML: template.HTML(ParseTableDataTmpl(navBtn)),
+		UrlPrefix:      config.Get().AssertPrefix(),
+		Title:          config.Get().Title,
+		Logo:           config.Get().Logo,
+		MiniLogo:       config.Get().MiniLogo,
+		ColorScheme:    config.Get().ColorScheme,
+		IndexUrl:       config.Get().GetIndexURL(),
+		CdnUrl:         config.Get().AssetUrl,
+		CustomHeadHtml: config.Get().CustomHeadHtml,
+		CustomFootHtml: config.Get().CustomFootHtml + btnJS,
+		AssetsList:     param.Assets,
+		navButtons:     param.Buttons,
+		NavButtonsHTML: navBtn,
 	}
 }
 

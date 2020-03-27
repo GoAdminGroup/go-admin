@@ -21,21 +21,23 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	panel, err := c(ctx)
 
-	globalConfig := config.Get()
-
 	if err != nil {
 		logger.Error("SetPageContent", err)
 		panel = template.WarningPanel(err.Error())
 	}
 
-	tmpl, tmplName := template.Get(globalConfig.Theme).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(config.Get().Theme).GetTemplate(ctx.IsPjax())
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 
 	buf := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user, conn).SetActiveClass(globalConfig.URLRemovePrefix(ctx.Path()))),
-		panel.GetContent(globalConfig.IsProductionEnvironment()), globalConfig, template.GetComponentAssetListsHTML()))
+
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		User:   user,
+		Menu:   menu.GetGlobalMenu(user, conn).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+		Panel:  panel.GetContent(config.Get().IsProductionEnvironment()),
+		Assets: template.GetComponentAssetListsHTML(),
+	}))
 	if err != nil {
 		logger.Error("SetPageContent", err)
 	}

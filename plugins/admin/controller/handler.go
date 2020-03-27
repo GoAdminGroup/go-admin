@@ -5,15 +5,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
-	"net/http"
 	"regexp"
 	"runtime/debug"
 	"strings"
@@ -57,15 +54,11 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 		user := auth.Auth(ctx)
 
-		tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-		buf := template.Execute(tmpl, tmplName, user, types.Panel{
+		h.HTML(ctx, user, types.Panel{
 			Content:     aAlert().Warning(errMsg),
 			Description: errors.Msg,
 			Title:       errors.Msg,
-		}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-			true, h.navButtons...)
-		ctx.HTML(http.StatusOK, buf.String())
-		return
+		})
 	}
 }
 
@@ -97,8 +90,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: aAlert().Warning(errMsg) + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -116,8 +108,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		true, h.navButtons...)
-	ctx.HTML(http.StatusOK, buf.String())
+	})
+
 	ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

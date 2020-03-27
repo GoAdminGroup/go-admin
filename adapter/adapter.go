@@ -129,9 +129,13 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 	cfg := config.Get()
 
 	buf := new(bytes.Buffer)
-	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(user,
-		*(menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path()))),
-		panel.GetContent(cfg.IsProductionEnvironment()), cfg, template.GetComponentAssetListsHTML(), btns...))
+	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		User:    user,
+		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path())),
+		Panel:   panel.GetContent(cfg.IsProductionEnvironment()),
+		Assets:  template.GetComponentAssetListsHTML(),
+		Buttons: btns,
+	}))
 
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", newBase.Name()), hasError)

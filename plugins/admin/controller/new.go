@@ -5,11 +5,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
@@ -39,9 +37,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		infoUrl = referer
 	}
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	hasAnimation := alert == ""
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetPrefix(h.config.PrefixFixSlash()).
 			SetContent(formInfo.FieldList).
@@ -59,8 +55,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 			SetFooter(panel.GetForm().FooterHtml)),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())), hasAnimation)
-	ctx.HTML(http.StatusOK, buf.String())
+	}, alert == "")
 
 	if isNew {
 		ctx.AddHeader(constant.PjaxUrlHeader, showNewUrl)

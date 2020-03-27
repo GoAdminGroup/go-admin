@@ -2,13 +2,9 @@ package controller
 
 import (
 	"fmt"
-	template2 "html/template"
-	"net/http"
-
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -16,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	template2 "html/template"
 )
 
 func (h *Handler) ShowDetail(ctx *context.Context) {
@@ -126,8 +123,7 @@ $('.delete-btn').on('click', function (event) {
 		alert = aAlert().Warning(err.Error())
 	}
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
-	buf := template.Execute(tmpl, tmplName, user, types.Panel{
+	h.HTML(ctx, user, types.Panel{
 		Content: alert + detailContent(aForm().
 			SetTitle(template.HTML(title)).
 			SetContent(formInfo.FieldList).
@@ -138,8 +134,5 @@ $('.delete-btn').on('click', function (event) {
 			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: desc,
 		Title:       title,
-	}, h.config, menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		true, h.navButtons...)
-
-	ctx.HTML(http.StatusOK, buf.String())
+	})
 }
