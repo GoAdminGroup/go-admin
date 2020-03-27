@@ -147,7 +147,7 @@ func ParseTableDataTmpl(content interface{}) string {
 	t := template.New("row_data_tmpl")
 	t, _ = t.Parse(c)
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, TableRowData{Ids: "selectedRows().join()"})
+	_ = t.Execute(buf, TableRowData{Ids: `typeof(selectedRows)=="function" ? selectedRows().join() : ""`})
 	return buf.String()
 }
 
@@ -155,7 +155,7 @@ func ParseTableDataTmplWithID(id template.HTML, content string) string {
 	t := template.New("row_data_tmpl")
 	t, _ = t.Parse(content)
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, TableRowData{Id: id, Ids: "selectedRows().join()"})
+	_ = t.Execute(buf, TableRowData{Id: id, Ids: `typeof(selectedRows)=="function" ? selectedRows().join() : ""`})
 	return buf.String()
 }
 
