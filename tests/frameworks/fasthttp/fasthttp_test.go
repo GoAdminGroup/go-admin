@@ -8,7 +8,7 @@ import (
 )
 
 func TestFasthttp(t *testing.T) {
-	common.Test(httpexpect.WithConfig(httpexpect.Config{
+	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
 			Transport: httpexpect.NewFastBinder(newHandler()),
 			Jar:       httpexpect.NewJar(),

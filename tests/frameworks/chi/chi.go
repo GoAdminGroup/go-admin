@@ -3,6 +3,11 @@ package chi
 import (
 	// add chi adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/chi"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/themes/adminlte"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -25,7 +30,7 @@ import (
 	"os"
 )
 
-func newChiHandler() http.Handler {
+func newHandler() http.Handler {
 	r := chi.NewRouter()
 
 	eng := engine.Default()
@@ -37,6 +42,35 @@ func newChiHandler() http.Handler {
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin, examplePlugin).Use(r); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	return r
+}
+
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+	r := chi.NewRouter()
+
+	eng := engine.Default()
+
+	adminPlugin := admin.NewAdmin(gens)
+	template.AddComp(chartjs.NewChart())
+
+	if err := eng.AddConfig(config.Config{
+		Databases: dbs,
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
+	}).
+		AddPlugins(adminPlugin).Use(r); err != nil {
 		panic(err)
 	}
 

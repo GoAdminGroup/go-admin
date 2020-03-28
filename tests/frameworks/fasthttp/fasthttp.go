@@ -3,6 +3,11 @@ package fasthttp
 import (
 	// add fasthttp adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/fasthttp"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/themes/adminlte"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -35,6 +40,39 @@ func newHandler() fasthttp.RequestHandler {
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
+		AddPlugins(adminPlugin).
+		Use(router); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	return func(ctx *fasthttp.RequestCtx) {
+		router.Handler(ctx)
+	}
+}
+
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.RequestHandler {
+	router := fasthttprouter.New()
+
+	eng := engine.Default()
+
+	adminPlugin := admin.NewAdmin(gens).AddDisplayFilterXssJsFilter()
+
+	template.AddComp(chartjs.NewChart())
+
+	if err := eng.AddConfig(config.Config{
+		Databases: dbs,
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
+	}).
 		AddPlugins(adminPlugin).
 		Use(router); err != nil {
 		panic(err)

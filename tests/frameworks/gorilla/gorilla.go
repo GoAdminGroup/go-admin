@@ -3,6 +3,11 @@ package gorilla
 import (
 	// add gorilla adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/themes/adminlte"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -25,7 +30,7 @@ import (
 	"os"
 )
 
-func newGorillaHandler() http.Handler {
+func newHandler() http.Handler {
 	app := mux.NewRouter()
 	eng := engine.Default()
 
@@ -35,6 +40,34 @@ func newGorillaHandler() http.Handler {
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(admin.NewAdmin(tables.Generators).
 			AddGenerator("user", tables.GetUserTable), examplePlugin).
+		Use(app); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	return app
+}
+
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+	app := mux.NewRouter()
+	eng := engine.Default()
+
+	template.AddComp(chartjs.NewChart())
+
+	if err := eng.AddConfig(config.Config{
+		Databases: dbs,
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
+	}).
+		AddPlugins(admin.NewAdmin(gens)).
 		Use(app); err != nil {
 		panic(err)
 	}

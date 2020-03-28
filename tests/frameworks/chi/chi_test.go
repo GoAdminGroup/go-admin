@@ -8,9 +8,9 @@ import (
 )
 
 func TestChi(t *testing.T) {
-	common.Test(httpexpect.WithConfig(httpexpect.Config{
+	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewBinder(newChiHandler()),
+			Transport: httpexpect.NewBinder(newHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

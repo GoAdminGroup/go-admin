@@ -3,6 +3,11 @@ package iris
 import (
 	// add iris adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/themes/adminlte"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -26,7 +31,7 @@ import (
 	"os"
 )
 
-func newIrisHandler() http.Handler {
+func newHandler() http.Handler {
 	app := iris.New()
 
 	eng := engine.Default()
@@ -37,6 +42,41 @@ func newIrisHandler() http.Handler {
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
+		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	if err := app.Build(); err != nil {
+		panic(err)
+	}
+
+	return app.Router
+}
+
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+	app := iris.New()
+
+	eng := engine.Default()
+
+	adminPlugin := admin.NewAdmin(gens)
+
+	examplePlugin := example.NewExample()
+	template.AddComp(chartjs.NewChart())
+
+	if err := eng.AddConfig(config.Config{
+		Databases: dbs,
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
+	}).
 		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}

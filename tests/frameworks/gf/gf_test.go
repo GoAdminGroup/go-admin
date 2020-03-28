@@ -8,7 +8,7 @@ import (
 )
 
 func TestGf(t *testing.T) {
-	common.Test(httpexpect.WithConfig(httpexpect.Config{
+	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
 			Transport: httpexpect.NewBinder(newHandler()),
 			Jar:       httpexpect.NewJar(),

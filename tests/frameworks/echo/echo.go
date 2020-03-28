@@ -3,6 +3,11 @@ package echo
 import (
 	// add echo adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/themes/adminlte"
+
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -25,7 +30,7 @@ import (
 	"os"
 )
 
-func newEchoHandler() http.Handler {
+func newHandler() http.Handler {
 	e := echo.New()
 
 	eng := engine.Default()
@@ -38,6 +43,36 @@ func newEchoHandler() http.Handler {
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin, examplePlugin).Use(e); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	return e
+}
+
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+	e := echo.New()
+
+	eng := engine.Default()
+
+	adminPlugin := admin.NewAdmin(gens)
+
+	template.AddComp(chartjs.NewChart())
+
+	if err := eng.AddConfig(config.Config{
+		Databases: dbs,
+		UrlPrefix: "admin",
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:    language.EN,
+		IndexUrl:    "/",
+		Debug:       true,
+		ColorScheme: adminlte.ColorschemeSkinBlack,
+	}).
+		AddPlugins(adminPlugin).Use(e); err != nil {
 		panic(err)
 	}
 
