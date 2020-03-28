@@ -137,7 +137,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 
 	// TODO: use transaction
 	deleteRolesErr := menuModel.DeleteRoles()
-	if deleteRolesErr != nil && !db.IgnoreOrNot(deleteRolesErr) {
+	if db.CheckError(deleteRolesErr, db.DELETE) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 		h.showEditMenu(ctx, formInfo, deleteRolesErr)
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -145,7 +145,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 	}
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
-		if addRoleErr != nil && !db.IgnoreOrNot(addRoleErr) {
+		if db.CheckError(addRoleErr, db.INSERT) {
 			formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 			h.showEditMenu(ctx, formInfo, addRoleErr)
 			ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -155,7 +155,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 
 	_, updateErr := menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
-	if updateErr != nil && !db.IgnoreOrNot(updateErr) {
+	if db.CheckError(updateErr, db.UPDATE) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 		h.showEditMenu(ctx, formInfo, updateErr)
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -185,14 +185,14 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 	menuModel, createErr := models.Menu().SetConn(h.conn).
 		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user, h.conn)).MaxOrder+1)
 
-	if createErr != nil && !db.IgnoreOrNot(createErr) {
+	if db.CheckError(createErr, db.INSERT) {
 		h.showNewMenu(ctx, createErr)
 		return
 	}
 
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
-		if addRoleErr != nil && !db.IgnoreOrNot(addRoleErr) {
+		if db.CheckError(addRoleErr, db.INSERT) {
 			h.showNewMenu(ctx, addRoleErr)
 			return
 		}

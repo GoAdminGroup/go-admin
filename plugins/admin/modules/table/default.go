@@ -613,15 +613,9 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
-	// TODO: some errors should be ignored.
-	if err != nil && !strings.Contains(err.Error(), "no affect") {
-		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
-			return err
-		}
-		if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
-			!strings.Contains(err.Error(), "There is no generated identity value") {
-			return err
-		}
+	// NOTE: some errors should be ignored.
+	if db.CheckError(err, db.UPDATE) {
+		return err
 	}
 
 	// NOTE: Database Transaction may be considered here.
@@ -669,15 +663,9 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	id, err := tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
-	// TODO: some errors should be ignored.
-	if err != nil {
-		if tb.connectionDriver != db.DriverPostgresql && tb.connectionDriver != db.DriverMssql {
-			return err
-		}
-		if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
-			!strings.Contains(err.Error(), "There is no generated identity value") {
-			return err
-		}
+	// NOTE: some errors should be ignored.
+	if db.CheckError(err, db.INSERT) {
+		return err
 	}
 
 	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))

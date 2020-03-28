@@ -112,11 +112,45 @@ func GetAggregationExpression(driver, field, headField, delimiter string) string
 	}
 }
 
-func IgnoreOrNot(err error) bool {
-	if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
-		!strings.Contains(err.Error(), "There is no generated identity value") &&
-		!strings.Contains(err.Error(), "no affect") {
+const (
+	INSERT = 0
+	DELETE = 1
+	UPDATE = 2
+	QUERY  = 3
+)
+
+var ignoreErrors = [...][]string{
+	// insert
+	{
+		"LastInsertId is not supported",
+		"There is no generated identity value",
+	},
+	// delete
+	{
+		"no affect",
+	},
+	// update
+	{
+		"LastInsertId is not supported",
+		"There is no generated identity value",
+		"no affect",
+	},
+	// query
+	{
+		"LastInsertId is not supported",
+		"There is no generated identity value",
+		"no affect",
+	},
+}
+
+func CheckError(err error, t int) bool {
+	if err == nil {
 		return false
+	}
+	for _, msg := range ignoreErrors[t] {
+		if strings.Contains(err.Error(), msg) {
+			return false
+		}
 	}
 	return true
 }

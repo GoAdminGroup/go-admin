@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -46,6 +47,11 @@ func UserWithId(id string) UserModel {
 
 func (t UserModel) SetConn(con db.Connection) UserModel {
 	t.Conn = con
+	return t
+}
+
+func (t UserModel) WithTx(tx *sql.Tx) UserModel {
+	t.Tx = tx
 	return t
 }
 
@@ -326,9 +332,9 @@ func (t UserModel) WithMenus() UserModel {
 }
 
 // New create a user model.
-func (t UserModel) New(username, password, name, avatar string) UserModel {
+func (t UserModel) New(username, password, name, avatar string) (UserModel, error) {
 
-	id, _ := t.Table(t.TableName).Insert(dialect.H{
+	id, err := t.WithTx(t.Tx).Table(t.TableName).Insert(dialect.H{
 		"username": username,
 		"password": password,
 		"name":     name,
@@ -341,11 +347,11 @@ func (t UserModel) New(username, password, name, avatar string) UserModel {
 	t.Avatar = avatar
 	t.Name = name
 
-	return t
+	return t, err
 }
 
 // Update update the user model.
-func (t UserModel) Update(username, password, name, avatar string) UserModel {
+func (t UserModel) Update(username, password, name, avatar string) (int64, error) {
 
 	fieldValues := dialect.H{
 		"username":   username,
@@ -363,15 +369,9 @@ func (t UserModel) Update(username, password, name, avatar string) UserModel {
 		t.Avatar = avatar
 	}
 
-	_, _ = t.Table(t.TableName).
+	return t.WithTx(t.Tx).Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(fieldValues)
-
-	t.UserName = username
-	t.Password = password
-	t.Name = name
-
-	return t
 }
 
 // UpdatePwd update the password of the user model.
@@ -397,23 +397,24 @@ func (t UserModel) CheckRoleId(roleId string) bool {
 }
 
 // DeleteRoles delete all the roles of the user model.
-func (t UserModel) DeleteRoles() {
-	_ = t.Table("goadmin_role_users").
+func (t UserModel) DeleteRoles() error {
+	return t.Table("goadmin_role_users").
 		Where("user_id", "=", t.Id).
 		Delete()
 }
 
 // AddRole add a role of the user model.
-func (t UserModel) AddRole(roleId string) {
+func (t UserModel) AddRole(roleId string) (int64, error) {
 	if roleId != "" {
 		if !t.CheckRoleId(roleId) {
-			_, _ = t.Table("goadmin_role_users").
+			return t.WithTx(t.Tx).Table("goadmin_role_users").
 				Insert(dialect.H{
 					"role_id": roleId,
 					"user_id": t.Id,
 				})
 		}
 	}
+	return 0, nil
 }
 
 // CheckRole check the role of the user.
@@ -448,23 +449,24 @@ func (t UserModel) CheckPermission(permission string) bool {
 }
 
 // DeletePermissions delete all the permissions of the user model.
-func (t UserModel) DeletePermissions() {
-	_ = t.Table("goadmin_user_permissions").
+func (t UserModel) DeletePermissions() error {
+	return t.WithTx(t.Tx).Table("goadmin_user_permissions").
 		Where("user_id", "=", t.Id).
 		Delete()
 }
 
 // AddPermission add a permission of the user model.
-func (t UserModel) AddPermission(permissionId string) {
+func (t UserModel) AddPermission(permissionId string) (int64, error) {
 	if permissionId != "" {
 		if !t.CheckPermissionById(permissionId) {
-			_, _ = t.Table("goadmin_user_permissions").
+			return t.WithTx(t.Tx).Table("goadmin_user_permissions").
 				Insert(dialect.H{
 					"permission_id": permissionId,
 					"user_id":       t.Id,
 				})
 		}
 	}
+	return 0, nil
 }
 
 // MapToModel get the user model from given map.

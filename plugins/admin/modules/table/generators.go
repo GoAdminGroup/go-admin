@@ -87,8 +87,8 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 					WhereIn("user_id", ids).
 					Delete()
 
-				if deleteUserRoleErr != nil && notNoAffectRow(deleteUserRoleErr) {
-					return deleteUserRoleErr, map[string]interface{}{}
+				if db.CheckError(deleteUserRoleErr, db.DELETE) {
+					return deleteUserRoleErr, nil
 				}
 
 				deleteUserPermissionErr := s.connection().WithTx(tx).
@@ -96,8 +96,8 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 					WhereIn("user_id", ids).
 					Delete()
 
-				if deleteUserPermissionErr != nil && notNoAffectRow(deleteUserPermissionErr) {
-					return deleteUserPermissionErr, map[string]interface{}{}
+				if db.CheckError(deleteUserPermissionErr, db.DELETE) {
+					return deleteUserPermissionErr, nil
 				}
 
 				deleteUserErr := s.connection().WithTx(tx).
@@ -105,11 +105,11 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 					WhereIn("id", ids).
 					Delete()
 
-				if deleteUserErr != nil {
-					return deleteUserErr, map[string]interface{}{}
+				if db.CheckError(deleteUserErr, db.DELETE) {
+					return deleteUserErr, nil
 				}
 
-				return nil, map[string]interface{}{}
+				return nil, nil
 			})
 
 			return txErr
@@ -186,19 +186,44 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			password = encodePassword([]byte(values.Get("password")))
 		}
 
-		user.Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+		_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-		user.DeleteRoles()
-		for i := 0; i < len(values["role_id[]"]); i++ {
-			user.AddRole(values["role_id[]"][i])
-		}
+			_, updateUserErr := user.WithTx(tx).Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
 
-		user.DeletePermissions()
-		for i := 0; i < len(values["permission_id[]"]); i++ {
-			user.AddPermission(values["permission_id[]"][i])
-		}
+			if db.CheckError(updateUserErr, db.UPDATE) {
+				return updateUserErr, nil
+			}
 
-		return nil
+			delRoleErr := user.WithTx(tx).DeleteRoles()
+
+			if db.CheckError(delRoleErr, db.DELETE) {
+				return delRoleErr, nil
+			}
+
+			for i := 0; i < len(values["role_id[]"]); i++ {
+				_, addRoleErr := user.WithTx(tx).AddRole(values["role_id[]"][i])
+				if db.CheckError(addRoleErr, db.INSERT) {
+					return addRoleErr, nil
+				}
+			}
+
+			delPermissionErr := user.WithTx(tx).DeletePermissions()
+
+			if db.CheckError(delPermissionErr, db.DELETE) {
+				return delPermissionErr, nil
+			}
+
+			for i := 0; i < len(values["permission_id[]"]); i++ {
+				_, addPermissionErr := user.WithTx(tx).AddPermission(values["permission_id[]"][i])
+				if db.CheckError(addPermissionErr, db.INSERT) {
+					return addPermissionErr, nil
+				}
+			}
+
+			return nil, nil
+		})
+
+		return txErr
 	})
 	formList.SetInsertFn(func(values form2.Values) error {
 		if values.IsEmpty("name", "username", "password") {
@@ -211,21 +236,34 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			return errors.New("password does not match")
 		}
 
-		user := models.User().SetConn(s.conn).New(values.Get("username"),
-			encodePassword([]byte(values.Get("password"))),
-			values.Get("name"),
-			values.Get("avatar"))
+		_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-		// TODO: Add transaction support.
+			user, createUserErr := models.User().WithTx(tx).SetConn(s.conn).New(values.Get("username"),
+				encodePassword([]byte(values.Get("password"))),
+				values.Get("name"),
+				values.Get("avatar"))
 
-		for i := 0; i < len(values["role_id[]"]); i++ {
-			user.AddRole(values["role_id[]"][i])
-		}
+			if db.CheckError(createUserErr, db.INSERT) {
+				return createUserErr, nil
+			}
 
-		for i := 0; i < len(values["permission_id[]"]); i++ {
-			user.AddPermission(values["permission_id[]"][i])
-		}
-		return nil
+			for i := 0; i < len(values["role_id[]"]); i++ {
+				_, addRoleErr := user.WithTx(tx).AddRole(values["role_id[]"][i])
+				if db.CheckError(addRoleErr, db.INSERT) {
+					return addRoleErr, nil
+				}
+			}
+
+			for i := 0; i < len(values["permission_id[]"]); i++ {
+				_, addPermissionErr := user.WithTx(tx).AddPermission(values["permission_id[]"][i])
+				if db.CheckError(addPermissionErr, db.INSERT) {
+					return addPermissionErr, nil
+				}
+			}
+
+			return nil, nil
+		})
+		return txErr
 	})
 
 	detail := ManagerTable.GetDetail()
@@ -347,8 +385,8 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 					WhereIn("user_id", ids).
 					Delete()
 
-				if deleteUserRoleErr != nil && notNoAffectRow(deleteUserRoleErr) {
-					return deleteUserRoleErr, map[string]interface{}{}
+				if db.CheckError(deleteUserRoleErr, db.DELETE) {
+					return deleteUserRoleErr, nil
 				}
 
 				deleteUserPermissionErr := s.connection().WithTx(tx).
@@ -356,8 +394,8 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 					WhereIn("user_id", ids).
 					Delete()
 
-				if deleteUserPermissionErr != nil && notNoAffectRow(deleteUserPermissionErr) {
-					return deleteUserPermissionErr, map[string]interface{}{}
+				if db.CheckError(deleteUserPermissionErr, db.DELETE) {
+					return deleteUserPermissionErr, nil
 				}
 
 				deleteUserErr := s.connection().WithTx(tx).
@@ -365,11 +403,11 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 					WhereIn("id", ids).
 					Delete()
 
-				if deleteUserErr != nil {
-					return deleteUserErr, map[string]interface{}{}
+				if db.CheckError(deleteUserErr, db.DELETE) {
+					return deleteUserErr, nil
 				}
 
-				return nil, map[string]interface{}{}
+				return nil, nil
 			})
 
 			return txErr
@@ -414,7 +452,11 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 			password = encodePassword([]byte(values.Get("password")))
 		}
 
-		user.Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+		_, updateUserErr := user.Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+
+		if db.CheckError(updateUserErr, db.UPDATE) {
+			return updateUserErr
+		}
 
 		return nil
 	})
@@ -433,10 +475,14 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 			return errors.New(errs.NoPermission)
 		}
 
-		models.User().SetConn(s.conn).New(values.Get("username"),
+		_, createUserErr := models.User().SetConn(s.conn).New(values.Get("username"),
 			encodePassword([]byte(values.Get("password"))),
 			values.Get("name"),
 			values.Get("avatar"))
+
+		if db.CheckError(createUserErr, db.INSERT) {
+			return createUserErr
+		}
 
 		return nil
 	})
@@ -488,8 +534,8 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 					WhereIn("permission_id", ids).
 					Delete()
 
-				if deleteRolePermissionErr != nil && notNoAffectRow(deleteRolePermissionErr) {
-					return deleteRolePermissionErr, map[string]interface{}{}
+				if db.CheckError(deleteRolePermissionErr, db.DELETE) {
+					return deleteRolePermissionErr, nil
 				}
 
 				deleteUserPermissionErr := s.connection().WithTx(tx).
@@ -497,8 +543,8 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 					WhereIn("permission_id", ids).
 					Delete()
 
-				if deleteUserPermissionErr != nil && notNoAffectRow(deleteUserPermissionErr) {
-					return deleteUserPermissionErr, map[string]interface{}{}
+				if db.CheckError(deleteUserPermissionErr, db.DELETE) {
+					return deleteUserPermissionErr, nil
 				}
 
 				deletePermissionsErr := s.connection().WithTx(tx).
@@ -507,10 +553,10 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 					Delete()
 
 				if deletePermissionsErr != nil {
-					return deletePermissionsErr, map[string]interface{}{}
+					return deletePermissionsErr, nil
 				}
 
-				return nil, map[string]interface{}{}
+				return nil, nil
 			})
 
 			return txErr
@@ -592,8 +638,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					WhereIn("role_id", ids).
 					Delete()
 
-				if deleteRoleUserErr != nil && notNoAffectRow(deleteRoleUserErr) {
-					return deleteRoleUserErr, map[string]interface{}{}
+				if db.CheckError(deleteRoleUserErr, db.DELETE) {
+					return deleteRoleUserErr, nil
 				}
 
 				deleteRoleMenuErr := s.connection().WithTx(tx).
@@ -601,8 +647,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					WhereIn("role_id", ids).
 					Delete()
 
-				if deleteRoleMenuErr != nil && notNoAffectRow(deleteRoleMenuErr) {
-					return deleteRoleMenuErr, map[string]interface{}{}
+				if db.CheckError(deleteRoleMenuErr, db.DELETE) {
+					return deleteRoleMenuErr, nil
 				}
 
 				deleteRolePermissionErr := s.connection().WithTx(tx).
@@ -610,8 +656,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					WhereIn("role_id", ids).
 					Delete()
 
-				if deleteRolePermissionErr != nil && notNoAffectRow(deleteRolePermissionErr) {
-					return deleteRolePermissionErr, map[string]interface{}{}
+				if db.CheckError(deleteRolePermissionErr, db.DELETE) {
+					return deleteRolePermissionErr, nil
 				}
 
 				deleteRolesErr := s.connection().WithTx(tx).
@@ -619,11 +665,11 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 					WhereIn("id", ids).
 					Delete()
 
-				if deleteRolesErr != nil {
-					return deleteRolesErr, map[string]interface{}{}
+				if db.CheckError(deleteRolesErr, db.DELETE) {
+					return deleteRolesErr, nil
 				}
 
-				return nil, map[string]interface{}{}
+				return nil, nil
 			})
 
 			return txErr
@@ -668,14 +714,31 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 		role := models.RoleWithId(values.Get("id")).SetConn(s.conn)
 
-		role.Update(values.Get("name"), values.Get("slug"))
+		_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-		role.DeletePermissions()
-		for i := 0; i < len(values["permission_id[]"]); i++ {
-			role.AddPermission(values["permission_id[]"][i])
-		}
+			_, updateRoleErr := role.WithTx(tx).Update(values.Get("name"), values.Get("slug"))
 
-		return nil
+			if db.CheckError(updateRoleErr, db.UPDATE) {
+				return updateRoleErr, nil
+			}
+
+			delPermissionErr := role.WithTx(tx).DeletePermissions()
+
+			if db.CheckError(delPermissionErr, db.DELETE) {
+				return delPermissionErr, nil
+			}
+
+			for i := 0; i < len(values["permission_id[]"]); i++ {
+				_, addPermissionErr := role.WithTx(tx).AddPermission(values["permission_id[]"][i])
+				if db.CheckError(addPermissionErr, db.INSERT) {
+					return addPermissionErr, nil
+				}
+			}
+
+			return nil, nil
+		})
+
+		return txErr
 	})
 
 	formList.SetInsertFn(func(values form2.Values) error {
@@ -684,13 +747,24 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 			return errors.New("slug exists")
 		}
 
-		role := models.Role().SetConn(s.conn).New(values.Get("name"), values.Get("slug"))
+		_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
+			role, createRoleErr := models.Role().WithTx(tx).SetConn(s.conn).New(values.Get("name"), values.Get("slug"))
 
-		for i := 0; i < len(values["permission_id[]"]); i++ {
-			role.AddPermission(values["permission_id[]"][i])
-		}
+			if db.CheckError(createRoleErr, db.INSERT) {
+				return createRoleErr, nil
+			}
 
-		return nil
+			for i := 0; i < len(values["permission_id[]"]); i++ {
+				_, addPermissionErr := role.WithTx(tx).AddPermission(values["permission_id[]"][i])
+				if db.CheckError(addPermissionErr, db.INSERT) {
+					return addPermissionErr, nil
+				}
+			}
+
+			return nil, nil
+		})
+
+		return txErr
 	})
 
 	return
@@ -787,8 +861,8 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 					WhereIn("menu_id", ids).
 					Delete()
 
-				if deleteRoleMenuErr != nil && notNoAffectRow(deleteRoleMenuErr) {
-					return deleteRoleMenuErr, map[string]interface{}{}
+				if db.CheckError(deleteRoleMenuErr, db.DELETE) {
+					return deleteRoleMenuErr, nil
 				}
 
 				deleteMenusErr := s.connection().WithTx(tx).
@@ -796,8 +870,8 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 					WhereIn("id", ids).
 					Delete()
 
-				if deleteMenusErr != nil {
-					return deleteMenusErr, map[string]interface{}{}
+				if db.CheckError(deleteMenusErr, db.DELETE) {
+					return deleteMenusErr, nil
 				}
 
 				return nil, map[string]interface{}{}
@@ -906,8 +980,4 @@ func interfaces(arr []string) []interface{} {
 	}
 
 	return iarr
-}
-
-func notNoAffectRow(s error) bool {
-	return s.Error() != "no affect row"
 }
