@@ -157,6 +157,9 @@ type Config struct {
 	// The url redirect to after login.
 	IndexUrl string `json:"index",yaml:"index",ini:"index"`
 
+	// Login page URL
+	LoginUrl string `json:"login_url",yaml:"login_url",ini:"login_url"`
+
 	// Debug mode
 	Debug bool `json:"debug",yaml:"debug",ini:"debug"`
 
@@ -397,6 +400,7 @@ func Set(cfg Config) Config {
 	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
 	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")
 	cfg.IndexUrl = setDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.LoginUrl = setDefault(cfg.LoginUrl, "", "/login")
 	cfg.AuthUserTable = setDefault(cfg.AuthUserTable, "", "goadmin_users")
 	cfg.ColorScheme = setDefault(cfg.ColorScheme, "", "skin-black")
 	cfg.FileUploadEngine.Name = setDefault(cfg.FileUploadEngine.Name, "", "local")

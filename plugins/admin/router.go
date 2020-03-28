@@ -14,7 +14,7 @@ func (admin *Admin) initRouter(prefix string) *Admin {
 	route := app.Group(prefix, admin.globalErrorHandler)
 
 	// auth
-	route.GET("/login", admin.handler.ShowLogin)
+	route.GET(config.Get().LoginUrl, admin.handler.ShowLogin)
 	route.POST("/signin", admin.handler.Auth)
 
 	// auto install
