@@ -84,12 +84,19 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	h.showEditMenu(ctx, formInfo)
+	h.showEditMenu(ctx, formInfo, nil)
 }
 
-func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo) {
+func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, err error) {
+
+	var alert template2.HTML
+
+	if err != nil {
+		alert = aAlert().Warning(err.Error())
+	}
+
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
-		Content: formContent(aForm().
+		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
@@ -129,25 +136,28 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 
 	// TODO: use transaction
 	deleteRolesErr := menuModel.DeleteRoles()
-	if deleteRolesErr != nil {
+	if deleteRolesErr != nil && deleteRolesErr.Error() != "no affect row" {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-		h.showEditMenu(ctx, formInfo)
+		h.showEditMenu(ctx, formInfo, deleteRolesErr)
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
 		return
 	}
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
 		if addRoleErr != nil {
 			formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-			h.showEditMenu(ctx, formInfo)
+			h.showEditMenu(ctx, formInfo, addRoleErr)
+			ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
 			return
 		}
 	}
 
 	_, updateErr := menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
-	if updateErr != nil {
+	if updateErr != nil && updateErr.Error() != "no affect row" {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-		h.showEditMenu(ctx, formInfo)
+		h.showEditMenu(ctx, formInfo, updateErr)
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
 		return
 	}
 
