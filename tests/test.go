@@ -10,6 +10,7 @@ import (
 	"github.com/gavv/httpexpect"
 	fasthttp2 "github.com/valyala/fasthttp"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -115,9 +116,7 @@ func Cleaner(config config.DatabaseList) {
 }
 
 func BlackBoxTestSuitOfBuiltInTables(t *testing.T, fn HandlerGenFn, config config.DatabaseList, isFasthttp ...bool) {
-	BlackBoxTestSuit(t, fn, config, nil, func() {
-		Cleaner(config)
-	}, common.Test, isFasthttp...)
+	BlackBoxTestSuit(t, fn, config, nil, Cleaner, common.Test, isFasthttp...)
 }
 
 func checkErr(_ interface{}, err error) {
@@ -129,10 +128,10 @@ func checkErr(_ interface{}, err error) {
 func BlackBoxTestSuit(t *testing.T, fn HandlerGenFn,
 	config config.DatabaseList,
 	gens table.GeneratorList,
-	cleaner func(),
+	cleaner DataCleaner,
 	tester func(e *httpexpect.Expect), isFasthttp ...bool) {
 	// Clean Data
-	cleaner()
+	cleaner(config)
 	// Test
 	if len(isFasthttp) > 0 && isFasthttp[0] {
 		tester(httpexpect.WithConfig(httpexpect.Config{
@@ -153,5 +152,6 @@ func BlackBoxTestSuit(t *testing.T, fn HandlerGenFn,
 	}
 }
 
+type DataCleaner func(config config.DatabaseList)
 type HandlerGenFn func(config config.DatabaseList, gens table.GeneratorList) http.Handler
 type FasthttpHandlerGenFn func(config config.DatabaseList, gens table.GeneratorList) fasthttp2.RequestHandler
