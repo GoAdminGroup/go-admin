@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
@@ -136,7 +137,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 
 	// TODO: use transaction
 	deleteRolesErr := menuModel.DeleteRoles()
-	if deleteRolesErr != nil && deleteRolesErr.Error() != "no affect row" {
+	if deleteRolesErr != nil && !db.IgnoreOrNot(deleteRolesErr) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 		h.showEditMenu(ctx, formInfo, deleteRolesErr)
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -144,7 +145,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 	}
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
-		if addRoleErr != nil {
+		if addRoleErr != nil && !db.IgnoreOrNot(addRoleErr) {
 			formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 			h.showEditMenu(ctx, formInfo, addRoleErr)
 			ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -154,7 +155,7 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 
 	_, updateErr := menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
 
-	if updateErr != nil && updateErr.Error() != "no affect row" {
+	if updateErr != nil && !db.IgnoreOrNot(updateErr) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
 		h.showEditMenu(ctx, formInfo, updateErr)
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -184,14 +185,14 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 	menuModel, createErr := models.Menu().SetConn(h.conn).
 		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user, h.conn)).MaxOrder+1)
 
-	if createErr != nil {
+	if createErr != nil && !db.IgnoreOrNot(createErr) {
 		h.showNewMenu(ctx, createErr)
 		return
 	}
 
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
-		if addRoleErr != nil {
+		if addRoleErr != nil && !db.IgnoreOrNot(addRoleErr) {
 			h.showNewMenu(ctx, addRoleErr)
 			return
 		}

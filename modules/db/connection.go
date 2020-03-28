@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"strings"
 )
 
 const (
@@ -109,4 +110,13 @@ func GetAggregationExpression(driver, field, headField, delimiter string) string
 	default:
 		panic("wrong driver")
 	}
+}
+
+func IgnoreOrNot(err error) bool {
+	if !strings.Contains(err.Error(), "LastInsertId is not supported") &&
+		!strings.Contains(err.Error(), "There is no generated identity value") &&
+		!strings.Contains(err.Error(), "no affect") {
+		return false
+	}
+	return true
 }
