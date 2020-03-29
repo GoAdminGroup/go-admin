@@ -1,7 +1,10 @@
 package form
 
+import "errors"
+
 const (
 	PostTypeKey           = "__go_admin_post_type"
+	PostResultKey         = "__go_admin_post_result"
 	PostIsSingleUpdateKey = "__go_admin_is_single_update"
 
 	PreviousKey = "__go_admin_previous_"
@@ -65,6 +68,14 @@ func (f Values) IsUpdatePost() bool {
 
 func (f Values) IsInsertPost() bool {
 	return f.Get(PostTypeKey) == "1"
+}
+
+func (f Values) PostError() error {
+	msg := f.Get(PostResultKey)
+	if msg == "" {
+		return nil
+	}
+	return errors.New(msg)
 }
 
 func (f Values) IsSingleUpdatePost() bool {

@@ -635,8 +635,14 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "0")
 
+	var (
+		errMsg = ""
+		err    error
+	)
+
 	if tb.Form.PostHook != nil {
 		defer func() {
+			dataList.Add(form.PostResultKey, errMsg)
 			go func() {
 				defer func() {
 					if err := recover(); err != nil {
@@ -654,25 +660,33 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	if tb.Form.Validator != nil {
 		if err := tb.Form.Validator(dataList); err != nil {
+			errMsg = "post error: " + err.Error()
 			return err
 		}
 	}
 
 	if tb.Form.UpdateFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		return tb.Form.UpdateFn(dataList)
+		err = tb.Form.UpdateFn(dataList)
+		if err != nil {
+			errMsg = "post error: " + err.Error()
+		}
+		return err
 	}
 
 	if tb.Form.PreProcessFn != nil {
 		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
-	_, err := tb.sql().Table(tb.Form.Table).
+	_, err = tb.sql().Table(tb.Form.Table).
 		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.UPDATE) {
+		if err != nil {
+			errMsg = "post error: " + err.Error()
+		}
 		return err
 	}
 
@@ -685,13 +699,15 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 	dataList.Add(form.PostTypeKey, "1")
 
 	var (
-		id  = int64(0)
-		err error
+		id     = int64(0)
+		err    error
+		errMsg = ""
 	)
 
 	if tb.Form.PostHook != nil {
 		defer func() {
 			dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
+			dataList.Add(form.PostResultKey, errMsg)
 
 			go func() {
 				defer func() {
@@ -710,13 +726,18 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	if tb.Form.Validator != nil {
 		if err := tb.Form.Validator(dataList); err != nil {
+			errMsg = "post error: " + err.Error()
 			return err
 		}
 	}
 
 	if tb.Form.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		return tb.Form.InsertFn(dataList)
+		err = tb.Form.InsertFn(dataList)
+		if err != nil {
+			errMsg = "post error: " + err.Error()
+		}
+		return err
 	}
 
 	if tb.Form.PreProcessFn != nil {
@@ -727,6 +748,7 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.INSERT) {
+		errMsg = "post error: " + err.Error()
 		return err
 	}
 
