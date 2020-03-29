@@ -53,6 +53,7 @@ func main() {
 		Language: language.CN,
 		IndexUrl: "/",
 		Debug:    true,
+		SqlLog:   true,
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},

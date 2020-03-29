@@ -1,9 +1,22 @@
 package web
 
 import (
-	"github.com/stretchr/testify/assert"
-	"strings"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/gin-gonic/gin"
+	"io/ioutil"
+	"os"
 	"testing"
+
+	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
+	"log"
+
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/template"
 )
 
 const (
@@ -140,275 +153,359 @@ const (
 	loginPagePasswordInput = `//*[@id="password"]`
 )
 
-func TestLogin(t *testing.T) {
-	defer StopDriverOnPanic(t)
+var (
+	debugMode  = false
+	optionList = []string{
+		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
+		"--window-size=1500,900",
+		"--incognito",
+		"--blink-settings=imagesEnabled=true",
+		"--no-default-browser-check",
+		"--ignore-ssl-errors=true",
+		"--ssl-protocol=any",
+		"--no-sandbox",
+		"--disable-breakpad",
+		"--disable-gpu",
+		"--disable-logging",
+		"--no-zygote",
+		"--allow-running-insecure-content",
+	}
+)
 
-	assert.Equal(t, page.Navigate(url("/admin")), nil)
+const (
+	port = ":9033"
+)
 
-	fill(t, loginPageUserNameInput, "admin")
-	fill(t, loginPagePasswordInput, "admin")
-	clickS(t, page.FindByButton("login"))
+func init() {
+	if os.Args[len(os.Args)-1] == "true" {
+		debugMode = true
+	}
+	if !debugMode {
+		optionList = append(optionList, "--headless")
+	}
+}
+
+func startServer(quit chan struct{}) {
+
+	if !debugMode {
+		gin.SetMode(gin.ReleaseMode)
+		gin.DefaultWriter = ioutil.Discard
+	}
+
+	r := gin.New()
+
+	eng := engine.Default()
+
+	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
+
+	template.AddComp(chartjs.NewChart())
+
+	cfg := config.ReadFromJson("./config.json")
+	if debugMode {
+		cfg.SqlLog = true
+		cfg.Debug = true
+		cfg.AccessLogOff = false
+	}
+
+	if err := eng.AddConfig(cfg).
+		AddPlugins(adminPlugin).
+		Use(r); err != nil {
+		panic(err)
+	}
+
+	eng.HTML("GET", "/admin", tables.GetContent)
+
+	r.Static("/uploads", "./uploads")
+
+	go func() {
+		_ = r.Run(port)
+	}()
+
+	<-quit
+	log.Print("closing database connection")
+	eng.MysqlConnection().Close()
+}
+
+func TestWeb(t *testing.T) {
+	UserAcceptanceTestSuit(t, func(t *testing.T, page *Page) {
+		defer page.Destroy()
+		testLogin(page)
+		testInfoTablePageOperations(page)
+		testNewPageOperations(page)
+		testEditPageOperations(page)
+		testDetailPageOperations(page)
+		testRolePageOperations(page)
+		testPermissionPageOperations(page)
+		testMenuPageOperations(page)
+		testManagerPageOperations(page)
+		testPermission(page)
+	}, startServer, debugMode, optionList...)
+}
+
+func testLogin(page *Page) {
+	page.NavigateTo(url("/"))
+
+	page.Fill(loginPageUserNameInput, "admin")
+	page.Fill(loginPagePasswordInput, "admin")
+	page.ClickS(page.FindByButton("login"))
 
 	wait(3)
 
-	content, err := page.HTML()
-	assert.Equal(t, err, nil)
-	assert.Equal(t, strings.Contains(content, "main-header"), true)
+	page.Contain("main-header")
 }
 
-func TestInfoTablePageOperations(t *testing.T) {
-	defer StopDriverOnPanic(t)
+func testInfoTablePageOperations(page *Page) {
 
-	navigate(t, "/info/user")
+	page.NavigateTo(url("/info/user"))
 
-	contain(t, "Users")
+	page.Contain("Users")
 
 	// Buttons Check
 	// =============================
 
 	printPart("buttons check")
 
-	click(t, popupBtn)
+	page.Click(popupBtn)
 
-	display(t, popup)
+	page.Display(popup)
 
 	wait(1)
 
-	contain(t, "hello world")
-	click(t, popupCloseBtn)
+	page.Contain("hello world")
+	page.Click(popupCloseBtn)
 
-	nondisplay(t, popup)
+	page.Nondisplay(popup)
 
-	click(t, ajaxBtn)
+	page.Click(ajaxBtn)
 
-	contain(t, "Oh li get")
+	page.Contain("Oh li get")
 
-	display(t, ajaxAlert)
+	page.Display(ajaxAlert)
 
-	clickS(t, page.FindByButton("OK"))
+	page.ClickS(page.FindByButton("OK"))
 
-	nondisplay(t, ajaxAlert)
+	page.Nondisplay(ajaxAlert)
 
 	// Update Check
 	// =============================
 
 	printPart("update check")
-	click(t, updateNameTd)
-	fill(t, updateNameInput, "DukeDukeDuke")
-	click(t, updateNameSaveBtn)
-	click(t, updateGenderBtn)
-	contain(t, "DukeDukeDuke")
+	page.Click(updateNameTd)
+	page.Fill(updateNameInput, "DukeDukeDuke")
+	page.Click(updateNameSaveBtn)
+	page.Click(updateGenderBtn)
+	page.Contain("DukeDukeDuke")
 
 	// Filter Area Check
 	// =============================
 
 	printPart("filter area check")
 
-	click(t, selectionDropDown)
+	page.Click(selectionDropDown)
 
-	text(t, selectionLi1, "men")
-	text(t, selectionLi2, "women")
+	page.Text(selectionLi1, "men")
+	page.Text(selectionLi2, "women")
 
-	click(t, selectionLi2)
+	page.Click(selectionLi2)
 
-	attr(t, page.FindByXPath(selectionRes), "title", "women")
+	page.Attr(page.FindByXPath(selectionRes), "title", "women")
 
-	fill(t, multiSelectInput, " ")
+	page.Fill(multiSelectInput, " ")
 
 	wait(1)
 
-	text(t, multiSelectLi1, "water")
-	text(t, multiSelectLi2, "juice")
-	text(t, multiSelectLi3, "red bull")
+	page.Text(multiSelectLi1, "water")
+	page.Text(multiSelectLi2, "juice")
+	page.Text(multiSelectLi3, "red bull")
 
-	click(t, multiSelectLi3)
+	page.Click(multiSelectLi3)
 
-	attr(t, page.FindByXPath(multiSelectRes), "title", "red bull")
+	page.Attr(page.FindByXPath(multiSelectRes), "title", "red bull")
 
-	click(t, radio)
+	page.Click(radio)
 
-	fill(t, filterNameField, "Jack")
+	page.Fill(filterNameField, "Jack")
 
-	click(t, searchBtn, 2)
+	page.Click(searchBtn, 2)
 
-	click(t, filterResetBtn, 2)
+	page.Click(filterResetBtn, 2)
 
 	// Row Selector Check
 	// =============================
 
 	printPart("row selector check")
 
-	click(t, rowSelector)
-	click(t, rowSelectCityCheckbox)
-	click(t, rowSelectAvatarCheckbox)
+	page.Click(rowSelector)
+	page.Click(rowSelectCityCheckbox)
+	page.Click(rowSelectAvatarCheckbox)
 
-	clickS(t, page.FindByButton("submit"), 2)
+	page.ClickS(page.FindByButton("submit"), 2)
 
-	noContain(t, "guangzhou")
+	page.NoContain("guangzhou")
 
-	clickS(t, page.FindByID("filter-btn"))
+	page.ClickS(page.FindByID("filter-btn"))
 
-	cssS(t, page.FindByClass("filter-area"), "display", "none")
+	page.CssS(page.FindByClass("filter-area"), "display", "none")
 
 	// Export Check
 	// =============================
 
 	printPart("row export check")
 
-	clickS(t, page.FindByXPath(actionDropDown))
-	clickS(t, page.FindByXPath(exportBtn))
-	clickS(t, page.FindByClass(`grid-batch-1`))
+	page.ClickS(page.FindByXPath(actionDropDown))
+	page.ClickS(page.FindByXPath(exportBtn))
+	page.ClickS(page.FindByClass(`grid-batch-1`))
 
 	// Order Check
 
 	printPart("order check")
 
-	click(t, idOrderBtn)
-	click(t, idOrderBtn)
+	page.Click(idOrderBtn)
+	page.Click(idOrderBtn)
 
 	// Action Button Check
 	// =============================
 
 	printPart("action buttons check")
 
-	click(t, rowActionDropDown)
-	click(t, previewAction)
-	contain(t, "preview content")
-	display(t, previewPopup)
+	page.Click(rowActionDropDown)
+	page.Click(previewAction)
+	page.Contain("preview content")
+	page.Display(previewPopup)
 
-	click(t, closePreviewAction)
+	page.Click(closePreviewAction)
 
-	nondisplay(t, previewPopup)
+	page.Nondisplay(previewPopup)
 
-	click(t, rowActionDropDown)
-	click(t, rowAjaxAction)
+	page.Click(rowActionDropDown)
+	page.Click(rowAjaxAction)
 
-	display(t, rowAjaxPopup)
+	page.Display(rowAjaxPopup)
 
-	click(t, closeRowAjaxPopup)
+	page.Click(closeRowAjaxPopup)
 
-	nondisplay(t, rowAjaxPopup)
+	page.Nondisplay(rowAjaxPopup)
 
 	wait(2)
 }
 
-func TestNewPageOperations(t *testing.T) {
-	defer StopDriverOnPanic(t)
+func testNewPageOperations(page *Page) {
 
-	click(t, newPageBtn, 2)
-	value(t, homePageField, "http://google.com")
+	page.Click(newPageBtn, 2)
+	page.Value(homePageField, "http://google.com")
 
 	// Selections Form Item Check
 	// =============================
 
 	printPart("selections form items check")
 
-	checkSelectionsInForm(t)
+	checkSelectionsInForm(page)
 
 	// Create Error Check
 	// =============================
 
 	printPart("create error check")
 
-	click(t, saveBtn)
-	contain(t, "error")
+	page.Click(saveBtn)
+	page.Contain("error")
 
 	// Reset Check
 	// =============================
 
 	printPart("reset error check")
 
-	fillNewForm(t, "jane", "girl")
-	click(t, resetBtn)
+	fillNewForm(page, "jane", "girl")
+	page.Click(resetBtn)
 
 	// Continue Creating Check
 	// =============================
 
 	printPart("continue creating check")
 
-	click(t, inputTab)
-	text(t, ipField, "")
-	click(t, continueEditCheckBox)
-	fillNewForm(t, "jane", "girl")
-	click(t, saveBtn)
+	page.Click(inputTab)
+	page.Text(ipField, "")
+	page.Click(continueEditCheckBox)
+	fillNewForm(page, "jane", "girl")
+	page.Click(saveBtn)
 
 	// Creating Check
 	// =============================
 
 	printPart("creating check")
 
-	fillNewForm(t, "harry", "boy")
-	click(t, saveBtn, 2)
+	fillNewForm(page, "harry", "boy")
+	page.Click(saveBtn, 2)
 
-	noContain(t, "harry")
-	click(t, genderActionDropDown)
-	click(t, menOptionActionBtn, 2)
-	click(t, idOrderBtn)
-	contain(t, "harry")
+	page.NoContain("harry")
+	page.Click(genderActionDropDown)
+	page.Click(menOptionActionBtn, 2)
+	page.Click(idOrderBtn)
+	page.Contain("harry")
 }
 
-func fillNewForm(t *testing.T, name, gender string) {
+func fillNewForm(page *Page, name, gender string) {
 
-	fill(t, nameField, name)
-	fill(t, ageField, "15")
-	fill(t, passwordField, "12345678")
-	fill(t, ipField, "127.0.0.1")
-	fill(t, amountField, "15")
-	click(t, selectTab)
-	click(t, appleOptField)
+	page.Fill(nameField, name)
+	page.Fill(ageField, "15")
+	page.Fill(passwordField, "12345678")
+	page.Fill(ipField, "127.0.0.1")
+	page.Fill(amountField, "15")
+	page.Click(selectTab)
+	page.Click(appleOptField)
 	if gender == "girl" {
-		click(t, genderGirlCheckBox)
+		page.Click(genderGirlCheckBox)
 	} else {
-		click(t, genderBoyCheckBox)
+		page.Click(genderBoyCheckBox)
 	}
-	click(t, experienceDropDown)
-	click(t, twoYearsSelection)
+	page.Click(experienceDropDown)
+	page.Click(twoYearsSelection)
 }
 
-func checkSelectionsInForm(t *testing.T) {
-	click(t, selectTab)
-	text(t, appleOptField, "Apple")
-	text(t, bananaOptField, "Banana")
-	text(t, watermelonOptField, "Watermelon")
-	text(t, pearOptField, "Pear")
-	click(t, experienceDropDown)
-	text(t, twoYearsSelection, "two years")
-	text(t, threeYearsSelection, "three years")
-	text(t, fourYearsSelection, "four years")
-	text(t, fiveYearsSelection, "five years")
-	click(t, selectTab)
-	attr(t, page.FindByXPath(multiSelectedOpt), "title", "Beer")
-	click(t, multiSelectionInput)
-	text(t, multiBeerOpt, "Beer")
-	text(t, multiJuiceOpt, "Juice")
-	text(t, multiWaterOpt, "Water")
-	text(t, multiRedBullOpt, "Red bull")
-	click(t, inputTab)
+func checkSelectionsInForm(page *Page) {
+	page.Click(selectTab)
+	page.Text(appleOptField, "Apple")
+	page.Text(bananaOptField, "Banana")
+	page.Text(watermelonOptField, "Watermelon")
+	page.Text(pearOptField, "Pear")
+	page.Click(experienceDropDown)
+	page.Text(twoYearsSelection, "two years")
+	page.Text(threeYearsSelection, "three years")
+	page.Text(fourYearsSelection, "four years")
+	page.Text(fiveYearsSelection, "five years")
+	page.Click(selectTab)
+	page.Attr(page.FindByXPath(multiSelectedOpt), "title", "Beer")
+	page.Click(multiSelectionInput)
+	page.Text(multiBeerOpt, "Beer")
+	page.Text(multiJuiceOpt, "Juice")
+	page.Text(multiWaterOpt, "Water")
+	page.Text(multiRedBullOpt, "Red bull")
+	page.Click(inputTab)
 }
 
-func TestEditPageOperations(t *testing.T) {
-	click(t, rowActionDropDown)
-	click(t, editPageBtn, 2)
+func testEditPageOperations(page *Page) {
+	page.Click(rowActionDropDown)
+	page.Click(editPageBtn, 2)
 
 	// Form Field Value Check
 	// =============================
 
 	printPart("edit form values check")
 
-	value(t, nameField, "harry")
-	value(t, homePageField, "http://google.com")
-	value(t, ageField, "15")
-	value(t, emailField, "xxxx@xxx.com")
-	value(t, birthdayField, "2010-09-05 00:00:00")
-	value(t, passwordField, "12345678")
-	value(t, ipField, "127.0.0.1")
-	value(t, amountField, "15.00")
+	page.Value(nameField, "harry")
+	page.Value(homePageField, "http://google.com")
+	page.Value(ageField, "15")
+	page.Value(emailField, "xxxx@xxx.com")
+	page.Value(birthdayField, "2010-09-05 00:00:00")
+	page.Value(passwordField, "12345678")
+	page.Value(ipField, "127.0.0.1")
+	page.Value(amountField, "15.00")
 
-	click(t, selectTab)
+	page.Click(selectTab)
 
-	text(t, boxSelectedOpt, "Pear")
-	attr(t, page.FindByXPath(multiSelectedOpt), "title", "Beer")
-	text(t, experienceSelectedOpt, "two years")
+	page.Text(boxSelectedOpt, "Pear")
+	page.Attr(page.FindByXPath(multiSelectedOpt), "title", "Beer")
+	page.Text(experienceSelectedOpt, "two years")
 }
 
 //  TODO:
@@ -416,61 +513,60 @@ func TestEditPageOperations(t *testing.T) {
 // [ ] Pagination
 // [ ] Join table fields display in table and form
 
-func testDetailPageOperations(t *testing.T) {
+func testDetailPageOperations(page *Page) {
 
 }
 
-func testRolePageOperations(t *testing.T) {
+func testRolePageOperations(page *Page) {
 
 }
 
-func testPermissionPageOperations(t *testing.T) {
+func testPermissionPageOperations(page *Page) {
 
 }
 
-func TestMenuPageOperations(t *testing.T) {
-	defer StopDriverOnPanic(t)
+func testMenuPageOperations(page *Page) {
 
-	click(t, sideBarManageDropDown)
-	click(t, menuPageBtn)
+	page.Click(sideBarManageDropDown)
+	page.Click(menuPageBtn)
 
 	// ParentIDs Selection Check
 	// =============================
 
 	printPart("menu parent ids selection check")
 
-	click(t, menuParentIdDropDown)
-	text(t, parentIdRootOpt, "root")
-	text(t, parentIdDashboardOpt, "Dashboard")
-	text(t, parentIdAdminOpt, "Admin")
-	text(t, parentIdUserOpt, "User")
-	click(t, parentIdRootOpt)
+	page.Click(menuParentIdDropDown)
+	page.Text(parentIdRootOpt, "root")
+	page.Text(parentIdDashboardOpt, "Dashboard")
+	page.Text(parentIdAdminOpt, "Admin")
+	page.Text(parentIdUserOpt, "User")
+	page.Click(parentIdRootOpt)
 
 	// Roles Selection Check
 	// =============================
 
 	printPart("menu roles selection check")
 
-	click(t, menuRoleDropDown)
-	text(t, menuRoleAdminOpt, "administrator")
-	text(t, menuRoleOperatorOpt, "operator")
-	click(t, menuRoleAdminOpt)
+	page.Click(menuRoleDropDown)
+	page.Text(menuRoleAdminOpt, "administrator")
+	page.Text(menuRoleOperatorOpt, "operator")
+	page.Click(menuRoleAdminOpt)
 
-	click(t, iconPopupBtn)
-	display(t, iconPopup)
-	click(t, iconBtn)
-	click(t, iconPopupBtn)
-	nondisplay(t, iconPopup)
+	page.Click(iconPopupBtn)
+	page.Display(iconPopup)
+	page.Click(iconBtn)
+	page.Click(iconPopupBtn)
+	page.Nondisplay(iconPopup)
 
-	fill(t, menuNameInput, "Test")
-	fill(t, menuUriInput, "/info/user")
+	page.Fill(menuNameInput, "Test")
+	page.Fill(menuUriInput, "/info/user")
 
 	// Save Check
 	// =============================
 
 	printPart("menu save check")
 
-	click(t, menuInfoSaveBtn)
+	page.Click(menuInfoSaveBtn)
 
 	// change order check
 
@@ -485,64 +581,62 @@ func TestMenuPageOperations(t *testing.T) {
 
 	printPart("menu delete check")
 
-	click(t, testMenuDeleteBtn)
-	click(t, testMenuDeleteConfirmBtn)
-	click(t, menuOkBtn)
+	page.Click(testMenuDeleteBtn)
+	page.Click(testMenuDeleteConfirmBtn)
+	page.Click(menuOkBtn)
 
-	click(t, userMenuEditBtn)
-	fill(t, headFieldInput, "example")
-	click(t, menuEditSaveBtn)
+	page.Click(userMenuEditBtn)
+	page.Fill(headFieldInput, "example")
+	page.Click(menuEditSaveBtn)
 }
 
-func TestManagerPageOperations(t *testing.T) {
-	defer StopDriverOnPanic(t)
+func testManagerPageOperations(page *Page) {
 
-	click(t, sideBarManageDropDown)
-	click(t, managerPageBtn)
-	click(t, managerEditBtn)
-	value(t, managerNameField, "admin")
-	value(t, managerNickNameField, "admin")
-	attr(t, page.FindByXPath(managerRoleSelectedOpt), "title", "administrator")
-	attr(t, page.FindByXPath(managerPermissionSelectedOpt), "title", "*")
-	fill(t, managerNickNameField, "admin1")
-	click(t, managerRoleDropDown)
-	text(t, managerRoleOpt2, "operator")
-	click(t, managerRoleDropDown)
-	click(t, managerPermissionDropDown)
-	text(t, managerPermissionOpt2, "dashboard")
-	click(t, managerPermissionDropDown)
-	click(t, managerSaveBtn)
-	contain(t, "admin1")
+	page.Click(managerPageBtn)
+	page.Click(managerEditBtn)
+	page.Value(managerNameField, "admin")
+	page.Value(managerNickNameField, "admin")
+	page.Attr(page.FindByXPath(managerRoleSelectedOpt), "title", "administrator")
+	page.Attr(page.FindByXPath(managerPermissionSelectedOpt), "title", "*")
+	page.Fill(managerNickNameField, "admin1")
+	page.Click(managerRoleDropDown)
+	page.Text(managerRoleOpt2, "operator")
+	page.Click(managerRoleDropDown)
+	page.Click(managerPermissionDropDown)
+	page.Text(managerPermissionOpt2, "dashboard")
+	page.Click(managerPermissionDropDown)
+	page.Click(managerSaveBtn)
+	page.Contain("admin1")
 
-	click(t, operatorEditBtn)
-	click(t, newPermissionBtn)
-	fill(t, permissionNameInput, "user_view")
-	fill(t, permissionSlugInput, "user_view")
-	click(t, permissionMethodSelect)
-	click(t, permissionGetSelectOpt)
-	fill(t, permissionPathInput, `/info/user
+	page.Click(operatorEditBtn)
+	page.Click(newPermissionBtn)
+	page.Fill(permissionNameInput, "user_view")
+	page.Fill(permissionSlugInput, "user_view")
+	page.Click(permissionMethodSelect)
+	page.Click(permissionGetSelectOpt)
+	page.Fill(permissionPathInput, `/info/user
 /info/user/detail`)
-	click(t, permissionSaveBtn)
-	click(t, managerPermissionDropDown)
-	click(t, managerUserViewSelectOpt)
-	click(t, managerSaveBtn)
+	page.Click(permissionSaveBtn)
+	page.Click(managerPermissionDropDown)
+	page.Click(managerUserViewSelectOpt)
+	page.Click(managerSaveBtn)
 
-	click(t, userNavMenuBtn)
-	click(t, userSettingBtn)
-	fill(t, managerNickNameField, "admin")
-	click(t, managerSaveBtn)
-	contain(t, "admin")
-	click(t, userNavMenuBtn)
-	click(t, userSignOutBtn)
+	page.Click(userNavMenuBtn)
+	page.Click(userSettingBtn)
+	page.Fill(managerNickNameField, "admin")
+	page.Click(managerSaveBtn)
+	page.Contain("admin")
+	page.Click(userNavMenuBtn)
+	page.Click(userSignOutBtn)
 }
 
-func TestPermission(t *testing.T) {
-	fill(t, loginPageUserNameInput, "operator")
-	fill(t, loginPagePasswordInput, "admin")
-	clickS(t, page.FindByButton("login"))
-	navigate(t, "/info/user")
-	noContain(t, "New")
-	click(t, opActionDropDown)
-	click(t, detailBtn)
-	noContain(t, "Edit")
+func testPermission(page *Page) {
+	page.Fill(loginPageUserNameInput, "operator")
+	page.Fill(loginPagePasswordInput, "admin")
+	page.ClickS(page.FindByButton("login"))
+	page.NavigateTo(url("/info/user"))
+	page.NoContain("New")
+	page.Click(opActionDropDown)
+	page.Click(detailBtn)
+	page.NoContain("Edit")
 }

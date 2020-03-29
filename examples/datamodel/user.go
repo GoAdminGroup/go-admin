@@ -50,7 +50,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
 	})
-	info.AddColumn("personality", func(value types.FieldModel) interface{} {
+	info.AddColumn("Personality", func(value types.FieldModel) interface{} {
 		return "handsome"
 	})
 	info.AddColumnButtons("see more", types.GetDefaultButton("see more", icon.Info,
