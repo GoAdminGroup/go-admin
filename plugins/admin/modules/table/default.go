@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	errs "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
@@ -356,17 +357,14 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
+		countExtra := ""
 		if connection.Name() == "mssql" {
-			// %s means: fields, table, join table, pk values, group by, order by field, order by type
-			queryStatement = "SELECT %s from " + placeholder + "%s where " + pk + " in (%s) %s ORDER BY %s." + placeholder + " %s"
-			// %s means: table, join table, pk values
-			countStatement = "select count(*) as [size] from " + placeholder + " %s where " + pk + " in (%s)"
-		} else {
-			// %s means: fields, table, join table, pk values, group by, order by field,  order by type
-			queryStatement = "select %s from %s %s where " + pk + " in (%s) %s order by %s." + placeholder + " %s"
-			// %s means: table, join table, pk values
-			countStatement = "select count(*) from " + placeholder + " %s where " + pk + " in (%s)"
+			countExtra = "as [size]"
 		}
+		// %s means: fields, table, join table, pk values, group by, order by field,  order by type
+		queryStatement = "select %s from " + placeholder + " %s where " + pk + " in (%s) %s ORDER BY %s." + placeholder + " %s"
+		// %s means: table, join table, pk values
+		countStatement = "select count(*) " + countExtra + " from " + placeholder + " %s where " + pk + " in (%s)"
 	} else {
 		if connection.Name() == "mssql" {
 			// %s means: order by field, order by type, fields, table, join table, wheres, group by
@@ -465,28 +463,26 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	}
 
 	// TODO: use the dialect
-
-	if len(ids) > 0 {
-		joins = ""
-	}
-
-	countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres)
-
-	total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
-
-	if err != nil {
-		return PanelInfo{}, err
-	}
-
-	logger.LogSQL(countCmd, nil)
-
 	var size int
-	if tb.connectionDriver == "postgresql" {
-		size = int(total[0]["count"].(int64))
-	} else if tb.connectionDriver == "mssql" {
-		size = int(total[0]["size"].(int64))
-	} else {
-		size = int(total[0]["count(*)"].(int64))
+
+	if len(ids) == 0 {
+		countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres)
+
+		total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
+
+		if err != nil {
+			return PanelInfo{}, err
+		}
+
+		logger.LogSQL(countCmd, nil)
+
+		if tb.connectionDriver == "postgresql" {
+			size = int(total[0]["count"].(int64))
+		} else if tb.connectionDriver == "mssql" {
+			size = int(total[0]["size"].(int64))
+		} else {
+			size = int(total[0]["count(*)"].(int64))
+		}
 	}
 
 	endTime := time.Now()
@@ -503,7 +499,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	}, nil
 }
 
-func getDataRes(list []map[string]interface{}, i int) map[string]interface{} {
+func getDataRes(list []map[string]interface{}, _ int) map[string]interface{} {
 	if len(list) > 0 {
 		return list[0]
 	}
@@ -533,24 +529,68 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 		columns, _ = tb.getColumns(tb.Form.Table)
 
 		var (
-			err    error
-			fields = make([]string, 0)
-		)
+			fields, joinFields, joins, groupBy = "", "", "", ""
 
-		for i := 0; i < len(tb.Form.FieldList); i++ {
-			if modules.InArray(columns, tb.Form.FieldList[i].Field) {
-				fields = append(fields, tb.Form.FieldList[i].Field)
+			err            error
+			joinTables     = make([]string, 0)
+			args           = make([]interface{}, 0)
+			connection     = tb.db()
+			delimiter      = connection.GetDelimiter()
+			tableName      = tb.GetForm().Table
+			pk             = tableName + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
+			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " in (%s) %s "
+		)
+		for _, field := range tb.Form.FieldList {
+
+			if field.Field != pk && modules.InArray(columns, field.Field) &&
+				!field.Join.Valid() {
+				fields += tableName + "." + modules.FilterField(field.Field, delimiter) + ","
+			}
+
+			headField := field.Field
+
+			if field.Join.Valid() {
+				headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
+				joinFields += db.GetAggregationExpression(connection.Name(), field.Join.Table+"."+
+					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
+				if !modules.InArray(joinTables, field.Join.Table) {
+					joinTables = append(joinTables, field.Join.Table)
+					joins += " left join " + modules.FilterField(field.Join.Table, delimiter) + " on " +
+						field.Join.Table + "." + modules.FilterField(field.Join.JoinField, delimiter) + " = " +
+						tableName + "." + modules.FilterField(field.Join.Field, delimiter)
+				}
 			}
 		}
 
-		res, err = tb.sql().
-			Table(tb.Form.Table).Select(fields...).
-			Where(tb.PrimaryKey.Name, "=", id).
-			First()
+		fields += pk
+
+		if joinFields != "" {
+			fields += "," + joinFields[:len(joinFields)-1]
+		}
+
+		if len(joinTables) > 0 {
+			if connection.Name() == "mssql" {
+				groupBy = " GROUP BY " + fields
+			} else {
+				groupBy = " GROUP BY " + pk
+			}
+		}
+
+		queryCmd := fmt.Sprintf(queryStatement, fields, tableName, joins, id, groupBy)
+
+		logger.LogSQL(queryCmd, args)
+
+		result, err := connection.QueryWithConnection(tb.connection, queryCmd, args...)
 
 		if err != nil {
 			return FormInfo{Title: tb.Form.Title, Description: tb.Form.Description}, err
 		}
+
+		if len(result) == 0 {
+			return FormInfo{Title: tb.Form.Title, Description: tb.Form.Description}, errors.New(errs.WrongID)
+		}
+
+		res = result[0]
 	}
 
 	var (

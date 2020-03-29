@@ -129,7 +129,7 @@ func BlackBoxTestSuit(t *testing.T, fn HandlerGenFn,
 	config config.DatabaseList,
 	gens table.GeneratorList,
 	cleaner DataCleaner,
-	tester func(e *httpexpect.Expect), isFasthttp ...bool) {
+	tester Tester, isFasthttp ...bool) {
 	// Clean Data
 	cleaner(config)
 	// Test
@@ -152,6 +152,7 @@ func BlackBoxTestSuit(t *testing.T, fn HandlerGenFn,
 	}
 }
 
+type Tester func(e *httpexpect.Expect)
 type DataCleaner func(config config.DatabaseList)
 type HandlerGenFn func(config config.DatabaseList, gens table.GeneratorList) http.Handler
 type FasthttpHandlerGenFn func(config config.DatabaseList, gens table.GeneratorList) fasthttp2.RequestHandler

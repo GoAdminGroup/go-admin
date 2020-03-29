@@ -44,7 +44,7 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	printlnWithColor("show form", "green")
 	e.GET(config.Get().Url("/info/user/edit")).
-		WithQuery(constant.EditPKKey, "10").
+		WithQuery(constant.EditPKKey, "362").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
