@@ -3,6 +3,7 @@ package action
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"html/template"
+	"strings"
 )
 
 type JumpAction struct {
@@ -13,6 +14,8 @@ type JumpAction struct {
 }
 
 func Jump(url string, ext ...template.HTML) *JumpAction {
+	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
+	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, Ext: ext[0]}
 	}

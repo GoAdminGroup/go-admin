@@ -195,7 +195,12 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			return types.FieldOptions{
 				{Value: val.Value, Text: val.Value, Selected: true},
 			}
-		})
+		}).FieldOptions(types.FieldOptions{
+		{Text: "Beijing", Value: "beijing"},
+		{Text: "ShangHai", Value: "shanghai"},
+		{Text: "GuangZhou", Value: "guangzhou"},
+		{Text: "ShenZhen", Value: "shenzhen"},
+	})
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
 		FieldOptions(types.FieldOptions{
 			{Text: "Boy", Value: "0"},

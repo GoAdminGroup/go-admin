@@ -156,7 +156,12 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			return types.FieldOptions{
 				{Value: val.Value, Text: val.Value, Selected: true},
 			}
-		})
+		}).FieldOptions(types.FieldOptions{
+		{Text: "Beijing", Value: "beijing"},
+		{Text: "ShangHai", Value: "shanghai"},
+		{Text: "GuangZhou", Value: "guangzhou"},
+		{Text: "ShenZhen", Value: "shenzhen"},
+	})
 	formList.AddField("Custom Field", "role", db.Varchar, form.Text).
 		FieldPostFilterFn(func(value types.PostFieldModel) interface{} {
 			fmt.Println("user custom field", value)

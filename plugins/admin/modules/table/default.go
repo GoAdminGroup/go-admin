@@ -635,6 +635,23 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "0")
 
+	if tb.Form.PostHook != nil {
+		defer func() {
+			go func() {
+				defer func() {
+					if err := recover(); err != nil {
+						logger.Error(err)
+					}
+				}()
+
+				err := tb.Form.PostHook(dataList)
+				if err != nil {
+					logger.Error(err)
+				}
+			}()
+		}()
+	}
+
 	if tb.Form.Validator != nil {
 		if err := tb.Form.Validator(dataList); err != nil {
 			return err
@@ -659,26 +676,6 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 		return err
 	}
 
-	// NOTE: Database Transaction may be considered here.
-
-	if tb.Form.PostHook != nil {
-		go func() {
-
-			defer func() {
-				if err := recover(); err != nil {
-					logger.Error(err)
-				}
-			}()
-
-			dataList.Add(form.PostTypeKey, "0")
-
-			err := tb.Form.PostHook(dataList)
-			if err != nil {
-				logger.Error(err)
-			}
-		}()
-	}
-
 	return nil
 }
 
@@ -686,6 +683,30 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "1")
+
+	var (
+		id  = int64(0)
+		err error
+	)
+
+	if tb.Form.PostHook != nil {
+		defer func() {
+			dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
+
+			go func() {
+				defer func() {
+					if err := recover(); err != nil {
+						logger.Error(err)
+					}
+				}()
+
+				err := tb.Form.PostHook(dataList)
+				if err != nil {
+					logger.Error(err)
+				}
+			}()
+		}()
+	}
 
 	if tb.Form.Validator != nil {
 		if err := tb.Form.Validator(dataList); err != nil {
@@ -702,31 +723,11 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
-	id, err := tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
+	id, err = tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.INSERT) {
 		return err
-	}
-
-	dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
-
-	if tb.Form.PostHook != nil {
-		go func() {
-
-			defer func() {
-				if err := recover(); err != nil {
-					logger.Error(err)
-				}
-			}()
-
-			dataList.Add(form.PostTypeKey, "1")
-
-			err := tb.Form.PostHook(dataList)
-			if err != nil {
-				logger.Error(err)
-			}
-		}()
 	}
 
 	return nil
