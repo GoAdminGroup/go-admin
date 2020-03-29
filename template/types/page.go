@@ -67,6 +67,9 @@ type Page struct {
 	// Components assets
 	AssetsList template.HTML
 
+	// Footer info
+	FooterInfo template.HTML
+
 	// Top Nav Buttons
 	navButtons     Buttons
 	NavButtonsHTML template.HTML
@@ -116,6 +119,7 @@ func NewPage(param NewPageParam) *Page {
 		CdnUrl:         config.Get().AssetUrl,
 		CustomHeadHtml: config.Get().CustomHeadHtml,
 		CustomFootHtml: config.Get().CustomFootHtml + btnJS,
+		FooterInfo:     config.Get().FooterInfo,
 		AssetsList:     param.Assets,
 		navButtons:     param.Buttons,
 		NavButtonsHTML: navBtn,

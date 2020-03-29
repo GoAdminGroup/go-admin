@@ -77,11 +77,6 @@ func (g *Guard) NewForm(ctx *context.Context) {
 
 	conn := db.GetConnection(g.services)
 
-	if !panel.GetCanAdd() {
-		alert(ctx, panel, errors.OperationNotAllow, conn)
-		ctx.Abort()
-		return
-	}
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {

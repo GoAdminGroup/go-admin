@@ -200,6 +200,9 @@ type Config struct {
 	// Custom html after body.
 	CustomFootHtml template.HTML `json:"custom_foot_html",yaml:"custom_foot_html",ini:"custom_foot_html"`
 
+	// Footer Info html
+	FooterInfo template.HTML `json:"footer_info",yaml:"footer_info",ini:"footer_info"`
+
 	// Login page title
 	LoginTitle string `json:"login_title",yaml:"login_title",ini:"login_title"`
 

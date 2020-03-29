@@ -50,7 +50,6 @@ type Table interface {
 	GetEditable() bool
 	GetDeletable() bool
 	GetExportable() bool
-	IsShowDetail() bool
 
 	GetPrimaryKey() PrimaryKey
 
@@ -90,7 +89,7 @@ func (base *BaseTable) GetForm() *types.FormPanel {
 }
 
 func (base *BaseTable) GetCanAdd() bool {
-	return base.CanAdd && !base.Info.IsHideNewButton
+	return base.CanAdd
 }
 
 func (base *BaseTable) GetPrimaryKey() PrimaryKey {
@@ -98,19 +97,15 @@ func (base *BaseTable) GetPrimaryKey() PrimaryKey {
 }
 
 func (base *BaseTable) GetEditable() bool {
-	return base.Editable && !base.Info.IsHideEditButton
+	return base.Editable
 }
 
 func (base *BaseTable) GetDeletable() bool {
-	return base.Deletable && !base.Info.IsHideDeleteButton
-}
-
-func (base *BaseTable) IsShowDetail() bool {
-	return !base.Info.IsHideDetailButton
+	return base.Deletable
 }
 
 func (base *BaseTable) GetExportable() bool {
-	return base.Exportable && !base.Info.IsHideExportButton
+	return base.Exportable
 }
 
 func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extraHtml ...template.HTML) types.PaginatorAttribute {

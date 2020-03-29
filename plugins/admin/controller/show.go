@@ -61,11 +61,11 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	paramStr := params.DeleteIsAll().GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr)
-	newUrl := modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(panel.GetDeletable(), h.routePathWithPrefix("delete", prefix))
-	exportUrl := modules.AorEmpty(panel.GetExportable(), h.routePathWithPrefix("export", prefix)+paramStr)
-	detailUrl := modules.AorEmpty(panel.IsShowDetail(), h.routePathWithPrefix("detail", prefix)+paramStr)
+	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix("show_edit", prefix)+paramStr)
+	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix("show_new", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix("delete", prefix))
+	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix("export", prefix)+paramStr)
+	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix("detail", prefix)+paramStr)
 
 	infoUrl := h.routePathWithPrefix("info", prefix)
 	updateUrl := h.routePathWithPrefix("update", prefix)
