@@ -406,7 +406,8 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	if len(ids) > 0 {
 		for _, value := range ids {
 			if value != "" {
-				wheres += value + ","
+				wheres += "?,"
+				args = append(args, value)
 			}
 		}
 		wheres = wheres[:len(wheres)-1]
@@ -533,12 +534,12 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 
 			err            error
 			joinTables     = make([]string, 0)
-			args           = make([]interface{}, 0)
+			args           = []interface{}{id}
 			connection     = tb.db()
 			delimiter      = connection.GetDelimiter()
 			tableName      = tb.GetForm().Table
 			pk             = tableName + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
-			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " in (%s) %s "
+			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " = ? %s "
 		)
 		for _, field := range tb.Form.FieldList {
 
@@ -576,7 +577,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 			}
 		}
 
-		queryCmd := fmt.Sprintf(queryStatement, fields, tableName, joins, id, groupBy)
+		queryCmd := fmt.Sprintf(queryStatement, fields, tableName, joins, groupBy)
 
 		logger.LogSQL(queryCmd, args)
 
