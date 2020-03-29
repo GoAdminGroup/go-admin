@@ -4,7 +4,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
-	"time"
 )
 
 const (
@@ -45,6 +44,12 @@ const (
 	rowAjaxAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[6]/a`
 	rowAjaxPopup            = `/html/body/div[3]`
 	closeRowAjaxPopup       = `/html/body/div[3]/div[7]/div/button`
+	updateNameTd            = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/a`
+	updateNameInput         = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/div/div[2]/div/form/div/div[1]/div[1]/input`
+	updateNameSaveBtn       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/div/div[2]/div/form/div/div[1]/div[2]/button[1]`
+	updateGenderBtn         = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[4]/div/div/span[1]`
+	opActionDropDown        = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/a`
+	detailBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[1]/a`
 
 	// Form Page
 
@@ -101,9 +106,13 @@ const (
 	testMenuDeleteBtn        = `//*[@id="tree-model"]/ol/li[2]/div/span/a[2]`
 	testMenuDeleteConfirmBtn = `/html/body/div[3]/div[7]/div/button`
 	menuOkBtn                = `/html/body/div[3]/div[7]/div/button`
+	userMenuEditBtn          = `//*[@id="tree-model"]/ol/li[3]/div/span/a[1]`
+	headFieldInput           = `//*[@id="header"]`
+	menuEditSaveBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
 	managerPageBtn               = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[1]/a`
 	managerEditBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[3]/td[8]/a[1]`
+	operatorEditBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/a[1]`
 	managerNameField             = `//*[@id="username"]`
 	managerNickNameField         = `//*[@id="name"]`
 	managerRoleSelectedOpt       = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[5]/div/span[1]/span[1]/span/ul/li[1]`
@@ -113,6 +122,22 @@ const (
 	managerPermissionDropDown    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[6]/div/span[1]/span[1]/span`
 	managerPermissionOpt2        = `/html/body/span/span/span/ul/li[2]`
 	managerSaveBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
+	newPermissionBtn             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[6]/div/span[2]/a`
+	managerUserViewSelectOpt     = `/html/body/span/span/span/ul/li[3]`
+
+	permissionNameInput    = `//*[@id="name"]`
+	permissionSlugInput    = `//*[@id="slug"]`
+	permissionMethodSelect = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[3]/div/span[1]/span[1]/span/ul/li/input`
+	permissionGetSelectOpt = `/html/body/span/span/span/ul/li[1]`
+	permissionPathInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/textarea`
+	permissionSaveBtn      = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
+
+	userNavMenuBtn = `//*[@id="firstnav"]/div/ul/li[5]`
+	userSettingBtn = `//*[@id="firstnav"]/div/ul/li[5]/ul/li[2]/div[1]/a`
+	userSignOutBtn = `//*[@id="firstnav"]/div/ul/li[5]/ul/li[2]/div[2]/a`
+
+	loginPageUserNameInput = `//*[@id="username"]`
+	loginPagePasswordInput = `//*[@id="password"]`
 )
 
 func TestLogin(t *testing.T) {
@@ -120,13 +145,11 @@ func TestLogin(t *testing.T) {
 
 	assert.Equal(t, page.Navigate(url("/admin")), nil)
 
-	//wait(5)
-
-	assert.Equal(t, page.Find("#username").Fill("admin"), nil)
-	assert.Equal(t, page.Find("#password").Fill("admin"), nil)
+	fill(t, loginPageUserNameInput, "admin")
+	fill(t, loginPagePasswordInput, "admin")
 	clickS(t, page.FindByButton("login"))
 
-	time.Sleep(time.Second * 3)
+	wait(3)
 
 	content, err := page.HTML()
 	assert.Equal(t, err, nil)
@@ -165,6 +188,16 @@ func TestInfoTablePageOperations(t *testing.T) {
 	clickS(t, page.FindByButton("OK"))
 
 	nondisplay(t, ajaxAlert)
+
+	// Update Check
+	// =============================
+
+	printPart("update check")
+	click(t, updateNameTd)
+	fill(t, updateNameInput, "DukeDukeDuke")
+	click(t, updateNameSaveBtn)
+	click(t, updateGenderBtn)
+	contain(t, "DukeDukeDuke")
 
 	// Filter Area Check
 	// =============================
@@ -455,11 +488,16 @@ func TestMenuPageOperations(t *testing.T) {
 	click(t, testMenuDeleteBtn)
 	click(t, testMenuDeleteConfirmBtn)
 	click(t, menuOkBtn)
+
+	click(t, userMenuEditBtn)
+	fill(t, headFieldInput, "example")
+	click(t, menuEditSaveBtn)
 }
 
 func TestManagerPageOperations(t *testing.T) {
 	defer StopDriverOnPanic(t)
 
+	click(t, sideBarManageDropDown)
 	click(t, managerPageBtn)
 	click(t, managerEditBtn)
 	value(t, managerNameField, "admin")
@@ -475,4 +513,36 @@ func TestManagerPageOperations(t *testing.T) {
 	click(t, managerPermissionDropDown)
 	click(t, managerSaveBtn)
 	contain(t, "admin1")
+
+	click(t, operatorEditBtn)
+	click(t, newPermissionBtn)
+	fill(t, permissionNameInput, "user_view")
+	fill(t, permissionSlugInput, "user_view")
+	click(t, permissionMethodSelect)
+	click(t, permissionGetSelectOpt)
+	fill(t, permissionPathInput, `/info/user
+/info/user/detail`)
+	click(t, permissionSaveBtn)
+	click(t, managerPermissionDropDown)
+	click(t, managerUserViewSelectOpt)
+	click(t, managerSaveBtn)
+
+	click(t, userNavMenuBtn)
+	click(t, userSettingBtn)
+	fill(t, managerNickNameField, "admin")
+	click(t, managerSaveBtn)
+	contain(t, "admin")
+	click(t, userNavMenuBtn)
+	click(t, userSignOutBtn)
+}
+
+func TestPermission(t *testing.T) {
+	fill(t, loginPageUserNameInput, "operator")
+	fill(t, loginPagePasswordInput, "admin")
+	clickS(t, page.FindByButton("login"))
+	navigate(t, "/info/user")
+	noContain(t, "New")
+	click(t, opActionDropDown)
+	click(t, detailBtn)
+	noContain(t, "Edit")
 }

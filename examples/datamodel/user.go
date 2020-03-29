@@ -150,7 +150,10 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			}
 			return true, "ok", data
 		})
-	formList.AddField("Phone", "phone", db.Varchar, form.Text)
+	formList.AddField("Phone", "phone", db.Varchar, form.Custom).
+		FieldCustomContent(`
+<span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
+<input type="text" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control json" placeholder="please input phone">`)
 	formList.AddField("City", "city", db.Varchar, form.SelectSingle).
 		FieldOptionInitFn(func(val types.FieldModel) types.FieldOptions {
 			return types.FieldOptions{

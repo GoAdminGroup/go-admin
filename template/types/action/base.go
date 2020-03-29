@@ -25,7 +25,9 @@ func (a AjaxData) Add(m map[string]interface{}) AjaxData {
 
 func (a AjaxData) JSON() string {
 	b, _ := json.Marshal(a)
-	s := strings.Replace(string(b), `"{{.Ids}}"`, "{{.Ids}}", -1)
+	s := strings.Replace(string(b), `"{%id}"`, "{{.Id}}", -1)
+	s = strings.Replace(s, `"{%ids}"`, "{{.Ids}}", -1)
+	s = strings.Replace(s, `"{{.Ids}}"`, "{{.Ids}}", -1)
 	s = strings.Replace(s, `"{{.Id}}"`, "{{.Id}}", -1)
 	return s
 }

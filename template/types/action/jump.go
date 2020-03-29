@@ -23,6 +23,8 @@ func Jump(url string, ext ...template.HTML) *JumpAction {
 }
 
 func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
+	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
+	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, NewTabTitle: title, Ext: ext[0]}
 	}
