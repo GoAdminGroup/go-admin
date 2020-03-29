@@ -358,7 +358,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 
 	if len(ids) > 0 {
 		countExtra := ""
-		if connection.Name() == "mssql" {
+		if connection.Name() == db.DriverMssql {
 			countExtra = "as [size]"
 		}
 		// %s means: fields, table, join table, pk values, group by, order by field,  order by type
@@ -366,10 +366,10 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 		// %s means: table, join table, pk values
 		countStatement = "select count(*) " + countExtra + " from " + placeholder + " %s where " + pk + " in (%s)"
 	} else {
-		if connection.Name() == "mssql" {
+		if connection.Name() == db.DriverMssql {
 			// %s means: order by field, order by type, fields, table, join table, wheres, group by
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s." + placeholder + " %s) as ROWNUMBER_, %s from " +
-				placeholder + "%s %s %s  ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
+				placeholder + "%s %s %s ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
 			// %s means: table, join table, wheres
 			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
 		} else {
@@ -387,9 +387,20 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 	fields += pk
 
 	allFields := fields
+	groupFields := fields
 
 	if joinFields != "" {
 		allFields += "," + joinFields[:len(joinFields)-1]
+		if connection.Name() == db.DriverMssql {
+			for _, field := range tb.Info.FieldList {
+				if field.TypeName == db.Text || field.TypeName == db.Longtext {
+					f := modules.Delimiter(connection.GetDelimiter(), field.Field)
+					headField := tb.Info.Table + "." + f
+					allFields = strings.Replace(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
+					groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+				}
+			}
+		}
 	}
 
 	if !modules.InArray(columns, params.SortField) {
@@ -424,7 +435,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 			wheres = " where " + wheres
 		}
 
-		if connection.Name() == "mssql" {
+		if connection.Name() == db.DriverMssql {
 			args = append(whereArgs, (params.PageInt-1)*params.PageSizeInt, params.PageInt*params.PageSizeInt)
 		} else {
 			args = append(whereArgs, params.PageSize, (params.PageInt-1)*params.PageSizeInt)
@@ -433,15 +444,15 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 
 	groupBy := ""
 	if len(joinTables) > 0 {
-		if connection.Name() == "mssql" {
-			groupBy = " GROUP BY " + fields
+		if connection.Name() == db.DriverMssql {
+			groupBy = " GROUP BY " + groupFields
 		} else {
 			groupBy = " GROUP BY " + pk
 		}
 	}
 
 	queryCmd := ""
-	if connection.Name() == "mssql" && len(ids) == 0 {
+	if connection.Name() == db.DriverMssql && len(ids) == 0 {
 		queryCmd = fmt.Sprintf(queryStatement, tb.Info.Table, params.SortField, params.SortType,
 			allFields, tb.Info.Table, joins, wheres, groupBy)
 	} else {
@@ -479,7 +490,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 
 		if tb.connectionDriver == "postgresql" {
 			size = int(total[0]["count"].(int64))
-		} else if tb.connectionDriver == "mssql" {
+		} else if tb.connectionDriver == db.DriverMssql {
 			size = int(total[0]["size"].(int64))
 		} else {
 			size = int(total[0]["count(*)"].(int64))
@@ -564,14 +575,25 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 		}
 
 		fields += pk
+		groupFields := fields
 
 		if joinFields != "" {
 			fields += "," + joinFields[:len(joinFields)-1]
+			if connection.Name() == db.DriverMssql {
+				for _, field := range tb.Form.FieldList {
+					if field.TypeName == db.Text || field.TypeName == db.Longtext {
+						f := modules.Delimiter(connection.GetDelimiter(), field.Field)
+						headField := tb.Info.Table + "." + f
+						fields = strings.Replace(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
+						groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+					}
+				}
+			}
 		}
 
 		if len(joinTables) > 0 {
-			if connection.Name() == "mssql" {
-				groupBy = " GROUP BY " + fields
+			if connection.Name() == db.DriverMssql {
+				groupBy = " GROUP BY " + groupFields
 			} else {
 				groupBy = " GROUP BY " + pk
 			}
@@ -933,7 +955,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 
 	columns := make(Columns, len(columnsModel))
 	switch tb.connectionDriver {
-	case "postgresql":
+	case db.DriverPostgresql:
 		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["column_name"].(string)
@@ -946,7 +968,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 			}
 		}
 		return columns, auto
-	case "mysql":
+	case db.DriverMysql:
 		auto := false
 		for key, model := range columnsModel {
 			columns[key] = model["Field"].(string)
@@ -959,7 +981,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 			}
 		}
 		return columns, auto
-	case "sqlite":
+	case db.DriverSqlite:
 		for key, model := range columnsModel {
 			columns[key] = string(model["name"].(string))
 		}
@@ -968,7 +990,7 @@ func (tb DefaultTable) getColumns(table string) (Columns, bool) {
 			Where("name", "=", tb.GetForm().Table).Count()
 
 		return columns, num > 0
-	case "mssql":
+	case db.DriverMssql:
 		for key, model := range columnsModel {
 			columns[key] = string(model["column_name"].(string))
 		}

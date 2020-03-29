@@ -23,7 +23,7 @@ func Delimiter(del, s string) string {
 
 func FilterField(filed, delimiter string) string {
 	if delimiter == "[" {
-		return filed
+		return "[" + filed + "]"
 	}
 	return delimiter + filed + delimiter
 }

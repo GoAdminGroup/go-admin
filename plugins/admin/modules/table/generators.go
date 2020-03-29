@@ -805,7 +805,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable()
 	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable()
 	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable()
-	info.AddField(lg("content"), "input", db.Varchar).FieldWidth(230)
+	info.AddField(lg("content"), "input", db.Text).FieldWidth(230)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 
 	users, _ := s.table("goadmin_users").Select("id", "name").All()
