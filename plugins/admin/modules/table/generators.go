@@ -784,10 +784,24 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 		},
 	})
 
-	info := OpTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := OpTable.GetInfo().AddXssJsFilter().
+		HideFilterArea().HideDeleteButton().HideDetailButton().HideEditButton().HideNewButton()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("userID"), "user_id", db.Int).FieldFilterable()
+	info.AddField("userID", "user_id", db.Int).FieldHide()
+	info.AddField(lg("user"), "name", db.Varchar).FieldJoin(types.Join{
+		Table:     "goadmin_users",
+		JoinField: "id",
+		Field:     "user_id",
+	}).FieldDisplay(func(value types.FieldModel) interface{} {
+		return template.Default().
+			Link().
+			SetURL(config.Get().Url("/info/manager/detail?__goadmin_detail_pk=") + strconv.Itoa(int(value.Row["user_id"].(int64)))).
+			SetContent(template.HTML(value.Value)).
+			OpenInNewTab().
+			SetTabTitle("Manager Detail").
+			GetContent()
+	}).FieldFilterable()
 	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable()
 	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable()
 	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable()

@@ -780,7 +780,7 @@ func (i *InfoPanel) SetTableFixed() *InfoPanel {
 func (i *InfoPanel) AddColumn(head string, fun FieldFilterFn) *InfoPanel {
 	i.FieldList = append(i.FieldList, Field{
 		Head:     head,
-		Field:    utils.Uuid(10),
+		Field:    head,
 		TypeName: db.Varchar,
 		Sortable: false,
 		EditAble: false,
@@ -807,7 +807,7 @@ func (i *InfoPanel) AddColumnButtons(head string, buttons ...Button) *InfoPanel 
 	i.FooterHtml += template.HTML("<script>") + template.HTML(ParseTableDataTmpl(js)) + template.HTML("</script>")
 	i.FieldList = append(i.FieldList, Field{
 		Head:     head,
-		Field:    utils.Uuid(10),
+		Field:    head,
 		TypeName: db.Varchar,
 		Sortable: false,
 		EditAble: false,

@@ -53,7 +53,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddColumn("Personality", func(value types.FieldModel) interface{} {
 		return "handsome"
 	})
-	info.AddColumnButtons("see more", types.GetDefaultButton("see more", icon.Info,
+	info.AddColumnButtons("see more", types.GetColumnButton("see more", icon.Info,
 		action.PopUp("/see/more/example", "see more", func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "ok", "<h1>Detail</h1><p>balabala</p>"
 		})))

@@ -261,10 +261,10 @@ func (param Parameters) URLNoAnimation(page string) string {
 	return param.URLPath + param.SetPage(page).GetRouteParamStr() + "&" + form.NoAnimationKey + "=true"
 }
 
-func (param Parameters) GetRouteParamStrWithoutPageSize() string {
+func (param Parameters) GetRouteParamStrWithoutPageSize(page string) string {
 	p := url.Values{}
 	p.Add(Sort, param.SortField)
-	p.Add(Page, param.Page)
+	p.Add(Page, page)
 	p.Add(SortType, param.SortType)
 	if len(param.Columns) > 0 {
 		p.Add(Columns, strings.Join(param.Columns, ","))

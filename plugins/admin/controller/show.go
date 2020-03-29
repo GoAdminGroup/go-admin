@@ -56,7 +56,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				GetContent(),
 			Description: errors.Msg,
 			Title:       errors.Msg,
-		})
+		}, params.Animation)
 	}
 
 	paramStr := params.DeleteIsAll().GetRouteParamStr()
@@ -211,7 +211,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Content:     box,
 		Description: panelInfo.Description,
 		Title:       panelInfo.Title,
-	})
+	}, params.Animation)
 }
 
 // Assets return front-end assets according the request path.

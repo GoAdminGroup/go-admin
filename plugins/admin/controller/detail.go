@@ -122,7 +122,7 @@ $('.delete-btn').on('click', function (event) {
 			Content:     aAlert().Warning(err.Error()),
 			Description: desc,
 			Title:       title,
-		})
+		}, param.Animation)
 		return
 	}
 
@@ -137,5 +137,5 @@ $('.delete-btn').on('click', function (event) {
 			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
 		Description: desc,
 		Title:       title,
-	})
+	}, param.Animation)
 }

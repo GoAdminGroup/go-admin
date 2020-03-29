@@ -34,10 +34,14 @@ type DefaultButton struct {
 	Color     template.HTML
 	TextColor template.HTML
 	Icon      string
+	Direction template.HTML
 }
 
 func GetDefaultButton(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
+	return defaultButton(title, "right", icon, action, colors...)
+}
 
+func defaultButton(title, direction template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
 	id := btnUUID()
 	action.SetBtnId(id)
 
@@ -57,7 +61,12 @@ func GetDefaultButton(title template.HTML, icon string, action Action, colors ..
 		Color:     color,
 		TextColor: textColor,
 		Icon:      icon,
+		Direction: direction,
 	}
+}
+
+func GetColumnButton(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
+	return defaultButton(title, "", icon, action, colors...)
 }
 
 func (b *DefaultButton) Content() (template.HTML, template.JS) {
@@ -78,7 +87,7 @@ func (b *DefaultButton) Content() (template.HTML, template.JS) {
 		style = template.HTML(`style="`) + addColor + template.HTML(`"`)
 	}
 
-	h := `<div class="btn-group pull-right" style="margin-right: 10px">
+	h := `<div class="btn-group pull-` + b.Direction + `" style="margin-right: 10px">
                 <a ` + style + ` class="` + template.HTML(b.Id) + ` btn btn-sm btn-default ` + b.Action.BtnClass() + `" ` + b.Action.BtnAttribute() + `>
                     <i class="fa ` + template.HTML(b.Icon) + `"></i>&nbsp;&nbsp;` + b.Title + `
                 </a>
