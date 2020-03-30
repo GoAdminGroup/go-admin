@@ -121,28 +121,21 @@ func main() {
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}
 
-    	// Generators: see https://github.com/GoAdminGroup/go-admin/blob/master/examples/datamodel/tables.go 
-	adminPlugin := admin.NewAdmin(datamodel.Generators)
-	
 	// add component chartjs
 	template.AddComp(chartjs.NewChart())
-	
-	// add generator, first parameter is the url prefix of table when visit.
-    	// example:
-    	//
-    	// "user" => http://localhost:9033/admin/info/user
-    	//
-    	adminPlugin.AddGenerator("user", datamodel.GetUserTable)
+
+	_ = eng.AddConfig(cfg).
+		AddGenerators(datamodel.Generators).
+	        // add generator, first parameter is the url prefix of table when visit.
+    	        // example:
+    	        //
+    	        // "user" => http://localhost:9033/admin/info/user
+    	        //		
+		AddGenerator("user", datamodel.GetUserTable).
+		Use(r)
 	
 	// customize your pages
-    
-    	r.GET("/admin", func(ctx *gin.Context) {
-    		eng.Content(ctx, func(ctx interface{}) (types.Panel, error) {
-    			return datamodel.GetContent()
-    		})
-    	})
-
-	_ = eng.AddConfig(cfg).AddPlugins(adminPlugin).Use(r)
+	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	_ = r.Run(":9033")
 }
