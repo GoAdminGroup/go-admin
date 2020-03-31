@@ -88,9 +88,9 @@ backup-mssql:
 	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/home/data/admin_ms.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
 
 fix-gf:
-	go get -u -v github.com/gogf/gf@v1.11.7
-	sudo chmod -R 777 $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.11.7/net/ghttp/ghttp_server_handler.go
-	sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.11.7/net/ghttp/ghttp_server_handler.go
+	go get -u -v github.com/gogf/gf@v1.12.1
+	sudo chmod -R 777 $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+	sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
 
 cp-mod:
 	cp go.mod go.mod.old

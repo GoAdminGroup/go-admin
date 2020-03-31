@@ -51,6 +51,11 @@ func TestCheckPermissions(t *testing.T) {
 				Slug:       "/",
 				HttpMethod: []string{"GET"},
 				HttpPath:   []string{"/info/user_list?user_type=20"},
+			}, {
+				Name:       "/delete/user",
+				Slug:       "/",
+				HttpMethod: []string{"POST"},
+				HttpPath:   []string{"/delete/user"},
 			},
 		},
 	}
@@ -73,4 +78,5 @@ func TestCheckPermissions(t *testing.T) {
 	assert.Equal(t, CheckPermissions(user, "/admin/logout?j=asdf", "post", param), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user_list?user_type=20", "get", param), true)
 	assert.Equal(t, CheckPermissions(user, "/admin/info/user_list?__goadmin_edit_pk=3&user_type=20", "get", param), true)
+	assert.Equal(t, CheckPermissions(user, "/admin/delete/user", "post", param), true)
 }

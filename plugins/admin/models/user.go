@@ -88,7 +88,7 @@ func (t UserModel) IsSuperAdmin() bool {
 }
 
 func (t UserModel) GetCheckPermissionByUrlMethod(path, method string) string {
-	if !t.CheckPermissionByUrlMethod(path, "GET", url.Values{}) {
+	if !t.CheckPermissionByUrlMethod(path, method, url.Values{}) {
 		return ""
 	}
 	return path
