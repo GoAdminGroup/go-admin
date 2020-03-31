@@ -850,6 +850,22 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 func (tb DefaultTable) DeleteData(id string) error {
 	idArr := strings.Split(id, ",")
 
+	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
+		defer func() {
+			go func() {
+				defer func() {
+					if err := recover(); err != nil {
+						logger.Error(err)
+					}
+				}()
+
+				if err := tb.Info.DeleteHook(idArr); err != nil {
+					logger.Error(err)
+				}
+			}()
+		}()
+	}
+
 	if tb.Info.DeleteFn != nil {
 
 		if len(idArr) == 0 {
@@ -870,20 +886,6 @@ func (tb DefaultTable) DeleteData(id string) error {
 	// TODO: use where in
 	for _, id := range idArr {
 		tb.delete(tableName, tb.PrimaryKey.Name, id)
-	}
-
-	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
-		go func() {
-			defer func() {
-				if err := recover(); err != nil {
-					logger.Error(err)
-				}
-			}()
-
-			if err := tb.Info.DeleteHook(idArr); err != nil {
-				logger.Error(err)
-			}
-		}()
 	}
 
 	return nil
