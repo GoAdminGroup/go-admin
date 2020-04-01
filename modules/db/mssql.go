@@ -7,11 +7,11 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/gogf/gf/text/gregex"
 )
 
 // Mssql is a Connection of mssql.
@@ -38,16 +38,75 @@ func (db *Mssql) Name() string {
 	return "mssql"
 }
 
+// TODO: 整理优化
+
+func replaceStringFunc(pattern, src string, rpl func(s string) string) (string, error) {
+
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return "", err
+	}
+
+	bytes := r.ReplaceAllFunc([]byte(src), func(bytes []byte) []byte {
+		return []byte(rpl(string(bytes)))
+	})
+
+	return string(bytes), nil
+}
+
+func replace(pattern string, replace, src []byte) ([]byte, error) {
+
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.ReplaceAll(src, replace), nil
+}
+
+func replaceString(pattern, rep, src string) (string, error) {
+	r, e := replace(pattern, []byte(rep), []byte(src))
+	return string(r), e
+}
+
+func matchAllString(pattern string, src string) ([][]string, error) {
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, err
+	}
+	return r.FindAllStringSubmatch(src, -1), nil
+}
+
+func isMatch(pattern string, src []byte) bool {
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return false
+	}
+	return r.Match(src)
+}
+
+func isMatchString(pattern string, src string) bool {
+	return isMatch(pattern, []byte(src))
+}
+
+func matchString(pattern string, src string) ([]string, error) {
+	r, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, err
+	}
+	return r.FindStringSubmatch(src), nil
+}
+
 // 从Gf框架复制
 // 在执行sql之前对sql进行进一步处理
 func (db *Mssql) handleSqlBeforeExec(query string) string {
 	index := 0
-	str, _ := gregex.ReplaceStringFunc("\\?", query, func(s string) string {
+	str, _ := replaceStringFunc("\\?", query, func(s string) string {
 		index++
 		return fmt.Sprintf("@p%d", index)
 	})
 
-	str, _ = gregex.ReplaceString("\"", "", str)
+	str, _ = replaceString("\"", "", str)
 
 	return db.parseSql(str)
 }
@@ -57,12 +116,12 @@ func (db *Mssql) handleSqlBeforeExec(query string) string {
 func (db *Mssql) parseSql(sql string) string {
 	//下面的正则表达式匹配出SELECT和INSERT的关键字后分别做不同的处理，如有LIMIT则将LIMIT的关键字也匹配出
 	patten := `^\s*(?i)(SELECT)|(LIMIT\s*(\d+)\s*,\s*(\d+))`
-	if gregex.IsMatchString(patten, sql) == false {
+	if isMatchString(patten, sql) == false {
 		//fmt.Println("not matched..")
 		return sql
 	}
 
-	res, err := gregex.MatchAllString(patten, sql)
+	res, err := matchAllString(patten, sql)
 	if err != nil {
 		//fmt.Println("MatchString error.", err)
 		return ""
@@ -81,17 +140,17 @@ func (db *Mssql) parseSql(sql string) string {
 		}
 
 		//不含LIMIT则不处理
-		if gregex.IsMatchString("((?i)SELECT)(.+)((?i)LIMIT)", sql) == false {
+		if isMatchString("((?i)SELECT)(.+)((?i)LIMIT)", sql) == false {
 			break
 		}
 
 		//判断SQL中是否含有order by
 		selectStr := ""
 		orderbyStr := ""
-		haveOrderby := gregex.IsMatchString("((?i)SELECT)(.+)((?i)ORDER BY)", sql)
+		haveOrderby := isMatchString("((?i)SELECT)(.+)((?i)ORDER BY)", sql)
 		if haveOrderby {
 			//取order by 前面的字符串
-			queryExpr, _ := gregex.MatchString("((?i)SELECT)(.+)((?i)ORDER BY)", sql)
+			queryExpr, _ := matchString("((?i)SELECT)(.+)((?i)ORDER BY)", sql)
 
 			if len(queryExpr) != 4 || strings.EqualFold(queryExpr[1], "SELECT") == false || strings.EqualFold(queryExpr[3], "ORDER BY") == false {
 				break
@@ -99,13 +158,13 @@ func (db *Mssql) parseSql(sql string) string {
 			selectStr = queryExpr[2]
 
 			//取order by表达式的值
-			orderbyExpr, _ := gregex.MatchString("((?i)ORDER BY)(.+)((?i)LIMIT)", sql)
+			orderbyExpr, _ := matchString("((?i)ORDER BY)(.+)((?i)LIMIT)", sql)
 			if len(orderbyExpr) != 4 || strings.EqualFold(orderbyExpr[1], "ORDER BY") == false || strings.EqualFold(orderbyExpr[3], "LIMIT") == false {
 				break
 			}
 			orderbyStr = orderbyExpr[2]
 		} else {
-			queryExpr, _ := gregex.MatchString("((?i)SELECT)(.+)((?i)LIMIT)", sql)
+			queryExpr, _ := matchString("((?i)SELECT)(.+)((?i)LIMIT)", sql)
 			if len(queryExpr) != 4 || strings.EqualFold(queryExpr[1], "SELECT") == false || strings.EqualFold(queryExpr[3], "LIMIT") == false {
 				break
 			}
