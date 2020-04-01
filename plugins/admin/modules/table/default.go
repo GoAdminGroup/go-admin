@@ -848,7 +848,11 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 
 // DeleteData delete data.
 func (tb DefaultTable) DeleteData(id string) error {
-	idArr := strings.Split(id, ",")
+
+	var (
+		idArr = strings.Split(id, ",")
+		err   error
+	)
 
 	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
 		defer func() {
@@ -866,26 +870,46 @@ func (tb DefaultTable) DeleteData(id string) error {
 		}()
 	}
 
+	if tb.Info.DeleteHookWithRes != nil && len(idArr) > 0 {
+		defer func() {
+			go func() {
+				defer func() {
+					if recoverErr := recover(); recoverErr != nil {
+						logger.Error(recoverErr)
+					}
+				}()
+
+				if hookErr := tb.Info.DeleteHookWithRes(idArr, err); hookErr != nil {
+					logger.Error(hookErr)
+				}
+			}()
+		}()
+	}
+
+	if tb.Info.PreDeleteFn != nil && len(idArr) > 0 {
+		if err = tb.Info.PreDeleteFn(idArr); err != nil {
+			return err
+		}
+	}
+
 	if tb.Info.DeleteFn != nil {
 
 		if len(idArr) == 0 {
 			return errors.New("wrong parameter")
 		}
 
-		return tb.Info.DeleteFn(idArr)
-	}
-
-	if tb.Info.PreDeleteFn != nil && len(idArr) > 0 {
-		if err := tb.Info.PreDeleteFn(idArr); err != nil {
-			return err
-		}
+		err = tb.Info.DeleteFn(idArr)
+		return err
 	}
 
 	tableName := modules.AorB(tb.Info.Table == "", tb.Form.Table, tb.Info.Table)
 
 	// TODO: use where in
 	for _, id := range idArr {
-		tb.delete(tableName, tb.PrimaryKey.Name, id)
+		err = tb.delete(tableName, tb.PrimaryKey.Name, id)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -906,8 +930,8 @@ func (tb DefaultTable) GetNewForm() FormInfo {
 // helper function for database operation
 // ***************************************
 
-func (tb DefaultTable) delete(table, key, id string) {
-	_ = tb.sql().Table(table).
+func (tb DefaultTable) delete(table, key, id string) error {
+	return tb.sql().Table(table).
 		Where(key, "=", id).
 		Delete()
 }

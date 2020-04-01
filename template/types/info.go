@@ -387,6 +387,7 @@ func (t TabHeaders) Add(header string) TabHeaders {
 type GetDataFn func(param parameter.Parameters) ([]map[string]interface{}, int)
 
 type DeleteFn func(ids []string) error
+type DeleteFnWithRes func(ids []string, res error) error
 
 type Sort uint8
 
@@ -446,6 +447,8 @@ type InfoPanel struct {
 	DeleteHook  DeleteFn
 	PreDeleteFn DeleteFn
 	DeleteFn    DeleteFn
+
+	DeleteHookWithRes DeleteFnWithRes
 
 	GetDataFn GetDataFn
 
@@ -749,6 +752,11 @@ func (i *InfoPanel) AddXssJsFilter() *InfoPanel {
 
 func (i *InfoPanel) SetDeleteHook(fn DeleteFn) *InfoPanel {
 	i.DeleteHook = fn
+	return i
+}
+
+func (i *InfoPanel) SetDeleteHookWithRes(fn DeleteFnWithRes) *InfoPanel {
+	i.DeleteHookWithRes = fn
 	return i
 }
 
