@@ -22,13 +22,11 @@ func (h *Handler) Delete(ctx *context.Context) {
 
 	if err := h.table(param.Prefix, ctx).DeleteData(param.Id); err != nil {
 		logger.Error(err)
-		response.Error(ctx, "删除失败")
+		response.Error(ctx, "delete fail")
 		return
 	}
 
-	newToken := h.authSrv().AddToken()
-
 	response.OkWithData(ctx, map[string]interface{}{
-		"token": newToken,
+		"token": h.authSrv().AddToken(),
 	})
 }

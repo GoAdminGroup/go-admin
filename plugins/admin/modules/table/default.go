@@ -854,23 +854,23 @@ func (tb DefaultTable) DeleteData(id string) error {
 		err   error
 	)
 
-	if tb.Info.DeleteHook != nil && len(idArr) > 0 {
+	if tb.Info.DeleteHook != nil {
 		defer func() {
 			go func() {
 				defer func() {
-					if err := recover(); err != nil {
-						logger.Error(err)
+					if recoverErr := recover(); recoverErr != nil {
+						logger.Error(recoverErr)
 					}
 				}()
 
-				if err := tb.Info.DeleteHook(idArr); err != nil {
-					logger.Error(err)
+				if hookErr := tb.Info.DeleteHook(idArr); hookErr != nil {
+					logger.Error(hookErr)
 				}
 			}()
 		}()
 	}
 
-	if tb.Info.DeleteHookWithRes != nil && len(idArr) > 0 {
+	if tb.Info.DeleteHookWithRes != nil {
 		defer func() {
 			go func() {
 				defer func() {
@@ -886,23 +886,23 @@ func (tb DefaultTable) DeleteData(id string) error {
 		}()
 	}
 
-	if tb.Info.PreDeleteFn != nil && len(idArr) > 0 {
+	if tb.Info.PreDeleteFn != nil {
 		if err = tb.Info.PreDeleteFn(idArr); err != nil {
 			return err
 		}
 	}
 
 	if tb.Info.DeleteFn != nil {
-
-		if len(idArr) == 0 {
-			return errors.New("wrong parameter")
-		}
-
 		err = tb.Info.DeleteFn(idArr)
 		return err
 	}
 
-	err = tb.delete(modules.AorB(tb.Info.Table == "", tb.Form.Table, tb.Info.Table), tb.PrimaryKey.Name, idArr)
+	if len(idArr) == 0 || tb.Info.Table == "" {
+		err = errors.New("delete error: wrong parameter")
+		return err
+	}
+
+	err = tb.delete(tb.Info.Table, tb.PrimaryKey.Name, idArr)
 	return err
 }
 

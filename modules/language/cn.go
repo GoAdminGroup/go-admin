@@ -58,6 +58,7 @@ var cn = map[string]string{
 	"refresh succeeded":      "刷新成功",
 	"edit fail":              "编辑失败",
 	"create fail":            "新增失败",
+	"delete fail":            "删除失败",
 	"confirm password":       "确认密码",
 	"all method if empty":    "为空默认为所有方法",
 
