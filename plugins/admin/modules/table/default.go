@@ -902,17 +902,8 @@ func (tb DefaultTable) DeleteData(id string) error {
 		return err
 	}
 
-	tableName := modules.AorB(tb.Info.Table == "", tb.Form.Table, tb.Info.Table)
-
-	// TODO: use where in
-	for _, id := range idArr {
-		err = tb.delete(tableName, tb.PrimaryKey.Name, id)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	err = tb.delete(modules.AorB(tb.Info.Table == "", tb.Form.Table, tb.Info.Table), tb.PrimaryKey.Name, idArr)
+	return err
 }
 
 func (tb DefaultTable) GetNewForm() FormInfo {
@@ -930,9 +921,15 @@ func (tb DefaultTable) GetNewForm() FormInfo {
 // helper function for database operation
 // ***************************************
 
-func (tb DefaultTable) delete(table, key, id string) error {
+func (tb DefaultTable) delete(table, key string, values []string) error {
+
+	var vals = make([]interface{}, len(values))
+	for i, v := range values {
+		vals[i] = v
+	}
+
 	return tb.sql().Table(table).
-		Where(key, "=", id).
+		WhereIn(key, vals).
 		Delete()
 }
 
