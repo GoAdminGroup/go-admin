@@ -307,15 +307,34 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{}) {
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
 
-		buf := new(bytes.Buffer)
+		cbuf := new(bytes.Buffer)
 
 		t, err := template2.ParseFiles(path)
 		if err != nil {
-			eng.errorPanelHTML(ctx, buf, err)
+			eng.errorPanelHTML(ctx, cbuf, err)
 		} else {
-			if err := t.Execute(buf, data); err != nil {
-				eng.errorPanelHTML(ctx, buf, err)
+			if err := t.Execute(cbuf, data); err != nil {
+				eng.errorPanelHTML(ctx, cbuf, err)
 			}
+		}
+
+		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
+
+		user := auth.Auth(ctx)
+
+		buf := new(bytes.Buffer)
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+			User: user,
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+			Panel: types.Panel{
+				Content: template.HTML(cbuf.String()),
+			},
+			Assets:  template.GetComponentAssetListsHTML(),
+			Buttons: eng.NavButtons,
+		}))
+
+		if hasError != nil {
+			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())
@@ -325,15 +344,34 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, files ...string) {
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
 
-		buf := new(bytes.Buffer)
+		cbuf := new(bytes.Buffer)
 
 		t, err := template2.ParseFiles(files...)
 		if err != nil {
-			eng.errorPanelHTML(ctx, buf, err)
+			eng.errorPanelHTML(ctx, cbuf, err)
 		} else {
-			if err := t.Execute(buf, data); err != nil {
-				eng.errorPanelHTML(ctx, buf, err)
+			if err := t.Execute(cbuf, data); err != nil {
+				eng.errorPanelHTML(ctx, cbuf, err)
 			}
+		}
+
+		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
+
+		user := auth.Auth(ctx)
+
+		buf := new(bytes.Buffer)
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+			User: user,
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+			Panel: types.Panel{
+				Content: template.HTML(cbuf.String()),
+			},
+			Assets:  template.GetComponentAssetListsHTML(),
+			Buttons: eng.NavButtons,
+		}))
+
+		if hasError != nil {
+			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())

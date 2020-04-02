@@ -687,6 +687,10 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 		}
 	}
 
+	if tb.Form.PreProcessFn != nil {
+		dataList = tb.Form.PreProcessFn(dataList)
+	}
+
 	if tb.Form.UpdateFn != nil {
 		dataList.Delete(form.PostTypeKey)
 		err = tb.Form.UpdateFn(dataList)
@@ -694,10 +698,6 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 			errMsg = "post error: " + err.Error()
 		}
 		return err
-	}
-
-	if tb.Form.PreProcessFn != nil {
-		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
 	_, err = tb.sql().Table(tb.Form.Table).
@@ -753,6 +753,10 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 		}
 	}
 
+	if tb.Form.PreProcessFn != nil {
+		dataList = tb.Form.PreProcessFn(dataList)
+	}
+
 	if tb.Form.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
 		err = tb.Form.InsertFn(dataList)
@@ -760,10 +764,6 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 			errMsg = "post error: " + err.Error()
 		}
 		return err
-	}
-
-	if tb.Form.PreProcessFn != nil {
-		dataList = tb.Form.PreProcessFn(dataList)
 	}
 
 	id, err = tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
