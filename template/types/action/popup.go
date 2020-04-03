@@ -20,6 +20,9 @@ type PopUpAction struct {
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
+	if id == "" {
+		panic("wrong popup action parameter, empty id")
+	}
 	return &PopUpAction{
 		Url:      URL(id),
 		Title:    title,

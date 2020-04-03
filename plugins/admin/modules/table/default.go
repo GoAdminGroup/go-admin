@@ -248,6 +248,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 
 		combineValue := db.GetValueFromDatabaseType(typeName, res[headField], len(columns) == 0).String()
 
+		// TODO: ToDisplay some same logic execute repeatedly, it can be improved.
 		var value interface{}
 		if len(columns) == 0 || modules.InArray(columns, headField) || field.Join.Valid() {
 			value = field.ToDisplay(types.FieldModel{

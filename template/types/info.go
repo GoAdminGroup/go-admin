@@ -77,6 +77,11 @@ func (c Callbacks) AddCallback(node context.Node) Callbacks {
 				return c
 			}
 		}
+		parr := strings.Split(node.Path, "?")
+		if len(parr) > 1 {
+			node.Path = parr[0]
+			return append(c, node)
+		}
 		return append(c, node)
 	}
 	return c

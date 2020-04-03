@@ -30,6 +30,9 @@ type AlertData struct {
 }
 
 func Ajax(id string, handler types.Handler) *AjaxAction {
+	if id == "" {
+		panic("wrong ajax action parameter, empty id")
+	}
 	return &AjaxAction{
 		Url:      URL(id),
 		Method:   "post",

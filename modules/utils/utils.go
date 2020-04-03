@@ -73,7 +73,16 @@ func InArray(arr []string, str string) bool {
 }
 
 func WrapURL(u string) string {
-	return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+	uarr := strings.Split(u, "?")
+	if len(uarr) < 2 {
+		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+	}
+	v, err := url.ParseQuery(uarr[1])
+	if err != nil {
+		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+	}
+	return url.QueryEscape(strings.Replace(uarr[0], "/", "_", -1)) + "?" +
+		strings.Replace(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}", -1)
 }
 
 func CopyMap(m map[string]string) map[string]string {
