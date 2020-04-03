@@ -74,6 +74,7 @@ var cn = map[string]string{
 	"parent":     "父级",
 	"icon":       "图标",
 	"uri":        "路径",
+	"close":      "关闭",
 
 	"login":      "登录",
 	"login fail": "登录失败",
