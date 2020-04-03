@@ -95,7 +95,14 @@ func (ajax *AjaxAction) Js() template.JS {
                                 } else {
                                     swal(data.msg, '', 'error');
                                 }
-                            }
+                            },
+							error: function (data) {
+								if (data.responseText !== "") {
+									swal(data.responseJSON.msg, '', 'error');								
+								} else {
+									swal('error', '', 'error');
+								}
+							},
                         });`
 
 	if ajax.Alert {

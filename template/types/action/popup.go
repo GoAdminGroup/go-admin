@@ -69,6 +69,7 @@ func (pop *PopUpAction) Js() template.JS {
                             url: "` + pop.Url + `",
                             data: data,
                             success: function (data) { 
+								console.log('success data', data)
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
                                 }
@@ -77,7 +78,18 @@ func (pop *PopUpAction) Js() template.JS {
                                 } else {
                                     swal(data.msg, '', 'error');
                                 }
-                            }
+                            },
+							error: function (data) {
+								if (data.responseText !== "") {
+									swal(data.responseJSON.msg, '', 'error');								
+								} else {
+									swal('error', '', 'error');
+								}
+								setTimeout(function() {
+									$('#` + pop.Id + `').hide();
+									$('.modal-backdrop.fade.in').hide();
+								}, 500)
+							},
                         });
             		});`)
 }

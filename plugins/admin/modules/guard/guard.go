@@ -34,7 +34,7 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 	prefix := ctx.Query(constant.PrefixKey)
 
 	if _, ok := g.tableList[prefix]; !ok {
-		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() == "POST" {
+		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
 			response.BadRequest(ctx, errors.Msg)
 		} else {
 			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn)

@@ -8,13 +8,15 @@ import (
 type Button interface {
 	Content() (template.HTML, template.JS)
 	GetAction() Action
+	URL() string
+	METHOD() string
 	ID() string
 }
 
 type BaseButton struct {
-	Id     string
-	Title  template.HTML
-	Action Action
+	Id, Url, Method string
+	Title           template.HTML
+	Action          Action
 }
 
 func (b *BaseButton) Content() (template.HTML, template.JS) {
@@ -27,6 +29,14 @@ func (b *BaseButton) GetAction() Action {
 
 func (b *BaseButton) ID() string {
 	return b.Id
+}
+
+func (b *BaseButton) URL() string {
+	return b.Url
+}
+
+func (b *BaseButton) METHOD() string {
+	return b.Method
 }
 
 type DefaultButton struct {
@@ -52,11 +62,14 @@ func defaultButton(title, direction template.HTML, icon string, action Action, c
 	if len(colors) > 1 {
 		textColor = colors[1]
 	}
+	node := action.GetCallbacks()
 	return &DefaultButton{
 		BaseButton: &BaseButton{
 			Id:     id,
 			Title:  title,
 			Action: action,
+			Url:    node.Path,
+			Method: node.Method,
 		},
 		Color:     color,
 		TextColor: textColor,
@@ -109,12 +122,15 @@ func GetActionButton(title template.HTML, action Action, ids ...string) *ActionB
 	}
 
 	action.SetBtnId(id)
+	node := action.GetCallbacks()
 
 	return &ActionButton{
 		BaseButton: &BaseButton{
 			Id:     id,
 			Title:  title,
 			Action: action,
+			Url:    node.Path,
+			Method: node.Method,
 		},
 	}
 }
@@ -147,12 +163,15 @@ func GetNavButton(title template.HTML, icon string, action Action) *NavButton {
 
 	id := btnUUID()
 	action.SetBtnId(id)
+	node := action.GetCallbacks()
 
 	return &NavButton{
 		BaseButton: &BaseButton{
 			Id:     id,
 			Title:  title,
 			Action: action,
+			Url:    node.Path,
+			Method: node.Method,
 		},
 		Icon: icon,
 	}

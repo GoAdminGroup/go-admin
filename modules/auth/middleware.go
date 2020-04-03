@@ -7,12 +7,15 @@ package auth
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"net/http"
 	"net/url"
 )
 
@@ -40,9 +43,16 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 			}, ``)
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
-			page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
-				return template2.WarningPanel(errors.PermissionDenied), nil
-			}, conn)
+			if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
+				ctx.JSON(http.StatusForbidden, map[string]interface{}{
+					"code": http.StatusForbidden,
+					"msg":  language.Get(errors.PermissionDenied),
+				})
+			} else {
+				page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
+					return template2.WarningPanel(errors.PermissionDenied), nil
+				}, conn)
+			}
 		},
 		conn: conn,
 	}

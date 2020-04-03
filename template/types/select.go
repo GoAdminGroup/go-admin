@@ -27,10 +27,13 @@ func GetDefaultSelection(placeholder string, options FieldOptions, action Action
 	if len(widths) > 0 {
 		width = widths[0]
 	}
+	node := action.GetCallbacks()
 	return &DefaultSelection{
 		BaseButton: &BaseButton{
 			Id:     id,
 			Action: action,
+			Url:    node.Path,
+			Method: node.Method,
 		},
 		Placeholder: placeholder,
 		Width:       width,

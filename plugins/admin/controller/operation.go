@@ -11,7 +11,7 @@ func (h *Handler) Operation(ctx *context.Context) {
 	id := ctx.Query("__goadmin_op_id")
 	if !h.OperationHandler(config.Get().Url("/operation/"+id), ctx) {
 		errMsg := "not found"
-		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() == "POST" {
+		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
 			response.BadRequest(ctx, errMsg)
 		} else {
 			response.Alert(ctx, errMsg, errMsg, errMsg, h.conn)

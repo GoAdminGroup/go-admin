@@ -23,6 +23,7 @@ import (
 	"github.com/GoAdminGroup/html"
 	template2 "html/template"
 	"net/http"
+	"net/url"
 	"path"
 	"strconv"
 	"strings"
@@ -84,33 +85,52 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		info       = panel.GetInfo()
 		actionBtns = info.Action
 		actionJs   template2.JS
+		allBtns    = make(types.Buttons, 0)
 	)
 
-	btns, btnsJs := info.Buttons.Content()
+	for _, b := range info.Buttons {
+		if b.URL() == "" || b.METHOD() == "" || user.CheckPermissionByUrlMethod(b.URL(), b.METHOD(), url.Values{}) {
+			allBtns = append(allBtns, b)
+		}
+	}
 
-	if actionBtns == template.HTML("") && len(info.ActionButtons) > 0 {
+	btns, btnsJs := allBtns.Content()
+
+	allActionBtns := make(types.Buttons, 0)
+
+	for _, b := range info.ActionButtons {
+		if b.URL() == "" || b.METHOD() == "" || user.CheckPermissionByUrlMethod(b.URL(), b.METHOD(), url.Values{}) {
+			allActionBtns = append(allActionBtns, b)
+		}
+	}
+
+	if actionBtns == template.HTML("") && len(allActionBtns) > 0 {
+
 		ext := template.HTML("")
 		if deleteUrl != "" {
 			ext = html.LiEl().SetClass("divider").Get()
-			info.AddActionButtonFront(language.GetFromHtml("delete"), types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
-				ext, "", ""), "grid-row-delete")
+			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
+				types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
+					ext, "", ""), "grid-row-delete")}, allActionBtns...)
 		}
 		ext = template.HTML("")
 		if detailUrl != "" {
 			if editUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()
 			}
-			info.AddActionButtonFront(language.GetFromHtml("detail"), action.Jump(detailUrl+"&"+constant.DetailPKKey+"={{.Id}}", ext))
+			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("detail"),
+				action.Jump(detailUrl+"&"+constant.DetailPKKey+"={{.Id}}", ext))}, allActionBtns...)
 		}
 		if editUrl != "" {
 			if detailUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()
 			}
-			info.AddActionButtonFront(language.GetFromHtml("edit"), action.Jump(editUrl+"&"+constant.EditPKKey+"={{.Id}}", ext))
+			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("edit"),
+				action.Jump(editUrl+"&"+constant.EditPKKey+"={{.Id}}", ext))}, allActionBtns...)
 		}
 
 		var content template2.HTML
-		content, actionJs = info.ActionButtons.Content()
+		content, actionJs = allActionBtns.Content()
 
 		actionBtns = html.Div(
 			html.A(icon.Icon(icon.EllipsisV),

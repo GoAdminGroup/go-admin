@@ -56,7 +56,14 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
 
 func Error(ctx *context.Context, msg string) {
 	ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
-		"code": 500,
+		"code": http.StatusInternalServerError,
+		"msg":  language.Get(msg),
+	})
+}
+
+func Denied(ctx *context.Context, msg string) {
+	ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+		"code": http.StatusForbidden,
 		"msg":  language.Get(msg),
 	})
 }
