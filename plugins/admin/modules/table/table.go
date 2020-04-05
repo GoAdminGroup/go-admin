@@ -86,8 +86,10 @@ func (base *BaseTable) GetDetail() *types.InfoPanel {
 }
 
 func (base *BaseTable) GetDetailFromInfo() *types.InfoPanel {
-	copy(base.Detail.FieldList, base.Info.FieldList)
-	return base.GetDetail()
+	detail := base.GetDetail()
+	detail.FieldList = make(types.FieldList, len(base.Info.FieldList))
+	copy(detail.FieldList, base.Info.FieldList)
+	return detail
 }
 
 func (base *BaseTable) GetForm() *types.FormPanel {
