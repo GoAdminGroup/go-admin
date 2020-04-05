@@ -44,6 +44,7 @@ func (g GeneratorList) CombineAll(ggg []GeneratorList) GeneratorList {
 type Table interface {
 	GetInfo() *types.InfoPanel
 	GetDetail() *types.InfoPanel
+	GetDetailFromInfo() *types.InfoPanel
 	GetForm() *types.FormPanel
 
 	GetCanAdd() bool
@@ -82,6 +83,11 @@ func (base *BaseTable) GetInfo() *types.InfoPanel {
 
 func (base *BaseTable) GetDetail() *types.InfoPanel {
 	return base.Detail.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
+}
+
+func (base *BaseTable) GetDetailFromInfo() *types.InfoPanel {
+	copy(base.Detail.FieldList, base.Info.FieldList)
+	return base.GetDetail()
 }
 
 func (base *BaseTable) GetForm() *types.FormPanel {
