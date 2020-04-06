@@ -109,7 +109,7 @@ func (g *Guard) EditForm(ctx *context.Context) {
 		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
 
 	if fromList {
-		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
+		previous = config.Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
 	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
@@ -146,5 +146,5 @@ func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn d
 }
 
 func getAlert(msg string) tmpl.HTML {
-	return template.Get(config.Get().Theme).Alert().Warning(msg)
+	return template.Get(config.GetTheme()).Alert().Warning(msg)
 }

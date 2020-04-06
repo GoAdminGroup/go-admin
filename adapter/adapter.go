@@ -126,13 +126,11 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 
 	tmpl, tmplName := template.Default().GetTemplate(newBase.IsPjax())
 
-	cfg := config.Get()
-
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 		User:    user,
-		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(newBase.Path())),
-		Panel:   panel.GetContent(cfg.IsProductionEnvironment()),
+		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
+		Panel:   panel.GetContent(config.IsProductionEnvironment()),
 		Assets:  template.GetComponentAssetListsHTML(),
 		Buttons: btns,
 	}))

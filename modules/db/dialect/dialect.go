@@ -40,7 +40,7 @@ type Dialect interface {
 
 // GetDialect return the default Dialect.
 func GetDialect() Dialect {
-	return GetDialectByDriver(config.Get().Databases.GetDefault().Driver)
+	return GetDialectByDriver(config.GetDatabases().GetDefault().Driver)
 }
 
 // GetDialectByDriver return the Dialect of given driver.

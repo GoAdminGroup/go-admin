@@ -43,7 +43,7 @@ func (b Base) Form() types.FormAttribute {
 		Layout:       form.LayoutDefault,
 		Title:        "edit",
 		Attribute:    b.Attribute,
-		CdnUrl:       config.Get().AssetUrl,
+		CdnUrl:       config.GetAssetUrl(),
 		HeadWidth:    2,
 		InputWidth:   8,
 	}

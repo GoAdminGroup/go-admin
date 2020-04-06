@@ -465,7 +465,7 @@ func (f *FormPanel) FieldEnableFileUpload(data ...interface{}) *FormPanel {
 				return
 			}
 
-			err := file.GetFileEngine(config.Get().FileUploadEngine.Name).Upload(ctx.Request.MultipartForm)
+			err := file.GetFileEngine(config.GetFileUploadEngine().Name).Upload(ctx.Request.MultipartForm)
 			if err != nil {
 				ctx.JSON(http.StatusOK, map[string]interface{}{
 					"errno": 500,
@@ -475,7 +475,7 @@ func (f *FormPanel) FieldEnableFileUpload(data ...interface{}) *FormPanel {
 
 			var imgPath = make([]string, len(ctx.Request.MultipartForm.Value["file"]))
 			for i, path := range ctx.Request.MultipartForm.Value["file"] {
-				imgPath[i] = config.Get().Store.URL(path)
+				imgPath[i] = config.GetStore().URL(path)
 			}
 
 			ctx.JSON(http.StatusOK, map[string]interface{}{
@@ -637,7 +637,7 @@ func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormP
 }
 
 func (f *FormPanel) OperationURL(id string) string {
-	return config.Get().Url("/operation/" + utils.WrapURL(id))
+	return config.Url("/operation/" + utils.WrapURL(id))
 }
 
 func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler) *FormPanel {
@@ -932,7 +932,7 @@ func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[str
 							list[j] = field.UpdateValue(id, rowValue, res)
 						}
 						if list[j].FormType == form2.File && list[j].Value != template.HTML("") {
-							list[j].Value2 = config.Get().Store.URL(string(list[j].Value))
+							list[j].Value2 = config.GetStore().URL(string(list[j].Value))
 						}
 						break
 					}
@@ -990,7 +990,7 @@ func (f *FormPanel) FieldsWithValue(id string, columns []string, res map[string]
 		}
 
 		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
-			formList[key].Value2 = config.Get().Store.URL(string(formList[key].Value))
+			formList[key].Value2 = config.GetStore().URL(string(formList[key].Value))
 		}
 	}
 	return formList

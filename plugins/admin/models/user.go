@@ -36,13 +36,13 @@ type UserModel struct {
 
 // User return a default user model.
 func User() UserModel {
-	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}}
+	return UserModel{Base: Base{TableName: config.GetAuthUserTable()}}
 }
 
 // UserWithId return a default user model of given id.
 func UserWithId(id string) UserModel {
 	idInt, _ := strconv.Atoi(id)
-	return UserModel{Base: Base{TableName: config.Get().AuthUserTable}, Id: int64(idInt)}
+	return UserModel{Base: Base{TableName: config.GetAuthUserTable()}, Id: int64(idInt)}
 }
 
 func (t UserModel) SetConn(con db.Connection) UserModel {
@@ -95,7 +95,7 @@ func (t UserModel) GetCheckPermissionByUrlMethod(path, method string) string {
 }
 
 func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams url.Values) bool {
-	logoutCheck, _ := regexp.Compile(config.Get().Url("/logout") + "(.*?)")
+	logoutCheck, _ := regexp.Compile(config.Url("/logout") + "(.*?)")
 
 	if logoutCheck.MatchString(path) {
 		return true
@@ -129,7 +129,7 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 
 			for i := 0; i < len(v.HttpPath); i++ {
 
-				matchPath := config.Get().Url(strings.TrimSpace(v.HttpPath[i]))
+				matchPath := config.Url(strings.TrimSpace(v.HttpPath[i]))
 				matchPath, matchParam := getParam(matchPath)
 
 				if matchPath == path {

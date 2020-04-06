@@ -35,7 +35,7 @@ func NewSystemTable(conn db.Connection) *SystemTable {
 }
 
 func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -271,10 +271,10 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 	detail.AddField(lg("Name"), "username", db.Varchar)
 	detail.AddField(lg("Avatar"), "avatar", db.Varchar).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			if model.Value == "" || config.Get().Store.Prefix == "" {
-				model.Value = config.Get().Url("/assets/dist/img/avatar04.png")
+			if model.Value == "" || config.GetStore().Prefix == "" {
+				model.Value = config.Url("/assets/dist/img/avatar04.png")
 			} else {
-				model.Value = config.Get().Store.URL(model.Value)
+				model.Value = config.GetStore().URL(model.Value)
 			}
 			return template.Default().Image().
 				SetSrc(template.HTML(model.Value)).
@@ -334,7 +334,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 }
 
 func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -491,7 +491,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 }
 
 func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
-	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := PermissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -614,7 +614,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 }
 
 func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
-	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := RolesTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -772,7 +772,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 
 func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	OpTable = NewDefaultTable(Config{
-		Driver:     config.Get().Databases.GetDefault().Driver,
+		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     false,
 		Editable:   false,
 		Deletable:  false,
@@ -796,7 +796,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	}).FieldDisplay(func(value types.FieldModel) interface{} {
 		return template.Default().
 			Link().
-			SetURL(config.Get().Url("/info/manager/detail?__goadmin_detail_pk=") + strconv.Itoa(int(value.Row["user_id"].(int64)))).
+			SetURL(config.Url("/info/manager/detail?__goadmin_detail_pk=") + strconv.Itoa(int(value.Row["user_id"].(int64)))).
 			SetContent(template.HTML(value.Value)).
 			OpenInNewTab().
 			SetTabTitle("Manager Detail").
@@ -847,7 +847,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 }
 
 func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
-	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.Get().Databases.GetDefault().Driver))
+	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := MenuTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -964,7 +964,7 @@ func encodePassword(pwd []byte) string {
 }
 
 func label() types.LabelAttribute {
-	return template.Get(config.Get().Theme).Label().SetType("success")
+	return template.Get(config.GetTheme()).Label().SetType("success")
 }
 
 func lg(v string) string {

@@ -319,6 +319,45 @@ func (c Config) PrefixFixSlash() string {
 	return c.UrlPrefix
 }
 
+func (c Config) Copy() Config {
+	return Config{
+		Databases:        c.Databases,
+		Domain:           c.Domain,
+		Language:         c.Language,
+		UrlPrefix:        c.UrlPrefix,
+		Theme:            c.Theme,
+		Store:            c.Store,
+		Title:            c.Title,
+		Logo:             c.Logo,
+		MiniLogo:         c.MiniLogo,
+		IndexUrl:         c.IndexUrl,
+		LoginUrl:         c.LoginUrl,
+		Debug:            c.Debug,
+		Env:              c.Env,
+		InfoLogPath:      c.InfoLogPath,
+		ErrorLogPath:     c.ErrorLogPath,
+		AccessLogPath:    c.AccessLogPath,
+		SqlLog:           c.SqlLog,
+		AccessLogOff:     c.AccessLogOff,
+		InfoLogOff:       c.InfoLogOff,
+		ErrorLogOff:      c.ErrorLogOff,
+		ColorScheme:      c.ColorScheme,
+		SessionLifeTime:  c.SessionLifeTime,
+		AssetUrl:         c.AssetUrl,
+		FileUploadEngine: c.FileUploadEngine,
+		CustomHeadHtml:   c.CustomHeadHtml,
+		CustomFootHtml:   c.CustomFootHtml,
+		FooterInfo:       c.FooterInfo,
+		LoginTitle:       c.LoginTitle,
+		LoginLogo:        c.LoginLogo,
+		AuthUserTable:    c.AuthUserTable,
+		Extra:            c.Extra,
+		Animation:        c.Animation,
+		NoLimitLoginIP:   c.NoLimitLoginIP,
+		prefix:           c.prefix,
+	}
+}
+
 var (
 	globalCfg Config
 	declare   sync.Once
@@ -443,9 +482,43 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 	return cfg
 }
 
+// AssertPrefix return the prefix of assert.
+func AssertPrefix() string {
+	return globalCfg.AssertPrefix()
+}
+
+// GetIndexURL get the index url with prefix.
+func GetIndexURL() string {
+	return globalCfg.GetIndexURL()
+}
+
+// IsProductionEnvironment check the environment if it is production.
+func IsProductionEnvironment() bool {
+	return globalCfg.IsProductionEnvironment()
+}
+
+// URLRemovePrefix remove prefix from the given url.
+func URLRemovePrefix(url string) string {
+	return globalCfg.URLRemovePrefix(url)
+}
+
+func Url(suffix string) string {
+	return globalCfg.Url(suffix)
+}
+
+// Prefix return the prefix.
+func Prefix() string {
+	return globalCfg.prefix
+}
+
+// PrefixFixSlash return the prefix fix the slash error.
+func PrefixFixSlash() string {
+	return globalCfg.PrefixFixSlash()
+}
+
 // Get gets the config.
 func Get() Config {
-	return globalCfg
+	return globalCfg.Copy()
 }
 
 // eraseSens erase sensitive info.
@@ -468,4 +541,137 @@ func setDefault(value, condition, def string) string {
 		return def
 	}
 	return value
+}
+
+// Getter methods
+// ============================
+
+func GetDatabases() DatabaseList {
+	return globalCfg.Databases
+}
+
+func GetDomain() string {
+	return globalCfg.Domain
+}
+
+func GetLanguage() string {
+	return globalCfg.Language
+}
+
+func GetUrlPrefix() string {
+	return globalCfg.UrlPrefix
+}
+
+func GetTheme() string {
+	return globalCfg.Theme
+}
+
+func GetStore() Store {
+	return globalCfg.Store
+}
+
+func GetTitle() string {
+	return globalCfg.Title
+}
+
+func GetLogo() template.HTML {
+	return globalCfg.Logo
+}
+
+func GetMiniLogo() template.HTML {
+	return globalCfg.MiniLogo
+}
+
+func GetIndexUrl() string {
+	return globalCfg.IndexUrl
+}
+
+func GetLoginUrl() string {
+	return globalCfg.LoginUrl
+}
+
+func GetDebug() bool {
+	return globalCfg.Debug
+}
+
+func GetEnv() string {
+	return globalCfg.Env
+}
+
+func GetInfoLogPath() string {
+	return globalCfg.InfoLogPath
+}
+
+func GetErrorLogPath() string {
+	return globalCfg.ErrorLogPath
+}
+
+func GetAccessLogPath() string {
+	return globalCfg.AccessLogPath
+}
+
+func GetSqlLog() bool {
+	return globalCfg.SqlLog
+}
+
+func GetAccessLogOff() bool {
+	return globalCfg.AccessLogOff
+}
+func GetInfoLogOff() bool {
+	return globalCfg.InfoLogOff
+}
+func GetErrorLogOff() bool {
+	return globalCfg.ErrorLogOff
+}
+
+func GetColorScheme() string {
+	return globalCfg.ColorScheme
+}
+
+func GetSessionLifeTime() int {
+	return globalCfg.SessionLifeTime
+}
+
+func GetAssetUrl() string {
+	return globalCfg.AssetUrl
+}
+
+func GetFileUploadEngine() FileUploadEngine {
+	return globalCfg.FileUploadEngine
+}
+
+func GetCustomHeadHtml() template.HTML {
+	return globalCfg.CustomHeadHtml
+}
+
+func GetCustomFootHtml() template.HTML {
+	return globalCfg.CustomFootHtml
+}
+
+func GetFooterInfo() template.HTML {
+	return globalCfg.FooterInfo
+}
+
+func GetLoginTitle() string {
+	return globalCfg.LoginTitle
+}
+
+func GetLoginLogo() template.HTML {
+	return globalCfg.LoginLogo
+}
+
+func GetAuthUserTable() string {
+	return globalCfg.AuthUserTable
+}
+
+func GetExtra() map[string]interface{} {
+	return globalCfg.Extra
+}
+
+func GetAnimation() PageAnimation {
+	return globalCfg.Animation
+}
+
+func GetNoLimitLoginIP() bool {
+	return globalCfg.NoLimitLoginIP
 }

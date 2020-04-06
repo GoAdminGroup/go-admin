@@ -91,7 +91,7 @@ func (g *Guard) NewForm(ctx *context.Context) {
 		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
 
 	if fromList {
-		previous = config.Get().Url("/info/" + prefix + param.GetRouteParamStr())
+		previous = config.Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
 	ctx.SetUserValue(newFormParamKey, &NewFormParam{

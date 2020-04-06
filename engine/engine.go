@@ -290,8 +290,8 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User:    user,
-			Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
-			Panel:   panel.GetContent(config.Get().IsProductionEnvironment()),
+			Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+			Panel:   panel.GetContent(eng.config.IsProductionEnvironment()),
 			Assets:  template.GetComponentAssetListsHTML(),
 			Buttons: eng.NavButtons,
 		}))
@@ -325,7 +325,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User: user,
-			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
@@ -362,7 +362,7 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User: user,
-			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
@@ -381,14 +381,13 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err error) {
 
 	user := auth.Auth(ctx)
-	cfg := config.Get()
 
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
 	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 		User:    user,
-		Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(cfg.URLRemovePrefix(ctx.Path())),
-		Panel:   template.WarningPanel(err.Error()).GetContent(cfg.IsProductionEnvironment()),
+		Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
+		Panel:   template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
 		Assets:  template.GetComponentAssetListsHTML(),
 		Buttons: eng.NavButtons,
 	}))

@@ -18,7 +18,7 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show
 
 	printlnWithColor("show", "green")
-	e.GET(config.Get().Url("/info/user")).
+	e.GET(config.Url("/info/user")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
@@ -27,7 +27,7 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// export
 
 	printlnWithColor("export test", "green")
-	e.POST(config.Get().Url("/export/user")).
+	e.POST(config.Url("/export/user")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("id", "1").
@@ -36,14 +36,14 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show form: without id
 
 	printlnWithColor("show form: without id", "green")
-	e.GET(config.Get().Url("/info/user/edit")).
+	e.GET(config.Url("/info/user/edit")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 
 	printlnWithColor("show form", "green")
-	e.GET(config.Get().Url("/info/user/edit")).
+	e.GET(config.Url("/info/user/edit")).
 		WithQuery(constant.EditPKKey, "362").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
@@ -51,7 +51,7 @@ func normalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	e.GET(config.Get().Url("/info/user/new")).
+	e.GET(config.Url("/info/user/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 

@@ -161,7 +161,7 @@ func (ch *Chi) Name() string {
 }
 
 func (ch *Chi) Redirect() {
-	http.Redirect(ch.ctx.Response, ch.ctx.Request, cfg.Get().Url("/login"), http.StatusFound)
+	http.Redirect(ch.ctx.Response, ch.ctx.Request, cfg.Url("/login"), http.StatusFound)
 }
 
 func (ch *Chi) SetContentType() {

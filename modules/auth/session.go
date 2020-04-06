@@ -72,13 +72,13 @@ func (ses *Session) Add(key string, value interface{}) {
 	cookie := http.Cookie{
 		Name:     ses.Cookie,
 		Value:    ses.Sid,
-		MaxAge:   config.Get().SessionLifeTime,
+		MaxAge:   config.GetSessionLifeTime(),
 		Expires:  time.Now().Add(ses.Expires),
 		HttpOnly: true,
 		Path:     "/",
 	}
-	if config.Get().Domain != "" {
-		cookie.Domain = config.Get().Domain
+	if config.GetDomain() != "" {
+		cookie.Domain = config.GetDomain()
 	}
 	ses.Context.SetCookie(&cookie)
 }
@@ -114,7 +114,7 @@ func InitSession(ctx *context.Context, conn db.Connection) *Session {
 
 	sessions := new(Session)
 	sessions.UpdateConfig(Config{
-		Expires: time.Second * time.Duration(config.Get().SessionLifeTime),
+		Expires: time.Second * time.Duration(config.GetSessionLifeTime()),
 		Cookie:  DefaultCookieKey,
 	})
 
@@ -153,8 +153,8 @@ func (driver *DBDriver) deleteOverdueSession() {
 	}()
 
 	var (
-		duration   = strconv.Itoa(config.Get().SessionLifeTime + 1000)
-		driverName = config.Get().Databases.GetDefault().Driver
+		duration   = strconv.Itoa(config.GetSessionLifeTime() + 1000)
+		driverName = config.GetDatabases().GetDefault().Driver
 		raw        = ``
 	)
 
@@ -187,7 +187,7 @@ func (driver *DBDriver) Update(sid string, values map[string]interface{}) {
 		sesValue := string(valuesByte)
 		sesModel, _ := driver.table().Where("sid", "=", sid).First()
 		if sesModel == nil {
-			if !config.Get().NoLimitLoginIP {
+			if !config.GetNoLimitLoginIP() {
 				_ = driver.table().Where("values", "=", sesValue).Delete()
 			}
 			_, _ = driver.table().Insert(dialect.H{

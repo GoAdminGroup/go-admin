@@ -26,8 +26,6 @@ type Admin struct {
 // InitPlugin implements Plugin.InitPlugin.
 func (admin *Admin) InitPlugin(services service.List) {
 
-	cfg := config.Get()
-
 	// TODO: find a better way to manage the dependencies
 
 	admin.services = services
@@ -43,7 +41,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 	})
 	admin.guardian = guard.New(admin.services, admin.conn, admin.tableList)
 	handlerCfg := controller.Config{
-		Config:     cfg,
+		Config:     config.Get(),
 		Services:   services,
 		Generators: admin.tableList,
 		Connection: admin.conn,
@@ -53,7 +51,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 	} else {
 		admin.handler.UpdateCfg(handlerCfg)
 	}
-	admin.initRouter(cfg.Prefix())
+	admin.initRouter()
 	admin.handler.SetRoutes(admin.app.Routers)
 
 	table.SetServices(services)

@@ -231,7 +231,7 @@ func aTab() types.TabsAttribute {
 }
 
 func aTemplate() template.Template {
-	return template.Get(c.Get().Theme)
+	return template.Get(c.GetTheme())
 }
 
 func isPjax(ctx *context.Context) bool {

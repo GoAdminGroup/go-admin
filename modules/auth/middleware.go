@@ -36,10 +36,10 @@ func Middleware(conn db.Connection) context.Handler {
 // DefaultInvoker return a default Invoker.
 func DefaultInvoker(conn db.Connection) *Invoker {
 	return &Invoker{
-		prefix: config.Get().Prefix(),
+		prefix: config.Prefix(),
 		authFailCallback: func(ctx *context.Context) {
 			ctx.Write(302, map[string]string{
-				"Location": config.Get().Url("/login"),
+				"Location": config.Url("/login"),
 			}, ``)
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
@@ -165,10 +165,10 @@ func GetCurUserByID(id int64, conn db.Connection) (user models.UserModel, ok boo
 		return
 	}
 
-	if user.Avatar == "" || config.Get().Store.Prefix == "" {
+	if user.Avatar == "" || config.GetStore().Prefix == "" {
 		user.Avatar = ""
 	} else {
-		user.Avatar = config.Get().Store.URL(user.Avatar)
+		user.Avatar = config.GetStore().URL(user.Avatar)
 	}
 
 	user = user.WithRoles().WithPermissions().WithMenus()

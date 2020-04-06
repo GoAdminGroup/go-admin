@@ -8,20 +8,20 @@ import (
 )
 
 // initRouter initialize the router and return the context.
-func (admin *Admin) initRouter(prefix string) *Admin {
+func (admin *Admin) initRouter() *Admin {
 	app := context.NewApp()
 
-	route := app.Group(prefix, admin.globalErrorHandler)
+	route := app.Group(config.Prefix(), admin.globalErrorHandler)
 
 	// auth
-	route.GET(config.Get().LoginUrl, admin.handler.ShowLogin)
+	route.GET(config.GetLoginUrl(), admin.handler.ShowLogin)
 	route.POST("/signin", admin.handler.Auth)
 
 	// auto install
 	route.GET("/install", admin.handler.ShowInstall)
 	route.POST("/install/database/check", admin.handler.CheckDatabase)
 
-	for _, path := range template.Get(config.Get().Theme).GetAssetList() {
+	for _, path := range template.Get(config.GetTheme()).GetAssetList() {
 		route.GET("/assets"+path, admin.handler.Assets)
 	}
 

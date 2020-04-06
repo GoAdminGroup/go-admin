@@ -19,7 +19,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show
 
 	printlnWithColor("show", "green")
-	e.GET(config.Get().Url("/info/roles")).
+	e.GET(config.Url("/info/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
@@ -28,7 +28,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	formBody := e.GET(config.Get().Url("/info/roles/new")).
+	formBody := e.GET(config.Url("/info/roles/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -37,30 +37,30 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// new roles tester
 
 	printlnWithColor("new roles test", "green")
-	res := e.POST(config.Get().Url("/new/roles")).
+	res := e.POST(config.Url("/new/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
 			"name":           "tester",
 			"slug":           "tester",
-			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 		}).Expect().Status(200)
-	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
+	res.Header("X-Pjax-Url").Contains(config.Url("/info/"))
 	res.Body().Contains("tester")
 
 	// show form: without id
 
 	printlnWithColor("show form: without id", "green")
-	e.GET(config.Get().Url("/info/roles/edit")).
+	e.GET(config.Url("/info/roles/edit")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 
 	printlnWithColor("show form", "green")
-	formBody = e.GET(config.Get().Url("/info/roles/edit")).
+	formBody = e.GET(config.Url("/info/roles/edit")).
 		WithQuery(constant.EditPKKey, "3").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
@@ -70,7 +70,7 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// edit form
 
 	printlnWithColor("edit form", "green")
-	res = e.POST(config.Get().Url("/edit/roles")).
+	res = e.POST(config.Url("/edit/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
@@ -78,17 +78,17 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithForm(map[string]interface{}{
 			"name":           "tester",
 			"slug":           "tester",
-			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 			"id":             "3",
 		}).Expect().Status(200)
-	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
+	res.Header("X-Pjax-Url").Contains(config.Url("/info/"))
 	res.Body().Contains("tester")
 
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	formBody = e.GET(config.Get().Url("/info/roles/new")).
+	formBody = e.GET(config.Url("/info/roles/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -97,21 +97,21 @@ func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// new tester2
 
 	printlnWithColor("new tester2", "green")
-	e.POST(config.Get().Url("/new/roles")).
+	e.POST(config.Url("/new/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("permission_id[]", "3").
 		WithForm(map[string]interface{}{
 			"name":           "tester2",
 			"slug":           "tester2",
-			form.PreviousKey: config.Get().Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/roles?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 
 	// delete tester2
 
 	printlnWithColor("delete roles tester2", "green")
-	e.POST(config.Get().Url("/delete/roles")).
+	e.POST(config.Url("/delete/roles")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("id", "3").

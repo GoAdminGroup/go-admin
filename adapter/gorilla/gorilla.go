@@ -139,7 +139,7 @@ func (g *Gorilla) SetContext(contextInterface interface{}) adapter.WebFrameWork 
 }
 
 func (g *Gorilla) Redirect() {
-	http.Redirect(g.ctx.Response, g.ctx.Request, config.Get().Url("/login"), http.StatusFound)
+	http.Redirect(g.ctx.Response, g.ctx.Request, config.Url("/login"), http.StatusFound)
 }
 
 func (g *Gorilla) SetContentType() {

@@ -21,7 +21,7 @@ import (
 func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
 	userTable = table.NewDefaultTable(table.Config{
-		Driver:     config.Get().Databases.GetDefault().Driver,
+		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,

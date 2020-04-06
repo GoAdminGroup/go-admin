@@ -19,7 +19,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show
 
 	printlnWithColor("show", "green")
-	e.GET(config.Get().Url("/info/permission")).
+	e.GET(config.Url("/info/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().
 		Status(200).
@@ -28,7 +28,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	formBody := e.GET(config.Get().Url("/info/permission/new")).
+	formBody := e.GET(config.Url("/info/permission/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -37,7 +37,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// new permission tester
 
 	printlnWithColor("new permission test", "green")
-	res := e.POST(config.Get().Url("/new/permission")).
+	res := e.POST(config.Url("/new/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("http_method[]", "GET").
@@ -46,23 +46,23 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 			"slug": "tester",
 			"http_path": `/
 /admin/info/op`,
-			form.PreviousKey: config.Get().Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 		}).Expect().Status(200)
-	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
+	res.Header("X-Pjax-Url").Contains(config.Url("/info/"))
 	res.Body().Contains("tester").Contains("GET")
 
 	// show form: without id
 
 	printlnWithColor("show form: without id", "green")
-	e.GET(config.Get().Url("/info/permission/edit")).
+	e.GET(config.Url("/info/permission/edit")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 
 	printlnWithColor("show form", "green")
-	formBody = e.GET(config.Get().Url("/info/permission/edit")).
+	formBody = e.GET(config.Url("/info/permission/edit")).
 		WithQuery(constant.EditPKKey, "3").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
@@ -72,7 +72,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// edit form
 
 	printlnWithColor("edit form", "green")
-	res = e.POST(config.Get().Url("/edit/permission")).
+	res = e.POST(config.Url("/edit/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("http_method[]", "GET").
@@ -82,17 +82,17 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 			"slug": "tester",
 			"http_path": `/
 /admin/info/op`,
-			form.PreviousKey: config.Get().Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 			"id":             "3",
 		}).Expect().Status(200)
-	res.Header("X-Pjax-Url").Contains(config.Get().Url("/info/"))
+	res.Header("X-Pjax-Url").Contains(config.Url("/info/"))
 	res.Body().Contains("tester").Contains("GET,POST")
 
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	formBody = e.GET(config.Get().Url("/info/permission/new")).
+	formBody = e.GET(config.Url("/info/permission/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
@@ -101,7 +101,7 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// new tester2
 
 	printlnWithColor("new tester2", "green")
-	e.POST(config.Get().Url("/new/permission")).
+	e.POST(config.Url("/new/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("http_method[]", "GET").
@@ -110,14 +110,14 @@ func permissionTest(e *httpexpect.Expect, sesID *http.Cookie) {
 			"slug": "tester2",
 			"http_path": `/
 /admin/info/op`,
-			form.PreviousKey: config.Get().Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
+			form.PreviousKey: config.Url("/info/permission?__page=1&__pageSize=10&__sort=id&__sort_type=desc"),
 			form.TokenKey:    token[1],
 		}).Expect().Status(200)
 
 	// delete tester2
 
 	printlnWithColor("delete permission tester2", "green")
-	e.POST(config.Get().Url("/delete/permission")).
+	e.POST(config.Url("/delete/permission")).
 		WithCookie(sesID.Name, sesID.Value).
 		WithMultipart().
 		WithFormField("id", "4").

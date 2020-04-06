@@ -149,7 +149,7 @@ func (bu *Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork
 }
 
 func (bu *Buffalo) Redirect() {
-	_ = bu.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+	_ = bu.ctx.Redirect(http.StatusFound, config.Url("/login"))
 }
 
 func (bu *Buffalo) SetContentType() {

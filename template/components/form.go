@@ -156,7 +156,7 @@ func (compo *FormAttribute) SetOperationFooter(value template.HTML) types.FormAt
 }
 
 func (compo *FormAttribute) GetContent() template.HTML {
-	compo.CdnUrl = config.Get().AssetUrl
+	compo.CdnUrl = config.GetAssetUrl()
 
 	if col := compo.Layout.Col(); col > 0 {
 		compo.ContentList = make([]types.FormFields, col)

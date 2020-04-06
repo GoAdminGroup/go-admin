@@ -37,18 +37,18 @@ func BadRequest(ctx *context.Context, msg string) {
 func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.Get().Theme).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 	buf := template.Execute(template.ExecuteParam{
 		User:     user,
 		TmplName: tmplName,
 		Tmpl:     tmpl,
 		Panel: types.Panel{
-			Content:     template.Get(config.Get().Theme).Alert().Warning(msg),
+			Content:     template.Get(config.GetTheme()).Alert().Warning(msg),
 			Description: desc,
 			Title:       title,
 		},
 		Config:    config.Get(),
-		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.Get().URLRemovePrefix(ctx.Path())),
+		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: true,
 	})
 	ctx.HTML(http.StatusOK, buf.String())

@@ -86,7 +86,7 @@ func Get(theme string) Template {
 // Get the default template with the theme name set with the global config.
 // If the name is not found, it panics.
 func Default() Template {
-	if temp, ok := templateMap[c.Get().Theme]; ok {
+	if temp, ok := templateMap[c.GetTheme()]; ok {
 		return temp
 	}
 	panic("wrong theme name")
@@ -208,10 +208,10 @@ func getHTMLFromAssetUrl(s string) template.HTML {
 	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
 
 	if fileSuffix == "css" {
-		return template.HTML(`<link rel="stylesheet" href="` + c.Get().AssetUrl + c.Get().Url("/assets"+s) + `">`)
+		return template.HTML(`<link rel="stylesheet" href="` + c.GetAssetUrl() + c.Url("/assets"+s) + `">`)
 	}
 	if fileSuffix == "js" {
-		return template.HTML(`<script src="` + c.Get().AssetUrl + c.Get().Url("/assets"+s) + `"></script>`)
+		return template.HTML(`<script src="` + c.GetAssetUrl() + c.Url("/assets"+s) + `"></script>`)
 	}
 	return ""
 }

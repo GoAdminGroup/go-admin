@@ -108,7 +108,7 @@ func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 }
 
 func (e *Echo) Redirect() {
-	_ = e.ctx.Redirect(http.StatusFound, config.Get().Url("/login"))
+	_ = e.ctx.Redirect(http.StatusFound, config.Url("/login"))
 }
 
 func (e *Echo) SetContentType() {

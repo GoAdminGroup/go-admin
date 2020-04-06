@@ -109,18 +109,18 @@ func NewPage(param NewPageParam) *Page {
 		Panel: param.Panel,
 		System: SystemInfo{
 			Version: system.Version(),
-			Theme:   config.Get().Theme,
+			Theme:   config.GetTheme(),
 		},
-		UrlPrefix:      config.Get().AssertPrefix(),
-		Title:          config.Get().Title,
-		Logo:           config.Get().Logo,
-		MiniLogo:       config.Get().MiniLogo,
-		ColorScheme:    config.Get().ColorScheme,
-		IndexUrl:       config.Get().GetIndexURL(),
-		CdnUrl:         config.Get().AssetUrl,
-		CustomHeadHtml: config.Get().CustomHeadHtml,
-		CustomFootHtml: config.Get().CustomFootHtml + btnJS,
-		FooterInfo:     config.Get().FooterInfo,
+		UrlPrefix:      config.AssertPrefix(),
+		Title:          config.GetTitle(),
+		Logo:           config.GetLogo(),
+		MiniLogo:       config.GetMiniLogo(),
+		ColorScheme:    config.GetColorScheme(),
+		IndexUrl:       config.GetIndexURL(),
+		CdnUrl:         config.GetAssetUrl(),
+		CustomHeadHtml: config.GetCustomHeadHtml(),
+		CustomFootHtml: config.GetCustomFootHtml() + btnJS,
+		FooterInfo:     config.GetFooterInfo(),
 		AssetsList:     param.Assets,
 		navButtons:     param.Buttons,
 		NavButtonsHTML: navBtn,
@@ -207,7 +207,7 @@ func (p Panel) GetContent(params ...bool) Panel {
 	animation := template.HTML("")
 	style := template.HTML("")
 	remove := template.HTML("")
-	ani := config.Get().Animation
+	ani := config.GetAnimation()
 	if ani.Type != "" && (len(params) < 2 || params[1]) {
 		animation = template.HTML(` class='pjax-container-content animated ` + ani.Type + `'`)
 		if ani.Delay != 0 {

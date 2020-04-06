@@ -25,11 +25,11 @@ func Get(value string) string {
 
 // GetWithScope return the value of given scopes.
 func GetWithScope(value string, scopes ...string) string {
-	if config.Get().Language == "" {
+	if config.GetLanguage() == "" {
 		return value
 	}
 
-	if locale, ok := Lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(value)]; ok {
+	if locale, ok := Lang[config.GetLanguage()][JoinScopes(scopes)+strings.ToLower(value)]; ok {
 		return locale
 	}
 
@@ -38,11 +38,11 @@ func GetWithScope(value string, scopes ...string) string {
 
 // GetFromHtml return the value of given scopes and template.HTML value.
 func GetFromHtml(value template.HTML, scopes ...string) template.HTML {
-	if config.Get().Language == "" {
+	if config.GetLanguage() == "" {
 		return value
 	}
 
-	if locale, ok := Lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(string(value))]; ok {
+	if locale, ok := Lang[config.GetLanguage()][JoinScopes(scopes)+strings.ToLower(string(value))]; ok {
 		return template.HTML(locale)
 	}
 
@@ -77,11 +77,11 @@ func (lang LangMap) Get(value string) string {
 
 // GetWithScope get the value from LangMap with given scopes.
 func (lang LangMap) GetWithScope(value string, scopes ...string) string {
-	if config.Get().Language == "" {
+	if config.GetLanguage() == "" {
 		return value
 	}
 
-	if locale, ok := lang[config.Get().Language][JoinScopes(scopes)+strings.ToLower(value)]; ok {
+	if locale, ok := lang[config.GetLanguage()][JoinScopes(scopes)+strings.ToLower(value)]; ok {
 		return locale
 	}
 
