@@ -42,7 +42,7 @@ func (ch *Chi) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	ch.GetContent(ctx, getPanelFn, ch, btns...)
+	ch.GetContent(ctx, getPanelFn, ch, btns)
 }
 
 type HandlerFunc func(ctx Context) (types.Panel, error)

@@ -463,10 +463,41 @@ func (sql *SQL) ShowColumns() ([]map[string]interface{}, error) {
 }
 
 // ShowTables show table info.
-func (sql *SQL) ShowTables() ([]map[string]interface{}, error) {
+func (sql *SQL) ShowTables() ([]string, error) {
 	defer RecycleSQL(sql)
 
-	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
+	models, err := sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowTables())
+
+	if err != nil {
+		return []string{}, err
+	}
+
+	tables := make([]string, 0)
+	if len(models) == 0 {
+		return tables, nil
+	}
+
+	key := "Tables_in_" + sql.TableName
+	if sql.diver.Name() == DriverPostgresql || sql.diver.Name() == DriverSqlite {
+		key = "tablename"
+	} else if sql.diver.Name() == DriverMssql {
+		key = "TABLE_NAME"
+	} else {
+		if _, ok := models[0][key].(string); !ok {
+			key = "Tables_in_" + strings.ToLower(sql.TableName)
+		}
+	}
+
+	for i := 0; i < len(models); i++ {
+		// skip sqlite system tables
+		if sql.diver.Name() == DriverSqlite && models[i][key].(string) == "sqlite_sequence" {
+			continue
+		}
+
+		tables = append(tables, models[i][key].(string))
+	}
+
+	return tables, nil
 }
 
 // Update exec the update method of given key/value pairs.

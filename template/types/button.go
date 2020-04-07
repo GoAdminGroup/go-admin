@@ -2,7 +2,9 @@ package types
 
 import (
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"html/template"
+	"net/url"
 )
 
 type Button interface {
@@ -152,6 +154,16 @@ func (b Buttons) Content() (template.HTML, template.JS) {
 		j += jj
 	}
 	return h, j
+}
+
+func (b Buttons) CheckPermission(user models.UserModel) Buttons {
+	btns := make(Buttons, 0)
+	for _, btn := range b {
+		if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
+			btns = append(btns, btn)
+		}
+	}
+	return btns
 }
 
 type NavButton struct {

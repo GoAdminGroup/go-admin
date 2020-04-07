@@ -43,7 +43,7 @@ func (fast *Fasthttp) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	fast.GetContent(ctx, getPanelFn, fast, btns...)
+	fast.GetContent(ctx, getPanelFn, fast, btns)
 }
 
 type HandlerFunc func(ctx *fasthttp.RequestCtx) (types.Panel, error)

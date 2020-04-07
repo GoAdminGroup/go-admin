@@ -54,7 +54,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu"),
 			}).
-			SetOperationFooter(formFooter("new"))),
+			SetOperationFooter(formFooter("new", false, false, false)), false),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
 	})
@@ -104,11 +104,11 @@ func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, er
 			SetPrefix(h.config.PrefixFixSlash()).
 			SetPrimaryKey(h.table("menu", ctx).GetPrimaryKey().Name).
 			SetUrl(h.routePath("menu_edit")).
-			SetOperationFooter(formFooter("edit")).
+			SetOperationFooter(formFooter("edit", false, false, false)).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu"),
-			})),
+			}), false),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
 	})
@@ -243,7 +243,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 			form2.TokenKey:    h.authSrv().AddToken(),
 			form2.PreviousKey: h.routePath("menu"),
 		}).
-		SetOperationFooter(formFooter("menu")).
+		SetOperationFooter(formFooter("menu", false, false, false)).
 		SetTitle("New").
 		SetContent(formInfo.FieldList).
 		SetTabContents(formInfo.GroupFieldList).

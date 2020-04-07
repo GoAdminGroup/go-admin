@@ -42,7 +42,7 @@ func (gf *Gf) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	gf.GetContent(ctx, getPanelFn, gf, btns...)
+	gf.GetContent(ctx, getPanelFn, gf, btns)
 }
 
 type HandlerFunc func(ctx *ghttp.Request) (types.Panel, error)

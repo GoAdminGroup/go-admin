@@ -41,7 +41,7 @@ func (gins *Gin) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	gins.GetContent(ctx, getPanelFn, gins, btns...)
+	gins.GetContent(ctx, getPanelFn, gins, btns)
 }
 
 type HandlerFunc func(ctx *gin.Context) (types.Panel, error)

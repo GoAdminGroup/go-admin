@@ -41,7 +41,7 @@ func (e *Echo) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	e.GetContent(ctx, getPanelFn, e, btns...)
+	e.GetContent(ctx, getPanelFn, e, btns)
 }
 
 type HandlerFunc func(ctx echo.Context) (types.Panel, error)

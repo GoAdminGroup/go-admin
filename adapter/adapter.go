@@ -92,7 +92,7 @@ func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf 
 	return nil
 }
 
-func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, btns ...types.Button) {
+func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, btns types.Buttons) {
 
 	newBase := wf.SetContext(ctx)
 
@@ -132,7 +132,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
 		Panel:   panel.GetContent(config.IsProductionEnvironment()),
 		Assets:  template.GetComponentAssetListsHTML(),
-		Buttons: btns,
+		Buttons: btns.CheckPermission(user),
 	}))
 
 	if hasError != nil {

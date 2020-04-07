@@ -90,6 +90,8 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 
 	user := auth.Auth(ctx)
 
+	f := panel.GetForm()
+
 	h.HTML(ctx, user, types.Panel{
 		Content: aAlert().Warning(errMsg) + formContent(aForm().
 			SetContent(formInfo.FieldList).
@@ -103,9 +105,10 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 				form.PreviousKey: h.config.Url("/info/" + prefix + queryParam),
 			}).
 			SetUrl(h.config.Url("/"+kind+"/"+prefix)).
-			SetOperationFooter(formFooter(kind)).
+			SetOperationFooter(formFooter(kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+				f.IsHideResetButton)).
 			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml)),
+			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
 	})

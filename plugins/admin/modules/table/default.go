@@ -665,6 +665,7 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	if tb.Form.PostHook != nil {
 		defer func() {
+			dataList.Add(form.PostTypeKey, "0")
 			dataList.Add(form.PostResultKey, errMsg)
 			go func() {
 				defer func() {
@@ -729,6 +730,7 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 
 	if tb.Form.PostHook != nil {
 		defer func() {
+			dataList.Add(form.PostTypeKey, "1")
 			dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
 			dataList.Add(form.PostResultKey, errMsg)
 

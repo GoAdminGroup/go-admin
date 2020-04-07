@@ -95,6 +95,11 @@ func (t UserModel) GetCheckPermissionByUrlMethod(path, method string) string {
 }
 
 func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams url.Values) bool {
+
+	if t.IsSuperAdmin() {
+		return true
+	}
+
 	logoutCheck, _ := regexp.Compile(config.Url("/logout") + "(.*?)")
 
 	if logoutCheck.MatchString(path) {

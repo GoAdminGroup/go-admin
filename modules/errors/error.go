@@ -3,12 +3,13 @@ package errors
 import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/icon"
+	"html/template"
 )
 
 var (
-	Msg         = language.Get("error")
-	MsgHTML     = language.GetFromHtml("error")
-	MsgWithIcon = icon.Icon(icon.Warning, 2) + MsgHTML + `!`
+	Msg         string
+	MsgHTML     template.HTML
+	MsgWithIcon template.HTML
 )
 
 const (
@@ -22,4 +23,10 @@ const (
 
 func WrongPK(pk string) string {
 	return "wrong " + pk
+}
+
+func Init() {
+	Msg = language.Get("error")
+	MsgHTML = language.GetFromHtml("error")
+	MsgWithIcon = icon.Icon(icon.Warning, 2) + MsgHTML + `!`
 }

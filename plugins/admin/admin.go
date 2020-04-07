@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -30,7 +31,8 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	admin.services = services
 	admin.conn = db.GetConnection(admin.services)
-	st := table.NewSystemTable(admin.conn)
+	c := config.GetService(services.Get("config"))
+	st := table.NewSystemTable(admin.conn, c)
 	admin.tableList.Combine(table.GeneratorList{
 		"manager":        st.GetManagerTable,
 		"permission":     st.GetPermissionTable,
@@ -38,10 +40,11 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"op":             st.GetOpTable,
 		"menu":           st.GetMenuTable,
 		"normal_manager": st.GetNormalManagerTable,
+		"site":           st.GetSiteTable,
 	})
 	admin.guardian = guard.New(admin.services, admin.conn, admin.tableList)
 	handlerCfg := controller.Config{
-		Config:     config.Get(),
+		Config:     c,
 		Services:   services,
 		Generators: admin.tableList,
 		Connection: admin.conn,
@@ -53,6 +56,9 @@ func (admin *Admin) InitPlugin(services service.List) {
 	}
 	admin.initRouter()
 	admin.handler.SetRoutes(admin.app.Routers)
+
+	// init site setting
+	models.Site().SetConn(admin.conn).Init(c.ToMap())
 
 	table.SetServices(services)
 }
@@ -85,12 +91,21 @@ func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 	return admin
 }
 
-// AddNavButtons add nav buttons.
-func (admin *Admin) AddNavButtons(btn types.Button) *Admin {
+// AddNavButton add nav buttons.
+func (admin *Admin) AddNavButton(btn types.Button) *Admin {
 	if admin.handler == nil {
 		admin.handler = controller.New()
 	}
-	admin.handler.AddNavButtons(btn)
+	admin.handler.AddNavButton(btn)
+	return admin
+}
+
+// AddNavButtonFront add nav buttons front.
+func (admin *Admin) AddNavButtonFront(btn types.Button) *Admin {
+	if admin.handler == nil {
+		admin.handler = controller.New()
+	}
+	admin.handler.AddNavButtonFront(btn)
 	return admin
 }
 

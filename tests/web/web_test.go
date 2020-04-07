@@ -66,8 +66,8 @@ const (
 
 	// Form Page
 
-	saveBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
-	resetBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[2]/button`
+	saveBtn               = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[1]/button`
+	resetBtn              = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[2]/button`
 	nameField             = `//*[@id="name"]`
 	ageField              = `//*[@id="age"]`
 	emailField            = `//*[@id="email"]`
@@ -87,15 +87,15 @@ const (
 	threeYearsSelection   = `/html/body/span/span/span[2]/ul/li[2]`
 	fourYearsSelection    = `/html/body/span/span/span[2]/ul/li[3]`
 	fiveYearsSelection    = `/html/body/span/span/span[2]/ul/li[4]`
-	inputTab              = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/ul/li[1]`
-	selectTab             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/ul/li[2]`
+	inputTab              = `//*[@id="pjax-container"]/section[2]/div/form/div[1]/div/div/ul/li[1]`
+	selectTab             = `//*[@id="pjax-container"]/section[2]/div/form/div[1]/div/div/ul/li[2]`
 	multiSelectionInput   = `//*[@id="tab-form-1"]/div[6]/div/span/span[1]/span/ul/li[2]/input`
 	multiSelectedOpt      = `//*[@id="tab-form-1"]/div[6]/div/span/span[1]/span/ul/li[1]`
 	multiBeerOpt          = `/html/body/span/span/span/ul/li[1]`
 	multiJuiceOpt         = `/html/body/span/span/span/ul/li[2]`
 	multiWaterOpt         = `/html/body/span/span/span/ul/li[3]`
 	multiRedBullOpt       = `/html/body/span/span/span/ul/li[4]`
-	continueEditCheckBox  = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/label/div`
+	continueEditCheckBox  = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/label/div`
 	boxSelectedOpt        = `//*[@id="bootstrap-duallistbox-selected-list_fruit[]"]/option`
 	experienceSelectedOpt = `//*[@id="tab-form-1"]/div[7]/div/span/span[1]/span/span[1]`
 
@@ -145,9 +145,9 @@ const (
 	permissionPathInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/textarea`
 	permissionSaveBtn      = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
-	userNavMenuBtn = `//*[@id="firstnav"]/div/ul/li[5]`
-	userSettingBtn = `//*[@id="firstnav"]/div/ul/li[5]/ul/li[2]/div[1]/a`
-	userSignOutBtn = `//*[@id="firstnav"]/div/ul/li[5]/ul/li[2]/div[2]/a`
+	userNavMenuBtn = `//*[@id="firstnav"]/div/ul/li[6]`
+	userSettingBtn = `//*[@id="firstnav"]/div/ul/li[6]/ul/li[2]/div[1]/a`
+	userSignOutBtn = `//*[@id="firstnav"]/div/ul/li[6]/ul/li[2]/div[2]/a`
 
 	loginPageUserNameInput = `//*[@id="username"]`
 	loginPagePasswordInput = `//*[@id="password"]`

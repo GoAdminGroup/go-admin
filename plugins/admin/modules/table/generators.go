@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	lang "golang.org/x/text/language"
 	tmpl "html/template"
 	"strconv"
 	"strings"
@@ -18,6 +19,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
@@ -28,16 +30,17 @@ import (
 
 type SystemTable struct {
 	conn db.Connection
+	c    *config.Config
 }
 
-func NewSystemTable(conn db.Connection) *SystemTable {
-	return &SystemTable{conn: conn}
+func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
+	return &SystemTable{conn: conn, c: c}
 }
 
-func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
+	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	labelModels, _ := s.table("goadmin_role_users").
 		Select("goadmin_roles.name", "user_id").
@@ -115,7 +118,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 			return txErr
 		})
 
-	formList := ManagerTable.GetForm().AddXssJsFilter()
+	formList := managerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).
@@ -266,7 +269,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 		return txErr
 	})
 
-	detail := ManagerTable.GetDetail()
+	detail := managerTable.GetDetail()
 	detail.AddField("ID", "id", db.Int)
 	detail.AddField(lg("Name"), "username", db.Varchar)
 	detail.AddField(lg("Avatar"), "avatar", db.Varchar).
@@ -333,10 +336,10 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (ManagerTable Table)
 	return
 }
 
-func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable Table) {
-	ManagerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable Table) {
+	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := ManagerTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	labelModels, _ := s.table("goadmin_role_users").
 		Select("goadmin_roles.name", "user_id").
@@ -413,7 +416,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 			return txErr
 		})
 
-	formList := ManagerTable.GetForm().AddXssJsFilter()
+	formList := managerTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("use for login"))).FieldMust()
@@ -490,10 +493,10 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (ManagerTable 
 	return
 }
 
-func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable Table) {
-	PermissionTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable Table) {
+	permissionTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := PermissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := permissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("permission"), "name", db.Varchar).FieldFilterable()
@@ -562,7 +565,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 			return txErr
 		})
 
-	formList := PermissionTable.GetForm().AddXssJsFilter()
+	formList := permissionTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text).FieldMust()
@@ -613,10 +616,10 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (PermissionTable 
 	return
 }
 
-func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
-	RolesTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
+	roleTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := RolesTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := roleTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("role"), "name", db.Varchar).FieldFilterable()
@@ -675,7 +678,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 			return txErr
 		})
 
-	formList := RolesTable.GetForm().AddXssJsFilter()
+	formList := roleTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text).FieldMust()
@@ -770,8 +773,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (RolesTable Table) {
 	return
 }
 
-func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
-	OpTable = NewDefaultTable(Config{
+func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
+	opTable = NewDefaultTable(Config{
 		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     false,
 		Editable:   false,
@@ -784,7 +787,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 		},
 	})
 
-	info := OpTable.GetInfo().AddXssJsFilter().
+	info := opTable.GetInfo().AddXssJsFilter().
 		HideFilterArea().HideDeleteButton().HideDetailButton().HideEditButton().HideNewButton()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
@@ -828,7 +831,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 		SetTitle(lg("operation log")).
 		SetDescription(lg("operation log"))
 
-	formList := OpTable.GetForm().AddXssJsFilter()
+	formList := opTable.GetForm().AddXssJsFilter()
 
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
@@ -846,10 +849,10 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (OpTable Table) {
 	return
 }
 
-func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
-	MenuTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
+	menuTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := MenuTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := menuTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("parent"), "parent_id", db.Int)
@@ -894,7 +897,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 			return txErr
 		})
 
-	formList := MenuTable.GetForm().AddXssJsFilter()
+	formList := menuTable.GetForm().AddXssJsFilter()
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptionsFromTable("goadmin_menu", "title", "id", func(sql *db.SQL) *db.SQL {
@@ -951,6 +954,144 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (MenuTable Table) {
 	return
 }
 
+func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
+	siteTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+		SetGetDataFun(func(params parameter.Parameters) (i []map[string]interface{}, i2 int) {
+			return []map[string]interface{}{models.Site().SetConn(s.conn).AllToMapInterface()}, 1
+		}))
+
+	trueStr := lgWithConfigScore("true")
+	falseStr := lgWithConfigScore("false")
+
+	formList := siteTable.GetForm().AddXssJsFilter()
+	formList.AddField("ID", "id", db.Varchar, form.Default).FieldDefault("1").FieldHide()
+	formList.AddField(lgWithConfigScore("debug"), "debug", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("env"), "env", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("language"), "language", db.Varchar, form.SelectSingle).
+		FieldDisplay(func(value types.FieldModel) interface{} {
+			if value.Value == lang.English.String() {
+				return "en"
+			}
+			if value.Value == lang.Chinese.String() {
+				return "cn"
+			}
+			if value.Value == lang.Japanese.String() {
+				return "jp"
+			}
+			if value.Value == lang.TraditionalChinese.String() {
+				return "tc"
+			}
+			return value.Value
+		}).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithConfigScore("cn", "language"), Value: "cn"},
+			{Text: lgWithConfigScore("en", "language"), Value: "en"},
+			{Text: lgWithConfigScore("jp", "language"), Value: "jp"},
+			{Text: lgWithConfigScore("tc", "language"), Value: "tc"},
+		})
+	themes := template.Themes()
+	themesOps := make(types.FieldOptions, len(themes))
+	for k, t := range themes {
+		themesOps[k] = types.FieldOption{Text: t, Value: t}
+	}
+
+	formList.AddField(lgWithConfigScore("theme"), "theme", db.Varchar, form.SelectSingle).
+		FieldOptions(themesOps)
+	formList.AddField(lgWithConfigScore("title"), "title", db.Varchar, form.Text)
+	if config.GetTheme() == "adminlte" {
+		formList.AddField(lgWithConfigScore("color scheme"), "color_scheme", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "skin-black", Value: "skin-black"},
+				{Text: "skin-black-light", Value: "skin-black-light"},
+				{Text: "skin-blue", Value: "skin-blue"},
+				{Text: "skin-blue-light", Value: "skin-blue-light"},
+				{Text: "skin-green", Value: "skin-green"},
+				{Text: "skin-green-light", Value: "skin-green-light"},
+				{Text: "skin-purple", Value: "skin-purple"},
+				{Text: "skin-purple-light", Value: "skin-purple-light"},
+				{Text: "skin-red", Value: "skin-red"},
+				{Text: "skin-red-light", Value: "skin-red-light"},
+				{Text: "skin-yellow", Value: "skin-yellow"},
+				{Text: "skin-yellow-light", Value: "skin-yellow-light"},
+			})
+	}
+	formList.AddField(lgWithConfigScore("login title"), "login_title", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("extra"), "extra", db.Varchar, form.TextArea)
+	//formList.AddField(lgWithConfigScore("databases"), "databases", db.Varchar, form.TextArea).
+	//	FieldDisplay(func(value types.FieldModel) interface{} {
+	//		var buf = new(bytes.Buffer)
+	//		_ = json.Indent(buf, []byte(value.Value), "", "    ")
+	//		return template.HTML(buf.String())
+	//	}).FieldNotAllowEdit()
+
+	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number)
+	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("login logo"), "login_logo", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("no limit login ip"), "no_limit_login_ip", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("animation"), "animation", db.Varchar, form.Text).
+		FieldHelpMsg(`see more: <a href="https://daneden.github.io/animate.css/">https://daneden.github.io/animate.css/</a>`)
+	formList.AddField(lgWithConfigScore("file upload engine"), "file_upload_engine", db.Varchar, form.Text)
+
+	formList.AddField(lgWithConfigScore("info log path"), "info_log_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("error log path"), "error_log_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("access log path"), "access_log_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("info log off"), "info_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("error log off"), "error_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("access log off"), "access_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+
+	group1 := []string{"id", "debug", "env", "language", "theme", "title", "login_title",
+		"extra", "session_life_time", "no_limit_login_ip", "animation", "file_upload_engine"}
+
+	if config.GetTheme() == "adminlte" {
+		group1 = []string{"id", "debug", "env", "language", "theme", "title", "login_title",
+			"color_scheme", "session_life_time", "no_limit_login_ip", "animation", "file_upload_engine", "extra"}
+	}
+
+	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
+	formList.SetTabGroups(types.NewTabGroups(group1...).
+		AddGroup("access_log_off", "info_log_off", "error_log_off", "info_log_path", "error_log_path", "access_log_path").
+		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_Html", "footer_info", "login_logo")).
+		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
+
+	formList.SetTable("goadmin_site").
+		SetTitle(lgWithConfigScore("site setting")).
+		SetDescription(lgWithConfigScore("site setting"))
+
+	formList.SetUpdateFn(func(values form2.Values) error {
+		err := models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())
+		if err == nil {
+			s.c.Update(values.ToMap())
+		}
+		return err
+	})
+
+	return
+}
+
 // -------------------------
 // helper functions
 // -------------------------
@@ -969,6 +1110,11 @@ func label() types.LabelAttribute {
 
 func lg(v string) string {
 	return language.Get(v)
+}
+
+func lgWithConfigScore(v string, score ...string) string {
+	scores := append([]string{"config"}, score...)
+	return language.GetWithScope(v, scores...)
 }
 
 func link(url, content string) tmpl.HTML {

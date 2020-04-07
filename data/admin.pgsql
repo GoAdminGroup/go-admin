@@ -100,6 +100,37 @@ CREATE TABLE public.goadmin_operation_log (
 ALTER TABLE public.goadmin_operation_log OWNER TO postgres;
 
 --
+-- Name: goadmin_site_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.goadmin_site_myid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 99999999
+    CACHE 1;
+
+
+ALTER TABLE public.goadmin_site_myid_seq OWNER TO postgres;
+
+--
+-- Name: goadmin_site; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.goadmin_site (
+    id integer DEFAULT nextval('public.goadmin_site_myid_seq'::regclass) NOT NULL,
+    key character varying(100) NOT NULL,
+    value text NOT NULL,
+    type integer DEFAULT 0,
+    description character varying(3000) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.goadmin_site OWNER TO postgres;
+
+--
 -- Name: goadmin_permissions_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 

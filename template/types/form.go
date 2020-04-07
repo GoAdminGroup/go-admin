@@ -280,6 +280,11 @@ type FormPanel struct {
 	UpdateFn FormPostFn
 	InsertFn FormPostFn
 
+	IsHideContinueEditCheckBox bool
+	IsHideContinueNewCheckBox  bool
+	IsHideResetButton          bool
+	IsHideBackButton           bool
+
 	processChains DisplayProcessFnChains
 
 	HeaderHtml template.HTML
@@ -335,6 +340,26 @@ func (f *FormPanel) AddXssJsFilter() *FormPanel {
 
 func (f *FormPanel) SetPrimaryKey(name string, typ db.DatabaseType) *FormPanel {
 	f.primaryKey = primaryKey{Name: name, Type: typ}
+	return f
+}
+
+func (f *FormPanel) HideContinueEditCheckBox() *FormPanel {
+	f.IsHideContinueEditCheckBox = true
+	return f
+}
+
+func (f *FormPanel) HideContinueNewCheckBox() *FormPanel {
+	f.IsHideContinueNewCheckBox = true
+	return f
+}
+
+func (f *FormPanel) HideResetButton() *FormPanel {
+	f.IsHideResetButton = true
+	return f
+}
+
+func (f *FormPanel) HideBackButton() *FormPanel {
+	f.IsHideBackButton = true
 	return f
 }
 

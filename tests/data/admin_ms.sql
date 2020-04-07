@@ -12,7 +12,7 @@
  Target Server Version : 14003281
  File Encoding         : utf-8
 
- Date: 03/15/2020 13:09:55 PM
+ Date: 04/08/2020 01:11:22 AM
 */
 
 -- ----------------------------
@@ -744,6 +744,24 @@ COMMIT
 GO
 
 -- ----------------------------
+--  Table structure for goadmin_site
+-- ----------------------------
+IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID('[dbo].[goadmin_site]') AND type IN ('U'))
+	DROP TABLE [dbo].[goadmin_site]
+GO
+CREATE TABLE [dbo].[goadmin_site] (
+	[id] int IDENTITY(1,1) NOT NULL,
+	[key] varchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[value] text COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[state] tinyint NULL DEFAULT ((0)),
+	[created_at] datetime NULL DEFAULT (getdate()),
+	[updated_at] datetime NULL DEFAULT (getdate())
+)
+ON [PRIMARY]
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+-- ----------------------------
 --  Table structure for goadmin_user_permissions
 -- ----------------------------
 IF EXISTS (SELECT * FROM sys.all_objects WHERE object_id = OBJECT_ID('[dbo].[goadmin_user_permissions]') AND type IN ('U'))
@@ -989,6 +1007,18 @@ ALTER TABLE [dbo].[goadmin_session] ADD
 GO
 
 -- ----------------------------
+--  Primary key structure for table goadmin_site
+-- ----------------------------
+ALTER TABLE [dbo].[goadmin_site] ADD
+	CONSTRAINT [PK__goadmin___3213E83FBC0B9B22] PRIMARY KEY CLUSTERED ([id]) 
+	WITH (PAD_INDEX = OFF,
+		IGNORE_DUP_KEY = OFF,
+		ALLOW_ROW_LOCKS = ON,
+		ALLOW_PAGE_LOCKS = ON)
+	ON [default]
+GO
+
+-- ----------------------------
 --  Primary key structure for table goadmin_user_permissions
 -- ----------------------------
 ALTER TABLE [dbo].[goadmin_user_permissions] ADD
@@ -1104,6 +1134,14 @@ GO
 ALTER TABLE [dbo].[goadmin_session] SET (LOCK_ESCALATION = TABLE)
 GO
 DBCC CHECKIDENT ('[dbo].[goadmin_session]', RESEED, 44)
+GO
+
+-- ----------------------------
+--  Options for table goadmin_site
+-- ----------------------------
+ALTER TABLE [dbo].[goadmin_site] SET (LOCK_ESCALATION = TABLE)
+GO
+DBCC CHECKIDENT ('[dbo].[goadmin_site]', RESEED, 1)
 GO
 
 -- ----------------------------

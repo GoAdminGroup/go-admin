@@ -7,11 +7,15 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	template2 "html/template"
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -20,9 +24,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
-	"net/http"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 )
 
 // Engine is the core component of goAdmin. It has two attributes.
@@ -34,9 +38,9 @@ type Engine struct {
 	PluginList []plugins.Plugin
 	Adapter    adapter.WebFrameWork
 	Services   service.List
-	NavButtons []types.Button
+	NavButtons types.Buttons
 
-	config config.Config
+	config *config.Config
 }
 
 // Default return the default engine instance.
@@ -56,6 +60,14 @@ func (eng *Engine) Use(router interface{}) error {
 	if len(eng.PluginList) == 0 {
 		eng.PluginList = append(eng.PluginList, admin.NewAdmin())
 	}
+
+	eng.Services.Add("config", config.SrvWithConfig(eng.config))
+	errors.Init()
+
+	btn := types.GetNavButton("", icon.Cogs, action.Jump(eng.config.Url("/info/site/edit")))
+	eng.AdminPlugin().AddNavButton(btn)
+	eng.NavButtons = append(eng.NavButtons, btn)
+	navButtons = append(navButtons, btn)
 
 	// Initialize plugins
 	for i := range eng.PluginList {
@@ -247,7 +259,7 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 
 func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
 	btn := types.GetNavButton(title, icon, action)
-	eng.AdminPlugin().AddNavButtons(btn)
+	eng.AdminPlugin().AddNavButton(btn)
 	eng.NavButtons = append(eng.NavButtons, btn)
 	navButtons = append(navButtons, btn)
 	return eng
@@ -293,7 +305,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 			Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:   panel.GetContent(eng.config.IsProductionEnvironment()),
 			Assets:  template.GetComponentAssetListsHTML(),
-			Buttons: eng.NavButtons,
+			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
 		if hasError != nil {
@@ -330,7 +342,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 				Content: template.HTML(cbuf.String()),
 			},
 			Assets:  template.GetComponentAssetListsHTML(),
-			Buttons: eng.NavButtons,
+			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
 		if hasError != nil {
@@ -367,7 +379,7 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 				Content: template.HTML(cbuf.String()),
 			},
 			Assets:  template.GetComponentAssetListsHTML(),
-			Buttons: eng.NavButtons,
+			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
 		if hasError != nil {
@@ -389,7 +401,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 		Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:   template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
 		Assets:  template.GetComponentAssetListsHTML(),
-		Buttons: eng.NavButtons,
+		Buttons: eng.NavButtons.CheckPermission(user),
 	}))
 
 	if hasError != nil {

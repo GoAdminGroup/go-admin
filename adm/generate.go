@@ -41,8 +41,10 @@ func generating(cfgFile string) {
 	cliInfo()
 
 	var (
-		driverName, host, port, dbFile, user, password, connection, packageName, outputPath, database string
-		chooseTables                                                                                  = make([]string, 0)
+		driverName, host, port, dbFile, user, password,
+		connection, packageName, outputPath, database string
+
+		chooseTables = make([]string, 0)
 	)
 
 	if cfgFile != "" {
@@ -184,9 +186,14 @@ func generating(cfgFile string) {
 
 	// step 2. show tables
 	if len(chooseTables) == 0 {
-		tableModels, _ := db.WithDriver(conn).ShowTables()
+		tables, err := db.WithDriver(conn).ShowTables()
 
-		tables := getTablesFromSQLResult(tableModels, driverName, database)
+		if err != nil {
+			panic(err)
+		}
+
+		tables = filterTables(tables)
+
 		if len(tables) == 0 {
 			exitWithError(`no tables, you should build a table of your own business first.
 
@@ -280,34 +287,15 @@ func clear(osName string) {
 	}
 }
 
-func getTablesFromSQLResult(models []map[string]interface{}, driver string, dbName string) []string {
+func filterTables(models []string) []string {
 	tables := make([]string, 0)
-	if len(models) == 0 {
-		return tables
-	}
-
-	key := "Tables_in_" + dbName
-	if driver == "postgresql" || driver == "sqlite" {
-		key = "tablename"
-	} else if driver == "mssql" {
-		key = "TABLE_NAME"
-	} else {
-		if _, ok := models[0][key].(string); !ok {
-			key = "Tables_in_" + strings.ToLower(dbName)
-		}
-	}
 
 	for i := 0; i < len(models); i++ {
-		// skip sqlite system tables
-		if driver == "sqlite" && models[i][key].(string) == "sqlite_sequence" {
-			continue
-		}
-
 		// skip goadmin system tables
-		if isSystemTable(models[i][key].(string)) {
+		if isSystemTable(models[i]) {
 			continue
 		}
-		tables = append(tables, models[i][key].(string))
+		tables = append(tables, models[i])
 	}
 
 	return tables

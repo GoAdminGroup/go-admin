@@ -42,7 +42,7 @@ func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	is.GetContent(ctx, getPanelFn, is, btns...)
+	is.GetContent(ctx, getPanelFn, is, btns)
 }
 
 type HandlerFunc func(ctx iris.Context) (types.Panel, error)

@@ -34,6 +34,12 @@ import (
 func (h *Handler) ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query(constant.PrefixKey)
+
+	if prefix == "site" {
+		ctx.Redirect(h.config.Url("/info/site/edit"))
+		return
+	}
+
 	panel := h.table(prefix, ctx)
 
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,

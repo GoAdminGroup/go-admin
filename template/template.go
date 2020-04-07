@@ -112,6 +112,16 @@ func Add(name string, temp Template) {
 	templateMap[name] = temp
 }
 
+func Themes() []string {
+	names := make([]string, len(templateMap))
+	i := 0
+	for k := range templateMap {
+		names[i] = k
+		i++
+	}
+	return names
+}
+
 func AddFromPlugin(name string, mod string) {
 
 	plug, err := plugin.Open(mod)

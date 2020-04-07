@@ -37,6 +37,8 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		infoUrl = referer
 	}
 
+	f := panel.GetForm()
+
 	h.HTML(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetPrefix(h.config.PrefixFixSlash()).
@@ -50,9 +52,10 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 				form2.PreviousKey: infoUrl,
 			}).
 			SetTitle("New").
-			SetOperationFooter(formFooter("new")).
+			SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+				f.IsHideResetButton)).
 			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml)),
+			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
 		Description: panel.GetForm().Description,
 		Title:       panel.GetForm().Title,
 	}, alert == "")

@@ -62,6 +62,16 @@ func (f Values) Delete(key string) {
 	delete(f, key)
 }
 
+func (f Values) ToMap() map[string]string {
+	var m = make(map[string]string)
+	for key, v := range f {
+		if len(v) > 0 {
+			m[key] = v[0]
+		}
+	}
+	return m
+}
+
 func (f Values) IsUpdatePost() bool {
 	return f.Get(PostTypeKey) == "0"
 }
@@ -85,5 +95,16 @@ func (f Values) IsSingleUpdatePost() bool {
 func (f Values) RemoveRemark() Values {
 	f.Delete(PostTypeKey)
 	f.Delete(PostIsSingleUpdateKey)
+	return f
+}
+
+func (f Values) RemoveSysRemark() Values {
+	f.Delete(PostTypeKey)
+	f.Delete(PostIsSingleUpdateKey)
+	f.Delete(PostResultKey)
+	f.Delete(PreviousKey)
+	f.Delete(TokenKey)
+	f.Delete(MethodKey)
+	f.Delete(NoAnimationKey)
 	return f
 }

@@ -3,9 +3,11 @@ package utils
 import (
 	"bytes"
 	"encoding/gob"
+	"encoding/json"
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
 	"net/url"
+	"strconv"
 	"strings"
 )
 
@@ -83,6 +85,19 @@ func WrapURL(u string) string {
 	}
 	return url.QueryEscape(strings.Replace(uarr[0], "/", "_", -1)) + "?" +
 		strings.Replace(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}", -1)
+}
+
+func JSON(a interface{}) string {
+	if a == nil {
+		return ""
+	}
+	b, _ := json.Marshal(a)
+	return string(b)
+}
+
+func ParseBool(s string) bool {
+	b1, _ := strconv.ParseBool(s)
+	return b1
 }
 
 func CopyMap(m map[string]string) map[string]string {

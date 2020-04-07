@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -63,6 +64,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		infoUrl = referer
 	}
 
+	f := panel.GetForm()
+
 	h.HTML(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
@@ -75,9 +78,10 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: infoUrl,
 			}).
-			SetOperationFooter(formFooter(footerKind)).
+			SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+				f.IsHideResetButton)).
 			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml)),
+			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
 	}, alert == "" || ((len(animation) > 0) && animation[0]))
@@ -135,6 +139,15 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
+		return
+	}
+
+	if param.Prefix == "site" {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
+		swal('%s', '', 'success');
+		setTimeout(function(){location.reload()}, 1000)
+</script>`, language.Get("modify success")))
+		ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/site/edit"))
 		return
 	}
 

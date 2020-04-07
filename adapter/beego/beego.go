@@ -42,7 +42,7 @@ func (bee *Beego) Use(router interface{}, plugs []plugins.Plugin) error {
 }
 
 func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	bee.GetContent(ctx, getPanelFn, bee)
+	bee.GetContent(ctx, getPanelFn, bee, btns)
 }
 
 type HandlerFunc func(ctx *context.Context) (types.Panel, error)

@@ -8,10 +8,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -67,6 +69,19 @@ func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
 	return drivers
 }
 
+func (d DatabaseList) JSON() string {
+	return utils.JSON(d)
+}
+
+func GetDatabaseListFromJSON(m string) DatabaseList {
+	var d = make(DatabaseList, 0)
+	if m == "" {
+		panic("wrong config")
+	}
+	_ = json.Unmarshal([]byte(m), &d)
+	return d
+}
+
 const (
 	// EnvTest is a const value of test environment.
 	EnvTest = "test"
@@ -88,8 +103,8 @@ const (
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {
-	Path   string
-	Prefix string
+	Path   string `json:"path",yaml:"path",ini:"path"`
+	Prefix string `json:"prefix",yaml:"prefix",ini:"prefix"`
 }
 
 func (s Store) URL(suffix string) string {
@@ -118,6 +133,22 @@ func (s Store) URL(suffix string) string {
 		return s.Prefix + "/" + suffix
 	}
 	return "/" + s.Prefix + "/" + suffix
+}
+
+func (s Store) JSON() string {
+	if s.Path == "" && s.Prefix == "" {
+		return ""
+	}
+	return utils.JSON(s)
+}
+
+func GetStoreFromJSON(m string) Store {
+	var s Store
+	if m == "" {
+		return s
+	}
+	_ = json.Unmarshal([]byte(m), &s)
+	return s
 }
 
 // Config type is the global config of goAdmin. It will be
@@ -213,7 +244,7 @@ type Config struct {
 	AuthUserTable string `json:"auth_user_table",yaml:"auth_user_table",ini:"auth_user_table"`
 
 	// Extra config info
-	Extra map[string]interface{} `json:"extra",yaml:"extra",ini:"extra"`
+	Extra ExtraInfo `json:"extra",yaml:"extra",ini:"extra"`
 
 	// Page animation
 	Animation PageAnimation `json:"animation",yaml:"animation",ini:"animation"`
@@ -221,8 +252,13 @@ type Config struct {
 	// Limit login with different IPs
 	NoLimitLoginIP bool `json:"no_limit_login_ip",yaml:"no_limit_login_ip",ini:"no_limit_login_ip"`
 
+	// SiteOff
+	SiteOff bool
+
 	prefix string
 }
+
+type ExtraInfo map[string]interface{}
 
 // see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
@@ -231,14 +267,49 @@ type PageAnimation struct {
 	Delay    float32 `json:"delay",yaml:"delay",ini:"delay"`
 }
 
+func (p PageAnimation) JSON() string {
+	if p.Type == "" {
+		return ""
+	}
+	return utils.JSON(p)
+}
+
+func GetPageAnimationFromJSON(m string) PageAnimation {
+	var p PageAnimation
+	if m == "" {
+		return p
+	}
+	_ = json.Unmarshal([]byte(m), &p)
+	return p
+}
+
 // FileUploadEngine is a file upload engine.
 type FileUploadEngine struct {
-	Name   string
-	Config map[string]interface{}
+	Name   string                 `json:"name",yaml:"name",ini:"name"`
+	Config map[string]interface{} `json:"config",yaml:"config",ini:"config"`
+}
+
+func (f FileUploadEngine) JSON() string {
+	if f.Name == "" {
+		return ""
+	}
+	if len(f.Config) == 0 {
+		f.Config = nil
+	}
+	return utils.JSON(f)
+}
+
+func GetFileUploadEngineFromJSON(m string) FileUploadEngine {
+	var f FileUploadEngine
+	if m == "" {
+		return f
+	}
+	_ = json.Unmarshal([]byte(m), &f)
+	return f
 }
 
 // GetIndexURL get the index url with prefix.
-func (c Config) GetIndexURL() string {
+func (c *Config) GetIndexURL() string {
 	index := c.Index()
 	if index == "/" {
 		return c.Prefix()
@@ -248,7 +319,7 @@ func (c Config) GetIndexURL() string {
 }
 
 // Url get url with the given suffix.
-func (c Config) Url(suffix string) string {
+func (c *Config) Url(suffix string) string {
 	if c.prefix == "/" {
 		return suffix
 	}
@@ -259,22 +330,22 @@ func (c Config) Url(suffix string) string {
 }
 
 // IsTestEnvironment check the environment if it is test.
-func (c Config) IsTestEnvironment() bool {
+func (c *Config) IsTestEnvironment() bool {
 	return c.Env == EnvTest
 }
 
 // IsLocalEnvironment check the environment if it is local.
-func (c Config) IsLocalEnvironment() bool {
+func (c *Config) IsLocalEnvironment() bool {
 	return c.Env == EnvLocal
 }
 
 // IsProductionEnvironment check the environment if it is production.
-func (c Config) IsProductionEnvironment() bool {
+func (c *Config) IsProductionEnvironment() bool {
 	return c.Env == EnvProd
 }
 
 // URLRemovePrefix remove prefix from the given url.
-func (c Config) URLRemovePrefix(url string) string {
+func (c *Config) URLRemovePrefix(url string) string {
 	if url == c.prefix {
 		return "/"
 	}
@@ -285,7 +356,7 @@ func (c Config) URLRemovePrefix(url string) string {
 }
 
 // Index return the index url without prefix.
-func (c Config) Index() string {
+func (c *Config) Index() string {
 	if c.IndexUrl == "" {
 		return "/"
 	}
@@ -296,12 +367,12 @@ func (c Config) Index() string {
 }
 
 // Prefix return the prefix.
-func (c Config) Prefix() string {
+func (c *Config) Prefix() string {
 	return c.prefix
 }
 
 // AssertPrefix return the prefix of assert.
-func (c Config) AssertPrefix() string {
+func (c *Config) AssertPrefix() string {
 	if c.prefix == "/" {
 		return ""
 	}
@@ -309,18 +380,18 @@ func (c Config) AssertPrefix() string {
 }
 
 // PrefixFixSlash return the prefix fix the slash error.
-func (c Config) PrefixFixSlash() string {
+func (c *Config) PrefixFixSlash() string {
 	if c.UrlPrefix == "/" {
 		return ""
 	}
-	if c.UrlPrefix[0] != '/' {
+	if c.UrlPrefix != "" && c.UrlPrefix[0] != '/' {
 		return "/" + c.UrlPrefix
 	}
 	return c.UrlPrefix
 }
 
-func (c Config) Copy() Config {
-	return Config{
+func (c *Config) Copy() *Config {
+	return &Config{
 		Databases:        c.Databases,
 		Domain:           c.Domain,
 		Language:         c.Language,
@@ -358,9 +429,103 @@ func (c Config) Copy() Config {
 	}
 }
 
+func (c *Config) ToMap() map[string]string {
+	var m = make(map[string]string, 0)
+	m["language"] = c.Language
+	m["databases"] = c.Databases.JSON()
+	m["domain"] = c.Domain
+	m["url_prefix"] = c.UrlPrefix
+	m["theme"] = c.Theme
+	m["store"] = c.Store.JSON()
+	m["title"] = c.Title
+	m["logo"] = string(c.Logo)
+	m["mini_logo"] = string(c.MiniLogo)
+	m["index_url"] = c.IndexUrl
+	m["login_url"] = c.LoginUrl
+	m["debug"] = strconv.FormatBool(c.Debug)
+	m["env"] = c.Env
+	m["info_log_path"] = c.InfoLogPath
+	m["error_log_path"] = c.ErrorLogPath
+	m["access_log_path"] = c.AccessLogPath
+	m["sql_log"] = strconv.FormatBool(c.SqlLog)
+	m["access_log_off"] = strconv.FormatBool(c.AccessLogOff)
+	m["info_log_off"] = strconv.FormatBool(c.InfoLogOff)
+	m["error_log_off"] = strconv.FormatBool(c.ErrorLogOff)
+	m["color_scheme"] = c.ColorScheme
+	m["session_life_time"] = strconv.Itoa(c.SessionLifeTime)
+	m["asset_url"] = c.AssetUrl
+	m["file_upload_engine"] = c.FileUploadEngine.JSON()
+	m["custom_head_html"] = string(c.CustomHeadHtml)
+	m["custom_foot_Html"] = string(c.CustomFootHtml)
+	m["footer_info"] = string(c.FooterInfo)
+	m["login_title"] = c.LoginTitle
+	m["login_logo"] = string(c.LoginLogo)
+	m["auth_user_table"] = c.AuthUserTable
+	if len(c.Extra) == 0 {
+		m["extra"] = ""
+	} else {
+		m["extra"] = utils.JSON(c.Extra)
+	}
+	m["animation"] = c.Animation.JSON()
+	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
+	return m
+}
+
+func (c *Config) Update(m map[string]string) {
+	updateLock.Lock()
+	defer updateLock.Unlock()
+	c.Language = m["language"]
+	c.Domain = m["domain"]
+	c.Theme = m["theme"]
+	c.Title = m["title"]
+	c.Logo = template.HTML(m["logo"])
+	c.MiniLogo = template.HTML(m["mini_logo"])
+	c.Debug = utils.ParseBool(m["debug"])
+	c.Env = m["env"]
+	c.InfoLogPath = m["info_log_path"]
+	c.ErrorLogPath = m["error_log_path"]
+	c.AccessLogPath = m["access_log_path"]
+	c.SqlLog = utils.ParseBool(m["sql_log"])
+	c.AccessLogOff = utils.ParseBool(m["access_log_off"])
+	c.InfoLogOff = utils.ParseBool(m["info_log_off"])
+	c.ErrorLogOff = utils.ParseBool(m["error_log_off"])
+	c.ColorScheme = m["color_scheme"]
+	ses, _ := strconv.Atoi(m["session_life_time"])
+	if ses != 0 {
+		c.SessionLifeTime = ses
+	}
+	c.CustomHeadHtml = template.HTML(m["custom_head_html"])
+	c.CustomFootHtml = template.HTML(m["custom_foot_Html"])
+	c.FooterInfo = template.HTML(m["footer_info"])
+	c.LoginTitle = m["login_title"]
+	c.LoginLogo = template.HTML(m["login_logo"])
+	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
+
+	c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
+	c.Animation = GetPageAnimationFromJSON(m["animation"])
+	if m["extra"] != "" {
+		var extra = make(map[string]interface{}, 0)
+		_ = json.Unmarshal([]byte(m["extra"]), &extra)
+		c.Extra = extra
+	}
+
+	return
+}
+
+// eraseSens erase sensitive info.
+func (c *Config) EraseSens() *Config {
+	for key := range c.Databases {
+		c.Databases[key] = Database{
+			Driver: c.Databases[key].Driver,
+		}
+	}
+	return c
+}
+
 var (
-	globalCfg Config
-	declare   sync.Once
+	globalCfg  = new(Config)
+	declare    sync.Once
+	updateLock sync.Mutex
 )
 
 // ReadFromJson read the Config from a JSON file.
@@ -426,7 +591,7 @@ var (
 )
 
 // Set sets the config.
-func Set(cfg Config) Config {
+func Set(cfg Config) *Config {
 
 	lock.Lock()
 	defer lock.Unlock()
@@ -476,10 +641,9 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 		})
 	}
 
-	globalCfg = cfg
-	eraseSens()
+	globalCfg = &cfg
 
-	return cfg
+	return globalCfg
 }
 
 // AssertPrefix return the prefix of assert.
@@ -518,22 +682,8 @@ func PrefixFixSlash() string {
 
 // Get gets the config.
 func Get() Config {
-	return globalCfg.Copy()
-}
-
-// eraseSens erase sensitive info.
-func eraseSens() {
-	for _, d := range globalCfg.Databases {
-		d.Host = ""
-		d.Port = ""
-		d.User = ""
-		d.Pwd = ""
-		d.Name = ""
-		d.MaxIdleCon = 0
-		d.MaxOpenCon = 0
-		d.File = ""
-		d.Dsn = ""
-	}
+	c := globalCfg.Copy().EraseSens()
+	return *c
 }
 
 func setDefault(value, condition, def string) string {
@@ -547,7 +697,13 @@ func setDefault(value, condition, def string) string {
 // ============================
 
 func GetDatabases() DatabaseList {
-	return globalCfg.Databases
+	var list = make(DatabaseList, len(globalCfg.Databases))
+	for key := range globalCfg.Databases {
+		list[key] = Database{
+			Driver: globalCfg.Databases[key].Driver,
+		}
+	}
+	return list
 }
 
 func GetDomain() string {
@@ -674,4 +830,23 @@ func GetAnimation() PageAnimation {
 
 func GetNoLimitLoginIP() bool {
 	return globalCfg.NoLimitLoginIP
+}
+
+type Service struct {
+	C *Config
+}
+
+func (s *Service) Name() string {
+	return "config"
+}
+
+func SrvWithConfig(c *Config) *Service {
+	return &Service{c}
+}
+
+func GetService(s interface{}) *Config {
+	if srv, ok := s.(*Service); ok {
+		return srv.C
+	}
+	panic("wrong service")
 }

@@ -35,6 +35,10 @@ func (c Collection) Where(key string, values ...interface{}) Collection {
 	return d
 }
 
+func (c Collection) Length() int {
+	return len(c)
+}
+
 func (c Collection) FirstGet(key string) interface{} {
 	return c[0][key]
 }

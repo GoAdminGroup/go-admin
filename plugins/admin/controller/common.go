@@ -24,14 +24,14 @@ import (
 )
 
 type Handler struct {
-	config        c.Config
+	config        *c.Config
 	captchaConfig map[string]string
 	services      service.List
 	conn          db.Connection
 	routes        context.RouterMap
 	generators    table.GeneratorList
 	operations    []context.Node
-	navButtons    []types.Button
+	navButtons    types.Buttons
 	operationLock sync.Mutex
 }
 
@@ -39,7 +39,7 @@ func New(cfg ...Config) *Handler {
 	if len(cfg) == 0 {
 		return &Handler{
 			operations: make([]context.Node, 0),
-			navButtons: make([]types.Button, 0),
+			navButtons: make(types.Buttons, 0),
 		}
 	}
 	return &Handler{
@@ -48,12 +48,12 @@ func New(cfg ...Config) *Handler {
 		conn:       cfg[0].Connection,
 		generators: cfg[0].Generators,
 		operations: make([]context.Node, 0),
-		navButtons: make([]types.Button, 0),
+		navButtons: make(types.Buttons, 0),
 	}
 }
 
 type Config struct {
-	Config     c.Config
+	Config     *c.Config
 	Services   service.List
 	Connection db.Connection
 	Generators table.GeneratorList
@@ -128,8 +128,13 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 	h.operations = append(h.operations, addNodes...)
 }
 
-func (h *Handler) AddNavButtons(btn types.Button) {
+func (h *Handler) AddNavButton(btn types.Button) {
 	h.navButtons = append(h.navButtons, btn)
+	h.addOperation(btn.GetAction().GetCallbacks())
+}
+
+func (h *Handler) AddNavButtonFront(btn types.Button) {
+	h.navButtons = append(types.Buttons{btn}, h.navButtons...)
 	h.addOperation(btn.GetAction().GetCallbacks())
 }
 
@@ -167,10 +172,10 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		TmplName:  tmplName,
 		Tmpl:      tmpl,
 		Panel:     panel,
-		Config:    h.config,
+		Config:    *h.config,
 		Menu:      menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
-		Buttons:   h.navButtons,
+		Buttons:   h.navButtons.CheckPermission(user),
 	})
 }
 
@@ -238,47 +243,58 @@ func isPjax(ctx *context.Context) bool {
 	return ctx.IsPjax()
 }
 
-func formFooter(page string) template2.HTML {
+func formFooter(page string, isHideEdit, isHideNew, isHideReset bool) template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 
 	var (
 		checkBoxs  template2.HTML
 		checkBoxJS template2.HTML
-	)
 
-	if page == "edit" {
-		checkBoxs = template.HTML(`
+		editCheckBox = template.HTML(`
 			<label class="pull-right" style="margin: 5px 10px 0 0;">
                 <input type="checkbox" class="continue_edit" style="position: absolute; opacity: 0;"> ` + language.Get("continue editing") + `
-            </label>
+            </label>`)
+		newCheckBox = template.HTML(`
 			<label class="pull-right" style="margin: 5px 10px 0 0;">
                 <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
             </label>`)
-		checkBoxJS = template.HTML(`<script>	
-	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
-	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+
+		editWithNewCheckBoxJs = template.HTML(`$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_new').iCheck('uncheck');
 			$('input[name="` + form.PreviousKey + `"]').val(location.href)
 		} else {
 			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
 		}
-	});	
-	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
+	});	`)
+
+		newWithEditCheckBoxJs = template.HTML(`$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
 		if (this.checked) {
 			$('.continue_edit').iCheck('uncheck');
 			$('input[name="` + form.PreviousKey + `"]').val(location.href.replace('/edit', '/new'))
 		} else {
 			$('input[name="` + form.PreviousKey + `"]').val(previous_url_goadmin)
 		}
-	});
+	});`)
+	)
+
+	if page == "edit" {
+		if isHideNew {
+			newCheckBox = ""
+			newWithEditCheckBoxJs = ""
+		}
+		if isHideEdit {
+			editCheckBox = ""
+			editWithNewCheckBoxJs = ""
+		}
+		checkBoxs = editCheckBox + newCheckBox
+		checkBoxJS = `<script>	
+	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
+	` + editWithNewCheckBoxJs + newWithEditCheckBoxJs + `
 </script>
-`)
-	} else if page == "edit_only" {
-		checkBoxs = template.HTML(`
-			<label class="pull-right" style="margin: 5px 10px 0 0;">
-                <input type="checkbox" class="continue_edit" style="position: absolute; opacity: 0;"> ` + language.Get("continue editing") + `
-            </label>`)
+`
+	} else if page == "edit_only" && !isHideEdit {
+		checkBoxs = editCheckBox
 		checkBoxJS = template.HTML(`	<script>
 	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
 	$('.continue_edit').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
@@ -290,11 +306,8 @@ func formFooter(page string) template2.HTML {
 	});
 </script>
 `)
-	} else if page == "new" {
-		checkBoxs = template.HTML(`
-			<label class="pull-right" style="margin: 5px 10px 0 0;">
-                <input type="checkbox" class="continue_new" style="position: absolute; opacity: 0;"> ` + language.Get("continue creating") + `
-            </label>`)
+	} else if page == "new" && !isHideNew {
+		checkBoxs = newCheckBox
 		checkBoxJS = template.HTML(`	<script>
 	let previous_url_goadmin = $('input[name="` + form.PreviousKey + `"]').attr("value")
 	$('.continue_new').iCheck({checkboxClass: 'icheckbox_minimal-blue'}).on('ifChanged', function (event) {
@@ -313,11 +326,14 @@ func formFooter(page string) template2.HTML {
 		SetThemePrimary().
 		SetOrientationRight().
 		GetContent()
-	btn2 := aButton().SetType("reset").
-		SetContent(language.GetFromHtml("Reset")).
-		SetThemeWarning().
-		SetOrientationLeft().
-		GetContent()
+	btn2 := template.HTML("")
+	if !isHideReset {
+		btn2 = aButton().SetType("reset").
+			SetContent(language.GetFromHtml("Reset")).
+			SetThemeWarning().
+			SetOrientationLeft().
+			GetContent()
+	}
 	col2 := aCol().SetSize(types.SizeMD(8)).
 		SetContent(btn1 + checkBoxs + btn2 + checkBoxJS).GetContent()
 	return col1 + col2
@@ -345,7 +361,10 @@ func filterFormFooter(infoUrl string) template2.HTML {
 	return col1 + col2
 }
 
-func formContent(form types.FormAttribute) template2.HTML {
+func formContent(form types.FormAttribute, isTab bool) template2.HTML {
+	if isTab {
+		return form.GetContent()
+	}
 	return aBox().
 		SetHeader(form.GetDefaultBoxHeader()).
 		WithHeadBorder().

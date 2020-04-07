@@ -37,10 +37,13 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 	}
 
 	id := ctx.Query(constant.EditPKKey)
-	if id == "" {
+	if id == "" && prefix != "site" {
 		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn)
 		ctx.Abort()
 		return
+	}
+	if prefix == "site" {
+		id = "1"
 	}
 
 	ctx.SetUserValue(showFormParamKey, &ShowFormParam{

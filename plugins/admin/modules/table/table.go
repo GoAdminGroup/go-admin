@@ -21,8 +21,8 @@ func (g GeneratorList) Add(key string, gen Generator) {
 	g[key] = gen
 }
 
-func (g GeneratorList) Combine(gg GeneratorList) GeneratorList {
-	for key, gen := range gg {
+func (g GeneratorList) Combine(list GeneratorList) GeneratorList {
+	for key, gen := range list {
 		if _, ok := g[key]; !ok {
 			g[key] = gen
 		}
@@ -30,9 +30,9 @@ func (g GeneratorList) Combine(gg GeneratorList) GeneratorList {
 	return g
 }
 
-func (g GeneratorList) CombineAll(ggg []GeneratorList) GeneratorList {
-	for _, gg := range ggg {
-		for key, gen := range gg {
+func (g GeneratorList) CombineAll(gens []GeneratorList) GeneratorList {
+	for _, list := range gens {
+		for key, gen := range list {
 			if _, ok := g[key]; !ok {
 				g[key] = gen
 			}

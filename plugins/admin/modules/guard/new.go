@@ -30,6 +30,12 @@ func (g *Guard) ShowNewForm(ctx *context.Context) {
 		return
 	}
 
+	if prefix == "site" {
+		ctx.Redirect(config.Url("/info/site/edit"))
+		ctx.Abort()
+		return
+	}
+
 	ctx.SetUserValue(showNewFormParam, &ShowNewFormParam{
 		Panel:  panel,
 		Prefix: prefix,
