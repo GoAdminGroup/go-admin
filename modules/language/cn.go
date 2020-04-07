@@ -115,7 +115,7 @@ var cn = map[string]string{
 	"config.title":           "标题",
 	"config.index url":       "首页URL",
 	"config.login url":       "登录URL",
-	"config.env":             "环境",
+	"config.env":             "开发环境",
 	"config.color scheme":    "颜色主题",
 	"config.asset url":       "资源URL",
 	"config.login title":     "登录标题",
@@ -133,9 +133,13 @@ var cn = map[string]string{
 	"config.log":             "日志",
 	"config.site setting":    "网站设置",
 	"config.custom":          "定制",
-	"config.debug":           "Debug",
+	"config.debug":           "Debug模式",
 	"config.true":            "是",
 	"config.false":           "否",
+
+	"config.test":  "测试环境",
+	"config.prod":  "生产环境",
+	"config.local": "本地环境",
 
 	"config.logo":               "Logo",
 	"config.mini logo":          "Mini Logo",

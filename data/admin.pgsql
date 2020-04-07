@@ -122,7 +122,8 @@ CREATE TABLE public.goadmin_site (
     key character varying(100) NOT NULL,
     value text NOT NULL,
     type integer DEFAULT 0,
-    description character varying(3000) NOT NULL,
+    description character varying(3000),
+    state integer DEFAULT 0,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()
 );
@@ -331,6 +332,14 @@ COPY public.goadmin_operation_log (id, user_id, path, method, ip, input, created
 
 
 --
+-- Data for Name: goadmin_site; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.goadmin_site (id, key, value, description, state, created_at, updated_at) FROM stdin;
+\.
+
+
+--
 -- Data for Name: goadmin_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -524,7 +533,7 @@ ALTER TABLE ONLY public.goadmin_roles
 
 
 --
--- Name: goadmin_roles goadmin_site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- Name: goadmin_site goadmin_site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.goadmin_site

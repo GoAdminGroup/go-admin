@@ -970,7 +970,12 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
-	formList.AddField(lgWithConfigScore("env"), "env", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("env"), "env", db.Varchar, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithConfigScore("test"), Value: config.EnvTest},
+			{Text: lgWithConfigScore("prod"), Value: config.EnvProd},
+			{Text: lgWithConfigScore("local"), Value: config.EnvLocal},
+		})
 	formList.AddField(lgWithConfigScore("language"), "language", db.Varchar, form.SelectSingle).
 		FieldDisplay(func(value types.FieldModel) interface{} {
 			if value.Value == lang.English.String() {
