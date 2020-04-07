@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -129,6 +130,7 @@ type Field struct {
 type FilterFormField struct {
 	Type        form.Type
 	Options     FieldOptions
+	OptionTable OptionTable
 	Width       int
 	Operator    FilterOperator
 	OptionExt   template.JS
@@ -138,7 +140,7 @@ type FilterFormField struct {
 	ProcessFn   func(string) string
 }
 
-func (f Field) GetFilterFormFields(params parameter.Parameters, headField string) []FormField {
+func (f Field) GetFilterFormFields(params parameter.Parameters, headField string, sqls ...*db.SQL) []FormField {
 
 	var (
 		filterForm = make([]FormField, 0)
@@ -167,6 +169,28 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 
 		options = make(FieldOptions, 0)
 
+		if len(filter.Options) == 0 && filter.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
+			sqls[0].Table(filter.OptionTable.Table).Select(filter.OptionTable.ValueField, filter.OptionTable.TextField)
+
+			if filter.OptionTable.QueryProcessFn != nil {
+				filter.OptionTable.QueryProcessFn(sqls[0])
+			}
+
+			queryRes, err := sqls[0].All()
+			if err == nil {
+				for _, item := range queryRes {
+					filter.Options = append(filter.Options, FieldOption{
+						Value: fmt.Sprintf("%v", item[filter.OptionTable.ValueField]),
+						Text:  fmt.Sprintf("%v", item[filter.OptionTable.TextField]),
+					})
+				}
+			}
+
+			if filter.OptionTable.ProcessFn != nil {
+				filter.Options = filter.OptionTable.ProcessFn(filter.Options)
+			}
+		}
+
 		if filter.Type.IsSingleSelect() {
 			options = filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
 		}
@@ -188,6 +212,7 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Value2:      value2,
 			Options:     options,
 			OptionExt:   filter.OptionExt,
+			OptionTable: filter.OptionTable,
 			Label:       filter.Operator.Label(),
 		})
 
@@ -219,7 +244,7 @@ type TableInfo struct {
 	Driver     string
 }
 
-func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string) (Thead,
+func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string, sqls ...*db.SQL) (Thead,
 	string, string, string, []string, []FormField) {
 	var (
 		thead      = make(Thead, 0)
@@ -250,7 +275,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		}
 
 		if field.Filterable {
-			filterForm = append(filterForm, field.GetFilterFormFields(params, headField)...)
+			filterForm = append(filterForm, field.GetFilterFormFields(params, headField, sqls...)...)
 		}
 
 		if field.Hide {
@@ -965,6 +990,20 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 func (i *InfoPanel) FieldFilterOptions(options FieldOptions) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].Options = options
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = `{"allowClear": "true"}`
+	return i
+}
+
+func (i *InfoPanel) FieldFilterOptionsFromTable(table, textFieldName, valueFieldName string, process ...OptionTableQueryProcessFn) *InfoPanel {
+	var fn OptionTableQueryProcessFn
+	if len(process) > 0 {
+		fn = process[0]
+	}
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionTable = OptionTable{
+		Table:          table,
+		TextField:      textFieldName,
+		ValueField:     valueFieldName,
+		QueryProcessFn: fn,
+	}
 	return i
 }
 

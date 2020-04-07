@@ -938,12 +938,13 @@ func (tb DefaultTable) delete(table, key string, values []string) error {
 
 func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
 	string, string, string, []string, []types.FormField) {
+
 	return tb.Info.FieldList.GetTheadAndFilterForm(types.TableInfo{
 		Table:      tb.Info.Table,
 		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
-	}, params, columns)
+	}, params, columns, tb.sql())
 }
 
 // db is a helper function return raw db connection.

@@ -543,6 +543,13 @@ SELECT pg_catalog.setval('public.goadmin_session_myid_seq', 1, true);
 
 
 --
+-- Name: goadmin_site_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.goadmin_site_myid_seq', 1, true);
+
+
+--
 -- Name: goadmin_users_myid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -580,6 +587,13 @@ ALTER TABLE ONLY public.goadmin_permissions
 ALTER TABLE ONLY public.goadmin_roles
     ADD CONSTRAINT goadmin_roles_pkey PRIMARY KEY (id);
 
+
+--
+-- Name: goadmin_roles goadmin_site_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.goadmin_site
+    ADD CONSTRAINT goadmin_site_pkey PRIMARY KEY (id);
 
 --
 -- Name: goadmin_session goadmin_session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
