@@ -22,7 +22,7 @@ func DefaultConfig() Config {
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
-		Exportable: false,
+		Exportable: true,
 		Connection: DefaultConnectionName,
 		PrimaryKey: PrimaryKey{
 			Type: db.Int,
@@ -93,7 +93,7 @@ func DefaultConfigWithDriverAndConnection(driver, conn string) Config {
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
-		Exportable: false,
+		Exportable: true,
 		PrimaryKey: PrimaryKey{
 			Type: db.Int,
 			Name: DefaultPrimaryKeyName,
