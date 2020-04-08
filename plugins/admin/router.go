@@ -4,7 +4,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
+	"net/http"
 )
 
 // initRouter initialize the router and return the context.
@@ -65,5 +70,20 @@ func (admin *Admin) initRouter() *Admin {
 
 func (admin *Admin) globalErrorHandler(ctx *context.Context) {
 	defer admin.handler.GlobalDeferHandler(ctx)
+
+	// Check site offline flag
+	if config.GetSiteOff() {
+		if ctx.WantsHTML() {
+			page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
+				return template.WarningPanel(errors.SiteOff), nil
+			}, admin.conn)
+		} else {
+			ctx.JSON(http.StatusForbidden, map[string]interface{}{
+				"code": http.StatusForbidden,
+				"msg":  language.Get(errors.SiteOff),
+			})
+		}
+	}
+
 	ctx.Next()
 }

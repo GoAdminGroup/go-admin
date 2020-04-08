@@ -944,7 +944,9 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, column
 		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
-	}, params, columns, tb.sql())
+	}, params, columns, func() *db.SQL {
+		return tb.sql()
+	})
 }
 
 // db is a helper function return raw db connection.

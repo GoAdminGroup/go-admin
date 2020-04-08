@@ -125,6 +125,15 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
+	if param.Prefix == "site" {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
+		swal('%s', '', 'success');
+		setTimeout(function(){location.reload()}, 1000)
+</script>`, language.Get("modify success")))
+		ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/site/edit"))
+		return
+	}
+
 	if !param.FromList {
 
 		if isNewUrl(param.PreviousPath, param.Prefix) {
@@ -139,15 +148,6 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
-		return
-	}
-
-	if param.Prefix == "site" {
-		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
-		swal('%s', '', 'success');
-		setTimeout(function(){location.reload()}, 1000)
-</script>`, language.Get("modify success")))
-		ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/site/edit"))
 		return
 	}
 

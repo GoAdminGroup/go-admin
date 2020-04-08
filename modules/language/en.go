@@ -91,7 +91,7 @@ var en = map[string]string{
 	"config.login url":       "Login URL",
 	"config.env":             "Env",
 	"config.color scheme":    "Color Scheme",
-	"config.asset url":       "Asset URL",
+	"config.cdn url":         "CDN Asset URL",
 	"config.login title":     "Login Title",
 	"config.auth user table": "Auth User Table",
 	"config.extra":           "Extra Configuration",
@@ -108,6 +108,7 @@ var en = map[string]string{
 	"config.site setting":    "Site Settings",
 	"config.custom":          "Customize",
 	"config.debug":           "Debug Mode",
+	"config.site off":        "Site Offline",
 	"config.true":            "Yes",
 	"config.false":           "No",
 

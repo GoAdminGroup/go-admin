@@ -244,7 +244,7 @@ type TableInfo struct {
 	Driver     string
 }
 
-func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string, sqls ...*db.SQL) (Thead,
+func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string, sql ...func() *db.SQL) (Thead,
 	string, string, string, []string, []FormField) {
 	var (
 		thead      = make(Thead, 0)
@@ -275,7 +275,11 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		}
 
 		if field.Filterable {
-			filterForm = append(filterForm, field.GetFilterFormFields(params, headField, sqls...)...)
+			if len(sql) > 0 {
+				filterForm = append(filterForm, field.GetFilterFormFields(params, headField, sql[0]())...)
+			} else {
+				filterForm = append(filterForm, field.GetFilterFormFields(params, headField)...)
+			}
 		}
 
 		if field.Hide {

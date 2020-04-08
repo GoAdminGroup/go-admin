@@ -19,6 +19,7 @@ const (
 	EditFailWrongToken   = "edit fail, wrong token"
 	CreateFailWrongToken = "create fail, wrong token"
 	NoPermission         = "no permission"
+	SiteOff              = "site is off"
 )
 
 func WrongPK(pk string) string {

@@ -4,6 +4,8 @@
 
 package language
 
+import "strings"
+
 var cn = map[string]string{
 	"managers":  "管理员管理",
 	"name":      "用户名",
@@ -117,7 +119,7 @@ var cn = map[string]string{
 	"config.login url":       "登录URL",
 	"config.env":             "开发环境",
 	"config.color scheme":    "颜色主题",
-	"config.asset url":       "资源URL",
+	"config.cdn url":         "cdn资源URL",
 	"config.login title":     "登录标题",
 	"config.auth user table": "登录用户表",
 	"config.extra":           "额外配置",
@@ -134,6 +136,7 @@ var cn = map[string]string{
 	"config.site setting":    "网站设置",
 	"config.custom":          "定制",
 	"config.debug":           "Debug模式",
+	"config.site off":        "关闭网站",
 	"config.true":            "是",
 	"config.false":           "否",
 
@@ -152,8 +155,11 @@ var cn = map[string]string{
 	"config.animation":          "动画",
 	"config.file upload engine": "文件上传引擎",
 
-	"config.language.cn": "中文",
-	"config.language.en": "英文",
-	"config.language.jp": "日文",
-	"config.language.tc": "繁体中文",
+	"config.do not modify when you have not set up all assets": "不要修改，当你还没有设置好所有资源文件的时候",
+	"config.it will work when theme is adminlte":               "当主题为adminlte时生效",
+
+	"config.language." + CN:                  "中文",
+	"config.language." + EN:                  "英文",
+	"config.language." + JP:                  "日文",
+	"config.language." + strings.ToLower(TC): "繁体中文",
 }

@@ -18,6 +18,24 @@ var (
 	TC = language.TraditionalChinese.String()
 )
 
+func FixedLanguageKey(key string) string {
+	if key == "en" {
+		return EN
+	}
+	if key == "cn" {
+		return CN
+	}
+	if key == "jp" {
+		return JP
+	}
+	if key == "tc" {
+		return TC
+	}
+	return key
+}
+
+var Langs = [...]string{EN, CN, JP, TC}
+
 // Get return the value of default scope.
 func Get(value string) string {
 	return GetWithScope(value)

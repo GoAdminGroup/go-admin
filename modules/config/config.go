@@ -252,8 +252,13 @@ type Config struct {
 	// Limit login with different IPs
 	NoLimitLoginIP bool `json:"no_limit_login_ip",yaml:"no_limit_login_ip",ini:"no_limit_login_ip"`
 
-	// SiteOff
-	SiteOff bool
+	// When site off is true, website will be closed
+	SiteOff bool `json:"site_off",yaml:"site_off",ini:"site_off"`
+
+	// Hide config center entrance flag
+	HideConfigCenterEntrance bool `json:"hide_config_center_entrance",yaml:"hide_config_center_entrance",ini:"hide_config_center_entrance"`
+
+	Favicon string
 
 	prefix string
 }
@@ -441,6 +446,7 @@ func (c *Config) ToMap() map[string]string {
 	m["logo"] = string(c.Logo)
 	m["mini_logo"] = string(c.MiniLogo)
 	m["index_url"] = c.IndexUrl
+	m["site_off"] = strconv.FormatBool(c.SiteOff)
 	m["login_url"] = c.LoginUrl
 	m["debug"] = strconv.FormatBool(c.Debug)
 	m["env"] = c.Env
@@ -471,7 +477,7 @@ func (c *Config) ToMap() map[string]string {
 	return m
 }
 
-func (c *Config) Update(m map[string]string) {
+func (c *Config) Update(m map[string]string) error {
 	updateLock.Lock()
 	defer updateLock.Unlock()
 	c.Language = m["language"]
@@ -482,14 +488,29 @@ func (c *Config) Update(m map[string]string) {
 	c.MiniLogo = template.HTML(m["mini_logo"])
 	c.Debug = utils.ParseBool(m["debug"])
 	c.Env = m["env"]
-	c.InfoLogPath = m["info_log_path"]
-	c.ErrorLogPath = m["error_log_path"]
-	c.AccessLogPath = m["access_log_path"]
-	c.SqlLog = utils.ParseBool(m["sql_log"])
+	c.SiteOff = utils.ParseBool(m["site_off"])
+
 	c.AccessLogOff = utils.ParseBool(m["access_log_off"])
 	c.InfoLogOff = utils.ParseBool(m["info_log_off"])
 	c.ErrorLogOff = utils.ParseBool(m["error_log_off"])
-	c.ColorScheme = m["color_scheme"]
+
+	if c.InfoLogPath != m["info_log_path"] {
+		c.InfoLogPath = m["info_log_path"]
+		logger.SetInfoLogger(c.InfoLogPath, c.Debug, c.InfoLogOff)
+	}
+	if c.ErrorLogPath != m["error_log_path"] {
+		c.ErrorLogPath = m["error_log_path"]
+		logger.SetErrorLogger(c.ErrorLogPath, c.Debug, c.ErrorLogOff)
+	}
+	if c.AccessLogPath != m["access_log_path"] {
+		c.AccessLogPath = m["access_log_path"]
+		logger.SetAccessLogger(c.AccessLogPath, c.Debug, c.AccessLogOff)
+	}
+
+	c.SqlLog = utils.ParseBool(m["sql_log"])
+	if c.Theme == "adminlte" {
+		c.ColorScheme = m["color_scheme"]
+	}
 	ses, _ := strconv.Atoi(m["session_life_time"])
 	if ses != 0 {
 		c.SessionLifeTime = ses
@@ -498,6 +519,7 @@ func (c *Config) Update(m map[string]string) {
 	c.CustomFootHtml = template.HTML(m["custom_foot_Html"])
 	c.FooterInfo = template.HTML(m["footer_info"])
 	c.LoginTitle = m["login_title"]
+	c.AssetUrl = m["asset_url"]
 	c.LoginLogo = template.HTML(m["login_logo"])
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
 
@@ -509,7 +531,7 @@ func (c *Config) Update(m map[string]string) {
 		c.Extra = extra
 	}
 
-	return
+	return nil
 }
 
 // eraseSens erase sensitive info.
@@ -732,6 +754,10 @@ func GetTitle() string {
 
 func GetLogo() template.HTML {
 	return globalCfg.Logo
+}
+
+func GetSiteOff() bool {
+	return globalCfg.SiteOff
 }
 
 func GetMiniLogo() template.HTML {

@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/sword"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -55,6 +56,7 @@ func main() {
 		IndexUrl: "/",
 		Debug:    true,
 		SqlLog:   true,
+		Theme:    "sword",
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},

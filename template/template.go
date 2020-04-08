@@ -57,6 +57,7 @@ type Template interface {
 	GetAssetList() []string
 	GetAsset(string) ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
+	GetVersion() string
 }
 
 func HTML(s string) template.HTML {

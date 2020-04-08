@@ -64,10 +64,12 @@ func (eng *Engine) Use(router interface{}) error {
 	eng.Services.Add("config", config.SrvWithConfig(eng.config))
 	errors.Init()
 
-	btn := types.GetNavButton("", icon.Gear, action.Jump(eng.config.Url("/info/site/edit")))
-	eng.AdminPlugin().AddNavButton(btn)
-	eng.NavButtons = append(eng.NavButtons, btn)
-	navButtons = append(navButtons, btn)
+	if !eng.config.HideConfigCenterEntrance {
+		btn := types.GetNavButton("", icon.Gear, action.Jump(eng.config.Url("/info/site/edit")))
+		eng.AdminPlugin().AddNavButton(btn)
+		eng.NavButtons = append(eng.NavButtons, btn)
+		navButtons = append(navButtons, btn)
+	}
 
 	// Initialize plugins
 	for i := range eng.PluginList {

@@ -266,6 +266,10 @@ func (ctx *Context) PostForm() url.Values {
 	return ctx.Request.PostForm
 }
 
+func (ctx *Context) WantsHTML() bool {
+	return ctx.Method() == "GET" && strings.Contains(ctx.Headers("Accept"), "html")
+}
+
 // AddHeader adds the key, value pair to the header.
 func (ctx *Context) AddHeader(key, value string) {
 	ctx.Response.Header.Add(key, value)

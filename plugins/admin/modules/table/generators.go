@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	lang "golang.org/x/text/language"
 	tmpl "html/template"
 	"strconv"
 	"strings"
@@ -965,6 +964,11 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList := siteTable.GetForm().AddXssJsFilter()
 	formList.AddField("ID", "id", db.Varchar, form.Default).FieldDefault("1").FieldHide()
+	formList.AddField(lgWithConfigScore("site off"), "site_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("debug"), "debug", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
@@ -976,28 +980,16 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: lgWithConfigScore("prod"), Value: config.EnvProd},
 			{Text: lgWithConfigScore("local"), Value: config.EnvLocal},
 		})
+
+	langOps := make(types.FieldOptions, len(language.Langs))
+	for k, t := range language.Langs {
+		langOps[k] = types.FieldOption{Text: lgWithConfigScore(t, "language"), Value: t}
+	}
 	formList.AddField(lgWithConfigScore("language"), "language", db.Varchar, form.SelectSingle).
 		FieldDisplay(func(value types.FieldModel) interface{} {
-			if value.Value == lang.English.String() {
-				return "en"
-			}
-			if value.Value == lang.Chinese.String() {
-				return "cn"
-			}
-			if value.Value == lang.Japanese.String() {
-				return "jp"
-			}
-			if value.Value == lang.TraditionalChinese.String() {
-				return "tc"
-			}
-			return value.Value
+			return language.FixedLanguageKey(value.Value)
 		}).
-		FieldOptions(types.FieldOptions{
-			{Text: lgWithConfigScore("cn", "language"), Value: "cn"},
-			{Text: lgWithConfigScore("en", "language"), Value: "en"},
-			{Text: lgWithConfigScore("jp", "language"), Value: "jp"},
-			{Text: lgWithConfigScore("tc", "language"), Value: "tc"},
-		})
+		FieldOptions(langOps)
 	themes := template.Themes()
 	themesOps := make(types.FieldOptions, len(themes))
 	for k, t := range themes {
@@ -1006,25 +998,23 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.AddField(lgWithConfigScore("theme"), "theme", db.Varchar, form.SelectSingle).
 		FieldOptions(themesOps)
-	formList.AddField(lgWithConfigScore("title"), "title", db.Varchar, form.Text)
-	if config.GetTheme() == "adminlte" {
-		formList.AddField(lgWithConfigScore("color scheme"), "color_scheme", db.Varchar, form.SelectSingle).
-			FieldOptions(types.FieldOptions{
-				{Text: "skin-black", Value: "skin-black"},
-				{Text: "skin-black-light", Value: "skin-black-light"},
-				{Text: "skin-blue", Value: "skin-blue"},
-				{Text: "skin-blue-light", Value: "skin-blue-light"},
-				{Text: "skin-green", Value: "skin-green"},
-				{Text: "skin-green-light", Value: "skin-green-light"},
-				{Text: "skin-purple", Value: "skin-purple"},
-				{Text: "skin-purple-light", Value: "skin-purple-light"},
-				{Text: "skin-red", Value: "skin-red"},
-				{Text: "skin-red-light", Value: "skin-red-light"},
-				{Text: "skin-yellow", Value: "skin-yellow"},
-				{Text: "skin-yellow-light", Value: "skin-yellow-light"},
-			})
-	}
-	formList.AddField(lgWithConfigScore("login title"), "login_title", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("title"), "title", db.Varchar, form.Text).FieldMust()
+	formList.AddField(lgWithConfigScore("color scheme"), "color_scheme", db.Varchar, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "skin-black", Value: "skin-black"},
+			{Text: "skin-black-light", Value: "skin-black-light"},
+			{Text: "skin-blue", Value: "skin-blue"},
+			{Text: "skin-blue-light", Value: "skin-blue-light"},
+			{Text: "skin-green", Value: "skin-green"},
+			{Text: "skin-green-light", Value: "skin-green-light"},
+			{Text: "skin-purple", Value: "skin-purple"},
+			{Text: "skin-purple-light", Value: "skin-purple-light"},
+			{Text: "skin-red", Value: "skin-red"},
+			{Text: "skin-red-light", Value: "skin-red-light"},
+			{Text: "skin-yellow", Value: "skin-yellow"},
+			{Text: "skin-yellow-light", Value: "skin-yellow-light"},
+		}).FieldHelpMsg(template.HTML(lgWithConfigScore("It will work when theme is adminlte")))
+	formList.AddField(lgWithConfigScore("login title"), "login_title", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lgWithConfigScore("extra"), "extra", db.Varchar, form.TextArea)
 	//formList.AddField(lgWithConfigScore("databases"), "databases", db.Varchar, form.TextArea).
 	//	FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1033,8 +1023,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	//		return template.HTML(buf.String())
 	//	}).FieldNotAllowEdit()
 
-	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.TextArea)
-	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.TextArea).FieldMust()
+	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.TextArea).FieldMust()
 	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number)
 	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.TextArea)
 	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.TextArea)
@@ -1048,6 +1038,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.AddField(lgWithConfigScore("animation"), "animation", db.Varchar, form.Text).
 		FieldHelpMsg(`see more: <a href="https://daneden.github.io/animate.css/">https://daneden.github.io/animate.css/</a>`)
 	formList.AddField(lgWithConfigScore("file upload engine"), "file_upload_engine", db.Varchar, form.Text)
+
+	formList.AddField(lgWithConfigScore("cdn url"), "asset_url", db.Varchar, form.Text).
+		FieldHelpMsg(template.HTML(lgWithConfigScore("Do not modify when you have not set up all assets")))
 
 	formList.AddField(lgWithConfigScore("info log path"), "info_log_path", db.Varchar, form.Text)
 	formList.AddField(lgWithConfigScore("error log path"), "error_log_path", db.Varchar, form.Text)
@@ -1068,16 +1061,10 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: falseStr, Value: "false"},
 		})
 
-	group1 := []string{"id", "debug", "env", "language", "theme", "title", "login_title",
-		"extra", "session_life_time", "no_limit_login_ip", "animation", "file_upload_engine"}
-
-	if config.GetTheme() == "adminlte" {
-		group1 = []string{"id", "debug", "env", "language", "theme", "title", "login_title",
-			"color_scheme", "session_life_time", "no_limit_login_ip", "animation", "file_upload_engine", "extra"}
-	}
-
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
-	formList.SetTabGroups(types.NewTabGroups(group1...).
+	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
+		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation",
+		"file_upload_engine", "extra").
 		AddGroup("access_log_off", "info_log_off", "error_log_off", "info_log_path", "error_log_path", "access_log_path").
 		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_Html", "footer_info", "login_logo")).
 		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
@@ -1087,9 +1074,17 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		SetDescription(lgWithConfigScore("site setting"))
 
 	formList.SetUpdateFn(func(values form2.Values) error {
+
+		ses := values.Get("session_life_time")
+		sesInt, _ := strconv.Atoi(ses)
+		if sesInt < 900 {
+			return errors.New("wrong session life time, must bigger than 900 seconds")
+		}
+
+		// TODO: add transaction
 		err := models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())
 		if err == nil {
-			s.c.Update(values.ToMap())
+			_ = s.c.Update(values.ToMap())
 		}
 		return err
 	})
