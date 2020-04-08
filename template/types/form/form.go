@@ -31,11 +31,12 @@ const (
 	TextArea
 	Custom
 	Switch
+	Code
 )
 
 var allType = []Type{Default, Text, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
 	RichText, Datetime, DatetimeRange, Radio, Email, Url, Ip, Color, Currency, Number, NumberRange,
-	TextArea, Custom, Switch}
+	TextArea, Custom, Switch, Code}
 
 func CheckType(t, def Type) Type {
 	for _, item := range allType {
@@ -130,6 +131,8 @@ func (t Type) String() string {
 		return "custom"
 	case Switch:
 		return "switch"
+	case Code:
+		return "code"
 	default:
 		panic("wrong form type")
 	}
@@ -153,6 +156,10 @@ func (t Type) IsRange() bool {
 
 func (t Type) IsFile() bool {
 	return t == File || t == Multifile
+}
+
+func (t Type) IsCode() bool {
+	return t == Code
 }
 
 func (t Type) IsCustom() bool {

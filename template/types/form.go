@@ -394,6 +394,15 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 		})
 	}
 
+	if formType.IsCode() {
+		f.FieldList[f.curFieldListIndex].OptionExt = `
+	theme = "monokai";
+	font_size = 14;
+	language = "html";
+	options = {useWorker: false};
+`
+	}
+
 	return f
 }
 
@@ -441,6 +450,17 @@ func (f *FormPanel) FieldOptionInitFn(fn OptionInitFn) *FormPanel {
 }
 
 func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
+
+	if f.FieldList[f.curFieldListIndex].FormType.IsCode() {
+		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(fmt.Sprintf(`
+	theme = "%s";
+	font_size = %s;
+	language = "%s";
+	options = %s;
+`, m["theme"], m["font_size"], m["language"], m["options"]))
+		return f
+	}
+
 	s, _ := json.Marshal(m)
 
 	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {

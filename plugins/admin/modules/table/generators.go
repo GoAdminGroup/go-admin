@@ -778,7 +778,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 		CanAdd:     false,
 		Editable:   false,
 		Deletable:  false,
-		Exportable: false,
+		Exportable: true,
 		Connection: "default",
 		PrimaryKey: PrimaryKey{
 			Type: db.Int,
@@ -1023,13 +1023,13 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	//		return template.HTML(buf.String())
 	//	}).FieldNotAllowEdit()
 
-	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.TextArea).FieldMust()
-	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.TextArea).FieldMust()
+	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.Code).FieldMust()
+	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number)
-	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.TextArea)
-	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.TextArea)
-	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.TextArea)
-	formList.AddField(lgWithConfigScore("login logo"), "login_logo", db.Varchar, form.TextArea)
+	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("login logo"), "login_logo", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("no limit login ip"), "no_limit_login_ip", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},

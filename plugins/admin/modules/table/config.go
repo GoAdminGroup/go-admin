@@ -78,7 +78,7 @@ func DefaultConfigWithDriver(driver string) Config {
 		CanAdd:     true,
 		Editable:   true,
 		Deletable:  true,
-		Exportable: false,
+		Exportable: true,
 		PrimaryKey: PrimaryKey{
 			Type: db.Int,
 			Name: DefaultPrimaryKeyName,
