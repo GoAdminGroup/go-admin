@@ -9,6 +9,7 @@ import (
 	"fmt"
 	template2 "html/template"
 	"net/http"
+	"strings"
 
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
@@ -117,6 +118,10 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 // setConfig set the config of engine.
 func (eng *Engine) setConfig(cfg config.Config) *Engine {
 	eng.config = config.Set(cfg)
+	if !template.CheckRequirements() {
+		panic(fmt.Sprintf("Wrong GoAdmin version, theme %s required GoAdmin version are %s",
+			cfg.Theme, strings.Join(template.Default().GetRequirements(), ",")))
+	}
 	return eng
 }
 

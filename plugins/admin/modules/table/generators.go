@@ -16,6 +16,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -1080,6 +1081,12 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		if sesInt < 900 {
 			return errors.New("wrong session life time, must bigger than 900 seconds")
 		}
+		if err := checkJSON(values, "animation"); err != nil {
+			return err
+		}
+		if err := checkJSON(values, "file_upload_engine"); err != nil {
+			return err
+		}
 
 		var err error
 		if s.c.UpdateProcessFn != nil {
@@ -1130,6 +1137,14 @@ func link(url, content string) tmpl.HTML {
 		SetAttr("href", url).
 		SetContent(template.HTML(lg(content))).
 		Get()
+}
+
+func checkJSON(values form2.Values, key string) error {
+	v := values.Get(key)
+	if v != "" && !utils.IsJSON(v) {
+		return errors.New("wrong " + key)
+	}
+	return nil
 }
 
 func (s *SystemTable) table(table string) *db.SQL {

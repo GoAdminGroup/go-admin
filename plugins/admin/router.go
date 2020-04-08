@@ -64,6 +64,14 @@ func (admin *Admin) initRouter() *Admin {
 
 	route.ANY("/operation/:__goadmin_op_id", auth.Middleware(admin.conn), admin.handler.Operation)
 
+	// TODO: crud json apis
+	//apiRoute := route.Group("/api", auth.Middleware(admin.conn), admin.guardian.CheckPrefix)
+	//apiRoute.GET("/list/:__prefix")
+	//apiRoute.GET("/detail/:__prefix")
+	//apiRoute.DELETE("/delete/:__prefix")
+	//apiRoute.POST("/update/:__prefix")
+	//apiRoute.POST("/create/:__prefix")
+
 	admin.app = app
 	return admin
 }

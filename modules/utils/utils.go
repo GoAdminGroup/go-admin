@@ -100,6 +100,11 @@ func ParseBool(s string) bool {
 	return b1
 }
 
+func IsJSON(str string) bool {
+	var js json.RawMessage
+	return json.Unmarshal([]byte(str), &js) == nil
+}
+
 func CopyMap(m map[string]string) map[string]string {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)

@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/system"
 	"html/template"
 	"path"
 	"plugin"
@@ -58,6 +59,7 @@ type Template interface {
 	GetAsset(string) ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
 	GetVersion() string
+	GetRequirements() []string
 }
 
 func HTML(s string) template.HTML {
@@ -111,6 +113,15 @@ func Add(name string, temp Template) {
 		panic("add template twice " + name)
 	}
 	templateMap[name] = temp
+}
+
+func CheckRequirements() bool {
+	for _, v := range Default().GetRequirements() {
+		if v == system.Version() {
+			return true
+		}
+	}
+	return false
 }
 
 func Themes() []string {

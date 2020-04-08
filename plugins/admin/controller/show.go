@@ -22,6 +22,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/html"
 	template2 "html/template"
+	"mime"
 	"net/http"
 	"net/url"
 	"path"
@@ -254,14 +255,10 @@ func (h *Handler) Assets(ctx *context.Context) {
 		}
 	}
 
-	fileSuffix := path.Ext(filepath)
-	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
+	var contentType = mime.TypeByExtension(path.Ext(filepath))
 
-	var contentType string
-	if fileSuffix == "css" || fileSuffix == "js" {
-		contentType = "text/" + fileSuffix + "; charset=utf-8"
-	} else {
-		contentType = "image/" + fileSuffix
+	if contentType == "" {
+		contentType = "application/octet-stream"
 	}
 
 	ctx.Write(http.StatusOK, map[string]string{
