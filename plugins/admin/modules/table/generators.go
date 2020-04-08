@@ -1081,12 +1081,20 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			return errors.New("wrong session life time, must bigger than 900 seconds")
 		}
 
-		// TODO: add transaction
-		err := models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())
-		if err == nil {
-			_ = s.c.Update(values.ToMap())
+		var err error
+		if s.c.UpdateProcessFn != nil {
+			values, err = s.c.UpdateProcessFn(values)
+			if err != nil {
+				return err
+			}
 		}
-		return err
+
+		// TODO: add transaction
+		err = models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())
+		if err != nil {
+			return err
+		}
+		return s.c.Update(values.ToMap())
 	})
 
 	return

@@ -42,7 +42,7 @@ func generating(cfgFile string) {
 
 	var (
 		driverName, host, port, dbFile, user, password,
-		connection, packageName, outputPath, database string
+		connection, packageName, outputPath, database, schema string
 
 		chooseTables = make([]string, 0)
 	)
@@ -136,6 +136,10 @@ func generating(cfgFile string) {
 
 		if password == "" {
 			password = promptPassword()
+		}
+
+		if schema == "" && driverName == "postgresql" {
+			schema = promptWithDefault("sql schema", "public")
 		}
 
 		if database == "" {
@@ -246,7 +250,7 @@ see: http://www.go-admin.cn/en/docs/#/plugins/admin`)
 	for i := 0; i < len(chooseTables); i++ {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
-		generateFile(chooseTables[i], conn, fieldField, typeField, packageName, connection, driverName, outputPath)
+		generateFile(chooseTables[i], schema, conn, fieldField, typeField, packageName, connection, driverName, outputPath)
 	}
 	generateTables(outputPath, chooseTables, packageName)
 
@@ -377,11 +381,16 @@ func selects(tables []string) []string {
 	return chooseTables
 }
 
-func generateFile(table string, conn db.Connection, fieldField, typeField, packageName, connection, driver, outputPath string) {
-
-	columnsModel, _ := db.WithDriver(conn).Table(table).ShowColumns()
+func generateFile(table, schema string, conn db.Connection, fieldField, typeField, packageName, connection, driver, outputPath string) {
 
 	tableCamel := camelcase(table)
+
+	dbTable := table
+	if schema != "" {
+		dbTable = schema + "." + table
+	}
+
+	columnsModel, _ := db.WithDriver(conn).Table(dbTable).ShowColumns()
 
 	var newTable = `table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))`
 	if connection != "default" {
@@ -420,7 +429,7 @@ func Get` + strings.Title(tableCamel) + `Table(ctx *context.Context) table.Table
 	}
 
 	content += `
-	info.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
+	info.SetTable("` + dbTable + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
 	formList := ` + tableCamel + `Table.GetForm()
 	
@@ -443,7 +452,7 @@ func Get` + strings.Title(tableCamel) + `Table(ctx *context.Context) table.Table
 	}
 
 	content += `
-	formList.SetTable("` + table + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
+	formList.SetTable("` + dbTable + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
 
 	return ` + tableCamel + `Table
 }`

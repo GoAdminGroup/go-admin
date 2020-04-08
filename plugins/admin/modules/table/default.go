@@ -286,7 +286,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
-		queryStatement = "select %s from %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
+		queryStatement = "select %s from %s %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
 	)
 
 	columns, _ := tb.getColumns(tb.Info.Table)
@@ -299,6 +299,11 @@ func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pane
 	}, params, columns)
 
 	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter())
+
+	groupBy := ""
+	if joins != "" {
+		groupBy = " GROUP BY " + tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
+	}
 
 	var (
 		wheres    = ""
@@ -319,7 +324,7 @@ func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pane
 		params.SortField = tb.PrimaryKey.Name
 	}
 
-	queryCmd := fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, params.SortField, params.SortType)
+	queryCmd := fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
 
 	logger.LogSQL(queryCmd, []interface{}{})
 
@@ -354,6 +359,10 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 		ids            = params.PKs()
 		pk             = tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
 	)
+
+	if connection.Name() == db.DriverPostgresql {
+		placeholder = "%s"
+	}
 
 	beginTime := time.Now()
 
@@ -553,6 +562,11 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 			pk             = tableName + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
 			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " = ? %s "
 		)
+
+		if connection.Name() == db.DriverPostgresql {
+			queryStatement = "select %s from %s %s where " + pk + " = ? %s "
+		}
+
 		for _, field := range tb.Form.FieldList {
 
 			if field.Field != pk && modules.InArray(columns, field.Field) &&

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 	"html/template"
@@ -258,12 +259,17 @@ type Config struct {
 	// Hide config center entrance flag
 	HideConfigCenterEntrance bool `json:"hide_config_center_entrance",yaml:"hide_config_center_entrance",ini:"hide_config_center_entrance"`
 
-	Favicon string
+	// Update Process Function
+	UpdateProcessFn UpdateConfigProcessFn `json:"-",yaml:"-",ini:"-"`
+
+	// Favicon string `json:"favicon",yaml:"favicon",ini:"favicon"`
 
 	prefix string
 }
 
 type ExtraInfo map[string]interface{}
+
+type UpdateConfigProcessFn func(values form.Values) (form.Values, error)
 
 // see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
@@ -382,6 +388,11 @@ func (c *Config) AssertPrefix() string {
 		return ""
 	}
 	return c.prefix
+}
+
+func (c *Config) AddUpdateProcessFn(fn UpdateConfigProcessFn) *Config {
+	c.UpdateProcessFn = fn
+	return c
 }
 
 // PrefixFixSlash return the prefix fix the slash error.
