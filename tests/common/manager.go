@@ -25,6 +25,14 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		Status(200).
 		Body().Contains("Managers").Contains("admin").Contains("1")
 
+	// api show
+
+	e.GET(config.Url("/api/list/manager")).
+		WithHeader("Accept", "application/json, text/plain, */*").
+		WithCookie(sesID.Name, sesID.Value).
+		Expect().
+		Status(200).JSON().Object().ValueEqual("code", 200)
+
 	// edit
 
 	printlnWithColor("edit", "green")
@@ -50,6 +58,12 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body().Contains(errors.WrongID)
 
+	e.GET(config.Url("/api/update/form/manager")).
+		WithHeader("Accept", "application/json, text/plain, */*").
+		WithCookie(sesID.Name, sesID.Value).
+		Expect().
+		Status(400).JSON().Object().ValueEqual("code", 400)
+
 	// show form
 
 	printlnWithColor("show form", "green")
@@ -57,6 +71,13 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithQuery(constant.EditPKKey, "1").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
+
+	e.GET(config.Url("/api/update/form/manager")).
+		WithHeader("Accept", "application/json, text/plain, */*").
+		WithQuery(constant.EditPKKey, "1").
+		WithCookie(sesID.Name, sesID.Value).
+		Expect().
+		Status(200).JSON().Object().ValueEqual("code", 200)
 
 	token := reg.FindStringSubmatch(formBody.Raw())
 
@@ -87,6 +108,12 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	formBody = e.GET(config.Url("/info/manager/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
+
+	e.GET(config.Url("/api/create/form/manager")).
+		WithHeader("Accept", "application/json, text/plain, */*").
+		WithCookie(sesID.Name, sesID.Value).
+		Expect().
+		Status(200).JSON().Object().ValueEqual("code", 200)
 
 	token = reg.FindStringSubmatch(formBody.Raw())
 

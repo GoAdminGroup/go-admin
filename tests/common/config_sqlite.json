@@ -14,5 +14,6 @@
   "language": "en",
   "index": "/",
   "debug": false,
+  "open_admin_api": true,
   "color_scheme": "skin-black"
 }
