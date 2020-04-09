@@ -27,6 +27,8 @@ func ExtraTest(e *httpexpect.Expect) {
 	roleTest(e, cookie)
 	// manager check
 	managerTest(e, cookie)
+	// api check
+	apiTest(e, cookie)
 	// menu check
 	menuTest(e, cookie)
 	// operation log check
