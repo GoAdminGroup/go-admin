@@ -15,14 +15,14 @@ import (
 
 func Ok(ctx *context.Context) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"code": 200,
+		"code": http.StatusOK,
 		"msg":  "ok",
 	})
 }
 
 func OkWithData(ctx *context.Context, data map[string]interface{}) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
-		"code": 200,
+		"code": http.StatusOK,
 		"msg":  "ok",
 		"data": data,
 	})
@@ -30,7 +30,7 @@ func OkWithData(ctx *context.Context, data map[string]interface{}) {
 
 func BadRequest(ctx *context.Context, msg string) {
 	ctx.JSON(http.StatusBadRequest, map[string]interface{}{
-		"code": 400,
+		"code": http.StatusBadRequest,
 		"msg":  language.Get(msg),
 	})
 }
@@ -71,7 +71,7 @@ func Denied(ctx *context.Context, msg string) {
 
 var OffLineHandler = func(ctx *context.Context) {
 	if config.GetSiteOff() {
-		if ctx.WantsHTML() {
+		if ctx.WantHTML() {
 			ctx.HTML(http.StatusOK, `<html><body><h1>The website is offline</h1></body></html>`)
 		} else {
 			ctx.JSON(http.StatusForbidden, map[string]interface{}{

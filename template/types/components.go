@@ -187,14 +187,14 @@ type PopupAttribute interface {
 type Thead []TheadItem
 
 type TheadItem struct {
-	Head       string
-	Sortable   bool
-	Field      string
-	Hide       bool
-	Editable   bool
-	EditType   string
-	EditOption FieldOptions
-	Width      int
+	Head       string       `json:"head"`
+	Sortable   bool         `json:"sortable"`
+	Field      string       `json:"field"`
+	Hide       bool         `json:"hide"`
+	Editable   bool         `json:"editable"`
+	EditType   string       `json:"edit_type"`
+	EditOption FieldOptions `json:"edit_option"`
+	Width      int          `json:"width"`
 }
 
 func (t Thead) GroupBy(group [][]string) []Thead {

@@ -76,18 +76,6 @@ func (e EditFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 
-func (e EditFormParam) HasAlert() bool {
-	return e.Alert != tmpl.HTML("")
-}
-
-func (e EditFormParam) IsManage() bool {
-	return e.Prefix == "manager"
-}
-
-func (e EditFormParam) IsRole() bool {
-	return e.Prefix == "roles"
-}
-
 func (g *Guard) EditForm(ctx *context.Context) {
 	previous := ctx.FormValue(form.PreviousKey)
 	panel, prefix := g.table(ctx)
@@ -141,7 +129,11 @@ func GetEditFormParam(ctx *context.Context) *EditFormParam {
 }
 
 func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection) {
-	response.Alert(ctx, panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
+	if ctx.WantJSON() {
+		response.BadRequest(ctx, msg)
+	} else {
+		response.Alert(ctx, panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
+	}
 }
 
 func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn db.Connection) {

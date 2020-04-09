@@ -132,20 +132,20 @@ func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extra
 }
 
 type PanelInfo struct {
-	Thead          types.Thead
-	InfoList       types.InfoList
-	FilterFormData types.FormFields
-	Paginator      types.PaginatorAttribute
-	Title          string
-	Description    string
+	Thead          types.Thead              `json:"thead"`
+	InfoList       types.InfoList           `json:"info_list"`
+	FilterFormData types.FormFields         `json:"filter_form_data"`
+	Paginator      types.PaginatorAttribute `json:"-"`
+	Title          string                   `json:"title"`
+	Description    string                   `json:"description"`
 }
 
 type FormInfo struct {
-	FieldList         types.FormFields
-	GroupFieldList    types.GroupFormFields
-	GroupFieldHeaders types.GroupFieldHeaders
-	Title             string
-	Description       string
+	FieldList         types.FormFields        `json:"field_list"`
+	GroupFieldList    types.GroupFormFields   `json:"group_field_list"`
+	GroupFieldHeaders types.GroupFieldHeaders `json:"group_field_headers"`
+	Title             string                  `json:"title"`
+	Description       string                  `json:"description"`
 }
 
 type PrimaryKey struct {

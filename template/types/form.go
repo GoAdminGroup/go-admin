@@ -96,41 +96,41 @@ type OptionProcessFn func(options FieldOptions) FieldOptions
 
 // FormField is the form field with different options.
 type FormField struct {
-	Field    string
-	TypeName db.DatabaseType
-	Head     string
-	FormType form2.Type
+	Field    string          `json:"field"`
+	TypeName db.DatabaseType `json:"type_name"`
+	Head     string          `json:"head"`
+	FormType form2.Type      `json:"form_type"`
 
-	Default                template.HTML
-	Value                  template.HTML
-	Value2                 string
-	Options                FieldOptions
-	DefaultOptionDelimiter string
-	Label                  template.HTML
+	Default                template.HTML `json:"default"`
+	Value                  template.HTML `json:"value"`
+	Value2                 string        `json:"value_2"`
+	Options                FieldOptions  `json:"options"`
+	DefaultOptionDelimiter string        `json:"default_option_delimiter"`
+	Label                  template.HTML `json:"label"`
 
-	Placeholder string
+	Placeholder string `json:"placeholder"`
 
-	CustomContent template.HTML
-	CustomJs      template.JS
-	CustomCss     template.CSS
+	CustomContent template.HTML `json:"custom_content"`
+	CustomJs      template.JS   `json:"custom_js"`
+	CustomCss     template.CSS  `json:"custom_css"`
 
-	Editable    bool
-	NotAllowAdd bool
-	Must        bool
-	Hide        bool
+	Editable    bool `json:"editable"`
+	NotAllowAdd bool `json:"not_allow_add"`
+	Must        bool `json:"must"`
+	Hide        bool `json:"hide"`
 
-	Width int
+	Width int `json:"width"`
 
-	Join Join
+	Join Join `json:"-"`
 
-	HelpMsg template.HTML
+	HelpMsg template.HTML `json:"help_msg"`
 
-	OptionExt    template.JS
-	OptionInitFn OptionInitFn
-	OptionTable  OptionTable
+	OptionExt    template.JS  `json:"option_ext"`
+	OptionInitFn OptionInitFn `json:"-"`
+	OptionTable  OptionTable  `json:"-"`
 
-	FieldDisplay
-	PostFilterFn PostFieldFilterFn
+	FieldDisplay `json:"-"`
+	PostFilterFn PostFieldFilterFn `json:"-"`
 }
 
 func (f FormField) UpdateValue(id, val string, res map[string]interface{}, sqls ...*db.SQL) FormField {

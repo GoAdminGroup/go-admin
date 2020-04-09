@@ -3,6 +3,15 @@ package controller
 import (
 	"bytes"
 	"fmt"
+	template2 "html/template"
+	"mime"
+	"net/http"
+	"net/url"
+	"path"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -21,14 +30,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/html"
-	template2 "html/template"
-	"mime"
-	"net/http"
-	"net/url"
-	"path"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // ShowInfo show info page.
@@ -46,16 +47,47 @@ func (h *Handler) ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	buf := h.showTable(ctx, prefix, params)
+	buf := h.showTable(ctx, prefix, params, panel)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) showTable(ctx *context.Context, prefix string, params parameter.Parameters) *bytes.Buffer {
-
-	panel := h.table(prefix, ctx)
+func (h *Handler) showTableData(ctx *context.Context, prefix string, params parameter.Parameters,
+	panel table.Table, urlNamePrefix string) (table.Table, table.PanelInfo, []string, error) {
+	if panel == nil {
+		panel = h.table(prefix, ctx)
+	}
 
 	panelInfo, err := panel.GetData(params.WithIsAll(false))
 
+	if err != nil {
+		return panel, panelInfo, nil, err
+	}
+
+	paramStr := params.DeleteIsAll().GetRouteParamStr()
+
+	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
+	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix))
+	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
+	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
+
+	infoUrl := h.routePathWithPrefix(urlNamePrefix+"info", prefix)
+	updateUrl := h.routePathWithPrefix(urlNamePrefix+"update", prefix)
+
+	user := auth.Auth(ctx)
+
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route(urlNamePrefix+"show_edit").Method())
+	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route(urlNamePrefix+"show_new").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route(urlNamePrefix+"delete").Method())
+	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, h.route(urlNamePrefix+"export").Method())
+	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, h.route(urlNamePrefix+"detail").Method())
+
+	return panel, panelInfo, []string{editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl, updateUrl}, nil
+}
+
+func (h *Handler) showTable(ctx *context.Context, prefix string, params parameter.Parameters, panel table.Table) *bytes.Buffer {
+
+	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
 		return h.Execute(ctx, auth.Auth(ctx), types.Panel{
 			Content: aAlert().SetTitle(errors.MsgWithIcon).
@@ -66,25 +98,9 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			Title:       errors.Msg,
 		}, params.Animation)
 	}
-
-	paramStr := params.DeleteIsAll().GetRouteParamStr()
-
-	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix("show_edit", prefix)+paramStr)
-	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix("show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix("delete", prefix))
-	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix("export", prefix)+paramStr)
-	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix("detail", prefix)+paramStr)
-
-	infoUrl := h.routePathWithPrefix("info", prefix)
-	updateUrl := h.routePathWithPrefix("update", prefix)
-
+	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
+		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
 	user := auth.Auth(ctx)
-
-	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
-	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route("show_new").Method())
-	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route("delete").Method())
-	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, h.route("export").Method())
-	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, h.route("detail").Method())
 
 	var (
 		body       template2.HTML

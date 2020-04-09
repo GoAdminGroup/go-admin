@@ -65,18 +65,6 @@ func (e NewFormParam) Value() form.Values {
 	return e.MultiForm.Value
 }
 
-func (e NewFormParam) IsManage() bool {
-	return e.Prefix == "manager"
-}
-
-func (e NewFormParam) HasAlert() bool {
-	return e.Alert != template.HTML("")
-}
-
-func (e NewFormParam) IsRole() bool {
-	return e.Prefix == "roles"
-}
-
 func (g *Guard) NewForm(ctx *context.Context) {
 	previous := ctx.FormValue(form.PreviousKey)
 	panel, prefix := g.table(ctx)

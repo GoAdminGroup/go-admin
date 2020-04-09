@@ -70,11 +70,6 @@ func (h *Handler) NewForm(ctx *context.Context) {
 
 	param := guard.GetNewFormParam(ctx)
 
-	if param.HasAlert() {
-		h.showNewForm(ctx, param.Alert, param.Prefix, param.Param.GetRouteParamStr(), true)
-		return
-	}
-
 	// process uploading files, only support local storage
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
@@ -102,7 +97,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param)
+	buf := h.showTable(ctx, param.Prefix, param.Param, nil)
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("info", param.Prefix)+param.Param.GetRouteParamStr())

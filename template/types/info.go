@@ -41,8 +41,8 @@ type PostFieldModel struct {
 type InfoList []map[string]InfoItem
 
 type InfoItem struct {
-	Content template.HTML
-	Value   string
+	Content template.HTML `json:"content"`
+	Value   string        `json:"value"`
 }
 
 func (i InfoList) GroupBy(groups TabGroups) []InfoList {

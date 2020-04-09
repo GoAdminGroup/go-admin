@@ -2,6 +2,10 @@ package controller
 
 import (
 	"fmt"
+	template2 "html/template"
+	"net/http"
+	"net/url"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
@@ -13,9 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	template2 "html/template"
-	"net/http"
-	"net/url"
 )
 
 // ShowForm show form page.
@@ -80,8 +81,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			}).
 			SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 				f.IsHideResetButton)).
-			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
+			SetHeader(f.HeaderHtml).
+			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
 		Description: formInfo.Description,
 		Title:       formInfo.Title,
 	}, alert == "" || ((len(animation) > 0) && animation[0]))
@@ -95,12 +96,6 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	param := guard.GetEditFormParam(ctx)
 
-	if param.HasAlert() {
-		h.showForm(ctx, param.Alert, param.Prefix, param.Param, true)
-		return
-	}
-
-	// process uploading files, only support local storage for now.
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
@@ -151,7 +146,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK().DeleteEditPk())
+	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK().DeleteEditPk(), nil)
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
@@ -41,6 +42,11 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 		if errMsg == "" {
 			errMsg = "system error"
+		}
+
+		if ctx.WantJSON() {
+			response.Error(ctx, errMsg)
+			return
 		}
 
 		if ok, _ = regexp.MatchString("/edit(.*)", ctx.Path()); ok {

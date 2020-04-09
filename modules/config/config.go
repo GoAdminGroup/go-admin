@@ -264,6 +264,9 @@ type Config struct {
 
 	// Favicon string `json:"favicon",yaml:"favicon",ini:"favicon"`
 
+	// Is open admin plugin json api
+	OpenAdminApi bool `json:"open_admin_api",yaml:"open_admin_api",ini:"open_admin_api"`
+
 	prefix string
 }
 
@@ -749,6 +752,10 @@ func GetLanguage() string {
 
 func GetUrlPrefix() string {
 	return globalCfg.UrlPrefix
+}
+
+func GetOpenAdminApi() bool {
+	return globalCfg.OpenAdminApi
 }
 
 func GetTheme() string {
