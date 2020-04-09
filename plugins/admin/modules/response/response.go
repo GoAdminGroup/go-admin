@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -66,4 +67,18 @@ func Denied(ctx *context.Context, msg string) {
 		"code": http.StatusForbidden,
 		"msg":  language.Get(msg),
 	})
+}
+
+var OffLineHandler = func(ctx *context.Context) {
+	if config.GetSiteOff() {
+		if ctx.WantsHTML() {
+			ctx.HTML(http.StatusOK, `<html><body><h1>The website is offline</h1></body></html>`)
+		} else {
+			ctx.JSON(http.StatusForbidden, map[string]interface{}{
+				"code": http.StatusForbidden,
+				"msg":  language.Get(errors.SiteOff),
+			})
+		}
+		ctx.Abort()
+	}
 }

@@ -7,6 +7,7 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
 	"strings"
@@ -257,7 +258,7 @@ func (eng *Engine) ClonedBySetter(setter Setter) *Engine {
 }
 
 func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
-	return []context.Handler{auth.Middleware(db.GetConnection(eng.Services)), handler}
+	return []context.Handler{response.OffLineHandler, auth.Middleware(db.GetConnection(eng.Services)), handler}
 }
 
 // ============================

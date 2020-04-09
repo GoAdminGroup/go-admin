@@ -109,8 +109,8 @@ var en = map[string]string{
 	"config.custom":          "Customize",
 	"config.debug":           "Debug Mode",
 	"config.site off":        "Site Offline",
-	"config.true":            "Yes",
-	"config.false":           "No",
+	"config.true":            "On",
+	"config.false":           "Off",
 
 	"config.logo":               "Logo",
 	"config.mini logo":          "Mini Logo",
