@@ -1,6 +1,6 @@
 package language
 
-var tc = map[string]string{
+var tc = LangSet{
 	"managers":  "管理員管理",
 	"name":      "用戶名",
 	"nickname":  "暱稱",

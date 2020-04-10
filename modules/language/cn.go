@@ -6,7 +6,7 @@ package language
 
 import "strings"
 
-var cn = map[string]string{
+var cn = LangSet{
 	"managers":  "管理员管理",
 	"name":      "用户名",
 	"nickname":  "昵称",

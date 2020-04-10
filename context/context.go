@@ -8,13 +8,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
+	"io"
 	"io/ioutil"
 	"math"
 	"net"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
 	"strings"
+	"time"
 )
 
 const abortIndex int8 = math.MaxInt8 / 2
@@ -120,6 +125,23 @@ func NewContext(req *http.Request) *Context {
 	}
 }
 
+const (
+	HeaderContentType = "Content-Type"
+
+	HeaderLastModified    = "Last-Modified"
+	HeaderIfModifiedSince = "If-Modified-Since"
+	HeaderCacheControl    = "Cache-Control"
+	HeaderETag            = "ETag"
+
+	HeaderContentDisposition = "Content-Disposition"
+	HeaderContentLength      = "Content-Length"
+	HeaderContentEncoding    = "Content-Encoding"
+
+	GzipHeaderValue      = "gzip"
+	HeaderAcceptEncoding = "Accept-Encoding"
+	HeaderVary           = "Vary"
+)
+
 func (ctx *Context) BindJSON(data interface{}) error {
 	if ctx.Request.Body != nil {
 		b, err := ioutil.ReadAll(ctx.Request.Body)
@@ -158,7 +180,7 @@ func (ctx *Context) Write(code int, Header map[string]string, Body string) {
 // It also sets the Content-Type as "application/json".
 func (ctx *Context) JSON(code int, Body map[string]interface{}) {
 	ctx.Response.StatusCode = code
-	ctx.AddHeader("Content-Type", "application/json")
+	ctx.SetContentType("application/json")
 	BodyStr, err := json.Marshal(Body)
 	if err != nil {
 		panic(err)
@@ -169,27 +191,27 @@ func (ctx *Context) JSON(code int, Body map[string]interface{}) {
 // Data writes some data into the body stream and updates the HTTP code.
 func (ctx *Context) Data(code int, contentType string, data []byte) {
 	ctx.Response.StatusCode = code
-	ctx.AddHeader("Content-Type", contentType)
+	ctx.SetContentType(contentType)
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 }
 
 // Redirect add redirect url to header.
 func (ctx *Context) Redirect(path string) {
 	ctx.Response.StatusCode = http.StatusFound
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.SetContentType("text/html; charset=utf-8")
 	ctx.AddHeader("Location", path)
 }
 
 // HTML output html response.
 func (ctx *Context) HTML(code int, body string) {
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.SetContentType("text/html; charset=utf-8")
 	ctx.SetStatusCode(code)
 	ctx.WriteString(body)
 }
 
 // HTMLByte output html response.
 func (ctx *Context) HTMLByte(code int, body []byte) {
-	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
+	ctx.SetContentType("text/html; charset=utf-8")
 	ctx.SetStatusCode(code)
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 }
@@ -206,7 +228,67 @@ func (ctx *Context) SetStatusCode(code int) {
 
 // SetContentType save the given content type header into the response header.
 func (ctx *Context) SetContentType(contentType string) {
-	ctx.AddHeader("Content-Type", contentType)
+	ctx.AddHeader(HeaderContentType, contentType)
+}
+
+func (ctx *Context) SetLastModified(modtime time.Time) {
+	if !IsZeroTime(modtime) {
+		ctx.AddHeader(HeaderLastModified, modtime.UTC().Format(http.TimeFormat)) // or modtime.UTC()?
+	}
+}
+
+var unixEpochTime = time.Unix(0, 0)
+
+// IsZeroTime reports whether t is obviously unspecified (either zero or Unix()=0).
+func IsZeroTime(t time.Time) bool {
+	return t.IsZero() || t.Equal(unixEpochTime)
+}
+
+// ParseTime parses a time header (such as the Date: header),
+// trying each forth formats
+// that are allowed by HTTP/1.1:
+// time.RFC850, and time.ANSIC.
+var ParseTime = func(text string) (t time.Time, err error) {
+	t, err = time.Parse(http.TimeFormat, text)
+	if err != nil {
+		return http.ParseTime(text)
+	}
+
+	return
+}
+
+func (ctx *Context) WriteNotModified() {
+	// RFC 7232 section 4.1:
+	// a sender SHOULD NOT generate representation metadata other than the
+	// above listed fields unless said metadata exists for the purpose of
+	// guiding cache updates (e.g.," Last-Modified" might be useful if the
+	// response does not have an ETag field).
+	delete(ctx.Response.Header, HeaderContentType)
+	delete(ctx.Response.Header, HeaderContentLength)
+	if ctx.Headers(HeaderETag) != "" {
+		delete(ctx.Response.Header, HeaderLastModified)
+	}
+	ctx.SetStatusCode(http.StatusNotModified)
+}
+
+func (ctx *Context) CheckIfModifiedSince(modtime time.Time) (bool, error) {
+	if method := ctx.Method(); method != http.MethodGet && method != http.MethodHead {
+		return false, errors.New("skip: method")
+	}
+	ims := ctx.Headers(HeaderIfModifiedSince)
+	if ims == "" || IsZeroTime(modtime) {
+		return false, errors.New("skip: zero time")
+	}
+	t, err := ParseTime(ims)
+	if err != nil {
+		return false, errors.New("skip: " + err.Error())
+	}
+	// sub-second precision, so
+	// use mtime < t+1s instead of mtime <= t to check for unmodified.
+	if modtime.UTC().Before(t.Add(1 * time.Second)) {
+		return false, nil
+	}
+	return true, nil
 }
 
 // LocalIP return the request client ip.
@@ -294,9 +376,50 @@ func (ctx *Context) SetHeader(key, value string) {
 	ctx.Response.Header.Set(key, value)
 }
 
+func (ctx *Context) GetContentType() string {
+	return ctx.Request.Header.Get("")
+}
+
 // User return the current login user.
 func (ctx *Context) User() interface{} {
 	return ctx.UserValue["user"]
+}
+
+// ServeContent serves content, headers are autoset
+// receives three parameters, it's low-level function, instead you can use .ServeFile(string,bool)/SendFile(string,string)
+//
+// You can define your own "Content-Type" header also, after this function call
+// Doesn't implements resuming (by range), use ctx.SendFile instead
+func (ctx *Context) ServeContent(content io.ReadSeeker, filename string, modtime time.Time, gzipCompression bool) error {
+	if modified, err := ctx.CheckIfModifiedSince(modtime); !modified && err == nil {
+		ctx.WriteNotModified()
+		return nil
+	}
+
+	if ctx.GetContentType() == "" {
+		ctx.SetContentType(filename)
+	}
+
+	buf, _ := ioutil.ReadAll(content)
+	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(buf))
+	return nil
+}
+
+// ServeFile serves a view file, to send a file ( zip for example) to the client you should use the SendFile(serverfilename,clientfilename)
+func (ctx *Context) ServeFile(filename string, gzipCompression bool) error {
+	f, err := os.Open(filename)
+	if err != nil {
+		return fmt.Errorf("%d", http.StatusNotFound)
+	}
+	defer func() {
+		_ = f.Close()
+	}()
+	fi, _ := f.Stat()
+	if fi.IsDir() {
+		return ctx.ServeFile(path.Join(filename, "index.html"), gzipCompression)
+	}
+
+	return ctx.ServeContent(f, fi.Name(), fi.ModTime(), gzipCompression)
 }
 
 type HandlerMap map[Path]Handlers

@@ -85,7 +85,6 @@ func (b Base) Label() types.LabelAttribute {
 func (b Base) Link() types.LinkAttribute {
 	return &LinkAttribute{
 		Name:      "link",
-		NewTab:    false,
 		Content:   "",
 		Attribute: b.Attribute,
 	}

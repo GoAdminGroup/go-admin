@@ -5,10 +5,17 @@
 package plugins
 
 import (
+	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 	"plugin"
 )
 
@@ -49,4 +56,20 @@ func LoadFromPlugin(mod string) Plugin {
 	}
 
 	return p
+}
+
+func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons, user models.UserModel,
+	panel types.Panel, animation ...bool) *bytes.Buffer {
+	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+
+	return template.Execute(template.ExecuteParam{
+		User:      user,
+		TmplName:  tmplName,
+		Tmpl:      tmpl,
+		Panel:     panel,
+		Config:    config.Get(),
+		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
+		Buttons:   navButtons.CheckPermission(user),
+	})
 }

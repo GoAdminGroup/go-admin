@@ -4,7 +4,7 @@
 
 package language
 
-var en = map[string]string{
+var en = LangSet{
 	"managers":         "Managers",
 	"name":             "Name",
 	"nickname":         "Nickname",

@@ -4,7 +4,7 @@
 
 package language
 
-var jp = map[string]string{
+var jp = LangSet{
 	"managers":  "管理者",
 	"name":      "ユーザー名",
 	"nickname":  "ニックネーム",

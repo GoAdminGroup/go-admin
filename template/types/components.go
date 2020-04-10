@@ -170,6 +170,8 @@ type AlertAttribute interface {
 type LinkAttribute interface {
 	OpenInNewTab() LinkAttribute
 	SetURL(value string) LinkAttribute
+	SetClass(class template.HTML) LinkAttribute
+	NoPjax() LinkAttribute
 	SetTabTitle(value template.HTML) LinkAttribute
 	SetContent(value template.HTML) LinkAttribute
 	GetContent() template.HTML

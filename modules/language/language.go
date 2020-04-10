@@ -72,8 +72,21 @@ func WithScopes(value string, scopes ...string) string {
 	return JoinScopes(scopes) + strings.ToLower(value)
 }
 
+type LangSet map[string]string
+
+func (l LangSet) Add(key, value string) {
+	l[key] = value
+}
+
+func (l LangSet) Combine(set LangSet) LangSet {
+	for k, s := range set {
+		l[k] = s
+	}
+	return l
+}
+
 // LangMap is the map of language packages.
-type LangMap map[string]map[string]string
+type LangMap map[string]LangSet
 
 // Lang is the global LangMap.
 var Lang = LangMap{
