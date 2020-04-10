@@ -120,6 +120,7 @@ type DataTableAttribute interface {
 	SetHideFilterArea(value bool) DataTableAttribute
 	SetHideRowSelector(value bool) DataTableAttribute
 	SetActionJs(aj template.JS) DataTableAttribute
+	SetNoAction() DataTableAttribute
 	SetInfoUrl(value string) DataTableAttribute
 	SetDetailUrl(value string) DataTableAttribute
 	SetHasFilter(hasFilter bool) DataTableAttribute
@@ -170,6 +171,7 @@ type AlertAttribute interface {
 type LinkAttribute interface {
 	OpenInNewTab() LinkAttribute
 	SetURL(value string) LinkAttribute
+	SetAttributes(attr template.HTMLAttr) LinkAttribute
 	SetClass(class template.HTML) LinkAttribute
 	NoPjax() LinkAttribute
 	SetTabTitle(value template.HTML) LinkAttribute
@@ -180,6 +182,7 @@ type LinkAttribute interface {
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
+
 	SetFooter(value template.HTML) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute

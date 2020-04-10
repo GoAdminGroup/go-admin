@@ -171,11 +171,16 @@ func (compo *DataTableAttribute) SetNewUrl(value string) types.DataTableAttribut
 	return compo
 }
 
+func (compo *DataTableAttribute) SetNoAction() types.DataTableAttribute {
+	compo.NoAction = true
+	return compo
+}
+
 func (compo *DataTableAttribute) GetContent() template.HTML {
 	if compo.MinWidth == 0 {
 		compo.MinWidth = 1000
 	}
-	if compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
+	if !compo.NoAction && compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
 		compo.NoAction = true
 	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")

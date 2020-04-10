@@ -6,11 +6,12 @@ import (
 )
 
 type LinkAttribute struct {
-	Name    string
-	URL     string
-	Class   template.HTML
-	Title   template.HTML
-	Content template.HTML
+	Name       string
+	URL        string
+	Class      template.HTML
+	Title      template.HTML
+	Attributes template.HTMLAttr
+	Content    template.HTML
 	types.Attribute
 }
 
@@ -26,6 +27,11 @@ func (compo *LinkAttribute) SetURL(value string) types.LinkAttribute {
 
 func (compo *LinkAttribute) SetClass(class template.HTML) types.LinkAttribute {
 	compo.Class = class
+	return compo
+}
+
+func (compo *LinkAttribute) SetAttributes(attr template.HTMLAttr) types.LinkAttribute {
+	compo.Attributes = attr
 	return compo
 }
 

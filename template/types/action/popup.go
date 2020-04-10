@@ -15,6 +15,7 @@ type PopUpAction struct {
 	Method   string
 	Id       string
 	Title    string
+	BtnTitle template.HTML
 	Data     AjaxData
 	Handlers []context.Handler
 }
@@ -27,6 +28,7 @@ func PopUp(id, title string, handler types.Handler) *PopUpAction {
 		Url:      URL(id),
 		Title:    title,
 		Method:   "post",
+		BtnTitle: "",
 		Data:     NewAjaxData(),
 		Id:       "info-popup-model-" + utils.Uuid(10),
 		Handlers: context.Handlers{handler.Wrap()},
@@ -40,6 +42,11 @@ func (pop *PopUpAction) SetData(data map[string]interface{}) *PopUpAction {
 
 func (pop *PopUpAction) SetUrl(url string) *PopUpAction {
 	pop.Url = url
+	return pop
+}
+
+func (pop *PopUpAction) SetBtnTitle(title template.HTML) *PopUpAction {
+	pop.BtnTitle = title
 	return pop
 }
 
@@ -64,12 +71,12 @@ func (pop *PopUpAction) Js() template.JS {
 						if (id && id !== "") {
 							data["id"] = id;
 						}
+						data['popup_id'] = "` + pop.Id + `"
 						$.ajax({
                             method: '` + pop.Method + `',
                             url: "` + pop.Url + `",
                             data: data,
-                            success: function (data) { 
-								console.log('success data', data)
+                            success: function (data) {
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
                                 }
@@ -101,6 +108,7 @@ func (pop *PopUpAction) BtnAttribute() template.HTML {
 func (pop *PopUpAction) FooterContent() template.HTML {
 	return template2.Default().Popup().SetID(pop.Id).
 		SetTitle(template.HTML(pop.Title)).
+		SetFooter(pop.BtnTitle).
 		SetBody(template.HTML(``)).
 		GetContent()
 }

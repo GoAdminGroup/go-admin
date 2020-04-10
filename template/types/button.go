@@ -156,6 +156,15 @@ func (b Buttons) Content() (template.HTML, template.JS) {
 	return h, j
 }
 
+func (b Buttons) FooterContent() template.HTML {
+	footer := template.HTML("")
+
+	for _, btn := range b {
+		footer += btn.GetAction().FooterContent()
+	}
+	return footer
+}
+
 func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 	btns := make(Buttons, 0)
 	for _, btn := range b {
