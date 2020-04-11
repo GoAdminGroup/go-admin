@@ -57,6 +57,7 @@ $("#` + file.BtnId + `_input").on("change", function () {
 
   var data = new FormData();
   data.append('` + file.FileName + `', files[0]);
+  NProgress.start();
 
   $.ajax({
 		url: '` + file.Url + `',
@@ -66,6 +67,7 @@ $("#` + file.BtnId + `_input").on("change", function () {
   		processData: false,
   		contentType: false,
 		success: function (data) { 
+		  	NProgress.done();
 			if (data.code === 0) {
 				swal(data.msg, '', 'success');
 				$.pjax.reload('#pjax-container');
@@ -74,6 +76,7 @@ $("#` + file.BtnId + `_input").on("change", function () {
 			}
 		},
 		error: function (data) {
+			NProgress.done();
 			if (data.responseText !== "") {
 				swal(data.responseJSON.msg, '', 'error');								
 			} else {
