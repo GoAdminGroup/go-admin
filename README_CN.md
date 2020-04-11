@@ -118,9 +118,6 @@ func main() {
 
 	// 增加 chartjs 组件
 	template.AddComp(chartjs.NewChart())
-	
-	// add component chartjs
-    	template.AddComp(chartjs.NewChart())
     
     	_ = eng.AddConfig(cfg).
     		AddGenerators(datamodel.Generators).

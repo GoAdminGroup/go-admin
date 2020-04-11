@@ -237,7 +237,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			SetSecondHeader(aForm().
 				SetContent(panelInfo.FilterFormData).
 				SetPrefix(h.config.PrefixFixSlash()).
-				SetInputWidth(10).
+				SetInputWidth(info.FilterFormInputWith).
+				SetHeadWidth(info.FilterFormHeadWith).
 				SetMethod("get").
 				SetLayout(info.FilterFormLayout).
 				SetUrl(infoUrl).
