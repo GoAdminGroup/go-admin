@@ -64,6 +64,10 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) Connection {
 			} else {
 				db.DbList[conn] = sqlDB
 			}
+
+			if err := sqlDB.Ping(); err != nil {
+				panic(err)
+			}
 		}
 	})
 	return db

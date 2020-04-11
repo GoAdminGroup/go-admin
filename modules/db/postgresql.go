@@ -82,6 +82,10 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 			}
 
 			db.DbList[conn] = sqlDB
+
+			if err := sqlDB.Ping(); err != nil {
+				panic(err)
+			}
 		}
 	})
 	return db

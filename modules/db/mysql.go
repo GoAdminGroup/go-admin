@@ -53,13 +53,17 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 				if sqlDB != nil {
 					_ = sqlDB.Close()
 				}
-				panic(err.Error())
+				panic(err)
 			} else {
 				// Largest set up the database connection reduce time wait
 				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
 				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
 				db.DbList[conn] = sqlDB
+			}
+
+			if err := sqlDB.Ping(); err != nil {
+				panic(err)
 			}
 		}
 	})
