@@ -285,14 +285,15 @@ func SetComp(name string, comp Component) {
 }
 
 type ExecuteParam struct {
-	User      models.UserModel
-	Tmpl      *template.Template
-	TmplName  string
-	Panel     types.Panel
-	Config    c.Config
-	Menu      *menu.Menu
-	Animation bool
-	Buttons   types.Buttons
+	User       models.UserModel
+	Tmpl       *template.Template
+	TmplName   string
+	Panel      types.Panel
+	Config     c.Config
+	Menu       *menu.Menu
+	Animation  bool
+	Buttons    types.Buttons
+	NoCompress bool
 }
 
 func Execute(param ExecuteParam) *bytes.Buffer {
@@ -302,7 +303,7 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 		types.NewPage(types.NewPageParam{
 			User:    param.User,
 			Menu:    param.Menu,
-			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment()}, param.Animation)...),
+			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
 			Assets:  GetComponentAssetListsHTML(),
 			Buttons: param.Buttons,
 		}))

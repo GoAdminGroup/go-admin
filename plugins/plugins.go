@@ -63,13 +63,14 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	return template.Execute(template.ExecuteParam{
-		User:      user,
-		TmplName:  tmplName,
-		Tmpl:      tmpl,
-		Panel:     panel,
-		Config:    config.Get(),
-		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
-		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
-		Buttons:   navButtons.CheckPermission(user),
+		User:       user,
+		TmplName:   tmplName,
+		Tmpl:       tmpl,
+		Panel:      panel,
+		Config:     config.Get(),
+		Menu:       menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Animation:  len(animation) > 0 && animation[0] || len(animation) == 0,
+		Buttons:    navButtons.CheckPermission(user),
+		NoCompress: len(animation) > 1 && animation[1],
 	})
 }

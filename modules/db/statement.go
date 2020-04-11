@@ -155,11 +155,11 @@ func (sql *SQL) GroupBy(fields ...string) *SQL {
 		panic("wrong group by field")
 	}
 	for i := 0; i < len(fields); i++ {
-		if i == len(fields)-2 {
-			sql.Group += " " + sql.wrap(fields[i]) + " " + fields[i+1]
-			return sql
+		if i == len(fields)-1 {
+			sql.Group += " " + sql.wrap(fields[i])
+		} else {
+			sql.Group += " " + sql.wrap(fields[i]) + ","
 		}
-		sql.Group += " " + sql.wrap(fields[i]) + " and "
 	}
 	return sql
 }

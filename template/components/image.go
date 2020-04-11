@@ -12,7 +12,7 @@ type ImgAttribute struct {
 	Height   string
 	Uuid     string
 	HasModal bool
-	Src      template.HTML
+	Src      template.URL
 	types.Attribute
 }
 
@@ -33,7 +33,7 @@ func (compo *ImgAttribute) WithModal() types.ImgAttribute {
 }
 
 func (compo *ImgAttribute) SetSrc(value template.HTML) types.ImgAttribute {
-	compo.Src = value
+	compo.Src = template.URL(value)
 	return compo
 }
 
