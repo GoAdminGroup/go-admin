@@ -38,8 +38,12 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 	return &Invoker{
 		prefix: config.Prefix(),
 		authFailCallback: func(ctx *context.Context) {
+			param := ""
+			if ref := ctx.Headers("Referer"); ref != "" {
+				param = "?ref=" + url.QueryEscape(ref)
+			}
 			ctx.Write(302, map[string]string{
-				"Location": config.Url("/login"),
+				"Location": config.Url(config.GetLoginUrl() + param),
 			}, ``)
 		},
 		permissionDenyCallback: func(ctx *context.Context) {

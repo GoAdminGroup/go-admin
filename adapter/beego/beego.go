@@ -106,7 +106,7 @@ func (bee *Beego) SetContext(contextInterface interface{}) adapter.WebFrameWork 
 }
 
 func (bee *Beego) Redirect() {
-	bee.ctx.Redirect(http.StatusFound, config.Url("/login"))
+	bee.ctx.Redirect(http.StatusFound, config.Url(config.GetLoginUrl()))
 }
 
 func (bee *Beego) SetContentType() {

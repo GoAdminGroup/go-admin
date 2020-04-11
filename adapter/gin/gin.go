@@ -110,7 +110,7 @@ func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 }
 
 func (gins *Gin) Redirect() {
-	gins.ctx.Redirect(http.StatusFound, config.Url("/login"))
+	gins.ctx.Redirect(http.StatusFound, config.Url(config.GetLoginUrl()))
 	gins.ctx.Abort()
 }
 

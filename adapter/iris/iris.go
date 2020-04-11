@@ -114,7 +114,7 @@ func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 }
 
 func (is *Iris) Redirect() {
-	is.ctx.Redirect(config.Url("/login"), http.StatusFound)
+	is.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
 }
 
 func (is *Iris) SetContentType() {

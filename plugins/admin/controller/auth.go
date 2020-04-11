@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/system"
@@ -14,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
+	"net/url"
 )
 
 // Auth check the input password and username for authentication.
@@ -57,6 +59,19 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 	auth.SetCookie(ctx, user, h.conn)
 
+	if ref := ctx.Headers("Referer"); ref != "" {
+		if u, err := url.Parse(ref); err == nil {
+			v := u.Query()
+			if r := v.Get("ref"); r != "" {
+				rr, _ := url.QueryUnescape(r)
+				response.OkWithData(ctx, map[string]interface{}{
+					"url": rr,
+				})
+				return
+			}
+		}
+	}
+
 	response.OkWithData(ctx, map[string]interface{}{
 		"url": h.config.GetIndexURL(),
 	})
@@ -67,7 +82,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 // Logout delete the cookie.
 func (h *Handler) Logout(ctx *context.Context) {
 	auth.DelCookie(ctx, db.GetConnection(h.services))
-	ctx.AddHeader("Location", h.config.Url("/login"))
+	ctx.AddHeader("Location", h.config.Url(config.GetLoginUrl()))
 	ctx.SetStatusCode(302)
 }
 

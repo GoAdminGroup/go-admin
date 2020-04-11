@@ -123,7 +123,7 @@ func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 }
 
 func (gf *Gf) Redirect() {
-	gf.ctx.Response.RedirectTo(config.Url("/login"))
+	gf.ctx.Response.RedirectTo(config.Url(config.GetLoginUrl()))
 }
 
 func (gf *Gf) SetContentType() {

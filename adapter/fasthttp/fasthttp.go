@@ -172,7 +172,7 @@ func (fast *Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameW
 }
 
 func (fast *Fasthttp) Redirect() {
-	fast.ctx.Redirect(config.Url("/login"), http.StatusFound)
+	fast.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
 }
 
 func (fast *Fasthttp) SetContentType() {

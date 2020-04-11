@@ -16,7 +16,7 @@ func authTest(e *httpexpect.Expect) *http.Cookie {
 	// login: show
 
 	printlnWithColor("login: show", "green")
-	e.GET(config.Url("/login")).Expect().Status(200)
+	e.GET(config.Url(config.GetLoginUrl())).Expect().Status(200)
 	printlnWithColor("login: empty password", "green")
 	e.POST(config.Url("/signin")).WithJSON(map[string]string{
 		"username": "admin",
