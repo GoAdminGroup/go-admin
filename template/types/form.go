@@ -821,6 +821,7 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 			if (data.code === 0) {
 				if (selectObj.length > 0) {
 					if (typeof(data.data) === "object") {
+						$('.' + id).html("");
 						$('.' + id).select2({
 							data: data.data
 						});
