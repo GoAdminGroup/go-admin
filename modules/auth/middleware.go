@@ -42,9 +42,29 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 			if ref := ctx.Headers("Referer"); ref != "" {
 				param = "?ref=" + url.QueryEscape(ref)
 			}
-			ctx.Write(302, map[string]string{
-				"Location": config.Url(config.GetLoginUrl() + param),
-			}, ``)
+
+			u := config.Url(config.GetLoginUrl() + param)
+
+			if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
+				ctx.Write(302, map[string]string{
+					"Location": u,
+				}, ``)
+			} else {
+				msg := "login overdue or login with different ips, please login again"
+				if config.GetNoLimitLoginIP() {
+					msg = "login overdue, please login again"
+				}
+				msg = language.Get(msg)
+				ctx.HTML(http.StatusOK, `<script>
+	if (typeof(swal) === "function") {
+		swal("`+msg+`", '', 'warning');
+		setTimeout(function(){ location.href = "`+u+`"; }, 3000);
+	} else {
+		alert("`+msg+`")
+		location.href = "`+u+`"
+    }
+</script>`)
+			}
 		},
 		permissionDenyCallback: func(ctx *context.Context) {
 			if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
