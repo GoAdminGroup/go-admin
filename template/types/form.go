@@ -800,19 +800,24 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 
 func chooseAjax(field, chooseField, url string, handler Handler) (template.HTML, context.Node) {
 	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	let id = '` + template.HTML(chooseField) + `'
-	let selectObj = $("."+id)
-	if (selectObj.length > 0) {
-		selectObj.val("").select2()
-		selectObj.html('<option value="" selected="selected"></option>')
-	}
+
+let updateBoxSelections = function(selectObj, new_opts) {
+    selectObj.html('');
+    new_opts.forEach(function (opt) {
+      	selectObj.append($('<option value="'+opt["id"]+'">'+opt["text"]+'</option>'));
+    });
+	console.log("selectObj.bootstrapDualListbox", selectObj.bootstrapDualListbox)
+    selectObj.bootstrapDualListbox('refresh', true);
+}
+
+let req = function(selectObj, box, event) {
 	$.ajax({
 		url:"` + template.HTML(url) + `",
 		type: 'post',
 		dataType: 'text',
 		data: {
-			'value':$(this).val()
+			'value':$(".` + template.HTML(field) + `").val(),
+			'event': event
 		},
 		success: function (data)  {
 			if (typeof (data) === "string") {
@@ -821,12 +826,22 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 			if (data.code === 0) {
 				if (selectObj.length > 0) {
 					if (typeof(data.data) === "object") {
-						$('.' + id).html("");
-						$('.' + id).select2({
-							data: data.data
-						});
+						if (box) {
+							updateBoxSelections(selectObj, data.data)
+						} else {
+							if (typeof(selectObj.attr("multiple")) !== "undefined") {
+								selectObj.html("");
+							}
+							selectObj.select2({
+								data: data.data
+							});
+						}	
 					} else {
-						$('.' + id).val(data.data).select2()
+						if (box) {
+							selectObj.val(data.data).select2()
+						} else {
+							
+						}
 					}
 				} else {
 					$('#` + template.HTML(chooseField) + `').val(data.data);
@@ -839,7 +854,45 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 			alert('error')
 		}
 	})
-})
+}
+
+if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duallistbox-container").length === 0) {
+	$(".` + template.HTML(field) + `").on("select2:select", function(e) {
+		let id = '` + template.HTML(chooseField) + `'
+		let selectObj = $("."+id)
+		if (selectObj.length > 0) {
+			selectObj.val("").select2()
+			selectObj.html('<option value="" selected="selected"></option>')
+		}
+		req(selectObj, false, "select");
+	})
+	if (typeof($(".` + template.HTML(field) + `").attr("multiple")) !== "undefined") {
+		$(".` + template.HTML(field) + `").on("select2:unselect",function(e){
+			let id = '` + template.HTML(chooseField) + `'
+			let selectObj = $("."+id)
+			if (selectObj.length > 0) {
+				selectObj.val("").select2()
+				selectObj.html('<option value="" selected="selected"></option>')
+			}
+			req(selectObj, false, "unselect");
+		})
+	}
+} else {
+	let ` + template.HTML(field) + `_lastState = $(".` + template.HTML(field) + `").val();
+
+	$(".` + template.HTML(field) + `").on('change',function (e) {
+    	var newState = $(this).val();                     
+		if ($(` + template.HTML(field) + `_lastState).not(newState).get().length > 0) {
+			let id = '` + template.HTML(chooseField) + `'
+			req($("."+id), true, "unselect");
+		}
+		if ($(newState).not(` + template.HTML(field) + `_lastState).get().length > 0) {
+			let id = '` + template.HTML(chooseField) + `'
+			req($("."+id), true, "select");
+		}
+    	` + template.HTML(field) + `_lastState = newState;
+	})
+}
 </script>`, context.Node{
 			Path:     url,
 			Method:   "post",
