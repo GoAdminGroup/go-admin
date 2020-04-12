@@ -7,8 +7,6 @@ package engine
 import (
 	"bytes"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/ui"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
 	"strings"
@@ -22,9 +20,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
@@ -60,7 +60,9 @@ func (eng *Engine) Use(router interface{}) error {
 		panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
 	}
 
-	if len(eng.PluginList) == 0 {
+	_, exist := eng.FindPluginByName("admin")
+
+	if !exist {
 		eng.PluginList = append(eng.PluginList, admin.NewAdmin())
 	}
 
