@@ -120,8 +120,8 @@ $('.delete-btn').on('click', function (event) {
 	if err != nil {
 		h.HTML(ctx, user, types.Panel{
 			Content:     aAlert().Warning(err.Error()),
-			Description: desc,
-			Title:       title,
+			Description: template.HTML(desc),
+			Title:       template.HTML(title),
 		}, param.Animation)
 		return
 	}
@@ -135,7 +135,7 @@ $('.delete-btn').on('click', function (event) {
 				form2.PreviousKey: infoUrl,
 			}).
 			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
-		Description: desc,
-		Title:       title,
+		Description: template.HTML(desc),
+		Title:       template.HTML(title),
 	}, param.Animation)
 }

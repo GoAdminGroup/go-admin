@@ -56,8 +56,8 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 				f.IsHideResetButton)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
-		Description: panel.GetForm().Description,
-		Title:       panel.GetForm().Title,
+		Description: template2.HTML(panel.GetForm().Description),
+		Title:       template2.HTML(panel.GetForm().Title),
 	}, alert == "")
 
 	if isNew {

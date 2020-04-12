@@ -62,8 +62,8 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 		h.HTML(ctx, user, types.Panel{
 			Content:     aAlert().Warning(errMsg),
-			Description: errors.Msg,
-			Title:       errors.Msg,
+			Description: template2.HTML(errors.Msg),
+			Title:       template2.HTML(errors.Msg),
 		})
 	}
 }
@@ -115,8 +115,8 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 				f.IsHideResetButton)).
 			SetHeader(panel.GetForm().HeaderHtml).
 			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
-		Description: formInfo.Description,
-		Title:       formInfo.Title,
+		Description: template2.HTML(formInfo.Description),
+		Title:       template2.HTML(formInfo.Title),
 	})
 
 	ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/"+prefix+"/"+kind+queryParam))

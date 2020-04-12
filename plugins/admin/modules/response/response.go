@@ -45,8 +45,8 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
 		Tmpl:     tmpl,
 		Panel: types.Panel{
 			Content:     template.Get(config.GetTheme()).Alert().Warning(msg),
-			Description: desc,
-			Title:       title,
+			Description: template.HTML(desc),
+			Title:       template.HTML(title),
 		},
 		Config:    config.Get(),
 		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),

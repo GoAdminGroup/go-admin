@@ -182,8 +182,8 @@ func ParseTableDataTmplWithID(id template.HTML, content string) string {
 
 // Panel contains the main content of the template which used as pjax.
 type Panel struct {
-	Title       string
-	Description string
+	Title       template.HTML
+	Description template.HTML
 	Content     template.HTML
 	Url         string
 

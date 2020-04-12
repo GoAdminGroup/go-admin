@@ -76,11 +76,11 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 
 	user := auth.Auth(ctx)
 
-	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route(urlNamePrefix+"show_edit").Method())
-	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route(urlNamePrefix+"show_new").Method())
-	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route(urlNamePrefix+"delete").Method())
-	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, h.route(urlNamePrefix+"export").Method())
-	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, h.route(urlNamePrefix+"detail").Method())
+	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route(urlNamePrefix + "show_edit").Method())
+	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route(urlNamePrefix + "show_new").Method())
+	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route(urlNamePrefix + "delete").Method())
+	exportUrl = user.GetCheckPermissionByUrlMethod(exportUrl, h.route(urlNamePrefix + "export").Method())
+	detailUrl = user.GetCheckPermissionByUrlMethod(detailUrl, h.route(urlNamePrefix + "detail").Method())
 
 	return panel, panelInfo, []string{editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl, updateUrl}, nil
 }
@@ -94,12 +94,12 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				SetTheme("warning").
 				SetContent(template2.HTML(err.Error())).
 				GetContent(),
-			Description: errors.Msg,
-			Title:       errors.Msg,
+			Description: template2.HTML(errors.Msg),
+			Title:       template2.HTML(errors.Msg),
 		}, params.Animation)
 	}
 	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
-		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
+	updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
 	user := auth.Auth(ctx)
 
 	var (
@@ -253,8 +253,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	return h.Execute(ctx, user, types.Panel{
 		Content:     box,
-		Description: panelInfo.Description,
-		Title:       panelInfo.Title,
+		Description: template2.HTML(panelInfo.Description),
+		Title:       template2.HTML(panelInfo.Title),
 	}, params.Animation)
 }
 

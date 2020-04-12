@@ -316,8 +316,8 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 func WarningPanel(msg string) types.Panel {
 	return types.Panel{
 		Content:     Default().Alert().Warning(msg),
-		Description: e.Msg,
-		Title:       e.Msg,
+		Description: template.HTML(e.Msg),
+		Title:       template.HTML(e.Msg),
 	}
 }
 

@@ -46,8 +46,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	if err != nil {
 		h.HTML(ctx, user, types.Panel{
 			Content:     aAlert().Warning(err.Error()),
-			Description: panel.GetForm().Description,
-			Title:       panel.GetForm().Title,
+			Description: template2.HTML(panel.GetForm().Description),
+			Title:       template2.HTML(panel.GetForm().Title),
 		}, alert == "" || ((len(animation) > 0) && animation[0]))
 
 		if isEdit {
@@ -83,8 +83,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 				f.IsHideResetButton)).
 			SetHeader(f.HeaderHtml).
 			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
-		Description: formInfo.Description,
-		Title:       formInfo.Title,
+		Description: template2.HTML(formInfo.Description),
+		Title:       template2.HTML(formInfo.Title),
 	}, alert == "" || ((len(animation) > 0) && animation[0]))
 
 	if isEdit {

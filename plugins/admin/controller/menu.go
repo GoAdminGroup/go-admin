@@ -55,8 +55,8 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 				form2.PreviousKey: h.routePath("menu"),
 			}).
 			SetOperationFooter(formFooter("new", false, false, false)), false),
-		Description: panel.GetForm().Description,
-		Title:       panel.GetForm().Title,
+		Description: template2.HTML(panel.GetForm().Description),
+		Title:       template2.HTML(panel.GetForm().Title),
 	})
 }
 
@@ -79,8 +79,8 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	if err != nil {
 		h.HTML(ctx, user, types.Panel{
 			Content:     aAlert().Warning(err.Error()),
-			Description: model.GetForm().Description,
-			Title:       model.GetForm().Title,
+			Description: template2.HTML(model.GetForm().Description),
+			Title:       template2.HTML(model.GetForm().Title),
 		})
 		return
 	}
@@ -109,8 +109,8 @@ func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, er
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu"),
 			}), false),
-		Description: formInfo.Description,
-		Title:       formInfo.Title,
+		Description: template2.HTML(formInfo.Description),
+		Title:       template2.HTML(formInfo.Title),
 	})
 	return
 }
