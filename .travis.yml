@@ -32,7 +32,7 @@ before_script:
   - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
   - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
   - docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
-  - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && go get github.com/GoAdminGroup/themes@master
+  - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && go get github.com/GoAdminGroup/themes@60d8ce9767
 
 script:
   - chromedriver --version
