@@ -7,11 +7,11 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 )
 
-func InitRouter(prefix string, srv service.List) *context.App {
+func (e *Example) initRouter(prefix string, srv service.List) *context.App {
 
 	app := context.NewApp()
 	route := app.Group(prefix)
-	route.GET("/example", auth.Middleware(db.GetConnection(srv)), TestHandler)
+	route.GET("/example", auth.Middleware(db.GetConnection(srv)), e.TestHandler)
 
 	return app
 }

@@ -3,7 +3,6 @@ package example
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
@@ -17,7 +16,7 @@ import (
 	"html/template"
 )
 
-func TestHandler(ctx *context.Context) {
+func (e *Example) TestHandler(ctx *context.Context) {
 	page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
 
 		components := template2.Default()
@@ -380,5 +379,5 @@ func TestHandler(ctx *context.Context) {
 			Title:       "Dashboard",
 			Description: "dashboard example",
 		}, nil
-	}, db.GetConnection(services))
+	}, e.Conn)
 }

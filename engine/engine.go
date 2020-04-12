@@ -7,6 +7,7 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
@@ -68,10 +69,11 @@ func (eng *Engine) Use(router interface{}) error {
 
 	if !eng.config.HideConfigCenterEntrance {
 		btn := types.GetNavButton("", icon.Gear, action.Jump(eng.config.Url("/info/site/edit")))
-		eng.AdminPlugin().AddNavButton(btn)
 		eng.NavButtons = append(eng.NavButtons, btn)
 		navButtons = append(navButtons, btn)
 	}
+
+	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
 
 	// Initialize plugins
 	for i := range eng.PluginList {
@@ -267,7 +269,6 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 
 func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
 	btn := types.GetNavButton(title, icon, action)
-	eng.AdminPlugin().AddNavButton(btn)
 	eng.NavButtons = append(eng.NavButtons, btn)
 	navButtons = append(navButtons, btn)
 	return eng

@@ -30,12 +30,12 @@ func (admin *Admin) initRouter() *Admin {
 		route.GET("/assets"+path, admin.handler.Assets)
 	}
 
-	authRoute := route.Group("/", auth.Middleware(admin.conn))
+	authRoute := route.Group("/", auth.Middleware(admin.Conn))
 
 	// auth
 	authRoute.GET("/logout", admin.handler.Logout)
 
-	authPrefixRoute := route.Group("/", auth.Middleware(admin.conn), admin.guardian.CheckPrefix)
+	authPrefixRoute := route.Group("/", auth.Middleware(admin.Conn), admin.guardian.CheckPrefix)
 
 	// menus
 	authRoute.POST("/menu/delete", admin.guardian.MenuDelete, admin.handler.DeleteMenu).Name("menu_delete")
@@ -58,12 +58,12 @@ func (admin *Admin) initRouter() *Admin {
 
 	authPrefixRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
 
-	route.ANY("/operation/:__goadmin_op_id", auth.Middleware(admin.conn), admin.handler.Operation)
+	route.ANY("/operation/:__goadmin_op_id", auth.Middleware(admin.Conn), admin.handler.Operation)
 
 	if config.GetOpenAdminApi() {
 
 		// crud json apis
-		apiRoute := route.Group("/api", auth.Middleware(admin.conn), admin.guardian.CheckPrefix)
+		apiRoute := route.Group("/api", auth.Middleware(admin.Conn), admin.guardian.CheckPrefix)
 		apiRoute.GET("/list/:__prefix", admin.handler.ApiList).Name("api_info")
 		apiRoute.GET("/detail/:__prefix", admin.handler.ApiDetail).Name("api_detail")
 		apiRoute.POST("/delete/:__prefix", admin.guardian.Delete, admin.handler.Delete).Name("api_delete")
@@ -76,7 +76,7 @@ func (admin *Admin) initRouter() *Admin {
 		apiRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("api_update")
 	}
 
-	admin.app = app
+	admin.App = app
 	return admin
 }
 

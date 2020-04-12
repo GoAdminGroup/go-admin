@@ -8,14 +8,18 @@ import (
 	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	template2 "html/template"
+	"net/http"
 	"plugin"
 )
 
@@ -29,10 +33,85 @@ type Plugin interface {
 	GetHandler() context.HandlerMap
 	InitPlugin(services service.List)
 	Name() string
+	Prefix() string
 }
 
-// GetHandler is a help method for Plugin GetHandler.
-func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
+type Base struct {
+	App       *context.App
+	Services  service.List
+	Conn      db.Connection
+	UI        *ui.Service
+	PlugName  string
+	URLPrefix string
+}
+
+func (b *Base) GetHandler() context.HandlerMap {
+	return b.App.Handlers
+}
+
+func (b *Base) Name() string {
+	return b.PlugName
+}
+
+func (b *Base) Prefix() string {
+	return b.URLPrefix
+}
+
+func (b *Base) InitBase(srv service.List) {
+	b.Services = srv
+	b.Conn = db.GetConnection(b.Services)
+	b.UI = ui.GetService(b.Services)
+}
+
+func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, animation ...bool) *bytes.Buffer {
+	return Execute(ctx, b.Conn, b.UI.NavButtons, auth.Auth(ctx), panel, animation...)
+}
+
+func (b *Base) HTML(ctx *context.Context, panel types.Panel, animation ...bool) {
+	buf := b.ExecuteTmpl(ctx, panel, animation...)
+	ctx.HTMLByte(http.StatusOK, buf.Bytes())
+}
+
+func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]interface{}, animation ...bool) {
+
+	buf := new(bytes.Buffer)
+	var panel types.Panel
+
+	t, err := template2.ParseFiles(path)
+	if err != nil {
+		panel = template.WarningPanel(err.Error()).GetContent(config.IsProductionEnvironment())
+	} else {
+		if err := t.Execute(buf, data); err != nil {
+			panel = template.WarningPanel(err.Error()).GetContent(config.IsProductionEnvironment())
+		} else {
+			panel = types.Panel{
+				Content: template.HTML(buf.String()),
+			}
+		}
+	}
+
+	b.HTML(ctx, panel, animation...)
+}
+
+func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, files []string, animation ...bool) {
+	buf := new(bytes.Buffer)
+	var panel types.Panel
+
+	t, err := template2.ParseFiles(files...)
+	if err != nil {
+		panel = template.WarningPanel(err.Error()).GetContent(config.IsProductionEnvironment())
+	} else {
+		if err := t.Execute(buf, data); err != nil {
+			panel = template.WarningPanel(err.Error()).GetContent(config.IsProductionEnvironment())
+		} else {
+			panel = types.Panel{
+				Content: template.HTML(buf.String()),
+			}
+		}
+	}
+
+	b.HTML(ctx, panel, animation...)
+}
 
 func LoadFromPlugin(mod string) Plugin {
 
@@ -57,6 +136,9 @@ func LoadFromPlugin(mod string) Plugin {
 
 	return p
 }
+
+// GetHandler is a help method for Plugin GetHandler.
+func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
 
 func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons, user models.UserModel,
 	panel types.Panel, animation ...bool) *bytes.Buffer {

@@ -1,9 +1,7 @@
 package admin
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
@@ -15,24 +13,21 @@ import (
 
 // Admin is a GoAdmin plugin.
 type Admin struct {
-	app       *context.App
+	*plugins.Base
 	tableList table.GeneratorList
-	services  service.List
-	conn      db.Connection
 	guardian  *guard.Guard
 	handler   *controller.Handler
-	name      string
 }
 
 // InitPlugin implements Plugin.InitPlugin.
+// TODO: find a better way to manage the dependencies
 func (admin *Admin) InitPlugin(services service.List) {
 
-	// TODO: find a better way to manage the dependencies
+	// DO NOT DELETE
+	admin.InitBase(services)
 
-	admin.services = services
-	admin.conn = db.GetConnection(admin.services)
 	c := config.GetService(services.Get("config"))
-	st := table.NewSystemTable(admin.conn, c)
+	st := table.NewSystemTable(admin.Conn, c)
 	admin.tableList.Combine(table.GeneratorList{
 		"manager":        st.GetManagerTable,
 		"permission":     st.GetPermissionTable,
@@ -42,12 +37,12 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"normal_manager": st.GetNormalManagerTable,
 		"site":           st.GetSiteTable,
 	})
-	admin.guardian = guard.New(admin.services, admin.conn, admin.tableList)
+	admin.guardian = guard.New(admin.Services, admin.Conn, admin.tableList)
 	handlerCfg := controller.Config{
 		Config:     c,
 		Services:   services,
 		Generators: admin.tableList,
-		Connection: admin.conn,
+		Connection: admin.Conn,
 	}
 	if admin.handler == nil {
 		admin.handler = controller.New(handlerCfg)
@@ -55,10 +50,11 @@ func (admin *Admin) InitPlugin(services service.List) {
 		admin.handler.UpdateCfg(handlerCfg)
 	}
 	admin.initRouter()
-	admin.handler.SetRoutes(admin.app.Routers)
+	admin.handler.SetRoutes(admin.App.Routers)
+	admin.handler.AddNavButton(admin.UI.NavButtons...)
 
 	// init site setting
-	models.Site().SetConn(admin.conn).Init(c.ToMap())
+	models.Site().SetConn(admin.Conn).Init(c.ToMap())
 
 	table.SetServices(services)
 }
@@ -67,45 +63,13 @@ func (admin *Admin) InitPlugin(services service.List) {
 func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
 	return &Admin{
 		tableList: make(table.GeneratorList).CombineAll(tableCfg),
-		name:      "admin",
+		Base:      &plugins.Base{PlugName: "admin"},
 	}
-}
-
-func (admin *Admin) Name() string {
-	return admin.name
-}
-
-// GetRequest implements Plugin.GetRequest.
-func (admin *Admin) GetRequest() []context.Path {
-	return admin.app.Requests
-}
-
-// GetHandler implements Plugin.GetHandler.
-func (admin *Admin) GetHandler() context.HandlerMap {
-	return plugins.GetHandler(admin.app)
 }
 
 // SetCaptcha set captcha driver.
 func (admin *Admin) SetCaptcha(captcha map[string]string) *Admin {
 	admin.handler.SetCaptcha(captcha)
-	return admin
-}
-
-// AddNavButton add nav buttons.
-func (admin *Admin) AddNavButton(btn types.Button) *Admin {
-	if admin.handler == nil {
-		admin.handler = controller.New()
-	}
-	admin.handler.AddNavButton(btn)
-	return admin
-}
-
-// AddNavButtonFront add nav buttons front.
-func (admin *Admin) AddNavButtonFront(btn types.Button) *Admin {
-	if admin.handler == nil {
-		admin.handler = controller.New()
-	}
-	admin.handler.AddNavButtonFront(btn)
 	return admin
 }
 

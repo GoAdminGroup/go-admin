@@ -128,9 +128,11 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 	h.operations = append(h.operations, addNodes...)
 }
 
-func (h *Handler) AddNavButton(btn types.Button) {
-	h.navButtons = append(h.navButtons, btn)
-	h.addOperation(btn.GetAction().GetCallbacks())
+func (h *Handler) AddNavButton(btns ...types.Button) {
+	for _, btn := range btns {
+		h.navButtons = append(h.navButtons, btn)
+		h.addOperation(btn.GetAction().GetCallbacks())
+	}
 }
 
 func (h *Handler) AddNavButtonFront(btn types.Button) {
