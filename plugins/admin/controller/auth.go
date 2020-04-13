@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -81,6 +82,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 // Logout delete the cookie.
 func (h *Handler) Logout(ctx *context.Context) {
+	fmt.Println("Logout...........................")
 	auth.DelCookie(ctx, db.GetConnection(h.services))
 	ctx.AddHeader("Location", h.config.Url(config.GetLoginUrl()))
 	ctx.SetStatusCode(302)

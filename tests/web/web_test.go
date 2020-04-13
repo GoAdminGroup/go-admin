@@ -244,7 +244,7 @@ func TestWeb(t *testing.T) {
 }
 
 func testLogin(page *Page) {
-	page.NavigateTo(url("/"))
+	page.NavigateTo(url("/login"))
 
 	page.Fill(loginPageUserNameInput, "admin")
 	page.Fill(loginPagePasswordInput, "admin")
