@@ -74,6 +74,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		formInfo table.FormInfo
 		prefix   = ctx.Query(constant.PrefixKey)
 		panel    = h.table(prefix, ctx)
+		f        = panel.GetForm()
 	)
 
 	if kind == "edit" {
@@ -87,18 +88,14 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			panel.GetInfo().GetSort()).WithPKs(id))
 	} else {
 		formInfo = panel.GetNewForm()
-		formInfo.Title = panel.GetForm().Title
-		formInfo.Description = panel.GetForm().Description
+		formInfo.Title = f.Title
+		formInfo.Description = f.Description
 	}
 
 	queryParam := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize,
 		panel.GetInfo().SortField, panel.GetInfo().GetSort()).GetRouteParamStr()
 
-	user := auth.Auth(ctx)
-
-	f := panel.GetForm()
-
-	h.HTML(ctx, user, types.Panel{
+	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content: aAlert().Warning(errMsg) + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -113,8 +110,8 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			SetUrl(h.config.Url("/"+kind+"/"+prefix)).
 			SetOperationFooter(formFooter(kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 				f.IsHideResetButton)).
-			SetHeader(panel.GetForm().HeaderHtml).
-			SetFooter(panel.GetForm().FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
+			SetHeader(f.HeaderHtml).
+			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
 	})
