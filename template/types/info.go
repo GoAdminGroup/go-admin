@@ -469,8 +469,8 @@ type InfoPanel struct {
 	IsHideFilterArea   bool
 	FilterFormLayout   form.Layout
 
-	FilterFormHeadWith  int
-	FilterFormInputWith int
+	FilterFormHeadWidth  int
+	FilterFormInputWidth int
 
 	Wheres    Wheres
 	WhereRaws WhereRaw
@@ -671,18 +671,18 @@ const DefaultPageSize = 10
 
 func NewInfoPanel(pk string) *InfoPanel {
 	return &InfoPanel{
-		curFieldListIndex:   -1,
-		PageSizeList:        DefaultPageSizeList,
-		DefaultPageSize:     DefaultPageSize,
-		processChains:       make(DisplayProcessFnChains, 0),
-		Buttons:             make(Buttons, 0),
-		Callbacks:           make(Callbacks, 0),
-		Wheres:              make([]Where, 0),
-		WhereRaws:           WhereRaw{},
-		SortField:           pk,
-		TableLayout:         "auto",
-		FilterFormInputWith: 10,
-		FilterFormHeadWith:  2,
+		curFieldListIndex:    -1,
+		PageSizeList:         DefaultPageSizeList,
+		DefaultPageSize:      DefaultPageSize,
+		processChains:        make(DisplayProcessFnChains, 0),
+		Buttons:              make(Buttons, 0),
+		Callbacks:            make(Callbacks, 0),
+		Wheres:               make([]Where, 0),
+		WhereRaws:            WhereRaw{},
+		SortField:            pk,
+		TableLayout:          "auto",
+		FilterFormInputWidth: 10,
+		FilterFormHeadWidth:  2,
 	}
 }
 
@@ -1174,13 +1174,13 @@ func (i *InfoPanel) SetFilterFormLayout(layout form.Layout) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) SetFilterFormHeadWith(w int) *InfoPanel {
-	i.FilterFormHeadWith = w
+func (i *InfoPanel) SetFilterFormHeadWidth(w int) *InfoPanel {
+	i.FilterFormHeadWidth = w
 	return i
 }
 
-func (i *InfoPanel) SetFilterFormInputWith(w int) *InfoPanel {
-	i.FilterFormInputWith = w
+func (i *InfoPanel) SetFilterFormInputWidth(w int) *InfoPanel {
+	i.FilterFormInputWidth = w
 	return i
 }
 
