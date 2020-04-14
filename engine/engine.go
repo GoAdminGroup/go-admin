@@ -352,9 +352,11 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 		t, err := template2.ParseFiles(path)
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		} else {
 			if err := t.Execute(cbuf, data); err != nil {
 				eng.errorPanelHTML(ctx, cbuf, err)
+				return
 			}
 		}
 
@@ -391,9 +393,11 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 		t, err := template2.ParseFiles(files...)
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		} else {
 			if err := t.Execute(cbuf, data); err != nil {
 				eng.errorPanelHTML(ctx, cbuf, err)
+				return
 			}
 		}
 
@@ -438,6 +442,8 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 	if hasError != nil {
 		logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
 	}
+
+	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
 // ============================
