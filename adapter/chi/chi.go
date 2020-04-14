@@ -33,14 +33,17 @@ func init() {
 	engine.Register(new(Chi))
 }
 
-func (ch *Chi) User(ci interface{}) (models.UserModel, bool) {
-	return ch.GetUser(ci, ch)
+// User implements the method Adapter.User.
+func (ch *Chi) User(ctx interface{}) (models.UserModel, bool) {
+	return ch.GetUser(ctx, ch)
 }
 
-func (ch *Chi) Use(router interface{}, plugs []plugins.Plugin) error {
-	return ch.GetUse(router, plugs, ch)
+// Use implements the method Adapter.Use.
+func (ch *Chi) Use(app interface{}, plugs []plugins.Plugin) error {
+	return ch.GetUse(app, plugs, ch)
 }
 
+// Content implements the method Adapter.Content.
 func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	ch.GetContent(ctx, getPanelFn, ch, btns)
 }
@@ -59,6 +62,7 @@ func Content(handler HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (ch *Chi) SetApp(app interface{}) error {
 	var (
 		eng *chi.Mux
@@ -71,6 +75,7 @@ func (ch *Chi) SetApp(app interface{}) error {
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (ch *Chi) AddHandler(method, path string, handlers context.Handlers) {
 	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
@@ -145,6 +150,7 @@ type Context struct {
 	Response http.ResponseWriter
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx Context
@@ -156,23 +162,28 @@ func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	return &Chi{ctx: ctx}
 }
 
+// Name implements the method Adapter.Name.
 func (ch *Chi) Name() string {
 	return "chi"
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (ch *Chi) Redirect() {
 	http.Redirect(ch.ctx.Response, ch.ctx.Request, cfg.Url(cfg.GetLoginUrl()), http.StatusFound)
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (ch *Chi) SetContentType() {
 	ch.ctx.Response.Header().Set("Content-Type", ch.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (ch *Chi) Write(body []byte) {
 	ch.ctx.Response.WriteHeader(http.StatusOK)
 	_, _ = ch.ctx.Response.Write(body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (ch *Chi) GetCookie() (string, error) {
 	cookie, err := ch.ctx.Request.Cookie(ch.CookieKey())
 	if err != nil {
@@ -181,19 +192,23 @@ func (ch *Chi) GetCookie() (string, error) {
 	return cookie.Value, err
 }
 
+// Path implements the method Adapter.Path.
 func (ch *Chi) Path() string {
 	return ch.ctx.Request.URL.Path
 }
 
+// Method implements the method Adapter.Method.
 func (ch *Chi) Method() string {
 	return ch.ctx.Request.Method
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (ch *Chi) FormParam() url.Values {
 	_ = ch.ctx.Request.ParseMultipartForm(32 << 20)
 	return ch.ctx.Request.PostForm
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (ch *Chi) IsPjax() bool {
 	return ch.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

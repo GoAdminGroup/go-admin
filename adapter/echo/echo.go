@@ -32,14 +32,17 @@ func init() {
 	engine.Register(new(Echo))
 }
 
-func (e *Echo) User(ci interface{}) (models.UserModel, bool) {
-	return e.GetUser(ci, e)
+// User implements the method Adapter.User.
+func (e *Echo) User(ctx interface{}) (models.UserModel, bool) {
+	return e.GetUser(ctx, e)
 }
 
-func (e *Echo) Use(router interface{}, plugs []plugins.Plugin) error {
-	return e.GetUse(router, plugs, e)
+// Use implements the method Adapter.Use.
+func (e *Echo) Use(app interface{}, plugs []plugins.Plugin) error {
+	return e.GetUse(app, plugs, e)
 }
 
+// Content implements the method Adapter.Content.
 func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	e.GetContent(ctx, getPanelFn, e, btns)
 }
@@ -55,6 +58,7 @@ func Content(handler HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (e *Echo) SetApp(app interface{}) error {
 	var (
 		eng *echo.Echo
@@ -67,6 +71,7 @@ func (e *Echo) SetApp(app interface{}) error {
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 	e.app.Add(strings.ToUpper(method), path, func(c echo.Context) error {
 		ctx := context.NewContext(c.Request())
@@ -92,10 +97,12 @@ func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 	})
 }
 
+// Name implements the method Adapter.Name.
 func (e *Echo) Name() string {
 	return "echo"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx echo.Context
@@ -107,19 +114,23 @@ func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	return &Echo{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (e *Echo) Redirect() {
 	_ = e.ctx.Redirect(http.StatusFound, config.Url(config.GetLoginUrl()))
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (e *Echo) SetContentType() {
 	e.ctx.Response().Header().Set("Content-Type", e.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (e *Echo) Write(body []byte) {
 	e.ctx.Response().WriteHeader(http.StatusOK)
 	_, _ = e.ctx.Response().Write(body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (e *Echo) GetCookie() (string, error) {
 	cookie, err := e.ctx.Cookie(e.CookieKey())
 	if err != nil {
@@ -128,19 +139,23 @@ func (e *Echo) GetCookie() (string, error) {
 	return cookie.Value, err
 }
 
+// Path implements the method Adapter.Path.
 func (e *Echo) Path() string {
 	return e.ctx.Request().URL.Path
 }
 
+// Method implements the method Adapter.Method.
 func (e *Echo) Method() string {
 	return e.ctx.Request().Method
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (e *Echo) FormParam() url.Values {
 	_ = e.ctx.Request().ParseMultipartForm(32 << 20)
 	return e.ctx.Request().PostForm
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (e *Echo) IsPjax() bool {
 	return e.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
 }

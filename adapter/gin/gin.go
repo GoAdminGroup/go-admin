@@ -32,14 +32,17 @@ func init() {
 	engine.Register(new(Gin))
 }
 
-func (gins *Gin) User(ci interface{}) (models.UserModel, bool) {
-	return gins.GetUser(ci, gins)
+// User implements the method Adapter.User.
+func (gins *Gin) User(ctx interface{}) (models.UserModel, bool) {
+	return gins.GetUser(ctx, gins)
 }
 
-func (gins *Gin) Use(router interface{}, plugs []plugins.Plugin) error {
-	return gins.GetUse(router, plugs, gins)
+// Use implements the method Adapter.Use.
+func (gins *Gin) Use(app interface{}, plugs []plugins.Plugin) error {
+	return gins.GetUse(app, plugs, gins)
 }
 
+// Content implements the method Adapter.Content.
 func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	gins.GetContent(ctx, getPanelFn, gins, btns)
 }
@@ -54,6 +57,7 @@ func Content(handler HandlerFunc) gin.HandlerFunc {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (gins *Gin) SetApp(app interface{}) error {
 	var (
 		eng *gin.Engine
@@ -66,6 +70,7 @@ func (gins *Gin) SetApp(app interface{}) error {
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (gins *Gin) AddHandler(method, path string, handlers context.Handlers) {
 	gins.app.Handle(strings.ToUpper(method), path, func(c *gin.Context) {
 		ctx := context.NewContext(c.Request)
@@ -92,10 +97,12 @@ func (gins *Gin) AddHandler(method, path string, handlers context.Handlers) {
 	})
 }
 
+// Name implements the method Adapter.Name.
 func (gins *Gin) Name() string {
 	return "gin"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *gin.Context
@@ -109,36 +116,44 @@ func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	return &Gin{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (gins *Gin) Redirect() {
 	gins.ctx.Redirect(http.StatusFound, config.Url(config.GetLoginUrl()))
 	gins.ctx.Abort()
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (gins *Gin) SetContentType() {
 	return
 }
 
+// Write implements the method Adapter.Write.
 func (gins *Gin) Write(body []byte) {
 	gins.ctx.Data(http.StatusOK, gins.HTMLContentType(), body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (gins *Gin) GetCookie() (string, error) {
 	return gins.ctx.Cookie(gins.CookieKey())
 }
 
+// Path implements the method Adapter.Path.
 func (gins *Gin) Path() string {
 	return gins.ctx.Request.URL.Path
 }
 
+// Method implements the method Adapter.Method.
 func (gins *Gin) Method() string {
 	return gins.ctx.Request.Method
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (gins *Gin) FormParam() url.Values {
 	_ = gins.ctx.Request.ParseMultipartForm(32 << 20)
 	return gins.ctx.Request.PostForm
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (gins *Gin) IsPjax() bool {
 	return gins.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }

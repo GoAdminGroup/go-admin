@@ -97,6 +97,7 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 	return eng
 }
 
+// FindPluginByName find the register plugin by given name.
 func (eng *Engine) FindPluginByName(name string) (plugins.Plugin, bool) {
 	for _, plug := range eng.PluginList {
 		if plug.Name() == name {
@@ -106,6 +107,7 @@ func (eng *Engine) FindPluginByName(name string) (plugins.Plugin, bool) {
 	return nil, false
 }
 
+// AddAuthService customize the auth logic with given callback function.
 func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
 	eng.Services.Add("auth", auth.NewService(processor))
 	return eng
@@ -169,6 +171,7 @@ func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 // defaultAdapter is the default adapter of engine.
 var defaultAdapter adapter.WebFrameWork
 
+// navButtons is the default buttons in the navigation bar.
 var navButtons = make([]types.Button, 0)
 
 // Register set default adapter of engine.
@@ -180,24 +183,25 @@ func Register(ada adapter.WebFrameWork) {
 }
 
 // User call the User method of defaultAdapter.
-func User(ci interface{}) (models.UserModel, bool) {
-	return defaultAdapter.User(ci)
+func User(ctx interface{}) (models.UserModel, bool) {
+	return defaultAdapter.User(ctx)
 }
 
 // User call the User method of engine adapter.
-func (eng *Engine) User(ci interface{}) (models.UserModel, bool) {
-	return eng.Adapter.User(ci)
+func (eng *Engine) User(ctx interface{}) (models.UserModel, bool) {
+	return eng.Adapter.User(ctx)
 }
 
 // ============================
 // DB Connection APIs
 // ============================
 
-// db return the db connection of given driver.
+// DB return the db connection of given driver.
 func (eng *Engine) DB(driver string) db.Connection {
 	return db.GetConnectionFromService(eng.Services.Get(driver))
 }
 
+// DefaultConnection return the default db connection.
 func (eng *Engine) DefaultConnection() db.Connection {
 	return eng.DB(eng.config.Databases.GetDefault().Driver)
 }
@@ -224,26 +228,31 @@ func (eng *Engine) SqliteConnection() db.Connection {
 
 type ConnectionSetter func(db.Connection)
 
+// ResolveConnection resolve the specified driver connection.
 func (eng *Engine) ResolveConnection(setter ConnectionSetter, driver string) *Engine {
 	setter(eng.DB(driver))
 	return eng
 }
 
+// ResolveMysqlConnection resolve the mysql connection.
 func (eng *Engine) ResolveMysqlConnection(setter ConnectionSetter) *Engine {
 	eng.ResolveConnection(setter, db.DriverMysql)
 	return eng
 }
 
+// ResolveMssqlConnection resolve the mssql connection.
 func (eng *Engine) ResolveMssqlConnection(setter ConnectionSetter) *Engine {
 	eng.ResolveConnection(setter, db.DriverMssql)
 	return eng
 }
 
+// ResolveSqliteConnection resolve the sqlite connection.
 func (eng *Engine) ResolveSqliteConnection(setter ConnectionSetter) *Engine {
 	eng.ResolveConnection(setter, db.DriverSqlite)
 	return eng
 }
 
+// ResolvePostgresqlConnection resolve the postgres connection.
 func (eng *Engine) ResolvePostgresqlConnection(setter ConnectionSetter) *Engine {
 	eng.ResolveConnection(setter, db.DriverPostgresql)
 	return eng
@@ -251,16 +260,19 @@ func (eng *Engine) ResolvePostgresqlConnection(setter ConnectionSetter) *Engine 
 
 type Setter func(*Engine)
 
+// Clone copy a new Engine.
 func (eng *Engine) Clone(e *Engine) *Engine {
 	e = eng
 	return eng
 }
 
+// ClonedBySetter copy a new Engine by a setter callback function.
 func (eng *Engine) ClonedBySetter(setter Setter) *Engine {
 	setter(eng)
 	return eng
 }
 
+// wrapWithAuthMiddleware wrap a auth middleware to the given handler.
 func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
 	return []context.Handler{response.OffLineHandler, auth.Middleware(db.GetConnection(eng.Services)), handler}
 }
@@ -269,6 +281,7 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 // HTML Content Render APIs
 // ============================
 
+// AddNavButtons add the nav buttons.
 func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
 	btn := types.GetNavButton(title, icon, action)
 	eng.NavButtons = append(eng.NavButtons, btn)
@@ -294,10 +307,12 @@ func Content(ctx interface{}, panel types.GetPanelFn) {
 	defaultAdapter.Content(ctx, panel, navButtons...)
 }
 
+// Data inject the route and corresponding handler to the web framework.
 func (eng *Engine) Data(method, url string, handler context.Handler) {
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
 }
 
+// HTML inject the route and corresponding handler wrapped by the given function to the web framework.
 func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
@@ -327,6 +342,8 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 	}))
 }
 
+// HTMLFile inject the route and corresponding handler which returns the panel content of given html file path
+// to the web framework.
 func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{}) {
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
 
@@ -364,6 +381,8 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 	}))
 }
 
+// HTMLFiles inject the route and corresponding handler which returns the panel content of given html files path
+// to the web framework.
 func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, files ...string) {
 	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
 
@@ -401,6 +420,7 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 	}))
 }
 
+// errorPanelHTML add an error panel html to context response.
 func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err error) {
 
 	user := auth.Auth(ctx)
@@ -424,11 +444,13 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 // Admin Plugin APIs
 // ============================
 
+// AddGenerators add the admin generators.
 func (eng *Engine) AddGenerators(list ...table.GeneratorList) *Engine {
 	eng.PluginList = append(eng.PluginList, admin.NewAdmin(list...))
 	return eng
 }
 
+// AdminPlugin get the admin plugin. if not exist, create one.
 func (eng *Engine) AdminPlugin() *admin.Admin {
 	plug, exist := eng.FindPluginByName("admin")
 	if exist {
@@ -445,55 +467,55 @@ func (eng *Engine) AddGenerator(key string, g table.Generator) *Engine {
 	return eng
 }
 
-// AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn
+// AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn.
 func (eng *Engine) AddGlobalDisplayProcessFn(f types.DisplayProcessFn) *Engine {
 	types.AddGlobalDisplayProcessFn(f)
 	return eng
 }
 
-// AddDisplayFilterLimit call types.AddDisplayFilterLimit
+// AddDisplayFilterLimit call types.AddDisplayFilterLimit.
 func (eng *Engine) AddDisplayFilterLimit(limit int) *Engine {
 	types.AddLimit(limit)
 	return eng
 }
 
-// AddDisplayFilterTrimSpace call types.AddDisplayFilterTrimSpace
+// AddDisplayFilterTrimSpace call types.AddDisplayFilterTrimSpace.
 func (eng *Engine) AddDisplayFilterTrimSpace() *Engine {
 	types.AddTrimSpace()
 	return eng
 }
 
-// AddDisplayFilterSubstr call types.AddDisplayFilterSubstr
+// AddDisplayFilterSubstr call types.AddDisplayFilterSubstr.
 func (eng *Engine) AddDisplayFilterSubstr(start int, end int) *Engine {
 	types.AddSubstr(start, end)
 	return eng
 }
 
-// AddDisplayFilterToTitle call types.AddDisplayFilterToTitle
+// AddDisplayFilterToTitle call types.AddDisplayFilterToTitle.
 func (eng *Engine) AddDisplayFilterToTitle() *Engine {
 	types.AddToTitle()
 	return eng
 }
 
-// AddDisplayFilterToUpper call types.AddDisplayFilterToUpper
+// AddDisplayFilterToUpper call types.AddDisplayFilterToUpper.
 func (eng *Engine) AddDisplayFilterToUpper() *Engine {
 	types.AddToUpper()
 	return eng
 }
 
-// AddDisplayFilterToLower call types.AddDisplayFilterToLower
+// AddDisplayFilterToLower call types.AddDisplayFilterToLower.
 func (eng *Engine) AddDisplayFilterToLower() *Engine {
 	types.AddToUpper()
 	return eng
 }
 
-// AddDisplayFilterXssFilter call types.AddDisplayFilterXssFilter
+// AddDisplayFilterXssFilter call types.AddDisplayFilterXssFilter.
 func (eng *Engine) AddDisplayFilterXssFilter() *Engine {
 	types.AddXssFilter()
 	return eng
 }
 
-// AddDisplayFilterXssJsFilter call types.AddDisplayFilterXssJsFilter
+// AddDisplayFilterXssJsFilter call types.AddDisplayFilterXssJsFilter.
 func (eng *Engine) AddDisplayFilterXssJsFilter() *Engine {
 	types.AddXssJsFilter()
 	return eng

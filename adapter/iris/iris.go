@@ -33,14 +33,17 @@ func init() {
 	engine.Register(new(Iris))
 }
 
-func (is *Iris) User(ci interface{}) (models.UserModel, bool) {
-	return is.GetUser(ci, is)
+// User implements the method Adapter.User.
+func (is *Iris) User(ctx interface{}) (models.UserModel, bool) {
+	return is.GetUser(ctx, is)
 }
 
-func (is *Iris) Use(router interface{}, plugs []plugins.Plugin) error {
-	return is.GetUse(router, plugs, is)
+// Use implements the method Adapter.Use.
+func (is *Iris) Use(app interface{}, plugs []plugins.Plugin) error {
+	return is.GetUse(app, plugs, is)
 }
 
+// Content implements the method Adapter.Content.
 func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	is.GetContent(ctx, getPanelFn, is, btns)
 }
@@ -55,6 +58,7 @@ func Content(handler HandlerFunc) iris.Handler {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (is *Iris) SetApp(app interface{}) error {
 	var (
 		eng *iris.Application
@@ -67,6 +71,7 @@ func (is *Iris) SetApp(app interface{}) error {
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (is *Iris) AddHandler(method, path string, handlers context.Handlers) {
 	is.app.Handle(strings.ToUpper(method), path, func(c iris.Context) {
 		ctx := context.NewContext(c.Request())
@@ -97,10 +102,12 @@ func (is *Iris) AddHandler(method, path string, handlers context.Handlers) {
 	})
 }
 
+// Name implements the method Adapter.Name.
 func (is *Iris) Name() string {
 	return "iris"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx iris.Context
@@ -113,34 +120,42 @@ func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	return &Iris{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (is *Iris) Redirect() {
 	is.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (is *Iris) SetContentType() {
 	is.ctx.Header("Content-Type", is.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (is *Iris) Write(body []byte) {
 	_, _ = is.ctx.Write(body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (is *Iris) GetCookie() (string, error) {
 	return is.ctx.GetCookie(is.CookieKey()), nil
 }
 
+// Path implements the method Adapter.Path.
 func (is *Iris) Path() string {
 	return is.ctx.Path()
 }
 
+// Method implements the method Adapter.Method.
 func (is *Iris) Method() string {
 	return is.ctx.Method()
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (is *Iris) FormParam() url.Values {
 	return is.ctx.FormValues()
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (is *Iris) IsPjax() bool {
 	return is.ctx.GetHeader(constant.PjaxHeader) == "true"
 }

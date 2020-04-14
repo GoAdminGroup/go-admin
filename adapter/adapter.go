@@ -26,8 +26,27 @@ import (
 // the routes and the corresponding handlers. Content writes the
 // response to the corresponding context of framework.
 type WebFrameWork interface {
-	Use(interface{}, []plugins.Plugin) error
-	Content(interface{}, types.GetPanelFn, ...types.Button)
+	// Name return the web framework name.
+	Name() string
+
+	// Use method inject the plugins to the web framework engine which is the
+	// first parameter.
+	Use(app interface{}, plugins []plugins.Plugin) error
+
+	// Content add the panel html response of the given callback function to
+	// the web framework context which is the first parameter.
+	Content(ctx interface{}, fn types.GetPanelFn, navButtons ...types.Button)
+
+	// User get the auth user model from the given web framework context.
+	User(ctx interface{}) (models.UserModel, bool)
+
+	// AddHandler inject the route and handlers of GoAdmin to the web framework.
+	AddHandler(method, path string, handlers context.Handlers)
+
+	// Helper functions
+	// ================================
+
+	SetApp(app interface{}) error
 	SetConnection(db.Connection)
 	GetConnection() db.Connection
 	SetContext(ctx interface{}) WebFrameWork
@@ -41,34 +60,36 @@ type WebFrameWork interface {
 	Write(body []byte)
 	CookieKey() string
 	HTMLContentType() string
-	Name() string
-	User(ci interface{}) (models.UserModel, bool)
-	SetApp(app interface{}) error
-	AddHandler(method, path string, handlers context.Handlers)
 }
 
+// BaseAdapter is a base adapter contains some helper functions.
 type BaseAdapter struct {
 	db db.Connection
 }
 
+// SetConnection set the db connection.
 func (base *BaseAdapter) SetConnection(conn db.Connection) {
 	base.db = conn
 }
 
+// GetConnection get the db connection.
 func (base *BaseAdapter) GetConnection() db.Connection {
 	return base.db
 }
 
+// HTMLContentType return the default content type header.
 func (base *BaseAdapter) HTMLContentType() string {
 	return "text/html; charset=utf-8"
 }
 
+// CookieKey return the cookie key.
 func (base *BaseAdapter) CookieKey() string {
 	return auth.DefaultCookieKey
 }
 
-func (base *BaseAdapter) GetUser(ci interface{}, wf WebFrameWork) (models.UserModel, bool) {
-	cookie, err := wf.SetContext(ci).GetCookie()
+// GetUser is a helper function get the auth user model from the context.
+func (base *BaseAdapter) GetUser(ctx interface{}, wf WebFrameWork) (models.UserModel, bool) {
+	cookie, err := wf.SetContext(ctx).GetCookie()
 
 	if err != nil {
 		return models.UserModel{}, false
@@ -78,8 +99,9 @@ func (base *BaseAdapter) GetUser(ci interface{}, wf WebFrameWork) (models.UserMo
 	return user.ReleaseConn(), exist
 }
 
-func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
-	if err := wf.SetApp(router); err != nil {
+// GetUse is a helper function adds the plugins to the framework.
+func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
+	if err := wf.SetApp(app); err != nil {
 		return err
 	}
 
@@ -92,7 +114,8 @@ func (base *BaseAdapter) GetUse(router interface{}, plugin []plugins.Plugin, wf 
 	return nil
 }
 
-func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, btns types.Buttons) {
+// GetContent is a helper function of adapter.Content
+func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, navButtons types.Buttons) {
 
 	newBase := wf.SetContext(ctx)
 
@@ -132,7 +155,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
 		Panel:   panel.GetContent(config.IsProductionEnvironment()),
 		Assets:  template.GetComponentAssetListsHTML(),
-		Buttons: btns.CheckPermission(user),
+		Buttons: navButtons.CheckPermission(user),
 	}))
 
 	if hasError != nil {
