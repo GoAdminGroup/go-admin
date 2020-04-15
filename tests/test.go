@@ -16,7 +16,23 @@ import (
 
 func Cleaner(config config.DatabaseList) {
 
-	if !strings.Contains(config.GetDefault().Name, "test") {
+	checkStatement := ""
+
+	if config.GetDefault().Driver != "sqlite" {
+		if config.GetDefault().Dsn == "" {
+			checkStatement = config.GetDefault().Name
+		} else {
+			checkStatement = config.GetDefault().Dsn
+		}
+	} else {
+		if config.GetDefault().Dsn == "" {
+			checkStatement = config.GetDefault().File
+		} else {
+			checkStatement = config.GetDefault().Dsn
+		}
+	}
+
+	if !strings.Contains(checkStatement, "test") {
 		panic("wrong database")
 	}
 
@@ -52,7 +68,7 @@ func Cleaner(config config.DatabaseList) {
 			{"name": "Dashboard", "slug": "dashboard", "http_method": "GET,PUT,POST,DELETE", "http_path": "/"},
 		},
 		"goadmin_menu": {
-			{"parent_id": 0, "type": 1, "order": 2, "title": "Admin", "icon": "fa-tasks"},
+			{"parent_id": 0, "type": 1, "order": 2, "title": "Admin", "icon": "fa-tasks", "uri": ""},
 			{"parent_id": 1, "type": 1, "order": 2, "title": "Users", "icon": "fa-users", "uri": "/info/manager"},
 			{"parent_id": 0, "type": 1, "order": 3, "title": "test2 menu", "icon": "fa-angellist", "uri": "/example/test"},
 			{"parent_id": 1, "type": 1, "order": 4, "title": "Permission", "icon": "fa-ban", "uri": "/info/permission"},

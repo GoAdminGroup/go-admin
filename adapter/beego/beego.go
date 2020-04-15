@@ -65,7 +65,7 @@ func (bee *Beego) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*beego.App); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("beego adapter SetApp: wrong parameter")
 	}
 	bee.app = eng
 	return nil
@@ -107,7 +107,7 @@ func (bee *Beego) SetContext(contextInterface interface{}) adapter.WebFrameWork 
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(*context.Context); !ok {
-		panic("wrong parameter")
+		panic("beego adapter SetContext: wrong parameter")
 	}
 	return &Beego{ctx: ctx}
 }

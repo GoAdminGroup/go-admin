@@ -64,7 +64,7 @@ func (gins *Gin) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*gin.Engine); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("gin adapter SetApp: wrong parameter")
 	}
 	gins.app = eng
 	return nil
@@ -110,7 +110,7 @@ func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	)
 
 	if ctx, ok = contextInterface.(*gin.Context); !ok {
-		panic("wrong parameter")
+		panic("gin adapter SetContext: wrong parameter")
 	}
 
 	return &Gin{ctx: ctx}

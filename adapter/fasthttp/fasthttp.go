@@ -66,7 +66,7 @@ func (fast *Fasthttp) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*fasthttprouter.Router); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("fasthttp adapter SetApp: wrong parameter")
 	}
 
 	fast.app = eng
@@ -173,7 +173,7 @@ func (fast *Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameW
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(*fasthttp.RequestCtx); !ok {
-		panic("wrong parameter")
+		panic("fasthttp adapter SetContext: wrong parameter")
 	}
 	return &Fasthttp{ctx: ctx}
 }

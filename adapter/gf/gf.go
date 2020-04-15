@@ -65,7 +65,7 @@ func (gf *Gf) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*ghttp.Server); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("gf adapter SetApp: wrong parameter")
 	}
 	gf.app = eng
 	return nil
@@ -124,7 +124,7 @@ func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	)
 
 	if ctx, ok = contextInterface.(*ghttp.Request); !ok {
-		panic("wrong parameter")
+		panic("gf adapter SetContext: wrong parameter")
 	}
 	return &Gf{ctx: ctx}
 }

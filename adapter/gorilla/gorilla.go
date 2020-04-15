@@ -69,7 +69,7 @@ func (g *Gorilla) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*mux.Router); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("gorilla adapter SetApp: wrong parameter")
 	}
 	g.app = eng
 	return nil
@@ -139,7 +139,7 @@ func (g *Gorilla) SetContext(contextInterface interface{}) adapter.WebFrameWork 
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(Context); !ok {
-		panic("wrong parameter")
+		panic("gorilla adapter SetContext: wrong parameter")
 	}
 
 	return &Gorilla{ctx: ctx}

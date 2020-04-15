@@ -77,6 +77,10 @@ func (eng *Engine) Use(router interface{}) error {
 
 	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
 
+	defaultConnection := db.GetConnection(eng.Services)
+	defaultAdapter.SetConnection(defaultConnection)
+	eng.Adapter.SetConnection(defaultConnection)
+
 	// Initialize plugins
 	for i := range eng.PluginList {
 		eng.PluginList[i].InitPlugin(eng.Services)
@@ -155,9 +159,6 @@ func (eng *Engine) InitDatabase() *Engine {
 	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	defaultConnection := db.GetConnection(eng.Services)
-	defaultAdapter.SetConnection(defaultConnection)
-	eng.Adapter.SetConnection(defaultConnection)
 	return eng
 }
 

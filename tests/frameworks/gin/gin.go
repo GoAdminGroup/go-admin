@@ -2,12 +2,7 @@ package gin
 
 import (
 	// add gin adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
-
+	ada "github.com/GoAdminGroup/go-admin/adapter/gin"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -19,12 +14,14 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
+	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
@@ -39,13 +36,11 @@ func newHandler() http.Handler {
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(tables.Generators)
-	adminPlugin.AddGenerator("user", tables.GetUserTable)
-
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(adminPlugin).
+		AddGenerators(tables.Generators).
+		AddGenerator("user", tables.GetUserTable).
 		Use(r); err != nil {
 		panic(err)
 	}
@@ -65,8 +60,6 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(gens)
-
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfig(config.Config{
@@ -81,7 +74,8 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddPlugins(adminPlugin).
+		AddAdapter(new(ada.Gin)).
+		AddGenerators(gens).
 		Use(r); err != nil {
 		panic(err)
 	}

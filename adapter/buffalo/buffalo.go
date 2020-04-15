@@ -66,7 +66,7 @@ func (bu *Buffalo) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*buffalo.App); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("buffalo adapter SetApp: wrong parameter")
 	}
 	bu.app = eng
 	return nil
@@ -150,7 +150,7 @@ func (bu *Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(buffalo.Context); !ok {
-		panic("wrong parameter")
+		panic("buffalo adapter SetContext: wrong parameter")
 	}
 	return &Buffalo{ctx: ctx}
 }

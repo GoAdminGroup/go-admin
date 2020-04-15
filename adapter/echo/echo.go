@@ -65,7 +65,7 @@ func (e *Echo) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*echo.Echo); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("echo adapter SetApp: wrong parameter")
 	}
 	e.app = eng
 	return nil
@@ -109,7 +109,7 @@ func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(echo.Context); !ok {
-		panic("wrong parameter")
+		panic("echo adapter SetContext: wrong parameter")
 	}
 	return &Echo{ctx: ctx}
 }

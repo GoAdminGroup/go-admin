@@ -2,12 +2,7 @@ package fasthttp
 
 import (
 	// add fasthttp adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/fasthttp"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
-
+	ada "github.com/GoAdminGroup/go-admin/adapter/fasthttp"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -20,10 +15,14 @@ import (
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 	"os"
@@ -57,8 +56,6 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.Requ
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(gens).AddDisplayFilterXssJsFilter()
-
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfig(config.Config{
@@ -73,7 +70,8 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.Requ
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddPlugins(adminPlugin).
+		AddAdapter(new(ada.Fasthttp)).
+		AddGenerators(gens).
 		Use(router); err != nil {
 		panic(err)
 	}

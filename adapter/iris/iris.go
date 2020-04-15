@@ -65,7 +65,7 @@ func (is *Iris) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*iris.Application); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("iris adapter SetApp: wrong parameter")
 	}
 	is.app = eng
 	return nil
@@ -114,7 +114,7 @@ func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(iris.Context); !ok {
-		panic("wrong parameter")
+		panic("iris adapter SetContext: wrong parameter")
 	}
 
 	return &Iris{ctx: ctx}

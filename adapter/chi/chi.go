@@ -69,7 +69,7 @@ func (ch *Chi) SetApp(app interface{}) error {
 		ok  bool
 	)
 	if eng, ok = app.(*chi.Mux); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("chi adapter SetApp: wrong parameter")
 	}
 	ch.app = eng
 	return nil
@@ -157,7 +157,7 @@ func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(Context); !ok {
-		panic("wrong parameter")
+		panic("chi adapter SetContext: wrong parameter")
 	}
 	return &Chi{ctx: ctx}
 }
