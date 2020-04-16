@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -59,42 +58,9 @@ func getLatestVersion() string {
 	return versionsArr[len(versionsArr)-1]
 }
 
-func isRequireUpdate(srcVersion, toCompareVersion string) bool {
-	if toCompareVersion == "" {
-		return false
-	}
-
-	exp, _ := regexp.Compile(`-(.*)`)
-	srcVersion = exp.ReplaceAllString(srcVersion, "")
-	toCompareVersion = exp.ReplaceAllString(toCompareVersion, "")
-
-	srcVersionArr := strings.Split(strings.Replace(srcVersion, "v", "", -1), ".")
-	toCompareVersionArr := strings.Split(strings.Replace(toCompareVersion, "v", "", -1), ".")
-
-	for i := len(srcVersionArr) - 1; i > -1; i-- {
-		v, err := strconv.Atoi(srcVersionArr[i])
-		if err != nil {
-			return false
-		}
-		vv, err := strconv.Atoi(toCompareVersionArr[i])
-		if err != nil {
-			return false
-		}
-		if v < vv {
-			return true
-		} else if v > vv {
-			return false
-		} else {
-			continue
-		}
-	}
-
-	return false
-}
-
 func compareVersion(srcVersion string) string {
 	toCompareVersion := getLatestVersion()
-	if isRequireUpdate(srcVersion, toCompareVersion) {
+	if utils.CompareVersion(srcVersion, toCompareVersion) {
 		return ", the latest version is " + toCompareVersion + " now."
 	}
 	return ""

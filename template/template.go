@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"html/template"
 	"path"
 	"plugin"
@@ -28,6 +29,8 @@ import (
 // Template is the interface which contains methods of ui components.
 // It will be used in the plugins for custom the ui.
 type Template interface {
+	Name() string
+
 	// Components
 
 	// layout
@@ -116,13 +119,29 @@ func Add(name string, temp Template) {
 }
 
 func CheckRequirements() bool {
-	for _, v := range Default().GetRequirements() {
-		if v == system.Version() {
+	if !CheckThemeRequirements() {
+		return false
+	}
+	if !utils.InArray(DefaultThemeNames, Default().Name()) {
+		return true
+	}
+	return versionCompare(Default().GetVersion(), system.RequireThemeVersion()[Default().Name()])
+}
+
+func CheckThemeRequirements() bool {
+	return versionCompare(system.Version(), Default().GetRequirements())
+}
+
+func versionCompare(toCompare string, versions []string) bool {
+	for _, v := range versions {
+		if v == toCompare || utils.CompareVersion(v, toCompare) {
 			return true
 		}
 	}
 	return false
 }
+
+var DefaultThemeNames = []string{"adminlte", "sword"}
 
 func Themes() []string {
 	names := make([]string, len(templateMap))

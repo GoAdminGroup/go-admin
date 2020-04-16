@@ -58,9 +58,7 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		user := auth.Auth(ctx)
-
-		h.HTML(ctx, user, types.Panel{
+		h.HTML(ctx, auth.Auth(ctx), types.Panel{
 			Content:     aAlert().Warning(errMsg),
 			Description: template2.HTML(errors.Msg),
 			Title:       template2.HTML(errors.Msg),

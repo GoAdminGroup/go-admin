@@ -7,6 +7,7 @@ import (
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -119,4 +120,37 @@ func CopyMap(m map[string]string) map[string]string {
 		panic(err)
 	}
 	return cm
+}
+
+func CompareVersion(src, toCompare string) bool {
+	if toCompare == "" {
+		return false
+	}
+
+	exp, _ := regexp.Compile(`-(.*)`)
+	src = exp.ReplaceAllString(src, "")
+	toCompare = exp.ReplaceAllString(toCompare, "")
+
+	srcArr := strings.Split(strings.Replace(src, "v", "", -1), ".")
+	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
+
+	for i := 0; i < len(srcArr); i++ {
+		v, err := strconv.Atoi(srcArr[i])
+		if err != nil {
+			return false
+		}
+		vv, err := strconv.Atoi(toCompareArr[i])
+		if err != nil {
+			return false
+		}
+		if v < vv {
+			return true
+		} else if v > vv {
+			return false
+		} else {
+			continue
+		}
+	}
+
+	return false
 }
