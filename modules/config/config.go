@@ -717,9 +717,8 @@ func PrefixFixSlash() string {
 }
 
 // Get gets the config.
-func Get() Config {
-	c := globalCfg.Copy().EraseSens()
-	return *c
+func Get() *Config {
+	return globalCfg.Copy().EraseSens()
 }
 
 func setDefault(value, condition, def string) string {
