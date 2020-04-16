@@ -133,11 +133,11 @@ func (eng *Engine) setConfig(cfg config.Config) *Engine {
 	sysCheck, themeCheck := template.CheckRequirements()
 	if !sysCheck {
 		panic(fmt.Sprintf("wrong GoAdmin version, theme %s required GoAdmin version are %s",
-			cfg.Theme, strings.Join(template.Default().GetRequirements(), ",")))
+			eng.config.Theme, strings.Join(template.Default().GetRequirements(), ",")))
 	}
 	if !themeCheck {
 		panic(fmt.Sprintf("wrong Theme version, GoAdmin %s required Theme version are %s",
-			system.Version(), strings.Join(system.RequireThemeVersion()[cfg.Theme], ",")))
+			system.Version(), strings.Join(system.RequireThemeVersion()[eng.config.Theme], ",")))
 	}
 	return eng
 }
