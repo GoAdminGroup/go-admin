@@ -125,14 +125,14 @@ func CheckRequirements() bool {
 	if !utils.InArray(DefaultThemeNames, Default().Name()) {
 		return true
 	}
-	return versionCompare(Default().GetVersion(), system.RequireThemeVersion()[Default().Name()])
+	return VersionCompare(Default().GetVersion(), system.RequireThemeVersion()[Default().Name()])
 }
 
 func CheckThemeRequirements() bool {
-	return versionCompare(system.Version(), Default().GetRequirements())
+	return VersionCompare(system.Version(), Default().GetRequirements())
 }
 
-func versionCompare(toCompare string, versions []string) bool {
+func VersionCompare(toCompare string, versions []string) bool {
 	for _, v := range versions {
 		if v == toCompare || utils.CompareVersion(v, toCompare) {
 			return true
