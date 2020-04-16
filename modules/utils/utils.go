@@ -131,9 +131,25 @@ func CompareVersion(src, toCompare string) bool {
 	src = exp.ReplaceAllString(src, "")
 	toCompare = exp.ReplaceAllString(toCompare, "")
 
-	srcArr := strings.Split(strings.Replace(src, "v", "", -1), ".")
-	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
+	srcs := strings.Split(src, "v")
+	srcArr := strings.Split(srcs[1], ".")
+	op := ">"
+	srcs[0] = strings.TrimSpace(srcs[0])
+	if InArray([]string{">=", "<=", "=", ">", "<"}, srcs[0]) {
+		op = srcs[0]
+	}
 
+	toCompare = strings.Replace(toCompare, "v", "", -1)
+
+	if op == "=" {
+		return srcs[1] == toCompare
+	}
+
+	if srcs[1] == toCompare && (op == "<=" || op == ">=") {
+		return true
+	}
+
+	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
 	for i := 0; i < len(srcArr); i++ {
 		v, err := strconv.Atoi(srcArr[i])
 		if err != nil {
@@ -143,12 +159,23 @@ func CompareVersion(src, toCompare string) bool {
 		if err != nil {
 			return false
 		}
-		if v < vv {
-			return true
-		} else if v > vv {
-			return false
-		} else {
-			continue
+		switch op {
+		case ">", ">=":
+			if v < vv {
+				return true
+			} else if v > vv {
+				return false
+			} else {
+				continue
+			}
+		case "<", "<=":
+			if v > vv {
+				return true
+			} else if v < vv {
+				return false
+			} else {
+				continue
+			}
 		}
 	}
 
