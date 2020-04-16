@@ -48,7 +48,7 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
 			Description: template.HTML(desc),
 			Title:       template.HTML(title),
 		},
-		Config:    config.Get(),
+		Config:    *config.Get(),
 		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: true,
 	})
