@@ -43,6 +43,10 @@ type WebFrameWork interface {
 	// AddHandler inject the route and handlers of GoAdmin to the web framework.
 	AddHandler(method, path string, handlers context.Handlers)
 
+	DisableLog()
+
+	Static(prefix, path string)
+
 	// Helper functions
 	// ================================
 

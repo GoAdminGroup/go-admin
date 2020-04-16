@@ -43,6 +43,9 @@ func (bee *Beego) Use(app interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(app, plugs, bee)
 }
 
+func (bee *Beego) DisableLog()                {}
+func (bee *Beego) Static(prefix, path string) {}
+
 // Content implements the method Adapter.Content.
 func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, navButtons ...types.Button) {
 	bee.GetContent(ctx, getPanelFn, bee, navButtons)

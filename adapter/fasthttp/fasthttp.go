@@ -44,6 +44,9 @@ func (fast *Fasthttp) Use(app interface{}, plugs []plugins.Plugin) error {
 	return fast.GetUse(app, plugs, fast)
 }
 
+func (fast *Fasthttp) DisableLog()                {}
+func (fast *Fasthttp) Static(prefix, path string) {}
+
 // Content implements the method Adapter.Content.
 func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	fast.GetContent(ctx, getPanelFn, fast, btns)

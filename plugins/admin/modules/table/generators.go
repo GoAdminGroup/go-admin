@@ -1062,11 +1062,44 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: falseStr, Value: "false"},
 		})
 
+	formList.AddField(lgWithConfigScore("sql log on"), "sql_log", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+
+	formList.AddField(lgWithConfigScore("logger rotate max size"), "logger_rotate_max_size", db.Varchar, form.Number).
+		FieldDivider(lgWithConfigScore("logger rotate"))
+	formList.AddField(lgWithConfigScore("logger rotate max backups"), "logger_rotate_max_backups", db.Varchar, form.Number)
+	formList.AddField(lgWithConfigScore("logger rotate max age"), "logger_rotate_max_age", db.Varchar, form.Number)
+	formList.AddField(lgWithConfigScore("logger rotate compress"), "logger_rotate_compress", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+
+	formList.AddField(lgWithConfigScore("logger rotate encoder time key"), "logger_encoder_time_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder level key"), "logger_encoder_level_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder name key"), "logger_encoder_name_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder caller key"), "logger_encoder_caller_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder message key"), "logger_encoder_message_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder stacktrace key"), "logger_encoder_stacktrace_key", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder level"), "logger_encoder_level", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder duration"), "logger_encoder_duration", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder caller"), "logger_encoder_caller", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder encoding"), "logger_encoder_encoding", db.Varchar, form.Text)
+
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
 		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation",
 		"file_upload_engine", "extra").
-		AddGroup("access_log_off", "info_log_off", "error_log_off", "info_log_path", "error_log_path", "access_log_path").
+		AddGroup("access_log_off", "info_log_off", "error_log_off", "info_log_path", "error_log_path",
+			"access_log_path", "sql_log", "logger_rotate_max_size", "logger_rotate_max_backups",
+			"logger_rotate_max_age", "logger_rotate_compress",
+			"logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_name_key", "logger_encoder_caller_key",
+			"logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_level", "logger_encoder_time",
+			"logger_encoder_duration", "logger_encoder_caller", "logger_encoder_encoding").
 		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_Html", "footer_info", "login_logo")).
 		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
 

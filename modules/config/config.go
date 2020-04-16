@@ -207,12 +207,17 @@ type Config struct {
 	// Access log path.
 	AccessLogPath string `json:"access_log",yaml:"access_log",ini:"access_log"`
 
+	// Access assets log off
+	AccessAssetsLogOff bool `json:"access_assets_log_off",yaml:"access_assets_log_off",ini:"access_assets_log_off"`
+
 	// Sql operator record log switch.
 	SqlLog bool `json:"sql_log",yaml:"sql_log",ini:"sql_log"`
 
 	AccessLogOff bool `json:"access_log_off",yaml:"access_log_off",ini:"access_log_off"`
 	InfoLogOff   bool `json:"info_log_off",yaml:"info_log_off",ini:"info_log_off"`
 	ErrorLogOff  bool `json:"error_log_off",yaml:"error_log_off",ini:"error_log_off"`
+
+	Logger Logger `json:"logger",yaml:"logger",ini:"logger"`
 
 	// Color scheme.
 	ColorScheme string `json:"color_scheme",yaml:"color_scheme",ini:"color_scheme"`
@@ -268,6 +273,32 @@ type Config struct {
 	OpenAdminApi bool `json:"open_admin_api",yaml:"open_admin_api",ini:"open_admin_api"`
 
 	prefix string
+}
+
+type Logger struct {
+	Encoder EncoderCfg `json:"encoder",yaml:"encoder",ini:"encoder"`
+	Rotate  RotateCfg  `json:"rotate",yaml:"rotate",ini:"rotate"`
+}
+
+type EncoderCfg struct {
+	TimeKey       string `json:"time_key",yaml:"time_key",ini:"time_key"`
+	LevelKey      string `json:"level_key",yaml:"level_key",ini:"level_key"`
+	NameKey       string `json:"name_key",yaml:"name_key",ini:"name_key"`
+	CallerKey     string `json:"caller_key",yaml:"caller_key",ini:"caller_key"`
+	MessageKey    string `json:"message_key",yaml:"message_key",ini:"message_key"`
+	StacktraceKey string `json:"stacktrace_key",yaml:"stacktrace_key",ini:"stacktrace_key"`
+	Level         string `json:"level",yaml:"level",ini:"level"`
+	Time          string `json:"time",yaml:"time",ini:"time"`
+	Duration      string `json:"duration",yaml:"duration",ini:"duration"`
+	Caller        string `json:"caller",yaml:"caller",ini:"caller"`
+	Encoding      string `json:"encoding",yaml:"encoding",ini:"encoding"`
+}
+
+type RotateCfg struct {
+	MaxSize    int  `json:"max_size",yaml:"max_size",ini:"max_size"`
+	MaxBackups int  `json:"max_backups",yaml:"max_backups",ini:"max_backups"`
+	MaxAge     int  `json:"max_age",yaml:"max_age",ini:"max_age"`
+	Compress   bool `json:"compress",yaml:"compress",ini:"compress"`
 }
 
 type ExtraInfo map[string]interface{}
@@ -444,6 +475,7 @@ func (c *Config) Copy() *Config {
 		Extra:            c.Extra,
 		Animation:        c.Animation,
 		NoLimitLoginIP:   c.NoLimitLoginIP,
+		Logger:           c.Logger,
 		prefix:           c.prefix,
 	}
 }
@@ -464,6 +496,10 @@ func (c *Config) ToMap() map[string]string {
 	m["login_url"] = c.LoginUrl
 	m["debug"] = strconv.FormatBool(c.Debug)
 	m["env"] = c.Env
+
+	// Logger config
+	// ========================
+
 	m["info_log_path"] = c.InfoLogPath
 	m["error_log_path"] = c.ErrorLogPath
 	m["access_log_path"] = c.AccessLogPath
@@ -471,6 +507,24 @@ func (c *Config) ToMap() map[string]string {
 	m["access_log_off"] = strconv.FormatBool(c.AccessLogOff)
 	m["info_log_off"] = strconv.FormatBool(c.InfoLogOff)
 	m["error_log_off"] = strconv.FormatBool(c.ErrorLogOff)
+
+	m["logger_rotate_max_size"] = strconv.Itoa(c.Logger.Rotate.MaxSize)
+	m["logger_rotate_max_backups"] = strconv.Itoa(c.Logger.Rotate.MaxBackups)
+	m["logger_rotate_max_age"] = strconv.Itoa(c.Logger.Rotate.MaxAge)
+	m["logger_rotate_compress"] = strconv.FormatBool(c.Logger.Rotate.Compress)
+
+	m["logger_encoder_time_key"] = c.Logger.Encoder.TimeKey
+	m["logger_encoder_level_key"] = c.Logger.Encoder.LevelKey
+	m["logger_encoder_name_key"] = c.Logger.Encoder.NameKey
+	m["logger_encoder_caller_key"] = c.Logger.Encoder.CallerKey
+	m["logger_encoder_message_key"] = c.Logger.Encoder.MessageKey
+	m["logger_encoder_stacktrace_key"] = c.Logger.Encoder.StacktraceKey
+	m["logger_encoder_level"] = c.Logger.Encoder.Level
+	m["logger_encoder_time"] = c.Logger.Encoder.Time
+	m["logger_encoder_duration"] = c.Logger.Encoder.Duration
+	m["logger_encoder_caller"] = c.Logger.Encoder.Caller
+	m["logger_encoder_encoding"] = c.Logger.Encoder.Encoding
+
 	m["color_scheme"] = c.ColorScheme
 	m["session_life_time"] = strconv.Itoa(c.SessionLifeTime)
 	m["asset_url"] = c.AssetUrl
@@ -510,16 +564,33 @@ func (c *Config) Update(m map[string]string) error {
 
 	if c.InfoLogPath != m["info_log_path"] {
 		c.InfoLogPath = m["info_log_path"]
-		logger.SetInfoLogger(c.InfoLogPath, c.Debug, c.InfoLogOff)
+		logger.SetInfoLogger(c.InfoLogPath, c.InfoLogOff)
 	}
 	if c.ErrorLogPath != m["error_log_path"] {
 		c.ErrorLogPath = m["error_log_path"]
-		logger.SetErrorLogger(c.ErrorLogPath, c.Debug, c.ErrorLogOff)
+		logger.SetErrorLogger(c.ErrorLogPath, c.ErrorLogOff)
 	}
 	if c.AccessLogPath != m["access_log_path"] {
 		c.AccessLogPath = m["access_log_path"]
-		logger.SetAccessLogger(c.AccessLogPath, c.Debug, c.AccessLogOff)
+		logger.SetAccessLogger(c.AccessLogPath, c.AccessLogOff)
 	}
+
+	c.Logger.Rotate.MaxSize, _ = strconv.Atoi(m["logger_rotate_max_size"])
+	c.Logger.Rotate.MaxBackups, _ = strconv.Atoi(m["logger_rotate_max_backups"])
+	c.Logger.Rotate.MaxAge, _ = strconv.Atoi(m["logger_rotate_max_age"])
+	c.Logger.Rotate.Compress = utils.ParseBool(m["logger_rotate_compress"])
+
+	c.Logger.Encoder.TimeKey = m["logger_encoder_time_key"]
+	c.Logger.Encoder.LevelKey = m["logger_encoder_level_key"]
+	c.Logger.Encoder.NameKey = m["logger_encoder_name_key"]
+	c.Logger.Encoder.CallerKey = m["logger_encoder_caller_key"]
+	c.Logger.Encoder.MessageKey = m["logger_encoder_message_key"]
+	c.Logger.Encoder.StacktraceKey = m["logger_encoder_stacktrace_key"]
+	c.Logger.Encoder.Level = m["logger_encoder_level"]
+	c.Logger.Encoder.Time = m["logger_encoder_time"]
+	c.Logger.Encoder.Duration = m["logger_encoder_duration"]
+	c.Logger.Encoder.Caller = m["logger_encoder_caller"]
+	c.Logger.Encoder.Encoding = m["logger_encoder_encoding"]
 
 	c.SqlLog = utils.ParseBool(m["sql_log"])
 	if c.Theme == "adminlte" {
@@ -637,17 +708,17 @@ func Set(cfg Config) *Config {
 	}
 	atomic.StoreUint32(&count, 1)
 
-	cfg.Title = setDefault(cfg.Title, "", "GoAdmin")
-	cfg.LoginTitle = setDefault(cfg.LoginTitle, "", "GoAdmin")
-	cfg.Logo = template.HTML(setDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
-	cfg.MiniLogo = template.HTML(setDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
-	cfg.Theme = setDefault(cfg.Theme, "", "adminlte")
-	cfg.IndexUrl = setDefault(cfg.IndexUrl, "", "/info/manager")
-	cfg.LoginUrl = setDefault(cfg.LoginUrl, "", "/login")
-	cfg.AuthUserTable = setDefault(cfg.AuthUserTable, "", "goadmin_users")
-	cfg.ColorScheme = setDefault(cfg.ColorScheme, "", "skin-black")
-	cfg.FileUploadEngine.Name = setDefault(cfg.FileUploadEngine.Name, "", "local")
-	cfg.Env = setDefault(cfg.Env, "", EnvProd)
+	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
+	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
+	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
+	cfg.MiniLogo = template.HTML(utils.SetDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
+	cfg.Theme = utils.SetDefault(cfg.Theme, "", "adminlte")
+	cfg.IndexUrl = utils.SetDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.LoginUrl = utils.SetDefault(cfg.LoginUrl, "", "/login")
+	cfg.AuthUserTable = utils.SetDefault(cfg.AuthUserTable, "", "goadmin_users")
+	cfg.ColorScheme = utils.SetDefault(cfg.ColorScheme, "", "skin-black")
+	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
+	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
 	if cfg.SessionLifeTime == 0 {
 		// default two hours
 		cfg.SessionLifeTime = 7200
@@ -661,9 +732,36 @@ func Set(cfg Config) *Config {
 		cfg.prefix = cfg.UrlPrefix
 	}
 
-	logger.SetInfoLogger(cfg.InfoLogPath, cfg.Debug, cfg.InfoLogOff)
-	logger.SetErrorLogger(cfg.ErrorLogPath, cfg.Debug, cfg.ErrorLogOff)
-	logger.SetAccessLogger(cfg.AccessLogPath, cfg.Debug, cfg.AccessLogOff)
+	logger.InitWithConfig(logger.Config{
+		InfoLogOff:         cfg.InfoLogOff,
+		ErrorLogOff:        cfg.ErrorLogOff,
+		AccessLogOff:       cfg.AccessLogOff,
+		SqlLogOpen:         cfg.SqlLog,
+		InfoLogPath:        cfg.InfoLogPath,
+		ErrorLogPath:       cfg.ErrorLogPath,
+		AccessLogPath:      cfg.AccessLogPath,
+		AccessAssetsLogOff: cfg.AccessAssetsLogOff,
+		Rotate: logger.RotateCfg{
+			MaxSize:    cfg.Logger.Rotate.MaxSize,
+			MaxBackups: cfg.Logger.Rotate.MaxBackups,
+			MaxAge:     cfg.Logger.Rotate.MaxAge,
+			Compress:   cfg.Logger.Rotate.Compress,
+		},
+		Encode: logger.EncoderCfg{
+			TimeKey:       cfg.Logger.Encoder.TimeKey,
+			LevelKey:      cfg.Logger.Encoder.LevelKey,
+			NameKey:       cfg.Logger.Encoder.NameKey,
+			CallerKey:     cfg.Logger.Encoder.CallerKey,
+			MessageKey:    cfg.Logger.Encoder.MessageKey,
+			StacktraceKey: cfg.Logger.Encoder.StacktraceKey,
+			Level:         cfg.Logger.Encoder.Level,
+			Time:          cfg.Logger.Encoder.Time,
+			Duration:      cfg.Logger.Encoder.Duration,
+			Caller:        cfg.Logger.Encoder.Caller,
+			Encoding:      cfg.Logger.Encoder.Encoding,
+		},
+		Debug: cfg.Debug,
+	})
 
 	if cfg.SqlLog {
 		logger.OpenSQLLog()
@@ -720,13 +818,6 @@ func PrefixFixSlash() string {
 func Get() Config {
 	c := globalCfg.Copy().EraseSens()
 	return *c
-}
-
-func setDefault(value, condition, def string) string {
-	if value == condition {
-		return def
-	}
-	return value
 }
 
 // Getter methods

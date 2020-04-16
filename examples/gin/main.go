@@ -23,10 +23,10 @@ import (
 )
 
 func main() {
-	r := gin.Default()
-
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
+
+	r := gin.New()
 
 	e := engine.Default()
 
@@ -54,6 +54,8 @@ func main() {
 		Language: language.CN,
 		IndexUrl: "/",
 		Debug:    true,
+
+		AccessAssetsLogOff: true,
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},
