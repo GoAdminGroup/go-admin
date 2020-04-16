@@ -7,6 +7,7 @@ package engine
 import (
 	"bytes"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/system"
 	template2 "html/template"
 	"net/http"
 	"strings"
@@ -129,9 +130,14 @@ func (eng *Engine) AddConfig(cfg config.Config) *Engine {
 // setConfig set the config of engine.
 func (eng *Engine) setConfig(cfg config.Config) *Engine {
 	eng.config = config.Set(cfg)
-	if !template.CheckRequirements() {
-		panic(fmt.Sprintf("Wrong GoAdmin version, theme %s required GoAdmin version are %s",
+	sysCheck, themeCheck := template.CheckRequirements()
+	if !sysCheck {
+		panic(fmt.Sprintf("wrong GoAdmin version, theme %s required GoAdmin version are %s",
 			cfg.Theme, strings.Join(template.Default().GetRequirements(), ",")))
+	}
+	if !themeCheck {
+		panic(fmt.Sprintf("wrong Theme version, GoAdmin %s required Theme version are %s",
+			system.Version(), strings.Join(system.RequireThemeVersion()[cfg.Theme], ",")))
 	}
 	return eng
 }

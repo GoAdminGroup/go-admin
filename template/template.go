@@ -118,14 +118,14 @@ func Add(name string, temp Template) {
 	templateMap[name] = temp
 }
 
-func CheckRequirements() bool {
+func CheckRequirements() (bool, bool) {
 	if !CheckThemeRequirements() {
-		return false
+		return false, true
 	}
 	if !utils.InArray(DefaultThemeNames, Default().Name()) {
-		return true
+		return true, true
 	}
-	return VersionCompare(Default().GetVersion(), system.RequireThemeVersion()[Default().Name()])
+	return true, VersionCompare(Default().GetVersion(), system.RequireThemeVersion()[Default().Name()])
 }
 
 func CheckThemeRequirements() bool {
