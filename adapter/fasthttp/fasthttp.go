@@ -34,14 +34,17 @@ func init() {
 	engine.Register(new(Fasthttp))
 }
 
-func (fast *Fasthttp) User(ci interface{}) (models.UserModel, bool) {
-	return fast.GetUser(ci, fast)
+// User implements the method Adapter.User.
+func (fast *Fasthttp) User(ctx interface{}) (models.UserModel, bool) {
+	return fast.GetUser(ctx, fast)
 }
 
-func (fast *Fasthttp) Use(router interface{}, plugs []plugins.Plugin) error {
-	return fast.GetUse(router, plugs, fast)
+// Use implements the method Adapter.Use.
+func (fast *Fasthttp) Use(app interface{}, plugs []plugins.Plugin) error {
+	return fast.GetUse(app, plugs, fast)
 }
 
+// Content implements the method Adapter.Content.
 func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	fast.GetContent(ctx, getPanelFn, fast, btns)
 }
@@ -56,19 +59,21 @@ func Content(handler HandlerFunc) fasthttp.RequestHandler {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (fast *Fasthttp) SetApp(app interface{}) error {
 	var (
 		eng *fasthttprouter.Router
 		ok  bool
 	)
 	if eng, ok = app.(*fasthttprouter.Router); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("fasthttp adapter SetApp: wrong parameter")
 	}
 
 	fast.app = eng
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (fast *Fasthttp) AddHandler(method, path string, handlers context.Handlers) {
 	fast.app.Handle(strings.ToUpper(method), path, func(c *fasthttp.RequestCtx) {
 		httpreq := convertCtx(c)
@@ -156,45 +161,54 @@ func (r *netHTTPBody) Close() error {
 	return nil
 }
 
+// Name implements the method Adapter.Name.
 func (fast *Fasthttp) Name() string {
 	return "fasthttp"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (fast *Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *fasthttp.RequestCtx
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(*fasthttp.RequestCtx); !ok {
-		panic("wrong parameter")
+		panic("fasthttp adapter SetContext: wrong parameter")
 	}
 	return &Fasthttp{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (fast *Fasthttp) Redirect() {
 	fast.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (fast *Fasthttp) SetContentType() {
 	fast.ctx.Response.Header.Set("Content-Type", fast.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (fast *Fasthttp) Write(body []byte) {
 	_, _ = fast.ctx.Write(body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (fast *Fasthttp) GetCookie() (string, error) {
 	return string(fast.ctx.Request.Header.Cookie(fast.CookieKey())), nil
 }
 
+// Path implements the method Adapter.Path.
 func (fast *Fasthttp) Path() string {
 	return string(fast.ctx.Path())
 }
 
+// Method implements the method Adapter.Method.
 func (fast *Fasthttp) Method() string {
 	return string(fast.ctx.Method())
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (fast *Fasthttp) FormParam() url.Values {
 	f, _ := fast.ctx.MultipartForm()
 	if f != nil {
@@ -203,6 +217,7 @@ func (fast *Fasthttp) FormParam() url.Values {
 	return url.Values{}
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (fast *Fasthttp) IsPjax() bool {
 	return string(fast.ctx.Request.Header.Peek(constant.PjaxHeader)) == "true"
 }

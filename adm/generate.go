@@ -190,7 +190,7 @@ func generating(cfgFile string) {
 
 	// step 2. show tables
 	if len(chooseTables) == 0 {
-		tables, err := db.WithDriver(conn).ShowTables()
+		tables, err := db.WithDriver(conn).Table(database).ShowTables()
 
 		if err != nil {
 			panic(err)

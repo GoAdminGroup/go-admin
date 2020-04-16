@@ -19,30 +19,32 @@ func GetLoginComponent() *Login {
 	}
 }
 
+var DefaultFuncMap = template.FuncMap{
+	"lang":     language.Get,
+	"langHtml": language.GetFromHtml,
+	"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
+		if cdnUrl == "" {
+			return prefixUrl + assetsUrl
+		}
+		return cdnUrl + assetsUrl
+	},
+	"isLinkUrl": func(s string) bool {
+		return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
+	},
+	"render": func(s, old, repl template.HTML) template.HTML {
+		return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+	},
+	"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
+		return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
+	},
+	"divide": func(a, b int) int {
+		return a / b
+	},
+}
+
 func (l *Login) GetTemplate() (*template.Template, string) {
 	tmpl, err := template.New("login_theme1").
-		Funcs(template.FuncMap{
-			"lang":     language.Get,
-			"langHtml": language.GetFromHtml,
-			"link": func(cdnUrl, prefixUrl, assetsUrl string) string {
-				if cdnUrl == "" {
-					return prefixUrl + assetsUrl
-				}
-				return cdnUrl + assetsUrl
-			},
-			"isLinkUrl": func(s string) bool {
-				return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
-			},
-			"render": func(s, old, repl template.HTML) template.HTML {
-				return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
-			},
-			"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
-				return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
-			},
-			"divide": func(a, b int) int {
-				return a / b
-			},
-		}).
+		Funcs(DefaultFuncMap).
 		Parse(List["login/theme1"])
 
 	if err != nil {

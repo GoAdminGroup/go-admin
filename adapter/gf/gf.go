@@ -33,14 +33,17 @@ func init() {
 	engine.Register(new(Gf))
 }
 
-func (gf *Gf) User(ci interface{}) (models.UserModel, bool) {
-	return gf.GetUser(ci, gf)
+// User implements the method Adapter.User.
+func (gf *Gf) User(ctx interface{}) (models.UserModel, bool) {
+	return gf.GetUser(ctx, gf)
 }
 
-func (gf *Gf) Use(router interface{}, plugs []plugins.Plugin) error {
-	return gf.GetUse(router, plugs, gf)
+// Use implements the method Adapter.Use.
+func (gf *Gf) Use(app interface{}, plugs []plugins.Plugin) error {
+	return gf.GetUse(app, plugs, gf)
 }
 
+// Content implements the method Adapter.Content.
 func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	gf.GetContent(ctx, getPanelFn, gf, btns)
 }
@@ -55,18 +58,20 @@ func Content(handler HandlerFunc) ghttp.HandlerFunc {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (gf *Gf) SetApp(app interface{}) error {
 	var (
 		eng *ghttp.Server
 		ok  bool
 	)
 	if eng, ok = app.(*ghttp.Server); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("gf adapter SetApp: wrong parameter")
 	}
 	gf.app = eng
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 	gf.app.BindHandler(strings.ToUpper(method)+":"+path, func(c *ghttp.Request) {
 		ctx := context.NewContext(c.Request)
@@ -106,10 +111,12 @@ func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 	})
 }
 
+// Name implements the method Adapter.Name.
 func (gf *Gf) Name() string {
 	return "gf"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *ghttp.Request
@@ -117,39 +124,47 @@ func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	)
 
 	if ctx, ok = contextInterface.(*ghttp.Request); !ok {
-		panic("wrong parameter")
+		panic("gf adapter SetContext: wrong parameter")
 	}
 	return &Gf{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (gf *Gf) Redirect() {
 	gf.ctx.Response.RedirectTo(config.Url(config.GetLoginUrl()))
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (gf *Gf) SetContentType() {
 	gf.ctx.Response.Header().Add("Content-Type", gf.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (gf *Gf) Write(body []byte) {
 	gf.ctx.Response.WriteStatus(http.StatusOK, body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (gf *Gf) GetCookie() (string, error) {
 	return gf.ctx.Cookie.Get(gf.CookieKey()), nil
 }
 
+// Path implements the method Adapter.Path.
 func (gf *Gf) Path() string {
 	return gf.ctx.URL.Path
 }
 
+// Method implements the method Adapter.Method.
 func (gf *Gf) Method() string {
 	return gf.ctx.Method
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (gf *Gf) FormParam() url.Values {
 	return gf.ctx.Form
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (gf *Gf) IsPjax() bool {
 	return gf.ctx.Header.Get(constant.PjaxHeader) == "true"
 }

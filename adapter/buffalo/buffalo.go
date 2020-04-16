@@ -33,14 +33,17 @@ func init() {
 	engine.Register(new(Buffalo))
 }
 
-func (bu *Buffalo) User(ci interface{}) (models.UserModel, bool) {
-	return bu.GetUser(ci, bu)
+// User implements the method Adapter.User.
+func (bu *Buffalo) User(ctx interface{}) (models.UserModel, bool) {
+	return bu.GetUser(ctx, bu)
 }
 
-func (bu *Buffalo) Use(router interface{}, plugs []plugins.Plugin) error {
-	return bu.GetUse(router, plugs, bu)
+// Use implements the method Adapter.Use.
+func (bu *Buffalo) Use(app interface{}, plugs []plugins.Plugin) error {
+	return bu.GetUse(app, plugs, bu)
 }
 
+// Content implements the method Adapter.Content.
 func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	bu.GetContent(ctx, getPanelFn, bu, btns)
 }
@@ -56,18 +59,20 @@ func Content(handler HandlerFunc) buffalo.Handler {
 	}
 }
 
+// SetApp implements the method Adapter.SetApp.
 func (bu *Buffalo) SetApp(app interface{}) error {
 	var (
 		eng *buffalo.App
 		ok  bool
 	)
 	if eng, ok = app.(*buffalo.App); !ok {
-		return errors.New("wrong parameter")
+		return errors.New("buffalo adapter SetApp: wrong parameter")
 	}
 	bu.app = eng
 	return nil
 }
 
+// AddHandler implements the method Adapter.AddHandler.
 func (bu *Buffalo) AddHandler(method, path string, handlers context.Handlers) {
 	url := path
 	reg1 := regexp.MustCompile(":(.*?)/")
@@ -133,51 +138,61 @@ func getHandleFunc(eng *buffalo.App, method string) HandleFun {
 	}
 }
 
+// Name implements the method Adapter.Name.
 func (bu *Buffalo) Name() string {
 	return "buffalo"
 }
 
+// SetContext implements the method Adapter.SetContext.
 func (bu *Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx buffalo.Context
 		ok  bool
 	)
 	if ctx, ok = contextInterface.(buffalo.Context); !ok {
-		panic("wrong parameter")
+		panic("buffalo adapter SetContext: wrong parameter")
 	}
 	return &Buffalo{ctx: ctx}
 }
 
+// Redirect implements the method Adapter.Redirect.
 func (bu *Buffalo) Redirect() {
 	_ = bu.ctx.Redirect(http.StatusFound, config.Url(config.GetLoginUrl()))
 }
 
+// SetContentType implements the method Adapter.SetContentType.
 func (bu *Buffalo) SetContentType() {
 	bu.ctx.Response().Header().Set("Content-Type", bu.HTMLContentType())
 }
 
+// Write implements the method Adapter.Write.
 func (bu *Buffalo) Write(body []byte) {
 	bu.ctx.Response().WriteHeader(http.StatusOK)
 	_, _ = bu.ctx.Response().Write(body)
 }
 
+// GetCookie implements the method Adapter.GetCookie.
 func (bu *Buffalo) GetCookie() (string, error) {
 	return bu.ctx.Cookies().Get(bu.CookieKey())
 }
 
+// Path implements the method Adapter.Path.
 func (bu *Buffalo) Path() string {
 	return bu.ctx.Request().URL.Path
 }
 
+// Method implements the method Adapter.Method.
 func (bu *Buffalo) Method() string {
 	return bu.ctx.Request().Method
 }
 
+// FormParam implements the method Adapter.FormParam.
 func (bu *Buffalo) FormParam() neturl.Values {
 	_ = bu.ctx.Request().ParseMultipartForm(32 << 20)
 	return bu.ctx.Request().PostForm
 }
 
+// IsPjax implements the method Adapter.IsPjax.
 func (bu *Buffalo) IsPjax() bool {
 	return bu.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
 }

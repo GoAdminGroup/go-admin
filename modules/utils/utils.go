@@ -7,6 +7,7 @@ import (
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -119,4 +120,64 @@ func CopyMap(m map[string]string) map[string]string {
 		panic(err)
 	}
 	return cm
+}
+
+func CompareVersion(src, toCompare string) bool {
+	if toCompare == "" {
+		return false
+	}
+
+	exp, _ := regexp.Compile(`-(.*)`)
+	src = exp.ReplaceAllString(src, "")
+	toCompare = exp.ReplaceAllString(toCompare, "")
+
+	srcs := strings.Split(src, "v")
+	srcArr := strings.Split(srcs[1], ".")
+	op := ">"
+	srcs[0] = strings.TrimSpace(srcs[0])
+	if InArray([]string{">=", "<=", "=", ">", "<"}, srcs[0]) {
+		op = srcs[0]
+	}
+
+	toCompare = strings.Replace(toCompare, "v", "", -1)
+
+	if op == "=" {
+		return srcs[1] == toCompare
+	}
+
+	if srcs[1] == toCompare && (op == "<=" || op == ">=") {
+		return true
+	}
+
+	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
+	for i := 0; i < len(srcArr); i++ {
+		v, err := strconv.Atoi(srcArr[i])
+		if err != nil {
+			return false
+		}
+		vv, err := strconv.Atoi(toCompareArr[i])
+		if err != nil {
+			return false
+		}
+		switch op {
+		case ">", ">=":
+			if v < vv {
+				return true
+			} else if v > vv {
+				return false
+			} else {
+				continue
+			}
+		case "<", "<=":
+			if v > vv {
+				return true
+			} else if v < vv {
+				return false
+			} else {
+				continue
+			}
+		}
+	}
+
+	return false
 }
