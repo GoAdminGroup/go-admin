@@ -805,6 +805,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		fun types.PostFieldFilterFn
 	)
 
+	// If a key is a auto increment primary key, it can`t be insert or update.
 	if auto {
 		exceptString = []string{tb.PrimaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey}
 	} else {
