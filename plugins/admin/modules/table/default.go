@@ -717,7 +717,7 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 	}
 
 	_, err = tb.sql().Table(tb.Form.Table).
-		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
+		Where(tb.PrimaryKey.Name, "=", dataList.Get("goadmin_pk_"+tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// NOTE: some errors should be ignored.
@@ -837,7 +837,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
 					value[k] = fun(types.PostFieldModel{
-						ID:    dataList.Get(tb.PrimaryKey.Name),
+						ID:    dataList.Get("goadmin_pk_" + tb.PrimaryKey.Name),
 						Value: vv,
 					})
 				} else {
@@ -853,7 +853,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				fun := tb.Form.FieldList.FindByFieldName(k).PostFilterFn
 				if fun != nil {
 					fun(types.PostFieldModel{
-						ID:    dataList.Get(tb.PrimaryKey.Name),
+						ID:    dataList.Get("goadmin_pk_" + tb.PrimaryKey.Name),
 						Value: modules.RemoveBlankFromArray(v),
 					})
 				}

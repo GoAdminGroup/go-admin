@@ -185,7 +185,10 @@ type Panel struct {
 	Title       template.HTML
 	Description template.HTML
 	Content     template.HTML
-	Url         string
+
+	CSS template.CSS
+	JS  template.JS
+	Url string
 
 	// Whether to toggle the sidebar
 	MiniSidebar bool
