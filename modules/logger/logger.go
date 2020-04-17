@@ -30,14 +30,15 @@ var (
 		Caller:        "short",
 		Encoding:      "console",
 	}
+	defaultRotateCfg = RotateCfg{
+		MaxSize:    10,
+		MaxBackups: 5,
+		MaxAge:     30,
+		Compress:   false,
+	}
 
 	logger = &Logger{
-		rotate: RotateCfg{
-			MaxSize:    10,
-			MaxBackups: 5,
-			MaxAge:     30,
-			Compress:   false,
-		},
+		rotate:  defaultRotateCfg,
 		encoder: defaultEncoderCfg,
 		Level:   zapcore.InfoLevel,
 	}
