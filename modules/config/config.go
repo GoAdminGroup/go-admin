@@ -278,6 +278,7 @@ type Config struct {
 type Logger struct {
 	Encoder EncoderCfg `json:"encoder",yaml:"encoder",ini:"encoder"`
 	Rotate  RotateCfg  `json:"rotate",yaml:"rotate",ini:"rotate"`
+	Level   int8       `json:"level",yaml:"level",ini:"level"`
 }
 
 type EncoderCfg struct {
@@ -524,6 +525,7 @@ func (c *Config) ToMap() map[string]string {
 	m["logger_encoder_duration"] = c.Logger.Encoder.Duration
 	m["logger_encoder_caller"] = c.Logger.Encoder.Caller
 	m["logger_encoder_encoding"] = c.Logger.Encoder.Encoding
+	m["logger_level"] = strconv.Itoa(int(c.Logger.Level))
 
 	m["color_scheme"] = c.ColorScheme
 	m["session_life_time"] = strconv.Itoa(c.SessionLifeTime)
@@ -564,35 +566,39 @@ func (c *Config) Update(m map[string]string) error {
 
 	if c.InfoLogPath != m["info_log_path"] {
 		c.InfoLogPath = m["info_log_path"]
-		logger.SetInfoLogger(c.InfoLogPath, c.InfoLogOff)
 	}
 	if c.ErrorLogPath != m["error_log_path"] {
 		c.ErrorLogPath = m["error_log_path"]
-		logger.SetErrorLogger(c.ErrorLogPath, c.ErrorLogOff)
 	}
 	if c.AccessLogPath != m["access_log_path"] {
 		c.AccessLogPath = m["access_log_path"]
-		logger.SetAccessLogger(c.AccessLogPath, c.AccessLogOff)
 	}
+	c.SqlLog = utils.ParseBool(m["sql_log"])
 
 	c.Logger.Rotate.MaxSize, _ = strconv.Atoi(m["logger_rotate_max_size"])
 	c.Logger.Rotate.MaxBackups, _ = strconv.Atoi(m["logger_rotate_max_backups"])
 	c.Logger.Rotate.MaxAge, _ = strconv.Atoi(m["logger_rotate_max_age"])
 	c.Logger.Rotate.Compress = utils.ParseBool(m["logger_rotate_compress"])
 
-	c.Logger.Encoder.TimeKey = m["logger_encoder_time_key"]
-	c.Logger.Encoder.LevelKey = m["logger_encoder_level_key"]
-	c.Logger.Encoder.NameKey = m["logger_encoder_name_key"]
-	c.Logger.Encoder.CallerKey = m["logger_encoder_caller_key"]
-	c.Logger.Encoder.MessageKey = m["logger_encoder_message_key"]
-	c.Logger.Encoder.StacktraceKey = m["logger_encoder_stacktrace_key"]
-	c.Logger.Encoder.Level = m["logger_encoder_level"]
-	c.Logger.Encoder.Time = m["logger_encoder_time"]
-	c.Logger.Encoder.Duration = m["logger_encoder_duration"]
-	c.Logger.Encoder.Caller = m["logger_encoder_caller"]
 	c.Logger.Encoder.Encoding = m["logger_encoder_encoding"]
+	loggerLevel, _ := strconv.Atoi(m["logger_level"])
+	c.Logger.Level = int8(loggerLevel)
 
-	c.SqlLog = utils.ParseBool(m["sql_log"])
+	if c.Logger.Encoder.Encoding == "json" {
+		c.Logger.Encoder.TimeKey = m["logger_encoder_time_key"]
+		c.Logger.Encoder.LevelKey = m["logger_encoder_level_key"]
+		c.Logger.Encoder.NameKey = m["logger_encoder_name_key"]
+		c.Logger.Encoder.CallerKey = m["logger_encoder_caller_key"]
+		c.Logger.Encoder.MessageKey = m["logger_encoder_message_key"]
+		c.Logger.Encoder.StacktraceKey = m["logger_encoder_stacktrace_key"]
+		c.Logger.Encoder.Level = m["logger_encoder_level"]
+		c.Logger.Encoder.Time = m["logger_encoder_time"]
+		c.Logger.Encoder.Duration = m["logger_encoder_duration"]
+		c.Logger.Encoder.Caller = m["logger_encoder_caller"]
+	}
+
+	initLogger(*c)
+
 	if c.Theme == "adminlte" {
 		c.ColorScheme = m["color_scheme"]
 	}
@@ -732,6 +738,26 @@ func Set(cfg Config) *Config {
 		cfg.prefix = cfg.UrlPrefix
 	}
 
+	initLogger(cfg)
+
+	if cfg.SqlLog {
+		logger.OpenSQLLog()
+	}
+
+	if cfg.Debug {
+		declare.Do(func() {
+			fmt.Println(`GoAdmin is now running.
+Running in "debug" mode. Switch to "release" mode in production.`)
+			fmt.Println()
+		})
+	}
+
+	globalCfg = &cfg
+
+	return globalCfg
+}
+
+func initLogger(cfg Config) {
 	logger.InitWithConfig(logger.Config{
 		InfoLogOff:         cfg.InfoLogOff,
 		ErrorLogOff:        cfg.ErrorLogOff,
@@ -761,23 +787,8 @@ func Set(cfg Config) *Config {
 			Encoding:      cfg.Logger.Encoder.Encoding,
 		},
 		Debug: cfg.Debug,
+		Level: cfg.Logger.Level,
 	})
-
-	if cfg.SqlLog {
-		logger.OpenSQLLog()
-	}
-
-	if cfg.Debug {
-		declare.Do(func() {
-			fmt.Println(`GoAdmin is now running.
-Running in "debug" mode. Switch to "release" mode in production.`)
-			fmt.Println()
-		})
-	}
-
-	globalCfg = &cfg
-
-	return globalCfg
 }
 
 // AssertPrefix return the prefix of assert.

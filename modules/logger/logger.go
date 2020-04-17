@@ -14,7 +14,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"time"
 )
 
 var (
@@ -25,10 +24,10 @@ var (
 		CallerKey:     "caller",
 		MessageKey:    "msg",
 		StacktraceKey: "stacktrace",
-		Level:         "lowercaseLevelEncoder",
-		Time:          "epochTimeEncoder",
-		Duration:      "secondsDurationEncoder",
-		Caller:        "shortCallerEncoder",
+		Level:         "capitalColor",
+		Time:          "ISO8601",
+		Duration:      "seconds",
+		Caller:        "short",
 		Encoding:      "console",
 	}
 
@@ -40,6 +39,7 @@ var (
 			Compress:   false,
 		},
 		encoder: defaultEncoderCfg,
+		Level:   zapcore.InfoLevel,
 	}
 
 	infoLevelEnabler = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
@@ -47,11 +47,11 @@ var (
 	})
 
 	errorLevelEnabler = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl == zapcore.ErrorLevel
+		return lvl >= zapcore.ErrorLevel
 	})
 
 	accessLevelEnabler = zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl == zapcore.DebugLevel
+		return lvl == zapcore.WarnLevel
 	})
 )
 
@@ -79,6 +79,8 @@ type Logger struct {
 
 	rotate  RotateCfg
 	encoder EncoderCfg
+
+	Level zapcore.Level
 }
 
 type EncoderCfg struct {
@@ -104,27 +106,43 @@ type RotateCfg struct {
 
 func (l *Logger) Init() {
 	zapLogger := zap.New(zapcore.NewTee(
-		zapcore.NewCore(l.getEncoder(), l.getLogWriter(l.infoLogPath), infoLevelEnabler),
-		zapcore.NewCore(l.getEncoder(), l.getLogWriter(l.errorLogPath), errorLevelEnabler),
-		zapcore.NewCore(l.getEncoder(), l.getLogWriter(l.accessLogPath), accessLevelEnabler),
+		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.infoLogPath), infoLevelEnabler),
+		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.errorLogPath), errorLevelEnabler),
+		zapcore.NewCore(l.getEncoder(""), l.getLogWriter(l.accessLogPath), accessLevelEnabler),
 	), zap.AddCaller())
 	l.sugaredLogger = zapLogger.Sugar()
 	l.logger = zapLogger
 }
 
-func (l *Logger) getEncoder() zapcore.Encoder {
+func (l *Logger) getEncoder(levelKey string) zapcore.Encoder {
+
+	var (
+		timeEncoder     = new(zapcore.TimeEncoder)
+		durationEncoder = new(zapcore.DurationEncoder)
+		callerEncoder   = new(zapcore.CallerEncoder)
+		nameEncoder     = new(zapcore.NameEncoder)
+		levelEncoder    = new(zapcore.LevelEncoder)
+	)
+
+	_ = timeEncoder.UnmarshalText([]byte(l.encoder.Time))
+	_ = durationEncoder.UnmarshalText([]byte(l.encoder.Duration))
+	_ = callerEncoder.UnmarshalText([]byte(l.encoder.Caller))
+	_ = nameEncoder.UnmarshalText([]byte("full"))
+	_ = levelEncoder.UnmarshalText([]byte(l.encoder.Level))
+
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:        l.encoder.TimeKey,
-		LevelKey:       l.encoder.LevelKey,
+		LevelKey:       levelKey,
 		NameKey:        l.encoder.NameKey,
 		CallerKey:      l.encoder.CallerKey,
 		MessageKey:     l.encoder.MessageKey,
 		StacktraceKey:  l.encoder.StacktraceKey,
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    filterZapEncodeLevel(l.encoder.Level),
-		EncodeTime:     filterZapTimeEncoder(l.encoder.Time),
-		EncodeDuration: filterZapDurationEncoder(l.encoder.Duration),
-		EncodeCaller:   filterZapCallerEncoder(l.encoder.Caller),
+		EncodeLevel:    *levelEncoder,
+		EncodeTime:     *timeEncoder,
+		EncodeDuration: *durationEncoder,
+		EncodeCaller:   *callerEncoder,
+		EncodeName:     *nameEncoder,
 	}
 
 	return filterZapEncoder(l.encoder.Encoding, encoderConfig)
@@ -181,6 +199,8 @@ type Config struct {
 	Rotate RotateCfg
 	Encode EncoderCfg
 
+	Level int8
+
 	Debug bool
 }
 
@@ -196,6 +216,7 @@ func InitWithConfig(cfg Config) {
 	logger.debug = cfg.Debug
 	logger.SetRotate(cfg.Rotate)
 	logger.SetEncoder(cfg.Encode)
+	logger.Level = filterZapAtomicLevelByViper(cfg.Level)
 	logger.Init()
 }
 
@@ -230,42 +251,114 @@ func OpenSQLLog() {
 	logger.sqlLogOpen = true
 }
 
-// Error print the error message.
-func Error(err ...interface{}) {
-	if !logger.errorLogOff {
-		logger.sugaredLogger.Error(err...)
+// Debug print the debug message.
+func Debug(info ...interface{}) {
+	if !logger.infoLogOff {
+		if logger.Level >= zapcore.DebugLevel {
+			logger.sugaredLogger.Info(info...)
+		}
+	}
+}
+
+// Debugf print the debug message.
+func Debugf(template string, args ...interface{}) {
+	if !logger.infoLogOff {
+		if logger.Level >= zapcore.DebugLevel {
+			logger.sugaredLogger.Infof(template, args...)
+		}
 	}
 }
 
 // Info print the info message.
 func Info(info ...interface{}) {
 	if !logger.infoLogOff {
-		logger.sugaredLogger.Info(info...)
+		if logger.Level >= zapcore.InfoLevel {
+			logger.sugaredLogger.Info(info...)
+		}
+	}
+}
+
+// Info print the info message.
+func Infof(template string, args ...interface{}) {
+	if !logger.infoLogOff {
+		if logger.Level >= zapcore.InfoLevel {
+			logger.sugaredLogger.Infof(template, args...)
+		}
 	}
 }
 
 // Warn print the warning message.
 func Warn(info ...interface{}) {
 	if !logger.infoLogOff {
-		logger.sugaredLogger.Warn(info...)
+		if logger.Level >= zapcore.WarnLevel {
+			logger.sugaredLogger.Warn(info...)
+		}
+	}
+}
+
+// Warnf print the warning message.
+func Warnf(template string, args ...interface{}) {
+	if !logger.infoLogOff {
+		if logger.Level >= zapcore.WarnLevel {
+			logger.sugaredLogger.Warnf(template, args...)
+		}
+	}
+}
+
+// Error print the error message.
+func Error(err ...interface{}) {
+	if !logger.errorLogOff {
+		if logger.Level >= zapcore.ErrorLevel {
+			logger.sugaredLogger.Error(err...)
+		}
+	}
+}
+
+// Errorf print the error message.
+func Errorf(template string, args ...interface{}) {
+	if !logger.errorLogOff {
+		if logger.Level >= zapcore.ErrorLevel {
+			logger.sugaredLogger.Errorf(template, args...)
+		}
+	}
+}
+
+// Fatal print the fatal message.
+func Fatal(info ...interface{}) {
+	if !logger.errorLogOff {
+		if logger.Level >= zapcore.FatalLevel {
+			logger.sugaredLogger.Fatal(info...)
+		}
+	}
+}
+
+// Fatalf print the fatal message.
+func Fatalf(template string, args ...interface{}) {
+	if !logger.errorLogOff {
+		if logger.Level >= zapcore.FatalLevel {
+			logger.sugaredLogger.Fatalf(template, args...)
+		}
 	}
 }
 
 // Access print the access message.
 func Access(ctx *context.Context) {
 	if !logger.accessLogOff {
-		if logger.accessAssetsLogOff {
-			if filepath.Ext(ctx.Path()) == "" {
-				logger.sugaredLogger.Debug("[GoAdmin]",
+		if logger.Level >= zapcore.WarnLevel {
+			temp := "[GoAdmin] %s %s %s"
+			if logger.accessAssetsLogOff {
+				if filepath.Ext(ctx.Path()) == "" {
+					logger.sugaredLogger.Warnf(temp,
+						ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
+						ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+						ctx.Path())
+				}
+			} else {
+				logger.sugaredLogger.Warnf(temp,
 					ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 					ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 					ctx.Path())
 			}
-		} else {
-			logger.sugaredLogger.Debug("[GoAdmin]",
-				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-				ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-				ctx.Path())
 		}
 	}
 }
@@ -273,66 +366,8 @@ func Access(ctx *context.Context) {
 // LogSQL print the sql info message.
 func LogSQL(statement string, args []interface{}) {
 	if logger.sqlLogOpen && statement != "" {
-		logger.sugaredLogger.Info("[GoAdmin]", "statement", statement, "args", args)
-	}
-}
-
-// default ISO8601TimeEncoder
-func filterZapTimeEncoder(timeEncoder string) func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-	switch timeEncoder {
-	default:
-		return zapcore.ISO8601TimeEncoder
-	case "ISO8601TimeEncoder":
-		return zapcore.ISO8601TimeEncoder
-	case "epochMillisTimeEncoder":
-		return zapcore.EpochMillisTimeEncoder
-	case "epochNanosTimeEncoder":
-		return zapcore.EpochNanosTimeEncoder
-	case "epochTimeEncoders":
-		return zapcore.EpochTimeEncoder
-	}
-}
-
-// default SecondsDurationEncoder
-func filterZapDurationEncoder(encodeDuration string) func(d time.Duration, enc zapcore.PrimitiveArrayEncoder) {
-	switch encodeDuration {
-	default:
-		return zapcore.SecondsDurationEncoder
-	case "secondsDurationEncoder":
-		return zapcore.SecondsDurationEncoder
-	case "nanosDurationEncoder":
-		return zapcore.NanosDurationEncoder
-	case "stringDurationEncoder":
-		return zapcore.StringDurationEncoder
-	}
-}
-
-// default FullCallerEncoder
-func filterZapCallerEncoder(encodeCaller string) func(caller zapcore.EntryCaller, enc zapcore.PrimitiveArrayEncoder) {
-	switch encodeCaller {
-	default:
-		return zapcore.FullCallerEncoder
-	case "fullCallerEncoder":
-		return zapcore.FullCallerEncoder
-	case "shortCallerEncoder":
-		return zapcore.ShortCallerEncoder
-	}
-
-}
-
-// default CapitalLevelEncoder
-func filterZapEncodeLevel(encodeLevel string) func(l zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
-	switch encodeLevel {
-	default:
-		return zapcore.CapitalLevelEncoder
-	case "capitalLevelEncoder":
-		return zapcore.CapitalLevelEncoder
-	case "capitalColorLevelEncoder":
-		return zapcore.CapitalColorLevelEncoder
-	case "lowercaseLevelEncoder":
-		return zapcore.LowercaseLevelEncoder
-	case "lowercaseColorLevelEncoder":
-		return zapcore.LowercaseColorLevelEncoder
+		//logger.sugaredLogger.Info("[GoAdmin] ", " statement ", statement, " args ", args)
+		logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
 	}
 }
 
@@ -349,7 +384,7 @@ func filterZapEncoder(encoding string, encoderConfig zapcore.EncoderConfig) zapc
 	return encoder
 }
 
-func filterZapAtomicLevelByViper(level int) zapcore.Level {
+func filterZapAtomicLevelByViper(level int8) zapcore.Level {
 	var atomViper zapcore.Level
 	switch level {
 	default:

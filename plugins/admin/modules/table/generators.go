@@ -1061,45 +1061,97 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
-
 	formList.AddField(lgWithConfigScore("sql log on"), "sql_log", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
+	formList.AddField(lgWithConfigScore("log level"), "logger_level", db.Varchar, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "Debug", Value: "-1"},
+			{Text: "Info", Value: "0"},
+			{Text: "Warn", Value: "1"},
+			{Text: "Error", Value: "2"},
+		}).FieldDisplay(defaultFilterFn("0"))
 
 	formList.AddField(lgWithConfigScore("logger rotate max size"), "logger_rotate_max_size", db.Varchar, form.Number).
-		FieldDivider(lgWithConfigScore("logger rotate"))
-	formList.AddField(lgWithConfigScore("logger rotate max backups"), "logger_rotate_max_backups", db.Varchar, form.Number)
-	formList.AddField(lgWithConfigScore("logger rotate max age"), "logger_rotate_max_age", db.Varchar, form.Number)
+		FieldDivider(lgWithConfigScore("logger rotate")).FieldDisplay(defaultFilterFn("10", "0"))
+	formList.AddField(lgWithConfigScore("logger rotate max backups"), "logger_rotate_max_backups", db.Varchar, form.Number).
+		FieldDisplay(defaultFilterFn("5", "0"))
+	formList.AddField(lgWithConfigScore("logger rotate max age"), "logger_rotate_max_age", db.Varchar, form.Number).
+		FieldDisplay(defaultFilterFn("30", "0"))
 	formList.AddField(lgWithConfigScore("logger rotate compress"), "logger_rotate_compress", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
-		})
+		}).FieldDisplay(defaultFilterFn("false"))
 
-	formList.AddField(lgWithConfigScore("logger rotate encoder time key"), "logger_encoder_time_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder level key"), "logger_encoder_level_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder name key"), "logger_encoder_name_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder caller key"), "logger_encoder_caller_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder message key"), "logger_encoder_message_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder stacktrace key"), "logger_encoder_stacktrace_key", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder level"), "logger_encoder_level", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder duration"), "logger_encoder_duration", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder caller"), "logger_encoder_caller", db.Varchar, form.Text)
-	formList.AddField(lgWithConfigScore("logger rotate encoder encoding"), "logger_encoder_encoding", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("logger rotate encoder encoding"), "logger_encoder_encoding", db.Varchar,
+		form.SelectSingle).
+		FieldDivider(lgWithConfigScore("logger rotate encoder")).
+		FieldOptions(types.FieldOptions{
+			{Text: "JSON", Value: "json"},
+			{Text: "Console", Value: "console"},
+		}).FieldDisplay(defaultFilterFn("console")).
+		FieldOnChooseHide("Console",
+			"logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_caller_key",
+			"logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_name_key")
+
+	formList.AddField(lgWithConfigScore("logger rotate encoder time key"), "logger_encoder_time_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("ts"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder level key"), "logger_encoder_level_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("level"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder name key"), "logger_encoder_name_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("logger"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder caller key"), "logger_encoder_caller_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("caller"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder message key"), "logger_encoder_message_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("msg"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder stacktrace key"), "logger_encoder_stacktrace_key", db.Varchar, form.Text).
+		FieldDisplay(defaultFilterFn("stacktrace"))
+
+	formList.AddField(lgWithConfigScore("logger rotate encoder level"), "logger_encoder_level", db.Varchar,
+		form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "Capital", Value: "capital"},
+			{Text: "CapitalColor", Value: "capitalColor"},
+			{Text: "Lowercase", Value: "lowercase"},
+			{Text: "LowercaseColor", Value: "color"},
+		}).FieldDisplay(defaultFilterFn("CapitalColor"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar,
+		form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "ISO8601", Value: "iso8601"},
+			{Text: "Millis", Value: "millis"},
+			{Text: "Nanos", Value: "nanos"},
+			{Text: "RFC3339", Value: "rfc3339"},
+			{Text: "RFC3339 Nano", Value: "rfc3339nano"},
+		}).FieldDisplay(defaultFilterFn("iso8601"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder duration"), "logger_encoder_duration", db.Varchar,
+		form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "Seconds", Value: "string"},
+			{Text: "Nanos", Value: "nanos"},
+			{Text: "Ms", Value: "ms"},
+		}).FieldDisplay(defaultFilterFn("string"))
+	formList.AddField(lgWithConfigScore("logger rotate encoder caller"), "logger_encoder_caller", db.Varchar,
+		form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "Full", Value: "full"},
+			{Text: "Short", Value: "short"},
+		}).FieldDisplay(defaultFilterFn("full"))
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
 		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation",
 		"file_upload_engine", "extra").
-		AddGroup("access_log_off", "info_log_off", "error_log_off", "info_log_path", "error_log_path",
-			"access_log_path", "sql_log", "logger_rotate_max_size", "logger_rotate_max_backups",
+		AddGroup("access_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
+			"info_log_path", "error_log_path",
+			"access_log_path", "logger_rotate_max_size", "logger_rotate_max_backups",
 			"logger_rotate_max_age", "logger_rotate_compress",
-			"logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_name_key", "logger_encoder_caller_key",
-			"logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_level", "logger_encoder_time",
-			"logger_encoder_duration", "logger_encoder_caller", "logger_encoder_encoding").
+			"logger_encoder_encoding", "logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_name_key",
+			"logger_encoder_caller_key", "logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_level",
+			"logger_encoder_time", "logger_encoder_duration", "logger_encoder_caller").
 		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_Html", "footer_info", "login_logo")).
 		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
 
@@ -1158,6 +1210,21 @@ func label() types.LabelAttribute {
 
 func lg(v string) string {
 	return language.Get(v)
+}
+
+func defaultFilterFn(val string, def ...string) types.FieldFilterFn {
+	return func(value types.FieldModel) interface{} {
+		if len(def) > 0 {
+			if value.Value == def[0] {
+				return val
+			}
+		} else {
+			if value.Value == "" {
+				return val
+			}
+		}
+		return value.Value
+	}
 }
 
 func lgWithConfigScore(v string, score ...string) string {
