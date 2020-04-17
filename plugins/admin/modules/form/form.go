@@ -12,6 +12,7 @@ const (
 	MethodKey   = "__go_admin_method_"
 
 	NoAnimationKey = "__go_admin_no_animation_"
+	PKPrefix       = "goadmin_pk_"
 )
 
 // Values maps a string key to a list of values.
@@ -62,6 +63,12 @@ func (f Values) Delete(key string) {
 	delete(f, key)
 }
 
+// GetPk get the primary key value.
+func (f Values) GetPK(pk string) string {
+	return f.Get(PKPrefix + pk)
+}
+
+// ToMap turn the values to a map[string]string type.
 func (f Values) ToMap() map[string]string {
 	var m = make(map[string]string)
 	for key, v := range f {
@@ -72,14 +79,17 @@ func (f Values) ToMap() map[string]string {
 	return m
 }
 
+// IsUpdatePost check the param if is from an update post request type or not.
 func (f Values) IsUpdatePost() bool {
 	return f.Get(PostTypeKey) == "0"
 }
 
+// IsInsertPost check the param if is from an insert post request type or not.
 func (f Values) IsInsertPost() bool {
 	return f.Get(PostTypeKey) == "1"
 }
 
+// PostError get the post result.
 func (f Values) PostError() error {
 	msg := f.Get(PostResultKey)
 	if msg == "" {
@@ -88,16 +98,19 @@ func (f Values) PostError() error {
 	return errors.New(msg)
 }
 
+// IsSingleUpdatePost check the param if from an single update post request type or not.
 func (f Values) IsSingleUpdatePost() bool {
 	return f.Get(PostIsSingleUpdateKey) == "1"
 }
 
+// RemoveRemark removes the PostType and IsSingleUpdate flag parameters.
 func (f Values) RemoveRemark() Values {
 	f.Delete(PostTypeKey)
 	f.Delete(PostIsSingleUpdateKey)
 	return f
 }
 
+// RemoveSysRemark removes all framework post flag parameters.
 func (f Values) RemoveSysRemark() Values {
 	f.Delete(PostTypeKey)
 	f.Delete(PostIsSingleUpdateKey)
