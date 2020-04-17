@@ -890,6 +890,12 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 	return i
 }
 
+func (i *InfoPanel) FieldImage(width, height string) {
+	i.FieldList[i.curFieldListIndex].Display = func(value FieldModel) interface{} {
+		return template.HTML(`<image src="` + value.Value + `" width="` + width + `" height="` + height + `" />`)
+	}
+}
+
 // Field attribute setting functions
 // ====================================================
 
