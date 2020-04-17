@@ -638,9 +638,9 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 
 	if len(tb.Form.TabGroups) > 0 {
 		if custom {
-			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res)
+			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res)
 		} else {
-			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(id, columns, res, tb.sql)
+			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
 		}
 		return FormInfo{
 			FieldList:         tb.Form.FieldList,
@@ -653,9 +653,9 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 
 	var fieldList types.FormFields
 	if custom {
-		fieldList = tb.Form.FieldsWithValue(id, columns, res)
+		fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res)
 	} else {
-		fieldList = tb.Form.FieldsWithValue(id, columns, res, tb.sql)
+		fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
 	}
 
 	return FormInfo{
@@ -717,7 +717,7 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 	}
 
 	_, err = tb.sql().Table(tb.Form.Table).
-		Where(tb.PrimaryKey.Name, "=", dataList.GetPK(tb.PrimaryKey.Name)).
+		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList))
 
 	// NOTE: some errors should be ignored.
@@ -837,7 +837,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
 					value[k] = fun(types.PostFieldModel{
-						ID:    dataList.GetPK(tb.PrimaryKey.Name),
+						ID:    dataList.Get(tb.PrimaryKey.Name),
 						Value: vv,
 					})
 				} else {
@@ -853,7 +853,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				fun := tb.Form.FieldList.FindByFieldName(k).PostFilterFn
 				if fun != nil {
 					fun(types.PostFieldModel{
-						ID:    dataList.GetPK(tb.PrimaryKey.Name),
+						ID:    dataList.Get(tb.PrimaryKey.Name),
 						Value: modules.RemoveBlankFromArray(v),
 					})
 				}

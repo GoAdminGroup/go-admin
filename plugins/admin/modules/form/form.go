@@ -1,6 +1,8 @@
 package form
 
-import "errors"
+import (
+	"errors"
+)
 
 const (
 	PostTypeKey           = "__go_admin_post_type"
@@ -12,7 +14,6 @@ const (
 	MethodKey   = "__go_admin_method_"
 
 	NoAnimationKey = "__go_admin_no_animation_"
-	PKPrefix       = "goadmin_pk_"
 )
 
 // Values maps a string key to a list of values.
@@ -61,11 +62,6 @@ func (f Values) Has(key ...string) bool {
 // Delete deletes the values associated with key.
 func (f Values) Delete(key string) {
 	delete(f, key)
-}
-
-// GetPk get the primary key value.
-func (f Values) GetPK(pk string) string {
-	return f.Get(PKPrefix + pk)
 }
 
 // ToMap turn the values to a map[string]string type.

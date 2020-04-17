@@ -1022,10 +1022,11 @@ func (f *FormPanel) SetInsertFn(fn FormPostFn) *FormPanel {
 	return f
 }
 
-func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) ([]FormFields, []string) {
+func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) ([]FormFields, []string) {
 	var (
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
+		hasPK         = false
 	)
 
 	if len(f.TabGroups) > 0 {
@@ -1034,6 +1035,9 @@ func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[str
 			for j := 0; j < len(value); j++ {
 				for _, field := range f.FieldList {
 					if value[j] == field.Field {
+						if field.Field == pk {
+							hasPK = true
+						}
 						rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 							db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 						if len(sql) > 0 {
@@ -1051,6 +1055,15 @@ func (f *FormPanel) GroupFieldWithValue(id string, columns []string, res map[str
 
 			groupFormList = append(groupFormList, list.FillCustomContent())
 			groupHeaders = append(groupHeaders, f.TabHeaders[key])
+		}
+
+		if len(groupFormList) > 0 && !hasPK {
+			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(FormField{
+				Head:  pk,
+				Field: pk,
+				Value: template.HTML(id),
+				Hide:  true,
+			})
 		}
 	}
 
@@ -1088,8 +1101,9 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 	return groupFormList, groupHeaders
 }
 
-func (f *FormPanel) FieldsWithValue(id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) FormFields {
+func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) FormFields {
 	formList := f.FieldList.Copy()
+	hasPK := false
 	for key, field := range formList {
 		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
@@ -1102,6 +1116,19 @@ func (f *FormPanel) FieldsWithValue(id string, columns []string, res map[string]
 		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
 			formList[key].Value2 = config.GetStore().URL(string(formList[key].Value))
 		}
+
+		if field.Field == pk {
+			hasPK = true
+		}
+	}
+	if !hasPK {
+		formList = formList.Add(FormField{
+			Head:     pk,
+			Field:    pk,
+			Value:    template.HTML(id),
+			FormType: form2.Default,
+			Hide:     true,
+		})
 	}
 	return formList
 }
@@ -1162,4 +1189,8 @@ func (f FormFields) FillCustomContent() FormFields {
 		}
 	}
 	return f
+}
+
+func (f FormFields) Add(field FormField) FormFields {
+	return append(f, field)
 }
