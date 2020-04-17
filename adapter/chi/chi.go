@@ -43,6 +43,9 @@ func (ch *Chi) Use(app interface{}, plugs []plugins.Plugin) error {
 	return ch.GetUse(app, plugs, ch)
 }
 
+func (ch *Chi) DisableLog()                {}
+func (ch *Chi) Static(prefix, path string) {}
+
 // Content implements the method Adapter.Content.
 func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	ch.GetContent(ctx, getPanelFn, ch, btns)

@@ -43,6 +43,9 @@ func (is *Iris) Use(app interface{}, plugs []plugins.Plugin) error {
 	return is.GetUse(app, plugs, is)
 }
 
+func (is *Iris) DisableLog()                {}
+func (is *Iris) Static(prefix, path string) {}
+
 // Content implements the method Adapter.Content.
 func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
 	is.GetContent(ctx, getPanelFn, is, btns)

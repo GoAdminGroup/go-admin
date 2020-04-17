@@ -123,6 +123,9 @@ type FormField struct {
 
 	Join Join `json:"-"`
 
+	Divider      bool   `json:"divider"`
+	DividerTitle string `json:"divider_title"`
+
 	HelpMsg template.HTML `json:"help_msg"`
 
 	OptionExt    template.JS  `json:"option_ext"`
@@ -436,6 +439,14 @@ func (f *FormPanel) FieldPlaceholder(placeholder string) *FormPanel {
 
 func (f *FormPanel) FieldWidth(width int) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Width = width
+	return f
+}
+
+func (f *FormPanel) FieldDivider(title ...string) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Divider = true
+	if len(title) > 0 {
+		f.FieldList[f.curFieldListIndex].DividerTitle = title[0]
+	}
 	return f
 }
 

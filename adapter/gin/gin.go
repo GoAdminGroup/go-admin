@@ -57,6 +57,9 @@ func Content(handler HandlerFunc) gin.HandlerFunc {
 	}
 }
 
+func (gins *Gin) DisableLog()                {}
+func (gins *Gin) Static(prefix, path string) {}
+
 // SetApp implements the method Adapter.SetApp.
 func (gins *Gin) SetApp(app interface{}) error {
 	var (

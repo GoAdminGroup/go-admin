@@ -101,6 +101,13 @@ func ParseBool(s string) bool {
 	return b1
 }
 
+func SetDefault(value, condition, def string) string {
+	if value == condition {
+		return def
+	}
+	return value
+}
+
 func IsJSON(str string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(str), &js) == nil
