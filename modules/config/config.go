@@ -508,6 +508,7 @@ func (c *Config) ToMap() map[string]string {
 	m["access_log_off"] = strconv.FormatBool(c.AccessLogOff)
 	m["info_log_off"] = strconv.FormatBool(c.InfoLogOff)
 	m["error_log_off"] = strconv.FormatBool(c.ErrorLogOff)
+	m["access_assets_log_off"] = strconv.FormatBool(c.AccessAssetsLogOff)
 
 	m["logger_rotate_max_size"] = strconv.Itoa(c.Logger.Rotate.MaxSize)
 	m["logger_rotate_max_backups"] = strconv.Itoa(c.Logger.Rotate.MaxBackups)
@@ -563,6 +564,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.AccessLogOff = utils.ParseBool(m["access_log_off"])
 	c.InfoLogOff = utils.ParseBool(m["info_log_off"])
 	c.ErrorLogOff = utils.ParseBool(m["error_log_off"])
+	c.AccessAssetsLogOff = utils.ParseBool(m["access_assets_log_off"])
 
 	if c.InfoLogPath != m["info_log_path"] {
 		c.InfoLogPath = m["info_log_path"]

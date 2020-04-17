@@ -1061,6 +1061,11 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
+	formList.AddField(lgWithConfigScore("access assets log off"), "access_assets_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("sql log on"), "sql_log", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
@@ -1145,7 +1150,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
 		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation",
 		"file_upload_engine", "extra").
-		AddGroup("access_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
+		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
 			"access_log_path", "logger_rotate_max_size", "logger_rotate_max_backups",
 			"logger_rotate_max_age", "logger_rotate_compress",

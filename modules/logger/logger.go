@@ -254,7 +254,7 @@ func OpenSQLLog() {
 // Debug print the debug message.
 func Debug(info ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.DebugLevel {
+		if logger.Level <= zapcore.DebugLevel {
 			logger.sugaredLogger.Info(info...)
 		}
 	}
@@ -263,7 +263,7 @@ func Debug(info ...interface{}) {
 // Debugf print the debug message.
 func Debugf(template string, args ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.DebugLevel {
+		if logger.Level <= zapcore.DebugLevel {
 			logger.sugaredLogger.Infof(template, args...)
 		}
 	}
@@ -272,7 +272,7 @@ func Debugf(template string, args ...interface{}) {
 // Info print the info message.
 func Info(info ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.InfoLevel {
+		if logger.Level <= zapcore.InfoLevel {
 			logger.sugaredLogger.Info(info...)
 		}
 	}
@@ -281,7 +281,7 @@ func Info(info ...interface{}) {
 // Info print the info message.
 func Infof(template string, args ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.InfoLevel {
+		if logger.Level <= zapcore.InfoLevel {
 			logger.sugaredLogger.Infof(template, args...)
 		}
 	}
@@ -290,7 +290,7 @@ func Infof(template string, args ...interface{}) {
 // Warn print the warning message.
 func Warn(info ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.WarnLevel {
+		if logger.Level <= zapcore.WarnLevel {
 			logger.sugaredLogger.Warn(info...)
 		}
 	}
@@ -299,7 +299,7 @@ func Warn(info ...interface{}) {
 // Warnf print the warning message.
 func Warnf(template string, args ...interface{}) {
 	if !logger.infoLogOff {
-		if logger.Level >= zapcore.WarnLevel {
+		if logger.Level <= zapcore.WarnLevel {
 			logger.sugaredLogger.Warnf(template, args...)
 		}
 	}
@@ -308,7 +308,7 @@ func Warnf(template string, args ...interface{}) {
 // Error print the error message.
 func Error(err ...interface{}) {
 	if !logger.errorLogOff {
-		if logger.Level >= zapcore.ErrorLevel {
+		if logger.Level <= zapcore.ErrorLevel {
 			logger.sugaredLogger.Error(err...)
 		}
 	}
@@ -317,7 +317,7 @@ func Error(err ...interface{}) {
 // Errorf print the error message.
 func Errorf(template string, args ...interface{}) {
 	if !logger.errorLogOff {
-		if logger.Level >= zapcore.ErrorLevel {
+		if logger.Level <= zapcore.ErrorLevel {
 			logger.sugaredLogger.Errorf(template, args...)
 		}
 	}
@@ -326,7 +326,7 @@ func Errorf(template string, args ...interface{}) {
 // Fatal print the fatal message.
 func Fatal(info ...interface{}) {
 	if !logger.errorLogOff {
-		if logger.Level >= zapcore.FatalLevel {
+		if logger.Level <= zapcore.ErrorLevel {
 			logger.sugaredLogger.Fatal(info...)
 		}
 	}
@@ -335,7 +335,7 @@ func Fatal(info ...interface{}) {
 // Fatalf print the fatal message.
 func Fatalf(template string, args ...interface{}) {
 	if !logger.errorLogOff {
-		if logger.Level >= zapcore.FatalLevel {
+		if logger.Level <= zapcore.ErrorLevel {
 			logger.sugaredLogger.Fatalf(template, args...)
 		}
 	}
@@ -344,7 +344,7 @@ func Fatalf(template string, args ...interface{}) {
 // Access print the access message.
 func Access(ctx *context.Context) {
 	if !logger.accessLogOff {
-		if logger.Level >= zapcore.WarnLevel {
+		if logger.Level <= zapcore.InfoLevel {
 			temp := "[GoAdmin] %s %s %s"
 			if logger.accessAssetsLogOff {
 				if filepath.Ext(ctx.Path()) == "" {
@@ -365,9 +365,12 @@ func Access(ctx *context.Context) {
 
 // LogSQL print the sql info message.
 func LogSQL(statement string, args []interface{}) {
-	if logger.sqlLogOpen && statement != "" {
-		//logger.sugaredLogger.Info("[GoAdmin] ", " statement ", statement, " args ", args)
-		logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
+	if !logger.infoLogOff {
+		if logger.sqlLogOpen && statement != "" {
+			if logger.Level <= zapcore.InfoLevel {
+				logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
+			}
+		}
 	}
 }
 
