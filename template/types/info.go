@@ -890,12 +890,6 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 	return i
 }
 
-func (i *InfoPanel) FieldImage(width, height string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = func(value FieldModel) interface{} {
-		return template.HTML(`<image src="` + value.Value + `" width="` + width + `" height="` + height + `" />`)
-	}
-	return i
-}
 
 // Field attribute setting functions
 // ====================================================
@@ -912,6 +906,11 @@ type FieldLabelParam struct {
 
 func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Display = displayFnGens["label"].Get(args)
+	return i
+}
+
+func (i *InfoPanel) FieldImage(width, height string, prefix ...interface{}) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["image"].Get(width, height, prefix)
 	return i
 }
 
