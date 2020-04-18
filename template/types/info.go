@@ -898,6 +898,16 @@ func (i *InfoPanel) FieldDisplay(filter FieldFilterFn) *InfoPanel {
 	return i
 }
 
+type FieldLabelParam struct {
+	Color template.HTML
+	Type  string
+}
+
+func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["label"].Get(args)
+	return i
+}
+
 func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Width = width
 	return i
