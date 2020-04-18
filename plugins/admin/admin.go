@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	_ "github.com/GoAdminGroup/go-admin/template/types/display"
 )
 
 // Admin is a GoAdmin plugin.

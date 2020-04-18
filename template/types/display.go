@@ -12,6 +12,19 @@ type FieldDisplay struct {
 	DisplayProcessChains DisplayProcessFnChains
 }
 
+type DisplayFnGenerator interface {
+	Get(args ...interface{}) FieldFilterFn
+}
+
+var displayFnGens = make(map[string]DisplayFnGenerator)
+
+func RegisterDisplayFnGenerator(key string, gen DisplayFnGenerator) {
+	if _, ok := displayFnGens[key]; ok {
+		panic("display function generator has been registered")
+	}
+	displayFnGens[key] = gen
+}
+
 func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	val := f.Display(value)
 
