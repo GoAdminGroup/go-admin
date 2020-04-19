@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gobuffalo/buffalo/runtime"
 	"html/template"
+	"os"
 )
 
 func (h *Handler) SystemInfo(ctx *context.Context) {
@@ -56,6 +57,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application run") + "</b>").
 		SetBody(srow(lg("golang_version"), runtime.Version) +
+			srow(lg("process_id"), itos(os.Getpid())) +
 			srow(lg("server_uptime"), app.Uptime) +
 			srow(lg("current_goroutine"), itos(app.NumGoroutine)) +
 			`<div><hr></div>` +

@@ -210,6 +210,7 @@ var cn = LangSet{
 	"system.application run": "应用运行信息",
 	"system.system":          "系统信息",
 
+	"system.process_id":                           "进程ID",
 	"system.golang_version":                       "Golang版本",
 	"system.server_uptime":                        "服务运行时间",
 	"system.current_goroutine":                    "当前 Goroutines 数量",
