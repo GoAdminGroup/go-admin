@@ -32,7 +32,7 @@ func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
 }
 
 func (jump *JumpAction) GetCallbacks() context.Node {
-	return context.Node{}
+	return context.Node{Path: jump.Url, Method: "GET"}
 }
 
 func (jump *JumpAction) BtnAttribute() template.HTML {
