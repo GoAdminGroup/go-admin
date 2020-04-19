@@ -156,6 +156,14 @@ var en = LangSet{
 	"config.lowercase":      "Lowercase",
 	"config.lowercasecolor": "Lowercase with color",
 
+	"config.seconds":     "Seconds",
+	"config.nanosecond":  "Nanosecond",
+	"config.microsecond": "Microsecond",
+	"config.millisecond": "Millisecond",
+
+	"config.full path":  "Full path",
+	"config.short path": "Short path",
+
 	"config.do not modify when you have not set up all assets": "Do not modify when you have not set up all assets",
 	"config.it will work when theme is adminlte":               "It will work when theme is adminlte",
 

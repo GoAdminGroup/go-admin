@@ -188,6 +188,14 @@ var cn = LangSet{
 	"config.lowercase":      "小写",
 	"config.lowercasecolor": "小写带颜色",
 
+	"config.seconds":     "秒",
+	"config.nanosecond":  "纳秒",
+	"config.microsecond": "微秒",
+	"config.millisecond": "毫秒",
+
+	"config.full path":  "完整路径",
+	"config.short path": "简短路径",
+
 	"config.do not modify when you have not set up all assets": "不要修改，当你还没有设置好所有资源文件的时候",
 	"config.it will work when theme is adminlte":               "当主题为adminlte时生效",
 	"config.must bigger than 900 seconds":                      "必须大于900秒",

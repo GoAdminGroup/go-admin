@@ -1164,24 +1164,24 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar,
 		form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "ISO8601", Value: "iso8601"},
-			{Text: "Millis", Value: "millis"},
-			{Text: "Nanos", Value: "nanos"},
-			{Text: "RFC3339", Value: "rfc3339"},
-			{Text: "RFC3339 Nano", Value: "rfc3339nano"},
+			{Text: "ISO8601(2006-01-02T15:04:05.000Z0700)", Value: "iso8601"},
+			{Text: lgWithConfigScore("millisecond"), Value: "millis"},
+			{Text: lgWithConfigScore("nanosecond"), Value: "nanos"},
+			{Text: "RFC3339(2006-01-02T15:04:05Z07:00)", Value: "rfc3339"},
+			{Text: "RFC3339 Nano(2006-01-02T15:04:05.999999999Z07:00)", Value: "rfc3339nano"},
 		}).FieldDisplay(defaultFilterFn("iso8601"))
 	formList.AddField(lgWithConfigScore("logger rotate encoder duration"), "logger_encoder_duration", db.Varchar,
 		form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "Seconds", Value: "string"},
-			{Text: "Nanos", Value: "nanos"},
-			{Text: "Ms", Value: "ms"},
+			{Text: lgWithConfigScore("seconds"), Value: "string"},
+			{Text: lgWithConfigScore("nanosecond"), Value: "nanos"},
+			{Text: lgWithConfigScore("microsecond"), Value: "ms"},
 		}).FieldDisplay(defaultFilterFn("string"))
 	formList.AddField(lgWithConfigScore("logger rotate encoder caller"), "logger_encoder_caller", db.Varchar,
 		form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "Full", Value: "full"},
-			{Text: "Short", Value: "short"},
+			{Text: lgWithConfigScore("full path"), Value: "full"},
+			{Text: lgWithConfigScore("short path"), Value: "short"},
 		}).FieldDisplay(defaultFilterFn("full"))
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
