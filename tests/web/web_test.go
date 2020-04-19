@@ -61,8 +61,7 @@ const (
 	updateNameInput         = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/div/div[2]/div/form/div/div[1]/div[1]/input`
 	updateNameSaveBtn       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/div/div[2]/div/form/div/div[1]/div[2]/button[1]`
 	updateGenderBtn         = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[4]/div/div/span[1]`
-	opActionDropDown        = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/a`
-	detailBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[1]/a`
+	detailBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/a`
 
 	// Form Page
 
@@ -636,7 +635,6 @@ func testPermission(page *Page) {
 	page.ClickS(page.FindByButton("login"))
 	page.NavigateTo(url("/info/user"))
 	page.NoContain("New")
-	page.Click(opActionDropDown)
 	page.Click(detailBtn)
 	page.NoContain("Edit")
 }
