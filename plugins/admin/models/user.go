@@ -361,17 +361,12 @@ func (t UserModel) Update(username, password, name, avatar string) (int64, error
 	fieldValues := dialect.H{
 		"username":   username,
 		"name":       name,
+		"avatar":     avatar,
 		"updated_at": time.Now().Format("2006-01-02 15:04:05"),
-	}
-
-	if avatar != "" {
-		fieldValues["avatar"] = avatar
-		t.Avatar = avatar
 	}
 
 	if password != "" {
 		fieldValues["password"] = password
-		t.Avatar = avatar
 	}
 
 	return t.WithTx(t.Tx).Table(t.TableName).
