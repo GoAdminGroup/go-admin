@@ -85,11 +85,42 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		})).
 		GetContent()
 
-	col1 := aCol().SetSize(size).SetContent(box1 + box2).GetContent()
-
 	app := system.GetAppStatus()
 
 	box3 := aBox().
+		WithHeadBorder().
+		SetHeader("<b>" + lg("application run") + "</b>").
+		SetBody(stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("current_heap_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapAlloc)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapSys)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_idle")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapIdle)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_in_use")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapInuse)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_released")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapReleased)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_objects")},
+				"value": types.InfoItem{Content: itos(app.HeapObjects)},
+			},
+		})).
+		GetContent()
+
+	col1 := aCol().SetSize(size).SetContent(box1 + box2 + box3).GetContent()
+
+	box4 := aBox().
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application run") + "</b>").
 		SetBody(stripedTable([]map[string]types.InfoItem{
@@ -118,38 +149,13 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"value": types.InfoItem{Content: itos(app.MemSys)},
 			}, {
 				"key":   types.InfoItem{Content: lg("pointer_lookup_times")},
-				"value": types.InfoItem{Content: template.HTML(app.Lookups)},
+				"value": types.InfoItem{Content: itos(app.Lookups)},
 			}, {
 				"key":   types.InfoItem{Content: lg("memory_allocate_times")},
 				"value": types.InfoItem{Content: itos(app.MemMallocs)},
 			}, {
 				"key":   types.InfoItem{Content: lg("memory_free_times")},
-				"value": types.InfoItem{Content: template.HTML(app.MemFrees)},
-			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("current_heap_usage")},
-				"value": types.InfoItem{Content: template.HTML(app.HeapAlloc)},
-			},
-			{
-				"key":   types.InfoItem{Content: lg("heap_memory_obtained")},
-				"value": types.InfoItem{Content: template.HTML(app.HeapSys)},
-			},
-			{
-				"key":   types.InfoItem{Content: lg("heap_memory_idle")},
-				"value": types.InfoItem{Content: template.HTML(app.HeapIdle)},
-			},
-			{
-				"key":   types.InfoItem{Content: lg("heap_memory_in_use")},
-				"value": types.InfoItem{Content: template.HTML(app.HeapInuse)},
-			},
-			{
-				"key":   types.InfoItem{Content: lg("heap_memory_released")},
-				"value": types.InfoItem{Content: template.HTML(app.HeapReleased)},
-			},
-			{
-				"key":   types.InfoItem{Content: lg("heap_objects")},
-				"value": types.InfoItem{Content: itos(app.HeapObjects)},
+				"value": types.InfoItem{Content: itos(app.MemFrees)},
 			},
 		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
 			{
@@ -200,7 +206,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		})).
 		GetContent()
 
-	col2 := aCol().SetSize(size).SetContent(box3).GetContent()
+	col2 := aCol().SetSize(size).SetContent(box4).GetContent()
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
