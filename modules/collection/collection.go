@@ -13,13 +13,13 @@ func (c Collection) Where(key string, values ...interface{}) Collection {
 	if len(values) < 1 {
 		for _, value := range c {
 			if isTrue(value[key]) {
-				d = append(d, copyMap(value))
+				d = append(d, value)
 			}
 		}
 	} else if len(values) < 2 {
 		for _, value := range c {
 			if value[key] == values[0] {
-				d = append(d, copyMap(value))
+				d = append(d, value)
 			}
 		}
 	} else {
@@ -27,7 +27,7 @@ func (c Collection) Where(key string, values ...interface{}) Collection {
 		case "=":
 			for _, value := range c {
 				if value[key] == values[1] {
-					d = append(d, copyMap(value))
+					d = append(d, value)
 				}
 			}
 		}

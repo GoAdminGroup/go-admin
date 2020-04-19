@@ -2,6 +2,8 @@ package system
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/host"
@@ -58,7 +60,7 @@ type AppStatus struct {
 
 func GetAppStatus() AppStatus {
 	var app AppStatus
-	app.Uptime = utils.TimeSincePro(startTime)
+	app.Uptime = utils.TimeSincePro(startTime, language.Lang[config.Get().Language])
 
 	m := new(runtime.MemStats)
 	runtime.ReadMemStats(m)

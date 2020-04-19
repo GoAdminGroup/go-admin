@@ -243,7 +243,7 @@ func FileSize(s uint64) string {
 }
 
 // TimeSincePro calculates the time interval and generate full user-friendly string.
-func TimeSincePro(then time.Time) string {
+func TimeSincePro(then time.Time, m map[string]string) string {
 	now := time.Now()
 	diff := now.Unix() - then.Unix()
 
@@ -257,7 +257,7 @@ func TimeSincePro(then time.Time) string {
 			break
 		}
 
-		diff, diffStr = computeTimeDiff(diff)
+		diff, diffStr = computeTimeDiff(diff, m)
 		timeStr += ", " + diffStr
 	}
 	return strings.TrimPrefix(timeStr, ", ")
@@ -273,7 +273,7 @@ const (
 	Year   = 12 * Month
 )
 
-func computeTimeDiff(diff int64) (int64, string) {
+func computeTimeDiff(diff int64, m map[string]string) (int64, string) {
 	diffStr := ""
 	switch {
 	case diff <= 0:
@@ -281,51 +281,51 @@ func computeTimeDiff(diff int64) (int64, string) {
 		diffStr = "now"
 	case diff < 2:
 		diff = 0
-		diffStr = "1 second"
+		diffStr = "1 " + m["second"]
 	case diff < 1*Minute:
-		diffStr = fmt.Sprintf("%d seconds", diff)
+		diffStr = fmt.Sprintf("%d "+m["seconds"], diff)
 		diff = 0
 
 	case diff < 2*Minute:
 		diff -= 1 * Minute
-		diffStr = "1 minute"
+		diffStr = "1 " + m["minute"]
 	case diff < 1*Hour:
-		diffStr = fmt.Sprintf("%d minutes", diff/Minute)
+		diffStr = fmt.Sprintf("%d "+m["minutes"], diff/Minute)
 		diff -= diff / Minute * Minute
 
 	case diff < 2*Hour:
 		diff -= 1 * Hour
-		diffStr = "1 hour"
+		diffStr = "1 " + m["hour"]
 	case diff < 1*Day:
-		diffStr = fmt.Sprintf("%d hours", diff/Hour)
+		diffStr = fmt.Sprintf("%d "+m["hours"], diff/Hour)
 		diff -= diff / Hour * Hour
 
 	case diff < 2*Day:
 		diff -= 1 * Day
-		diffStr = "1 day"
+		diffStr = "1 " + m["day"]
 	case diff < 1*Week:
-		diffStr = fmt.Sprintf("%d days", diff/Day)
+		diffStr = fmt.Sprintf("%d "+m["days"], diff/Day)
 		diff -= diff / Day * Day
 
 	case diff < 2*Week:
 		diff -= 1 * Week
-		diffStr = "1 week"
+		diffStr = "1 " + m["week"]
 	case diff < 1*Month:
-		diffStr = fmt.Sprintf("%d weeks", diff/Week)
+		diffStr = fmt.Sprintf("%d "+m["weeks"], diff/Week)
 		diff -= diff / Week * Week
 
 	case diff < 2*Month:
 		diff -= 1 * Month
-		diffStr = "1 month"
+		diffStr = "1 " + m["month"]
 	case diff < 1*Year:
-		diffStr = fmt.Sprintf("%d months", diff/Month)
+		diffStr = fmt.Sprintf("%d "+m["months"], diff/Month)
 		diff -= diff / Month * Month
 
 	case diff < 2*Year:
 		diff -= 1 * Year
-		diffStr = "1 year"
+		diffStr = "1 " + m["year"]
 	default:
-		diffStr = fmt.Sprintf("%d years", diff/Year)
+		diffStr = fmt.Sprintf("%d "+m["years"], diff/Year)
 		diff = 0
 	}
 	return diff, diffStr
