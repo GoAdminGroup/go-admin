@@ -91,7 +91,7 @@ var jp = LangSet{
 	"create here.":                                  "ここに新規作成",
 	"use for login":                                 "ログインに使う",
 	"use to display":                                "表示に使う",
-	"a path a line":                                 "パスを１行ずつ入力してください",
+	"a path a line, without global prefix":          "パスを１行ずつ入力してください",
 	"slug or http_path or name should not be empty": "スラッグ、http_pathまたユーザー名が正しく入力されていることを確認してください",
 	"no roles":                                      "ロールなし",
 

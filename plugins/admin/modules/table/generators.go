@@ -588,7 +588,8 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 		}).
 		FieldHelpMsg(template.HTML(lg("all method if empty")))
 
-	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea).FieldHelpMsg(template.HTML(lg("a path a line")))
+	formList.AddField(lg("path"), "http_path", db.Varchar, form.TextArea).
+		FieldHelpMsg(template.HTML(lg("a path a line, without global prefix")))
 	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldNotAllowAdd()
 

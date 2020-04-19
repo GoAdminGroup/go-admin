@@ -100,7 +100,7 @@ var cn = LangSet{
 	"create here.":                                  "在这里新建一个。",
 	"use for login":                                 "用于登录",
 	"use to display":                                "用来展示",
-	"a path a line":                                 "一行一个路径，换行输入新路径",
+	"a path a line, without global prefix":          "一行一个路径，换行输入新路径，路径不包含全局路由前缀",
 	"slug or http_path or name should not be empty": "标志或路径或权限名不能为空",
 	"no roles":                                      "无角色",
 	"no permission":                                 "没有权限",
