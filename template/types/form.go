@@ -935,6 +935,16 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 		` + showText + `
 	}
 })
+$(function(){
+	let data = $(".` + template.HTML(field) + `").select2("data");
+	let text = "";
+	if (data.length > 0) {
+		text = data[0].text;
+	}
+	if (text === "` + template.HTML(value) + `") {
+		` + hideText + `
+	}
+})
 </script>`
 }
 
