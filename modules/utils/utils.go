@@ -101,6 +101,11 @@ func ParseBool(s string) bool {
 	return b1
 }
 
+func ParseFloat32(f string) float32 {
+	s, _ := strconv.ParseFloat(f, 32)
+	return float32(s)
+}
+
 func SetDefault(value, condition, def string) string {
 	if value == condition {
 		return def

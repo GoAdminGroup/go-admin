@@ -7,11 +7,6 @@ import (
 	"strings"
 )
 
-type FieldDisplay struct {
-	Display              FieldFilterFn
-	DisplayProcessChains DisplayProcessFnChains
-}
-
 type DisplayFnGenerator interface {
 	Get(args ...interface{}) FieldFilterFn
 }
@@ -23,6 +18,11 @@ func RegisterDisplayFnGenerator(key string, gen DisplayFnGenerator) {
 		panic("display function generator has been registered")
 	}
 	displayFnGens[key] = gen
+}
+
+type FieldDisplay struct {
+	Display              FieldFilterFn
+	DisplayProcessChains DisplayProcessFnChains
 }
 
 func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {

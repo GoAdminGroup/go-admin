@@ -543,7 +543,11 @@ func (c *Config) ToMap() map[string]string {
 	} else {
 		m["extra"] = utils.JSON(c.Extra)
 	}
-	m["animation"] = c.Animation.JSON()
+
+	m["animation_type"] = c.Animation.Type
+	m["animation_duration"] = fmt.Sprintf("%.2f", c.Animation.Duration)
+	m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
+
 	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
 	return m
 }
@@ -617,7 +621,11 @@ func (c *Config) Update(m map[string]string) error {
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
 
 	c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
-	c.Animation = GetPageAnimationFromJSON(m["animation"])
+
+	c.Animation.Type = m["animation_type"]
+	c.Animation.Duration = utils.ParseFloat32(m["animation_duration"])
+	c.Animation.Delay = utils.ParseFloat32(m["animation_delay"])
+
 	if m["extra"] != "" {
 		var extra = make(map[string]interface{}, 0)
 		_ = json.Unmarshal([]byte(m["extra"]), &extra)

@@ -1028,7 +1028,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.Code).FieldMust()
-	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number)
+	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number).
+		FieldMust().
+		FieldHelpMsg(template.HTML(lgWithConfigScore("must bigger than 900 seconds")))
 	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.Code)
@@ -1038,8 +1040,42 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
-	formList.AddField(lgWithConfigScore("animation"), "animation", db.Varchar, form.Text).
+
+	formList.AddField(lgWithConfigScore("animation type"), "animation_type", db.Varchar, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: "", Value: ""},
+			{Text: "bounce", Value: "bounce"}, {Text: "flash", Value: "flash"}, {Text: "pulse", Value: "pulse"},
+			{Text: "rubberBand", Value: "rubberBand"}, {Text: "shake", Value: "shake"}, {Text: "swing", Value: "swing"},
+			{Text: "tada", Value: "tada"}, {Text: "wobble", Value: "wobble"}, {Text: "jello", Value: "jello"},
+			{Text: "heartBeat", Value: "heartBeat"}, {Text: "bounceIn", Value: "bounceIn"}, {Text: "bounceInDown", Value: "bounceInDown"},
+			{Text: "bounceInLeft", Value: "bounceInLeft"}, {Text: "bounceInRight", Value: "bounceInRight"}, {Text: "bounceInUp", Value: "bounceInUp"},
+			{Text: "bounceOut", Value: "bounceOut"}, {Text: "bounceOutDown", Value: "bounceOutDown"}, {Text: "bounceOutLeft", Value: "bounceOutLeft"},
+			{Text: "bounceOutRight", Value: "bounceOutRight"}, {Text: "bounceOutUp", Value: "bounceOutUp"}, {Text: "fadeIn", Value: "fadeIn"},
+			{Text: "fadeInDown", Value: "fadeInDown"}, {Text: "fadeInDownBig", Value: "fadeInDownBig"},
+			{Text: "fadeInLeft", Value: "fadeInLeft"}, {Text: "fadeInLeftBig", Value: "fadeInLeftBig"}, {Text: "fadeInRight", Value: "fadeInRight"},
+			{Text: "fadeInRightBig", Value: "fadeInRightBig"}, {Text: "fadeInUp", Value: "fadeInUp"}, {Text: "fadeInUpBig", Value: "fadeInUpBig"},
+			{Text: "fadeOut", Value: "fadeOut"}, {Text: "fadeOutDown", Value: "fadeOutDown"}, {Text: "fadeOutDownBig", Value: "fadeOutDownBig"},
+			{Text: "fadeOutLeft", Value: "fadeOutLeft"}, {Text: "fadeOutLeftBig", Value: "fadeOutLeftBig"}, {Text: "fadeOutRight", Value: "fadeOutRight"},
+			{Text: "fadeOutRightBig", Value: "fadeOutRightBig"}, {Text: "fadeOutUp", Value: "fadeOutUp"}, {Text: "fadeOutUpBig", Value: "fadeOutUpBig"},
+			{Text: "flip", Value: "flip"}, {Text: "flipInX", Value: "flipInX"}, {Text: "flipInY", Value: "flipInY"},
+			{Text: "flipOutX", Value: "flipOutX"}, {Text: "flipOutY", Value: "flipOutY"}, {Text: "lightSpeedIn", Value: "lightSpeedIn"},
+			{Text: "lightSpeedOut", Value: "lightSpeedOut"}, {Text: "rotateIn", Value: "rotateIn"}, {Text: "rotateInDownLeft", Value: "rotateInDownLeft"},
+			{Text: "rotateInDownRight", Value: "rotateInDownRight"}, {Text: "rotateInUpLeft", Value: "rotateInUpLeft"}, {Text: "rotateInUpRight", Value: "rotateInUpRight"},
+			{Text: "rotateOut", Value: "rotateOut"}, {Text: "rotateOutDownLeft", Value: "rotateOutDownLeft"}, {Text: "rotateOutDownRight", Value: "rotateOutDownRight"},
+			{Text: "rotateOutUpLeft", Value: "rotateOutUpLeft"}, {Text: "rotateOutUpRight", Value: "rotateOutUpRight"}, {Text: "slideInUp", Value: "slideInUp"},
+			{Text: "slideInDown", Value: "slideInDown"}, {Text: "slideInLeft", Value: "slideInLeft"}, {Text: "slideInRight", Value: "slideInRight"},
+			{Text: "slideOutUp", Value: "slideOutUp"}, {Text: "slideOutDown", Value: "slideOutDown"}, {Text: "slideOutLeft", Value: "slideOutLeft"},
+			{Text: "slideOutRight", Value: "slideOutRight"}, {Text: "zoomIn", Value: "zoomIn"}, {Text: "zoomInDown", Value: "zoomInDown"},
+			{Text: "zoomInLeft", Value: "zoomInLeft"}, {Text: "zoomInRight", Value: "zoomInRight"}, {Text: "zoomInUp", Value: "zoomInUp"},
+			{Text: "zoomOut", Value: "zoomOut"}, {Text: "zoomOutDown", Value: "zoomOutDown"}, {Text: "zoomOutLeft", Value: "zoomOutLeft"},
+			{Text: "zoomOutRight", Value: "zoomOutRight"}, {Text: "zoomOutUp", Value: "zoomOutUp"}, {Text: "hinge", Value: "hinge"},
+			{Text: "jackInTheBox", Value: "jackInTheBox"}, {Text: "rollIn", Value: "rollIn"}, {Text: "rollOut", Value: "rollOut"},
+		}).FieldOnChooseHide("", "animation_duration", "animation_delay").
 		FieldHelpMsg(`see more: <a href="https://daneden.github.io/animate.css/">https://daneden.github.io/animate.css/</a>`)
+
+	formList.AddField(lgWithConfigScore("animation duration"), "animation_duration", db.Varchar, form.Number)
+	formList.AddField(lgWithConfigScore("animation delay"), "animation_delay", db.Varchar, form.Number)
+
 	formList.AddField(lgWithConfigScore("file upload engine"), "file_upload_engine", db.Varchar, form.Text)
 
 	formList.AddField(lgWithConfigScore("cdn url"), "asset_url", db.Varchar, form.Text).
@@ -1120,10 +1156,10 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.AddField(lgWithConfigScore("logger rotate encoder level"), "logger_encoder_level", db.Varchar,
 		form.SelectSingle).
 		FieldOptions(types.FieldOptions{
-			{Text: "Capital", Value: "capital"},
-			{Text: "CapitalColor", Value: "capitalColor"},
-			{Text: "Lowercase", Value: "lowercase"},
-			{Text: "LowercaseColor", Value: "color"},
+			{Text: lgWithConfigScore("capital"), Value: "capital"},
+			{Text: lgWithConfigScore("capitalcolor"), Value: "capitalColor"},
+			{Text: lgWithConfigScore("lowercase"), Value: "lowercase"},
+			{Text: lgWithConfigScore("lowercasecolor"), Value: "color"},
 		}).FieldDisplay(defaultFilterFn("CapitalColor"))
 	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar,
 		form.SelectSingle).
@@ -1150,8 +1186,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
-		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation",
-		"file_upload_engine", "extra").
+		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation_type",
+		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
 			"access_log_path", "logger_rotate_max_size", "logger_rotate_max_backups",
@@ -1172,9 +1208,6 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		sesInt, _ := strconv.Atoi(ses)
 		if sesInt < 900 {
 			return errors.New("wrong session life time, must bigger than 900 seconds")
-		}
-		if err := checkJSON(values, "animation"); err != nil {
-			return err
 		}
 		if err := checkJSON(values, "file_upload_engine"); err != nil {
 			return err

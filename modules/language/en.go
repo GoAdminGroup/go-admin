@@ -117,7 +117,9 @@ var en = LangSet{
 	"config.footer info":        "Footer Info",
 	"config.login logo":         "Login Logo",
 	"config.no limit login ip":  "No Limit Login Multi IPs",
-	"config.animation":          "Animation",
+	"config.animation type":     "Animation Type",
+	"config.animation duration": "Animation Duration(s)",
+	"config.animation delay":    "Animation Delay(s)",
 	"config.file upload engine": "File Upload Engine",
 
 	"config.logger rotate":             "Log Rotate Settings",
@@ -148,6 +150,11 @@ var en = LangSet{
 	"config.logger rotate encoder duration":       "Duration Encoder",
 	"config.logger rotate encoder caller":         "Caller Encoder",
 	"config.logger rotate encoder encoding":       "Output Format",
+
+	"config.capital":        "Capital",
+	"config.capitalcolor":   "Capital with color",
+	"config.lowercase":      "Lowercase",
+	"config.lowercasecolor": "Lowercase with color",
 
 	"config.do not modify when you have not set up all assets": "Do not modify when you have not set up all assets",
 	"config.it will work when theme is adminlte":               "It will work when theme is adminlte",

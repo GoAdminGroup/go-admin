@@ -890,7 +890,6 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 	return i
 }
 
-
 // Field attribute setting functions
 // ====================================================
 
