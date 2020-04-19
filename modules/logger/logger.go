@@ -158,7 +158,10 @@ func (l *Logger) getLogWriter(path string) zapcore.WriteSyncer {
 			MaxAge:     l.rotate.MaxAge,
 			Compress:   l.rotate.Compress,
 		}
-		return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(lumberJackLogger))
+		if l.debug {
+			return zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(lumberJackLogger))
+		}
+		return zapcore.AddSync(lumberJackLogger)
 	}
 	return zapcore.AddSync(os.Stdout)
 }
