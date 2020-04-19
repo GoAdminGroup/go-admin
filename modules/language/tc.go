@@ -155,6 +155,7 @@ var tc = LangSet{
 	"system.application run": "應用運行信息",
 	"system.system":          "系統信息",
 
+	"system.golang_version":                       "Golang版本",
 	"system.server_uptime":                        "服務運行時間",
 	"system.current_goroutine":                    "當前 Goroutines 數量",
 	"system.current_memory_usage":                 "當前內存使用量",

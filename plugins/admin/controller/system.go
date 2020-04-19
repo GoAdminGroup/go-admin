@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/gobuffalo/buffalo/runtime"
 	"html/template"
 )
 
@@ -54,7 +55,8 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		WithHeadBorder().
 		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application run") + "</b>").
-		SetBody(srow(lg("server_uptime"), app.Uptime) +
+		SetBody(srow(lg("golang_version"), runtime.Version) +
+			srow(lg("server_uptime"), app.Uptime) +
 			srow(lg("current_goroutine"), itos(app.NumGoroutine)) +
 			`<div><hr></div>` +
 			srow(lg("current_memory_usage"), app.MemAllocated) +

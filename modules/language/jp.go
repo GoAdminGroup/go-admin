@@ -188,6 +188,7 @@ var jp = LangSet{
 	"system.application run": "Applications Running Info",
 	"system.system":          "System Info",
 
+	"system.golang_version":                       "Golang Version",
 	"system.server_uptime":                        "Server Uptime",
 	"system.current_goroutine":                    "Current Goroutines",
 	"system.current_memory_usage":                 "Current Memory Usage",
