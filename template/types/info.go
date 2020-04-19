@@ -909,7 +909,7 @@ func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldImage(width, height string, prefix ...interface{}) *InfoPanel {
+func (i *InfoPanel) FieldImage(width, height string, prefix ...string) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Display = displayFnGens["image"].Get(width, height, prefix)
 	return i
 }

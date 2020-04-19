@@ -13,13 +13,15 @@ func init() {
 
 func (image *Image) Get(args ...interface{}) types.FieldFilterFn {
 
-	param := args[2].([]interface{})
+	param := args[2].([]string)
 	return func(value types.FieldModel) interface{} {
 		if len(param) > 0 {
-			return template.Default().Image().SetWidth(args[0].(string)).SetHeight(args[1].(string)).SetSrc(template.HTML(param[0].(string) + value.Value)).GetContent()
+			return template.Default().Image().SetWidth(args[0].(string)).SetHeight(args[1].(string)).
+				SetSrc(template.HTML(param[0] + value.Value)).GetContent()
 
 		} else {
-			return template.Default().Image().SetWidth(args[0].(string)).SetHeight(args[1].(string)).SetSrc(template.HTML(value.Value)).GetContent()
+			return template.Default().Image().SetWidth(args[0].(string)).SetHeight(args[1].(string)).
+				SetSrc(template.HTML(value.Value)).GetContent()
 		}
 	}
 
