@@ -100,8 +100,10 @@ type TableAttribute interface {
 	SetThead(value Thead) TableAttribute
 	SetInfoList(value []map[string]InfoItem) TableAttribute
 	SetType(value string) TableAttribute
-	SetMinWidth(value int) TableAttribute
+	SetMinWidth(value string) TableAttribute
+	SetHideThead() TableAttribute
 	SetLayout(value string) TableAttribute
+	SetStyle(style string) TableAttribute
 	GetContent() template.HTML
 }
 
@@ -113,8 +115,10 @@ type DataTableAttribute interface {
 	SetDeleteUrl(value string) DataTableAttribute
 	SetNewUrl(value string) DataTableAttribute
 	SetPrimaryKey(value string) DataTableAttribute
+	SetStyle(style string) DataTableAttribute
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
+	SetHideThead() DataTableAttribute
 	SetLayout(value string) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
 	SetHideFilterArea(value bool) DataTableAttribute
@@ -199,7 +203,7 @@ type TheadItem struct {
 	Editable   bool         `json:"editable"`
 	EditType   string       `json:"edit_type"`
 	EditOption FieldOptions `json:"edit_option"`
-	Width      int          `json:"width"`
+	Width      string       `json:"width"`
 }
 
 func (t Thead) GroupBy(group [][]string) []Thead {

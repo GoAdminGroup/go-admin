@@ -7,9 +7,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/gobuffalo/buffalo/runtime"
 	"html/template"
 	"os"
+	"runtime"
 )
 
 func (h *Handler) SystemInfo(ctx *context.Context) {
@@ -20,32 +20,69 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	box1 := aBox().
 		WithHeadBorder().
-		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application") + "</b>").
-		SetBody(srow(lg("app_name"), "GoAdmin") +
-			srow(lg("go_admin_version"), system.Version()) +
-			srow(lg("theme_name"), aTemplate().Name()) +
-			srow(lg("theme_version"), aTemplate().GetVersion())).
+		SetBody(stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("app_name")},
+				"value": types.InfoItem{Content: "GoAdmin"},
+			}, {
+				"key":   types.InfoItem{Content: lg("go_admin_version")},
+				"value": types.InfoItem{Content: template.HTML(system.Version())},
+			}, {
+				"key":   types.InfoItem{Content: lg("theme_name")},
+				"value": types.InfoItem{Content: template.HTML(aTemplate().Name())},
+			}, {
+				"key":   types.InfoItem{Content: lg("theme_version")},
+				"value": types.InfoItem{Content: template.HTML(aTemplate().GetVersion())},
+			},
+		})).
 		GetContent()
 
 	box2 := aBox().
 		WithHeadBorder().
-		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("system") + "</b>").
-		SetBody(srow(lg("cpu_logical_core"), itos(sys.CpuLogicalCore)) +
-			srow(lg("cpu_core"), itos(sys.CpuCore)) +
-			`<div><hr></div>` +
-			srow(lg("os_platform"), sys.OSPlatform) +
-			srow(lg("os_family"), sys.OSFamily) +
-			srow(lg("os_version"), sys.OSVersion) +
-			`<div><hr></div>` +
-			srow(lg("load1"), fmt.Sprintf("%.2f", sys.Load1)) +
-			srow(lg("load5"), fmt.Sprintf("%.2f", sys.Load5)) +
-			srow(lg("load15"), fmt.Sprintf("%.2f", sys.Load15)) +
-			`<div><hr></div>` +
-			srow(lg("mem_total"), sys.MemTotal) +
-			srow(lg("mem_available"), sys.MemAvailable) +
-			srow(lg("mem_used"), sys.MemUsed)).
+		SetBody(stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("cpu_logical_core")},
+				"value": types.InfoItem{Content: itos(sys.CpuLogicalCore)},
+			}, {
+				"key":   types.InfoItem{Content: lg("cpu_core")},
+				"value": types.InfoItem{Content: itos(sys.CpuCore)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("os_platform")},
+				"value": types.InfoItem{Content: template.HTML(sys.OSPlatform)},
+			}, {
+				"key":   types.InfoItem{Content: lg("os_family")},
+				"value": types.InfoItem{Content: template.HTML(sys.OSFamily)},
+			}, {
+				"key":   types.InfoItem{Content: lg("os_version")},
+				"value": types.InfoItem{Content: template.HTML(sys.OSVersion)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("load1")},
+				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load1))},
+			}, {
+				"key":   types.InfoItem{Content: lg("load5")},
+				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load5))},
+			}, {
+				"key":   types.InfoItem{Content: lg("load15")},
+				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load15))},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("mem_total")},
+				"value": types.InfoItem{Content: template.HTML(sys.MemTotal)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mem_available")},
+				"value": types.InfoItem{Content: template.HTML(sys.MemAvailable)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mem_used")},
+				"value": types.InfoItem{Content: template.HTML(sys.MemUsed)},
+			},
+		})).
 		GetContent()
 
 	col1 := aCol().SetSize(size).SetContent(box1 + box2).GetContent()
@@ -54,42 +91,113 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	box3 := aBox().
 		WithHeadBorder().
-		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application run") + "</b>").
-		SetBody(srow(lg("golang_version"), runtime.Version) +
-			srow(lg("process_id"), itos(os.Getpid())) +
-			srow(lg("server_uptime"), app.Uptime) +
-			srow(lg("current_goroutine"), itos(app.NumGoroutine)) +
-			`<div><hr></div>` +
-			srow(lg("current_memory_usage"), app.MemAllocated) +
-			srow(lg("total_memory_allocated"), app.MemTotal) +
-			srow(lg("memory_obtained"), app.MemSys) +
-			srow(lg("pointer_lookup_times"), itos(app.Lookups)) +
-			srow(lg("memory_allocate_times"), itos(app.MemMallocs)) +
-			srow(lg("memory_free_times"), itos(app.MemFrees)) +
-			`<div><hr></div>` +
-			srow(lg("current_heap_usage"), app.HeapAlloc) +
-			srow(lg("heap_memory_obtained"), app.HeapSys) +
-			srow(lg("heap_memory_idle"), app.HeapIdle) +
-			srow(lg("heap_memory_in_use"), app.HeapInuse) +
-			srow(lg("heap_memory_released"), app.HeapReleased) +
-			srow(lg("heap_objects"), itos(app.HeapObjects)) +
-			`<div><hr></div>` +
-			srow(lg("bootstrap_stack_usage"), app.StackInuse) +
-			srow(lg("stack_memory_obtained"), app.StackSys) +
-			srow(lg("mspan_structures_usage"), app.MSpanInuse) +
-			srow(lg("mspan_structures_obtained"), app.HeapSys) +
-			srow(lg("mcache_structures_usage"), app.MCacheInuse) +
-			srow(lg("mcache_structures_obtained"), app.MCacheSys) +
-			srow(lg("profiling_bucket_hash_table_obtained"), app.BuckHashSys) +
-			srow(lg("gc_metadata_obtained"), app.GCSys) +
-			srow(lg("other_system_allocation_obtained"), app.OtherSys) +
-			`<div><hr></div>` +
-			srow(lg("next_gc_recycle"), app.NextGC) +
-			srow(lg("last_gc_time"), app.LastGC) +
-			srow(lg("total_gc_pause"), app.PauseTotalNs) +
-			srow(lg("last_gc_pause"), app.PauseNs) +
-			srow(lg("gc_times"), itos(app.NumGC))).
+		SetBody(stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("golang_version")},
+				"value": types.InfoItem{Content: template.HTML(runtime.Version())},
+			}, {
+				"key":   types.InfoItem{Content: lg("process_id")},
+				"value": types.InfoItem{Content: itos(os.Getpid())},
+			}, {
+				"key":   types.InfoItem{Content: lg("server_uptime")},
+				"value": types.InfoItem{Content: template.HTML(app.Uptime)},
+			}, {
+				"key":   types.InfoItem{Content: lg("current_goroutine")},
+				"value": types.InfoItem{Content: itos(app.NumGoroutine)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("current_memory_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.MemAllocated)},
+			}, {
+				"key":   types.InfoItem{Content: lg("total_memory_allocated")},
+				"value": types.InfoItem{Content: template.HTML(app.MemTotal)},
+			}, {
+				"key":   types.InfoItem{Content: lg("memory_obtained")},
+				"value": types.InfoItem{Content: itos(app.MemSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("pointer_lookup_times")},
+				"value": types.InfoItem{Content: template.HTML(app.Lookups)},
+			}, {
+				"key":   types.InfoItem{Content: lg("memory_allocate_times")},
+				"value": types.InfoItem{Content: itos(app.MemMallocs)},
+			}, {
+				"key":   types.InfoItem{Content: lg("memory_free_times")},
+				"value": types.InfoItem{Content: template.HTML(app.MemFrees)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("current_heap_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapAlloc)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapSys)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_idle")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapIdle)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_in_use")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapInuse)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_memory_released")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapReleased)},
+			},
+			{
+				"key":   types.InfoItem{Content: lg("heap_objects")},
+				"value": types.InfoItem{Content: itos(app.HeapObjects)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("bootstrap_stack_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.StackInuse)},
+			}, {
+				"key":   types.InfoItem{Content: lg("stack_memory_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.StackSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mspan_structures_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.MSpanInuse)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mspan_structures_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.HeapSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mcache_structures_usage")},
+				"value": types.InfoItem{Content: template.HTML(app.MCacheInuse)},
+			}, {
+				"key":   types.InfoItem{Content: lg("mcache_structures_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.MCacheSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("profiling_bucket_hash_table_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.BuckHashSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("gc_metadata_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.GCSys)},
+			}, {
+				"key":   types.InfoItem{Content: lg("other_system_allocation_obtained")},
+				"value": types.InfoItem{Content: template.HTML(app.OtherSys)},
+			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("next_gc_recycle")},
+				"value": types.InfoItem{Content: template.HTML(app.NextGC)},
+			}, {
+				"key":   types.InfoItem{Content: lg("last_gc_time")},
+				"value": types.InfoItem{Content: template.HTML(app.LastGC)},
+			}, {
+				"key":   types.InfoItem{Content: lg("total_gc_pause")},
+				"value": types.InfoItem{Content: template.HTML(app.PauseTotalNs)},
+			}, {
+				"key":   types.InfoItem{Content: lg("last_gc_pause")},
+				"value": types.InfoItem{Content: template.HTML(app.PauseNs)},
+			}, {
+				"key":   types.InfoItem{Content: lg("gc_times")},
+				"value": types.InfoItem{Content: itos(app.NumGC)},
+			},
+		})).
 		GetContent()
 
 	col2 := aCol().SetSize(size).SetContent(box3).GetContent()
@@ -103,16 +211,22 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 	})
 }
 
-func srow(content1 template.HTML, content2 string) template.HTML {
-	size := types.Size(6, 6, 6)
-	return aRow().SetContent(aCol().SetSize(size).SetContent(content1).GetContent() +
-		aCol().SetSize(size).SetContent(template.HTML(content2)).GetContent()).GetContent()
+func stripedTable(list []map[string]types.InfoItem) template.HTML {
+	return aTable().
+		SetStyle("striped").
+		SetHideThead().
+		SetMinWidth("0.01%").
+		SetThead(types.Thead{
+			types.TheadItem{Head: "key", Width: "50%"},
+			types.TheadItem{Head: "value"},
+		}).
+		SetInfoList(list).GetContent()
 }
 
 func lg(v template.HTML) template.HTML {
 	return language.GetFromHtml(v, "system")
 }
 
-func itos(i interface{}) string {
-	return fmt.Sprintf("%v", i)
+func itos(i interface{}) template.HTML {
+	return template.HTML(fmt.Sprintf("%v", i))
 }

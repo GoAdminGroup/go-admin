@@ -293,7 +293,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 			Editable:   field.EditAble,
 			EditType:   field.EditType.String(),
 			EditOption: field.EditOptions,
-			Width:      field.Width,
+			Width:      strconv.Itoa(field.Width) + "px",
 		})
 	}
 
@@ -338,7 +338,7 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 			Editable:   field.EditAble,
 			EditType:   field.EditType.String(),
 			EditOption: field.EditOptions,
-			Width:      field.Width,
+			Width:      strconv.Itoa(field.Width) + "px",
 		})
 	}
 

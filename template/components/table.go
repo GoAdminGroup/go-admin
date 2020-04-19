@@ -11,10 +11,12 @@ type TableAttribute struct {
 	InfoList   []map[string]types.InfoItem
 	Type       string
 	PrimaryKey string
+	Style      string
+	HideThead  bool
 	NoAction   bool
 	Action     template.HTML
 	EditUrl    string
-	MinWidth   int
+	MinWidth   string
 	DeleteUrl  string
 	DetailUrl  string
 	UpdateUrl  string
@@ -39,7 +41,17 @@ func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 	return compo
 }
 
-func (compo *TableAttribute) SetMinWidth(value int) types.TableAttribute {
+func (compo *TableAttribute) SetHideThead() types.TableAttribute {
+	compo.HideThead = true
+	return compo
+}
+
+func (compo *TableAttribute) SetStyle(style string) types.TableAttribute {
+	compo.Style = style
+	return compo
+}
+
+func (compo *TableAttribute) SetMinWidth(value string) types.TableAttribute {
 	compo.MinWidth = value
 	return compo
 }
@@ -50,8 +62,8 @@ func (compo *TableAttribute) SetLayout(value string) types.TableAttribute {
 }
 
 func (compo *TableAttribute) GetContent() template.HTML {
-	if compo.MinWidth == 0 {
-		compo.MinWidth = 1000
+	if compo.MinWidth == "" {
+		compo.MinWidth = "1000px"
 	}
 	return ComposeHtml(compo.TemplateList, *compo, "table")
 }
@@ -61,6 +73,8 @@ type DataTableAttribute struct {
 	EditUrl           string
 	NewUrl            string
 	UpdateUrl         string
+	HideThead         bool
+	Style             string
 	DetailUrl         string
 	DeleteUrl         string
 	PrimaryKey        string
@@ -96,6 +110,11 @@ func (compo *DataTableAttribute) SetIsTab(value bool) types.DataTableAttribute {
 	return compo
 }
 
+func (compo *DataTableAttribute) SetHideThead() types.DataTableAttribute {
+	compo.HideThead = true
+	return compo
+}
+
 func (compo *DataTableAttribute) SetButtons(btns template.HTML) types.DataTableAttribute {
 	compo.Buttons = btns
 	return compo
@@ -123,6 +142,11 @@ func (compo *DataTableAttribute) SetInfoUrl(value string) types.DataTableAttribu
 
 func (compo *DataTableAttribute) SetAction(action template.HTML) types.DataTableAttribute {
 	compo.Action = action
+	return compo
+}
+
+func (compo *DataTableAttribute) SetStyle(style string) types.DataTableAttribute {
+	compo.Style = style
 	return compo
 }
 
@@ -177,8 +201,8 @@ func (compo *DataTableAttribute) SetNoAction() types.DataTableAttribute {
 }
 
 func (compo *DataTableAttribute) GetContent() template.HTML {
-	if compo.MinWidth == 0 {
-		compo.MinWidth = 1000
+	if compo.MinWidth == "" {
+		compo.MinWidth = "1000px"
 	}
 	if !compo.NoAction && compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
 		compo.NoAction = true

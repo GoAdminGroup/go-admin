@@ -225,6 +225,10 @@ func aTree() types.TreeAttribute {
 	return aTemplate().Tree()
 }
 
+func aTable() types.TableAttribute {
+	return aTemplate().Table()
+}
+
 func aDataTable() types.DataTableAttribute {
 	return aTemplate().DataTable()
 }

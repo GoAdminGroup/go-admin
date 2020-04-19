@@ -127,6 +127,7 @@ func (b Base) Table() types.TableAttribute {
 		Thead:     make(types.Thead, 0),
 		InfoList:  make([]map[string]types.InfoItem, 0),
 		Type:      "normal",
+		Style:     "hover",
 		Layout:    "auto",
 		Attribute: b.Attribute,
 	}
@@ -138,6 +139,7 @@ func (b Base) DataTable() types.DataTableAttribute {
 			SetType("data-table").(*TableAttribute)),
 		EditUrl:   "",
 		NewUrl:    "",
+		Style:     "hover",
 		Attribute: b.Attribute,
 	}
 }
