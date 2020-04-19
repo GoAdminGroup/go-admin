@@ -4,6 +4,8 @@
 
 package language
 
+import "strings"
+
 var en = LangSet{
 	"managers":         "Managers",
 	"name":             "Name",
@@ -97,20 +99,15 @@ var en = LangSet{
 	"config.extra":           "Extra Configuration",
 	"config.store":           "File Store Setting",
 	"config.databases":       "Database Setting",
-	"config.info log path":   "Info Log Store Path",
-	"config.error log path":  "Error Log Store Path",
-	"config.access log path": "Access Log Store Path",
-	"config.info log off":    "Info Log Off",
-	"config.error log off":   "Error Log Off",
-	"config.access log off":  "Access Log Off",
-	"config.general":         "General",
-	"config.log":             "Log",
-	"config.site setting":    "Site Settings",
-	"config.custom":          "Customize",
-	"config.debug":           "Debug Mode",
-	"config.site off":        "Site Offline",
-	"config.true":            "On",
-	"config.false":           "Off",
+
+	"config.general":      "General",
+	"config.log":          "Log",
+	"config.site setting": "Site Settings",
+	"config.custom":       "Customize",
+	"config.debug":        "Debug Mode",
+	"config.site off":     "Site Offline",
+	"config.true":         "On",
+	"config.false":        "Off",
 
 	"config.logo":               "Logo",
 	"config.mini logo":          "Mini Logo",
@@ -123,8 +120,40 @@ var en = LangSet{
 	"config.animation":          "Animation",
 	"config.file upload engine": "File Upload Engine",
 
-	"config.language.cn": "Chinese",
-	"config.language.en": "English",
-	"config.language.jp": "Japanese",
-	"config.language.tc": "Traditional Chinese",
+	"config.logger rotate":             "Log Rotate Settings",
+	"config.logger rotate max size":    "Max Size（m）",
+	"config.logger rotate max backups": "Max Buckups",
+	"config.logger rotate max age":     "Max Age（day）",
+	"config.logger rotate compress":    "Compress",
+
+	"config.info log path":         "Info Log Store Path",
+	"config.error log path":        "Error Log Store Path",
+	"config.access log path":       "Access Log Store Path",
+	"config.info log off":          "Info Log Off",
+	"config.error log off":         "Error Log Off",
+	"config.access log off":        "Access Log Off",
+	"config.access assets log off": "Access Assets Log Off",
+	"config.sql log on":            "Open SQL Log",
+	"config.log level":             "Level",
+
+	"config.logger rotate encoder":                "Log Encoder Settings",
+	"config.logger rotate encoder time key":       "Time Key",
+	"config.logger rotate encoder level key":      "Level Key",
+	"config.logger rotate encoder name key":       "Name Key",
+	"config.logger rotate encoder caller key":     "Caller Key",
+	"config.logger rotate encoder message key":    "Message Key",
+	"config.logger rotate encoder stacktrace key": "Stacktrace Key",
+	"config.logger rotate encoder level":          "Level Encoder",
+	"config.logger rotate encoder time":           "Time Encoder",
+	"config.logger rotate encoder duration":       "Duration Encoder",
+	"config.logger rotate encoder caller":         "Caller Encoder",
+	"config.logger rotate encoder encoding":       "Output Format",
+
+	"config.do not modify when you have not set up all assets": "Do not modify when you have not set up all assets",
+	"config.it will work when theme is adminlte":               "It will work when theme is adminlte",
+
+	"config.language." + CN:                  "Chinese",
+	"config.language." + EN:                  "English",
+	"config.language." + JP:                  "Japanese",
+	"config.language." + strings.ToLower(TC): "Traditional Chinese",
 }
