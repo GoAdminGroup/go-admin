@@ -109,7 +109,7 @@ func (t SiteModel) AllToMapInterface() map[string]interface{} {
 
 func (t SiteModel) Update(v form.Values) error {
 	for key, vv := range v {
-		if len(vv) > 0 && vv[0] != "" {
+		if len(vv) > 0 && (vv[0] != "" || key == "animation_type") {
 			_, err := t.Table(t.TableName).Where("key", "=", key).Update(dialect.H{
 				"value": vv[0],
 			})

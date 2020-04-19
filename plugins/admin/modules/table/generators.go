@@ -1071,6 +1071,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: "zoomOutRight", Value: "zoomOutRight"}, {Text: "zoomOutUp", Value: "zoomOutUp"}, {Text: "hinge", Value: "hinge"},
 			{Text: "jackInTheBox", Value: "jackInTheBox"}, {Text: "rollIn", Value: "rollIn"}, {Text: "rollOut", Value: "rollOut"},
 		}).FieldOnChooseHide("", "animation_duration", "animation_delay").
+		FieldOptionExt(map[string]interface{}{"allowClear": true}).
 		FieldHelpMsg(`see more: <a href="https://daneden.github.io/animate.css/">https://daneden.github.io/animate.css/</a>`)
 
 	formList.AddField(lgWithConfigScore("animation duration"), "animation_duration", db.Varchar, form.Number)

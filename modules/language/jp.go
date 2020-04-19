@@ -4,6 +4,8 @@
 
 package language
 
+import "strings"
+
 var jp = LangSet{
 	"managers":  "管理者",
 	"name":      "ユーザー名",
@@ -92,4 +94,92 @@ var jp = LangSet{
 	"a path a line":                                 "パスを１行ずつ入力してください",
 	"slug or http_path or name should not be empty": "スラッグ、http_pathまたユーザー名が正しく入力されていることを確認してください",
 	"no roles":                                      "ロールなし",
+
+	"config.domain":          "Website Domain",
+	"config.language":        "Website Language",
+	"config.url prefix":      "URL Prefix",
+	"config.theme":           "Theme",
+	"config.title":           "Title",
+	"config.index url":       "Home URL",
+	"config.login url":       "Login URL",
+	"config.env":             "Env",
+	"config.color scheme":    "Color Scheme",
+	"config.cdn url":         "CDN Asset URL",
+	"config.login title":     "Login Title",
+	"config.auth user table": "Auth User Table",
+	"config.extra":           "Extra Configuration",
+	"config.store":           "File Store Setting",
+	"config.databases":       "Database Setting",
+
+	"config.general":      "General",
+	"config.log":          "Log",
+	"config.site setting": "Site Settings",
+	"config.custom":       "Customize",
+	"config.debug":        "Debug Mode",
+	"config.site off":     "Site Offline",
+	"config.true":         "On",
+	"config.false":        "Off",
+
+	"config.logo":               "Logo",
+	"config.mini logo":          "Mini Logo",
+	"config.session life time":  "Session Life Time",
+	"config.custom head html":   "Head HTML",
+	"config.custom foot html":   "Foot HTML",
+	"config.footer info":        "Footer Info",
+	"config.login logo":         "Login Logo",
+	"config.no limit login ip":  "No Limit Login Multi IPs",
+	"config.animation type":     "Animation Type",
+	"config.animation duration": "Animation Duration(s)",
+	"config.animation delay":    "Animation Delay(s)",
+	"config.file upload engine": "File Upload Engine",
+
+	"config.logger rotate":             "Log Rotate Settings",
+	"config.logger rotate max size":    "Max Size（m）",
+	"config.logger rotate max backups": "Max Buckups",
+	"config.logger rotate max age":     "Max Age（day）",
+	"config.logger rotate compress":    "Compress",
+
+	"config.info log path":         "Info Log File Path",
+	"config.error log path":        "Error Log File Path",
+	"config.access log path":       "Access Log File Path",
+	"config.info log off":          "Info Log Off",
+	"config.error log off":         "Error Log Off",
+	"config.access log off":        "Access Log Off",
+	"config.access assets log off": "Access Assets Log Off",
+	"config.sql log on":            "Open SQL Log",
+	"config.log level":             "Level",
+
+	"config.logger rotate encoder":                "Log Encoder Settings",
+	"config.logger rotate encoder time key":       "Time Key",
+	"config.logger rotate encoder level key":      "Level Key",
+	"config.logger rotate encoder name key":       "Name Key",
+	"config.logger rotate encoder caller key":     "Caller Key",
+	"config.logger rotate encoder message key":    "Message Key",
+	"config.logger rotate encoder stacktrace key": "Stacktrace Key",
+	"config.logger rotate encoder level":          "Level Encoder",
+	"config.logger rotate encoder time":           "Time Encoder",
+	"config.logger rotate encoder duration":       "Duration Encoder",
+	"config.logger rotate encoder caller":         "Caller Encoder",
+	"config.logger rotate encoder encoding":       "Output Format",
+
+	"config.capital":        "Capital",
+	"config.capitalcolor":   "Capital with color",
+	"config.lowercase":      "Lowercase",
+	"config.lowercasecolor": "Lowercase with color",
+
+	"config.seconds":     "Seconds",
+	"config.nanosecond":  "Nanosecond",
+	"config.microsecond": "Microsecond",
+	"config.millisecond": "Millisecond",
+
+	"config.full path":  "Full path",
+	"config.short path": "Short path",
+
+	"config.do not modify when you have not set up all assets": "Do not modify when you have not set up all assets",
+	"config.it will work when theme is adminlte":               "It will work when theme is adminlte",
+
+	"config.language." + CN:                  "Chinese",
+	"config.language." + EN:                  "English",
+	"config.language." + JP:                  "Japanese",
+	"config.language." + strings.ToLower(TC): "Traditional Chinese",
 }
