@@ -16,6 +16,7 @@ require (
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
 	github.com/natefinch/lumberjack v2.0.0+incompatible // indirect
 	github.com/satori/go.uuid v1.2.0
+	github.com/shirou/gopsutil v2.20.3+incompatible // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.5.1

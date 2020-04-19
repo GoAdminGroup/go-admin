@@ -249,10 +249,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				GetContent())
 	}
 
-	box := boxModel.GetContent()
-
 	return h.Execute(ctx, user, types.Panel{
-		Content:     box,
+		Content:     boxModel.GetContent(),
 		Description: template2.HTML(panelInfo.Description),
 		Title:       template2.HTML(panelInfo.Title),
 	}, params.Animation)

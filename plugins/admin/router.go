@@ -58,6 +58,8 @@ func (admin *Admin) initRouter() *Admin {
 
 	authPrefixRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
 
+	authRoute.GET("/application/info", admin.handler.SystemInfo)
+
 	route.ANY("/operation/:__goadmin_op_id", auth.Middleware(admin.Conn), admin.handler.Operation)
 
 	if config.GetOpenAdminApi() {

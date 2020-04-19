@@ -76,6 +76,12 @@ func (eng *Engine) Use(router interface{}) error {
 		navButtons = append(navButtons, btn)
 	}
 
+	if !eng.config.HideAppInfoEntrance {
+		btn := types.GetNavButton("", icon.Info, action.Jump(eng.config.Url("/application/info")))
+		eng.NavButtons = append(eng.NavButtons, btn)
+		navButtons = append(navButtons, btn)
+	}
+
 	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
 
 	defaultConnection := db.GetConnection(eng.Services)

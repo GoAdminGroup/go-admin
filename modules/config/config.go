@@ -264,6 +264,9 @@ type Config struct {
 	// Hide config center entrance flag
 	HideConfigCenterEntrance bool `json:"hide_config_center_entrance",yaml:"hide_config_center_entrance",ini:"hide_config_center_entrance"`
 
+	// Hide app info entrance flag
+	HideAppInfoEntrance bool `json:"hide_app_info_entrance",yaml:"hide_app_info_entrance",ini:"hide_app_info_entrance"`
+
 	// Update Process Function
 	UpdateProcessFn UpdateConfigProcessFn `json:"-",yaml:"-",ini:"-"`
 

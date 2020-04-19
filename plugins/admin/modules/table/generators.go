@@ -1186,8 +1186,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		}).FieldDisplay(defaultFilterFn("full"))
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
-	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme",
-		"asset_url", "title", "login_title", "color_scheme", "session_life_time", "no_limit_login_ip", "animation_type",
+	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme", "color_scheme",
+		"asset_url", "title", "login_title", "session_life_time", "no_limit_login_ip", "animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
