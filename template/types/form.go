@@ -708,6 +708,11 @@ func (f *FormPanel) FieldOnChooseHide(value string, field ...string) *FormPanel 
 	return f
 }
 
+func (f *FormPanel) FieldOnChooseShow(value string, field ...string) *FormPanel {
+	f.FooterHtml += chooseShowJS(f.FieldList[f.curFieldListIndex].Field, value, field...)
+	return f
+}
+
 func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPanel {
 	f.FooterHtml += chooseDisableJS(f.FieldList[f.curFieldListIndex].Field, value, field...)
 	return f
@@ -942,6 +947,42 @@ $(function(){
 		text = data[0].text;
 	}
 	if (text === "` + template.HTML(value) + `") {
+		` + hideText + `
+	}
+})
+</script>`
+}
+
+func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
+	if len(chooseFields) == 0 {
+		return ""
+	}
+
+	hideText := template.HTML("")
+	showText := template.HTML("")
+
+	for _, f := range chooseFields {
+		hideText += `$("label[for='` + template.HTML(f) + `']").parent().hide()
+`
+		showText += `$("label[for='` + template.HTML(f) + `']").parent().show()
+`
+	}
+
+	return `<script>
+$(".` + template.HTML(field) + `").on("select2:select",function(e){
+	if (e.params.data.text === "` + template.HTML(value) + `") {
+		` + showText + `
+	} else {
+		` + hideText + `
+	}
+})
+$(function(){
+	let data = $(".` + template.HTML(field) + `").select2("data");
+	let text = "";
+	if (data.length > 0) {
+		text = data[0].text;
+	}
+	if (text !== "` + template.HTML(value) + `") {
 		` + hideText + `
 	}
 })

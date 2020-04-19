@@ -998,7 +998,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	}
 
 	formList.AddField(lgWithConfigScore("theme"), "theme", db.Varchar, form.SelectSingle).
-		FieldOptions(themesOps)
+		FieldOptions(themesOps).
+		FieldOnChooseShow("adminlte",
+			"color_scheme")
 	formList.AddField(lgWithConfigScore("title"), "title", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lgWithConfigScore("color scheme"), "color_scheme", db.Varchar, form.SelectSingle).
 		FieldOptions(types.FieldOptions{

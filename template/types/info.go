@@ -1071,6 +1071,11 @@ func (i *InfoPanel) FieldFilterOnChooseHide(value string, field ...string) *Info
 	return i
 }
 
+func (i *InfoPanel) FieldFilterOnChooseShow(value string, field ...string) *InfoPanel {
+	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	return i
+}
+
 func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *InfoPanel {
 	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
 	return i

@@ -126,9 +126,9 @@ var en = LangSet{
 	"config.logger rotate max age":     "Max Age（day）",
 	"config.logger rotate compress":    "Compress",
 
-	"config.info log path":         "Info Log Store Path",
-	"config.error log path":        "Error Log Store Path",
-	"config.access log path":       "Access Log Store Path",
+	"config.info log path":         "Info Log File Path",
+	"config.error log path":        "Error Log File Path",
+	"config.access log path":       "Access Log File Path",
 	"config.info log off":          "Info Log Off",
 	"config.error log off":         "Error Log Off",
 	"config.access log off":        "Access Log Off",
