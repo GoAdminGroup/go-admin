@@ -1160,7 +1160,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: lgWithConfigScore("capitalcolor"), Value: "capitalColor"},
 			{Text: lgWithConfigScore("lowercase"), Value: "lowercase"},
 			{Text: lgWithConfigScore("lowercasecolor"), Value: "color"},
-		}).FieldDisplay(defaultFilterFn("CapitalColor"))
+		}).FieldDisplay(defaultFilterFn("capitalColor"))
 	formList.AddField(lgWithConfigScore("logger rotate encoder time"), "logger_encoder_time", db.Varchar,
 		form.SelectSingle).
 		FieldOptions(types.FieldOptions{
