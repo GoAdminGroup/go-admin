@@ -18,6 +18,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	box1 := aBox().
 		WithHeadBorder().
+		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application") + "</b>").
 		SetBody(srow(lg("app_name"), "GoAdmin") +
 			srow(lg("go_admin_version"), system.Version()) +
@@ -27,6 +28,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	box2 := aBox().
 		WithHeadBorder().
+		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("system") + "</b>").
 		SetBody(srow(lg("cpu_logical_core"), itos(sys.CpuLogicalCore)) +
 			srow(lg("cpu_core"), itos(sys.CpuCore)) +
@@ -50,6 +52,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	box3 := aBox().
 		WithHeadBorder().
+		SetHeadColor("#f5f5f5").
 		SetHeader("<b>" + lg("application run") + "</b>").
 		SetBody(srow(lg("server_uptime"), app.Uptime) +
 			srow(lg("current_goroutine"), itos(app.NumGoroutine)) +
