@@ -794,7 +794,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("userID", "user_id", db.Int).FieldHide()
 	info.AddField(lg("user"), "name", db.Varchar).FieldJoin(types.Join{
-		Table:     "goadmin_users",
+		Table:     config.GetAuthUserTable(),
 		JoinField: "id",
 		Field:     "user_id",
 	}).FieldDisplay(func(value types.FieldModel) interface{} {
@@ -812,7 +812,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 	info.AddField(lg("content"), "input", db.Text).FieldWidth(230)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 
-	users, _ := s.table("goadmin_users").Select("id", "name").All()
+	users, _ := s.table(config.GetAuthUserTable()).Select("id", "name").All()
 	options := make(types.FieldOptions, len(users))
 	for k, user := range users {
 		options[k].Value = fmt.Sprintf("%v", user["id"])
