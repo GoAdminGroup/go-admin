@@ -27,7 +27,7 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 线上demo：[https://demo.go-admin.cn](https://demo.go-admin.cn)
 
-上手例子：[https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
+上手例子：[https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example/blob/master/README_CN.md)
 
 [文档地址1](http://doc.go-admin.cn/zh) | [备用文档地址1](https://book.go-admin.cn/zh)
 
