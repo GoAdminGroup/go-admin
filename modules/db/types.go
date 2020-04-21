@@ -220,6 +220,12 @@ func GetValueFromSQLOfDatabaseType(typ DatabaseType, value interface{}) Value {
 			}
 			return "false"
 		}
+		if v, ok := value.(int64); ok {
+			if v == 0 {
+				return "false"
+			}
+			return "true"
+		}
 		return "false"
 	case Contains(typ, IntTypeList):
 		if v, ok := value.(int64); ok {
