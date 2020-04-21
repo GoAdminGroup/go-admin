@@ -480,6 +480,18 @@ func (eng *Engine) AdminPlugin() *admin.Admin {
 	return adm
 }
 
+// SetCaptcha set the captcha config.
+func (eng *Engine) SetCaptcha(captcha map[string]string) *Engine {
+	eng.AdminPlugin().SetCaptcha(captcha)
+	return eng
+}
+
+// SetCaptchaDriver set the captcha config with driver.
+func (eng *Engine) SetCaptchaDriver(driver string) *Engine {
+	eng.AdminPlugin().SetCaptcha(map[string]string{"driver": driver})
+	return eng
+}
+
 // AddGenerator add table model generator.
 func (eng *Engine) AddGenerator(key string, g table.Generator) *Engine {
 	eng.AdminPlugin().AddGenerator(key, g)

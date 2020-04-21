@@ -45,11 +45,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 		Generators: admin.tableList,
 		Connection: admin.Conn,
 	}
-	if admin.handler == nil {
-		admin.handler = controller.New(handlerCfg)
-	} else {
-		admin.handler.UpdateCfg(handlerCfg)
-	}
+	admin.handler.UpdateCfg(handlerCfg)
 	admin.initRouter()
 	admin.handler.SetRoutes(admin.App.Routers)
 	admin.handler.AddNavButton(admin.UI.NavButtons...)
@@ -65,6 +61,7 @@ func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
 	return &Admin{
 		tableList: make(table.GeneratorList).CombineAll(tableCfg),
 		Base:      &plugins.Base{PlugName: "admin"},
+		handler:   controller.New(),
 	}
 }
 

@@ -32,7 +32,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
     <div class="container">
         <div class="row" style="margin-top: 80px;">
             <div class="col-md-4 col-md-offset-4">
-                <form action="{{.UrlPrefix}}/signin" method="post" id="sign-up-form" class="fh5co-form animate-box"
+                <form action="##" onsubmit="return false" method="post" id="sign-up-form" class="fh5co-form animate-box"
                       data-animate-effect="fadeIn">
                     <h2>{{.Title}}</h2>
                     <div class="form-group">
@@ -46,7 +46,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
                                autocomplete="off">
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-primary">{{lang "login"}}</button>
+                        <button class="btn btn-primary" onclick="submitData()">{{lang "login"}}</button>
                     </div>
                 </form>
             </div>
@@ -67,8 +67,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
     <script src="{{link .CdnUrl .UrlPrefix "/assets/login/dist/all.min.js"}}"></script>
 
     <script>
-        $("#sign-up-form").submit(function (e) {
-            e.preventDefault();
+        function submitData() {
             $.ajax({
                 dataType: 'json',
                 type: 'POST',
