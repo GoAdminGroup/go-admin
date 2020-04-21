@@ -84,7 +84,7 @@ var List = map[string]string{"login/theme1": `{{define "login_theme1"}}
                     alert('{{lang "login fail"}}');
                 }
             });
-        });
+        }
     </script>
 
     </body>

@@ -54,21 +54,10 @@ func (l *Login) GetTemplate() (*template.Template, string) {
 	return tmpl, "login_theme1"
 }
 
-func (l *Login) GetAssetList() []string {
-	return AssetsList
-}
-
-func (l *Login) GetAsset(name string) ([]byte, error) {
-	return Asset(name[1:])
-}
-
-func (l *Login) IsAPage() bool {
-	return true
-}
-
-func (l *Login) GetName() string {
-	return "login"
-}
+func (l *Login) GetAssetList() []string               { return AssetsList }
+func (l *Login) GetAsset(name string) ([]byte, error) { return Asset(name[1:]) }
+func (l *Login) IsAPage() bool                        { return true }
+func (l *Login) GetName() string                      { return "login" }
 
 func (l *Login) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)
