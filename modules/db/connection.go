@@ -140,6 +140,7 @@ var ignoreErrors = [...][]string{
 		"LastInsertId is not supported",
 		"There is no generated identity value",
 		"no affect",
+		"out of index",
 	},
 }
 
