@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	errors2 "errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/system"
 	template2 "html/template"
 	"net/http"
 	"runtime/debug"
@@ -24,6 +23,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
@@ -288,10 +288,8 @@ func (eng *Engine) ClonedBySetter(setter Setter) *Engine {
 	return eng
 }
 
-// wrapWithAuthMiddleware wrap a auth middleware to the given handler.
-func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
-	conn := db.GetConnection(eng.Services)
-	return []context.Handler{func(ctx *context.Context) {
+func (eng *Engine) deferHandler(conn db.Connection) context.Handler {
+	return func(ctx *context.Context) {
 		defer func(ctx *context.Context) {
 			if user, ok := ctx.UserValue["user"].(models.UserModel); ok {
 				var input []byte
@@ -332,7 +330,19 @@ func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handl
 			}
 		}(ctx)
 		ctx.Next()
-	}, response.OffLineHandler, auth.Middleware(conn), handler}
+	}
+}
+
+// wrapWithAuthMiddleware wrap a auth middleware to the given handler.
+func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
+	conn := db.GetConnection(eng.Services)
+	return []context.Handler{eng.deferHandler(conn), response.OffLineHandler, auth.Middleware(conn), handler}
+}
+
+// wrapWithAuthMiddleware wrap a auth middleware to the given handler.
+func (eng *Engine) wrap(handler context.Handler) context.Handlers {
+	conn := db.GetConnection(eng.Services)
+	return []context.Handler{eng.deferHandler(conn), response.OffLineHandler, handler}
 }
 
 // ============================
@@ -366,14 +376,18 @@ func Content(ctx interface{}, panel types.GetPanelFn) {
 }
 
 // Data inject the route and corresponding handler to the web framework.
-func (eng *Engine) Data(method, url string, handler context.Handler) {
-	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+func (eng *Engine) Data(method, url string, handler context.Handler, noAuth ...bool) {
+	if len(noAuth) > 0 && noAuth[0] {
+		eng.Adapter.AddHandler(method, url, eng.wrap(handler))
+	} else {
+		eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+	}
 }
 
 // HTML inject the route and corresponding handler wrapped by the given function to the web framework.
-func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
+func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...bool) {
 
-	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+	var handler = func(ctx *context.Context) {
 		panel, err := fn(ctx)
 		if err != nil {
 			panel = template.WarningPanel(err.Error())
@@ -397,13 +411,20 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn) {
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())
-	}))
+	}
+
+	if len(noAuth) > 0 && noAuth[0] {
+		eng.Adapter.AddHandler(method, url, eng.wrap(handler))
+	} else {
+		eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+	}
 }
 
 // HTMLFile inject the route and corresponding handler which returns the panel content of given html file path
 // to the web framework.
-func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{}) {
-	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{}, noAuth ...bool) {
+
+	var handler = func(ctx *context.Context) {
 
 		cbuf := new(bytes.Buffer)
 
@@ -438,13 +459,31 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())
-	}))
+	}
+
+	if len(noAuth) > 0 && noAuth[0] {
+		eng.Adapter.AddHandler(method, url, eng.wrap(handler))
+	} else {
+		eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+	}
 }
 
 // HTMLFiles inject the route and corresponding handler which returns the panel content of given html files path
 // to the web framework.
 func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, files ...string) {
-	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(func(ctx *context.Context) {
+	eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(eng.htmlFilesHandler(data, files...)))
+}
+
+// HTMLFilesNoAuth inject the route and corresponding handler which returns the panel content of given html files path
+// to the web framework without auth check.
+func (eng *Engine) HTMLFilesNoAuth(method, url string, data map[string]interface{}, files ...string) {
+	eng.Adapter.AddHandler(method, url, eng.wrap(eng.htmlFilesHandler(data, files...)))
+}
+
+// HTMLFiles inject the route and corresponding handler which returns the panel content of given html files path
+// to the web framework.
+func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string) context.Handler {
+	return func(ctx *context.Context) {
 
 		cbuf := new(bytes.Buffer)
 
@@ -479,7 +518,7 @@ func (eng *Engine) HTMLFiles(method, url string, data map[string]interface{}, fi
 		}
 
 		ctx.HTMLByte(http.StatusOK, buf.Bytes())
-	}))
+	}
 }
 
 // errorPanelHTML add an error panel html to context response.

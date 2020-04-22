@@ -211,7 +211,7 @@ func (h *Handler) MenuOrder(ctx *context.Context) {
 	var data []map[string]interface{}
 	_ = json.Unmarshal([]byte(ctx.FormValue("_order")), &data)
 
-	models.Menu().SetConn(h.conn).ResetOrder(data)
+	models.Menu().SetConn(h.conn).ResetOrder([]byte(ctx.FormValue("_order")))
 
 	response.Ok(ctx)
 }

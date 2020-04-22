@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
@@ -96,28 +97,57 @@ func (t MenuModel) Update(title, icon, uri, header string, parentId int64) (int6
 		})
 }
 
+type OrderItems []OrderItem
+
+type OrderItem struct {
+	ID       uint       `json:"id"`
+	Children OrderItems `json:"children"`
+}
+
 // ResetOrder update the order of menu models.
-func (t MenuModel) ResetOrder(data []map[string]interface{}) {
+func (t MenuModel) ResetOrder(data []byte) {
+
+	var items OrderItems
+	_ = json.Unmarshal(data, &items)
+
 	count := 1
-	for _, v := range data {
-		if child, ok := v["children"]; ok {
+	for _, v := range items {
+		if len(v.Children) > 0 {
 			_, _ = t.Table(t.TableName).
-				Where("id", "=", v["id"]).Update(dialect.H{
+				Where("id", "=", v.ID).Update(dialect.H{
 				"order":     count,
 				"parent_id": 0,
 			})
 
-			for _, v2 := range child.([]interface{}) {
-				_, _ = t.Table(t.TableName).
-					Where("id", "=", v2.(map[string]interface{})["id"]).Update(dialect.H{
-					"order":     count,
-					"parent_id": v["id"],
-				})
-				count++
+			for _, v2 := range v.Children {
+				if len(v2.Children) > 0 {
+
+					_, _ = t.Table(t.TableName).
+						Where("id", "=", v2.ID).Update(dialect.H{
+						"order":     count,
+						"parent_id": v.ID,
+					})
+
+					for _, v3 := range v2.Children {
+						_, _ = t.Table(t.TableName).
+							Where("id", "=", v3.ID).Update(dialect.H{
+							"order":     count,
+							"parent_id": v2.ID,
+						})
+						count++
+					}
+				} else {
+					_, _ = t.Table(t.TableName).
+						Where("id", "=", v2.ID).Update(dialect.H{
+						"order":     count,
+						"parent_id": v.ID,
+					})
+					count++
+				}
 			}
 		} else {
 			_, _ = t.Table(t.TableName).
-				Where("id", "=", v["id"]).Update(dialect.H{
+				Where("id", "=", v.ID).Update(dialect.H{
 				"order":     count,
 				"parent_id": 0,
 			})
