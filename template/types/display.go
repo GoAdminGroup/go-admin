@@ -29,6 +29,7 @@ func RegisterDisplayFnGenerator(key string, gen DisplayFnGenerator) {
 
 type FieldDisplay struct {
 	Display              FieldFilterFn
+	DisplayGenerator     string
 	DisplayProcessChains DisplayProcessFnChains
 }
 
