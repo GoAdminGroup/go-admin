@@ -6,7 +6,6 @@ package auth
 
 import (
 	"encoding/json"
-	"errors"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -147,7 +146,7 @@ func (driver *DBDriver) Load(sid string) (map[string]interface{}, error) {
 	}
 
 	if sesModel == nil {
-		return map[string]interface{}{}, errors.New("invalid session id")
+		return map[string]interface{}{}, nil
 	}
 
 	var values map[string]interface{}
