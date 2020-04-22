@@ -5,7 +5,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
-type Label struct{}
+type Label struct {
+	types.BaseDisplayFnGenerator
+}
 
 func init() {
 	types.RegisterDisplayFnGenerator("label", new(Label))

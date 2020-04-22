@@ -5,7 +5,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
-type Image struct{}
+type Image struct {
+	types.BaseDisplayFnGenerator
+}
 
 func init() {
 	types.RegisterDisplayFnGenerator("image", new(Image))

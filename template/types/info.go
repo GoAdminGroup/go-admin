@@ -492,9 +492,11 @@ type InfoPanel struct {
 	processChains DisplayProcessFnChains
 
 	ActionButtons Buttons
-	Action        template.HTML
-	HeaderHtml    template.HTML
-	FooterHtml    template.HTML
+
+	// column operation buttons
+	Action     template.HTML
+	HeaderHtml template.HTML
+	FooterHtml template.HTML
 }
 
 type Where struct {
@@ -905,6 +907,8 @@ type FieldLabelParam struct {
 
 func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Display = displayFnGens["label"].Get(args)
+	i.FooterHtml += displayFnGens["label"].HTML() +
+		template.HTML("<script>") + displayFnGens["label"].JS() + template.HTML("</script>")
 	return i
 }
 
@@ -1225,12 +1229,12 @@ func (i *InfoPanel) SetAction(action template.HTML) *InfoPanel {
 }
 
 func (i *InfoPanel) SetHeaderHtml(header template.HTML) *InfoPanel {
-	i.HeaderHtml = header
+	i.HeaderHtml += header
 	return i
 }
 
 func (i *InfoPanel) SetFooterHtml(footer template.HTML) *InfoPanel {
-	i.FooterHtml = footer
+	i.FooterHtml += footer
 	return i
 }
 

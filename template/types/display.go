@@ -9,7 +9,14 @@ import (
 
 type DisplayFnGenerator interface {
 	Get(args ...interface{}) FieldFilterFn
+	JS() template.HTML
+	HTML() template.HTML
 }
+
+type BaseDisplayFnGenerator struct{}
+
+func (base *BaseDisplayFnGenerator) JS() template.HTML   { return "" }
+func (base *BaseDisplayFnGenerator) HTML() template.HTML { return "" }
 
 var displayFnGens = make(map[string]DisplayFnGenerator)
 
