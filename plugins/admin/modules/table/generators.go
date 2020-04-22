@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	tmpl "html/template"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -1033,7 +1035,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		FieldMust().
 		FieldHelpMsg(template.HTML(lgWithConfigScore("must bigger than 900 seconds")))
 	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.Code)
-	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_Html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_html", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("login logo"), "login_logo", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("no limit login ip"), "no_limit_login_ip", db.Varchar, form.Switch).
@@ -1176,7 +1178,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		}).FieldDisplay(defaultFilterFn("full"))
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
-	formList.SetTabGroups(types.NewTabGroups("id", "site_off", "debug", "env", "language", "theme", "color_scheme",
+	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
 		"asset_url", "title", "login_title", "session_life_time", "no_limit_login_ip", "animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
@@ -1186,7 +1188,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			"logger_encoder_encoding", "logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_name_key",
 			"logger_encoder_caller_key", "logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_level",
 			"logger_encoder_time", "logger_encoder_duration", "logger_encoder_caller").
-		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_Html", "footer_info", "login_logo")).
+		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_html", "footer_info", "login_logo")).
 		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
 
 	formList.SetTable("goadmin_site").
@@ -1203,6 +1205,13 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		if err := checkJSON(values, "file_upload_engine"); err != nil {
 			return err
 		}
+
+		values["logo"][0] = escape(values.Get("logo"))
+		values["mini_logo"][0] = escape(values.Get("mini_logo"))
+		values["custom_head_html"][0] = escape(values.Get("custom_head_html"))
+		values["custom_foot_html"][0] = escape(values.Get("custom_foot_html"))
+		values["footer_info"][0] = escape(values.Get("footer_info"))
+		values["login_logo"][0] = escape(values.Get("login_logo"))
 
 		var err error
 		if s.c.UpdateProcessFn != nil {
@@ -1268,6 +1277,17 @@ func link(url, content string) tmpl.HTML {
 		SetAttr("href", url).
 		SetContent(template.HTML(lg(content))).
 		Get()
+}
+
+func escape(s string) string {
+	if s == "" {
+		return ""
+	}
+	s, err := url.QueryUnescape(s)
+	if err != nil {
+		logger.Error("config set error", err)
+	}
+	return s
 }
 
 func checkJSON(values form2.Values, key string) error {

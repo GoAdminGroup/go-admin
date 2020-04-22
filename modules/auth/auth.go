@@ -53,15 +53,25 @@ func EncodePassword(pwd []byte) string {
 }
 
 // SetCookie set the cookie.
-func SetCookie(ctx *context.Context, user models.UserModel, conn db.Connection) bool {
-	InitSession(ctx, conn).Add("user_id", user.Id)
-	return true
+func SetCookie(ctx *context.Context, user models.UserModel, conn db.Connection) error {
+	ses, err := InitSession(ctx, conn)
+
+	if err != nil {
+		return err
+	}
+
+	return ses.Add("user_id", user.Id)
 }
 
 // DelCookie delete the cookie from Context.
-func DelCookie(ctx *context.Context, conn db.Connection) bool {
-	InitSession(ctx, conn).Clear()
-	return true
+func DelCookie(ctx *context.Context, conn db.Connection) error {
+	ses, err := InitSession(ctx, conn)
+
+	if err != nil {
+		return err
+	}
+
+	return ses.Clear()
 }
 
 type TokenService struct {

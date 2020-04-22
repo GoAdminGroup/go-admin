@@ -6,10 +6,13 @@ package engine
 
 import (
 	"bytes"
+	"encoding/json"
+	errors2 "errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	template2 "html/template"
 	"net/http"
+	"runtime/debug"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/adapter"
@@ -287,7 +290,49 @@ func (eng *Engine) ClonedBySetter(setter Setter) *Engine {
 
 // wrapWithAuthMiddleware wrap a auth middleware to the given handler.
 func (eng *Engine) wrapWithAuthMiddleware(handler context.Handler) context.Handlers {
-	return []context.Handler{response.OffLineHandler, auth.Middleware(db.GetConnection(eng.Services)), handler}
+	conn := db.GetConnection(eng.Services)
+	return []context.Handler{func(ctx *context.Context) {
+		defer func(ctx *context.Context) {
+			if user, ok := ctx.UserValue["user"].(models.UserModel); ok {
+				var input []byte
+				form := ctx.Request.MultipartForm
+				if form != nil {
+					input, _ = json.Marshal((*form).Value)
+				}
+
+				models.OperationLog().SetConn(conn).New(user.Id, ctx.Path(), ctx.Method(), ctx.LocalIP(), string(input))
+			}
+
+			if err := recover(); err != nil {
+				logger.Error(err)
+				logger.Error(string(debug.Stack()[:]))
+
+				var (
+					errMsg string
+					ok     bool
+					e      error
+				)
+
+				if errMsg, ok = err.(string); !ok {
+					if e, ok = err.(error); ok {
+						errMsg = e.Error()
+					}
+				}
+
+				if errMsg == "" {
+					errMsg = "system error"
+				}
+
+				if ctx.WantJSON() {
+					response.Error(ctx, errMsg)
+					return
+				}
+
+				eng.errorPanelHTML(ctx, new(bytes.Buffer), errors2.New(errMsg))
+			}
+		}(ctx)
+		ctx.Next()
+	}, response.OffLineHandler, auth.Middleware(conn), handler}
 }
 
 // ============================

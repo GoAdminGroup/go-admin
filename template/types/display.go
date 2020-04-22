@@ -236,8 +236,8 @@ func addXssFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
 
 func addXssJsFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
 	chains = chains.Add(func(value string) string {
-		s := strings.Replace(value, "<script>", "&lt;script&gt;", -1)
-		return strings.Replace(s, "</script>", "&lt;/script&gt;", -1)
+		replacer := strings.NewReplacer("<script>", "&lt;script&gt;", "</script>", "&lt;/script&gt;")
+		return replacer.Replace(value)
 	})
 	return chains
 }

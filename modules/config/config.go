@@ -536,7 +536,7 @@ func (c *Config) ToMap() map[string]string {
 	m["asset_url"] = c.AssetUrl
 	m["file_upload_engine"] = c.FileUploadEngine.JSON()
 	m["custom_head_html"] = string(c.CustomHeadHtml)
-	m["custom_foot_Html"] = string(c.CustomFootHtml)
+	m["custom_foot_html"] = string(c.CustomFootHtml)
 	m["footer_info"] = string(c.FooterInfo)
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
@@ -616,7 +616,7 @@ func (c *Config) Update(m map[string]string) error {
 		c.SessionLifeTime = ses
 	}
 	c.CustomHeadHtml = template.HTML(m["custom_head_html"])
-	c.CustomFootHtml = template.HTML(m["custom_foot_Html"])
+	c.CustomFootHtml = template.HTML(m["custom_foot_html"])
 	c.FooterInfo = template.HTML(m["footer_info"])
 	c.LoginTitle = m["login_title"]
 	c.AssetUrl = m["asset_url"]

@@ -57,7 +57,12 @@ func (h *Handler) Auth(ctx *context.Context) {
 		return
 	}
 
-	auth.SetCookie(ctx, user, h.conn)
+	err := auth.SetCookie(ctx, user, h.conn)
+
+	if err != nil {
+		response.Error(ctx, err.Error())
+		return
+	}
 
 	if ref := ctx.Headers("Referer"); ref != "" {
 		if u, err := url.Parse(ref); err == nil {
@@ -81,7 +86,10 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 // Logout delete the cookie.
 func (h *Handler) Logout(ctx *context.Context) {
-	auth.DelCookie(ctx, db.GetConnection(h.services))
+	err := auth.DelCookie(ctx, db.GetConnection(h.services))
+	if err != nil {
+		logger.Error("logout error", err)
+	}
 	ctx.AddHeader("Location", h.config.Url(config.GetLoginUrl()))
 	ctx.SetStatusCode(302)
 }

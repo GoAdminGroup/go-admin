@@ -828,13 +828,9 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 		k = strings.Replace(k, "[]", "", -1)
 		if !modules.InArray(exceptString, k) {
 			if modules.InArray(columns, k) {
-				delimiter := ","
-				for i := 0; i < len(tb.Form.FieldList); i++ {
-					if k == tb.Form.FieldList[i].Field {
-						fun = tb.Form.FieldList[i].PostFilterFn
-						delimiter = modules.SetDefault(tb.Form.FieldList[i].DefaultOptionDelimiter, ",")
-					}
-				}
+				field := tb.Form.FieldList.FindByFieldName(k)
+				fun = field.PostFilterFn
+				delimiter := modules.SetDefault(field.DefaultOptionDelimiter, ",")
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
 					value[k] = fun(types.PostFieldModel{

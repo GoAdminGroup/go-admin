@@ -11,6 +11,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/page"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	template2 "github.com/GoAdminGroup/go-admin/template"
@@ -148,7 +149,14 @@ func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, b
 		user = models.User()
 	)
 
-	if id, ok = InitSession(ctx, conn).Get("user_id").(float64); !ok {
+	ses, err := InitSession(ctx, conn)
+
+	if err != nil {
+		logger.Error("retrieve auth user failed", err)
+		return user, false, false
+	}
+
+	if id, ok = ses.Get("user_id").(float64); !ok {
 		return user, false, false
 	}
 
@@ -165,7 +173,11 @@ const defaultUserIDSesKey = "user_id"
 
 // GetUserID return the user id from the session.
 func GetUserID(sesKey string, conn db.Connection) int64 {
-	id := GetSessionByKey(sesKey, defaultUserIDSesKey, conn)
+	id, err := GetSessionByKey(sesKey, defaultUserIDSesKey, conn)
+	if err != nil {
+		logger.Error("retrieve auth user failed", err)
+		return -1
+	}
 	if idFloat64, ok := id.(float64); ok {
 		return int64(idFloat64)
 	}
