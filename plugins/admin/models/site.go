@@ -59,17 +59,18 @@ func (t SiteModel) Init(cfg map[string]string) {
 			if db.CheckError(err, db.INSERT) {
 				panic(err)
 			}
-		} else {
-			if value != "" {
-				_, err := t.Table(t.TableName).
-					Where("key", "=", key).Update(dialect.H{
-					"value": value,
-				})
-				if db.CheckError(err, db.UPDATE) {
-					panic(err)
-				}
-			}
 		}
+		//else {
+		//	if value != "" {
+		//		_, err := t.Table(t.TableName).
+		//			Where("key", "=", key).Update(dialect.H{
+		//			"value": value,
+		//		})
+		//		if db.CheckError(err, db.UPDATE) {
+		//			panic(err)
+		//		}
+		//	}
+		//}
 	}
 }
 
