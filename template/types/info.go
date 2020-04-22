@@ -907,8 +907,6 @@ type FieldLabelParam struct {
 
 func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Display = displayFnGens["label"].Get(args)
-	i.FooterHtml += displayFnGens["label"].HTML() +
-		template.HTML("<script>") + displayFnGens["label"].JS() + template.HTML("</script>")
 	return i
 }
 
