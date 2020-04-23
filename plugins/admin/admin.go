@@ -51,7 +51,9 @@ func (admin *Admin) InitPlugin(services service.List) {
 	admin.handler.AddNavButton(admin.UI.NavButtons...)
 
 	// init site setting
-	models.Site().SetConn(admin.Conn).Init(c.ToMap())
+	site := models.Site().SetConn(admin.Conn)
+	site.Init(c.ToMap())
+	_ = c.Update(site.AllToMap())
 
 	table.SetServices(services)
 }

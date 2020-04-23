@@ -24,6 +24,7 @@ import (
 type FieldOption struct {
 	Text          string            `json:"text"`
 	Value         string            `json:"value"`
+	TextHTML      template.HTML     `json:"-"`
 	Selected      bool              `json:"-"`
 	SelectedLabel template.HTML     `json:"-"`
 	Extra         map[string]string `json:"-"`
@@ -35,7 +36,11 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []template.HTML) Fiel
 
 	if valArr, ok := val.([]string); ok {
 		for k := range fo {
-			fo[k].Selected = utils.InArray(valArr, fo[k].Value) || utils.InArray(valArr, fo[k].Text)
+			text := fo[k].Text
+			if text == "" {
+				text = string(fo[k].TextHTML)
+			}
+			fo[k].Selected = utils.InArray(valArr, fo[k].Value) || utils.InArray(valArr, text)
 			if fo[k].Selected {
 				fo[k].SelectedLabel = labels[0]
 			} else {
@@ -44,7 +49,11 @@ func (fo FieldOptions) SetSelected(val interface{}, labels []template.HTML) Fiel
 		}
 	} else {
 		for k := range fo {
-			fo[k].Selected = fo[k].Value == val || fo[k].Text == val
+			text := fo[k].Text
+			if text == "" {
+				text = string(fo[k].TextHTML)
+			}
+			fo[k].Selected = fo[k].Value == val || text == val
 			if fo[k].Selected {
 				fo[k].SelectedLabel = labels[0]
 			} else {
@@ -1217,6 +1226,7 @@ func (f FormFields) Copy() FormFields {
 			formList[i].Options[j] = FieldOption{
 				Value:    f[i].Options[j].Value,
 				Text:     f[i].Options[j].Text,
+				TextHTML: f[i].Options[j].TextHTML,
 				Selected: f[i].Options[j].Selected,
 			}
 		}

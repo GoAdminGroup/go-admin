@@ -903,20 +903,56 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 			return txErr
 		})
 
+	var parentIDOptions = types.FieldOptions{
+		{
+			Text:  "ROOT",
+			Value: "0",
+		},
+	}
+
+	allMenus, _ := s.connection().Table("goadmin_menu").
+		Where("parent_id", "=", 0).
+		Select("id", "title").
+		OrderBy("order", "asc").
+		All()
+	allMenuIDs := make([]interface{}, len(allMenus))
+
+	if len(allMenuIDs) > 0 {
+		for i := 0; i < len(allMenus); i++ {
+			allMenuIDs[i] = allMenus[i]["id"]
+		}
+
+		secondLevelMenus, _ := s.connection().Table("goadmin_menu").
+			WhereIn("parent_id", allMenuIDs).
+			Select("id", "title", "parent_id").
+			All()
+
+		secondLevelMenusCol := collection.Collection(secondLevelMenus)
+
+		for i := 0; i < len(allMenus); i++ {
+			parentIDOptions = append(parentIDOptions, types.FieldOption{
+				TextHTML: "&nbsp;&nbsp;┝  " + language.GetFromHtml(template.HTML(allMenus[i]["title"].(string))),
+				Value:    strconv.Itoa(int(allMenus[i]["id"].(int64))),
+			})
+			col := secondLevelMenusCol.Where("parent_id", "=", allMenus[i]["id"].(int64))
+			for i := 0; i < len(col); i++ {
+				parentIDOptions = append(parentIDOptions, types.FieldOption{
+					TextHTML: "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;┝  " +
+						language.GetFromHtml(template.HTML(col[i]["title"].(string))),
+					Value: strconv.Itoa(int(col[i]["id"].(int64))),
+				})
+			}
+		}
+	}
+
 	formList := menuTable.GetForm().AddXssJsFilter()
 	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
-		FieldOptionsFromTable("goadmin_menu", "title", "id", func(sql *db.SQL) *db.SQL {
-			return sql.Where("parent_id", "=", 0).OrderBy("order", "asc")
-		}).
-		FieldOptionsTableProcessFn(func(options types.FieldOptions) types.FieldOptions {
-			return append([]types.FieldOption{{
-				Text:  "root",
-				Value: "0",
-			}}, options...)
-		}).
+		FieldOptions(parentIDOptions).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var menuItem []string
+
+			fmt.Println("model.ID", model.ID)
 
 			if model.ID == "" {
 				return menuItem

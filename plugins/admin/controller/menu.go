@@ -231,9 +231,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 
-	list := h.table("menu", ctx)
-
-	formInfo := list.GetNewForm()
+	formInfo := h.table("menu", ctx).GetNewForm()
 
 	newForm := menuFormContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).
