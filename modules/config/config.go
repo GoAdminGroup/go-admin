@@ -275,6 +275,8 @@ type Config struct {
 	// Is open admin plugin json api
 	OpenAdminApi bool `json:"open_admin_api",yaml:"open_admin_api",ini:"open_admin_api"`
 
+	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance",yaml:"hide_visitor_user_center_entrance",ini:"hide_visitor_user_center_entrance"`
+
 	prefix string
 }
 
@@ -446,41 +448,47 @@ func (c *Config) PrefixFixSlash() string {
 
 func (c *Config) Copy() *Config {
 	return &Config{
-		Databases:        c.Databases,
-		Domain:           c.Domain,
-		Language:         c.Language,
-		UrlPrefix:        c.UrlPrefix,
-		Theme:            c.Theme,
-		Store:            c.Store,
-		Title:            c.Title,
-		Logo:             c.Logo,
-		MiniLogo:         c.MiniLogo,
-		IndexUrl:         c.IndexUrl,
-		LoginUrl:         c.LoginUrl,
-		Debug:            c.Debug,
-		Env:              c.Env,
-		InfoLogPath:      c.InfoLogPath,
-		ErrorLogPath:     c.ErrorLogPath,
-		AccessLogPath:    c.AccessLogPath,
-		SqlLog:           c.SqlLog,
-		AccessLogOff:     c.AccessLogOff,
-		InfoLogOff:       c.InfoLogOff,
-		ErrorLogOff:      c.ErrorLogOff,
-		ColorScheme:      c.ColorScheme,
-		SessionLifeTime:  c.SessionLifeTime,
-		AssetUrl:         c.AssetUrl,
-		FileUploadEngine: c.FileUploadEngine,
-		CustomHeadHtml:   c.CustomHeadHtml,
-		CustomFootHtml:   c.CustomFootHtml,
-		FooterInfo:       c.FooterInfo,
-		LoginTitle:       c.LoginTitle,
-		LoginLogo:        c.LoginLogo,
-		AuthUserTable:    c.AuthUserTable,
-		Extra:            c.Extra,
-		Animation:        c.Animation,
-		NoLimitLoginIP:   c.NoLimitLoginIP,
-		Logger:           c.Logger,
-		prefix:           c.prefix,
+		Databases:                     c.Databases,
+		Domain:                        c.Domain,
+		Language:                      c.Language,
+		UrlPrefix:                     c.UrlPrefix,
+		Theme:                         c.Theme,
+		Store:                         c.Store,
+		Title:                         c.Title,
+		Logo:                          c.Logo,
+		MiniLogo:                      c.MiniLogo,
+		IndexUrl:                      c.IndexUrl,
+		LoginUrl:                      c.LoginUrl,
+		Debug:                         c.Debug,
+		Env:                           c.Env,
+		InfoLogPath:                   c.InfoLogPath,
+		ErrorLogPath:                  c.ErrorLogPath,
+		AccessLogPath:                 c.AccessLogPath,
+		SqlLog:                        c.SqlLog,
+		AccessLogOff:                  c.AccessLogOff,
+		InfoLogOff:                    c.InfoLogOff,
+		ErrorLogOff:                   c.ErrorLogOff,
+		ColorScheme:                   c.ColorScheme,
+		SessionLifeTime:               c.SessionLifeTime,
+		AssetUrl:                      c.AssetUrl,
+		FileUploadEngine:              c.FileUploadEngine,
+		CustomHeadHtml:                c.CustomHeadHtml,
+		CustomFootHtml:                c.CustomFootHtml,
+		FooterInfo:                    c.FooterInfo,
+		LoginTitle:                    c.LoginTitle,
+		LoginLogo:                     c.LoginLogo,
+		AuthUserTable:                 c.AuthUserTable,
+		Extra:                         c.Extra,
+		Animation:                     c.Animation,
+		NoLimitLoginIP:                c.NoLimitLoginIP,
+		Logger:                        c.Logger,
+		SiteOff:                       c.SiteOff,
+		HideConfigCenterEntrance:      c.HideConfigCenterEntrance,
+		HideAppInfoEntrance:           c.HideAppInfoEntrance,
+		UpdateProcessFn:               c.UpdateProcessFn,
+		OpenAdminApi:                  c.OpenAdminApi,
+		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
+		prefix:                        c.prefix,
 	}
 }
 
@@ -988,6 +996,10 @@ func GetAnimation() PageAnimation {
 
 func GetNoLimitLoginIP() bool {
 	return globalCfg.NoLimitLoginIP
+}
+
+func GetHideVisitorUserCenterEntrance() bool {
+	return globalCfg.HideVisitorUserCenterEntrance
 }
 
 type Service struct {

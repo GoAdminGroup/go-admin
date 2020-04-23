@@ -94,6 +94,14 @@ func (t UserModel) GetCheckPermissionByUrlMethod(path, method string) string {
 	return path
 }
 
+func (t UserModel) IsVisitor() bool {
+	return !t.CheckPermissionByUrlMethod(config.Url("/info/normal_manager"), "GET", url.Values{})
+}
+
+func (t UserModel) HideUserCenterEntrance() bool {
+	return t.IsVisitor() && config.GetHideVisitorUserCenterEntrance()
+}
+
 func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams url.Values) bool {
 
 	if t.IsSuperAdmin() {

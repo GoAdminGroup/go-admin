@@ -493,6 +493,8 @@ type InfoPanel struct {
 
 	ActionButtons Buttons
 
+	DisplayGeneratorRecords map[string]uint8
+
 	// column operation buttons
 	Action     template.HTML
 	HeaderHtml template.HTML
