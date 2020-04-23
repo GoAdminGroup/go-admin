@@ -159,9 +159,6 @@ func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
 	var title string
 	for j := 0; j < len(menus); j++ {
 		if parentID == menus[j]["parent_id"].(int64) {
-
-			childList := constructMenuTree(menus, menus[j]["id"].(int64))
-
 			if menus[j]["type"].(int64) == 1 {
 				title = language.Get(menus[j]["title"].(string))
 			} else {
@@ -177,7 +174,7 @@ func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
 				Icon:         menus[j]["icon"].(string),
 				Header:       header,
 				Active:       "",
-				ChildrenList: childList,
+				ChildrenList: constructMenuTree(menus, menus[j]["id"].(int64)),
 			}
 
 			branch = append(branch, child)
