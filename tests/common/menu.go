@@ -110,5 +110,5 @@ func menuTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		WithMultipart().
 		Expect().Status(200).JSON().Object().
 		ValueEqual("code", 200).
-		ValueEqual("msg", "ok")
+		ValueEqual("msg", "delete succeed")
 }
