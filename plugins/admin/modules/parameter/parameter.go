@@ -302,7 +302,7 @@ func (param Parameters) GetFixedParamStr() url.Values {
 }
 
 func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []interface{}, columns, existKeys []string,
-	filterProcess func(string, string, string) string, getJoinTable func(string) string) (string, []interface{}, []string) {
+	filterProcess func(string, string, string) string) (string, []interface{}, []string) {
 	var multiKey = make(map[string]uint8)
 	for key, value := range param.Fields {
 
@@ -354,23 +354,21 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 		} else {
 			keys := strings.Split(key, FilterParamJoinInfix)
 			if len(keys) > 1 {
-				if joinTable := getJoinTable(keys[1]); joinTable != "" {
-					val := filterProcess(key, value[0], keyIndexSuffix)
-					if op == "in" {
-						qmark := ""
-						for range value {
-							qmark += "?,"
-						}
-						wheres += joinTable + "." + modules.FilterField(keys[1], delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
-					} else {
-						wheres += joinTable + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
+				val := filterProcess(key, value[0], keyIndexSuffix)
+				if op == "in" {
+					qmark := ""
+					for range value {
+						qmark += "?,"
 					}
-					if op == "like" && !strings.Contains(val, "%") {
-						whereArgs = append(whereArgs, "%"+val+"%")
-					} else {
-						for _, v := range value {
-							whereArgs = append(whereArgs, v)
-						}
+					wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+				} else {
+					wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
+				}
+				if op == "like" && !strings.Contains(val, "%") {
+					whereArgs = append(whereArgs, "%"+val+"%")
+				} else {
+					for _, v := range value {
+						whereArgs = append(whereArgs, v)
 					}
 				}
 			}

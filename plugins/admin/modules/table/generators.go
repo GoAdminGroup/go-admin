@@ -77,7 +77,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 			}
 
 			return labels
-		})
+		}).FieldFilterable()
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 

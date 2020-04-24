@@ -312,7 +312,7 @@ func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pane
 	)
 
 	wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
-		tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
+		tb.Info.FieldList.GetFieldFilterProcessValue)
 	wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
 	wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
@@ -436,7 +436,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 
 		// parameter
 		wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
-			tb.Info.FieldList.GetFieldFilterProcessValue, tb.Info.FieldList.GetFieldJoinTable)
+			tb.Info.FieldList.GetFieldFilterProcessValue)
 		// pre query
 		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
 		wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)

@@ -536,9 +536,9 @@ func testMenuPageOperations(page *Page) {
 
 	page.Click(menuParentIdDropDown)
 	page.Text(parentIdRootOpt, "ROOT")
-	page.Text(parentIdDashboardOpt, "  ┝  Dashboard")
-	page.Text(parentIdAdminOpt, "  ┝  Admin")
-	page.Text(parentIdUserOpt, "         ┝  Users")
+	page.Text(parentIdDashboardOpt, "  ┝ Dashboard")
+	page.Text(parentIdAdminOpt, "  ┝ Admin")
+	page.Text(parentIdUserOpt, "         ┝ Users")
 	page.Click(parentIdRootOpt)
 
 	// Roles Selection Check
