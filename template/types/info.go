@@ -127,6 +127,8 @@ type Field struct {
 	FieldDisplay
 }
 
+type QueryFilterFn func(param parameter.Parameters, conn db.Connection) (ids []string, stopQuery bool)
+
 type FilterFormField struct {
 	Type        form.Type
 	Options     FieldOptions
@@ -535,6 +537,8 @@ type InfoPanel struct {
 
 	DisplayGeneratorRecords map[string]struct{}
 
+	QueryFilterFn QueryFilterFn
+
 	// column operation buttons
 	Action     template.HTML
 	HeaderHtml template.HTML
@@ -841,6 +845,11 @@ func (i *InfoPanel) SetDeleteHook(fn DeleteFn) *InfoPanel {
 
 func (i *InfoPanel) SetDeleteHookWithRes(fn DeleteFnWithRes) *InfoPanel {
 	i.DeleteHookWithRes = fn
+	return i
+}
+
+func (i *InfoPanel) SetQueryFilterFn(fn QueryFilterFn) *InfoPanel {
+	i.QueryFilterFn = fn
 	return i
 }
 

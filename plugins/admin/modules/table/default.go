@@ -96,6 +96,13 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 		beginTime = time.Now()
 	)
 
+	if tb.Info.QueryFilterFn != nil {
+		ids, stop := tb.Info.QueryFilterFn(params, tb.db())
+		if stop {
+			return tb.GetDataWithIds(params.WithPKs(ids...))
+		}
+	}
+
 	if tb.getDataFun != nil {
 		data, size = tb.getDataFun(params)
 	} else if tb.sourceURL != "" {
