@@ -58,6 +58,7 @@ var cn = LangSet{
 	"confirm":                "确认",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",
+	"delete succeed":         "删除成功",
 	"edit fail":              "编辑失败",
 	"create fail":            "新增失败",
 	"delete fail":            "删除失败",

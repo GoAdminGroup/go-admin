@@ -110,7 +110,7 @@ type Field struct {
 	Field    string
 	TypeName db.DatabaseType
 
-	Join Join
+	Joins Joins
 
 	Width      int
 	Sortable   bool
@@ -256,21 +256,26 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 	)
 	for _, field := range f {
 		if field.Field != info.PrimaryKey && modules.InArray(columns, field.Field) &&
-			!field.Join.Valid() {
+			!field.Joins.Valid() {
 			fields += info.Table + "." + modules.FilterField(field.Field, info.Delimiter) + ","
 		}
 
 		headField := field.Field
 
-		if field.Join.Valid() {
-			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
-			joinFields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
+		if field.Joins.Valid() {
+			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			joinFields += db.GetAggregationExpression(info.Driver, field.Joins.Last().Table+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
-			if !modules.InArray(joinTables, field.Join.Table) {
-				joinTables = append(joinTables, field.Join.Table)
-				joins += " left join " + modules.FilterField(field.Join.Table, info.Delimiter) + " on " +
-					field.Join.Table + "." + modules.FilterField(field.Join.JoinField, info.Delimiter) + " = " +
-					info.Table + "." + modules.FilterField(field.Join.Field, info.Delimiter)
+			for _, join := range field.Joins {
+				if !modules.InArray(joinTables, join.Table) {
+					joinTables = append(joinTables, join.Table)
+					if join.BaseTable == "" {
+						join.BaseTable = info.Table
+					}
+					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " on " +
+						join.Table + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
+						join.BaseTable + "." + modules.FilterField(join.Field, info.Delimiter)
+				}
 			}
 		}
 
@@ -309,21 +314,24 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 	)
 	for _, field := range f {
 		if field.Field != info.PrimaryKey && modules.InArray(columns, field.Field) &&
-			!field.Join.Valid() {
+			!field.Joins.Valid() {
 			fields += info.Table + "." + modules.FilterField(field.Field, info.Delimiter) + ","
 		}
 
 		headField := field.Field
 
-		if field.Join.Valid() {
-			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
-			fields += db.GetAggregationExpression(info.Driver, field.Join.Table+"."+
-				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
-			if !modules.InArray(joinTables, field.Join.Table) {
-				joinTables = append(joinTables, field.Join.Table)
-				joins += " left join " + modules.FilterField(field.Join.Table, info.Delimiter) + " on " +
-					field.Join.Table + "." + modules.FilterField(field.Join.JoinField, info.Delimiter) + " = " +
-					info.Table + "." + modules.FilterField(field.Join.Field, info.Delimiter)
+		if field.Joins.Valid() {
+			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			for _, join := range field.Joins {
+				if !modules.InArray(joinTables, join.Table) {
+					joinTables = append(joinTables, join.Table)
+					if join.BaseTable == "" {
+						join.BaseTable = info.Table
+					}
+					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " on " +
+						join.Table + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
+						join.BaseTable + "." + modules.FilterField(join.Field, info.Delimiter)
+				}
 			}
 		}
 
@@ -360,7 +368,7 @@ func (f FieldList) GetFieldFilterProcessValue(key, value, keyIndex string) strin
 func (f FieldList) GetFieldJoinTable(key string) string {
 	field := f.GetFieldByFieldName(key)
 	if field.Exist() {
-		return field.Join.Table
+		return field.Joins.Last().Table
 	}
 	return ""
 }
@@ -370,18 +378,34 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 		if field.Field == name {
 			return field
 		}
-		if JoinField(field.Join.Table, field.Field) == name {
+		if JoinField(field.Joins.Last().Table, field.Field) == name {
 			return field
 		}
 	}
 	return Field{}
 }
 
+// Join store join table info. For example:
+//
+// Join {
+//     BaseTable:   "users",
+//     Field:       "role_id",
+//     Table:       "roles",
+//     JoinField:   "id",
+// }
+//
+// It will generate the join table sql like:
+//
+// ... left join roles on roles.id = users.role_id ...
+//
 type Join struct {
 	Table     string
 	Field     string
 	JoinField string
+	BaseTable string
 }
+
+type Joins []Join
 
 func JoinField(table, field string) string {
 	return table + parameter.FilterParamJoinInfix + field
@@ -389,6 +413,19 @@ func JoinField(table, field string) string {
 
 func GetJoinField(field string) string {
 	return strings.Split(field, parameter.FilterParamJoinInfix)[1]
+}
+
+func (j Joins) Valid() bool {
+	for i := 0; i < len(j); i++ {
+		if j[i].Valid() {
+			return true
+		}
+	}
+	return false
+}
+
+func (j Joins) Last() Join {
+	return j[len(j)-1]
 }
 
 func (j Join) Valid() bool {
@@ -493,7 +530,7 @@ type InfoPanel struct {
 
 	ActionButtons Buttons
 
-	DisplayGeneratorRecords map[string]uint8
+	DisplayGeneratorRecords map[string]struct{}
 
 	// column operation buttons
 	Action     template.HTML
@@ -675,18 +712,19 @@ const DefaultPageSize = 10
 
 func NewInfoPanel(pk string) *InfoPanel {
 	return &InfoPanel{
-		curFieldListIndex:    -1,
-		PageSizeList:         DefaultPageSizeList,
-		DefaultPageSize:      DefaultPageSize,
-		processChains:        make(DisplayProcessFnChains, 0),
-		Buttons:              make(Buttons, 0),
-		Callbacks:            make(Callbacks, 0),
-		Wheres:               make([]Where, 0),
-		WhereRaws:            WhereRaw{},
-		SortField:            pk,
-		TableLayout:          "auto",
-		FilterFormInputWidth: 10,
-		FilterFormHeadWidth:  2,
+		curFieldListIndex:       -1,
+		PageSizeList:            DefaultPageSizeList,
+		DefaultPageSize:         DefaultPageSize,
+		processChains:           make(DisplayProcessFnChains, 0),
+		Buttons:                 make(Buttons, 0),
+		Callbacks:               make(Callbacks, 0),
+		DisplayGeneratorRecords: make(map[string]struct{}),
+		Wheres:                  make([]Where, 0),
+		WhereRaws:               WhereRaw{},
+		SortField:               pk,
+		TableLayout:             "auto",
+		FilterFormInputWidth:    10,
+		FilterFormHeadWidth:     2,
 	}
 }
 
@@ -881,6 +919,7 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 		Field:    field,
 		TypeName: typeName,
 		Sortable: false,
+		Joins:    make(Joins, 0),
 		EditAble: false,
 		EditType: table.Text,
 		FieldDisplay: FieldDisplay{
@@ -1096,7 +1135,7 @@ func (i *InfoPanel) FieldHide() *InfoPanel {
 }
 
 func (i *InfoPanel) FieldJoin(join Join) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Join = join
+	i.FieldList[i.curFieldListIndex].Joins = append(i.FieldList[i.curFieldListIndex].Joins, join)
 	return i
 }
 

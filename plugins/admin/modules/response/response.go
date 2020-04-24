@@ -20,6 +20,13 @@ func Ok(ctx *context.Context) {
 	})
 }
 
+func OkWithMsg(ctx *context.Context, msg string) {
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"code": http.StatusOK,
+		"msg":  msg,
+	})
+}
+
 func OkWithData(ctx *context.Context, data map[string]interface{}) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,

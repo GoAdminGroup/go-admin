@@ -39,7 +39,7 @@ func (h *Handler) ApiDetail(ctx *context.Context) {
 			TypeName:     field.TypeName,
 			Head:         field.Head,
 			Hide:         field.Hide,
-			Join:         field.Join,
+			Joins:        field.Joins,
 			FormType:     form.Default,
 			FieldDisplay: field.FieldDisplay,
 		}

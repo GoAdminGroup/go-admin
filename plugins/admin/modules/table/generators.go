@@ -44,28 +44,31 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
-	labelModels, _ := s.table("goadmin_role_users").
-		Select("goadmin_roles.name", "user_id").
-		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
-		All()
-	labelCollection := collection.Collection(labelModels)
-
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
 	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
-	info.AddField(lg("role"), "roles", db.Varchar).
+	info.AddField(lg("role"), "name", db.Varchar).
+		FieldJoin(types.Join{
+			Table:     "goadmin_role_users",
+			JoinField: "user_id",
+			Field:     "id",
+		}).
+		FieldJoin(types.Join{
+			Table:     "goadmin_roles",
+			JoinField: "id",
+			Field:     "role_id",
+			BaseTable: "goadmin_role_users",
+		}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			uid, _ := strconv.Atoi(model.ID)
-			labelCol := labelCollection.Where("user_id", int64(uid))
-
 			labels := template.HTML("")
 			labelTpl := label().SetType("success")
 
-			for key, label := range labelCol {
-				if key == len(labelCol)-1 {
-					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+			labelValues := strings.Split(model.Value, types.JoinFieldValueDelimiter)
+			for key, label := range labelValues {
+				if key == len(labelValues)-1 {
+					labels += labelTpl.SetContent(template.HTML(label)).GetContent()
 				} else {
-					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+					labels += labelTpl.SetContent(template.HTML(label)).GetContent() + "<br><br>"
 				}
 			}
 
@@ -343,27 +346,31 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
-	labelModels, _ := s.table("goadmin_role_users").
-		Select("goadmin_roles.name", "user_id").
-		LeftJoin("goadmin_roles", "goadmin_roles.id", "=", "goadmin_role_users.role_id").
-		All()
-	labelCollection := collection.Collection(labelModels)
-
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
 	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
 	info.AddField(lg("role"), "roles", db.Varchar).
+		FieldJoin(types.Join{
+			Table:     "goadmin_role_users",
+			JoinField: "user_id",
+			Field:     "id",
+		}).
+		FieldJoin(types.Join{
+			Table:     "goadmin_roles",
+			JoinField: "id",
+			Field:     "role_id",
+			BaseTable: "goadmin_role_users",
+		}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
-			labelCol := labelCollection.Where("user_id", model.ID)
-
 			labels := template.HTML("")
 			labelTpl := label().SetType("success")
 
-			for key, label := range labelCol {
-				if key == len(labelModels)-1 {
-					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent()
+			labelValues := strings.Split(model.Value, types.JoinFieldValueDelimiter)
+			for key, label := range labelValues {
+				if key == len(labelValues)-1 {
+					labels += labelTpl.SetContent(template.HTML(label)).GetContent()
 				} else {
-					labels += labelTpl.SetContent(template.HTML(label["name"].(string))).GetContent() + "<br><br>"
+					labels += labelTpl.SetContent(template.HTML(label)).GetContent() + "<br><br>"
 				}
 			}
 

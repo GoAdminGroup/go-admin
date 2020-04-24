@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -118,7 +119,7 @@ func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, er
 // DeleteMenu delete the menu of given id.
 func (h *Handler) DeleteMenu(ctx *context.Context) {
 	models.MenuWithId(guard.GetMenuDeleteParam(ctx).Id).SetConn(h.conn).Delete()
-	response.Ok(ctx)
+	response.OkWithMsg(ctx, language.Get("delete succeed"))
 }
 
 // EditMenu edit the menu of given id.

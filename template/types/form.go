@@ -130,7 +130,7 @@ type FormField struct {
 
 	Width int `json:"width"`
 
-	Join Join `json:"-"`
+	Joins Joins `json:"-"`
 
 	Divider      bool   `json:"divider"`
 	DividerTitle string `json:"divider_title"`

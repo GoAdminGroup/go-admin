@@ -38,6 +38,7 @@ var tc = LangSet{
 	"menu name":         "菜單名",
 
 	"are you sure to delete": "你確定要刪除嗎",
+	"delete succeed":         "刪除成功",
 	"yes":                    "確定",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",

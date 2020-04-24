@@ -229,8 +229,8 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 
 		headField = field.Field
 
-		if field.Join.Valid() {
-			headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
+		if field.Joins.Valid() {
+			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
 		}
 
 		if field.Hide {
@@ -242,7 +242,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 
 		typeName := field.TypeName
 
-		if field.Join.Valid() {
+		if field.Joins.Valid() {
 			typeName = db.Varchar
 		}
 
@@ -250,7 +250,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 
 		// TODO: ToDisplay some same logic execute repeatedly, it can be improved.
 		var value interface{}
-		if len(columns) == 0 || modules.InArray(columns, headField) || field.Join.Valid() {
+		if len(columns) == 0 || modules.InArray(columns, headField) || field.Joins.Valid() {
 			value = field.ToDisplay(types.FieldModel{
 				ID:    primaryKeyValue.String(),
 				Value: combineValue,
@@ -570,21 +570,26 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 		for _, field := range tb.Form.FieldList {
 
 			if field.Field != pk && modules.InArray(columns, field.Field) &&
-				!field.Join.Valid() {
+				!field.Joins.Valid() {
 				fields += tableName + "." + modules.FilterField(field.Field, delimiter) + ","
 			}
 
 			headField := field.Field
 
-			if field.Join.Valid() {
-				headField = field.Join.Table + parameter.FilterParamJoinInfix + field.Field
-				joinFields += db.GetAggregationExpression(connection.Name(), field.Join.Table+"."+
+			if field.Joins.Valid() {
+				headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().Table+"."+
 					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
-				if !modules.InArray(joinTables, field.Join.Table) {
-					joinTables = append(joinTables, field.Join.Table)
-					joins += " left join " + modules.FilterField(field.Join.Table, delimiter) + " on " +
-						field.Join.Table + "." + modules.FilterField(field.Join.JoinField, delimiter) + " = " +
-						tableName + "." + modules.FilterField(field.Join.Field, delimiter)
+				for _, join := range field.Joins {
+					if !modules.InArray(joinTables, join.Table) {
+						joinTables = append(joinTables, join.Table)
+						if join.BaseTable == "" {
+							join.BaseTable = tableName
+						}
+						joins += " left join " + modules.FilterField(join.Table, delimiter) + " on " +
+							join.Table + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
+							join.BaseTable + "." + modules.FilterField(join.Field, delimiter)
+					}
 				}
 			}
 		}
