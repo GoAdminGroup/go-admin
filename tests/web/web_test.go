@@ -535,10 +535,10 @@ func testMenuPageOperations(page *Page) {
 	printPart("menu parent ids selection check")
 
 	page.Click(menuParentIdDropDown)
-	page.Text(parentIdRootOpt, "root")
-	page.Text(parentIdDashboardOpt, "Dashboard")
-	page.Text(parentIdAdminOpt, "Admin")
-	page.Text(parentIdUserOpt, "User")
+	page.Text(parentIdRootOpt, "ROOT")
+	page.Text(parentIdDashboardOpt, "  ┝  Dashboard")
+	page.Text(parentIdAdminOpt, "  ┝  Admin")
+	page.Text(parentIdUserOpt, "         ┝  Users")
 	page.Click(parentIdRootOpt)
 
 	// Roles Selection Check

@@ -425,7 +425,10 @@ func (j Joins) Valid() bool {
 }
 
 func (j Joins) Last() Join {
-	return j[len(j)-1]
+	if len(j) > 0 {
+		return j[len(j)-1]
+	}
+	return Join{}
 }
 
 func (j Join) Valid() bool {
