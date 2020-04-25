@@ -277,6 +277,8 @@ type Config struct {
 
 	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance",yaml:"hide_visitor_user_center_entrance",ini:"hide_visitor_user_center_entrance"`
 
+	ExcludeThemeComponents []string `json:"exclude_theme_components",yaml:"exclude_theme_components",ini:"exclude_theme_components"`
+
 	prefix string
 }
 
@@ -488,6 +490,7 @@ func (c *Config) Copy() *Config {
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
+		ExcludeThemeComponents:        c.ExcludeThemeComponents,
 		prefix:                        c.prefix,
 	}
 }
@@ -1000,6 +1003,10 @@ func GetNoLimitLoginIP() bool {
 
 func GetHideVisitorUserCenterEntrance() bool {
 	return globalCfg.HideVisitorUserCenterEntrance
+}
+
+func GetExcludeThemeComponents() []string {
+	return globalCfg.ExcludeThemeComponents
 }
 
 type Service struct {

@@ -36,7 +36,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 		User:   user,
 		Menu:   menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Panel:  panel.GetContent(config.IsProductionEnvironment()),
-		Assets: template.GetComponentAssetListsHTML(),
+		Assets: template.GetComponentAssetImportHTML(),
 	}))
 	if err != nil {
 		logger.Error("SetPageContent", err)

@@ -8,8 +8,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"html/template"
 	"path"
 	"plugin"
@@ -21,6 +19,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -59,11 +59,30 @@ type Template interface {
 	// Builder methods
 	GetTmplList() map[string]string
 	GetAssetList() []string
+	GetAssetImportHTML(exceptComponents ...string) template.HTML
 	GetAsset(string) ([]byte, error)
 	GetTemplate(bool) (*template.Template, string)
 	GetVersion() string
 	GetRequirements() []string
 }
+
+const (
+	CompCol       = "col"
+	CompRow       = "row"
+	CompForm      = "form"
+	CompTable     = "table"
+	CompDataTable = "datatable"
+	CompTree      = "tree"
+	CompTabs      = "tabs"
+	CompAlert     = "alert"
+	CompLink      = "link"
+	CompPaginator = "paginator"
+	CompPopup     = "popup"
+	CompBox       = "box"
+	CompLabel     = "label"
+	CompImage     = "image"
+	CompButton    = "button"
+)
 
 func HTML(s string) template.HTML {
 	return template.HTML(s)
@@ -218,7 +237,7 @@ func GetComp(name string) Component {
 	panic("wrong component name")
 }
 
-func GetComponentAssetLists() []string {
+func GetComponentAsset() []string {
 	assets := make([]string, 0)
 	for _, comp := range compMap {
 		assets = append(assets, comp.GetAssetList()...)
@@ -226,7 +245,7 @@ func GetComponentAssetLists() []string {
 	return assets
 }
 
-func GetComponentAssetListsWithinPage() []string {
+func GetComponentAssetWithinPage() []string {
 	assets := make([]string, 0)
 	for _, comp := range compMap {
 		if !comp.IsAPage() {
@@ -236,8 +255,9 @@ func GetComponentAssetListsWithinPage() []string {
 	return assets
 }
 
-func GetComponentAssetListsHTML() (res template.HTML) {
-	assets := GetComponentAssetListsWithinPage()
+func GetComponentAssetImportHTML() (res template.HTML) {
+	res = Default().GetAssetImportHTML(c.GetExcludeThemeComponents()...)
+	assets := GetComponentAssetWithinPage()
 	for i := 0; i < len(assets); i++ {
 		res += getHTMLFromAssetUrl(assets[i])
 	}
@@ -245,16 +265,14 @@ func GetComponentAssetListsHTML() (res template.HTML) {
 }
 
 func getHTMLFromAssetUrl(s string) template.HTML {
-	fileSuffix := path.Ext(s)
-	fileSuffix = strings.Replace(fileSuffix, ".", "", -1)
-
-	if fileSuffix == "css" {
+	switch path.Ext(s) {
+	case ".css":
 		return template.HTML(`<link rel="stylesheet" href="` + c.GetAssetUrl() + c.Url("/assets"+s) + `">`)
-	}
-	if fileSuffix == "js" {
+	case ".js":
 		return template.HTML(`<script src="` + c.GetAssetUrl() + c.Url("/assets"+s) + `"></script>`)
+	default:
+		return ""
 	}
-	return ""
 }
 
 func GetAsset(path string) ([]byte, error) {
@@ -323,7 +341,7 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 			User:    param.User,
 			Menu:    param.Menu,
 			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
-			Assets:  GetComponentAssetListsHTML(),
+			Assets:  GetComponentAssetImportHTML(),
 			Buttons: param.Buttons,
 		}))
 	if err != nil {

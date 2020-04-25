@@ -277,7 +277,9 @@ func (h *Handler) Assets(ctx *context.Context) {
 	}
 
 	ctx.Write(http.StatusOK, map[string]string{
-		"content-type": contentType,
+		"content-type":   contentType,
+		"cache-control":  "max-age=2592000",
+		"content-length": strconv.Itoa(len(data)),
 	}, string(data))
 }
 

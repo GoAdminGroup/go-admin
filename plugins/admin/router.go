@@ -26,7 +26,7 @@ func (admin *Admin) initRouter() *Admin {
 		route.GET("/assets"+path, admin.handler.Assets)
 	}
 
-	for _, path := range template.GetComponentAssetLists() {
+	for _, path := range template.GetComponentAsset() {
 		route.GET("/assets"+path, admin.handler.Assets)
 	}
 

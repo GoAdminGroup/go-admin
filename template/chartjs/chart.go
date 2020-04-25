@@ -840,21 +840,10 @@ func (c *Chart) GetTemplate() (*template.Template, string) {
 	return tmpl, "chartjs"
 }
 
-func (c *Chart) GetAssetList() []string {
-	return AssetsList
-}
-
-func (c *Chart) GetAsset(name string) ([]byte, error) {
-	return Asset(name[1:])
-}
-
-func (c *Chart) IsAPage() bool {
-	return false
-}
-
-func (c *Chart) GetName() string {
-	return "chartjs"
-}
+func (c *Chart) GetAssetList() []string               { return AssetsList }
+func (c *Chart) GetAsset(name string) ([]byte, error) { return Asset(name[1:]) }
+func (c *Chart) IsAPage() bool                        { return false }
+func (c *Chart) GetName() string                      { return "chartjs" }
 
 func (c *Chart) GetContent() template.HTML {
 	buffer := new(bytes.Buffer)

@@ -158,7 +158,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		User:    user,
 		Menu:    menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
 		Panel:   panel.GetContent(config.IsProductionEnvironment()),
-		Assets:  template.GetComponentAssetListsHTML(),
+		Assets:  template.GetComponentAssetImportHTML(),
 		Buttons: navButtons.CheckPermission(user),
 	}))
 

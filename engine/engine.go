@@ -402,7 +402,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 			User:    user,
 			Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:   panel.GetContent(eng.config.IsProductionEnvironment()),
-			Assets:  template.GetComponentAssetListsHTML(),
+			Assets:  template.GetComponentAssetImportHTML(),
 			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
@@ -450,7 +450,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
-			Assets:  template.GetComponentAssetListsHTML(),
+			Assets:  template.GetComponentAssetImportHTML(),
 			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
@@ -509,7 +509,7 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
-			Assets:  template.GetComponentAssetListsHTML(),
+			Assets:  template.GetComponentAssetImportHTML(),
 			Buttons: eng.NavButtons.CheckPermission(user),
 		}))
 
@@ -532,7 +532,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 		User:    user,
 		Menu:    menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:   template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
-		Assets:  template.GetComponentAssetListsHTML(),
+		Assets:  template.GetComponentAssetImportHTML(),
 		Buttons: eng.NavButtons.CheckPermission(user),
 	}))
 
