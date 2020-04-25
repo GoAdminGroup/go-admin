@@ -167,10 +167,10 @@ func (ctx *Context) MustBindJSON(data interface{}) {
 	panic("empty request body")
 }
 
-// Write save the given status code, header and body string into the response.
-func (ctx *Context) Write(code int, Header map[string]string, Body string) {
+// Write save the given status code, headers and body string into the response.
+func (ctx *Context) Write(code int, header map[string]string, Body string) {
 	ctx.Response.StatusCode = code
-	for key, head := range Header {
+	for key, head := range header {
 		ctx.AddHeader(key, head)
 	}
 	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
@@ -186,6 +186,15 @@ func (ctx *Context) JSON(code int, Body map[string]interface{}) {
 		panic(err)
 	}
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewReader(BodyStr))
+}
+
+// DataWithHeaders save the given status code, headers and body data into the response.
+func (ctx *Context) DataWithHeaders(code int, header map[string]string, data []byte) {
+	ctx.Response.StatusCode = code
+	for key, head := range header {
+		ctx.AddHeader(key, head)
+	}
+	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 }
 
 // Data writes some data into the body stream and updates the HTTP code.

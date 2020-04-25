@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bytes"
+	"crypto/md5"
 	"fmt"
 	template2 "html/template"
 	"mime"
@@ -276,11 +277,21 @@ func (h *Handler) Assets(ctx *context.Context) {
 		contentType = "application/octet-stream"
 	}
 
-	ctx.Write(http.StatusOK, map[string]string{
-		"content-type":   contentType,
-		"cache-control":  "max-age=2592000",
-		"content-length": strconv.Itoa(len(data)),
-	}, string(data))
+	etag := fmt.Sprintf("%x", md5.Sum(data))
+
+	if match := ctx.Headers("If-None-Match"); match != "" {
+		if strings.Contains(match, etag) {
+			ctx.SetStatusCode(http.StatusNotModified)
+			return
+		}
+	}
+
+	ctx.DataWithHeaders(http.StatusOK, map[string]string{
+		"Content-Type":   contentType,
+		"Cache-Control":  "max-age=2592000",
+		"Content-Length": strconv.Itoa(len(data)),
+		"ETag":           etag,
+	}, data)
 }
 
 // Export export table rows as excel object.
