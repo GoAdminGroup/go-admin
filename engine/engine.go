@@ -549,6 +549,11 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 
 // AddGenerators add the admin generators.
 func (eng *Engine) AddGenerators(list ...table.GeneratorList) *Engine {
+	plug, exist := eng.FindPluginByName("admin")
+	if exist {
+		plug.(*admin.Admin).AddGenerators(list...)
+		return eng
+	}
 	eng.PluginList = append(eng.PluginList, admin.NewAdmin(list...))
 	return eng
 }

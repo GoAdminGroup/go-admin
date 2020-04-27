@@ -79,6 +79,12 @@ func (admin *Admin) AddGenerator(key string, g table.Generator) *Admin {
 	return admin
 }
 
+// AddGenerators add table model generators.
+func (admin *Admin) AddGenerators(gen ...table.GeneratorList) *Admin {
+	admin.tableList.CombineAll(gen)
+	return admin
+}
+
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn
 func (admin *Admin) AddGlobalDisplayProcessFn(f types.DisplayProcessFn) *Admin {
 	types.AddGlobalDisplayProcessFn(f)
