@@ -283,9 +283,22 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 		}
 	}
 
-	tempModelData[tb.PrimaryKey.Name] = types.InfoItem{
-		Content: template.HTML(primaryKeyValue.String()),
-		Value:   primaryKeyValue.String(),
+	primaryKeyField := tb.Info.FieldList.GetFieldByFieldName(tb.PrimaryKey.Name)
+	value := primaryKeyField.ToDisplay(types.FieldModel{
+		ID:    primaryKeyValue.String(),
+		Value: primaryKeyValue.String(),
+		Row:   res,
+	})
+	if valueStr, ok := value.(string); ok {
+		tempModelData[tb.PrimaryKey.Name] = types.InfoItem{
+			Content: template.HTML(valueStr),
+			Value:   primaryKeyValue.String(),
+		}
+	} else {
+		tempModelData[tb.PrimaryKey.Name] = types.InfoItem{
+			Content: value.(template.HTML),
+			Value:   primaryKeyValue.String(),
+		}
 	}
 	return tempModelData
 }
