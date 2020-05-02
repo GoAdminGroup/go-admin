@@ -26,10 +26,10 @@ func main() {
 			if errs, ok := err.(error); ok {
 				fmt.Println()
 				if runtime.GOOS == "windows" && errs.Error() == "Incorrect function." {
-					fmt.Println(ansi.Color("go-admin cli error: cli has not supported MINGW64 for now, please use cmd terminal instead.", "red"))
+					fmt.Println(ansi.Color("GoAdmin CLI error: CLI has not supported MINGW64 for now, please use cmd terminal instead.", "red"))
 					fmt.Println("know more here: http://forum.go-admin.cn/threads/2")
 				} else {
-					fmt.Println(ansi.Color("go-admin cli error: "+errs.Error(), "red"))
+					fmt.Println(ansi.Color("GoAdmin CLI error: "+errs.Error(), "red"))
 
 					if *verbose {
 						fmt.Println(string(debug.Stack()))
@@ -40,7 +40,7 @@ func main() {
 		}
 	}()
 
-	app := cli.App("adm", "GoAdmin cli tool for developing and generating")
+	app := cli.App("adm", "GoAdmin CLI tool for developing and generating")
 
 	app.Spec = "[-v]"
 
@@ -120,11 +120,40 @@ func main() {
 
 		var (
 			config = cmd.StringOpt("c config", "", "config ini path")
+			lang   = cmd.StringOpt("l language", "en", "language")
 		)
 
 		cmd.Action = func() {
+			setDefaultLangSet(*lang)
 			generating(*config)
 		}
+	})
+
+	app.Command("add", "generate user/permission/roles", func(cmd *cli.Cmd) {
+
+		cmd.Command("user", "generate users", func(cmd *cli.Cmd) {
+			var (
+				config = cmd.StringOpt("c config", "", "config ini path")
+				lang   = cmd.StringOpt("l language", "en", "language")
+			)
+
+			cmd.Action = func() {
+				setDefaultLangSet(*lang)
+				addUser(*config)
+			}
+		})
+
+		cmd.Command("permission", "generate permissions of table", func(cmd *cli.Cmd) {
+			var (
+				config = cmd.StringOpt("c config", "", "config ini path")
+				lang   = cmd.StringOpt("l language", "en", "language")
+			)
+
+			cmd.Action = func() {
+				setDefaultLangSet(*lang)
+				addPermission(*config)
+			}
+		})
 	})
 
 	_ = app.Run(os.Args)

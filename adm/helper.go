@@ -1,28 +1,21 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/mgutz/ansi"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/mgutz/ansi"
 )
 
 func cliInfo() {
 	fmt.Println("GoAdmin CLI " + system.Version() + compareVersion(system.Version()))
 	fmt.Println()
-}
-
-func exitWithError(msg string) {
-	fmt.Println()
-	fmt.Println(ansi.Color("go-admin cli error: "+msg, "red"))
-	fmt.Println()
-	os.Exit(-1)
 }
 
 func checkError(err error) {
@@ -64,4 +57,16 @@ func compareVersion(srcVersion string) string {
 		return ", the latest version is " + toCompareVersion + " now."
 	}
 	return ""
+}
+
+func printSuccessInfo(msg string) {
+	fmt.Println()
+	fmt.Println()
+	fmt.Println(ansi.Color(getWord(msg), "green"))
+	fmt.Println()
+	fmt.Println()
+}
+
+func newError(msg string) error {
+	return errors.New(getWord(msg))
 }
