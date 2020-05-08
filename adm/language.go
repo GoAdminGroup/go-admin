@@ -26,7 +26,7 @@ var langs = map[string]map[string]string{
 		"no table is selected": "没有选择表格",
 
 		"set package name":     "设置包名",
-		"set connection name":  "设置连接名",
+		"set connection name":  "设置连接",
 		"set file output path": "设置文件输出路径",
 
 		"generate permission records for tables, Y on behalf of yes": "是否生成表格权限，Y 代表是",
@@ -39,9 +39,12 @@ var langs = map[string]map[string]string{
 		"Delete":                "删除",
 		"Export":                "导出",
 
-		"Add admin user success~~🍺🍺":             "增加用户成功~~🍺🍺",
-		"Add table permissions success~~🍺🍺":      "增加表格权限成功~~🍺🍺",
-		"Generate data table models success~~🍺🍺": "生成数据模型文件成功~~🍺🍺",
+		"Use arrows to move, type to filter, enter to select": "使用方向键去移动，空格键选择，输入进行筛选",
+		"select all": "选择全部",
+		"Use arrows to move, space to select, type to filter": "使用方向键去移动，空格键选择，输入进行筛选",
+		"Add admin user success~~🍺🍺":                          "增加用户成功~~🍺🍺",
+		"Add table permissions success~~🍺🍺":                   "增加表格权限成功~~🍺🍺",
+		"Generate data table models success~~🍺🍺":              "生成数据模型文件成功~~🍺🍺",
 		"see the docs: ": "查看文档：",
 		"generating: ":   "生成中：",
 	},

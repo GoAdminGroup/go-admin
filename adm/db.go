@@ -48,8 +48,18 @@ func getDBInfoFromINIConfig(cfg *ini.File, connection string) *dbInfo {
 
 func askForDBInfo(info *dbInfo) db.Connection {
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "type to filter", "type to filter, enter to select", -1)
-	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate, "enter to select", "space to select", -1)
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
+		"type to filter", "type to filter, enter to select", -1)
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
+		"enter to select", "space to select", -1)
+
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
+		"Use arrows to move, type to filter, enter to select",
+		getWord("Use arrows to move, type to filter, enter to select"), -1)
+
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
+		"Use arrows to move, space to select, type to filter",
+		getWord("Use arrows to move, space to select, type to filter"), -1)
 
 	if info.DriverName == "" {
 		var qs = []*survey.Question{

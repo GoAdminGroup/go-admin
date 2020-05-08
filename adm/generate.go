@@ -91,7 +91,7 @@ func generating(cfgFile string) {
 		if len(tables) == 0 {
 			panic(newError(`no tables, you should build a table of your own business first.`))
 		}
-		tables = append([]string{"[select all]"}, tables...)
+		tables = append([]string{"[" + getWord("select all") + "]"}, tables...)
 
 		survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
 
@@ -99,7 +99,7 @@ func generating(cfgFile string) {
 		if len(chooseTables) == 0 {
 			panic(newError("no table is selected"))
 		}
-		if modules.InArray(chooseTables, "[select all]") {
+		if modules.InArray(chooseTables, "["+getWord("select all")+"]") {
 			chooseTables = tables[1:]
 		}
 	}
@@ -118,7 +118,7 @@ func generating(cfgFile string) {
 
 	if generatePermissionFlag == "" {
 		generatePermissionFlag = promptWithDefault("generate permission records for tables, Y on behalf of yes",
-			"N")
+			"Y")
 	}
 
 	if generatePermissionFlag == "Y" {
