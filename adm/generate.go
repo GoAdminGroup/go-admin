@@ -40,7 +40,7 @@ func generating(cfgFile string) {
 	cliInfo()
 
 	var (
-		info dbInfo
+		info = new(dbInfo)
 
 		connection, packageName, outputPath, generatePermissionFlag string
 
@@ -127,7 +127,7 @@ func generating(cfgFile string) {
 				insertPermissionOfTable(conn, table)
 			}
 		} else {
-			var defInfo dbInfo
+			var defInfo = new(dbInfo)
 			if cfgFile != "" {
 				defInfo = getDBInfoFromINIConfig(cfgModel, "")
 			}

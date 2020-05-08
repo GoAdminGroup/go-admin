@@ -53,7 +53,7 @@ func addUser(cfgFile string) {
 		}
 	}
 
-	conn := askForDBInfo(dbInfo{
+	conn := askForDBInfo(&dbInfo{
 		File:       dbFile,
 		DriverName: driverName,
 		Host:       host,
@@ -149,7 +149,7 @@ func addPermission(cfgFile string) {
 		}
 	}
 
-	conn := askForDBInfo(dbInfo{
+	conn := askForDBInfo(&dbInfo{
 		File:       dbFile,
 		DriverName: driverName,
 		Host:       host,

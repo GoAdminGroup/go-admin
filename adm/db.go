@@ -21,7 +21,7 @@ type dbInfo struct {
 	Database   string
 }
 
-func getDBInfoFromINIConfig(cfg *ini.File, connection string) dbInfo {
+func getDBInfoFromINIConfig(cfg *ini.File, connection string) *dbInfo {
 
 	section := "database"
 
@@ -32,7 +32,7 @@ func getDBInfoFromINIConfig(cfg *ini.File, connection string) dbInfo {
 	dbCfgModel, exist := cfg.GetSection(section)
 
 	if exist == nil {
-		return dbInfo{
+		return &dbInfo{
 			DriverName: dbCfgModel.Key("driver").Value(),
 			Host:       dbCfgModel.Key("host").Value(),
 			User:       dbCfgModel.Key("username").Value(),
@@ -43,10 +43,10 @@ func getDBInfoFromINIConfig(cfg *ini.File, connection string) dbInfo {
 		}
 	}
 
-	return dbInfo{}
+	return &dbInfo{}
 }
 
-func askForDBInfo(info dbInfo) db.Connection {
+func askForDBInfo(info *dbInfo) db.Connection {
 
 	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "type to filter", "type to filter, enter to select", -1)
 	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate, "enter to select", "space to select", -1)
