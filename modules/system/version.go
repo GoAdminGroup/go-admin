@@ -1,10 +1,10 @@
 package system
 
-const version = "v1.2.9"
+const version = "v1.2.10"
 
 var requireThemeVersion = map[string][]string{
-	"adminlte": {"v0.0.31"},
-	"sword":    {"v0.0.31"},
+	"adminlte": {"v0.0.32"},
+	"sword":    {"v0.0.32"},
 }
 
 // Version return the version of framework.
