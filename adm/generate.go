@@ -26,6 +26,7 @@ var systemGoAdminTables = []string{
 	"goadmin_operation_log",
 	"goadmin_permissions",
 	"goadmin_role_menu",
+	"goadmin_site",
 	"goadmin_roles",
 	"goadmin_session",
 	"goadmin_users",
