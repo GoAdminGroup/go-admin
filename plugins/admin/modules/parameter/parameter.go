@@ -301,6 +301,14 @@ func (param Parameters) GetFixedParamStr() url.Values {
 	return p
 }
 
+func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
+	p := url.Values{}
+	p.Add(Sort, param.SortField)
+	p.Add(PageSize, param.PageSize)
+	p.Add(SortType, param.SortType)
+	return "?" + p.Encode()
+}
+
 func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []interface{}, columns, existKeys []string,
 	filterProcess func(string, string, string) string) (string, []interface{}, []string) {
 	var multiKey = make(map[string]uint8)

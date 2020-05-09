@@ -242,7 +242,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				SetHeadWidth(info.FilterFormHeadWidth).
 				SetMethod("get").
 				SetLayout(info.FilterFormLayout).
-				SetUrl(infoUrl).
+				SetUrl(infoUrl + params.GetFixedParamStrWithoutColumnsAndPage()).
 				SetHiddenFields(map[string]string{
 					form.NoAnimationKey: "true",
 				}).
