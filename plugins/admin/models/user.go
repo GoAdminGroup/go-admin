@@ -80,7 +80,7 @@ func (t UserModel) HasMenu() bool {
 // IsSuperAdmin check the user model is super admin or not.
 func (t UserModel) IsSuperAdmin() bool {
 	for _, per := range t.Permissions {
-		if len(per.HttpPath) > 0 && per.HttpPath[0] == "*" {
+		if len(per.HttpPath) > 0 && per.HttpPath[0] == "*" && per.HttpMethod[0] == "" {
 			return true
 		}
 	}
