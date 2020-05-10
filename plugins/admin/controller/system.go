@@ -16,8 +16,6 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	size := types.Size(6, 6, 6)
 
-	sys := system.GetSysStatus()
-
 	box1 := aBox().
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application") + "</b>").
@@ -38,56 +36,9 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		})).
 		GetContent()
 
-	box2 := aBox().
-		WithHeadBorder().
-		SetHeader("<b>" + lg("system") + "</b>").
-		SetBody(stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("cpu_logical_core")},
-				"value": types.InfoItem{Content: itos(sys.CpuLogicalCore)},
-			}, {
-				"key":   types.InfoItem{Content: lg("cpu_core")},
-				"value": types.InfoItem{Content: itos(sys.CpuCore)},
-			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("os_platform")},
-				"value": types.InfoItem{Content: template.HTML(sys.OSPlatform)},
-			}, {
-				"key":   types.InfoItem{Content: lg("os_family")},
-				"value": types.InfoItem{Content: template.HTML(sys.OSFamily)},
-			}, {
-				"key":   types.InfoItem{Content: lg("os_version")},
-				"value": types.InfoItem{Content: template.HTML(sys.OSVersion)},
-			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("load1")},
-				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load1))},
-			}, {
-				"key":   types.InfoItem{Content: lg("load5")},
-				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load5))},
-			}, {
-				"key":   types.InfoItem{Content: lg("load15")},
-				"value": types.InfoItem{Content: template.HTML(fmt.Sprintf("%.2f", sys.Load15))},
-			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("mem_total")},
-				"value": types.InfoItem{Content: template.HTML(sys.MemTotal)},
-			}, {
-				"key":   types.InfoItem{Content: lg("mem_available")},
-				"value": types.InfoItem{Content: template.HTML(sys.MemAvailable)},
-			}, {
-				"key":   types.InfoItem{Content: lg("mem_used")},
-				"value": types.InfoItem{Content: template.HTML(sys.MemUsed)},
-			},
-		})).
-		GetContent()
-
 	app := system.GetAppStatus()
 
-	box3 := aBox().
+	box2 := aBox().
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application run") + "</b>").
 		SetBody(stripedTable([]map[string]types.InfoItem{
@@ -115,10 +66,27 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"key":   types.InfoItem{Content: lg("heap_objects")},
 				"value": types.InfoItem{Content: itos(app.HeapObjects)},
 			},
+		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+			{
+				"key":   types.InfoItem{Content: lg("next_gc_recycle")},
+				"value": types.InfoItem{Content: template.HTML(app.NextGC)},
+			}, {
+				"key":   types.InfoItem{Content: lg("last_gc_time")},
+				"value": types.InfoItem{Content: template.HTML(app.LastGC)},
+			}, {
+				"key":   types.InfoItem{Content: lg("total_gc_pause")},
+				"value": types.InfoItem{Content: template.HTML(app.PauseTotalNs)},
+			}, {
+				"key":   types.InfoItem{Content: lg("last_gc_pause")},
+				"value": types.InfoItem{Content: template.HTML(app.PauseNs)},
+			}, {
+				"key":   types.InfoItem{Content: lg("gc_times")},
+				"value": types.InfoItem{Content: itos(app.NumGC)},
+			},
 		})).
 		GetContent()
 
-	col1 := aCol().SetSize(size).SetContent(box1 + box2 + box3).GetContent()
+	col1 := aCol().SetSize(size).SetContent(box1 + box2).GetContent()
 
 	box4 := aBox().
 		WithHeadBorder().
@@ -185,23 +153,6 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 			}, {
 				"key":   types.InfoItem{Content: lg("other_system_allocation_obtained")},
 				"value": types.InfoItem{Content: template.HTML(app.OtherSys)},
-			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
-			{
-				"key":   types.InfoItem{Content: lg("next_gc_recycle")},
-				"value": types.InfoItem{Content: template.HTML(app.NextGC)},
-			}, {
-				"key":   types.InfoItem{Content: lg("last_gc_time")},
-				"value": types.InfoItem{Content: template.HTML(app.LastGC)},
-			}, {
-				"key":   types.InfoItem{Content: lg("total_gc_pause")},
-				"value": types.InfoItem{Content: template.HTML(app.PauseTotalNs)},
-			}, {
-				"key":   types.InfoItem{Content: lg("last_gc_pause")},
-				"value": types.InfoItem{Content: template.HTML(app.PauseNs)},
-			}, {
-				"key":   types.InfoItem{Content: lg("gc_times")},
-				"value": types.InfoItem{Content: itos(app.NumGC)},
 			},
 		})).
 		GetContent()

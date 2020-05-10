@@ -5,10 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/host"
-	"github.com/shirou/gopsutil/load"
-	"github.com/shirou/gopsutil/mem"
 	"runtime"
 	"time"
 )
@@ -111,20 +107,4 @@ type SysStatus struct {
 	MemTotal       string
 	MemAvailable   string
 	MemUsed        string
-}
-
-func GetSysStatus() SysStatus {
-	var sys SysStatus
-	sys.CpuLogicalCore, _ = cpu.Counts(true)
-	sys.CpuCore, _ = cpu.Counts(false)
-	sys.OSPlatform, sys.OSFamily, sys.OSVersion, _ = host.PlatformInformation()
-	loadAvg, err := load.Avg()
-	if err == nil && loadAvg != nil {
-		sys.Load1, sys.Load5, sys.Load15 = loadAvg.Load1, loadAvg.Load5, loadAvg.Load15
-	}
-	memStat, err := mem.VirtualMemory()
-	if err == nil && memStat != nil {
-		sys.MemTotal, sys.MemAvailable, sys.MemUsed = utils.FileSize(memStat.Total), utils.FileSize(memStat.Available), utils.FileSize(memStat.Used)
-	}
-	return sys
 }
