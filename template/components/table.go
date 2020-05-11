@@ -19,6 +19,7 @@ type TableAttribute struct {
 	MinWidth   string
 	DeleteUrl  string
 	DetailUrl  string
+	SortUrl    string
 	UpdateUrl  string
 	Layout     string
 	IsTab      bool
@@ -76,6 +77,7 @@ type DataTableAttribute struct {
 	HideThead         bool
 	Style             string
 	DetailUrl         string
+	SortUrl           string
 	DeleteUrl         string
 	PrimaryKey        string
 	IsTab             bool
@@ -167,6 +169,11 @@ func (compo *DataTableAttribute) SetUpdateUrl(value string) types.DataTableAttri
 
 func (compo *DataTableAttribute) SetDetailUrl(value string) types.DataTableAttribute {
 	compo.DetailUrl = value
+	return compo
+}
+
+func (compo *DataTableAttribute) SetSortUrl(value string) types.DataTableAttribute {
+	compo.SortUrl = value
 	return compo
 }
 

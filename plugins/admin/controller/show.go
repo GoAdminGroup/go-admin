@@ -196,6 +196,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					SetLayout(info.TableLayout).
 					SetExportUrl(exportUrl).
 					SetNewUrl(newUrl).
+					SetSortUrl(params.GetFixedParamStrWithoutSort()).
 					SetEditUrl(editUrl).
 					SetUpdateUrl(updateUrl).
 					SetDetailUrl(detailUrl).
@@ -220,6 +221,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			SetHideFilterArea(info.IsHideFilterArea).
 			SetNewUrl(newUrl).
 			SetEditUrl(editUrl).
+			SetSortUrl(params.GetFixedParamStrWithoutSort()).
 			SetUpdateUrl(updateUrl).
 			SetDetailUrl(detailUrl).
 			SetDeleteUrl(deleteUrl)

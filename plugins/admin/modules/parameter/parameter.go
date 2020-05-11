@@ -309,6 +309,19 @@ func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
 	return "?" + p.Encode()
 }
 
+func (param Parameters) GetFixedParamStrWithoutSort() string {
+	p := url.Values{}
+	p.Add(PageSize, param.PageSize)
+	if len(param.Columns) > 0 {
+		p.Add(Columns, strings.Join(param.Columns, ","))
+	}
+	for key, value := range param.Fields {
+		p[key] = value
+	}
+	p.Add(form.NoAnimationKey, "true")
+	return "&" + p.Encode()
+}
+
 func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []interface{}, columns, existKeys []string,
 	filterProcess func(string, string, string) string) (string, []interface{}, []string) {
 	var multiKey = make(map[string]uint8)
