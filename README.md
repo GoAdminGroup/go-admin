@@ -39,6 +39,8 @@ Quick follow up example: [https://github.com/GoAdminGroup/example](https://githu
 
 ![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
+GoAdmin+vue example: [https://github.com/GoAdminGroup/goadmin-vue-example](https://github.com/GoAdminGroup/goadmin-vue-example)
+
 ## Features
 
 - 🚀 **Fast**: build a production admin panel app in **ten** minutes.

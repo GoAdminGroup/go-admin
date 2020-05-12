@@ -29,6 +29,8 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 上手例子：[https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example/blob/master/README_CN.md)
 
+GoAdmin+vue 例子： [https://github.com/GoAdminGroup/goadmin-vue-example](https://github.com/GoAdminGroup/goadmin-vue-example)
+
 [文档地址1](http://doc.go-admin.cn/zh) | [备用文档地址1](https://book.go-admin.cn/zh)
 
 ![](http://file.go-admin.cn/introduction/interface_3.png)
