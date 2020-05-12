@@ -108,6 +108,7 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 
 	columnsArr := make([]string, 0)
 	if columns != "" {
+		columns, _ = url.QueryUnescape(columns)
 		columnsArr = strings.Split(columns, ",")
 	}
 
@@ -305,6 +306,9 @@ func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
 	p := url.Values{}
 	p.Add(Sort, param.SortField)
 	p.Add(PageSize, param.PageSize)
+	if len(param.Columns) > 0 {
+		p.Add(Columns, strings.Join(param.Columns, ","))
+	}
 	p.Add(SortType, param.SortType)
 	return "?" + p.Encode()
 }
@@ -312,13 +316,13 @@ func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
 func (param Parameters) GetFixedParamStrWithoutSort() string {
 	p := url.Values{}
 	p.Add(PageSize, param.PageSize)
-	if len(param.Columns) > 0 {
-		p.Add(Columns, strings.Join(param.Columns, ","))
-	}
 	for key, value := range param.Fields {
 		p[key] = value
 	}
 	p.Add(form.NoAnimationKey, "true")
+	if len(param.Columns) > 0 {
+		p.Add(Columns, strings.Join(param.Columns, ","))
+	}
 	return "&" + p.Encode()
 }
 
