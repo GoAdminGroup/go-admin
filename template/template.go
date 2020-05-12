@@ -42,6 +42,7 @@ type Template interface {
 	Table() types.TableAttribute
 	DataTable() types.DataTableAttribute
 
+	TreeView() types.TreeViewAttribute
 	Tree() types.TreeAttribute
 	Tabs() types.TabsAttribute
 	Alert() types.AlertAttribute
@@ -73,6 +74,7 @@ const (
 	CompTable     = "table"
 	CompDataTable = "datatable"
 	CompTree      = "tree"
+	CompTreeView  = "treeview"
 	CompTabs      = "tabs"
 	CompAlert     = "alert"
 	CompLink      = "link"

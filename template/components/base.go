@@ -147,7 +147,14 @@ func (b Base) DataTable() types.DataTableAttribute {
 func (b Base) Tree() types.TreeAttribute {
 	return &TreeAttribute{
 		Name:      "tree",
-		Tree:      []menu.Item{},
+		Tree:      make([]menu.Item, 0),
+		Attribute: b.Attribute,
+	}
+}
+
+func (b Base) TreeView() types.TreeViewAttribute {
+	return &TreeViewAttribute{
+		Name:      "treeview",
 		Attribute: b.Attribute,
 	}
 }

@@ -145,6 +145,13 @@ type TreeAttribute interface {
 	GetTreeHeader() template.HTML
 }
 
+type TreeViewAttribute interface {
+	SetTree(value TreeViewData) TreeViewAttribute
+	SetUrlPrefix(value string) TreeViewAttribute
+	SetID(id string) TreeViewAttribute
+	GetContent() template.HTML
+}
+
 type PaginatorAttribute interface {
 	SetCurPageStartIndex(value string) PaginatorAttribute
 	SetCurPageEndIndex(value string) PaginatorAttribute
@@ -224,4 +231,54 @@ func (t Thead) GroupBy(group [][]string) []Thead {
 	}
 
 	return res
+}
+
+type TreeViewData struct {
+	Data              TreeViewItems `json:"data,omitempty"`
+	Levels            int           `json:"levels,omitempty"`
+	BackColor         string        `json:"backColor,omitempty"`
+	BorderColor       string        `json:"borderColor,omitempty"`
+	CheckedIcon       string        `json:"checkedIcon,omitempty"`
+	CollapseIcon      string        `json:"collapseIcon,omitempty"`
+	Color             string        `json:"color,omitempty"`
+	EmptyIcon         string        `json:"emptyIcon,omitempty"`
+	EnableLinks       bool          `json:"enableLinks,omitempty"`
+	ExpandIcon        string        `json:"expandIcon,omitempty"`
+	MultiSelect       bool          `json:"multiSelect,omitempty"`
+	NodeIcon          string        `json:"nodeIcon,omitempty"`
+	OnhoverColor      string        `json:"onhoverColor,omitempty"`
+	SelectedIcon      string        `json:"selectedIcon,omitempty"`
+	SearchResultColor string        `json:"searchResultColor,omitempty"`
+	SelectedBackColor string        `json:"selectedBackColor,omitempty"`
+	SelectedColor     string        `json:"selectedColor,omitempty"`
+	ShowBorder        bool          `json:"showBorder,omitempty"`
+	ShowCheckbox      bool          `json:"showCheckbox,omitempty"`
+	ShowIcon          bool          `json:"showIcon,omitempty"`
+	ShowTags          bool          `json:"showTags,omitempty"`
+	UncheckedIcon     string        `json:"uncheckedIcon,omitempty"`
+
+	SearchResultBackColor  string `json:"searchResultBackColor,omitempty"`
+	HighlightSearchResults bool   `json:"highlightSearchResults,omitempty"`
+}
+
+type TreeViewItems []TreeViewItem
+
+type TreeViewItemState struct {
+	Checked  bool `json:"checked,omitempty"`
+	Disabled bool `json:"disabled,omitempty"`
+	Expanded bool `json:"expanded,omitempty"`
+	Selected bool `json:"selected,omitempty"`
+}
+
+type TreeViewItem struct {
+	Text         string            `json:"text,omitempty"`
+	Icon         string            `json:"icon,omitempty"`
+	SelectedIcon string            `json:"selected_icon,omitempty"`
+	Color        string            `json:"color,omitempty"`
+	BackColor    string            `json:"backColor,omitempty"`
+	Href         string            `json:"href,omitempty"`
+	Selectable   bool              `json:"selectable,omitempty"`
+	State        TreeViewItemState `json:"state,omitempty"`
+	Tags         []string          `json:"tags,omitempty"`
+	Nodes        TreeViewItems     `json:"nodes,omitempty"`
 }
