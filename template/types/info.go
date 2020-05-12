@@ -509,6 +509,7 @@ type InfoPanel struct {
 	IsHideRowSelector  bool
 	IsHidePagination   bool
 	IsHideFilterArea   bool
+	IsHideQueryInfo    bool
 	FilterFormLayout   form.Layout
 
 	FilterFormHeadWidth  int
@@ -1325,6 +1326,11 @@ func (i *InfoPanel) HidePagination() *InfoPanel {
 
 func (i *InfoPanel) HideFilterArea() *InfoPanel {
 	i.IsHideFilterArea = true
+	return i
+}
+
+func (i *InfoPanel) HideQueryInfo() *InfoPanel {
+	i.IsHideQueryInfo = true
 	return i
 }
 

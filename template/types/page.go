@@ -70,6 +70,9 @@ type Page struct {
 	// Footer info
 	FooterInfo template.HTML
 
+	// Load as Iframe or not
+	Iframe bool
+
 	// Top Nav Buttons
 	navButtons     Buttons
 	NavButtonsHTML template.HTML
@@ -81,6 +84,7 @@ type NewPageParam struct {
 	Panel   Panel
 	Assets  template.HTML
 	Buttons Buttons
+	Iframe  bool
 }
 
 func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
@@ -123,6 +127,7 @@ func NewPage(param NewPageParam) *Page {
 		FooterInfo:     config.GetFooterInfo(),
 		AssetsList:     param.Assets,
 		navButtons:     param.Buttons,
+		Iframe:         param.Iframe,
 		NavButtonsHTML: navBtn,
 	}
 }

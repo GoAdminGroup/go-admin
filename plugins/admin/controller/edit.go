@@ -67,6 +67,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 
 	f := panel.GetForm()
 
+	isNotIframe := ctx.Query(constant.IframeKey) != "true"
+
 	content := formContent(aForm().
 		SetContent(formInfo.FieldList).
 		SetFieldsHTML(f.HTMLContent).
@@ -83,7 +85,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton)).
 		SetHeader(f.HeaderHtml).
-		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0)
+		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe)
 
 	if f.Wrapper != nil {
 		content = f.Wrapper(content)
@@ -92,7 +94,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	h.HTML(ctx, user, types.Panel{
 		Content:     alert + content,
 		Description: template2.HTML(formInfo.Description),
-		Title:       template2.HTML(formInfo.Title),
+		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
 	}, alert == "" || ((len(animation) > 0) && animation[0]))
 
 	if isEdit {

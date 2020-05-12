@@ -333,6 +333,7 @@ type ExecuteParam struct {
 	Animation  bool
 	Buttons    types.Buttons
 	NoCompress bool
+	Iframe     bool
 }
 
 func Execute(param ExecuteParam) *bytes.Buffer {
@@ -345,6 +346,7 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
 			Assets:  GetComponentAssetImportHTML(),
 			Buttons: param.Buttons,
+			Iframe:  param.Iframe,
 		}))
 	if err != nil {
 		fmt.Println("Execute err", err)

@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/satori/go.uuid"
+	"html/template"
 	"strconv"
 )
 
@@ -70,7 +71,7 @@ func GetPage(page string) (pageInt int) {
 	return
 }
 
-func AorB(condition bool, a string, b string) string {
+func AorB(condition bool, a, b string) string {
 	if condition {
 		return a
 	}
@@ -82,4 +83,11 @@ func AorEmpty(condition bool, a string) string {
 		return a
 	}
 	return ""
+}
+
+func AorBHTML(condition bool, a, b template.HTML) template.HTML {
+	if condition {
+		return a
+	}
+	return b
 }

@@ -1,23 +1,29 @@
 package action
 
 import (
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
+	"strings"
 )
 
 type PopUpAction struct {
 	BaseAction
-	Url      string
-	Method   string
-	Id       string
-	Title    string
-	BtnTitle template.HTML
-	Data     AjaxData
-	Handlers []context.Handler
+	Url       string
+	Method    string
+	Id        string
+	Title     string
+	Draggable bool
+	Width     string
+	Height    string
+	HasIframe bool
+	BtnTitle  template.HTML
+	Data      AjaxData
+	Handlers  []context.Handler
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
@@ -40,9 +46,66 @@ func (pop *PopUpAction) SetData(data map[string]interface{}) *PopUpAction {
 	return pop
 }
 
+func (pop *PopUpAction) SetDraggable() *PopUpAction {
+	pop.Draggable = true
+	return pop
+}
+
+func (pop *PopUpAction) SetWidth(width string) *PopUpAction {
+	pop.Width = width
+	return pop
+}
+
+func (pop *PopUpAction) SetHeight(height string) *PopUpAction {
+	pop.Height = height
+	return pop
+}
+
 func (pop *PopUpAction) SetUrl(url string) *PopUpAction {
 	pop.Url = url
 	return pop
+}
+
+type IframeData struct {
+	Width  string
+	Height string
+	Src    string
+}
+
+func PopUpWithIframe(id, title string, data IframeData, width, height string) *PopUpAction {
+	if id == "" {
+		panic("wrong popup action parameter, empty id")
+	}
+	if data.Width == "" {
+		data.Width = "100%"
+	}
+	if data.Height == "" {
+		data.Height = "100%"
+	}
+	if strings.Contains(data.Src, "?") {
+		data.Src = data.Src + "&"
+	} else {
+		data.Src = data.Src + "?"
+	}
+	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
+		return true, "ok", fmt.Sprintf(`<iframe style="width:%s;height:%s;" 
+			scrolling="auto" 
+			allowtransparency="true" 
+			frameborder="0"
+			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true"><iframe>`, data.Width, data.Height, data.Src)
+	}
+	return &PopUpAction{
+		Url:       URL(id),
+		Title:     title,
+		Method:    "post",
+		BtnTitle:  "",
+		Height:    height,
+		Width:     width,
+		Draggable: true,
+		Data:      NewAjaxData(),
+		Id:        "info-popup-model-" + utils.Uuid(10),
+		Handlers:  context.Handlers{handler.Wrap()},
+	}
 }
 
 func (pop *PopUpAction) SetBtnTitle(title template.HTML) *PopUpAction {
@@ -106,9 +169,16 @@ func (pop *PopUpAction) BtnAttribute() template.HTML {
 }
 
 func (pop *PopUpAction) FooterContent() template.HTML {
-	return template2.Default().Popup().SetID(pop.Id).
+	up := template2.Default().Popup().SetID(pop.Id).
 		SetTitle(template.HTML(pop.Title)).
 		SetFooter(pop.BtnTitle).
-		SetBody(template.HTML(``)).
-		GetContent()
+		SetWidth(pop.Width).
+		SetHeight(pop.Height).
+		SetBody(template.HTML(``))
+
+	if pop.Draggable {
+		return up.SetDraggable().GetContent()
+	}
+
+	return up.GetContent()
 }

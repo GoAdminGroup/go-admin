@@ -103,16 +103,23 @@ $('.delete-btn').on('click', function (event) {
 </script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
 	}
 
-	title := panel.GetDetail().Title
+	title := ""
+	desc := ""
 
-	if title == "" {
-		title = panel.GetInfo().Title + language.Get("Detail")
-	}
+	isNotIframe := ctx.Query(constant.IframeKey) != "true"
 
-	desc := panel.GetDetail().Description
+	if isNotIframe {
+		title = panel.GetDetail().Title
 
-	if desc == "" {
-		desc = panel.GetInfo().Description + language.Get("Detail")
+		if title == "" {
+			title = panel.GetInfo().Title + language.Get("Detail")
+		}
+
+		desc = panel.GetDetail().Description
+
+		if desc == "" {
+			desc = panel.GetInfo().Description + language.Get("Detail")
+		}
 	}
 
 	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
@@ -134,7 +141,7 @@ $('.delete-btn').on('click', function (event) {
 			SetHiddenFields(map[string]string{
 				form2.PreviousKey: infoUrl,
 			}).
-			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl),
+			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl, !isNotIframe),
 		Description: template.HTML(desc),
 		Title:       template.HTML(title),
 	}, param.Animation)

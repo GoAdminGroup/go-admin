@@ -125,6 +125,13 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 
 	endTime := time.Now()
 
+	extraInfo := ""
+
+	if !tb.Info.IsHideQueryInfo {
+		extraInfo = fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
+			fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000))
+	}
+
 	return PanelInfo{
 		Thead:    thead,
 		InfoList: infoList,
@@ -132,8 +139,7 @@ func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 			Size:         size,
 			Param:        params,
 			PageSizeList: tb.Info.GetPageSizeList(),
-		}).SetExtraInfo(template.HTML(fmt.Sprintf("<b>" + language.Get("query time") + ": </b>" +
-			fmt.Sprintf("%.3fms", endTime.Sub(beginTime).Seconds()*1000)))),
+		}).SetExtraInfo(template.HTML(extraInfo)),
 		Title:          tb.Info.Title,
 		FilterFormData: filterForm,
 		Description:    tb.Info.Description,

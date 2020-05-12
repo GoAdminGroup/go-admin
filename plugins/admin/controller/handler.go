@@ -109,7 +109,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			SetOperationFooter(formFooter(kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 				f.IsHideResetButton)).
 			SetHeader(f.HeaderHtml).
-			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
+			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, ctx.Query(constant.IframeKey) == "true"),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
 	})

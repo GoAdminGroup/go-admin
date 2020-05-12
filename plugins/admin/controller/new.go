@@ -5,6 +5,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
@@ -39,6 +40,8 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 
 	f := panel.GetForm()
 
+	isNotIframe := ctx.Query(constant.IframeKey) != "true"
+
 	content := formContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetFieldsHTML(f.HTMLContent).
@@ -56,7 +59,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton)).
 		SetHeader(f.HeaderHtml).
-		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0)
+		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe)
 
 	if f.Wrapper != nil {
 		content = f.Wrapper(content)
@@ -65,7 +68,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 	h.HTML(ctx, user, types.Panel{
 		Content:     alert + content,
 		Description: template2.HTML(f.Description),
-		Title:       template2.HTML(f.Title),
+		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
 	}, alert == "")
 
 	if isNew {

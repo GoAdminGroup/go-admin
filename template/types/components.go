@@ -41,6 +41,8 @@ type BoxAttribute interface {
 	SetFooter(value template.HTML) BoxAttribute
 	SetTitle(value template.HTML) BoxAttribute
 	WithHeadBorder() BoxAttribute
+	SetIframeStyle(iframe bool) BoxAttribute
+	SetAttr(attr template.HTMLAttr) BoxAttribute
 	SetStyle(value template.HTMLAttr) BoxAttribute
 	SetHeadColor(value string) BoxAttribute
 	SetTheme(value string) BoxAttribute
@@ -156,6 +158,7 @@ type PaginatorAttribute interface {
 	SetCurPageStartIndex(value string) PaginatorAttribute
 	SetCurPageEndIndex(value string) PaginatorAttribute
 	SetTotal(value string) PaginatorAttribute
+	SetHideEntriesInfo() PaginatorAttribute
 	SetPreviousClass(value string) PaginatorAttribute
 	SetPreviousUrl(value string) PaginatorAttribute
 	SetPages(value []map[string]string) PaginatorAttribute
@@ -195,7 +198,9 @@ type LinkAttribute interface {
 type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
-
+	SetDraggable() PopupAttribute
+	SetWidth(width string) PopupAttribute
+	SetHeight(height string) PopupAttribute
 	SetFooter(value template.HTML) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute

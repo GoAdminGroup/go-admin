@@ -15,5 +15,7 @@ const (
 	DetailPKKey = "__goadmin_detail_pk"
 	PrefixKey   = "__prefix"
 
+	IframeKey = "__goadmin_iframe"
+
 	ContextNodeNeedAuth = constant.ContextNodeNeedAuth
 )

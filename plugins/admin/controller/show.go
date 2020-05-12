@@ -228,12 +228,21 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		body = dataTable.GetContent()
 	}
 
+	isNotIframe := ctx.Query(constant.IframeKey) != "true"
+
+	paginator := panelInfo.Paginator
+
+	if !isNotIframe {
+		paginator = paginator.SetHideEntriesInfo()
+	}
+
 	boxModel := aBox().
 		SetBody(body).
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
 		WithHeadBorder().
-		SetFooter(panelInfo.Paginator.GetContent() + info.FooterHtml)
+		SetIframeStyle(!isNotIframe).
+		SetFooter(paginator.GetContent() + info.FooterHtml)
 
 	if len(panelInfo.FilterFormData) > 0 {
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").
@@ -261,7 +270,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	return h.Execute(ctx, user, types.Panel{
 		Content:     content,
 		Description: template2.HTML(panelInfo.Description),
-		Title:       template2.HTML(panelInfo.Title),
+		Title:       modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
 	}, params.Animation)
 }
 

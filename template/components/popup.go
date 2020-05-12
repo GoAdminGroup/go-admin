@@ -6,12 +6,15 @@ import (
 )
 
 type PopupAttribute struct {
-	Name   string
-	ID     string
-	Body   template.HTML
-	Footer template.HTML
-	Title  template.HTML
-	Size   string
+	Name      string
+	ID        string
+	Body      template.HTML
+	Footer    template.HTML
+	Title     template.HTML
+	Size      string
+	Height    string
+	Width     string
+	Draggable bool
 	types.Attribute
 }
 
@@ -27,6 +30,21 @@ func (compo *PopupAttribute) SetTitle(value template.HTML) types.PopupAttribute 
 
 func (compo *PopupAttribute) SetFooter(value template.HTML) types.PopupAttribute {
 	compo.Footer = value
+	return compo
+}
+
+func (compo *PopupAttribute) SetWidth(width string) types.PopupAttribute {
+	compo.Width = width
+	return compo
+}
+
+func (compo *PopupAttribute) SetHeight(height string) types.PopupAttribute {
+	compo.Height = height
+	return compo
+}
+
+func (compo *PopupAttribute) SetDraggable() types.PopupAttribute {
+	compo.Draggable = true
 	return compo
 }
 

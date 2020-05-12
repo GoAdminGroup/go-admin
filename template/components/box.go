@@ -14,6 +14,7 @@ type BoxAttribute struct {
 	Title             template.HTML
 	Theme             string
 	HeadBorder        string
+	Attr              template.HTMLAttr
 	HeadColor         string
 	SecondHeaderClass string
 	SecondHeader      template.HTML
@@ -41,6 +42,18 @@ func (compo *BoxAttribute) SetBody(value template.HTML) types.BoxAttribute {
 
 func (compo *BoxAttribute) SetStyle(value template.HTMLAttr) types.BoxAttribute {
 	compo.Style = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetAttr(attr template.HTMLAttr) types.BoxAttribute {
+	compo.Attr = attr
+	return compo
+}
+
+func (compo *BoxAttribute) SetIframeStyle(iframe bool) types.BoxAttribute {
+	if iframe {
+		compo.Attr = `style="border-radius: 0px;box-shadow:none;border-top:none;margin-bottom: 0px;"`
+	}
 	return compo
 }
 

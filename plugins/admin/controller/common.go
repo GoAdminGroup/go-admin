@@ -178,6 +178,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		Menu:      menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
 		Buttons:   h.navButtons.CheckPermission(user),
+		Iframe:    ctx.Query(constant.IframeKey) == "true",
 	})
 }
 
@@ -367,7 +368,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 	return col1 + col2
 }
 
-func formContent(form types.FormAttribute, isTab bool) template2.HTML {
+func formContent(form types.FormAttribute, isTab, iframe bool) template2.HTML {
 	if isTab {
 		return form.GetContent()
 	}
@@ -375,15 +376,17 @@ func formContent(form types.FormAttribute, isTab bool) template2.HTML {
 		SetHeader(form.GetDefaultBoxHeader()).
 		WithHeadBorder().
 		SetStyle(" ").
+		SetIframeStyle(iframe).
 		SetBody(form.GetContent()).
 		GetContent()
 }
 
-func detailContent(form types.FormAttribute, editUrl, deleteUrl string) template2.HTML {
+func detailContent(form types.FormAttribute, editUrl, deleteUrl string, iframe bool) template2.HTML {
 	return aBox().
 		SetHeader(form.GetDetailBoxHeader(editUrl, deleteUrl)).
 		WithHeadBorder().
 		SetBody(form.GetContent()).
+		SetIframeStyle(iframe).
 		GetContent()
 }
 
