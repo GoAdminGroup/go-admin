@@ -37,9 +37,9 @@ Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
 Quick follow up example: [https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
 
-![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
-
 GoAdmin+vue example: [https://github.com/GoAdminGroup/goadmin-vue-example](https://github.com/GoAdminGroup/goadmin-vue-example)
+
+![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
 ## Features
 
