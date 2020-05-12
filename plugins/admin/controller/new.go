@@ -46,6 +46,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetUrl(newUrl).
+			SetLayout(f.Layout).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),

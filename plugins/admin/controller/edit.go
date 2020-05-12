@@ -75,6 +75,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			SetPrefix(h.config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(editUrl).
+			SetLayout(f.Layout).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: infoUrl,

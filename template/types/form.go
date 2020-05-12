@@ -297,6 +297,8 @@ type FormPanel struct {
 	IsHideResetButton          bool
 	IsHideBackButton           bool
 
+	Layout form2.Layout
+
 	processChains DisplayProcessFnChains
 
 	HeaderHtml template.HTML
@@ -1054,6 +1056,11 @@ func (f *FormPanel) SetHeaderHtml(header template.HTML) *FormPanel {
 
 func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
 	f.FooterHtml += footer
+	return f
+}
+
+func (f *FormPanel) SetLayout(layout form2.Layout) *FormPanel {
+	f.Layout = layout
 	return f
 }
 
