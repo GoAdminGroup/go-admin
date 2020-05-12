@@ -1,10 +1,12 @@
 package main
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	e "github.com/GoAdminGroup/go-admin/plugins/example"
 )
 
 type Example struct {
@@ -17,5 +19,18 @@ var Plugin = &Example{
 
 func (example *Example) InitPlugin(srv service.List) {
 	example.InitBase(srv)
-	Plugin.App = e.InitRouter(c.Prefix(), srv)
+	Plugin.App = example.initRouter(c.Prefix(), srv)
+}
+
+func (example *Example) initRouter(prefix string, srv service.List) *context.App {
+
+	app := context.NewApp()
+	route := app.Group(prefix)
+	route.GET("/example", auth.Middleware(db.GetConnection(srv)), example.TestHandler)
+
+	return app
+}
+
+func (example *Example) TestHandler(ctx *context.Context) {
+
 }
