@@ -309,6 +309,7 @@ func NewFormPanel() *FormPanel {
 	return &FormPanel{
 		curFieldListIndex: -1,
 		Callbacks:         make(Callbacks, 0),
+		Layout:            form2.LayoutDefault,
 	}
 }
 
