@@ -69,12 +69,11 @@ func (admin *Admin) initRouter() *Admin {
 		apiRoute.GET("/list/:__prefix", admin.handler.ApiList).Name("api_info")
 		apiRoute.GET("/detail/:__prefix", admin.handler.ApiDetail).Name("api_detail")
 		apiRoute.POST("/delete/:__prefix", admin.guardian.Delete, admin.handler.Delete).Name("api_delete")
-		apiRoute.POST("/update/:__prefix", admin.guardian.EditForm, admin.handler.ApiUpdate).Name("api_edit")
-		apiRoute.GET("/update/form/:__prefix", admin.guardian.ShowForm, admin.handler.ApiUpdateForm).Name("api_show_edit")
+		apiRoute.POST("/edit/:__prefix", admin.guardian.EditForm, admin.handler.ApiUpdate).Name("api_edit")
+		apiRoute.GET("/edit/form/:__prefix", admin.guardian.ShowForm, admin.handler.ApiUpdateForm).Name("api_show_edit")
 		apiRoute.POST("/create/:__prefix", admin.guardian.NewForm, admin.handler.ApiCreate).Name("api_new")
 		apiRoute.GET("/create/form/:__prefix", admin.guardian.ShowNewForm, admin.handler.ApiCreateForm).Name("api_show_new")
 		apiRoute.POST("/export/:__prefix", admin.guardian.Export, admin.handler.Export).Name("api_export")
-
 		apiRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("api_update")
 	}
 

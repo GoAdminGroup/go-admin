@@ -23,11 +23,11 @@ const (
 	// Info Table Page
 
 	newPageBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[3]/a`
-	editPageBtn             = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[1]/a`
+	editPageBtn             = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/ul/li[1]/a`
 	genderActionDropDown    = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[7]/div/span/span[1]/span/span[2]`
 	menOptionActionBtn      = `/html/body/span/span/span[2]/ul/li[2]`
 	idOrderBtn              = `//*[@id="sort-id"]`
-	rowActionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/a`
+	rowActionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/a`
 	popupBtn                = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[5]/a`
 	popup                   = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]`
 	popupCloseBtn           = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]/div/div/div[3]/button`
@@ -51,10 +51,10 @@ const (
 	rowSelectAvatarCheckbox = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[1]/ul/li[1]/ul/li[5]/label/div`
 	actionDropDown          = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[1]/div`
 	exportBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/span/div/button`
-	previewAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[7]/a`
+	previewAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/ul/li[7]/a`
 	closePreviewAction      = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[2]/div/div/div[3]/button`
 	previewPopup            = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[2]`
-	rowAjaxAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[10]/div/ul/li[6]/a`
+	rowAjaxAction           = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/ul/li[6]/a`
 	rowAjaxPopup            = `/html/body/div[3]`
 	closeRowAjaxPopup       = `/html/body/div[3]/div[7]/div/button`
 	updateNameTd            = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[3]/a`
