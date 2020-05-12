@@ -21,6 +21,7 @@ type FormAttribute struct {
 	TabHeaders      []string
 	Footer          template.HTML
 	Url             string
+	FieldsHTML      template.HTML
 	Method          string
 	PrimaryKey      string
 	HeadWidth       int
@@ -65,6 +66,11 @@ func (compo *FormAttribute) SetHeadWidth(width int) types.FormAttribute {
 
 func (compo *FormAttribute) SetInputWidth(width int) types.FormAttribute {
 	compo.InputWidth = width
+	return compo
+}
+
+func (compo *FormAttribute) SetFieldsHTML(html template.HTML) types.FormAttribute {
+	compo.FieldsHTML = html
 	return compo
 }
 

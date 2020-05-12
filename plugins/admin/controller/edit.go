@@ -67,23 +67,30 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 
 	f := panel.GetForm()
 
+	content := formContent(aForm().
+		SetContent(formInfo.FieldList).
+		SetFieldsHTML(f.HTMLContent).
+		SetTabContents(formInfo.GroupFieldList).
+		SetTabHeaders(formInfo.GroupFieldHeaders).
+		SetPrefix(h.config.PrefixFixSlash()).
+		SetPrimaryKey(panel.GetPrimaryKey().Name).
+		SetUrl(editUrl).
+		SetLayout(f.Layout).
+		SetHiddenFields(map[string]string{
+			form2.TokenKey:    h.authSrv().AddToken(),
+			form2.PreviousKey: infoUrl,
+		}).
+		SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+			f.IsHideResetButton)).
+		SetHeader(f.HeaderHtml).
+		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0)
+
+	if f.Wrapper != nil {
+		content = f.Wrapper(content)
+	}
+
 	h.HTML(ctx, user, types.Panel{
-		Content: alert + formContent(aForm().
-			SetContent(formInfo.FieldList).
-			SetTabContents(formInfo.GroupFieldList).
-			SetTabHeaders(formInfo.GroupFieldHeaders).
-			SetPrefix(h.config.PrefixFixSlash()).
-			SetPrimaryKey(panel.GetPrimaryKey().Name).
-			SetUrl(editUrl).
-			SetLayout(f.Layout).
-			SetHiddenFields(map[string]string{
-				form2.TokenKey:    h.authSrv().AddToken(),
-				form2.PreviousKey: infoUrl,
-			}).
-			SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
-				f.IsHideResetButton)).
-			SetHeader(f.HeaderHtml).
-			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0),
+		Content:     alert + content,
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
 	}, alert == "" || ((len(animation) > 0) && animation[0]))

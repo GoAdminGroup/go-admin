@@ -299,6 +299,10 @@ type FormPanel struct {
 
 	Layout form2.Layout
 
+	HTMLContent template.HTML
+
+	Wrapper ContentWrapper
+
 	processChains DisplayProcessFnChains
 
 	HeaderHtml template.HTML
@@ -1072,6 +1076,16 @@ func (f *FormPanel) SetPostValidator(va FormPostFn) *FormPanel {
 
 func (f *FormPanel) SetPreProcessFn(fn FormPreProcessFn) *FormPanel {
 	f.PreProcessFn = fn
+	return f
+}
+
+func (f *FormPanel) SetHTMLContent(content template.HTML) *FormPanel {
+	f.HTMLContent = content
+	return f
+}
+
+func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
+	f.Wrapper = wrapper
 	return f
 }
 

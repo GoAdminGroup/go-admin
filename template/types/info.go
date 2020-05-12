@@ -539,6 +539,8 @@ type InfoPanel struct {
 
 	QueryFilterFn QueryFilterFn
 
+	Wrapper ContentWrapper
+
 	// column operation buttons
 	Action     template.HTML
 	HeaderHtml template.HTML
@@ -679,6 +681,8 @@ func (h Handler) Wrap() context.Handler {
 		})
 	}
 }
+
+type ContentWrapper func(content template.HTML) template.HTML
 
 type Action interface {
 	Js() template.JS
@@ -850,6 +854,11 @@ func (i *InfoPanel) SetDeleteHookWithRes(fn DeleteFnWithRes) *InfoPanel {
 
 func (i *InfoPanel) SetQueryFilterFn(fn QueryFilterFn) *InfoPanel {
 	i.QueryFilterFn = fn
+	return i
+}
+
+func (i *InfoPanel) SetWrapper(wrapper ContentWrapper) *InfoPanel {
+	i.Wrapper = wrapper
 	return i
 }
 
