@@ -978,6 +978,91 @@ func (i *InfoPanel) FieldImage(width, height string, prefix ...string) *InfoPane
 	return i
 }
 
+func (i *InfoPanel) FieldBool(flags ...string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["bool"].Get(flags)
+	return i
+}
+
+func (i *InfoPanel) FieldLink(src string, openInNewTab ...bool) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["link"].Get(src, openInNewTab)
+	return i
+}
+
+func (i *InfoPanel) FieldFileSize() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["filesize"].Get()
+	return i
+}
+
+func (i *InfoPanel) FieldDate(format string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["date"].Get()
+	return i
+}
+
+func (i *InfoPanel) FieldIcon(icons map[string]string, defaultIcon string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["link"].Get(icons, defaultIcon)
+	return i
+}
+
+type FieldDotColor string
+
+const (
+	FieldDotColorDanger  FieldDotColor = "danger"
+	FieldDotColorInfo    FieldDotColor = "info"
+	FieldDotColorPrimary FieldDotColor = "primary"
+	FieldDotColorSuccess FieldDotColor = "success"
+)
+
+func (i *InfoPanel) FieldDot(icons map[string]FieldDotColor, defaultDot string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["dot"].Get(icons, defaultDot)
+	return i
+}
+
+type FieldProgressBarData struct {
+	Style string
+	Size  string
+	Max   int
+}
+
+func (i *InfoPanel) FieldProgressBar(data ...FieldProgressBarData) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["progressbar"].Get(data)
+	return i
+}
+
+func (i *InfoPanel) FieldLoading(data []string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["loading"].Get(data)
+	return i
+}
+
+func (i *InfoPanel) FieldDownLoadable(prefix ...string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["downloadable"].Get(prefix)
+	return i
+}
+
+func (i *InfoPanel) FieldCopyable(prefix ...string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["copyable"].Get(prefix)
+	if _, ok := i.DisplayGeneratorRecords["copyable"]; !ok {
+		i.addFooterHTML(`<script>` + displayFnGens["copyable"].JS() + `</script>`)
+		i.DisplayGeneratorRecords["copyable"] = struct{}{}
+	}
+	return i
+}
+
+type FieldGetImgArrFn func(value string) []string
+
+func (i *InfoPanel) FieldCarousel(fn FieldGetImgArrFn) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["carousel"].Get(fn)
+	return i
+}
+
+func (i *InfoPanel) FieldQrcode() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].Display = displayFnGens["qrcode"].Get()
+	if _, ok := i.DisplayGeneratorRecords["qrcode"]; !ok {
+		i.addFooterHTML(`<script>` + displayFnGens["qrcode"].JS() + `</script>`)
+		i.DisplayGeneratorRecords["qrcode"] = struct{}{}
+	}
+	return i
+}
+
 func (i *InfoPanel) FieldWidth(width int) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Width = width
 	return i

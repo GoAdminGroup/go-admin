@@ -14,7 +14,6 @@ func init() {
 }
 
 func (image *Image) Get(args ...interface{}) types.FieldFilterFn {
-
 	param := args[2].([]string)
 	return func(value types.FieldModel) interface{} {
 		if len(param) > 0 {
@@ -26,5 +25,4 @@ func (image *Image) Get(args ...interface{}) types.FieldFilterFn {
 				SetSrc(template.HTML(value.Value)).GetContent()
 		}
 	}
-
 }
