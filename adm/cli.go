@@ -59,10 +59,11 @@ func main() {
 			var (
 				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/css/combine/", "css src path")
 				outputPath = cmd.StringOpt("d dist", "./resource/assets/dist/css/all.min.css", "css output path")
+				hash       = cmd.BoolOpt("h hash", false, "add hash tag to file name")
 			)
 
 			cmd.Action = func() {
-				cssMinifier(*rootPath, *outputPath)
+				cssMinifier(*rootPath, *outputPath, *hash)
 			}
 		})
 
@@ -70,10 +71,11 @@ func main() {
 			var (
 				rootPath   = cmd.StringOpt("s src", "./resource/assets/src/js/combine/", "js src path")
 				outputPath = cmd.StringOpt("d dist", "./resource/assets/dist/js/all.min.js", "js output path")
+				hash       = cmd.BoolOpt("h hash", false, "add hash tag to file name")
 			)
 
 			cmd.Action = func() {
-				jsMinifier(*rootPath, *outputPath)
+				jsMinifier(*rootPath, *outputPath, *hash)
 			}
 		})
 	})

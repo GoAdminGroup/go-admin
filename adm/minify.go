@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/css"
@@ -10,10 +12,12 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"sort"
+	"strings"
 )
 
-func cssMinifier(inputDir, outputFile string) {
+func cssMinifier(inputDir, outputFile string, hash bool) {
 	err := removeOutputFile(outputFile)
 	if err != nil {
 		log.Panicln("removeOutputFileError", err)
@@ -38,6 +42,13 @@ func cssMinifier(inputDir, outputFile string) {
 		return
 	}
 
+	if hash && filepath.Ext(outputFile) == ".css" {
+		m5 := md5.New()
+		m5.Write([]byte(minifiedString))
+		m5res := hex.EncodeToString(m5.Sum(nil))
+		outputFile = strings.Replace(outputFile, ".css", "."+m5res[len(m5res)-10:]+".css", -1)
+	}
+
 	err = writeOutputFile(minifiedString, outputFile)
 	if err != nil {
 		log.Panicln("writeOutputFileError", err)
@@ -45,7 +56,7 @@ func cssMinifier(inputDir, outputFile string) {
 	}
 }
 
-func jsMinifier(inputDir, outputFile string) {
+func jsMinifier(inputDir, outputFile string, hash bool) {
 	err := removeOutputFile(outputFile)
 	if err != nil {
 		log.Panicln("removeOutputFileError", err)
@@ -66,13 +77,13 @@ func jsMinifier(inputDir, outputFile string) {
 			continue
 		}
 
-		filepath := inputDir + name
-		fileTxt, err := ioutil.ReadFile(filepath)
+		filePath := inputDir + name
+		fileTxt, err := ioutil.ReadFile(filePath)
 		if err != nil {
 			return
 		}
 
-		fmt.Println("filepath", filepath)
+		fmt.Println("file path", filePath)
 
 		m := minify.New()
 		m.AddFunc("text/javascript", js.Minify)
@@ -86,6 +97,13 @@ func jsMinifier(inputDir, outputFile string) {
 		if err != nil {
 			return
 		}
+	}
+
+	if hash && filepath.Ext(outputFile) == ".js" {
+		m5 := md5.New()
+		m5.Write(b.Bytes())
+		m5res := hex.EncodeToString(m5.Sum(nil))
+		outputFile = strings.Replace(outputFile, ".js", "."+m5res[len(m5res)-10:]+".js", -1)
 	}
 
 	err = writeOutputFile(b.String(), outputFile)
@@ -139,13 +157,13 @@ func combineFiles(filenames []string, inputDir string) (string, error) {
 			continue
 		}
 
-		filepath := inputDir + name
-		fileTxt, err := ioutil.ReadFile(filepath)
+		filePath := inputDir + name
+		fileTxt, err := ioutil.ReadFile(filePath)
 		if err != nil {
 			return "", err
 		}
 
-		fmt.Println("filepath", filepath)
+		fmt.Println("file path", filePath)
 
 		_, err = b.Write(fileTxt)
 		if err != nil {
