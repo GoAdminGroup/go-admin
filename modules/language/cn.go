@@ -36,6 +36,7 @@ var cn = LangSet{
 	"all":             "全部",
 	"more":            "更多",
 	"browse":          "打开",
+	"remove":          "移除",
 
 	"permission manage": "权限管理",
 	"menus manage":      "菜单管理",

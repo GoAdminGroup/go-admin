@@ -27,6 +27,7 @@ var tc = LangSet{
 	"online":          "在線",
 	"setting":         "設置",
 	"sign out":        "登出",
+	"remove":          "移除",
 
 	"permission manage": "權限管理",
 	"menus manage":      "菜單管理",

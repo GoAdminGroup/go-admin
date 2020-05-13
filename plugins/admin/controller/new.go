@@ -68,7 +68,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 	h.HTML(ctx, user, types.Panel{
 		Content:     alert + content,
 		Description: template2.HTML(f.Description),
-		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
+		Title:       modules.AorBHTML(isNotIframe, template2.HTML(f.Title), ""),
 	}, alert == "")
 
 	if isNew {

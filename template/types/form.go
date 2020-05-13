@@ -137,6 +137,8 @@ type FormField struct {
 
 	HelpMsg template.HTML `json:"help_msg"`
 
+	TableFields FormFields
+
 	OptionExt    template.JS  `json:"option_ext"`
 	OptionInitFn OptionInitFn `json:"-"`
 	OptionTable  OptionTable  `json:"-"`
@@ -390,6 +392,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 		TypeName:    filedType,
 		Editable:    true,
 		Hide:        false,
+		TableFields: make(FormFields, 0),
 		Placeholder: language.Get("input") + " " + head,
 		FormType:    formType,
 		FieldDisplay: FieldDisplay{
@@ -423,6 +426,24 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 	}
 
 	return f
+}
+
+func (f *FormPanel) AddTable(head, field string, fields ...FormField) {
+	f.FieldList = append(f.FieldList, FormField{
+		Head:        head,
+		Field:       field,
+		TypeName:    db.Varchar,
+		Editable:    true,
+		Hide:        false,
+		TableFields: fields,
+		FormType:    form2.Table,
+		FieldDisplay: FieldDisplay{
+			Display: func(value FieldModel) interface{} {
+				return value.Value
+			},
+			DisplayProcessChains: chooseDisplayProcessChains(f.processChains),
+		},
+	})
 }
 
 // Field attribute setting functions
@@ -833,16 +854,15 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 func chooseAjax(field, chooseField, url string, handler Handler) (template.HTML, context.Node) {
 	return `<script>
 
-let updateBoxSelections = function(selectObj, new_opts) {
+let ` + template.HTML(field) + `_updateBoxSelections = function(selectObj, new_opts) {
     selectObj.html('');
     new_opts.forEach(function (opt) {
       	selectObj.append($('<option value="'+opt["id"]+'">'+opt["text"]+'</option>'));
     });
-	console.log("selectObj.bootstrapDualListbox", selectObj.bootstrapDualListbox)
     selectObj.bootstrapDualListbox('refresh', true);
 }
 
-let req = function(selectObj, box, event) {
+let ` + template.HTML(field) + `_req = function(selectObj, box, event) {
 	$.ajax({
 		url:"` + template.HTML(url) + `",
 		type: 'post',
@@ -859,7 +879,7 @@ let req = function(selectObj, box, event) {
 				if (selectObj.length > 0) {
 					if (typeof(data.data) === "object") {
 						if (box) {
-							updateBoxSelections(selectObj, data.data)
+							` + template.HTML(field) + `_updateBoxSelections(selectObj, data.data)
 						} else {
 							if (typeof(selectObj.attr("multiple")) !== "undefined") {
 								selectObj.html("");
@@ -896,7 +916,7 @@ if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duall
 			selectObj.val("").select2()
 			selectObj.html('<option value="" selected="selected"></option>')
 		}
-		req(selectObj, false, "select");
+		` + template.HTML(field) + `_req(selectObj, false, "select");
 	})
 	if (typeof($(".` + template.HTML(field) + `").attr("multiple")) !== "undefined") {
 		$(".` + template.HTML(field) + `").on("select2:unselect",function(e){
@@ -906,7 +926,7 @@ if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duall
 				selectObj.val("").select2()
 				selectObj.html('<option value="" selected="selected"></option>')
 			}
-			req(selectObj, false, "unselect");
+			` + template.HTML(field) + `_req(selectObj, false, "unselect");
 		})
 	}
 } else {
@@ -916,11 +936,11 @@ if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duall
     	var newState = $(this).val();                     
 		if ($(` + template.HTML(field) + `_lastState).not(newState).get().length > 0) {
 			let id = '` + template.HTML(chooseField) + `'
-			req($("."+id), true, "unselect");
+			` + template.HTML(field) + `_req($("."+id), true, "unselect");
 		}
 		if ($(newState).not(` + template.HTML(field) + `_lastState).get().length > 0) {
 			let id = '` + template.HTML(chooseField) + `'
-			req($("."+id), true, "select");
+			` + template.HTML(field) + `_req($("."+id), true, "select");
 		}
     	` + template.HTML(field) + `_lastState = newState;
 	})
@@ -957,12 +977,12 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 	}
 })
 $(function(){
-	let data = $(".` + template.HTML(field) + `").select2("data");
-	let text = "";
-	if (data.length > 0) {
-		text = data[0].text;
+	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
+	let ` + template.HTML(field) + `text = "";
+	if (` + template.HTML(field) + `data.length > 0) {
+		` + template.HTML(field) + `text = data[0].text;
 	}
-	if (text === "` + template.HTML(value) + `") {
+	if (` + template.HTML(field) + `text === "` + template.HTML(value) + `") {
 		` + hideText + `
 	}
 })
@@ -993,12 +1013,12 @@ $(".` + template.HTML(field) + `").on("select2:select",function(e){
 	}
 })
 $(function(){
-	let data = $(".` + template.HTML(field) + `").select2("data");
-	let text = "";
-	if (data.length > 0) {
-		text = data[0].text;
+	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
+	let ` + template.HTML(field) + `text = "";
+	if (` + template.HTML(field) + `data.length > 0) {
+		` + template.HTML(field) + `text = data[0].text;
 	}
-	if (text !== "` + template.HTML(value) + `") {
+	if (` + template.HTML(field) + `text !== "` + template.HTML(value) + `") {
 		` + hideText + `
 	}
 })

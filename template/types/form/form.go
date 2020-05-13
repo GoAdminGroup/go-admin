@@ -25,8 +25,10 @@ const (
 	Url
 	Ip
 	Color
+	Array
 	Currency
 	Number
+	Table
 	NumberRange
 	TextArea
 	Custom
@@ -34,8 +36,8 @@ const (
 	Code
 )
 
-var allType = []Type{Default, Text, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
-	RichText, Datetime, DatetimeRange, Radio, Email, Url, Ip, Color, Currency, Number, NumberRange,
+var allType = []Type{Default, Text, Array, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
+	RichText, Datetime, DatetimeRange, Radio, Table, Email, Url, Ip, Color, Currency, Number, NumberRange,
 	TextArea, Custom, Switch, Code}
 
 func CheckType(t, def Type) Type {
@@ -99,6 +101,8 @@ func (t Type) String() string {
 		return "selectbox"
 	case File:
 		return "file"
+	case Table:
+		return "table"
 	case Multifile:
 		return "multi_file"
 	case Password:
@@ -111,6 +115,8 @@ func (t Type) String() string {
 		return "datetime_range"
 	case Radio:
 		return "radio"
+	case Array:
+		return "array"
 	case Email:
 		return "email"
 	case Url:

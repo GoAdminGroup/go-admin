@@ -34,6 +34,7 @@ var en = LangSet{
 	"all":              "All",
 	"confirm password": "Confirm Password",
 	"search":           "Search",
+	"remove":           "Remove",
 
 	"are you sure to delete":               "Are you sure to delete",
 	"yes":                                  "yes",

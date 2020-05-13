@@ -35,6 +35,7 @@ var jp = LangSet{
 	"home":            "ホーム",
 	"all":             "全て",
 	"more":            "更に",
+	"remove":          "削除する",
 
 	"permission manage": "権限管理",
 	"menus manage":      "メニュー管理",
