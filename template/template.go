@@ -65,6 +65,8 @@ type Template interface {
 	GetTemplate(bool) (*template.Template, string)
 	GetVersion() string
 	GetRequirements() []string
+	GetHeadHTML() template.HTML
+	GetFootJS() template.HTML
 }
 
 const (
@@ -341,12 +343,14 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
 		types.NewPage(types.NewPageParam{
-			User:    param.User,
-			Menu:    param.Menu,
-			Panel:   param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
-			Assets:  GetComponentAssetImportHTML(),
-			Buttons: param.Buttons,
-			Iframe:  param.Iframe,
+			User:         param.User,
+			Menu:         param.Menu,
+			Panel:        param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
+			Assets:       GetComponentAssetImportHTML(),
+			Buttons:      param.Buttons,
+			Iframe:       param.Iframe,
+			TmplHeadHTML: Default().GetHeadHTML(),
+			TmplFootJS:   Default().GetFootJS(),
 		}))
 	if err != nil {
 		fmt.Println("Execute err", err)

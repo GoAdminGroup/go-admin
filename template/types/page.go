@@ -64,6 +64,9 @@ type Page struct {
 	// Custom html after body.
 	CustomFootHtml template.HTML
 
+	TmplHeadHTML template.HTML
+	TmplFootJS   template.HTML
+
 	// Components assets
 	AssetsList template.HTML
 
@@ -79,12 +82,14 @@ type Page struct {
 }
 
 type NewPageParam struct {
-	User    models.UserModel
-	Menu    *menu.Menu
-	Panel   Panel
-	Assets  template.HTML
-	Buttons Buttons
-	Iframe  bool
+	User         models.UserModel
+	Menu         *menu.Menu
+	Panel        Panel
+	Assets       template.HTML
+	Buttons      Buttons
+	Iframe       bool
+	TmplHeadHTML template.HTML
+	TmplFootJS   template.HTML
 }
 
 func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
@@ -129,6 +134,8 @@ func NewPage(param NewPageParam) *Page {
 		navButtons:     param.Buttons,
 		Iframe:         param.Iframe,
 		NavButtonsHTML: navBtn,
+		TmplHeadHTML:   param.TmplHeadHTML,
+		TmplFootJS:     param.TmplFootJS,
 	}
 }
 

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -22,6 +23,11 @@ func compileAsset(rootPath, outputPath, packageName string) {
 
 var AssetsList = []string{
 `
+		pathsContent := `package ` + packageName + `
+
+var AssetPaths = map[string]string{
+`
+
 		fileNames, err := getAllFiles(rootPath)
 
 		if err != nil {
@@ -31,12 +37,24 @@ var AssetsList = []string{
 		for _, name := range fileNames {
 			listContent += `	"` + rootPathArr[1] + strings.Replace(name, rootPath, "", -1)[1:] + `",
 `
+			ext := filepath.Ext(name)
+			if ext == ".css" || ext == ".js" {
+				fileName := filepath.Base(name)
+				reg, _ := regexp.Compile(".min.(.*?)" + ext)
+				pathsContent += `	"` + reg.ReplaceAllString(fileName, ".min"+ext) + `":"` +
+					rootPathArr[1] + strings.Replace(name, rootPath, "", -1)[1:] + `",
+`
+			}
 		}
+
+		pathsContent += `
+}`
 
 		listContent += `
 }`
 
 		err = ioutil.WriteFile(outputPath+"/assets_list.go", []byte(listContent), 0644)
+		err = ioutil.WriteFile(outputPath+"/assets_path.go", []byte(pathsContent), 0644)
 		if err != nil {
 			return
 		}
