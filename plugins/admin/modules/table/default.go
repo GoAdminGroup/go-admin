@@ -674,7 +674,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
 		}
 		return FormInfo{
-			FieldList:         tb.Form.FieldList,
+			FieldList:         tb.Form.FieldList.RemoveNotShow(),
 			GroupFieldList:    groupFormList,
 			GroupFieldHeaders: groupHeaders,
 			Title:             tb.Form.Title,
@@ -690,7 +690,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 	}
 
 	return FormInfo{
-		FieldList:         fieldList.FillCustomContent(),
+		FieldList:         fieldList.FillCustomContent().RemoveNotShow(),
 		GroupFieldList:    groupFormList,
 		GroupFieldHeaders: groupHeaders,
 		Title:             tb.Form.Title,
@@ -954,7 +954,7 @@ func (tb DefaultTable) DeleteData(id string) error {
 func (tb DefaultTable) GetNewForm() FormInfo {
 
 	if len(tb.Form.TabGroups) == 0 {
-		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql).FillCustomContent()}
+		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql).FillCustomContent().RemoveNotShow()}
 	}
 
 	newForm, headers := tb.Form.GroupField(tb.sql)

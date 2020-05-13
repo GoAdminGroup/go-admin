@@ -148,6 +148,14 @@ func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
 }
 
+func (t Type) IsArray() bool {
+	return t == Array
+}
+
+func (t Type) IsTable() bool {
+	return t == Table
+}
+
 func (t Type) IsSingleSelect() bool {
 	return t == SelectSingle || t == Radio || t == Switch
 }
