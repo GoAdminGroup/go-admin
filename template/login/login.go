@@ -45,7 +45,7 @@ var DefaultFuncMap = template.FuncMap{
 func (l *Login) GetTemplate() (*template.Template, string) {
 	tmpl, err := template.New("login_theme1").
 		Funcs(DefaultFuncMap).
-		Parse(List["login/theme1"])
+		Parse(loginTmpl)
 
 	if err != nil {
 		logger.Error("Login GetTemplate Error: ", err)

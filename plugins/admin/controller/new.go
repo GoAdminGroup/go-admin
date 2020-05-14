@@ -98,6 +98,11 @@ func (h *Handler) NewForm(ctx *context.Context) {
 		return
 	}
 
+	if param.Panel.GetForm().Responder != nil {
+		param.Panel.GetForm().Responder(ctx)
+		return
+	}
+
 	if !param.FromList {
 
 		if isNewUrl(param.PreviousPath, param.Prefix) {

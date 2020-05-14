@@ -285,4 +285,10 @@ var cn = LangSet{
 	"tool.db type":              "数据类型",
 	"tool.form type":            "表单类型",
 	"tool.generate table model": "生成表单模型",
+	"tool.primarykey":           "主键",
+	"tool.field filterable":     "可筛选",
+	"tool.field sortable":       "可排序",
+	"tool.yes":                  "是",
+	"tool.no":                   "否",
+	"tool.generate success":     "生成成功",
 }

@@ -402,6 +402,15 @@ var DefaultFuncMap = template.FuncMap{
 		}
 		return ""
 	},
+	"changeValue": func(f types.FormField, index int) types.FormField {
+		if len(f.ValueArr) > 0 {
+			f.Value = template.HTML(f.ValueArr[index])
+		}
+		if len(f.OptionsArr) > 0 {
+			f.Options = f.OptionsArr[index]
+		}
+		return f
+	},
 }
 
 type BaseComponent struct{}

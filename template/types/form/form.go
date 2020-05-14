@@ -193,44 +193,44 @@ func (t Type) SelectedLabel() []template.HTML {
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {
 
 	if fieldName == "password" {
-		return "form.Password"
+		return "Password"
 	}
 
 	if fieldName == "id" {
-		return "form.Default"
+		return "Default"
 	}
 
 	if fieldName == "ip" {
-		return "form.Ip"
+		return "Ip"
 	}
 
 	if fieldName == "Url" {
-		return "form.Url"
+		return "Url"
 	}
 
 	if fieldName == "email" {
-		return "form.Email"
+		return "Email"
 	}
 
 	if fieldName == "color" {
-		return "form.Color"
+		return "Color"
 	}
 
 	if fieldName == "money" {
-		return "form.Currency"
+		return "Currency"
 	}
 
 	switch typeName {
 	case db.Int, db.Tinyint, db.Int4, db.Integer, db.Mediumint, db.Smallint,
 		db.Numeric, db.Smallserial, db.Serial, db.Bigserial, db.Money, db.Bigint:
-		return "form.Number"
+		return "Number"
 	case db.Text, db.Longtext, db.Mediumtext, db.Tinytext:
-		return "form.RichText"
+		return "RichText"
 	case db.Datetime, db.Date, db.Time, db.Timestamp, db.Timestamptz, db.Year:
-		return "form.Datetime"
+		return "Datetime"
 	}
 
-	return "form.Text"
+	return "Text"
 }
 
 func DefaultHTML(value string) template.HTML {

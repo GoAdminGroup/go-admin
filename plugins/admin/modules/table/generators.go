@@ -4,9 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	tmpl "html/template"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -1328,116 +1330,97 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				}
 				return true, "ok", ops
 			})
-	formList.AddField(lgWithScore("table", "tool"), "table", db.Varchar, form.SelectSingle)
+	formList.AddField(lgWithScore("table", "tool"), "table", db.Varchar, form.SelectSingle).
+		FieldOnChooseAjax("xxxx", "/tool/choose/table",
+			func(ctx *context.Context) (success bool, msg string, data interface{}) {
+				tableName := ctx.FormValue("value")
+				connName := ctx.FormValue("conn")
+				driver := s.c.Databases[connName].Driver
+				conn := db.GetConnectionFromService(services.Get(driver))
+				columnsModel, _ := db.WithDriver(conn).Table(tableName).ShowColumns()
+
+				fieldField := "Field"
+				typeField := "Type"
+				if driver == "postgresql" {
+					fieldField = "column_name"
+					typeField = "udt_name"
+				}
+				if driver == "sqlite" {
+					fieldField = "name"
+					typeField = "type"
+				}
+				if driver == "mssql" {
+					fieldField = "column_name"
+					typeField = "data_type"
+				}
+
+				headName := make([]string, len(columnsModel))
+				fieldName := make([]string, len(columnsModel))
+				dbTypeList := make([]string, len(columnsModel))
+				formTypeList := make([]string, len(columnsModel))
+
+				for i, model := range columnsModel {
+					typeName := getType(model[typeField].(string))
+
+					headName[i] = strings.Title(model[fieldField].(string))
+					fieldName[i] = model[fieldField].(string)
+					dbTypeList[i] = typeName
+					formTypeList[i] = form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)),
+						model[fieldField].(string))
+				}
+
+				return true, "ok", [][]string{headName, fieldName, dbTypeList, formTypeList}
+			}, `
+$("tbody").find("tr").remove();
+console.log(data.data);
+var tpl = $("template.fields-tpl").html();
+for (let i = 0; i < data.data[0].length; i++) {
+	$("tbody.fields-table").append(tpl);
+}
+let trs = $("tbody").find("tr");
+for (let i = 0; i < data.data[0].length; i++) {
+	$(trs[i]).find('.field_head').val(data.data[0][i]);
+	$(trs[i]).find('.field_name').val(data.data[1][i]);
+	$(trs[i]).find('select.field_db_type').val(data.data[2][i]).select2();
+	$(trs[i]).find('select.field_form_type').val(data.data[3][i]).select2();
+}
+`, `"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("main")
+	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).FieldDefault("./")
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
-		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel()
-		pa.AddField(lgWithScore("field name", "tool"), "field_name", db.Varchar, form.Text).FieldHideLabel()
+		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field name", "tool"), "field_name", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field filterable", "tool"), "field_filterable", db.Varchar, form.Switch).
+			FieldOptions(types.FieldOptions{
+				{Text: lgWithScore("yes", "tool"), Value: "y"},
+				{Text: lgWithScore("no", "tool"), Value: "n"},
+			}).
+			FieldDefault("n").FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{"n"}
+		})
+		pa.AddField(lgWithScore("field sortable", "tool"), "field_sortable", db.Varchar, form.Switch).
+			FieldOptions(types.FieldOptions{
+				{Text: lgWithScore("yes", "tool"), Value: "y"},
+				{Text: lgWithScore("no", "tool"), Value: "n"},
+			}).
+			FieldDefault("n").FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{"n"}
+		})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
-			FieldOptions(types.FieldOptions{
-				{Text: "INT", Value: "Int"},
-				{Text: "TINYINT", Value: "Tinyint"},
-				{Text: "MEDIUMINT", Value: "Mediumint"},
-				{Text: "SMALLINT", Value: "Smallint"},
-				{Text: "BIGINT", Value: "Bigint"},
-				{Text: "BIT", Value: "Bit"},
-				{Text: "INT8", Value: "Int8"},
-				{Text: "INT4", Value: "Int4"},
-				{Text: "INT2", Value: "Int2"},
-				{Text: "INTEGER", Value: "Integer"},
-				{Text: "NUMERIC", Value: "Numeric"},
-				{Text: "SMALLSERIAL", Value: "Smallserial"},
-				{Text: "SERIAL", Value: "Serial"},
-				{Text: "BIGSERIAL", Value: "Bigserial"},
-				{Text: "MONEY", Value: "Money"},
-				{Text: "REAL", Value: "Real"},
-				{Text: "FLOAT", Value: "Float"},
-				{Text: "FLOAT4", Value: "Float4"},
-				{Text: "FLOAT8", Value: "Float8"},
-				{Text: "DOUBLE", Value: "Double"},
-				{Text: "DECIMAL", Value: "Decimal"},
-				{Text: "DOUBLEPRECISION", Value: "Doubleprecision"},
-				{Text: "DATE", Value: "Date"},
-				{Text: "TIME", Value: "Time"},
-				{Text: "YEAR", Value: "Year"},
-				{Text: "DATETIME", Value: "Datetime"},
-				{Text: "TIMESTAMP", Value: "Timestamp"},
-				{Text: "TEXT", Value: "Text"},
-				{Text: "LONGTEXT", Value: "Longtext"},
-				{Text: "MEDIUMTEXT", Value: "Mediumtext"},
-				{Text: "TINYTEXT", Value: "Tinytext"},
-				{Text: "VARCHAR", Value: "Varchar"},
-				{Text: "CHAR", Value: "Char"},
-				{Text: "BPCHAR", Value: "Bpchar"},
-				{Text: "JSON", Value: "Json"},
-				{Text: "BLOB", Value: "Blob"},
-				{Text: "TINYBLOB", Value: "Tinyblob"},
-				{Text: "MEDIUMBLOB", Value: "Mediumblob"},
-				{Text: "LONGBLOB", Value: "Longblob"},
-				{Text: "INTERVAL", Value: "Interval"},
-				{Text: "BOOLEAN", Value: "Boolean"},
-				{Text: "Bool", Value: "Bool"},
-				{Text: "POINT", Value: "Point"},
-				{Text: "LINE", Value: "Line"},
-				{Text: "LSEG", Value: "Lseg"},
-				{Text: "BOX", Value: "Box"},
-				{Text: "PATH", Value: "Path"},
-				{Text: "POLYGON", Value: "Polygon"},
-				{Text: "CIRCLE", Value: "Circle"},
-				{Text: "CIDR", Value: "Cidr"},
-				{Text: "INET", Value: "Inet"},
-				{Text: "MACADDR", Value: "Macaddr"},
-				{Text: "CHARACTER", Value: "Character"},
-				{Text: "VARYINGCHARACTER", Value: "Varyingcharacter"},
-				{Text: "NCHAR", Value: "Nchar"},
-				{Text: "NATIVECHARACTER", Value: "Nativecharacter"},
-				{Text: "NVARCHAR", Value: "Nvarchar"},
-				{Text: "CLOB", Value: "Clob"},
-				{Text: "BINARY", Value: "Binary"},
-				{Text: "VARBINARY", Value: "Varbinary"},
-				{Text: "ENUM", Value: "Enum"},
-				{Text: "SET", Value: "Set"},
-				{Text: "GEOMETRY", Value: "Geometry"},
-				{Text: "MULTILINESTRING", Value: "Multilinestring"},
-				{Text: "MULTIPOLYGON", Value: "Multipolygon"},
-				{Text: "LINESTRING", Value: "Linestring"},
-				{Text: "MULTIPOINT", Value: "Multipoint"},
-				{Text: "GEOMETRYCOLLECTION", Value: "Geometrycollection"},
-				{Text: "NAME", Value: "Name"},
-				{Text: "UUID", Value: "Uuid"},
-				{Text: "TIMESTAMPTZ", Value: "Timestamptz"},
-				{Text: "TIMETZ", Value: "Timetz"},
-			})
+			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{""}
+		})
 		pa.AddField(lgWithScore("form type", "tool"), "field_form_type", db.Varchar, form.SelectSingle).
-			FieldOptions(types.FieldOptions{
-				{Text: "Default", Value: "Default"},
-				{Text: "Text", Value: "Text"},
-				{Text: "SelectSingle", Value: "SelectSingle"},
-				{Text: "Select", Value: "Select"},
-				{Text: "IconPicker", Value: "IconPicker"},
-				{Text: "SelectBox", Value: "SelectBox"},
-				{Text: "File", Value: "File"},
-				{Text: "Multifile", Value: "Multifile"},
-				{Text: "Password", Value: "Password"},
-				{Text: "RichText", Value: "RichText"},
-				{Text: "Datetime", Value: "Datetime"},
-				{Text: "DatetimeRange", Value: "DatetimeRange"},
-				{Text: "Radio", Value: "Radio"},
-				{Text: "Email", Value: "Email"},
-				{Text: "Url", Value: "Url"},
-				{Text: "Ip", Value: "Ip"},
-				{Text: "Color", Value: "Color"},
-				{Text: "Array", Value: "Array"},
-				{Text: "Currency", Value: "Currency"},
-				{Text: "Number", Value: "Number"},
-				{Text: "Table", Value: "Table"},
-				{Text: "NumberRange", Value: "NumberRange"},
-				{Text: "TextArea", Value: "TextArea"},
-				{Text: "Custom", Value: "Custom"},
-				{Text: "Switch", Value: "Switch"},
-				{Text: "Code", Value: "Code"},
-			})
+			FieldOptions(formTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{""}
+		})
 	}).FieldInputWidth(11)
 
 	formList.SetTable("tool").
@@ -1446,8 +1429,40 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		SetHeader(template.HTML(`<h3 class="box-title">` +
 			lgWithScore("generate table model", "tool") + `</h3>`))
 
-	formList.SetUpdateFn(func(values form2.Values) error {
-		return nil
+	formList.SetInsertFn(func(values form2.Values) error {
+		fmt.Println("values", values)
+
+		connName := values.Get("conn")
+
+		fields := make(tools.Fields, len(values["field_head"]))
+
+		for i := 0; i < len(values["field_head"]); i++ {
+			fields[i] = tools.Field{
+				Head:       values["field_head"][i],
+				Name:       values["field_name"][i],
+				FormType:   values["field_form_type"][i],
+				DBType:     values["field_db_type"][i],
+				Filterable: values["field_filterable"][i] == "y",
+				Sortable:   values["field_sortable"][i] == "y",
+			}
+		}
+
+		return tools.Generate(tools.NewParamWithFields(tools.Config{
+			Connection: connName,
+			Driver:     s.c.Databases[connName].Driver,
+			Package:    values.Get("package"),
+			Table:      values.Get("table"),
+			Schema:     values.Get("schema"),
+			Output:     values.Get("path"),
+		}, fields))
+	})
+
+	formList.SetResponder(func(ctx *context.Context) {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
+		swal('%s', '', 'success');
+		setTimeout(function(){location.reload()}, 1000)
+</script>`, lgWithScore("generate success", "tool")))
+		ctx.AddHeader(constant.PjaxUrlHeader, s.c.Url("/info/generate/new"))
 	})
 
 	return generateTool
@@ -1539,4 +1554,119 @@ func interfaces(arr []string) []interface{} {
 	}
 
 	return iarr
+}
+
+func formTypeOptions() types.FieldOptions {
+	return types.FieldOptions{
+		{Text: "Default", Value: "Default"},
+		{Text: "Text", Value: "Text"},
+		{Text: "SelectSingle", Value: "SelectSingle"},
+		{Text: "Select", Value: "Select"},
+		{Text: "IconPicker", Value: "IconPicker"},
+		{Text: "SelectBox", Value: "SelectBox"},
+		{Text: "File", Value: "File"},
+		{Text: "Multifile", Value: "Multifile"},
+		{Text: "Password", Value: "Password"},
+		{Text: "RichText", Value: "RichText"},
+		{Text: "Datetime", Value: "Datetime"},
+		{Text: "DatetimeRange", Value: "DatetimeRange"},
+		{Text: "Radio", Value: "Radio"},
+		{Text: "Email", Value: "Email"},
+		{Text: "Url", Value: "Url"},
+		{Text: "Ip", Value: "Ip"},
+		{Text: "Color", Value: "Color"},
+		{Text: "Array", Value: "Array"},
+		{Text: "Currency", Value: "Currency"},
+		{Text: "Number", Value: "Number"},
+		{Text: "Table", Value: "Table"},
+		{Text: "NumberRange", Value: "NumberRange"},
+		{Text: "TextArea", Value: "TextArea"},
+		{Text: "Custom", Value: "Custom"},
+		{Text: "Switch", Value: "Switch"},
+		{Text: "Code", Value: "Code"},
+	}
+}
+
+func databaseTypeOptions() types.FieldOptions {
+	return types.FieldOptions{
+		{Text: "INT", Value: "Int"},
+		{Text: "TINYINT", Value: "Tinyint"},
+		{Text: "MEDIUMINT", Value: "Mediumint"},
+		{Text: "SMALLINT", Value: "Smallint"},
+		{Text: "BIGINT", Value: "Bigint"},
+		{Text: "BIT", Value: "Bit"},
+		{Text: "INT8", Value: "Int8"},
+		{Text: "INT4", Value: "Int4"},
+		{Text: "INT2", Value: "Int2"},
+		{Text: "INTEGER", Value: "Integer"},
+		{Text: "NUMERIC", Value: "Numeric"},
+		{Text: "SMALLSERIAL", Value: "Smallserial"},
+		{Text: "SERIAL", Value: "Serial"},
+		{Text: "BIGSERIAL", Value: "Bigserial"},
+		{Text: "MONEY", Value: "Money"},
+		{Text: "REAL", Value: "Real"},
+		{Text: "FLOAT", Value: "Float"},
+		{Text: "FLOAT4", Value: "Float4"},
+		{Text: "FLOAT8", Value: "Float8"},
+		{Text: "DOUBLE", Value: "Double"},
+		{Text: "DECIMAL", Value: "Decimal"},
+		{Text: "DOUBLEPRECISION", Value: "Doubleprecision"},
+		{Text: "DATE", Value: "Date"},
+		{Text: "TIME", Value: "Time"},
+		{Text: "YEAR", Value: "Year"},
+		{Text: "DATETIME", Value: "Datetime"},
+		{Text: "TIMESTAMP", Value: "Timestamp"},
+		{Text: "TEXT", Value: "Text"},
+		{Text: "LONGTEXT", Value: "Longtext"},
+		{Text: "MEDIUMTEXT", Value: "Mediumtext"},
+		{Text: "TINYTEXT", Value: "Tinytext"},
+		{Text: "VARCHAR", Value: "Varchar"},
+		{Text: "CHAR", Value: "Char"},
+		{Text: "BPCHAR", Value: "Bpchar"},
+		{Text: "JSON", Value: "Json"},
+		{Text: "BLOB", Value: "Blob"},
+		{Text: "TINYBLOB", Value: "Tinyblob"},
+		{Text: "MEDIUMBLOB", Value: "Mediumblob"},
+		{Text: "LONGBLOB", Value: "Longblob"},
+		{Text: "INTERVAL", Value: "Interval"},
+		{Text: "BOOLEAN", Value: "Boolean"},
+		{Text: "Bool", Value: "Bool"},
+		{Text: "POINT", Value: "Point"},
+		{Text: "LINE", Value: "Line"},
+		{Text: "LSEG", Value: "Lseg"},
+		{Text: "BOX", Value: "Box"},
+		{Text: "PATH", Value: "Path"},
+		{Text: "POLYGON", Value: "Polygon"},
+		{Text: "CIRCLE", Value: "Circle"},
+		{Text: "CIDR", Value: "Cidr"},
+		{Text: "INET", Value: "Inet"},
+		{Text: "MACADDR", Value: "Macaddr"},
+		{Text: "CHARACTER", Value: "Character"},
+		{Text: "VARYINGCHARACTER", Value: "Varyingcharacter"},
+		{Text: "NCHAR", Value: "Nchar"},
+		{Text: "NATIVECHARACTER", Value: "Nativecharacter"},
+		{Text: "NVARCHAR", Value: "Nvarchar"},
+		{Text: "CLOB", Value: "Clob"},
+		{Text: "BINARY", Value: "Binary"},
+		{Text: "VARBINARY", Value: "Varbinary"},
+		{Text: "ENUM", Value: "Enum"},
+		{Text: "SET", Value: "Set"},
+		{Text: "GEOMETRY", Value: "Geometry"},
+		{Text: "MULTILINESTRING", Value: "Multilinestring"},
+		{Text: "MULTIPOLYGON", Value: "Multipolygon"},
+		{Text: "LINESTRING", Value: "Linestring"},
+		{Text: "MULTIPOINT", Value: "Multipoint"},
+		{Text: "GEOMETRYCOLLECTION", Value: "Geometrycollection"},
+		{Text: "NAME", Value: "Name"},
+		{Text: "UUID", Value: "Uuid"},
+		{Text: "TIMESTAMPTZ", Value: "Timestamptz"},
+		{Text: "TIMETZ", Value: "Timetz"},
+	}
+}
+
+func getType(typeName string) string {
+	r, _ := regexp.Compile(`\(.*?\)`)
+	typeName = r.ReplaceAllString(typeName, "")
+	r2, _ := regexp.Compile(`unsigned(.*)`)
+	return strings.TrimSpace(strings.Title(strings.ToLower(r2.ReplaceAllString(typeName, ""))))
 }

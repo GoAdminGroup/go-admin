@@ -15,7 +15,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
 	"gopkg.in/ini.v1"
@@ -143,26 +143,19 @@ func generating(cfgFile string) {
 	fmt.Println(ansi.Color("✔", "green") + " " + getWord("generating: "))
 	fmt.Println()
 
-	fieldField := "Field"
-	typeField := "Type"
-	if info.DriverName == "postgresql" {
-		fieldField = "column_name"
-		typeField = "udt_name"
-	}
-	if info.DriverName == "sqlite" {
-		fieldField = "name"
-		typeField = "type"
-	}
-	if info.DriverName == "mssql" {
-		fieldField = "column_name"
-		typeField = "data_type"
-	}
-
 	bar := progressbar.New(len(chooseTables))
 	for i := 0; i < len(chooseTables); i++ {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
-		generateFile(chooseTables[i], info.Schema, conn, fieldField, typeField, packageName, connection, info.DriverName, outputPath)
+		checkError(tools.Generate(tools.NewParam(tools.Config{
+			Connection: connection,
+			Driver:     info.DriverName,
+			Package:    packageName,
+			Table:      chooseTables[i],
+			Schema:     info.Schema,
+			Output:     outputPath,
+			Conn:       conn,
+		})))
 	}
 	generateTables(outputPath, chooseTables, packageName)
 
@@ -292,88 +285,6 @@ func selects(tables []string) []string {
 	checkError(err)
 
 	return chooseTables
-}
-
-func generateFile(table, schema string, conn db.Connection, fieldField, typeField, packageName, connection, driver, outputPath string) {
-
-	tableCamel := camelcase(table)
-
-	dbTable := table
-	if schema != "" {
-		dbTable = schema + "." + table
-	}
-
-	columnsModel, _ := db.WithDriver(conn).Table(dbTable).ShowColumns()
-
-	var newTable = `table.NewDefaultTable(table.DefaultConfigWithDriver("` + driver + `"))`
-	if connection != "default" {
-		newTable = `table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("` + driver + `", "` + connection + `"))`
-	}
-
-	content := `package ` + packageName + `
-
-import (
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
-)
-
-func Get` + strings.Title(tableCamel) + `Table(ctx *context.Context) table.Table {
-
-    ` + tableCamel + `Table := ` + newTable + `
-
-	info := ` + tableCamel + `Table.GetInfo()
-	
-	`
-
-	for _, model := range columnsModel {
-		if model[fieldField].(string) == "id" {
-			content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
-				`","` + model[fieldField].(string) +
-				`", db.` + getType(model[typeField].(string)) + `).FieldFilterable()
-	`
-		} else {
-			content += `info.AddField("` + strings.Title(model[fieldField].(string)) +
-				`","` + model[fieldField].(string) +
-				`", db.` + getType(model[typeField].(string)) + `)
-	`
-		}
-	}
-
-	content += `
-	info.SetTable("` + dbTable + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
-
-	formList := ` + tableCamel + `Table.GetForm()
-	
-	`
-
-	for _, model := range columnsModel {
-
-		typeName := getType(model[typeField].(string))
-		formType := form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string))
-
-		if model[fieldField].(string) == "id" {
-			content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
-				model[fieldField].(string) + `",db.` + typeName + `,` + formType + `).FieldNotAllowAdd()
-	`
-		} else {
-			content += `formList.AddField("` + strings.Title(model[fieldField].(string)) + `","` +
-				model[fieldField].(string) + `",db.` + typeName + `,` + formType + `)
-	`
-		}
-	}
-
-	content += `
-	formList.SetTable("` + dbTable + `").SetTitle("` + strings.Title(table) + `").SetDescription("` + strings.Title(table) + `")
-
-	return ` + tableCamel + `Table
-}`
-
-	c, err := format.Source([]byte(content))
-	checkError(err)
-
-	checkError(ioutil.WriteFile(outputPath+"/"+table+".go", c, 0644))
 }
 
 func generateTables(outputPath string, tables []string, packageName string) {
