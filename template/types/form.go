@@ -112,6 +112,8 @@ type FormField struct {
 	FatherFormType form2.Type      `json:"father_form_type"`
 	FatherField    string          `json:"father_field"`
 
+	RowWidth int
+
 	Default                template.HTML `json:"default"`
 	Value                  template.HTML `json:"value"`
 	Value2                 string        `json:"value_2"`
@@ -119,6 +121,7 @@ type FormField struct {
 	Options                FieldOptions  `json:"options"`
 	DefaultOptionDelimiter string        `json:"default_option_delimiter"`
 	Label                  template.HTML `json:"label"`
+	HideLabel              bool          `json:"hide_label"`
 
 	Placeholder string `json:"placeholder"`
 
@@ -132,6 +135,9 @@ type FormField struct {
 	Hide        bool `json:"hide"`
 
 	Width int `json:"width"`
+
+	InputWidth int `json:"input_width"`
+	HeadWidth  int `json:"head_width"`
 
 	Joins Joins `json:"-"`
 
@@ -352,6 +358,13 @@ type FormPanel struct {
 
 	HTMLContent template.HTML
 
+	Header template.HTML
+
+	InputWidth int
+	HeadWidth  int
+
+	Responder Responder
+
 	Wrapper ContentWrapper
 
 	processChains DisplayProcessFnChains
@@ -359,6 +372,8 @@ type FormPanel struct {
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
 }
+
+type Responder func(ctx *context.Context)
 
 func NewFormPanel() *FormPanel {
 	return &FormPanel{
@@ -479,7 +494,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 
 type AddFormFieldFn func(panel *FormPanel)
 
-func (f *FormPanel) AddTable(head, field string, addFields AddFormFieldFn) {
+func (f *FormPanel) AddTable(head, field string, addFields AddFormFieldFn) *FormPanel {
 	index := f.curFieldListIndex
 	addFields(f)
 	for i := index + 1; i <= f.curFieldListIndex; i++ {
@@ -503,6 +518,13 @@ func (f *FormPanel) AddTable(head, field string, addFields AddFormFieldFn) {
 			DisplayProcessChains: chooseDisplayProcessChains(f.processChains),
 		},
 	})
+	f.curFieldListIndex++
+	return f
+}
+
+func (f *FormPanel) AddRow(addFields AddFormFieldFn) *FormPanel {
+	addFields(f)
+	return f
 }
 
 // Field attribute setting functions
@@ -535,6 +557,26 @@ func (f *FormPanel) FieldPlaceholder(placeholder string) *FormPanel {
 
 func (f *FormPanel) FieldWidth(width int) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Width = width
+	return f
+}
+
+func (f *FormPanel) FieldInputWidth(width int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].InputWidth = width
+	return f
+}
+
+func (f *FormPanel) FieldHeadWidth(width int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].HeadWidth = width
+	return f
+}
+
+func (f *FormPanel) FieldRowWidth(width int) *FormPanel {
+	f.FieldList[f.curFieldListIndex].RowWidth = width
+	return f
+}
+
+func (f *FormPanel) FieldHideLabel() *FormPanel {
+	f.FieldList[f.curFieldListIndex].HideLabel = true
 	return f
 }
 
@@ -970,7 +1012,7 @@ let ` + template.HTML(field) + `_req = function(selectObj, box, event) {
 if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duallistbox-container").length === 0) {
 	$(".` + template.HTML(field) + `").on("select2:select", function(e) {
 		let id = '` + template.HTML(chooseField) + `'
-		let selectObj = $("."+id)
+		let selectObj = $("select."+id)
 		if (selectObj.length > 0) {
 			selectObj.val("").select2()
 			selectObj.html('<option value="" selected="selected"></option>')
@@ -980,7 +1022,7 @@ if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duall
 	if (typeof($(".` + template.HTML(field) + `").attr("multiple")) !== "undefined") {
 		$(".` + template.HTML(field) + `").on("select2:unselect",function(e){
 			let id = '` + template.HTML(chooseField) + `'
-			let selectObj = $("."+id)
+			let selectObj = $("select."+id)
 			if (selectObj.length > 0) {
 				selectObj.val("").select2()
 				selectObj.html('<option value="" selected="selected"></option>')
@@ -1039,7 +1081,7 @@ $(function(){
 	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
 	let ` + template.HTML(field) + `text = "";
 	if (` + template.HTML(field) + `data.length > 0) {
-		` + template.HTML(field) + `text = data[0].text;
+		` + template.HTML(field) + `text = ` + template.HTML(field) + `data[0].text;
 	}
 	if (` + template.HTML(field) + `text === "` + template.HTML(value) + `") {
 		` + hideText + `
@@ -1075,7 +1117,7 @@ $(function(){
 	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
 	let ` + template.HTML(field) + `text = "";
 	if (` + template.HTML(field) + `data.length > 0) {
-		` + template.HTML(field) + `text = data[0].text;
+		` + template.HTML(field) + `text = ` + template.HTML(field) + `data[0].text;
 	}
 	if (` + template.HTML(field) + `text !== "` + template.HTML(value) + `") {
 		` + hideText + `
@@ -1163,8 +1205,28 @@ func (f *FormPanel) SetHTMLContent(content template.HTML) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) SetHeader(content template.HTML) *FormPanel {
+	f.Header = content
+	return f
+}
+
+func (f *FormPanel) SetInputWidth(width int) *FormPanel {
+	f.InputWidth = width
+	return f
+}
+
+func (f *FormPanel) SetHeadWidth(width int) *FormPanel {
+	f.HeadWidth = width
+	return f
+}
+
 func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
 	f.Wrapper = wrapper
+	return f
+}
+
+func (f *FormPanel) SetResponder(responder Responder) *FormPanel {
+	f.Responder = responder
 	return f
 }
 

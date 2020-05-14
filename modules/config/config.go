@@ -74,6 +74,16 @@ func (d DatabaseList) JSON() string {
 	return utils.JSON(d)
 }
 
+func (d DatabaseList) Connections() []string {
+	conns := make([]string, len(d))
+	count := 0
+	for key := range d {
+		conns[count] = key
+		count++
+	}
+	return conns
+}
+
 func GetDatabaseListFromJSON(m string) DatabaseList {
 	var d = make(DatabaseList, 0)
 	if m == "" {

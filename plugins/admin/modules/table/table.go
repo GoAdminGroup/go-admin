@@ -63,18 +63,27 @@ type Table interface {
 
 	GetNewForm() FormInfo
 
+	GetOnlyInfo() bool
+	GetOnlyDetail() bool
+	GetOnlyNewForm() bool
+	GetOnlyUpdateForm() bool
+
 	Copy() Table
 }
 
 type BaseTable struct {
-	Info       *types.InfoPanel
-	Form       *types.FormPanel
-	Detail     *types.InfoPanel
-	CanAdd     bool
-	Editable   bool
-	Deletable  bool
-	Exportable bool
-	PrimaryKey PrimaryKey
+	Info           *types.InfoPanel
+	Form           *types.FormPanel
+	Detail         *types.InfoPanel
+	CanAdd         bool
+	Editable       bool
+	Deletable      bool
+	Exportable     bool
+	OnlyInfo       bool
+	OnlyDetail     bool
+	OnlyNewForm    bool
+	OnlyUpdateForm bool
+	PrimaryKey     PrimaryKey
 }
 
 func (base *BaseTable) GetInfo() *types.InfoPanel {
@@ -100,21 +109,14 @@ func (base *BaseTable) GetCanAdd() bool {
 	return base.CanAdd
 }
 
-func (base *BaseTable) GetPrimaryKey() PrimaryKey {
-	return base.PrimaryKey
-}
-
-func (base *BaseTable) GetEditable() bool {
-	return base.Editable
-}
-
-func (base *BaseTable) GetDeletable() bool {
-	return base.Deletable
-}
-
-func (base *BaseTable) GetExportable() bool {
-	return base.Exportable
-}
+func (base *BaseTable) GetPrimaryKey() PrimaryKey { return base.PrimaryKey }
+func (base *BaseTable) GetEditable() bool         { return base.Editable }
+func (base *BaseTable) GetDeletable() bool        { return base.Deletable }
+func (base *BaseTable) GetExportable() bool       { return base.Exportable }
+func (base *BaseTable) GetOnlyInfo() bool         { return base.OnlyInfo }
+func (base *BaseTable) GetOnlyDetail() bool       { return base.OnlyDetail }
+func (base *BaseTable) GetOnlyNewForm() bool      { return base.OnlyNewForm }
+func (base *BaseTable) GetOnlyUpdateForm() bool   { return base.OnlyUpdateForm }
 
 func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extraHtml ...template.HTML) types.PaginatorAttribute {
 

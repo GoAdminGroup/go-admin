@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	tmpl "html/template"
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -14,10 +14,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -26,6 +28,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	selection "github.com/GoAdminGroup/go-admin/template/types/form/select"
 	"github.com/GoAdminGroup/html"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -1005,6 +1008,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 
 func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	siteTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+		SetOnlyUpdateForm().
 		SetGetDataFun(func(params parameter.Parameters) (i []map[string]interface{}, i2 int) {
 			return []map[string]interface{}{models.Site().SetConn(s.conn).AllToMapInterface()}, 1
 		}))
@@ -1275,7 +1279,178 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		return s.c.Update(values.ToMap())
 	})
 
+	formList.SetResponder(func(ctx *context.Context) {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
+		swal('%s', '', 'success');
+		setTimeout(function(){location.reload()}, 1000)
+</script>`, language.Get("modify success")))
+		ctx.AddHeader(constant.PjaxUrlHeader, s.c.Url("/info/site/edit"))
+	})
+
 	return
+}
+
+func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table) {
+	generateTool = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+		SetOnlyNewForm())
+
+	formList := generateTool.GetForm().AddXssJsFilter().
+		SetHeadWidth(1).
+		SetInputWidth(4).
+		HideBackButton().
+		HideContinueNewCheckBox().
+		HideResetButton()
+
+	formList.AddField("ID", "id", db.Varchar, form.Default).FieldDefault("1").FieldHide()
+
+	connNames := config.GetDatabases().Connections()
+	ops := make(types.FieldOptions, len(connNames))
+	for i, name := range connNames {
+		ops[i] = types.FieldOption{Text: name, Value: name}
+	}
+
+	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).FieldOptions(ops).
+		FieldOnChooseAjax("table", "/tool/choose/conn",
+			func(ctx *context.Context) (success bool, msg string, data interface{}) {
+				connName := ctx.FormValue("value")
+				if connName == "" {
+					return false, "wrong parameter", nil
+				}
+				cfg := s.c.Databases[connName]
+				conn := db.GetConnectionFromService(services.Get(cfg.Driver))
+				tables, err := db.WithDriver(conn).Table(cfg.Name).ShowTables()
+				if err != nil {
+					return false, err.Error(), nil
+				}
+				ops := make(selection.Options, len(tables))
+				for i, table := range tables {
+					ops[i] = selection.Option{Text: table, ID: table}
+				}
+				return true, "ok", ops
+			})
+	formList.AddField(lgWithScore("table", "tool"), "table", db.Varchar, form.SelectSingle)
+	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("main")
+	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).FieldDefault("./")
+	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
+		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel()
+		pa.AddField(lgWithScore("field name", "tool"), "field_name", db.Varchar, form.Text).FieldHideLabel()
+		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "INT", Value: "Int"},
+				{Text: "TINYINT", Value: "Tinyint"},
+				{Text: "MEDIUMINT", Value: "Mediumint"},
+				{Text: "SMALLINT", Value: "Smallint"},
+				{Text: "BIGINT", Value: "Bigint"},
+				{Text: "BIT", Value: "Bit"},
+				{Text: "INT8", Value: "Int8"},
+				{Text: "INT4", Value: "Int4"},
+				{Text: "INT2", Value: "Int2"},
+				{Text: "INTEGER", Value: "Integer"},
+				{Text: "NUMERIC", Value: "Numeric"},
+				{Text: "SMALLSERIAL", Value: "Smallserial"},
+				{Text: "SERIAL", Value: "Serial"},
+				{Text: "BIGSERIAL", Value: "Bigserial"},
+				{Text: "MONEY", Value: "Money"},
+				{Text: "REAL", Value: "Real"},
+				{Text: "FLOAT", Value: "Float"},
+				{Text: "FLOAT4", Value: "Float4"},
+				{Text: "FLOAT8", Value: "Float8"},
+				{Text: "DOUBLE", Value: "Double"},
+				{Text: "DECIMAL", Value: "Decimal"},
+				{Text: "DOUBLEPRECISION", Value: "Doubleprecision"},
+				{Text: "DATE", Value: "Date"},
+				{Text: "TIME", Value: "Time"},
+				{Text: "YEAR", Value: "Year"},
+				{Text: "DATETIME", Value: "Datetime"},
+				{Text: "TIMESTAMP", Value: "Timestamp"},
+				{Text: "TEXT", Value: "Text"},
+				{Text: "LONGTEXT", Value: "Longtext"},
+				{Text: "MEDIUMTEXT", Value: "Mediumtext"},
+				{Text: "TINYTEXT", Value: "Tinytext"},
+				{Text: "VARCHAR", Value: "Varchar"},
+				{Text: "CHAR", Value: "Char"},
+				{Text: "BPCHAR", Value: "Bpchar"},
+				{Text: "JSON", Value: "Json"},
+				{Text: "BLOB", Value: "Blob"},
+				{Text: "TINYBLOB", Value: "Tinyblob"},
+				{Text: "MEDIUMBLOB", Value: "Mediumblob"},
+				{Text: "LONGBLOB", Value: "Longblob"},
+				{Text: "INTERVAL", Value: "Interval"},
+				{Text: "BOOLEAN", Value: "Boolean"},
+				{Text: "Bool", Value: "Bool"},
+				{Text: "POINT", Value: "Point"},
+				{Text: "LINE", Value: "Line"},
+				{Text: "LSEG", Value: "Lseg"},
+				{Text: "BOX", Value: "Box"},
+				{Text: "PATH", Value: "Path"},
+				{Text: "POLYGON", Value: "Polygon"},
+				{Text: "CIRCLE", Value: "Circle"},
+				{Text: "CIDR", Value: "Cidr"},
+				{Text: "INET", Value: "Inet"},
+				{Text: "MACADDR", Value: "Macaddr"},
+				{Text: "CHARACTER", Value: "Character"},
+				{Text: "VARYINGCHARACTER", Value: "Varyingcharacter"},
+				{Text: "NCHAR", Value: "Nchar"},
+				{Text: "NATIVECHARACTER", Value: "Nativecharacter"},
+				{Text: "NVARCHAR", Value: "Nvarchar"},
+				{Text: "CLOB", Value: "Clob"},
+				{Text: "BINARY", Value: "Binary"},
+				{Text: "VARBINARY", Value: "Varbinary"},
+				{Text: "ENUM", Value: "Enum"},
+				{Text: "SET", Value: "Set"},
+				{Text: "GEOMETRY", Value: "Geometry"},
+				{Text: "MULTILINESTRING", Value: "Multilinestring"},
+				{Text: "MULTIPOLYGON", Value: "Multipolygon"},
+				{Text: "LINESTRING", Value: "Linestring"},
+				{Text: "MULTIPOINT", Value: "Multipoint"},
+				{Text: "GEOMETRYCOLLECTION", Value: "Geometrycollection"},
+				{Text: "NAME", Value: "Name"},
+				{Text: "UUID", Value: "Uuid"},
+				{Text: "TIMESTAMPTZ", Value: "Timestamptz"},
+				{Text: "TIMETZ", Value: "Timetz"},
+			})
+		pa.AddField(lgWithScore("form type", "tool"), "field_form_type", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "Default", Value: "Default"},
+				{Text: "Text", Value: "Text"},
+				{Text: "SelectSingle", Value: "SelectSingle"},
+				{Text: "Select", Value: "Select"},
+				{Text: "IconPicker", Value: "IconPicker"},
+				{Text: "SelectBox", Value: "SelectBox"},
+				{Text: "File", Value: "File"},
+				{Text: "Multifile", Value: "Multifile"},
+				{Text: "Password", Value: "Password"},
+				{Text: "RichText", Value: "RichText"},
+				{Text: "Datetime", Value: "Datetime"},
+				{Text: "DatetimeRange", Value: "DatetimeRange"},
+				{Text: "Radio", Value: "Radio"},
+				{Text: "Email", Value: "Email"},
+				{Text: "Url", Value: "Url"},
+				{Text: "Ip", Value: "Ip"},
+				{Text: "Color", Value: "Color"},
+				{Text: "Array", Value: "Array"},
+				{Text: "Currency", Value: "Currency"},
+				{Text: "Number", Value: "Number"},
+				{Text: "Table", Value: "Table"},
+				{Text: "NumberRange", Value: "NumberRange"},
+				{Text: "TextArea", Value: "TextArea"},
+				{Text: "Custom", Value: "Custom"},
+				{Text: "Switch", Value: "Switch"},
+				{Text: "Code", Value: "Code"},
+			})
+	}).FieldInputWidth(11)
+
+	formList.SetTable("tool").
+		SetTitle(lgWithScore("tool", "tool")).
+		SetDescription(lgWithScore("tool", "tool")).
+		SetHeader(template.HTML(`<h3 class="box-title">` +
+			lgWithScore("generate table model", "tool") + `</h3>`))
+
+	formList.SetUpdateFn(func(values form2.Values) error {
+		return nil
+	})
+
+	return generateTool
 }
 
 // -------------------------
@@ -1311,6 +1486,10 @@ func defaultFilterFn(val string, def ...string) types.FieldFilterFn {
 		}
 		return value.Value
 	}
+}
+
+func lgWithScore(v string, score ...string) string {
+	return language.GetWithScope(v, score...)
 }
 
 func lgWithConfigScore(v string, score ...string) string {

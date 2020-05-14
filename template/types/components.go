@@ -28,7 +28,7 @@ type FormAttribute interface {
 	SetTitle(value template.HTML) FormAttribute
 	SetLayout(layout form.Layout) FormAttribute
 	SetOperationFooter(value template.HTML) FormAttribute
-	GetDefaultBoxHeader() template.HTML
+	GetDefaultBoxHeader(hideBack bool) template.HTML
 	GetDetailBoxHeader(editUrl, deleteUrl string) template.HTML
 	GetBoxHeaderNoButton() template.HTML
 	GetContent() template.HTML

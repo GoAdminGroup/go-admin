@@ -5,15 +5,19 @@ import (
 )
 
 type Config struct {
-	Driver     string
-	Connection string
-	CanAdd     bool
-	Editable   bool
-	Deletable  bool
-	Exportable bool
-	PrimaryKey PrimaryKey
-	SourceURL  string
-	GetDataFun GetDataFun
+	Driver         string
+	Connection     string
+	CanAdd         bool
+	Editable       bool
+	Deletable      bool
+	Exportable     bool
+	PrimaryKey     PrimaryKey
+	SourceURL      string
+	GetDataFun     GetDataFun
+	OnlyInfo       bool
+	OnlyNewForm    bool
+	OnlyUpdateForm bool
+	OnlyDetail     bool
 }
 
 func DefaultConfig() Config {
@@ -58,6 +62,26 @@ func (config Config) SetEditable(editable bool) Config {
 
 func (config Config) SetDeletable(deletable bool) Config {
 	config.Deletable = deletable
+	return config
+}
+
+func (config Config) SetOnlyInfo() Config {
+	config.OnlyInfo = true
+	return config
+}
+
+func (config Config) SetOnlyUpdateForm() Config {
+	config.OnlyUpdateForm = true
+	return config
+}
+
+func (config Config) SetOnlyNewForm() Config {
+	config.OnlyNewForm = true
+	return config
+}
+
+func (config Config) SetOnlyDetail() Config {
+	config.OnlyDetail = true
 	return config
 }
 

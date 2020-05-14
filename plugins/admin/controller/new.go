@@ -49,6 +49,8 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetTabContents(formInfo.GroupFieldList).
 		SetTabHeaders(formInfo.GroupFieldHeaders).
 		SetUrl(newUrl).
+		SetInputWidth(f.InputWidth).
+		SetHeadWidth(f.HeadWidth).
 		SetLayout(f.Layout).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetHiddenFields(map[string]string{
@@ -59,7 +61,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton)).
 		SetHeader(f.HeaderHtml).
-		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe)
+		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe, f.IsHideBackButton, f.Header)
 
 	if f.Wrapper != nil {
 		content = f.Wrapper(content)

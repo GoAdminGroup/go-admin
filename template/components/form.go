@@ -60,12 +60,22 @@ func (compo *FormAttribute) SetTabHeaders(value []string) types.FormAttribute {
 }
 
 func (compo *FormAttribute) SetHeadWidth(width int) types.FormAttribute {
-	compo.HeadWidth = width
+	if width > 0 {
+		if width > 12 {
+			width = 12
+		}
+		compo.HeadWidth = width
+	}
 	return compo
 }
 
 func (compo *FormAttribute) SetInputWidth(width int) types.FormAttribute {
-	compo.InputWidth = width
+	if width > 0 {
+		if width > 12 {
+			width = 12
+		}
+		compo.InputWidth = width
+	}
 	return compo
 }
 
@@ -109,7 +119,10 @@ func (compo *FormAttribute) SetTitle(value template.HTML) types.FormAttribute {
 	return compo
 }
 
-func (compo *FormAttribute) GetDefaultBoxHeader() template.HTML {
+func (compo *FormAttribute) GetDefaultBoxHeader(hideBack bool) template.HTML {
+	if hideBack {
+		return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>`, language.GetFromHtml(compo.Title)))
+	}
 	return template.HTML(fmt.Sprintf(`<h3 class="box-title">%s</h3>
             <div class="box-tools">
                 <div class="btn-group pull-right" style="margin-right: 10px">

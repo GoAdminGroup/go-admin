@@ -38,12 +38,22 @@ func (h *Handler) ShowInfo(ctx *context.Context) {
 
 	prefix := ctx.Query(constant.PrefixKey)
 
-	if prefix == "site" {
-		ctx.Redirect(h.config.Url("/info/site/edit"))
+	panel := h.table(prefix, ctx)
+
+	if panel.GetOnlyUpdateForm() {
+		ctx.Redirect(h.routePathWithPrefix("show_edit", prefix))
 		return
 	}
 
-	panel := h.table(prefix, ctx)
+	if panel.GetOnlyNewForm() {
+		ctx.Redirect(h.routePathWithPrefix("show_new", prefix))
+		return
+	}
+
+	if panel.GetOnlyDetail() {
+		ctx.Redirect(h.routePathWithPrefix("detail", prefix))
+		return
+	}
 
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())

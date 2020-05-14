@@ -9,7 +9,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -75,6 +74,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		SetTabContents(formInfo.GroupFieldList).
 		SetTabHeaders(formInfo.GroupFieldHeaders).
 		SetPrefix(h.config.PrefixFixSlash()).
+		SetInputWidth(f.InputWidth).
+		SetHeadWidth(f.HeadWidth).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetUrl(editUrl).
 		SetLayout(f.Layout).
@@ -82,10 +83,12 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			form2.TokenKey:    h.authSrv().AddToken(),
 			form2.PreviousKey: infoUrl,
 		}).
-		SetOperationFooter(formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+		SetOperationFooter(formFooter(footerKind,
+			f.IsHideContinueEditCheckBox,
+			f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton)).
 		SetHeader(f.HeaderHtml).
-		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe)
+		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe, f.IsHideBackButton, f.Header)
 
 	if f.Wrapper != nil {
 		content = f.Wrapper(content)
@@ -130,12 +133,8 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	if param.Prefix == "site" {
-		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
-		swal('%s', '', 'success');
-		setTimeout(function(){location.reload()}, 1000)
-</script>`, language.Get("modify success")))
-		ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/site/edit"))
+	if param.Panel.GetForm().Responder != nil {
+		param.Panel.GetForm().Responder(ctx)
 		return
 	}
 

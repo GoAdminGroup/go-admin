@@ -36,6 +36,24 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 		return
 	}
 
+	if panel.GetOnlyInfo() {
+		ctx.Redirect(config.Url("/info/" + prefix))
+		ctx.Abort()
+		return
+	}
+
+	if panel.GetOnlyDetail() {
+		ctx.Redirect(config.Url("/info/" + prefix + "/detail"))
+		ctx.Abort()
+		return
+	}
+
+	if panel.GetOnlyNewForm() {
+		ctx.Redirect(config.Url("/info/" + prefix + "/new"))
+		ctx.Abort()
+		return
+	}
+
 	id := ctx.Query(constant.EditPKKey)
 	if id == "" && prefix != "site" {
 		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn)

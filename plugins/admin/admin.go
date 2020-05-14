@@ -37,6 +37,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"menu":           st.GetMenuTable,
 		"normal_manager": st.GetNormalManagerTable,
 		"site":           st.GetSiteTable,
+		"generate":       st.GetGenerateForm,
 	})
 	admin.guardian = guard.New(admin.Services, admin.Conn, admin.tableList)
 	handlerCfg := controller.Config{

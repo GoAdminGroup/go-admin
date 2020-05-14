@@ -30,8 +30,20 @@ func (g *Guard) ShowNewForm(ctx *context.Context) {
 		return
 	}
 
-	if prefix == "site" {
-		ctx.Redirect(config.Url("/info/site/edit"))
+	if panel.GetOnlyInfo() {
+		ctx.Redirect(config.Url("/info/" + prefix))
+		ctx.Abort()
+		return
+	}
+
+	if panel.GetOnlyDetail() {
+		ctx.Redirect(config.Url("/info/" + prefix + "/detail"))
+		ctx.Abort()
+		return
+	}
+
+	if panel.GetOnlyUpdateForm() {
+		ctx.Redirect(config.Url("/info/" + prefix + "/edit"))
 		ctx.Abort()
 		return
 	}

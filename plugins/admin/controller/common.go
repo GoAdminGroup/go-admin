@@ -368,12 +368,15 @@ func filterFormFooter(infoUrl string) template2.HTML {
 	return col1 + col2
 }
 
-func formContent(form types.FormAttribute, isTab, iframe bool) template2.HTML {
+func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, header template2.HTML) template2.HTML {
 	if isTab {
 		return form.GetContent()
 	}
+	if header == template2.HTML("") {
+		header = form.GetDefaultBoxHeader(isHideBack)
+	}
 	return aBox().
-		SetHeader(form.GetDefaultBoxHeader()).
+		SetHeader(header).
 		WithHeadBorder().
 		SetStyle(" ").
 		SetIframeStyle(iframe).

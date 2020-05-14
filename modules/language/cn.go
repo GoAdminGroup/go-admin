@@ -273,4 +273,16 @@ var cn = LangSet{
 	"system.go_admin_version": "应用版本",
 	"system.theme_name":       "主题",
 	"system.theme_version":    "主题版本",
+
+	"tool.tool":                 "工具",
+	"tool.table":                "表格",
+	"tool.connection":           "连接",
+	"tool.package":              "包名",
+	"tool.output":               "输出路径",
+	"tool.field":                "字段名",
+	"tool.title":                "标题",
+	"tool.field name":           "字段名",
+	"tool.db type":              "数据类型",
+	"tool.form type":            "表单类型",
+	"tool.generate table model": "生成表单模型",
 }
