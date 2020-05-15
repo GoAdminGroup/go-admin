@@ -51,7 +51,7 @@ func NewParam(cfg Config) Param {
 		Driver:         cfg.Driver,
 		Package:        cfg.Package,
 		Table:          ta,
-		TableTitle:     strings.Title(cfg.Table),
+		TableTitle:     strings.Title(ta),
 		TableName:      dbTable,
 		HideFilterArea: cfg.HideFilterArea,
 		RowTable:       cfg.Table,
