@@ -964,8 +964,8 @@ func (f *FormPanel) FieldToLower() *FormPanel {
 
 func (f *FormPanel) FieldXssFilter() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].DisplayProcessChains.
-		Add(func(s string) string {
-			return html.EscapeString(s)
+		Add(func(value FieldModel) interface{} {
+			return html.EscapeString(value.Value)
 		})
 	return f
 }

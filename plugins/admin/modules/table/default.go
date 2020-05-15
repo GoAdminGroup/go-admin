@@ -882,9 +882,9 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 					}
 				}
 			} else {
-				fun := tb.Form.FieldList.FindByFieldName(k).PostFilterFn
-				if fun != nil {
-					fun(types.PostFieldModel{
+				field := tb.Form.FieldList.FindByFieldName(k)
+				if field != nil && field.PostFilterFn != nil {
+					field.PostFilterFn(types.PostFieldModel{
 						ID:    dataList.Get(tb.PrimaryKey.Name),
 						Value: modules.RemoveBlankFromArray(v),
 					})

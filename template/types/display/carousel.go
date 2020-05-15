@@ -17,6 +17,18 @@ func init() {
 func (c *Carousel) Get(args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		fn := args[0].(types.FieldGetImgArrFn)
+		size := args[1].([]int)
+
+		width := "300"
+		height := "200"
+
+		if len(size) > 0 {
+			width = strconv.Itoa(size[0])
+		}
+
+		if len(size) > 1 {
+			height = strconv.Itoa(size[1])
+		}
 
 		images := fn(value.Value)
 
@@ -34,14 +46,14 @@ func (c *Carousel) Get(args ...interface{}) types.FieldFilterFn {
 			}
 			items += `<div class="item` + active + `">
             <img src="` + img + `" alt="" 
-style="max-width:300px;max-height:200px;display: block;margin-left: auto;margin-right: auto;" />
+style="max-width:` + width + `px;max-height:` + height + `px;display: block;margin-left: auto;margin-right: auto;" />
             <div class="carousel-caption"></div>
         </div>`
 		}
 
 		return template.HTML(`
-<div id="carousel-value-` + value.ID + `" class="carousel slide" data-ride="carousel" width="300" height="200" 
-style="padding: 5px;border: 1px solid #f4f4f4;background-color:white;width:300px;">
+<div id="carousel-value-` + value.ID + `" class="carousel slide" data-ride="carousel" width="` + width + `" height="` + height + `" 
+style="padding: 5px;border: 1px solid #f4f4f4;background-color:white;width:` + width + `px;">
     <ol class="carousel-indicators">
 		` + indicators + `
     </ol>

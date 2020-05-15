@@ -16,9 +16,9 @@ func init() {
 func (d *Dot) Get(args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		icons := args[0].(map[string]types.FieldDotColor)
-		defaultDot := ""
+		defaultDot := types.FieldDotColor("")
 		if len(args) > 1 {
-			defaultDot = args[1].(string)
+			defaultDot = args[1].(types.FieldDotColor)
 		}
 		for k, style := range icons {
 			if k == value.Value {

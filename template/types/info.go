@@ -969,37 +969,37 @@ type FieldLabelParam struct {
 }
 
 func (i *InfoPanel) FieldLabel(args ...FieldLabelParam) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["label"].Get(args)
+	i.addDisplayChains(displayFnGens["label"].Get(args))
 	return i
 }
 
 func (i *InfoPanel) FieldImage(width, height string, prefix ...string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["image"].Get(width, height, prefix)
+	i.addDisplayChains(displayFnGens["image"].Get(width, height, prefix))
 	return i
 }
 
 func (i *InfoPanel) FieldBool(flags ...string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["bool"].Get(flags)
+	i.addDisplayChains(displayFnGens["bool"].Get(flags))
 	return i
 }
 
 func (i *InfoPanel) FieldLink(src string, openInNewTab ...bool) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["link"].Get(src, openInNewTab)
+	i.addDisplayChains(displayFnGens["link"].Get(src, openInNewTab))
 	return i
 }
 
 func (i *InfoPanel) FieldFileSize() *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["filesize"].Get()
+	i.addDisplayChains(displayFnGens["filesize"].Get())
 	return i
 }
 
 func (i *InfoPanel) FieldDate(format string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["date"].Get()
+	i.addDisplayChains(displayFnGens["date"].Get())
 	return i
 }
 
 func (i *InfoPanel) FieldIcon(icons map[string]string, defaultIcon string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["link"].Get(icons, defaultIcon)
+	i.addDisplayChains(displayFnGens["link"].Get(icons, defaultIcon))
 	return i
 }
 
@@ -1012,8 +1012,8 @@ const (
 	FieldDotColorSuccess FieldDotColor = "success"
 )
 
-func (i *InfoPanel) FieldDot(icons map[string]FieldDotColor, defaultDot string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["dot"].Get(icons, defaultDot)
+func (i *InfoPanel) FieldDot(icons map[string]FieldDotColor, defaultDot FieldDotColor) *InfoPanel {
+	i.addDisplayChains(displayFnGens["dot"].Get(icons, defaultDot))
 	return i
 }
 
@@ -1024,22 +1024,22 @@ type FieldProgressBarData struct {
 }
 
 func (i *InfoPanel) FieldProgressBar(data ...FieldProgressBarData) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["progressbar"].Get(data)
+	i.addDisplayChains(displayFnGens["progressbar"].Get(data))
 	return i
 }
 
 func (i *InfoPanel) FieldLoading(data []string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["loading"].Get(data)
+	i.addDisplayChains(displayFnGens["loading"].Get(data))
 	return i
 }
 
 func (i *InfoPanel) FieldDownLoadable(prefix ...string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["downloadable"].Get(prefix)
+	i.addDisplayChains(displayFnGens["downloadable"].Get(prefix))
 	return i
 }
 
 func (i *InfoPanel) FieldCopyable(prefix ...string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["copyable"].Get(prefix)
+	i.addDisplayChains(displayFnGens["copyable"].Get(prefix))
 	if _, ok := i.DisplayGeneratorRecords["copyable"]; !ok {
 		i.addFooterHTML(`<script>` + displayFnGens["copyable"].JS() + `</script>`)
 		i.DisplayGeneratorRecords["copyable"] = struct{}{}
@@ -1049,13 +1049,13 @@ func (i *InfoPanel) FieldCopyable(prefix ...string) *InfoPanel {
 
 type FieldGetImgArrFn func(value string) []string
 
-func (i *InfoPanel) FieldCarousel(fn FieldGetImgArrFn) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["carousel"].Get(fn)
+func (i *InfoPanel) FieldCarousel(fn FieldGetImgArrFn, size ...int) *InfoPanel {
+	i.addDisplayChains(displayFnGens["carousel"].Get(fn, size))
 	return i
 }
 
 func (i *InfoPanel) FieldQrcode() *InfoPanel {
-	i.FieldList[i.curFieldListIndex].Display = displayFnGens["qrcode"].Get()
+	i.addDisplayChains(displayFnGens["qrcode"].Get())
 	if _, ok := i.DisplayGeneratorRecords["qrcode"]; !ok {
 		i.addFooterHTML(`<script>` + displayFnGens["qrcode"].JS() + `</script>`)
 		i.DisplayGeneratorRecords["qrcode"] = struct{}{}
@@ -1278,8 +1278,8 @@ func (i *InfoPanel) FieldToLower() *InfoPanel {
 
 func (i *InfoPanel) FieldXssFilter() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].DisplayProcessChains.
-		Add(func(s string) string {
-			return html.EscapeString(s)
+		Add(func(value FieldModel) interface{} {
+			return html.EscapeString(value.Value)
 		})
 	return i
 }
@@ -1456,4 +1456,10 @@ func (i *InfoPanel) addActionButton(btn Button) *InfoPanel {
 
 func (i *InfoPanel) isFromJSON() bool {
 	return i.GetDataFn != nil
+}
+
+func (i *InfoPanel) addDisplayChains(fn FieldFilterFn) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].DisplayProcessChains =
+		i.FieldList[i.curFieldListIndex].DisplayProcessChains.Add(fn)
+	return i
 }

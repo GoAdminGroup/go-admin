@@ -87,7 +87,7 @@ func (admin *Admin) AddGenerators(gen ...table.GeneratorList) *Admin {
 }
 
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn
-func (admin *Admin) AddGlobalDisplayProcessFn(f types.DisplayProcessFn) *Admin {
+func (admin *Admin) AddGlobalDisplayProcessFn(f types.FieldFilterFn) *Admin {
 	types.AddGlobalDisplayProcessFn(f)
 	return admin
 }

@@ -596,7 +596,7 @@ func (eng *Engine) AddGenerator(key string, g table.Generator) *Engine {
 }
 
 // AddGlobalDisplayProcessFn call types.AddGlobalDisplayProcessFn.
-func (eng *Engine) AddGlobalDisplayProcessFn(f types.DisplayProcessFn) *Engine {
+func (eng *Engine) AddGlobalDisplayProcessFn(f types.FieldFilterFn) *Engine {
 	types.AddGlobalDisplayProcessFn(f)
 	return eng
 }

@@ -42,7 +42,7 @@ const (
 	multiSelectLi2          = `/html/body/span/span/span/ul/li[2]`
 	multiSelectLi3          = `/html/body/span/span/span/ul/li[3]`
 	multiSelectRes          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[1]/div/div/div[2]/div/span/span[1]/span/ul/li[1]`
-	filterNameField         = `//*[@id="name"]`
+	filterNameField         = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[1]/div/div/div[1]/div/div/input`
 	radio                   = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[3]/div/div/div[1]/div/div[1]`
 	searchBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 	filterResetBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[2]/a`
@@ -67,14 +67,14 @@ const (
 
 	saveBtn               = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[1]/button`
 	resetBtn              = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[2]/button`
-	nameField             = `//*[@id="name"]`
-	ageField              = `//*[@id="age"]`
-	emailField            = `//*[@id="email"]`
-	birthdayField         = `//*[@id="birthday"]`
-	passwordField         = `//*[@id="password"]`
-	homePageField         = `//*[@id="homepage"]`
-	ipField               = `//*[@id="ip"]`
-	amountField           = `//*[@id="money"]`
+	nameField             = `//*[@id="tab-form-0"]/div[1]/div/div/input`
+	ageField              = `//*[@id="tab-form-0"]/div[2]/div/div/div/input`
+	emailField            = `//*[@id="tab-form-0"]/div[4]/div/div/input`
+	birthdayField         = `//*[@id="tab-form-0"]/div[5]/div/div/input`
+	passwordField         = `//*[@id="tab-form-0"]/div[6]/div/div/input`
+	homePageField         = `//*[@id="tab-form-0"]/div[3]/div/div/input`
+	ipField               = `//*[@id="tab-form-0"]/div[7]/div/div/input`
+	amountField           = `//*[@id="tab-form-0"]/div[9]/div/div/input`
 	appleOptField         = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
 	bananaOptField        = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[2]`
 	watermelonOptField    = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[3]`
@@ -111,22 +111,22 @@ const (
 	iconPopupBtn             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[1]/div/div/div[4]/div/div[1]/span`
 	iconPopup                = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[1]/div/div/div[4]/div/div[2]`
 	iconBtn                  = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[1]/div/div/div[4]/div/div[2]/div[3]/div/div/a[5]`
-	menuNameInput            = `//*[@id="title"]`
-	menuUriInput             = `//*[@id="uri"]`
+	menuNameInput            = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[1]/div/div/div[2]/div/div/input`
+	menuUriInput             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[1]/div/div/div[5]/div/div/input`
 	menuInfoSaveBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/div/div[2]/form/div[2]/div[2]/div[1]/button`
 	testMenuItem             = `//*[@id="tree-model"]/ol/li[2]`
 	testMenuDeleteBtn        = `//*[@id="tree-model"]/ol/li[2]/div/span/a[2]`
 	testMenuDeleteConfirmBtn = `/html/body/div[3]/div[7]/div/button`
 	menuOkBtn                = `/html/body/div[3]/div[7]/div/button`
 	userMenuEditBtn          = `//*[@id="tree-model"]/ol/li[3]/div/span/a[1]`
-	headFieldInput           = `//*[@id="header"]`
+	headFieldInput           = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/div/input`
 	menuEditSaveBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
 	managerPageBtn               = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[1]/a`
 	managerEditBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[3]/td[8]/a[1]`
 	operatorEditBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/a[1]`
-	managerNameField             = `//*[@id="username"]`
-	managerNickNameField         = `//*[@id="name"]`
+	managerNameField             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[2]/div/div/input`
+	managerNickNameField         = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[3]/div/div/input`
 	managerRoleSelectedOpt       = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[5]/div/span[1]/span[1]/span/ul/li[1]`
 	managerPermissionSelectedOpt = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[6]/div/span[1]/span[1]/span/ul/li[1]`
 	managerRoleDropDown          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[5]/div/span[1]/span[1]/span/ul`
@@ -137,8 +137,8 @@ const (
 	newPermissionBtn             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[6]/div/span[2]/a`
 	managerUserViewSelectOpt     = `/html/body/span/span/span/ul/li[3]`
 
-	permissionNameInput    = `//*[@id="name"]`
-	permissionSlugInput    = `//*[@id="slug"]`
+	permissionNameInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[1]/div/div/input`
+	permissionSlugInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[2]/div/div/input`
 	permissionMethodSelect = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[3]/div/span[1]/span[1]/span/ul/li/input`
 	permissionGetSelectOpt = `/html/body/span/span/span/ul/li[1]`
 	permissionPathInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/textarea`

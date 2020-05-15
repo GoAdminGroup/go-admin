@@ -39,7 +39,11 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 		if _, ok2 := val.([]string); !ok2 {
 			valStr := fmt.Sprintf("%v", val)
 			for _, process := range f.DisplayProcessChains {
-				valStr = process(valStr)
+				valStr = fmt.Sprintf("%v", process(FieldModel{
+					Row:   value.Row,
+					Value: valStr,
+					ID:    value.ID,
+				}))
 			}
 			return valStr
 		}
@@ -49,65 +53,63 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 }
 
 func (f FieldDisplay) AddLimit(limit int) DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		if limit > len(value) {
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		if limit > len(value.Value) {
 			return value
 		} else if limit < 0 {
 			return ""
 		} else {
-			return value[:limit]
+			return value.Value[:limit]
 		}
 	})
 }
 
 func (f FieldDisplay) AddTrimSpace() DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		return strings.TrimSpace(value)
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		return strings.TrimSpace(value.Value)
 	})
 }
 
 func (f FieldDisplay) AddSubstr(start int, end int) DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		if start > end || start > len(value) || end < 0 {
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		if start > end || start > len(value.Value) || end < 0 {
 			return ""
 		}
 		if start < 0 {
 			start = 0
 		}
-		if end > len(value) {
-			end = len(value)
+		if end > len(value.Value) {
+			end = len(value.Value)
 		}
-		return value[start:end]
+		return value.Value[start:end]
 	})
 }
 
 func (f FieldDisplay) AddToTitle() DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		return strings.Title(value)
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		return strings.Title(value.Value)
 	})
 }
 
 func (f FieldDisplay) AddToUpper() DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		return strings.ToUpper(value)
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		return strings.ToUpper(value.Value)
 	})
 }
 
 func (f FieldDisplay) AddToLower() DisplayProcessFnChains {
-	return f.DisplayProcessChains.Add(func(value string) string {
-		return strings.ToLower(value)
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		return strings.ToLower(value.Value)
 	})
 }
 
-type DisplayProcessFn func(string) string
-
-type DisplayProcessFnChains []DisplayProcessFn
+type DisplayProcessFnChains []FieldFilterFn
 
 func (d DisplayProcessFnChains) Valid() bool {
 	return len(d) > 0
 }
 
-func (d DisplayProcessFnChains) Add(f DisplayProcessFn) DisplayProcessFnChains {
+func (d DisplayProcessFnChains) Add(f FieldFilterFn) DisplayProcessFnChains {
 	return append(d, f)
 }
 
@@ -134,7 +136,7 @@ func chooseDisplayProcessChains(internal DisplayProcessFnChains) DisplayProcessF
 
 var globalDisplayProcessChains = make(DisplayProcessFnChains, 0)
 
-func AddGlobalDisplayProcessFn(f DisplayProcessFn) {
+func AddGlobalDisplayProcessFn(f FieldFilterFn) {
 	globalDisplayProcessChains = globalDisplayProcessChains.Add(f)
 }
 
@@ -171,73 +173,73 @@ func AddXssJsFilter() DisplayProcessFnChains {
 }
 
 func addLimit(limit int, chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		if limit > len(value) {
+	chains = chains.Add(func(value FieldModel) interface{} {
+		if limit > len(value.Value) {
 			return value
 		} else if limit < 0 {
 			return ""
 		} else {
-			return value[:limit]
+			return value.Value[:limit]
 		}
 	})
 	return chains
 }
 
 func addTrimSpace(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		return strings.TrimSpace(value)
+	chains = chains.Add(func(value FieldModel) interface{} {
+		return strings.TrimSpace(value.Value)
 	})
 	return chains
 }
 
 func addSubstr(start int, end int, chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		if start > end || start > len(value) || end < 0 {
+	chains = chains.Add(func(value FieldModel) interface{} {
+		if start > end || start > len(value.Value) || end < 0 {
 			return ""
 		}
 		if start < 0 {
 			start = 0
 		}
-		if end > len(value) {
-			end = len(value)
+		if end > len(value.Value) {
+			end = len(value.Value)
 		}
-		return value[start:end]
+		return value.Value[start:end]
 	})
 	return chains
 }
 
 func addToTitle(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		return strings.Title(value)
+	chains = chains.Add(func(value FieldModel) interface{} {
+		return strings.Title(value.Value)
 	})
 	return chains
 }
 
 func addToUpper(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		return strings.ToUpper(value)
+	chains = chains.Add(func(value FieldModel) interface{} {
+		return strings.ToUpper(value.Value)
 	})
 	return chains
 }
 
 func addToLower(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		return strings.ToLower(value)
+	chains = chains.Add(func(value FieldModel) interface{} {
+		return strings.ToLower(value.Value)
 	})
 	return chains
 }
 
 func addXssFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
-		return html.EscapeString(value)
+	chains = chains.Add(func(value FieldModel) interface{} {
+		return html.EscapeString(value.Value)
 	})
 	return chains
 }
 
 func addXssJsFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
-	chains = chains.Add(func(value string) string {
+	chains = chains.Add(func(value FieldModel) interface{} {
 		replacer := strings.NewReplacer("<script>", "&lt;script&gt;", "</script>", "&lt;/script&gt;")
-		return replacer.Replace(value)
+		return replacer.Replace(value.Value)
 	})
 	return chains
 }
