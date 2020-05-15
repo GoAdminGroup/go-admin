@@ -964,8 +964,6 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			var menuItem []string
 
-			fmt.Println("model.ID", model.ID)
-
 			if model.ID == "" {
 				return menuItem
 			}
@@ -1387,6 +1385,11 @@ for (let i = 0; i < data.data[0].length; i++) {
 `, `"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("main")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
+	formList.AddField(lgWithScore("hide filter area", "tool"), "hide_filter_area", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithScore("yes", "tool"), Value: "y"},
+			{Text: lgWithScore("no", "tool"), Value: "n"},
+		}).FieldDefault("n")
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).FieldDefault("./")
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
 		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
@@ -1430,7 +1433,6 @@ for (let i = 0; i < data.data[0].length; i++) {
 			lgWithScore("generate table model", "tool") + `</h3>`))
 
 	formList.SetInsertFn(func(values form2.Values) error {
-		fmt.Println("values", values)
 
 		connName := values.Get("conn")
 
@@ -1448,12 +1450,13 @@ for (let i = 0; i < data.data[0].length; i++) {
 		}
 
 		return tools.Generate(tools.NewParamWithFields(tools.Config{
-			Connection: connName,
-			Driver:     s.c.Databases[connName].Driver,
-			Package:    values.Get("package"),
-			Table:      values.Get("table"),
-			Schema:     values.Get("schema"),
-			Output:     values.Get("path"),
+			Connection:     connName,
+			Driver:         s.c.Databases[connName].Driver,
+			Package:        values.Get("package"),
+			Table:          values.Get("table"),
+			HideFilterArea: values.Get("hide_filter_area") == "y",
+			Schema:         values.Get("schema"),
+			Output:         values.Get("path"),
 		}, fields))
 	})
 

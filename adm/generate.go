@@ -148,13 +148,14 @@ func generating(cfgFile string) {
 		_ = bar.Add(1)
 		time.Sleep(10 * time.Millisecond)
 		checkError(tools.Generate(tools.NewParam(tools.Config{
-			Connection: connection,
-			Driver:     info.DriverName,
-			Package:    packageName,
-			Table:      chooseTables[i],
-			Schema:     info.Schema,
-			Output:     outputPath,
-			Conn:       conn,
+			Connection:     connection,
+			Driver:         info.DriverName,
+			Package:        packageName,
+			HideFilterArea: true,
+			Table:          chooseTables[i],
+			Schema:         info.Schema,
+			Output:         outputPath,
+			Conn:           conn,
 		})))
 	}
 	generateTables(outputPath, chooseTables, packageName)

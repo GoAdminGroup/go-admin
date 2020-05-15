@@ -18,7 +18,7 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}"))
 	{{end}}
 
-	info := {{.Table}}.GetInfo()
+	info := {{.Table}}.GetInfo(){{if .HideFilterArea}}.HideFilterArea(){{end}}
 
 	{{- range $key, $field := .Fields}}
 	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.FieldFilterable(){{end -}}

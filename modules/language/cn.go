@@ -291,4 +291,5 @@ var cn = LangSet{
 	"tool.yes":                  "是",
 	"tool.no":                   "否",
 	"tool.generate success":     "生成成功",
+	"tool.hide filter area":     "隐藏筛选框",
 }

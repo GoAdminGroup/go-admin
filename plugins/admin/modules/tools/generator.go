@@ -21,19 +21,22 @@ type Param struct {
 	TableTitle string `json:"table_title"`
 	TableName  string `json:"table_name"`
 
+	HideFilterArea bool `json:"hide_filter_area"`
+
 	Fields Fields
 
 	Output string `json:"output"`
 }
 
 type Config struct {
-	Connection string        `json:"connection"`
-	Driver     string        `json:"driver"`
-	Package    string        `json:"package"`
-	Table      string        `json:"table"`
-	Schema     string        `json:"schema"`
-	Output     string        `json:"output"`
-	Conn       db.Connection `json:"conn"`
+	Connection     string        `json:"connection"`
+	Driver         string        `json:"driver"`
+	Package        string        `json:"package"`
+	Table          string        `json:"table"`
+	Schema         string        `json:"schema"`
+	Output         string        `json:"output"`
+	Conn           db.Connection `json:"conn"`
+	HideFilterArea bool          `json:"hide_filter_area"`
 }
 
 func NewParam(cfg Config) Param {
@@ -44,15 +47,16 @@ func NewParam(cfg Config) Param {
 	}
 
 	return Param{
-		Connection: cfg.Connection,
-		Driver:     cfg.Driver,
-		Package:    cfg.Package,
-		Table:      ta,
-		TableTitle: strings.Title(cfg.Table),
-		TableName:  dbTable,
-		RowTable:   cfg.Table,
-		Fields:     getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver),
-		Output:     cfg.Output,
+		Connection:     cfg.Connection,
+		Driver:         cfg.Driver,
+		Package:        cfg.Package,
+		Table:          ta,
+		TableTitle:     strings.Title(cfg.Table),
+		TableName:      dbTable,
+		HideFilterArea: cfg.HideFilterArea,
+		RowTable:       cfg.Table,
+		Fields:         getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver),
+		Output:         cfg.Output,
 	}
 }
 
@@ -64,15 +68,16 @@ func NewParamWithFields(cfg Config, fields Fields) Param {
 	}
 
 	return Param{
-		Connection: cfg.Connection,
-		Driver:     cfg.Driver,
-		Package:    cfg.Package,
-		Table:      ta,
-		TableTitle: strings.Title(cfg.Table),
-		TableName:  dbTable,
-		RowTable:   cfg.Table,
-		Fields:     fields,
-		Output:     cfg.Output,
+		Connection:     cfg.Connection,
+		Driver:         cfg.Driver,
+		Package:        cfg.Package,
+		Table:          ta,
+		TableTitle:     strings.Title(cfg.Table),
+		TableName:      dbTable,
+		RowTable:       cfg.Table,
+		HideFilterArea: cfg.HideFilterArea,
+		Fields:         fields,
+		Output:         cfg.Output,
 	}
 }
 
