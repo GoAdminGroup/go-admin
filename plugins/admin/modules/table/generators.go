@@ -1331,14 +1331,18 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("table", "tool"), "table", db.Varchar, form.SelectSingle).
 		FieldOnChooseAjax("xxxx", "/tool/choose/table",
 			func(ctx *context.Context) (success bool, msg string, data interface{}) {
-				tableName := ctx.FormValue("value")
-				connName := ctx.FormValue("conn")
-				driver := s.c.Databases[connName].Driver
-				conn := db.GetConnectionFromService(services.Get(driver))
-				columnsModel, _ := db.WithDriver(conn).Table(tableName).ShowColumns()
 
-				fieldField := "Field"
-				typeField := "Type"
+				var (
+					tableName       = ctx.FormValue("value")
+					connName        = ctx.FormValue("conn")
+					driver          = s.c.Databases[connName].Driver
+					conn            = db.GetConnectionFromService(services.Get(driver))
+					columnsModel, _ = db.WithDriver(conn).Table(tableName).ShowColumns()
+
+					fieldField = "Field"
+					typeField  = "Type"
+				)
+
 				if driver == "postgresql" {
 					fieldField = "column_name"
 					typeField = "udt_name"

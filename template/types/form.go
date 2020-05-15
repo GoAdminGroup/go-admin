@@ -1549,9 +1549,9 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 }
 
 func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) FormFields {
-	formList := f.FieldList.Copy()
+	list := make(FormFields, 0)
 	hasPK := false
-	for key, field := range formList {
+	for _, field := range f.FieldList {
 		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
 			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 		if len(sql) > 0 {
@@ -1559,19 +1559,19 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 				f.FieldList.FindTableField(field.Field, field.FatherField).
 					UpdateValue(id, rowValue, res, sql[0]())
 			} else {
-				formList[key] = *(field.UpdateValue(id, rowValue, res, sql[0]()))
+				list = append(list, *(field.UpdateValue(id, rowValue, res, sql[0]())))
 			}
 		} else {
 			if field.FatherField != "" {
 				f.FieldList.FindTableField(field.Field, field.FatherField).
 					UpdateValue(id, rowValue, res)
 			} else {
-				formList[key] = *(field.UpdateValue(id, rowValue, res))
+				list = append(list, *(field.UpdateValue(id, rowValue, res)))
 			}
 		}
 
-		if formList[key].FormType == form2.File && formList[key].Value != template.HTML("") {
-			formList[key].Value2 = config.GetStore().URL(string(formList[key].Value))
+		if list[len(list)-1].FormType == form2.File && list[len(list)-1].Value != template.HTML("") {
+			list[len(list)-1].Value2 = config.GetStore().URL(string(list[len(list)-1].Value))
 		}
 
 		if field.Field == pk {
@@ -1579,7 +1579,7 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 		}
 	}
 	if !hasPK {
-		formList = formList.Add(FormField{
+		list = list.Add(FormField{
 			Head:       pk,
 			FieldClass: pk,
 			Field:      pk,
@@ -1588,11 +1588,11 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 			Hide:       true,
 		})
 	}
-	return formList
+	return list
 }
 
 func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
-	var newForm FormFields
+	var newForm = make(FormFields, 0)
 	for _, v := range f.FieldList {
 		if !v.NotAllowAdd {
 			v.Editable = true

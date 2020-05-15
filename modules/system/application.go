@@ -56,7 +56,7 @@ type AppStatus struct {
 
 func GetAppStatus() AppStatus {
 	var app AppStatus
-	app.Uptime = utils.TimeSincePro(startTime, language.Lang[config.Get().Language])
+	app.Uptime = utils.TimeSincePro(startTime, language.Lang[config.GetLanguage()])
 
 	m := new(runtime.MemStats)
 	runtime.ReadMemStats(m)

@@ -74,6 +74,14 @@ func (d DatabaseList) JSON() string {
 	return utils.JSON(d)
 }
 
+func (d DatabaseList) Copy() DatabaseList {
+	var c = make(DatabaseList)
+	for k, v := range d {
+		c[k] = v
+	}
+	return c
+}
+
 func (d DatabaseList) Connections() []string {
 	conns := make([]string, len(d))
 	count := 0
@@ -463,7 +471,7 @@ func (c *Config) PrefixFixSlash() string {
 
 func (c *Config) Copy() *Config {
 	return &Config{
-		Databases:                     c.Databases,
+		Databases:                     c.Databases.Copy(),
 		Domain:                        c.Domain,
 		Language:                      c.Language,
 		UrlPrefix:                     c.UrlPrefix,
