@@ -107,6 +107,7 @@ type OptionProcessFn func(options FieldOptions) FieldOptions
 // FormField is the form field with different options.
 type FormField struct {
 	Field          string          `json:"field"`
+	FieldClass     string          `json:"field_class"`
 	TypeName       db.DatabaseType `json:"type_name"`
 	Head           string          `json:"head"`
 	FormType       form2.Type      `json:"form_type"`
@@ -637,6 +638,7 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 	f.FieldList = append(f.FieldList, FormField{
 		Head:        head,
 		Field:       field,
+		FieldClass:  field,
 		TypeName:    filedType,
 		Editable:    true,
 		Hide:        false,
@@ -690,6 +692,7 @@ func (f *FormPanel) AddTable(head, field string, addFields AddFormFieldFn) *Form
 	f.FieldList = append(f.FieldList, FormField{
 		Head:        head,
 		Field:       field,
+		FieldClass:  field,
 		TypeName:    db.Varchar,
 		Editable:    true,
 		Hide:        false,
@@ -1492,10 +1495,11 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 
 		if len(groupFormList) > 0 && !hasPK {
 			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(FormField{
-				Head:  pk,
-				Field: pk,
-				Value: template.HTML(id),
-				Hide:  true,
+				Head:       pk,
+				FieldClass: pk,
+				Field:      pk,
+				Value:      template.HTML(id),
+				Hide:       true,
 			})
 		}
 	}
@@ -1576,11 +1580,12 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 	}
 	if !hasPK {
 		formList = formList.Add(FormField{
-			Head:     pk,
-			Field:    pk,
-			Value:    template.HTML(id),
-			FormType: form2.Default,
-			Hide:     true,
+			Head:       pk,
+			FieldClass: pk,
+			Field:      pk,
+			Value:      template.HTML(id),
+			FormType:   form2.Default,
+			Hide:       true,
 		})
 	}
 	return formList

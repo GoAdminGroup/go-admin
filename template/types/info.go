@@ -203,6 +203,7 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 
 		filterForm = append(filterForm, FormField{
 			Field:       headField + keySuffix,
+			FieldClass:  headField + keySuffix,
 			Head:        filter.Head,
 			TypeName:    f.TypeName,
 			HelpMsg:     filter.HelpMsg,
@@ -220,12 +221,13 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 
 		if filter.Operator.AddOrNot() {
 			filterForm = append(filterForm, FormField{
-				Field:    headField + parameter.FilterParamOperatorSuffix + keySuffix,
-				Head:     f.Head,
-				TypeName: f.TypeName,
-				Value:    template.HTML(filter.Operator.Value()),
-				FormType: filter.Type,
-				Hide:     true,
+				Field:      headField + parameter.FilterParamOperatorSuffix + keySuffix,
+				FieldClass: headField + parameter.FilterParamOperatorSuffix + keySuffix,
+				Head:       f.Head,
+				TypeName:   f.TypeName,
+				Value:      template.HTML(filter.Operator.Value()),
+				FormType:   filter.Type,
+				Hide:       true,
 			})
 		}
 	}

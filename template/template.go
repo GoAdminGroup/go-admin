@@ -11,6 +11,7 @@ import (
 	"html/template"
 	"path"
 	"plugin"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -408,6 +409,9 @@ var DefaultFuncMap = template.FuncMap{
 		}
 		if len(f.OptionsArr) > 0 {
 			f.Options = f.OptionsArr[index]
+		}
+		if f.FormType.IsSelect() {
+			f.FieldClass += "_" + strconv.Itoa(index)
 		}
 		return f
 	},

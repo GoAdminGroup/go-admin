@@ -37,6 +37,7 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 	for i, field := range fieldList {
 		formModel.FieldList[i] = types.FormField{
 			Field:        field.Field,
+			FieldClass:   field.Field,
 			TypeName:     field.TypeName,
 			Head:         field.Head,
 			Hide:         field.Hide,

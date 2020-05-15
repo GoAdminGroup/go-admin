@@ -85,6 +85,12 @@ func (eng *Engine) Use(router interface{}) error {
 		navButtons = append(navButtons, btn)
 	}
 
+	if !eng.config.HideToolEntrance {
+		btn := types.GetNavButton("", icon.Wrench, action.Jump(eng.config.Url("/info/generate/new")))
+		eng.NavButtons = append(eng.NavButtons, btn)
+		navButtons = append(navButtons, btn)
+	}
+
 	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
 
 	defaultConnection := db.GetConnection(eng.Services)
