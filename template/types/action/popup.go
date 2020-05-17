@@ -8,22 +8,24 @@ import (
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
+	"regexp"
 	"strings"
 )
 
 type PopUpAction struct {
 	BaseAction
-	Url       string
-	Method    string
-	Id        string
-	Title     string
-	Draggable bool
-	Width     string
-	Height    string
-	HasIframe bool
-	BtnTitle  template.HTML
-	Data      AjaxData
-	Handlers  []context.Handler
+	Url          string
+	Method       string
+	Id           string
+	Title        string
+	Draggable    bool
+	Width        string
+	Height       string
+	HasIframe    bool
+	IsIFrameForm bool
+	BtnTitle     template.HTML
+	Data         AjaxData
+	Handlers     []context.Handler
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
@@ -87,24 +89,28 @@ func PopUpWithIframe(id, title string, data IframeData, width, height string) *P
 	} else {
 		data.Src = data.Src + "?"
 	}
+	modalID := "info-popup-model-" + utils.Uuid(10)
 	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
 		return true, "ok", fmt.Sprintf(`<iframe style="width:%s;height:%s;" 
 			scrolling="auto" 
 			allowtransparency="true" 
 			frameborder="0"
-			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true"><iframe>`, data.Width, data.Height, data.Src)
+			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true&__goadmin_iframe_id=%s"><iframe>`,
+			data.Width, data.Height, data.Src, modalID)
 	}
 	return &PopUpAction{
-		Url:       URL(id),
-		Title:     title,
-		Method:    "post",
-		BtnTitle:  "",
-		Height:    height,
-		Width:     width,
-		Draggable: true,
-		Data:      NewAjaxData(),
-		Id:        "info-popup-model-" + utils.Uuid(10),
-		Handlers:  context.Handlers{handler.Wrap()},
+		Url:          URL(id),
+		Title:        title,
+		Method:       "post",
+		BtnTitle:     "",
+		Height:       height,
+		HasIframe:    true,
+		IsIFrameForm: isFormURL(data.Src),
+		Width:        width,
+		Draggable:    true,
+		Data:         NewAjaxData(),
+		Id:           modalID,
+		Handlers:     context.Handlers{handler.Wrap()},
 	}
 }
 
@@ -177,8 +183,16 @@ func (pop *PopUpAction) FooterContent() template.HTML {
 		SetBody(template.HTML(``))
 
 	if pop.Draggable {
+		if pop.IsIFrameForm {
+			up = up.SetHideFooter()
+		}
 		return up.SetDraggable().GetContent()
 	}
 
 	return up.GetContent()
+}
+
+func isFormURL(s string) bool {
+	reg, _ := regexp.Compile("(.*)info/(.*)/(new|edit)(.*?)")
+	return reg.MatchString(s)
 }

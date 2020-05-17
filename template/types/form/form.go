@@ -1,7 +1,9 @@
 package form
 
 import (
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"html/template"
 )
 
@@ -21,12 +23,17 @@ const (
 	Datetime
 	DatetimeRange
 	Radio
+	Checkbox
+	CheckboxStacked
 	Email
+	Date
+	DateRange
 	Url
 	Ip
 	Color
 	Array
 	Currency
+	Rate
 	Number
 	Table
 	NumberRange
@@ -34,11 +41,12 @@ const (
 	Custom
 	Switch
 	Code
+	Slider
 )
 
 var allType = []Type{Default, Text, Array, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
-	RichText, Datetime, DatetimeRange, Radio, Table, Email, Url, Ip, Color, Currency, Number, NumberRange,
-	TextArea, Custom, Switch, Code}
+	RichText, Datetime, DatetimeRange, Checkbox, CheckboxStacked, Radio, Table, Email, Url, Ip, Color, Currency, Number, NumberRange,
+	TextArea, Custom, Switch, Code, Rate, Slider, Date, DateRange}
 
 func CheckType(t, def Type) Type {
 	for _, item := range allType {
@@ -109,12 +117,24 @@ func (t Type) String() string {
 		return "password"
 	case RichText:
 		return "richtext"
+	case Rate:
+		return "rate"
+	case Checkbox:
+		return "checkbox"
+	case CheckboxStacked:
+		return "checkbox_stacked"
+	case Date:
+		return "datetime"
+	case DateRange:
+		return "datetime_range"
 	case Datetime:
 		return "datetime"
 	case DatetimeRange:
 		return "datetime_range"
 	case Radio:
 		return "radio"
+	case Slider:
+		return "slider"
 	case Array:
 		return "array"
 	case Email:
@@ -145,7 +165,8 @@ func (t Type) String() string {
 }
 
 func (t Type) IsSelect() bool {
-	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch
+	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch ||
+		t == Checkbox || t == CheckboxStacked
 }
 
 func (t Type) IsArray() bool {
@@ -161,7 +182,7 @@ func (t Type) IsSingleSelect() bool {
 }
 
 func (t Type) IsMultiSelect() bool {
-	return t == Select || t == SelectBox
+	return t == Select || t == SelectBox || t == Checkbox || t == CheckboxStacked
 }
 
 func (t Type) IsRange() bool {
@@ -172,6 +193,26 @@ func (t Type) IsFile() bool {
 	return t == File || t == Multifile
 }
 
+func (t Type) IsSlider() bool {
+	return t == Slider
+}
+
+func (t Type) IsDateTime() bool {
+	return t == Datetime
+}
+
+func (t Type) IsDateTimeRange() bool {
+	return t == DatetimeRange
+}
+
+func (t Type) IsDate() bool {
+	return t == Date
+}
+
+func (t Type) IsDateRange() bool {
+	return t == DateRange
+}
+
 func (t Type) IsCode() bool {
 	return t == Code
 }
@@ -180,14 +221,103 @@ func (t Type) IsCustom() bool {
 	return t == Custom
 }
 
+func (t Type) FixOptions(m map[string]interface{}) map[string]interface{} {
+	switch t {
+	case Slider:
+		if _, ok := m["type"]; !ok {
+			m["type"] = "single"
+		}
+		if _, ok := m["prettify"]; !ok {
+			m["prettify"] = false
+		}
+		if _, ok := m["hasGrid"]; !ok {
+			m["hasGrid"] = true
+		}
+		return m
+	}
+	return m
+}
+
 func (t Type) SelectedLabel() []template.HTML {
 	if t == Select || t == SelectSingle || t == SelectBox {
 		return []template.HTML{"selected", ""}
 	}
-	if t == Radio || t == Switch {
+	if t == Radio || t == Switch || t == Checkbox || t == CheckboxStacked {
 		return []template.HTML{"checked", ""}
 	}
 	return []template.HTML{"", ""}
+}
+
+func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[string]interface{}) {
+	switch t {
+	case File, Multifile:
+		return map[string]interface{}{
+			"overwriteInitial":     true,
+			"initialPreviewAsData": true,
+			"browseLabel":          language.Get("Browse"),
+			"showRemove":           false,
+			"previewClass":         "preview-" + field,
+			"showUpload":           false,
+			"allowedFileTypes":     []string{"image"},
+		}, nil
+	case Slider:
+		return map[string]interface{}{
+			"type":     "single",
+			"prettify": false,
+			"hasGrid":  true,
+			"max":      100,
+			"min":      1,
+			"step":     1,
+			"postfix":  "",
+		}, nil
+	case DatetimeRange:
+		return getDateTimeRangeOptions(DatetimeRange)
+	case Datetime:
+		return getDateTimeOptions(Datetime), nil
+	case Date:
+		return getDateTimeOptions(Date), nil
+	case DateRange:
+		return getDateTimeRangeOptions(DateRange)
+	}
+
+	return map[string]interface{}{}, nil
+}
+
+func getDateTimeOptions(f Type) map[string]interface{} {
+	format := "YYYY-MM-DD HH:mm:ss"
+	if f == Date {
+		format = "YYYY-MM-DD"
+	}
+	m := map[string]interface{}{
+		"format":           format,
+		"locale":           "en",
+		"allowInputToggle": true,
+	}
+	if config.GetLanguage() == language.CN || config.GetLanguage() == "cn" {
+		m["locale"] = "zh-CN"
+	}
+	return m
+}
+
+func getDateTimeRangeOptions(f Type) (map[string]interface{}, map[string]interface{}) {
+	format := "YYYY-MM-DD HH:mm:ss"
+	if f == DateRange {
+		format = "YYYY-MM-DD"
+	}
+	m := map[string]interface{}{
+		"format": format,
+		"locale": "en",
+	}
+	m1 := map[string]interface{}{
+		"format":     format,
+		"locale":     "en",
+		"useCurrent": false,
+	}
+	if config.GetLanguage() == language.CN || config.GetLanguage() == "cn" {
+		m["locale"] = "zh-CN"
+		m1["locale"] = "zh-CN"
+	}
+	return m, m1
 }
 
 func GetFormTypeFromFieldType(typeName db.DatabaseType, fieldName string) string {

@@ -6,6 +6,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -70,6 +71,8 @@ type NewFormParam struct {
 	MultiForm    *multipart.Form
 	PreviousPath string
 	FromList     bool
+	IsIframe     bool
+	IframeID     string
 	Alert        template.HTML
 }
 
@@ -100,11 +103,15 @@ func (g *Guard) NewForm(ctx *context.Context) {
 		previous = config.Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
+	values := ctx.Request.MultipartForm.Value
+
 	ctx.SetUserValue(newFormParamKey, &NewFormParam{
 		Panel:        panel,
 		Id:           "",
 		Prefix:       prefix,
 		Param:        param,
+		IsIframe:     form.Values(values).Get(constant.IframeKey) == "true",
+		IframeID:     form.Values(values).Get(constant.IframeIDKey),
 		Path:         strings.Split(previous, "?")[0],
 		MultiForm:    ctx.Request.MultipartForm,
 		PreviousPath: previous,

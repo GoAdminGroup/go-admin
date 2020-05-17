@@ -6,15 +6,16 @@ import (
 )
 
 type PopupAttribute struct {
-	Name      string
-	ID        string
-	Body      template.HTML
-	Footer    template.HTML
-	Title     template.HTML
-	Size      string
-	Height    string
-	Width     string
-	Draggable bool
+	Name       string
+	ID         string
+	Body       template.HTML
+	Footer     template.HTML
+	Title      template.HTML
+	Size       string
+	HideFooter bool
+	Height     string
+	Width      string
+	Draggable  bool
 	types.Attribute
 }
 
@@ -45,6 +46,11 @@ func (compo *PopupAttribute) SetHeight(height string) types.PopupAttribute {
 
 func (compo *PopupAttribute) SetDraggable() types.PopupAttribute {
 	compo.Draggable = true
+	return compo
+}
+
+func (compo *PopupAttribute) SetHideFooter() types.PopupAttribute {
+	compo.HideFooter = true
 	return compo
 }
 

@@ -88,6 +88,8 @@ type EditFormParam struct {
 	PreviousPath string
 	Alert        tmpl.HTML
 	FromList     bool
+	IsIframe     bool
+	IframeID     string
 }
 
 func (e EditFormParam) Value() form.Values {
@@ -123,6 +125,8 @@ func (g *Guard) EditForm(ctx *context.Context) {
 
 	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
 
+	values := ctx.Request.MultipartForm.Value
+
 	ctx.SetUserValue(editFormParamKey, &EditFormParam{
 		Panel:        panel,
 		Id:           id,
@@ -130,6 +134,8 @@ func (g *Guard) EditForm(ctx *context.Context) {
 		Param:        param.WithPKs(id),
 		Path:         strings.Split(previous, "?")[0],
 		MultiForm:    multiForm,
+		IsIframe:     form.Values(values).Get(constant.IframeKey) == "true",
+		IframeID:     form.Values(values).Get(constant.IframeIDKey),
 		PreviousPath: previous,
 		FromList:     fromList,
 	})

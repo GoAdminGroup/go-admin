@@ -279,7 +279,7 @@ var cn = LangSet{
 	"tool.connection":           "连接",
 	"tool.package":              "包名",
 	"tool.output":               "输出路径",
-	"tool.field":                "字段名",
+	"tool.field":                "字段",
 	"tool.title":                "标题",
 	"tool.field name":           "字段名",
 	"tool.db type":              "数据类型",

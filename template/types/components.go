@@ -199,6 +199,7 @@ type PopupAttribute interface {
 	SetID(value string) PopupAttribute
 	SetTitle(value template.HTML) PopupAttribute
 	SetDraggable() PopupAttribute
+	SetHideFooter() PopupAttribute
 	SetWidth(width string) PopupAttribute
 	SetHeight(height string) PopupAttribute
 	SetFooter(value template.HTML) PopupAttribute

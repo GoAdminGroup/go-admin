@@ -110,11 +110,13 @@ type FormField struct {
 	FieldClass     string          `json:"field_class"`
 	TypeName       db.DatabaseType `json:"type_name"`
 	Head           string          `json:"head"`
+	Foot           template.HTML   `json:"foot"`
 	FormType       form2.Type      `json:"form_type"`
 	FatherFormType form2.Type      `json:"father_form_type"`
 	FatherField    string          `json:"father_field"`
 
 	RowWidth int
+	RowFlag  uint8
 
 	Default                template.HTML  `json:"default"`
 	DefaultArr             interface{}    `json:"default_arr"`
@@ -154,6 +156,7 @@ type FormField struct {
 	TableFields FormFields
 
 	OptionExt       template.JS     `json:"option_ext"`
+	OptionExt2      template.JS     `json:"option_ext_2"`
 	OptionInitFn    OptionInitFn    `json:"-"`
 	OptionArrInitFn OptionArrInitFn `json:"-"`
 	OptionTable     OptionTable     `json:"-"`
@@ -654,16 +657,14 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 	})
 	f.curFieldListIndex++
 
-	if formType.IsFile() {
-		f.FieldOptionExt(map[string]interface{}{
-			"overwriteInitial":     true,
-			"initialPreviewAsData": true,
-			"browseLabel":          language.Get("Browse"),
-			"showRemove":           false,
-			"previewClass":         "preview-" + field,
-			"showUpload":           false,
-			"allowedFileTypes":     []string{"image"},
-		})
+	op1, op2 := formType.GetDefaultOptions(field)
+
+	if op1 != nil {
+		f.FieldOptionExt(op1)
+	}
+
+	if op2 != nil {
+		f.FieldOptionExt2(op2)
 	}
 
 	if formType.IsCode() {
@@ -710,7 +711,19 @@ func (f *FormPanel) AddTable(head, field string, addFields AddFormFieldFn) *Form
 }
 
 func (f *FormPanel) AddRow(addFields AddFormFieldFn) *FormPanel {
+	index := f.curFieldListIndex
 	addFields(f)
+	if f.curFieldListIndex != index+1 {
+		for i := index + 1; i <= f.curFieldListIndex; i++ {
+			if i == index+1 {
+				f.FieldList[i].RowFlag = 1
+			} else if i == f.curFieldListIndex {
+				f.FieldList[i].RowFlag = 2
+			} else {
+				f.FieldList[i].RowFlag = 3
+			}
+		}
+	}
 	return f
 }
 
@@ -767,6 +780,11 @@ func (f *FormPanel) FieldHideLabel() *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldFoot(foot template.HTML) *FormPanel {
+	f.FieldList[f.curFieldListIndex].Foot = foot
+	return f
+}
+
 func (f *FormPanel) FieldDivider(title ...string) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Divider = true
 	if len(title) > 0 {
@@ -797,6 +815,8 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 		return f
 	}
 
+	m = f.FieldList[f.curFieldListIndex].FormType.FixOptions(m)
+
 	s, _ := json.Marshal(m)
 
 	if f.FieldList[f.curFieldListIndex].OptionExt != template.JS("") {
@@ -812,8 +832,32 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldOptionExt2(m map[string]interface{}) *FormPanel {
+
+	m = f.FieldList[f.curFieldListIndex].FormType.FixOptions(m)
+
+	s, _ := json.Marshal(m)
+
+	if f.FieldList[f.curFieldListIndex].OptionExt2 != template.JS("") {
+		ss := string(f.FieldList[f.curFieldListIndex].OptionExt2)
+		ss = strings.Replace(ss, "}", "", strings.Count(ss, "}"))
+		ss = strings.TrimRight(ss, " ")
+		ss += ","
+		f.FieldList[f.curFieldListIndex].OptionExt2 = template.JS(ss) + template.JS(strings.Replace(string(s), "{", "", 1))
+	} else {
+		f.FieldList[f.curFieldListIndex].OptionExt2 = template.JS(string(s))
+	}
+
+	return f
+}
+
 func (f *FormPanel) FieldOptionExtJS(js template.JS) *FormPanel {
 	f.FieldList[f.curFieldListIndex].OptionExt = js
+	return f
+}
+
+func (f *FormPanel) FieldOptionExtJS2(js template.JS) *FormPanel {
+	f.FieldList[f.curFieldListIndex].OptionExt2 = js
 	return f
 }
 

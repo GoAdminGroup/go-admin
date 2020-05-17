@@ -2,16 +2,18 @@ package controller
 
 import (
 	"fmt"
+	template2 "html/template"
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
-	"net/http"
 )
 
 // ShowNewForm show a new form page.
@@ -42,6 +44,19 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 
 	isNotIframe := ctx.Query(constant.IframeKey) != "true"
 
+	hiddenFields := map[string]string{
+		form2.TokenKey:    h.authSrv().AddToken(),
+		form2.PreviousKey: infoUrl,
+	}
+
+	if ctx.Query(constant.IframeKey) != "" {
+		hiddenFields[constant.IframeKey] = ctx.Query(constant.IframeKey)
+	}
+
+	if ctx.Query(constant.IframeIDKey) != "" {
+		hiddenFields[constant.IframeIDKey] = ctx.Query(constant.IframeIDKey)
+	}
+
 	content := formContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetFieldsHTML(f.HTMLContent).
@@ -53,10 +68,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetHeadWidth(f.HeadWidth).
 		SetLayout(f.Layout).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
-		SetHiddenFields(map[string]string{
-			form2.TokenKey:    h.authSrv().AddToken(),
-			form2.PreviousKey: infoUrl,
-		}).
+		SetHiddenFields(hiddenFields).
 		SetTitle("New").
 		SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton)).
@@ -112,6 +124,17 @@ func (h *Handler) NewForm(ctx *context.Context) {
 
 		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>location.href="%s"</script>`, param.PreviousPath))
 		ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)
+		return
+	}
+
+	if param.IsIframe {
+		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
+		swal('%s', '', 'success');
+		setTimeout(function(){
+			$("#%s", window.parent.document).hide();
+			$('.modal-backdrop.fade.in', window.parent.document).hide();
+		}, 1000)
+</script>`, language.Get("success"), param.IframeID))
 		return
 	}
 
