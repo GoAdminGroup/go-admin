@@ -79,8 +79,8 @@ const (
 	bananaOptField        = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[2]`
 	watermelonOptField    = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[3]`
 	pearOptField          = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[4]`
-	genderBoyCheckBox     = `//*[@id="tab-form-1"]/div[5]/div/div[1]`
-	genderGirlCheckBox    = `//*[@id="tab-form-1"]/div[5]/div/div[2]`
+	genderBoyCheckBox     = `//*[@id="tab-form-1"]/div[5]/div/div/div[1]`
+	genderGirlCheckBox    = `//*[@id="tab-form-1"]/div[5]/div/div/div[2]`
 	experienceDropDown    = `//*[@id="tab-form-1"]/div[7]/div/span/span[1]/span/span[2]`
 	twoYearsSelection     = `/html/body/span/span/span[2]/ul/li[1]`
 	threeYearsSelection   = `/html/body/span/span/span[2]/ul/li[2]`
