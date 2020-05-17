@@ -292,4 +292,5 @@ var cn = LangSet{
 	"tool.no":                   "否",
 	"tool.generate success":     "生成成功",
 	"tool.hide filter area":     "隐藏筛选框",
+	"tool.display":              "显示",
 }

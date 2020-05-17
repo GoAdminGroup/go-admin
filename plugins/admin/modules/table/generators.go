@@ -1404,22 +1404,24 @@ for (let i = 0; i < data.data[0].length; i++) {
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{""}
 			})
-		pa.AddField(lgWithScore("field filterable", "tool"), "field_filterable", db.Varchar, form.Switch).
+		pa.AddField(lgWithScore("field filterable", "tool"), "field_filterable", db.Varchar, form.CheckboxSingle).
 			FieldOptions(types.FieldOptions{
-				{Text: lgWithScore("yes", "tool"), Value: "y"},
-				{Text: lgWithScore("no", "tool"), Value: "n"},
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
 			}).
-			FieldDefault("n").FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{"n"}
-		})
-		pa.AddField(lgWithScore("field sortable", "tool"), "field_sortable", db.Varchar, form.Switch).
+			FieldDefault("0").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"0"}
+			})
+		pa.AddField(lgWithScore("field sortable", "tool"), "field_sortable", db.Varchar, form.CheckboxSingle).
 			FieldOptions(types.FieldOptions{
-				{Text: lgWithScore("yes", "tool"), Value: "y"},
-				{Text: lgWithScore("no", "tool"), Value: "n"},
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
 			}).
-			FieldDefault("n").FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{"n"}
-		})
+			FieldDefault("0").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"0"}
+			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
 			return []string{""}

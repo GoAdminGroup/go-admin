@@ -37,15 +37,17 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 
 	if _, ok := val.(template.HTML); !ok {
 		if _, ok2 := val.([]string); !ok2 {
-			valStr := fmt.Sprintf("%v", val)
-			for _, process := range f.DisplayProcessChains {
-				valStr = fmt.Sprintf("%v", process(FieldModel{
-					Row:   value.Row,
-					Value: valStr,
-					ID:    value.ID,
-				}))
+			if _, ok3 := val.([][]string); !ok3 {
+				valStr := fmt.Sprintf("%v", val)
+				for _, process := range f.DisplayProcessChains {
+					valStr = fmt.Sprintf("%v", process(FieldModel{
+						Row:   value.Row,
+						Value: valStr,
+						ID:    value.ID,
+					}))
+				}
+				return valStr
 			}
-			return valStr
 		}
 	}
 

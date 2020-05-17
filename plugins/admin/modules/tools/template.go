@@ -21,7 +21,7 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	info := {{.Table}}.GetInfo(){{if .HideFilterArea}}.HideFilterArea(){{end}}
 
 	{{- range $key, $field := .Fields}}
-	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.FieldFilterable(){{end -}}
+	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.FieldFilterable(){{end}}{{if $field.Sortable}}.FieldSortable(){{end -}}
 	{{- end}}
 
 	info.SetTable("{{.TableName}}").SetTitle("{{.TableTitle}}").SetDescription("{{.TableTitle}}")

@@ -7,7 +7,6 @@ package template
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"html/template"
 	"path"
 	"plugin"
@@ -354,7 +353,7 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 			TmplFootJS:   Default().GetFootJS(),
 		}))
 	if err != nil {
-		fmt.Println("Execute err", err)
+		logger.Error("template execute error", err)
 	}
 	return buf
 }

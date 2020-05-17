@@ -25,6 +25,7 @@ const (
 	Radio
 	Checkbox
 	CheckboxStacked
+	CheckboxSingle
 	Email
 	Date
 	DateRange
@@ -46,7 +47,7 @@ const (
 
 var allType = []Type{Default, Text, Array, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
 	RichText, Datetime, DatetimeRange, Checkbox, CheckboxStacked, Radio, Table, Email, Url, Ip, Color, Currency, Number, NumberRange,
-	TextArea, Custom, Switch, Code, Rate, Slider, Date, DateRange}
+	TextArea, Custom, Switch, Code, Rate, Slider, Date, DateRange, CheckboxSingle}
 
 func CheckType(t, def Type) Type {
 	for _, item := range allType {
@@ -123,6 +124,8 @@ func (t Type) String() string {
 		return "checkbox"
 	case CheckboxStacked:
 		return "checkbox_stacked"
+	case CheckboxSingle:
+		return "checkbox_single"
 	case Date:
 		return "datetime"
 	case DateRange:
@@ -166,7 +169,7 @@ func (t Type) String() string {
 
 func (t Type) IsSelect() bool {
 	return t == Select || t == SelectSingle || t == SelectBox || t == Radio || t == Switch ||
-		t == Checkbox || t == CheckboxStacked
+		t == Checkbox || t == CheckboxStacked || t == CheckboxSingle
 }
 
 func (t Type) IsArray() bool {
@@ -178,7 +181,7 @@ func (t Type) IsTable() bool {
 }
 
 func (t Type) IsSingleSelect() bool {
-	return t == SelectSingle || t == Radio || t == Switch
+	return t == SelectSingle || t == Radio || t == Switch || t == CheckboxSingle
 }
 
 func (t Type) IsMultiSelect() bool {

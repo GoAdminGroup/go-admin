@@ -33,21 +33,15 @@ func externalTest(e *httpexpect.Expect, sesID *http.Cookie) {
 	// show form
 
 	printlnWithColor("show form", "green")
-	formBody := e.GET(config.Url("/info/external/edit")).
+	e.GET(config.Url("/info/external/edit")).
 		WithQuery(constant.EditPKKey, "10").
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
 
-	token := reg.FindStringSubmatch(formBody.Raw())
-
 	// show new form
 
 	printlnWithColor("show new form", "green")
-	formBody = e.GET(config.Url("/info/external/new")).
+	e.GET(config.Url("/info/external/new")).
 		WithCookie(sesID.Name, sesID.Value).
 		Expect().Status(200).Body()
-
-	token = reg.FindStringSubmatch(formBody.Raw())
-
-	fmt.Println("token", token)
 }
