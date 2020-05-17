@@ -283,7 +283,7 @@ func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[strin
 		return getDateTimeRangeOptions(DateRange)
 	}
 
-	return map[string]interface{}{}, nil
+	return nil, nil
 }
 
 func getDateTimeOptions(f Type) map[string]interface{} {
