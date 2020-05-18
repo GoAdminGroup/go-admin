@@ -31,16 +31,16 @@ import (
 // mssql, the other configurations will be ignored, except for
 // MaxIdleCon and MaxOpenCon.
 type Database struct {
-	Host       string `json:"host",yaml:"host",ini:"host"`
-	Port       string `json:"port",yaml:"port",ini:"port"`
-	User       string `json:"user",yaml:"user",ini:"user"`
-	Pwd        string `json:"pwd",yaml:"pwd",ini:"pwd"`
-	Name       string `json:"name",yaml:"name",ini:"name"`
-	MaxIdleCon int    `json:"max_idle_con",yaml:"max_idle_con",ini:"max_idle_con"`
-	MaxOpenCon int    `json:"max_open_con",yaml:"max_open_con",ini:"max_open_con"`
-	Driver     string `json:"driver",yaml:"driver",ini:"driver"`
-	File       string `json:"file",yaml:"file",ini:"file"`
-	Dsn        string `json:"dsn",yaml:"dsn",ini:"dsn"`
+	Host       string `json:"host,omitempty",yaml:"host",ini:"host"`
+	Port       string `json:"port,omitempty",yaml:"port",ini:"port"`
+	User       string `json:"user,omitempty",yaml:"user",ini:"user"`
+	Pwd        string `json:"pwd,omitempty",yaml:"pwd",ini:"pwd"`
+	Name       string `json:"name,omitempty",yaml:"name",ini:"name"`
+	MaxIdleCon int    `json:"max_idle_con,omitempty",yaml:"max_idle_con",ini:"max_idle_con"`
+	MaxOpenCon int    `json:"max_open_con,omitempty",yaml:"max_open_con",ini:"max_open_con"`
+	Driver     string `json:"driver,omitempty",yaml:"driver",ini:"driver"`
+	File       string `json:"file,omitempty",yaml:"file",ini:"file"`
+	Dsn        string `json:"dsn,omitempty",yaml:"dsn",ini:"dsn"`
 }
 
 // DatabaseList is a map of Database.
@@ -122,8 +122,8 @@ const (
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {
-	Path   string `json:"path",yaml:"path",ini:"path"`
-	Prefix string `json:"prefix",yaml:"prefix",ini:"prefix"`
+	Path   string `json:"path,omitempty",yaml:"path",ini:"path"`
+	Prefix string `json:"prefix,omitempty",yaml:"prefix",ini:"prefix"`
 }
 
 func (s Store) URL(suffix string) string {
@@ -176,158 +176,158 @@ type Config struct {
 	// An map supports multi database connection. The first
 	// element of Databases is the default connection. See the
 	// file connection.go.
-	Databases DatabaseList `json:"database",yaml:"database",ini:"database"`
+	Databases DatabaseList `json:"database,omitempty",yaml:"database",ini:"database"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
-	Domain string `json:"domain",yaml:"domain",ini:"domain"`
+	Domain string `json:"domain,omitempty",yaml:"domain",ini:"domain"`
 
 	// Used to set as the localize language which show in the
 	// interface.
-	Language string `json:"language",yaml:"language",ini:"language"`
+	Language string `json:"language,omitempty",yaml:"language",ini:"language"`
 
 	// The global url prefix.
-	UrlPrefix string `json:"prefix",yaml:"prefix",ini:"prefix"`
+	UrlPrefix string `json:"prefix,omitempty",yaml:"prefix",ini:"prefix"`
 
 	// The theme name of template.
-	Theme string `json:"theme",yaml:"theme",ini:"theme"`
+	Theme string `json:"theme,omitempty",yaml:"theme",ini:"theme"`
 
 	// The path where files will be stored into.
-	Store Store `json:"store",yaml:"store",ini:"store"`
+	Store Store `json:"store,omitempty",yaml:"store",ini:"store"`
 
 	// The title of web page.
-	Title string `json:"title",yaml:"title",ini:"title"`
+	Title string `json:"title,omitempty",yaml:"title",ini:"title"`
 
 	// Logo is the top text in the sidebar.
-	Logo template.HTML `json:"logo",yaml:"logo",ini:"logo"`
+	Logo template.HTML `json:"logo,omitempty",yaml:"logo",ini:"logo"`
 
 	// Mini-logo is the top text in the sidebar when folding.
-	MiniLogo template.HTML `json:"mini_logo",yaml:"mini_logo",ini:"mini_logo"`
+	MiniLogo template.HTML `json:"mini_logo,omitempty",yaml:"mini_logo",ini:"mini_logo"`
 
 	// The url redirect to after login.
-	IndexUrl string `json:"index",yaml:"index",ini:"index"`
+	IndexUrl string `json:"index,omitempty",yaml:"index",ini:"index"`
 
 	// Login page URL
-	LoginUrl string `json:"login_url",yaml:"login_url",ini:"login_url"`
+	LoginUrl string `json:"login_url,omitempty",yaml:"login_url",ini:"login_url"`
 
 	// Debug mode
-	Debug bool `json:"debug",yaml:"debug",ini:"debug"`
+	Debug bool `json:"debug,omitempty",yaml:"debug",ini:"debug"`
 
 	// Env is the environment,which maybe local,test,prod.
-	Env string `json:"env",yaml:"env",ini:"env"`
+	Env string `json:"env,omitempty",yaml:"env",ini:"env"`
 
 	// Info log path.
-	InfoLogPath string `json:"info_log",yaml:"info_log",ini:"info_log"`
+	InfoLogPath string `json:"info_log,omitempty",yaml:"info_log",ini:"info_log"`
 
 	// Error log path.
-	ErrorLogPath string `json:"error_log",yaml:"error_log",ini:"error_log"`
+	ErrorLogPath string `json:"error_log,omitempty",yaml:"error_log",ini:"error_log"`
 
 	// Access log path.
-	AccessLogPath string `json:"access_log",yaml:"access_log",ini:"access_log"`
+	AccessLogPath string `json:"access_log,omitempty",yaml:"access_log",ini:"access_log"`
 
 	// Access assets log off
-	AccessAssetsLogOff bool `json:"access_assets_log_off",yaml:"access_assets_log_off",ini:"access_assets_log_off"`
+	AccessAssetsLogOff bool `json:"access_assets_log_off,omitempty",yaml:"access_assets_log_off",ini:"access_assets_log_off"`
 
 	// Sql operator record log switch.
-	SqlLog bool `json:"sql_log",yaml:"sql_log",ini:"sql_log"`
+	SqlLog bool `json:"sql_log,omitempty",yaml:"sql_log",ini:"sql_log"`
 
-	AccessLogOff bool `json:"access_log_off",yaml:"access_log_off",ini:"access_log_off"`
-	InfoLogOff   bool `json:"info_log_off",yaml:"info_log_off",ini:"info_log_off"`
-	ErrorLogOff  bool `json:"error_log_off",yaml:"error_log_off",ini:"error_log_off"`
+	AccessLogOff bool `json:"access_log_off,omitempty",yaml:"access_log_off",ini:"access_log_off"`
+	InfoLogOff   bool `json:"info_log_off,omitempty",yaml:"info_log_off",ini:"info_log_off"`
+	ErrorLogOff  bool `json:"error_log_off,omitempty",yaml:"error_log_off",ini:"error_log_off"`
 
-	Logger Logger `json:"logger",yaml:"logger",ini:"logger"`
+	Logger Logger `json:"logger,omitempty",yaml:"logger",ini:"logger"`
 
 	// Color scheme.
-	ColorScheme string `json:"color_scheme",yaml:"color_scheme",ini:"color_scheme"`
+	ColorScheme string `json:"color_scheme,omitempty",yaml:"color_scheme",ini:"color_scheme"`
 
 	// Session valid time duration,units are seconds. Default 7200.
-	SessionLifeTime int `json:"session_life_time",yaml:"session_life_time",ini:"session_life_time"`
+	SessionLifeTime int `json:"session_life_time,omitempty",yaml:"session_life_time",ini:"session_life_time"`
 
 	// Assets visit link.
-	AssetUrl string `json:"asset_url",yaml:"asset_url",ini:"asset_url"`
+	AssetUrl string `json:"asset_url,omitempty",yaml:"asset_url",ini:"asset_url"`
 
 	// File upload engine,default "local"
-	FileUploadEngine FileUploadEngine `json:"file_upload_engine",yaml:"file_upload_engine",ini:"file_upload_engine"`
+	FileUploadEngine FileUploadEngine `json:"file_upload_engine,omitempty",yaml:"file_upload_engine",ini:"file_upload_engine"`
 
 	// Custom html in the tag head.
-	CustomHeadHtml template.HTML `json:"custom_head_html",yaml:"custom_head_html",ini:"custom_head_html"`
+	CustomHeadHtml template.HTML `json:"custom_head_html,omitempty",yaml:"custom_head_html",ini:"custom_head_html"`
 
 	// Custom html after body.
-	CustomFootHtml template.HTML `json:"custom_foot_html",yaml:"custom_foot_html",ini:"custom_foot_html"`
+	CustomFootHtml template.HTML `json:"custom_foot_html,omitempty",yaml:"custom_foot_html",ini:"custom_foot_html"`
 
 	// Footer Info html
-	FooterInfo template.HTML `json:"footer_info",yaml:"footer_info",ini:"footer_info"`
+	FooterInfo template.HTML `json:"footer_info,omitempty",yaml:"footer_info",ini:"footer_info"`
 
 	// Login page title
-	LoginTitle string `json:"login_title",yaml:"login_title",ini:"login_title"`
+	LoginTitle string `json:"login_title,omitempty",yaml:"login_title",ini:"login_title"`
 
 	// Login page logo
-	LoginLogo template.HTML `json:"login_logo",yaml:"login_logo",ini:"login_logo"`
+	LoginLogo template.HTML `json:"login_logo,omitempty",yaml:"login_logo",ini:"login_logo"`
 
 	// Auth user table
-	AuthUserTable string `json:"auth_user_table",yaml:"auth_user_table",ini:"auth_user_table"`
+	AuthUserTable string `json:"auth_user_table,omitempty",yaml:"auth_user_table",ini:"auth_user_table"`
 
 	// Extra config info
-	Extra ExtraInfo `json:"extra",yaml:"extra",ini:"extra"`
+	Extra ExtraInfo `json:"extra,omitempty",yaml:"extra",ini:"extra"`
 
 	// Page animation
-	Animation PageAnimation `json:"animation",yaml:"animation",ini:"animation"`
+	Animation PageAnimation `json:"animation,omitempty",yaml:"animation",ini:"animation"`
 
 	// Limit login with different IPs
-	NoLimitLoginIP bool `json:"no_limit_login_ip",yaml:"no_limit_login_ip",ini:"no_limit_login_ip"`
+	NoLimitLoginIP bool `json:"no_limit_login_ip,omitempty",yaml:"no_limit_login_ip",ini:"no_limit_login_ip"`
 
 	// When site off is true, website will be closed
-	SiteOff bool `json:"site_off",yaml:"site_off",ini:"site_off"`
+	SiteOff bool `json:"site_off,omitempty",yaml:"site_off",ini:"site_off"`
 
 	// Hide config center entrance flag
-	HideConfigCenterEntrance bool `json:"hide_config_center_entrance",yaml:"hide_config_center_entrance",ini:"hide_config_center_entrance"`
+	HideConfigCenterEntrance bool `json:"hide_config_center_entrance,omitempty",yaml:"hide_config_center_entrance",ini:"hide_config_center_entrance"`
 
 	// Hide app info entrance flag
-	HideAppInfoEntrance bool `json:"hide_app_info_entrance",yaml:"hide_app_info_entrance",ini:"hide_app_info_entrance"`
+	HideAppInfoEntrance bool `json:"hide_app_info_entrance,omitempty",yaml:"hide_app_info_entrance",ini:"hide_app_info_entrance"`
 
 	// Hide tool entrance flag
-	HideToolEntrance bool `json:"hide_tool_entrance",yaml:"hide_tool_entrance",ini:"hide_tool_entrance"`
+	HideToolEntrance bool `json:"hide_tool_entrance,omitempty",yaml:"hide_tool_entrance",ini:"hide_tool_entrance"`
 
 	// Update Process Function
-	UpdateProcessFn UpdateConfigProcessFn `json:"-",yaml:"-",ini:"-"`
+	UpdateProcessFn UpdateConfigProcessFn `json:"-",,omitemptyyaml:"-",ini:"-"`
 
-	// Favicon string `json:"favicon",yaml:"favicon",ini:"favicon"`
+	// Favicon string `json:"favicon,omitempty",yaml:"favicon",ini:"favicon"`
 
 	// Is open admin plugin json api
-	OpenAdminApi bool `json:"open_admin_api",yaml:"open_admin_api",ini:"open_admin_api"`
+	OpenAdminApi bool `json:"open_admin_api,omitempty",yaml:"open_admin_api",ini:"open_admin_api"`
 
-	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance",yaml:"hide_visitor_user_center_entrance",ini:"hide_visitor_user_center_entrance"`
+	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance,omitempty",yaml:"hide_visitor_user_center_entrance",ini:"hide_visitor_user_center_entrance"`
 
-	ExcludeThemeComponents []string `json:"exclude_theme_components",yaml:"exclude_theme_components",ini:"exclude_theme_components"`
+	ExcludeThemeComponents []string `json:"exclude_theme_components,omitempty",yaml:"exclude_theme_components",ini:"exclude_theme_components"`
 
 	prefix string
 }
 
 type Logger struct {
-	Encoder EncoderCfg `json:"encoder",yaml:"encoder",ini:"encoder"`
-	Rotate  RotateCfg  `json:"rotate",yaml:"rotate",ini:"rotate"`
-	Level   int8       `json:"level",yaml:"level",ini:"level"`
+	Encoder EncoderCfg `json:"encoder,omitempty",yaml:"encoder",ini:"encoder"`
+	Rotate  RotateCfg  `json:"rotate,omitempty",yaml:"rotate",ini:"rotate"`
+	Level   int8       `json:"level,omitempty",yaml:"level",ini:"level"`
 }
 
 type EncoderCfg struct {
-	TimeKey       string `json:"time_key",yaml:"time_key",ini:"time_key"`
-	LevelKey      string `json:"level_key",yaml:"level_key",ini:"level_key"`
-	NameKey       string `json:"name_key",yaml:"name_key",ini:"name_key"`
-	CallerKey     string `json:"caller_key",yaml:"caller_key",ini:"caller_key"`
-	MessageKey    string `json:"message_key",yaml:"message_key",ini:"message_key"`
-	StacktraceKey string `json:"stacktrace_key",yaml:"stacktrace_key",ini:"stacktrace_key"`
-	Level         string `json:"level",yaml:"level",ini:"level"`
-	Time          string `json:"time",yaml:"time",ini:"time"`
-	Duration      string `json:"duration",yaml:"duration",ini:"duration"`
-	Caller        string `json:"caller",yaml:"caller",ini:"caller"`
-	Encoding      string `json:"encoding",yaml:"encoding",ini:"encoding"`
+	TimeKey       string `json:"time_key,omitempty",yaml:"time_key",ini:"time_key"`
+	LevelKey      string `json:"level_key,omitempty",yaml:"level_key",ini:"level_key"`
+	NameKey       string `json:"name_key,omitempty",yaml:"name_key",ini:"name_key"`
+	CallerKey     string `json:"caller_key,omitempty",yaml:"caller_key",ini:"caller_key"`
+	MessageKey    string `json:"message_key,omitempty",yaml:"message_key",ini:"message_key"`
+	StacktraceKey string `json:"stacktrace_key,omitempty",yaml:"stacktrace_key",ini:"stacktrace_key"`
+	Level         string `json:"level,omitempty",yaml:"level",ini:"level"`
+	Time          string `json:"time,omitempty",yaml:"time",ini:"time"`
+	Duration      string `json:"duration,omitempty",yaml:"duration",ini:"duration"`
+	Caller        string `json:"caller,omitempty",yaml:"caller",ini:"caller"`
+	Encoding      string `json:"encoding,omitempty",yaml:"encoding",ini:"encoding"`
 }
 
 type RotateCfg struct {
-	MaxSize    int  `json:"max_size",yaml:"max_size",ini:"max_size"`
-	MaxBackups int  `json:"max_backups",yaml:"max_backups",ini:"max_backups"`
-	MaxAge     int  `json:"max_age",yaml:"max_age",ini:"max_age"`
-	Compress   bool `json:"compress",yaml:"compress",ini:"compress"`
+	MaxSize    int  `json:"max_size,omitempty",yaml:"max_size",ini:"max_size"`
+	MaxBackups int  `json:"max_backups,omitempty",yaml:"max_backups",ini:"max_backups"`
+	MaxAge     int  `json:"max_age,omitempty",yaml:"max_age",ini:"max_age"`
+	Compress   bool `json:"compress,omitempty",yaml:"compress",ini:"compress"`
 }
 
 type ExtraInfo map[string]interface{}
@@ -336,9 +336,9 @@ type UpdateConfigProcessFn func(values form.Values) (form.Values, error)
 
 // see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
-	Type     string  `json:"type",yaml:"type",ini:"type"`
-	Duration float32 `json:"duration",yaml:"duration",ini:"duration"`
-	Delay    float32 `json:"delay",yaml:"delay",ini:"delay"`
+	Type     string  `json:"type,omitempty",yaml:"type",ini:"type"`
+	Duration float32 `json:"duration,omitempty",yaml:"duration",ini:"duration"`
+	Delay    float32 `json:"delay,omitempty",yaml:"delay",ini:"delay"`
 }
 
 func (p PageAnimation) JSON() string {
@@ -359,8 +359,8 @@ func GetPageAnimationFromJSON(m string) PageAnimation {
 
 // FileUploadEngine is a file upload engine.
 type FileUploadEngine struct {
-	Name   string                 `json:"name",yaml:"name",ini:"name"`
-	Config map[string]interface{} `json:"config",yaml:"config",ini:"config"`
+	Name   string                 `json:"name,omitempty",yaml:"name",ini:"name"`
+	Config map[string]interface{} `json:"config,omitempty",yaml:"config",ini:"config"`
 }
 
 func (f FileUploadEngine) JSON() string {
@@ -748,6 +748,27 @@ var (
 	lock  sync.Mutex
 )
 
+func SetDefault(cfg Config) Config {
+	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
+	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
+	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
+	cfg.MiniLogo = template.HTML(utils.SetDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
+	cfg.Theme = utils.SetDefault(cfg.Theme, "", "adminlte")
+	cfg.IndexUrl = utils.SetDefault(cfg.IndexUrl, "", "/info/manager")
+	cfg.LoginUrl = utils.SetDefault(cfg.LoginUrl, "", "/login")
+	cfg.AuthUserTable = utils.SetDefault(cfg.AuthUserTable, "", "goadmin_users")
+	if cfg.Theme == "adminlte" {
+		cfg.ColorScheme = utils.SetDefault(cfg.ColorScheme, "", "skin-black")
+	}
+	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
+	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
+	if cfg.SessionLifeTime == 0 {
+		// default two hours
+		cfg.SessionLifeTime = 7200
+	}
+	return cfg
+}
+
 // Set sets the config.
 func Set(cfg Config) *Config {
 
@@ -759,21 +780,7 @@ func Set(cfg Config) *Config {
 	}
 	atomic.StoreUint32(&count, 1)
 
-	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
-	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
-	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
-	cfg.MiniLogo = template.HTML(utils.SetDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
-	cfg.Theme = utils.SetDefault(cfg.Theme, "", "adminlte")
-	cfg.IndexUrl = utils.SetDefault(cfg.IndexUrl, "", "/info/manager")
-	cfg.LoginUrl = utils.SetDefault(cfg.LoginUrl, "", "/login")
-	cfg.AuthUserTable = utils.SetDefault(cfg.AuthUserTable, "", "goadmin_users")
-	cfg.ColorScheme = utils.SetDefault(cfg.ColorScheme, "", "skin-black")
-	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
-	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
-	if cfg.SessionLifeTime == 0 {
-		// default two hours
-		cfg.SessionLifeTime = 7200
-	}
+	cfg = SetDefault(cfg)
 
 	if cfg.UrlPrefix == "" {
 		cfg.prefix = "/"

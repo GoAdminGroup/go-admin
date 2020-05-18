@@ -115,16 +115,21 @@ func buildProject(cfgFile string) {
 
 	// generate config json
 
-	var cfg = config.Config{
-		Debug:         true,
-		Theme:         p.Theme,
+	var cfg = config.SetDefault(config.Config{
+		Debug: true,
+		Env:   config.EnvLocal,
+		Theme: p.Theme,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
 		Language:      p.Language,
 		UrlPrefix:     p.Prefix,
 		IndexUrl:      "/",
 		AccessLogPath: "./logs/access.log",
 		ErrorLogPath:  "./logs/error.log",
 		InfoLogPath:   "./logs/info.log",
-	}
+	})
 
 	if info.DriverName == "" && p.Driver != "" {
 		info.DriverName = p.Driver
@@ -133,6 +138,13 @@ func buildProject(cfgFile string) {
 	cfg.Databases = askForDBConfig(info)
 
 	configByte, err := json.MarshalIndent(cfg, "", "	")
+	configByte = bytes.Replace(configByte, []byte(`
+	"logger": {
+		"encoder": {},
+		"rotate": {}
+	},`), []byte{}, -1)
+	configByte = bytes.Replace(configByte, []byte(`,
+	"animation": {}`), []byte{}, -1)
 	checkError(err)
 	checkError(ioutil.WriteFile("./config.json", configByte, 0644))
 
