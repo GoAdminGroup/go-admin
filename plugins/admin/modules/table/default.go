@@ -478,7 +478,7 @@ func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelIn
 		if connection.Name() == db.DriverMssql {
 			args = append(whereArgs, (params.PageInt-1)*params.PageSizeInt, params.PageInt*params.PageSizeInt)
 		} else {
-			args = append(whereArgs, params.PageSize, (params.PageInt-1)*params.PageSizeInt)
+			args = append(whereArgs, params.PageSizeInt, (params.PageInt-1)*params.PageSizeInt)
 		}
 	}
 
