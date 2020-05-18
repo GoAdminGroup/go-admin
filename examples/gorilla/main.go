@@ -1,21 +1,23 @@
 package main
 
 import (
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
+
+	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gorilla/mux"
-	"log"
-	"net/http"
 )
 
 func main() {
@@ -82,7 +84,6 @@ func main() {
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
-	log.Println("Listening 9033")
 	go func() {
 		_ = http.ListenAndServe(":9033", app)
 	}()

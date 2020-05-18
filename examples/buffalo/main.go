@@ -1,22 +1,23 @@
 package main
 
 import (
-	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
+
+	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gobuffalo/buffalo"
-	"net/http"
 )
 
 func main() {

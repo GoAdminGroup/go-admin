@@ -67,6 +67,8 @@ type Template interface {
 	GetRequirements() []string
 	GetHeadHTML() template.HTML
 	GetFootJS() template.HTML
+	Get404Page() template.HTML
+	GetErrorPage() template.HTML
 }
 
 const (

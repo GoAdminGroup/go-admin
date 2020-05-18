@@ -1,21 +1,22 @@
 package main
 
 import (
-	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	_ "github.com/GoAdminGroup/themes/adminlte"
-	"github.com/labstack/echo/v4"
 	"log"
 	"os"
 	"os/signal"
+
+	_ "github.com/GoAdminGroup/go-admin/adapter/echo"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/labstack/echo/v4"
 )
 
 func main() {

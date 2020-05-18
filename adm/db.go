@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
-	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"gopkg.in/ini.v1"
@@ -19,6 +18,21 @@ type dbInfo struct {
 	Password   string
 	Schema     string
 	Database   string
+}
+
+func initSurvey() {
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
+		"type to filter", "type to filter, enter to select", -1)
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
+		"enter to select", "space to select", -1)
+
+	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
+		"Use arrows to move, type to filter, enter to select",
+		getWord("Use arrows to move, type to filter, enter to select"), -1)
+
+	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
+		"Use arrows to move, space to select, type to filter",
+		getWord("Use arrows to move, space to select, type to filter"), -1)
 }
 
 func getDBInfoFromINIConfig(cfg *ini.File, connection string) *dbInfo {
@@ -46,44 +60,14 @@ func getDBInfoFromINIConfig(cfg *ini.File, connection string) *dbInfo {
 	return &dbInfo{}
 }
 
-func askForDBInfo(info *dbInfo) db.Connection {
+func askForDBConfig(info *dbInfo) config.DatabaseList {
 
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
-		"type to filter", "type to filter, enter to select", -1)
-	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
-		"enter to select", "space to select", -1)
-
-	survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate,
-		"Use arrows to move, type to filter, enter to select",
-		getWord("Use arrows to move, type to filter, enter to select"), -1)
-
-	survey.MultiSelectQuestionTemplate = strings.Replace(survey.MultiSelectQuestionTemplate,
-		"Use arrows to move, space to select, type to filter",
-		getWord("Use arrows to move, space to select, type to filter"), -1)
+	initSurvey()
 
 	if info.DriverName == "" {
-		var qs = []*survey.Question{
-			{
-				Name: "driver",
-				Prompt: &survey.Select{
-					Message: getWord("choose a driver"),
-					Options: []string{"mysql", "postgresql", "sqlite", "mssql"},
-					Default: "mysql",
-				},
-			},
-		}
-
-		var result = make(map[string]interface{})
-
-		err := survey.Ask(qs, &result)
-		checkError(err)
-		info.DriverName = result["driver"].(core.OptionAnswer).Value
+		info.DriverName = singleSelect(getWord("choose a driver"),
+			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
 	}
-
-	var (
-		cfg  map[string]config.Database
-		conn = db.GetConnectionByDriver(info.DriverName)
-	)
 
 	if info.DriverName != "sqlite" {
 
@@ -124,10 +108,7 @@ func askForDBInfo(info *dbInfo) db.Connection {
 			info.Database = prompt("sql database name")
 		}
 
-		if conn == nil {
-			panic("invalid db connection")
-		}
-		cfg = map[string]config.Database{
+		return map[string]config.Database{
 			"default": {
 				Host:       info.Host,
 				Port:       info.Port,
@@ -146,16 +127,21 @@ func askForDBInfo(info *dbInfo) db.Connection {
 			info.File = prompt("sql file")
 		}
 
-		if conn == nil {
-			panic("invalid db connection")
-		}
-		cfg = map[string]config.Database{
+		return map[string]config.Database{
 			"default": {
 				Driver: info.DriverName,
 				File:   info.File,
 			},
 		}
 	}
+}
+
+func askForDBConnection(info *dbInfo) db.Connection {
+
+	var (
+		cfg  = askForDBConfig(info)
+		conn = db.GetConnectionByDriver(info.DriverName)
+	)
 
 	conn.InitDB(cfg)
 

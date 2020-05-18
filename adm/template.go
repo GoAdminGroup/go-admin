@@ -13,11 +13,25 @@ import (
 
 func getThemeTemplate(moduleName, themeName string) {
 
-	defer func() {
-		_ = os.Remove("tmp.zip")
-	}()
+	downloadTo("http://file.go-admin.cn/go_admin/template/template.zip", "tmp.zip")
 
-	url := "http://file.go-admin.cn/go_admin/template/template.zip"
+	checkError(unzipDir("tmp.zip", "."))
+
+	checkError(os.Rename("./QiAtztVk83CwCh", "./"+themeName))
+
+	replaceContents("./"+themeName, moduleName, themeName)
+
+	checkError(os.Rename("./"+themeName+"/template.go", "./"+themeName+"/"+themeName+".go"))
+
+	fmt.Println()
+	fmt.Println("generate theme template success!!🍺🍺")
+	fmt.Println()
+}
+
+func downloadTo(url, output string) {
+	defer func() {
+		_ = os.Remove(output)
+	}()
 
 	req, err := http.NewRequest("GET", url, nil)
 
@@ -31,25 +45,11 @@ func getThemeTemplate(moduleName, themeName string) {
 		_ = res.Body.Close()
 	}()
 
-	file, err := os.Create("tmp.zip")
-
-	checkError(err)
+	file, err := os.Create(output)
 
 	_, err = io.Copy(file, res.Body)
 
 	checkError(err)
-
-	checkError(unzipDir("tmp.zip", "."))
-
-	checkError(os.Rename("./QiAtztVk83CwCh", "./"+themeName))
-
-	replaceContents("./"+themeName, moduleName, themeName)
-
-	checkError(os.Rename("./"+themeName+"/template.go", "./"+themeName+"/"+themeName+".go"))
-
-	fmt.Println()
-	fmt.Println("generate theme template success!!🍺🍺")
-	fmt.Println()
 }
 
 func unzipDir(src, dest string) error {

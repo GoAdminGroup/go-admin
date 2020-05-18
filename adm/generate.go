@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
@@ -77,7 +78,7 @@ func generating(cfgFile string) {
 	}
 
 	// step 1. get connection
-	conn := askForDBInfo(info)
+	conn := askForDBConnection(info)
 
 	// step 2. show tables
 	if len(chooseTables) == 0 {
@@ -132,7 +133,7 @@ func generating(cfgFile string) {
 			if cfgFile != "" {
 				defInfo = getDBInfoFromINIConfig(cfgModel, "")
 			}
-			defConn := askForDBInfo(defInfo)
+			defConn := askForDBConnection(defInfo)
 			for _, table := range chooseTables {
 				insertPermissionOfTable(defConn, table)
 			}
@@ -165,6 +166,8 @@ func generating(cfgFile string) {
 	fmt.Println(ansi.Color(getWord("Generate data table models success~~🍺🍺"), "green"))
 	fmt.Println()
 	fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn/en/#/introduce/plugins/admin",
+		"blue"))
+	fmt.Println(getWord("visit forum: ") + ansi.Color("http://discuss.go-admin.com",
 		"blue"))
 	fmt.Println()
 	fmt.Println()
@@ -286,6 +289,25 @@ func selects(tables []string) []string {
 	checkError(err)
 
 	return chooseTables
+}
+
+func singleSelect(msg string, options []string, def string) string {
+	var qs = []*survey.Question{
+		{
+			Name: "question",
+			Prompt: &survey.Select{
+				Message: msg,
+				Options: options,
+				Default: def,
+			},
+		},
+	}
+	var result = make(map[string]interface{})
+	err := survey.Ask(qs, &result)
+	checkError(err)
+
+	return result["question"].(core.OptionAnswer).Value
+
 }
 
 func generateTables(outputPath string, tables []string, packageName string) {

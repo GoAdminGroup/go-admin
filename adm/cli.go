@@ -132,6 +132,19 @@ func main() {
 		}
 	})
 
+	app.Command("init", "generate a template project", func(cmd *cli.Cmd) {
+
+		var (
+			config = cmd.StringOpt("c config", "", "config ini path")
+			lang   = cmd.StringOpt("l language", "en", "language")
+		)
+
+		cmd.Action = func() {
+			setDefaultLangSet(*lang)
+			buildProject(*config)
+		}
+	})
+
 	app.Command("add", "generate user/permission/roles", func(cmd *cli.Cmd) {
 
 		cmd.Command("user", "generate users", func(cmd *cli.Cmd) {

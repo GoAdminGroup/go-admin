@@ -46,9 +46,28 @@ var langs = map[string]map[string]string{
 		"Add table permissions success~~🍺🍺":                   "增加表格权限成功~~🍺🍺",
 		"Generate data table models success~~🍺🍺":              "生成数据模型文件成功~~🍺🍺",
 		"see the docs: ": "查看文档：",
+		"visit forum: ":  "访问论坛：",
 		"generating: ":   "生成中：",
+
+		"choose a theme":   "选择主题",
+		"choose language":  "选择语言",
+		"choose framework": "选择框架",
+		"Generate project template success~~🍺🍺": "生成项目模板成功~~🍺🍺",
+
+		"port":       "端口",
+		"url prefix": "路由前缀",
+
+		"cn": "简体中文",
+		"en": "英文",
+		"jp": "日文",
+		"tc": "繁体中文",
 	},
-	"en": {},
+	"en": {
+		"cn": "Chinese",
+		"en": "English",
+		"jp": "Japanese",
+		"tc": "Traditional Chinese",
+	},
 }
 
 var defaultLang = "en"
