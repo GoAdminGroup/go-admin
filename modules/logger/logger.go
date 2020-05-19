@@ -229,27 +229,6 @@ func SetRotate(cfg RotateCfg) {
 	logger.Init()
 }
 
-// SetInfoLogger set the info logger.
-func SetInfoLogger(path string, isInfoLogOff bool) {
-	logger.infoLogPath = path
-	logger.infoLogOff = isInfoLogOff
-	logger.Init()
-}
-
-// SetErrorLogger set the error logger.
-func SetErrorLogger(path string, isErrorLogOff bool) {
-	logger.errorLogPath = path
-	logger.errorLogOff = isErrorLogOff
-	logger.Init()
-}
-
-// SetAccessLogger set the access logger.
-func SetAccessLogger(path string, isAccessLogOff bool) {
-	logger.accessLogPath = path
-	logger.accessLogOff = isAccessLogOff
-	logger.Init()
-}
-
 // OpenSQLLog set the sqlLogOpen true.
 func OpenSQLLog() {
 	logger.sqlLogOpen = true
@@ -266,114 +245,92 @@ func Debug(info ...interface{}) {
 
 // Debugf print the debug message.
 func Debugf(template string, args ...interface{}) {
-	if !logger.infoLogOff {
-		if logger.Level <= zapcore.DebugLevel {
-			logger.sugaredLogger.Infof(template, args...)
-		}
+	if !logger.infoLogOff && logger.Level <= zapcore.DebugLevel {
+		logger.sugaredLogger.Infof(template, args...)
 	}
 }
 
 // Info print the info message.
 func Info(info ...interface{}) {
-	if !logger.infoLogOff {
-		if logger.Level <= zapcore.InfoLevel {
-			logger.sugaredLogger.Info(info...)
-		}
+	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
+		logger.sugaredLogger.Info(info...)
 	}
 }
 
 // Info print the info message.
 func Infof(template string, args ...interface{}) {
-	if !logger.infoLogOff {
-		if logger.Level <= zapcore.InfoLevel {
-			logger.sugaredLogger.Infof(template, args...)
-		}
+	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
+		logger.sugaredLogger.Infof(template, args...)
 	}
 }
 
 // Warn print the warning message.
 func Warn(info ...interface{}) {
-	if !logger.infoLogOff {
-		if logger.Level <= zapcore.WarnLevel {
-			logger.sugaredLogger.Warn(info...)
-		}
+	if !logger.infoLogOff && logger.Level <= zapcore.WarnLevel {
+		logger.sugaredLogger.Warn(info...)
 	}
 }
 
 // Warnf print the warning message.
 func Warnf(template string, args ...interface{}) {
-	if !logger.infoLogOff {
-		if logger.Level <= zapcore.WarnLevel {
-			logger.sugaredLogger.Warnf(template, args...)
-		}
+	if !logger.infoLogOff && logger.Level <= zapcore.WarnLevel {
+		logger.sugaredLogger.Warnf(template, args...)
 	}
 }
 
 // Error print the error message.
 func Error(err ...interface{}) {
-	if !logger.errorLogOff {
-		if logger.Level <= zapcore.ErrorLevel {
-			logger.sugaredLogger.Error(err...)
-		}
+	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
+		logger.sugaredLogger.Error(err...)
 	}
 }
 
 // Errorf print the error message.
 func Errorf(template string, args ...interface{}) {
-	if !logger.errorLogOff {
-		if logger.Level <= zapcore.ErrorLevel {
-			logger.sugaredLogger.Errorf(template, args...)
-		}
+	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
+		logger.sugaredLogger.Errorf(template, args...)
 	}
 }
 
 // Fatal print the fatal message.
 func Fatal(info ...interface{}) {
-	if !logger.errorLogOff {
-		if logger.Level <= zapcore.ErrorLevel {
-			logger.sugaredLogger.Fatal(info...)
-		}
+	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
+		logger.sugaredLogger.Fatal(info...)
 	}
 }
 
 // Fatalf print the fatal message.
 func Fatalf(template string, args ...interface{}) {
-	if !logger.errorLogOff {
-		if logger.Level <= zapcore.ErrorLevel {
-			logger.sugaredLogger.Fatalf(template, args...)
-		}
+	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
+		logger.sugaredLogger.Fatalf(template, args...)
 	}
 }
 
 // Access print the access message.
 func Access(ctx *context.Context) {
-	if !logger.accessLogOff {
-		if logger.Level <= zapcore.InfoLevel {
-			temp := "[GoAdmin] %s %s %s"
-			if logger.accessAssetsLogOff {
-				if filepath.Ext(ctx.Path()) == "" {
-					logger.sugaredLogger.Warnf(temp,
-						ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-						ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
-						ctx.Path())
-				}
-			} else {
+	if !logger.accessLogOff && logger.Level <= zapcore.InfoLevel {
+		temp := "[GoAdmin] %s %s %s"
+		if logger.accessAssetsLogOff {
+			if filepath.Ext(ctx.Path()) == "" {
 				logger.sugaredLogger.Warnf(temp,
 					ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
 					ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
 					ctx.Path())
 			}
+		} else {
+			logger.sugaredLogger.Warnf(temp,
+				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
+				ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+				ctx.Path())
 		}
 	}
 }
 
 // LogSQL print the sql info message.
 func LogSQL(statement string, args []interface{}) {
-	if !logger.infoLogOff {
-		if logger.sqlLogOpen && statement != "" {
-			if logger.Level <= zapcore.InfoLevel {
-				logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
-			}
+	if !logger.infoLogOff && logger.sqlLogOpen && statement != "" {
+		if logger.Level <= zapcore.InfoLevel {
+			logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
 		}
 	}
 }
