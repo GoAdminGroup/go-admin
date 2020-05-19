@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -363,11 +362,4 @@ var Generators = map[string]table.Generator{` + tableStr + `
 
 	checkError(err)
 	checkError(ioutil.WriteFile(outputPath+"/tables.go", c, 0644))
-}
-
-func getType(typeName string) string {
-	r, _ := regexp.Compile(`\(.*?\)`)
-	typeName = r.ReplaceAllString(typeName, "")
-	r2, _ := regexp.Compile(`unsigned(.*)`)
-	return strings.TrimSpace(strings.Title(strings.ToLower(r2.ReplaceAllString(typeName, ""))))
 }
