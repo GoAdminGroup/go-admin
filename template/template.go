@@ -62,14 +62,20 @@ type Template interface {
 	GetAssetList() []string
 	GetAssetImportHTML(exceptComponents ...string) template.HTML
 	GetAsset(string) ([]byte, error)
-	GetTemplate(bool) (*template.Template, string)
+	GetTemplate(bool, ...PageType) (*template.Template, string)
 	GetVersion() string
 	GetRequirements() []string
 	GetHeadHTML() template.HTML
 	GetFootJS() template.HTML
-	Get404Page() template.HTML
-	GetErrorPage() template.HTML
 }
+
+type PageType uint8
+
+const (
+	NormalPage PageType = iota
+	Missing404Page
+	Error500Page
+)
 
 const (
 	CompCol       = "col"
@@ -114,7 +120,7 @@ func Get(theme string) Template {
 	panic("wrong theme name")
 }
 
-// Get the default template with the theme name set with the global config.
+// Default get the default template with the theme name set with the global config.
 // If the name is not found, it panics.
 func Default() Template {
 	if temp, ok := templateMap[c.GetTheme()]; ok {
@@ -166,7 +172,7 @@ func VersionCompare(toCompare string, versions []string) bool {
 	return false
 }
 
-var DefaultThemeNames = []string{"adminlte", "sword"}
+var DefaultThemeNames = []string{"sword", "adminlte"}
 
 func Themes() []string {
 	names := make([]string, len(templateMap))

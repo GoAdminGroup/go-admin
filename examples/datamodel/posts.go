@@ -29,7 +29,9 @@ func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 			GetContent()
 	})
 	info.AddField("AuthorName", "name", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
-		return value.Row["authors_goadmin_join_first_name"].(string) + " " + value.Row["authors_goadmin_join_last_name"].(string)
+		first, _ := value.Row["authors_goadmin_join_first_name"].(string)
+		last, _ := value.Row["authors_goadmin_join_last_name"].(string)
+		return first + " " + last
 	})
 	info.AddField("AuthorFirstName", "first_name", db.Varchar).FieldJoin(types.Join{
 		Field:     "author_id",

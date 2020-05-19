@@ -42,10 +42,15 @@ func BadRequest(ctx *context.Context, msg string) {
 	})
 }
 
-func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection) {
+func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, pageType ...template.PageType) {
 	user := auth.Auth(ctx)
 
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+	pt := template.Error500Page
+	if len(pageType) > 0 {
+		pt = pageType[0]
+	}
+
+	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax(), pt)
 	buf := template.Execute(template.ExecuteParam{
 		User:     user,
 		TmplName: tmplName,

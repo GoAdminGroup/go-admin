@@ -8,6 +8,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
 )
 
 type Guard struct {
@@ -37,7 +38,7 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
 			response.BadRequest(ctx, errors.Msg)
 		} else {
-			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn)
+			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn, template.Missing404Page)
 		}
 		ctx.Abort()
 		return

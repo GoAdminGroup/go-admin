@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -842,9 +843,11 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 
 	// If a key is a auto increment primary key, it can`t be insert or update.
 	if auto {
-		exceptString = []string{tb.PrimaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey}
+		exceptString = []string{tb.PrimaryKey.Name, form.PreviousKey, form.MethodKey, form.TokenKey,
+			constant.IframeKey, constant.IframeIDKey}
 	} else {
-		exceptString = []string{form.PreviousKey, form.MethodKey, form.TokenKey}
+		exceptString = []string{form.PreviousKey, form.MethodKey, form.TokenKey,
+			constant.IframeKey, constant.IframeIDKey}
 	}
 
 	if !dataList.IsSingleUpdatePost() {

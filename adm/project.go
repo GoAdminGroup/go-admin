@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/mgutz/ansi"
 	"go/format"
 	"gopkg.in/ini.v1"
@@ -65,7 +66,7 @@ func buildProject(cfgFile string) {
 	initSurvey()
 
 	if p.Theme == "" {
-		p.Theme = singleSelect(getWord("choose a theme"), []string{"sword", "adminlte"}, "sword")
+		p.Theme = singleSelect(getWord("choose a theme"), template2.DefaultThemeNames, "sword")
 	}
 	if p.Framework == "" {
 		p.Framework = singleSelect(getWord("choose framework"),
