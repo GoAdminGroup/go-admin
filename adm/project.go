@@ -153,8 +153,13 @@ func buildProject(cfgFile string) {
 	fmt.Println()
 	fmt.Println(ansi.Color(getWord("Generate project template success~~🍺🍺"), "green"))
 	fmt.Println()
-	fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
-		"blue"))
+	if defaultLang == "cn" {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
+			"blue"))
+	} else {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("https://book.go-admin.com",
+			"blue"))
+	}
 	fmt.Println(getWord("visit forum: ") + ansi.Color("http://discuss.go-admin.com",
 		"blue"))
 	fmt.Println()

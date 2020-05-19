@@ -29,7 +29,7 @@ var langs = map[string]map[string]string{
 		"set connection name":  "设置连接",
 		"set file output path": "设置文件输出路径",
 
-		"generate permission records for tables, Y on behalf of yes": "是否生成表格权限，Y 代表是",
+		"generate permission records for tables": "是否生成表格权限",
 
 		"Query":                 "查询",
 		"Show Edit Form Page":   "编辑页显示",
@@ -56,6 +56,9 @@ var langs = map[string]map[string]string{
 
 		"port":       "端口",
 		"url prefix": "路由前缀",
+
+		"yes": "是",
+		"no":  "否",
 
 		"cn": "简体中文",
 		"en": "英文",

@@ -3,6 +3,7 @@ package tools
 import (
 	"bytes"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"go/format"
 	"io/ioutil"
@@ -39,6 +40,17 @@ type Config struct {
 	HideFilterArea bool          `json:"hide_filter_area"`
 }
 
+func fixedTable(table string) string {
+	if utils.InArray(keyWords, table) {
+		return table + "_"
+	}
+	return table
+}
+
+var keyWords = []string{"import", "package", "chan", "const", "func", "interface", "map", "struct", "type",
+	"var", "break", "case", "continue", "default", "defer", "else", "fallthrough", "for", "go", "goto", "if",
+	"range", "return", "select", "switch"}
+
 func NewParam(cfg Config) Param {
 	ta := camelcase(cfg.Table)
 	dbTable := cfg.Table
@@ -50,7 +62,7 @@ func NewParam(cfg Config) Param {
 		Connection:     cfg.Connection,
 		Driver:         cfg.Driver,
 		Package:        cfg.Package,
-		Table:          ta,
+		Table:          fixedTable(ta),
 		TableTitle:     strings.Title(ta),
 		TableName:      dbTable,
 		HideFilterArea: cfg.HideFilterArea,

@@ -118,11 +118,11 @@ func generating(cfgFile string) {
 	}
 
 	if generatePermissionFlag == "" {
-		generatePermissionFlag = promptWithDefault("generate permission records for tables, Y on behalf of yes",
-			"Y")
+		generatePermissionFlag = singleSelect(getWord("generate permission records for tables"),
+			[]string{getWord("yes"), getWord("no")}, getWord("yes"))
 	}
 
-	if generatePermissionFlag == "Y" {
+	if generatePermissionFlag == getWord("yes") {
 		if connection == "default" {
 			for _, table := range chooseTables {
 				insertPermissionOfTable(conn, table)
@@ -164,8 +164,13 @@ func generating(cfgFile string) {
 	fmt.Println()
 	fmt.Println(ansi.Color(getWord("Generate data table models success~~🍺🍺"), "green"))
 	fmt.Println()
-	fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn/en/#/introduce/plugins/admin",
-		"blue"))
+	if defaultLang == "cn" {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
+			"blue"))
+	} else {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("https://book.go-admin.com",
+			"blue"))
+	}
 	fmt.Println(getWord("visit forum: ") + ansi.Color("http://discuss.go-admin.com",
 		"blue"))
 	fmt.Println()
