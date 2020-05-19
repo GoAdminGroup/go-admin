@@ -6,12 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/mgutz/ansi"
 	"go/format"
 	"gopkg.in/ini.v1"
 	"io/ioutil"
 	"os"
+	"runtime"
 	"strings"
 	"text/template"
 )
@@ -26,6 +28,9 @@ type Project struct {
 }
 
 func buildProject(cfgFile string) {
+
+	clear(runtime.GOOS)
+	cliInfo()
 
 	var (
 		p        Project
@@ -65,16 +70,27 @@ func buildProject(cfgFile string) {
 
 	initSurvey()
 
-	if p.Theme == "" {
-		p.Theme = singleSelect(getWord("choose a theme"), template2.DefaultThemeNames, "sword")
-	}
 	if p.Framework == "" {
 		p.Framework = singleSelect(getWord("choose framework"),
 			[]string{"gin", "beego", "buffalo", "fasthttp", "echo", "chi", "gf", "gorilla", "iris"}, "gin")
 	}
+	if p.Theme == "" {
+		p.Theme = singleSelect(getWord("choose a theme"), template2.DefaultThemeNames, "sword")
+	}
 	if p.Language == "" {
 		p.Language = singleSelect(getWord("choose language"),
-			[]string{getWord("cn"), getWord("en"), getWord("jp"), getWord("tc")}, "cn")
+			[]string{getWord("cn"), getWord("en"), getWord("jp"), getWord("tc")},
+			getWord("cn"))
+		switch p.Language {
+		case getWord("cn"):
+			p.Language = language.CN
+		case getWord("en"):
+			p.Language = language.EN
+		case getWord("jp"):
+			p.Language = language.JP
+		case getWord("tc"):
+			p.Language = language.TC
+		}
 	}
 	if p.Port == "" {
 		p.Port = promptWithDefault(getWord("port"), "80")
@@ -91,7 +107,7 @@ func buildProject(cfgFile string) {
 		"title": func(s string) string {
 			return strings.Title(s)
 		},
-	}).Parse(ProjectTemplate[p.Framework])
+	}).Parse(projectTemplate[p.Framework])
 	checkError(err)
 	buf := new(bytes.Buffer)
 	checkError(t.Execute(buf, p))
@@ -103,16 +119,25 @@ func buildProject(cfgFile string) {
 	checkError(os.Mkdir("tables", os.ModePerm))
 	checkError(os.Mkdir("logs", os.ModePerm))
 	checkError(os.Mkdir("uploads", os.ModePerm))
+	checkError(os.Mkdir("build", os.ModePerm))
 
 	checkError(ioutil.WriteFile("./logs/access.log", []byte{}, os.ModePerm))
 	checkError(ioutil.WriteFile("./logs/info.log", []byte{}, os.ModePerm))
 	checkError(ioutil.WriteFile("./logs/error.log", []byte{}, os.ModePerm))
 
 	if p.Theme == "sword" {
-		checkError(ioutil.WriteFile("./index.go", swordIndexPage, os.ModePerm))
+		checkError(ioutil.WriteFile("./index.go", swordIndexPage, 0644))
 	} else {
-		checkError(ioutil.WriteFile("./index.go", adminlteIndexPage, os.ModePerm))
+		checkError(ioutil.WriteFile("./index.go", adminlteIndexPage, 0644))
 	}
+
+	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+		checkError(ioutil.WriteFile("./main_test.go", mainTestCN, 0644))
+	} else {
+		checkError(ioutil.WriteFile("./main_test.go", mainTest, 0644))
+	}
+
+	checkError(ioutil.WriteFile("./Makefile", makefile, 0644))
 
 	// generate config json
 
@@ -137,6 +162,14 @@ func buildProject(cfgFile string) {
 	}
 
 	cfg.Databases = askForDBConfig(info)
+
+	if cfgFile == "" {
+		t, err := template.New("ini").Parse(admINI)
+		checkError(err)
+		buf := new(bytes.Buffer)
+		checkError(t.Execute(buf, info))
+		checkError(ioutil.WriteFile("./adm.ini", buf.Bytes(), 0644))
+	}
 
 	configByte, err := json.MarshalIndent(cfg, "", "	")
 	configByte = bytes.Replace(configByte, []byte(`

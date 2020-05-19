@@ -54,8 +54,9 @@ var langs = map[string]map[string]string{
 		"choose framework": "选择框架",
 		"Generate project template success~~🍺🍺": "生成项目模板成功~~🍺🍺",
 
-		"port":       "端口",
-		"url prefix": "路由前缀",
+		"port":        "端口",
+		"url prefix":  "路由前缀",
+		"module path": "模块路径",
 
 		"yes": "是",
 		"no":  "否",

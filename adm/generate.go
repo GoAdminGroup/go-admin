@@ -35,7 +35,7 @@ var systemGoAdminTables = []string{
 	"goadmin_user_permissions",
 }
 
-func generating(cfgFile string) {
+func generating(cfgFile, connName string) {
 
 	clear(runtime.GOOS)
 	cliInfo()
@@ -71,6 +71,10 @@ func generating(cfgFile string) {
 			packageName = modelCfgModel.Key("package").Value()
 			outputPath = modelCfgModel.Key("output").Value()
 			generatePermissionFlag = modelCfgModel.Key("generate_permission_flag").Value()
+		}
+
+		if connection == "" {
+			connection = connName
 		}
 
 		info = getDBInfoFromINIConfig(cfgModel, connection)

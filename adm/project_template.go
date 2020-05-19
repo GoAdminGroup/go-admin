@@ -1,6 +1,6 @@
 package main
 
-var ProjectTemplate = map[string]string{
+var projectTemplate = map[string]string{
 	"gin": `{{define "project"}}
 package main
 
@@ -19,6 +19,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	gin.SetMode(gin.ReleaseMode)
 	gin.DefaultWriter = ioutil.Discard
 
@@ -62,6 +66,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	app := beego.NewApp()
 
 	eng := engine.Default()
@@ -105,6 +113,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	bu := buffalo.New(buffalo.Options{
 		Env:  "test",
 		Addr: "127.0.0.1:{{.Port}}",
@@ -153,6 +165,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	r := chi.NewRouter()
 
 	eng := engine.Default()
@@ -166,7 +182,7 @@ func main() {
 
 	workDir, _ := os.Getwd()
 	filesDir := filepath.Join(workDir, "uploads")
-	FileServer(r, "/uploads", http.Dir(filesDir))
+	fileServer(r, "/uploads", http.Dir(filesDir))
 
 	go func() {
 		_ = http.ListenAndServe(":{{.Port}}", r)
@@ -180,9 +196,9 @@ func main() {
 }
 
 
-// FileServer conveniently sets up a http.FileServer handler to serve
+// fileServer conveniently sets up a http.FileServer handler to serve
 // static files from a http.FileSystem.
-func FileServer(r chi.Router, path string, root http.FileSystem) {
+func fileServer(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit URL parameters.")
 	}
@@ -218,6 +234,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	e := echo.New()
 
 	eng := engine.Default()
@@ -259,6 +279,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	router := fasthttprouter.New()
 
 	eng := engine.Default()
@@ -301,6 +325,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	s := g.Server()
 
 	eng := engine.Default()
@@ -343,6 +371,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	app := mux.NewRouter()
 
 	eng := engine.Default()
@@ -385,6 +417,10 @@ import (
 )
 
 func main() {
+	startServer()
+}
+
+func startServer() {
 	app := iris.Default()
 
 	eng := engine.Default()
@@ -1082,3 +1118,163 @@ like Aldus PageMaker including versions of Lorem Ipsum.
 		Description: "dashboard example",
 	}, nil
 }`)
+
+var mainTest = []byte(`package main
+
+import (
+	"github.com/GoAdminGroup/demo/tables"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/tests"
+	"github.com/GoAdminGroup/go-admin/tests/common"
+	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
+	"github.com/GoAdminGroup/go-admin/tests/web"
+	"github.com/gavv/httpexpect"
+	"log"
+	"testing"
+)
+
+// Black box testing
+func TestMainBlackBox(t *testing.T) {
+	cfg := config.ReadFromJson("./config.json")
+	tests.BlackBoxTestSuit(t, gin.NewHandler, cfg.Databases, tables.Generators, func(cfg config.DatabaseList) {
+		// Data cleaner of the framework
+		tests.Cleaner(cfg)
+		// Clean your own data:
+		// ...
+	}, func(e *httpexpect.Expect) {
+		// Test cases of the framework
+		common.Test(e)
+		// Write your own API test, for example:
+		// More usages: https://github.com/gavv/httpexpect
+		// e.POST("/signin").Expect().Status(http.StatusOK)
+	})
+}
+
+// User acceptance testing
+func TestMainUserAcceptance(t *testing.T) {
+	web.UserAcceptanceTestSuit(t, func(t *testing.T, page *web.Page) {
+		// Write test case base on chromedriver, for example:
+		// More usages: https://github.com/sclevine/agouti
+		page.NavigateTo("http://127.0.0.1:9033/admin")
+		//page.Contain("username")
+		//page.Click("")
+	}, func(quit chan struct{}) {
+		// start the server:
+		// ....
+		go startServer()
+		<-quit
+		log.Print("test quit")
+	}, true) // if local parameter is true, it will not be headless, and window not close when finishing tests.
+}`)
+
+var mainTestCN = []byte(`package main
+
+import (
+	"github.com/GoAdminGroup/demo/tables"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/tests"
+	"github.com/GoAdminGroup/go-admin/tests/common"
+	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
+	"github.com/GoAdminGroup/go-admin/tests/web"
+	"github.com/gavv/httpexpect"
+	"log"
+	"testing"
+)
+
+// 黑盒测试
+func TestMainBlackBox(t *testing.T) {
+	cfg := config.ReadFromJson("./config.json")
+	tests.BlackBoxTestSuit(t, gin.NewHandler, cfg.Databases, tables.Generators, func(cfg config.DatabaseList) {
+		// 框架自带数据清理
+		tests.Cleaner(cfg)
+		// 以下清理自己的数据：
+		// ...
+	}, func(e *httpexpect.Expect) {
+		// 框架自带内置表测试
+		common.Test(e)
+		// 以下写API测试：
+		// 更多用法：https://github.com/gavv/httpexpect
+		// ...
+		// e.POST("/signin").Expect().Status(http.StatusOK)
+	})
+}
+
+// 浏览器验收测试
+func TestMainUserAcceptance(t *testing.T) {
+	web.UserAcceptanceTestSuit(t, func(t *testing.T, page *web.Page) {
+		// 写浏览器测试，基于chromedriver
+		// 更多用法：https://github.com/sclevine/agouti
+		// page.NavigateTo("http://127.0.0.1:9033/admin")
+		// page.Contain("username")
+		// page.Click("")
+	}, func(quit chan struct{}) {
+		// 启动服务器
+		go startServer()
+		<-quit
+		log.Print("test quit")
+	}, true)
+}`)
+
+var makefile = []byte(`GOCMD = go
+GOBUILD = $(GOCMD) build
+GOINSTALL = $(GOCMD) install
+GOTEST = $(GOCMD) test
+BINARY_NAME = goadmin
+CLI = adm
+
+all: serve
+
+serve:
+	$(GOCMD) run .
+
+build:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o ./build/$(BINARY_NAME) -v ./
+
+generate:
+	$(GOINSTALL) github.com/GoAdminGroup/go-admin/adm
+	$(CLI) generate -c adm.ini
+
+test: black-box-test user-acceptance-test
+
+black-box-test: ready-for-data
+	$(GOTEST) -v -test.run=TestMainBlackBox
+	make clean
+
+user-acceptance-test: ready-for-data
+	$(GOTEST) -v -test.run=TestMainUserAcceptance
+	make clean
+
+ready-for-data:
+	cp admin.db admin_test.db
+
+clean:
+	rm admin_test.db
+
+.PHONY: all serve build generate test black-box-test user-acceptance-test ready-for-data clean`)
+
+var admINI = `{{define "ini"}}
+; default database config 默认数据库配置
+[database]{{if eq .DriverName "sqlite"}}
+driver = sqlite
+file = {{.File}}
+{{else}}
+driver = {{.DriverName}}
+host = {{.Host}}
+username = {{.User}} 
+port = {{.Port}}
+password = {{.Password}}
+database = {{.Database}} 
+{{end}}
+; Here are new tables to generate. 新的待转换的表格
+; tables = new_table1,new_table2
+
+; specified connection database config 指定数据库配置
+; for example, database config which connection name is mydb.
+;[database.mydb]
+
+; table model config 数据模型设置
+[model]
+package = main
+connection = default
+output = ./tables
+{{end}}`

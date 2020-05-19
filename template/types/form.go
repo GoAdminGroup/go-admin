@@ -89,20 +89,20 @@ func (fo FieldOptions) Marshal() string {
 	return string(eo)
 }
 
-type OptionInitFn func(val FieldModel) FieldOptions
-type OptionArrInitFn func(val FieldModel) []FieldOptions
+type (
+	OptionInitFn              func(val FieldModel) FieldOptions
+	OptionArrInitFn           func(val FieldModel) []FieldOptions
+	OptionTableQueryProcessFn func(sql *db.SQL) *db.SQL
+	OptionProcessFn           func(options FieldOptions) FieldOptions
 
-type OptionTable struct {
-	Table          string
-	TextField      string
-	ValueField     string
-	QueryProcessFn OptionTableQueryProcessFn
-	ProcessFn      OptionProcessFn
-}
-
-type OptionTableQueryProcessFn func(sql *db.SQL) *db.SQL
-
-type OptionProcessFn func(options FieldOptions) FieldOptions
+	OptionTable struct {
+		Table          string
+		TextField      string
+		ValueField     string
+		QueryProcessFn OptionTableQueryProcessFn
+		ProcessFn      OptionProcessFn
+	}
+)
 
 // FormField is the form field with different options.
 type FormField struct {
@@ -1722,14 +1722,13 @@ func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
 	return newForm
 }
 
-type FormPreProcessFn func(values form.Values) form.Values
-
-type FormPostFn func(values form.Values) error
-
-type FormFields []FormField
-
-type GroupFormFields []FormFields
-type GroupFieldHeaders []string
+type (
+	FormPreProcessFn  func(values form.Values) form.Values
+	FormPostFn        func(values form.Values) error
+	FormFields        []FormField
+	GroupFormFields   []FormFields
+	GroupFieldHeaders []string
+)
 
 func (f FormFields) Copy() FormFields {
 	formList := make(FormFields, len(f))

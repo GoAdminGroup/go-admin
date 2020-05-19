@@ -124,11 +124,12 @@ func main() {
 		var (
 			config = cmd.StringOpt("c config", "", "config ini path")
 			lang   = cmd.StringOpt("l language", "en", "language")
+			conn   = cmd.StringOpt("conn connection", "", "connection")
 		)
 
 		cmd.Action = func() {
 			setDefaultLangSet(*lang)
-			generating(*config)
+			generating(*config, *conn)
 		}
 	})
 
