@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
 
@@ -64,6 +65,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetTabContents(formInfo.GroupFieldList).
 		SetTabHeaders(formInfo.GroupFieldHeaders).
 		SetUrl(newUrl).
+		SetAjax(f.AjaxSuccessJS, f.AjaxErrorJS).
 		SetInputWidth(f.InputWidth).
 		SetHeadWidth(f.HeadWidth).
 		SetLayout(f.Layout).
@@ -99,19 +101,34 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+			if ctx.WantJSON() {
+				response.Error(ctx, err.Error())
+			} else {
+				h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+			}
 			return
 		}
 	}
 
 	err := param.Panel.InsertData(param.Value())
 	if err != nil {
-		h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+		if ctx.WantJSON() {
+			response.Error(ctx, err.Error())
+		} else {
+			h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+		}
 		return
 	}
 
 	if param.Panel.GetForm().Responder != nil {
 		param.Panel.GetForm().Responder(ctx)
+		return
+	}
+
+	if ctx.WantJSON() && !param.IsIframe {
+		response.OkWithData(ctx, map[string]interface{}{
+			"url": param.PreviousPath,
+		})
 		return
 	}
 

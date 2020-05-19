@@ -99,7 +99,6 @@ func (e EditFormParam) Value() form.Values {
 func (g *Guard) EditForm(ctx *context.Context) {
 	previous := ctx.FormValue(form.PreviousKey)
 	panel, prefix := g.table(ctx)
-	multiForm := ctx.Request.MultipartForm
 
 	if !panel.GetEditable() {
 		alert(ctx, panel, errors.OperationNotAllow, g.conn)
@@ -122,6 +121,8 @@ func (g *Guard) EditForm(ctx *context.Context) {
 	if fromList {
 		previous = config.Url("/info/" + prefix + param.GetRouteParamStr())
 	}
+
+	multiForm := ctx.Request.MultipartForm
 
 	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
 

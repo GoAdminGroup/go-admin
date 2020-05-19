@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
 	"net/url"
@@ -92,6 +93,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		SetHeadWidth(f.HeadWidth).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetUrl(editUrl).
+		SetAjax(f.AjaxSuccessJS, f.AjaxErrorJS).
 		SetLayout(f.Layout).
 		SetHiddenFields(hiddenFields).
 		SetOperationFooter(formFooter(footerKind,
@@ -123,8 +125,11 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			alert := aAlert().Warning(err.Error())
-			h.showForm(ctx, alert, param.Prefix, param.Param, true)
+			if ctx.WantJSON() {
+				response.Error(ctx, err.Error())
+			} else {
+				h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+			}
 			return
 		}
 	}
@@ -139,13 +144,23 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	err := param.Panel.UpdateData(param.Value())
 	if err != nil {
-		alert := aAlert().Warning(err.Error())
-		h.showForm(ctx, alert, param.Prefix, param.Param, true)
+		if ctx.WantJSON() {
+			response.Error(ctx, err.Error())
+		} else {
+			h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+		}
 		return
 	}
 
 	if param.Panel.GetForm().Responder != nil {
 		param.Panel.GetForm().Responder(ctx)
+		return
+	}
+
+	if ctx.WantJSON() && !param.IsIframe {
+		response.OkWithData(ctx, map[string]interface{}{
+			"url": param.PreviousPath,
+		})
 		return
 	}
 

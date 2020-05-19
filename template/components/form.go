@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -13,6 +14,7 @@ import (
 
 type FormAttribute struct {
 	Name            string
+	Id              string
 	Header          template.HTML
 	Content         types.FormFields
 	ContentList     []types.FormFields
@@ -24,6 +26,9 @@ type FormAttribute struct {
 	FieldsHTML      template.HTML
 	Method          string
 	PrimaryKey      string
+	Ajax            bool
+	AjaxSuccessJS   template.JS
+	AjaxErrorJS     template.JS
 	HeadWidth       int
 	InputWidth      int
 	HiddenFields    map[string]string
@@ -46,6 +51,20 @@ func (compo *FormAttribute) SetPrimaryKey(value string) types.FormAttribute {
 
 func (compo *FormAttribute) SetContent(value types.FormFields) types.FormAttribute {
 	compo.Content = value
+	return compo
+}
+
+func (compo *FormAttribute) SetId(id string) types.FormAttribute {
+	compo.Id = id
+	return compo
+}
+
+func (compo *FormAttribute) SetAjax(successJS, errorJS template.JS) types.FormAttribute {
+	if successJS != template.JS("") && errorJS != template.JS("") {
+		compo.Ajax = true
+		compo.AjaxErrorJS = errorJS
+		compo.AjaxSuccessJS = successJS
+	}
 	return compo
 }
 
@@ -176,6 +195,9 @@ func (compo *FormAttribute) SetOperationFooter(value template.HTML) types.FormAt
 
 func (compo *FormAttribute) GetContent() template.HTML {
 	compo.CdnUrl = config.GetAssetUrl()
+	if compo.Id == "" {
+		compo.Id = utils.Uuid(10)
+	}
 
 	if col := compo.Layout.Col(); col > 0 {
 		compo.ContentList = make([]types.FormFields, col)

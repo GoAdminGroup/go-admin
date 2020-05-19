@@ -84,8 +84,23 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			return true, "", "<h2>hello world</h2>"
 		}))
 
-	info.AddButton("iframe", icon.Terminal, action.PopUpWithIframe("/admin/iframe", "Iframe Example",
+	info.AddButton("iframe", icon.Tv, action.PopUpWithIframe("/admin/iframe", "Iframe Example",
 		action.IframeData{Src: "/admin/info/authors"}, "900px", "560px"))
+	info.AddButton("form", icon.Folder, action.PopUpWithForm(action.PopUpData{
+		Id:     "/admin/popup/form",
+		Title:  "Popup Form Example",
+		Width:  "900px",
+		Height: "430px",
+	}, func(panel *types.FormPanel) *types.FormPanel {
+		panel.AddField("Name", "name", db.Varchar, form.Text)
+		panel.AddField("Age", "age", db.Int, form.Number)
+		panel.AddField("HomePage", "homepage", db.Varchar, form.Url).FieldDefault("http://google.com")
+		panel.AddField("Email", "email", db.Varchar, form.Email).FieldDefault("xxxx@xxx.com")
+		panel.AddField("Birthday", "birthday", db.Varchar, form.Date).FieldDefault("2010-09-03 18:09:05")
+		panel.AddField("Time", "time", db.Varchar, form.Datetime).FieldDefault("2010-09-05")
+		panel.EnableAjax("Request Success", "Request Failed")
+		return panel
+	}, "/admin/popup/form"))
 
 	info.AddButton("ajax", icon.Android, action.Ajax("/admin/ajax",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {

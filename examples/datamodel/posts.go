@@ -61,6 +61,7 @@ func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 	formList.AddField("Description", "description", db.Varchar, form.Text)
 	formList.AddField("Content", "content", db.Varchar, form.RichText).FieldEnableFileUpload()
 	formList.AddField("Date", "date", db.Varchar, form.Datetime)
+	formList.EnableAjax("Request Success", "Request Failed")
 
 	formList.SetTable("posts").SetTitle("Posts").SetDescription("Posts")
 

@@ -551,6 +551,10 @@ type FormPanel struct {
 	InputWidth int
 	HeadWidth  int
 
+	Ajax          bool
+	AjaxSuccessJS template.JS
+	AjaxErrorJS   template.JS
+
 	Responder Responder
 
 	Wrapper ContentWrapper
@@ -1473,6 +1477,64 @@ func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
 
 func (f *FormPanel) SetResponder(responder Responder) *FormPanel {
 	f.Responder = responder
+	return f
+}
+
+func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
+	f.Ajax = true
+	if f.AjaxSuccessJS == template.JS("") {
+		successMsg := "data.msg"
+		if len(msgs) > 0 {
+			successMsg = `"` + msgs[0] + `"`
+		}
+		errorMsg := "data.msg"
+		if len(msgs) > 1 {
+			errorMsg = `"` + msgs[1] + `"`
+		}
+		f.AjaxSuccessJS = template.JS(`
+	if (typeof (data) === "string") {
+	    data = JSON.parse(data);
+	}
+	if (data.code === 200) {
+	    swal({
+			type: "success",
+			title: ` + successMsg + `,
+			showCancelButton: false,
+			confirmButtonColor: "#3c8dbc",
+			confirmButtonText: '` + language.Get("yes") + `',
+        }, function() {
+            window.location = data.data.url;
+        });
+	} else {
+	    swal(` + errorMsg + `, '', 'error');
+	}
+`)
+	}
+	if f.AjaxErrorJS == template.JS("") {
+		errorMsg := "data.responseJSON.msg"
+		error2Msg := "'" + language.Get("error") + "'"
+		if len(msgs) > 1 {
+			errorMsg = `"` + msgs[1] + `"`
+			error2Msg = errorMsg
+		}
+		f.AjaxErrorJS = template.JS(`
+	if (data.responseText !== "") {
+		swal(` + errorMsg + `, '', 'error');								
+	} else {
+		swal(` + error2Msg + `, '', 'error');
+	}
+`)
+	}
+	return f
+}
+
+func (f *FormPanel) SetAjaxSuccessJS(js template.JS) *FormPanel {
+	f.AjaxSuccessJS = js
+	return f
+}
+
+func (f *FormPanel) SetAjaxErrorJS(js template.JS) *FormPanel {
+	f.AjaxErrorJS = js
 	return f
 }
 

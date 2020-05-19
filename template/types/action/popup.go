@@ -3,9 +3,12 @@ package action
 import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"regexp"
@@ -14,18 +17,18 @@ import (
 
 type PopUpAction struct {
 	BaseAction
-	Url          string
-	Method       string
-	Id           string
-	Title        string
-	Draggable    bool
-	Width        string
-	Height       string
-	HasIframe    bool
-	IsIFrameForm bool
-	BtnTitle     template.HTML
-	Data         AjaxData
-	Handlers     []context.Handler
+	Url        string
+	Method     string
+	Id         string
+	Title      string
+	Draggable  bool
+	Width      string
+	Height     string
+	HasIframe  bool
+	HideFooter bool
+	BtnTitle   template.HTML
+	Data       AjaxData
+	Handlers   []context.Handler
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
@@ -99,18 +102,78 @@ func PopUpWithIframe(id, title string, data IframeData, width, height string) *P
 			data.Width, data.Height, data.Src, modalID)
 	}
 	return &PopUpAction{
-		Url:          URL(id),
-		Title:        title,
-		Method:       "post",
-		BtnTitle:     "",
-		Height:       height,
-		HasIframe:    true,
-		IsIFrameForm: isFormURL(data.Src),
-		Width:        width,
-		Draggable:    true,
-		Data:         NewAjaxData(),
-		Id:           modalID,
-		Handlers:     context.Handlers{handler.Wrap()},
+		Url:        URL(id),
+		Title:      title,
+		Method:     "post",
+		BtnTitle:   "",
+		Height:     height,
+		HasIframe:  true,
+		HideFooter: isFormURL(data.Src),
+		Width:      width,
+		Draggable:  true,
+		Data:       NewAjaxData(),
+		Id:         modalID,
+		Handlers:   context.Handlers{handler.Wrap()},
+	}
+}
+
+type PopUpData struct {
+	Id     string
+	Title  string
+	Width  string
+	Height string
+}
+
+type GetForm func(panel *types.FormPanel) *types.FormPanel
+
+func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
+	if data.Id == "" {
+		panic("wrong popup action parameter, empty id")
+	}
+	modalID := "info-popup-model-" + utils.Uuid(10)
+	col1 := template2.Default().Col().GetContent()
+	btn1 := template2.Default().Button().SetType("submit").
+		SetContent(language.GetFromHtml("Save")).
+		SetThemePrimary().
+		SetOrientationRight().
+		SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + `Save`).
+		GetContent()
+	btn2 := template2.Default().Button().SetType("reset").
+		SetContent(language.GetFromHtml("Reset")).
+		SetThemeWarning().
+		SetOrientationLeft().
+		GetContent()
+	col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
+		SetContent(btn1 + btn2).GetContent()
+	panel := fn(types.NewFormPanel())
+
+	fields, headers := panel.GroupField()
+	aform := template2.Default().Form().
+		SetContent(panel.FieldList).
+		SetTabHeaders(headers).
+		SetTabContents(fields).
+		SetAjax(panel.AjaxSuccessJS, panel.AjaxErrorJS).
+		SetPrefix(config.PrefixFixSlash()).
+		SetUrl(url).
+		SetOperationFooter(col1 + col2)
+
+	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
+		return true, "ok", template2.Default().Box().
+			SetHeader("").
+			SetBody(aform.GetContent()).GetContent()
+	}
+	return &PopUpAction{
+		Url:        URL(data.Id),
+		Title:      data.Title,
+		Method:     "post",
+		BtnTitle:   "",
+		HideFooter: true,
+		Height:     data.Height,
+		Width:      data.Width,
+		Draggable:  true,
+		Data:       NewAjaxData(),
+		Id:         modalID,
+		Handlers:   context.Handlers{handler.Wrap()},
 	}
 }
 
@@ -183,7 +246,7 @@ func (pop *PopUpAction) FooterContent() template.HTML {
 		SetBody(template.HTML(``))
 
 	if pop.Draggable {
-		if pop.IsIFrameForm {
+		if pop.HideFooter {
 			up = up.SetHideFooter()
 		}
 		return up.SetDraggable().GetContent()

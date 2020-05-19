@@ -20,6 +20,8 @@ type FormAttribute interface {
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetPrimaryKey(value string) FormAttribute
+	SetId(id string) FormAttribute
+	SetAjax(successJS, errorJS template.JS) FormAttribute
 	SetHiddenFields(fields map[string]string) FormAttribute
 	SetFieldsHTML(html template.HTML) FormAttribute
 	SetMethod(value string) FormAttribute
