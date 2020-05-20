@@ -52,6 +52,8 @@ var langs = map[string]map[string]string{
 		"choose a theme":   "选择主题",
 		"choose language":  "选择语言",
 		"choose framework": "选择框架",
+		"choose a orm":     "选择一个ORM",
+		"none":             "不使用",
 		"Generate project template success~~🍺🍺":   "生成项目模板成功~~🍺🍺",
 		"2 Execute the following command to run:": "2 执行以下命令运行：",
 		"1 Initialize database:":                  "1 安装数据库：",

@@ -27,6 +27,7 @@ type Project struct {
 	Driver    string
 	Framework string
 	Module    string
+	Orm       string
 }
 
 func buildProject(cfgFile string) {
@@ -64,6 +65,7 @@ func buildProject(cfgFile string) {
 			p.Driver = projectCfgModel.Key("driver").Value()
 			p.Prefix = projectCfgModel.Key("prefix").Value()
 			p.Module = projectCfgModel.Key("module").Value()
+			p.Orm = projectCfgModel.Key("orm").Value()
 		}
 
 		info = getDBInfoFromINIConfig(cfgModel, "default")
@@ -112,6 +114,10 @@ func buildProject(cfgFile string) {
 		p.Driver = singleSelect(getWord("choose a driver"),
 			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
 	}
+	if p.Orm == "" {
+		p.Orm = singleSelect(getWord("choose a orm"),
+			[]string{getWord("none"), "gorm"}, getWord("none"))
+	}
 
 	t, err := template.New("project").Funcs(map[string]interface{}{
 		"title": func(s string) string {
@@ -131,6 +137,29 @@ func buildProject(cfgFile string) {
 	checkError(os.Mkdir("uploads", os.ModePerm))
 	checkError(os.Mkdir("html", os.ModePerm))
 	checkError(os.Mkdir("build", os.ModePerm))
+	if p.Orm == "gorm" {
+		checkError(os.Mkdir("models", os.ModePerm))
+		checkError(ioutil.WriteFile("./models/base.go", []byte(`package models
+
+import (
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/jinzhu/gorm"
+)
+
+var (
+	orm *gorm.DB
+	err error
+)
+
+func Init(c db.Connection) {
+	orm, err = gorm.Open("`+p.Driver+`", c.GetDB("default"))
+
+	if err != nil {
+		panic("initialize orm failed")
+	}
+}
+`), os.ModePerm))
+	}
 
 	checkError(ioutil.WriteFile("./logs/access.log", []byte{}, os.ModePerm))
 	checkError(ioutil.WriteFile("./logs/info.log", []byte{}, os.ModePerm))

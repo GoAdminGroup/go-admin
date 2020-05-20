@@ -21,6 +21,7 @@ import (
 	
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -49,6 +50,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	_ = r.Run(":{{.Port}}")
 
@@ -79,6 +82,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -104,6 +108,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = {{.Port}}
@@ -137,6 +143,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -163,6 +170,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	bu.ServeFiles("/uploads", http.Dir("./uploads"))
 
@@ -200,6 +209,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -223,6 +233,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	workDir, _ := os.Getwd()
 	filesDir := filepath.Join(workDir, "uploads")
@@ -280,6 +292,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -303,6 +316,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	e.Static("/uploads", "./uploads")
 
@@ -336,6 +351,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -359,6 +375,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	router.ServeFiles("/uploads/*filepath", "./uploads")
 
@@ -393,6 +411,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -416,6 +435,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	s.AddStaticPath("/uploads", "./uploads")
 
@@ -450,6 +471,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -473,6 +495,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	app.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
@@ -507,6 +531,7 @@ import (
 
 	"{{.Module}}/pages"
 	"{{.Module}}/tables"
+	{{if ne .Orm ""}}"{{.Module}}/models"{{end}}
 )
 
 func main() {
@@ -530,6 +555,8 @@ func startServer() {
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
+
+	{{if ne .Orm ""}}models.Init(eng.{{title .Driver}}Connection()){{end}}
 
 	app.HandleDir("/uploads", "./uploads", iris.DirOptions{
 		IndexName: "/index.html",
