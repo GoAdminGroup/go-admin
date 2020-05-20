@@ -14,6 +14,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                       // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 )
@@ -28,6 +30,8 @@ func startServer() {
 
 	r := gin.Default()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -37,7 +41,10 @@ func startServer() {
 
 	r.Static("/uploads", "./uploads")
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	_ = r.Run(":{{.Port}}")
 
@@ -62,6 +69,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/astaxie/beego"
 )
 
@@ -72,6 +81,8 @@ func main() {
 func startServer() {
 	app := beego.NewApp()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	beego.SetStaticPath("/uploads", "uploads")
@@ -81,7 +92,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	beego.BConfig.Listen.HTTPAddr = "127.0.0.1"
 	beego.BConfig.Listen.HTTPPort = {{.Port}}
@@ -109,6 +123,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gobuffalo/buffalo"	
 )
 
@@ -122,6 +138,8 @@ func startServer() {
 		Addr: "127.0.0.1:{{.Port}}",
 	})
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -129,7 +147,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	bu.ServeFiles("/uploads", http.Dir("./uploads"))
 
@@ -161,6 +182,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/go-chi/chi"
 )
 
@@ -171,6 +194,8 @@ func main() {
 func startServer() {
 	r := chi.NewRouter()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -178,7 +203,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	workDir, _ := os.Getwd()
 	filesDir := filepath.Join(workDir, "uploads")
@@ -230,6 +258,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/labstack/echo/v4"
 )
 
@@ -240,6 +270,8 @@ func main() {
 func startServer() {
 	e := echo.New()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -247,7 +279,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	e.Static("/uploads", "./uploads")
 
@@ -274,6 +309,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 )
@@ -285,6 +322,8 @@ func main() {
 func startServer() {
 	router := fasthttprouter.New()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -292,7 +331,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	router.ServeFiles("/uploads/*filepath", "./uploads")
 
@@ -321,6 +363,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gogf/gf/frame/g"
 )
 
@@ -331,6 +375,8 @@ func main() {
 func startServer() {
 	s := g.Server()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -338,7 +384,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	s.AddStaticPath("/uploads", "./uploads")
 
@@ -367,6 +416,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gorilla/mux"
 )
 
@@ -377,6 +428,8 @@ func main() {
 func startServer() {
 	app := mux.NewRouter()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -384,7 +437,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	app.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
 
@@ -413,6 +469,8 @@ import (
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/kataras/iris/v12"
 )
 
@@ -423,6 +481,8 @@ func main() {
 func startServer() {
 	app := iris.Default()
 
+	template.AddComp(chartjs.NewChart())
+
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
@@ -430,7 +490,10 @@ func startServer() {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/admin", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
+		"msg": "Hello world",
+	})
 
 	app.HandleDir("/uploads", "./uploads", iris.DirOptions{
 		IndexName: "/index.html",
@@ -1122,7 +1185,7 @@ like Aldus PageMaker including versions of Lorem Ipsum.
 var mainTest = []byte(`package main
 
 import (
-	"github.com/GoAdminGroup/demo/tables"
+	"./tables"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/tests"
 	"github.com/GoAdminGroup/go-admin/tests/common"
@@ -1170,7 +1233,7 @@ func TestMainUserAcceptance(t *testing.T) {
 var mainTestCN = []byte(`package main
 
 import (
-	"github.com/GoAdminGroup/demo/tables"
+	"./tables"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/tests"
 	"github.com/GoAdminGroup/go-admin/tests/common"
@@ -1217,12 +1280,19 @@ func TestMainUserAcceptance(t *testing.T) {
 
 var makefile = []byte(`GOCMD = go
 GOBUILD = $(GOCMD) build
+GOMOD = $(GOCMD) mod
 GOINSTALL = $(GOCMD) install
 GOTEST = $(GOCMD) test
 BINARY_NAME = goadmin
 CLI = adm
 
 all: serve
+
+init:
+	$(GOMOD) init $(module)
+
+install:
+	$(GOMOD) tidy
 
 serve:
 	$(GOCMD) run .
@@ -1278,3 +1348,89 @@ package = main
 connection = default
 output = ./tables
 {{end}}`
+
+var readme = []byte(`# GoAdmin Instruction
+
+GoAdmin is a golang framework help gopher quickly build a data visualization platform. 
+
+- [github](https://github.com/GoAdminGroup/go-admin)
+- [forum](http://discuss.go-admin.com)
+- [document](https://book.go-admin.cn)
+
+## Directories Introduction
+
+` + "```" + `
+.
+├── Dockerfile          Dockerfile
+├── Makefile            Makefile
+├── adm.ini             adm config
+├── admin.db            sqlite database
+├── build               binary build target folder
+├── config.json         config file
+├── go.mod              go.mod
+├── go.sum              go.sum
+├── html                frontend html files
+├── logs                logs
+├── main.go             main.go
+├── main_test.go        ci test
+├── pages               page controllers
+├── tables              table models
+└── uploads             upload files
+` + "```" + `
+
+## Generate Table Model
+
+### online tool
+
+visit: /info/generate/new
+
+### use adm
+
+` + "```" + `
+adm generate
+` + "```" + `
+
+`)
+
+var readmeCN = []byte(`# GoAdmin 介绍
+
+GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。 
+
+- [github](https://github.com/GoAdminGroup/go-admin)
+- [论坛](http://discuss.go-admin.com)
+- [文档](https://book.go-admin.cn)
+
+## 目录介绍
+
+` + "```" + `
+.
+├── Dockerfile          Dockerfile
+├── Makefile            Makefile
+├── adm.ini             adm配置文件
+├── admin.db            sqlite数据库
+├── build               二进制构建目标文件夹
+├── config.json         配置文件
+├── go.mod              go.mod
+├── go.sum              go.sum
+├── html                前端html文件
+├── logs                日志
+├── main.go             main.go
+├── main_test.go        CI测试
+├── pages               页面控制器
+├── tables              数据模型
+└── uploads             上传文件夹
+` + "```" + `
+
+## 生成数据模型
+
+### 在线工具
+
+访问：/info/generate/new
+
+### 使用命令行工具
+
+` + "```" + `
+adm generate -l cn
+` + "```" + `
+
+`)

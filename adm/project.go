@@ -119,6 +119,7 @@ func buildProject(cfgFile string) {
 	checkError(os.Mkdir("tables", os.ModePerm))
 	checkError(os.Mkdir("logs", os.ModePerm))
 	checkError(os.Mkdir("uploads", os.ModePerm))
+	checkError(os.Mkdir("html", os.ModePerm))
 	checkError(os.Mkdir("build", os.ModePerm))
 
 	checkError(ioutil.WriteFile("./logs/access.log", []byte{}, os.ModePerm))
@@ -133,11 +134,26 @@ func buildProject(cfgFile string) {
 
 	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
 		checkError(ioutil.WriteFile("./main_test.go", mainTestCN, 0644))
+		checkError(ioutil.WriteFile("./README.md", readmeCN, 0644))
 	} else {
 		checkError(ioutil.WriteFile("./main_test.go", mainTest, 0644))
+		checkError(ioutil.WriteFile("./README.md", readme, 0644))
 	}
 
 	checkError(ioutil.WriteFile("./Makefile", makefile, 0644))
+
+	checkError(ioutil.WriteFile("./html/hello.tmpl", []byte(`<div class="hello">
+    <h1>{{index . "msg"}}</h1>
+</div>
+
+<style>
+    .hello {
+        padding: 50px;
+        width: 100%;
+        text-align: center;
+    }
+</style>
+`), 0644))
 
 	// generate config json
 
@@ -185,6 +201,25 @@ func buildProject(cfgFile string) {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println(ansi.Color(getWord("Generate project template success~~🍺🍺"), "green"))
+	fmt.Println()
+	fmt.Println(getWord("1 Initialize database:"))
+	fmt.Println()
+	fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.db", "blue"))
+	fmt.Println("- mssql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.mssql", "blue"))
+	fmt.Println("- postgresql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.pgsql", "blue"))
+	fmt.Println("- mysql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.sql", "blue"))
+	fmt.Println()
+	fmt.Println(getWord("2 Execute the following command to run:"))
+	fmt.Println()
+	if runtime.GOOS == "windows" {
+		fmt.Println("> go mod init xxxx.com/xxxxx/xxxx")
+		fmt.Println("> go mod tidy")
+		fmt.Println("> GO111MODULE=on go run .")
+	} else {
+		fmt.Println("> make init module=xxxx.com/xxxxx/xxxx")
+		fmt.Println("> make install")
+		fmt.Println("> make serve")
+	}
 	fmt.Println()
 	if defaultLang == "cn" {
 		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
