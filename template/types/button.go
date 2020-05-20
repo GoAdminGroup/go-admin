@@ -138,7 +138,8 @@ func GetActionButton(title template.HTML, action Action, ids ...string) *ActionB
 }
 
 func (b *ActionButton) Content() (template.HTML, template.JS) {
-	h := template.HTML(`<li style="cursor: pointer;"><a data-id="{{.Id}}" class="`+template.HTML(b.Id)+`" `+b.Action.BtnAttribute()+`>`+b.Title+`</a></li>`) + b.Action.ExtContent()
+	h := template.HTML(`<li style="cursor: pointer;"><a data-id="{{.Id}}" class="`+template.HTML(b.Id)+` `+
+		b.Action.BtnClass()+`" `+b.Action.BtnAttribute()+`>`+b.Title+`</a></li>`) + b.Action.ExtContent()
 	return h, b.Action.Js()
 }
 
@@ -212,7 +213,7 @@ func (n *NavButton) Content() (template.HTML, template.JS) {
 	}
 
 	h := template.HTML(`<li>
-    <a class="`+template.HTML(n.Id)+`" `+n.Action.BtnAttribute()+`>
+    <a class="`+template.HTML(n.Id)+` `+n.Action.BtnClass()+`" `+n.Action.BtnAttribute()+`>
       `+icon+`
       `+title+`
     </a>

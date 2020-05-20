@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	errors2 "errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	template2 "html/template"
 	"net/http"
 	"runtime/debug"
@@ -74,19 +75,22 @@ func (eng *Engine) Use(router interface{}) error {
 	errors.Init()
 
 	if !eng.config.HideConfigCenterEntrance {
-		btn := types.GetNavButton("", icon.Gear, action.Jump(eng.config.Url("/info/site/edit")))
+		btn := types.GetNavButton("", icon.Gear, action.JumpInNewTab(eng.config.Url("/info/site/edit"),
+			language.GetWithScope("site setting", "config")))
 		eng.NavButtons = append(eng.NavButtons, btn)
 		navButtons = append(navButtons, btn)
 	}
 
 	if !eng.config.HideAppInfoEntrance {
-		btn := types.GetNavButton("", icon.Info, action.Jump(eng.config.Url("/application/info")))
+		btn := types.GetNavButton("", icon.Info, action.JumpInNewTab(eng.config.Url("/application/info"),
+			language.GetWithScope("system info", "system")))
 		eng.NavButtons = append(eng.NavButtons, btn)
 		navButtons = append(navButtons, btn)
 	}
 
 	if !eng.config.HideToolEntrance {
-		btn := types.GetNavButton("", icon.Wrench, action.Jump(eng.config.Url("/info/generate/new")))
+		btn := types.GetNavButton("", icon.Wrench, action.JumpInNewTab(eng.config.Url("/info/generate/new"),
+			language.GetWithScope("tool", "tool")))
 		eng.NavButtons = append(eng.NavButtons, btn)
 		navButtons = append(navButtons, btn)
 	}
