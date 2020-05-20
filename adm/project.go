@@ -241,12 +241,20 @@ var Generators = map[string]table.Generator{
 	fmt.Println(getWord("2 Execute the following command to run:"))
 	fmt.Println()
 	if runtime.GOOS == "windows" {
-		fmt.Println("> go mod init module=" + p.Module)
-		fmt.Println("> go mod tidy")
+		fmt.Println("> GO111MODULE=on go mod init module=" + p.Module)
+		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+			fmt.Println("> GO111MODULE=on go mod tidy (设置代理为：https://goproxy.io 或 https://goproxy.cn)")
+		} else {
+			fmt.Println("> GO111MODULE=on go mod tidy")
+		}
 		fmt.Println("> GO111MODULE=on go run .")
 	} else {
 		fmt.Println("> make init module=" + p.Module)
-		fmt.Println("> make install")
+		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+			fmt.Println("> make install (设置代理为：https://goproxy.io 或 https://goproxy.cn)")
+		} else {
+			fmt.Println("> make install")
+		}
 		fmt.Println("> make serve")
 	}
 	fmt.Println()
