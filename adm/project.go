@@ -117,6 +117,9 @@ func buildProject(cfgFile string) {
 	if p.Orm == "" {
 		p.Orm = singleSelect(getWord("choose a orm"),
 			[]string{getWord("none"), "gorm"}, getWord("none"))
+		if p.Orm == getWord("none") {
+			p.Orm = ""
+		}
 	}
 
 	t, err := template.New("project").Funcs(map[string]interface{}{
