@@ -5,6 +5,7 @@ var projectTemplate = map[string]string{
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +18,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gin-gonic/gin"
-	"io/ioutil"
+	
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -35,13 +38,14 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(r); err != nil {
 		panic(err)
 	}
 
 	r.Static("/uploads", "./uploads")
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -72,6 +76,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/astaxie/beego"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -88,11 +95,12 @@ func startServer() {
 	beego.SetStaticPath("/uploads", "uploads")
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(app); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -126,6 +134,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gobuffalo/buffalo"	
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -143,11 +154,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(bu); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -185,6 +197,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/go-chi/chi"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -199,11 +214,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(r); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -261,6 +277,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/labstack/echo/v4"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -275,11 +294,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(e); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -313,6 +333,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -327,11 +350,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(router); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -366,6 +390,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gogf/gf/frame/g"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -380,11 +407,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(s); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -419,6 +447,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/gorilla/mux"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -433,11 +464,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(app); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -472,6 +504,9 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/kataras/iris/v12"
+
+	"{{.Module}}/pages"
+	"{{.Module}}/tables"
 )
 
 func main() {
@@ -486,11 +521,12 @@ func startServer() {
 	eng := engine.Default()
 
 	if err := eng.AddConfigFromJSON("./config.json").
+		AddGenerators(tables.Generators).
 		Use(app); err != nil {
 		panic(err)
 	}
 
-	eng.HTML("GET", "/{{.Prefix}}", GetDashBoard)
+	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{
 		"msg": "Hello world",
 	})
@@ -502,7 +538,7 @@ func startServer() {
 	})
 
 	go func() {
-		_ = app.Run(iris.Addr(":8099"))
+		_ = app.Run(iris.Addr(":{{.Port}}"))
 	}()
 
 	quit := make(chan os.Signal)
@@ -514,7 +550,7 @@ func startServer() {
 {{end}}`,
 }
 
-var swordIndexPage = []byte(`package main
+var swordIndexPage = []byte(`package pages
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
@@ -787,7 +823,7 @@ like Aldus PageMaker including versions of Lorem Ipsum.
 }
 `)
 
-var adminlteIndexPage = []byte(`package main
+var adminlteIndexPage = []byte(`package pages
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
@@ -1349,7 +1385,7 @@ connection = default
 output = ./tables
 {{end}}`
 
-var readme = []byte(`# GoAdmin Instruction
+var readme = `# GoAdmin Instruction
 
 GoAdmin is a golang framework help gopher quickly build a data visualization platform. 
 
@@ -1382,7 +1418,7 @@ GoAdmin is a golang framework help gopher quickly build a data visualization pla
 
 ### online tool
 
-visit: /info/generate/new
+visit: http://127.0.0.1:%s/info/generate/new
 
 ### use adm
 
@@ -1390,9 +1426,9 @@ visit: /info/generate/new
 adm generate
 ` + "```" + `
 
-`)
+`
 
-var readmeCN = []byte(`# GoAdmin 介绍
+var readmeCN = `# GoAdmin 介绍
 
 GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。 
 
@@ -1425,7 +1461,7 @@ GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。
 
 ### 在线工具
 
-访问：/info/generate/new
+管理员身份运行后，访问：http://127.0.0.1:%s/info/generate/new
 
 ### 使用命令行工具
 
@@ -1433,4 +1469,4 @@ GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。
 adm generate -l cn
 ` + "```" + `
 
-`)
+`

@@ -13,6 +13,7 @@ import (
 	"gopkg.in/ini.v1"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"text/template"
@@ -25,6 +26,7 @@ type Project struct {
 	Language  string
 	Driver    string
 	Framework string
+	Module    string
 }
 
 func buildProject(cfgFile string) {
@@ -61,6 +63,7 @@ func buildProject(cfgFile string) {
 			p.Port = projectCfgModel.Key("port").Value()
 			p.Driver = projectCfgModel.Key("driver").Value()
 			p.Prefix = projectCfgModel.Key("prefix").Value()
+			p.Module = projectCfgModel.Key("module").Value()
 		}
 
 		info = getDBInfoFromINIConfig(cfgModel, "default")
@@ -70,6 +73,13 @@ func buildProject(cfgFile string) {
 
 	initSurvey()
 
+	if p.Module == "" {
+		dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			panic(err)
+		}
+		p.Module = promptWithDefault(getWord("module path"), filepath.Base(dir))
+	}
 	if p.Framework == "" {
 		p.Framework = singleSelect(getWord("choose framework"),
 			[]string{"gin", "beego", "buffalo", "fasthttp", "echo", "chi", "gf", "gorilla", "iris"}, "gin")
@@ -127,17 +137,17 @@ func buildProject(cfgFile string) {
 	checkError(ioutil.WriteFile("./logs/error.log", []byte{}, os.ModePerm))
 
 	if p.Theme == "sword" {
-		checkError(ioutil.WriteFile("./index.go", swordIndexPage, 0644))
+		checkError(ioutil.WriteFile("./pages/index.go", swordIndexPage, 0644))
 	} else {
-		checkError(ioutil.WriteFile("./index.go", adminlteIndexPage, 0644))
+		checkError(ioutil.WriteFile("./pages/index.go", adminlteIndexPage, 0644))
 	}
 
 	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
 		checkError(ioutil.WriteFile("./main_test.go", mainTestCN, 0644))
-		checkError(ioutil.WriteFile("./README.md", readmeCN, 0644))
+		checkError(ioutil.WriteFile("./README.md", []byte(fmt.Sprintf(readmeCN, p.Port+"/"+p.Prefix)), 0644))
 	} else {
 		checkError(ioutil.WriteFile("./main_test.go", mainTest, 0644))
-		checkError(ioutil.WriteFile("./README.md", readme, 0644))
+		checkError(ioutil.WriteFile("./README.md", []byte(fmt.Sprintf(readme, p.Port+"/"+p.Prefix)), 0644))
 	}
 
 	checkError(ioutil.WriteFile("./Makefile", makefile, 0644))
@@ -153,6 +163,25 @@ func buildProject(cfgFile string) {
         text-align: center;
     }
 </style>
+`), 0644))
+
+	checkError(ioutil.WriteFile("./tables/tables.go", []byte(`package tables
+
+import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+
+// The key of Generators is the prefix of table info url.
+// The corresponding value is the Form and Table data.
+//
+// http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
+//
+// example:
+//
+// example end
+//
+var Generators = map[string]table.Generator{
+
+	// generators end
+}
 `), 0644))
 
 	// generate config json
@@ -212,11 +241,11 @@ func buildProject(cfgFile string) {
 	fmt.Println(getWord("2 Execute the following command to run:"))
 	fmt.Println()
 	if runtime.GOOS == "windows" {
-		fmt.Println("> go mod init xxxx.com/xxxxx/xxxx")
+		fmt.Println("> go mod init module=" + p.Module)
 		fmt.Println("> go mod tidy")
 		fmt.Println("> GO111MODULE=on go run .")
 	} else {
-		fmt.Println("> make init module=xxxx.com/xxxxx/xxxx")
+		fmt.Println("> make init module=" + p.Module)
 		fmt.Println("> make install")
 		fmt.Println("> make serve")
 	}
@@ -232,4 +261,12 @@ func buildProject(cfgFile string) {
 		"blue"))
 	fmt.Println()
 	fmt.Println()
+}
+
+func GetCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
+	return strings.Replace(dir, "\\", "/", -1)
 }
