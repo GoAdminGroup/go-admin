@@ -65,6 +65,12 @@ var tc = LangSet{
 	"menu":      "菜單",
 	"dashboard": "儀表盤",
 
+	"permission denied": "沒有權限",
+	"error":             "錯誤",
+	"success":           "成功",
+	"fail":              "失敗",
+	"current page":      "當前頁",
+
 	"confirm":             "確認",
 	"edit fail":           "編輯失敗",
 	"create fail":         "新增失敗",

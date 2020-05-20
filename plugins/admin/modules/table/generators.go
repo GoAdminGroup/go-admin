@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	tmpl "html/template"
-	"net/http"
 	"net/url"
 	"regexp"
 	"strconv"
@@ -16,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/collection"
 	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
@@ -1279,13 +1277,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		return s.c.Update(values.ToMap())
 	})
 
-	formList.SetResponder(func(ctx *context.Context) {
-		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
-		swal('%s', '', 'success');
-		setTimeout(function(){location.reload()}, 1000)
-</script>`, language.Get("modify success")))
-		ctx.AddHeader(constant.PjaxUrlHeader, s.c.Url("/info/site/edit"))
-	})
+	formList.EnableAjax(lg("success"), lg("fail"))
 
 	return
 }
@@ -1466,13 +1458,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 		}, fields))
 	})
 
-	formList.SetResponder(func(ctx *context.Context) {
-		ctx.HTML(http.StatusOK, fmt.Sprintf(`<script>
-		swal('%s', '', 'success');
-		setTimeout(function(){location.reload()}, 1000)
-</script>`, lgWithScore("generate success", "tool")))
-		ctx.AddHeader(constant.PjaxUrlHeader, s.c.Url("/info/generate/new"))
-	})
+	formList.EnableAjax(lg("success"), lg("fail"))
 
 	return generateTool
 }

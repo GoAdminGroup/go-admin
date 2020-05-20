@@ -52,6 +52,7 @@ var cn = LangSet{
 	"permission denied": "没有权限",
 	"error":             "错误",
 	"success":           "成功",
+	"fail":              "失败",
 	"current page":      "当前页",
 
 	"are you sure to delete": "你确定要删除吗",
