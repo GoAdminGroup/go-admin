@@ -294,4 +294,5 @@ var cn = LangSet{
 	"tool.generate success":     "生成成功",
 	"tool.hide filter area":     "隐藏筛选框",
 	"tool.display":              "显示",
+	"tool.use absolute path":    "使用绝对路径",
 }

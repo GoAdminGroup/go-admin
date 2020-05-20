@@ -1379,14 +1379,15 @@ for (let i = 0; i < data.data[0].length; i++) {
 	$(trs[i]).find('select.field_form_type').val(data.data[3][i]).select2();
 }
 `, `"conn":$('.conn').val(),`)
-	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("main")
+	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 	formList.AddField(lgWithScore("hide filter area", "tool"), "hide_filter_area", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: lgWithScore("yes", "tool"), Value: "y"},
 			{Text: lgWithScore("no", "tool"), Value: "n"},
 		}).FieldDefault("n")
-	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).FieldDefault("./")
+	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
+		FieldDefault("").FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
 		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1447,18 +1448,31 @@ for (let i = 0; i < data.data[0].length; i++) {
 			}
 		}
 
-		return tools.Generate(tools.NewParamWithFields(tools.Config{
+		output := values.Get("path")
+
+		err := tools.Generate(tools.NewParamWithFields(tools.Config{
 			Connection:     connName,
 			Driver:         s.c.Databases[connName].Driver,
 			Package:        values.Get("package"),
 			Table:          values.Get("table"),
 			HideFilterArea: values.Get("hide_filter_area") == "y",
 			Schema:         values.Get("schema"),
-			Output:         values.Get("path"),
+			Output:         output,
 		}, fields))
+
+		if err != nil {
+			return err
+		}
+
+		if utils.FileExist(output + "/tables.go") {
+			return tools.GenerateTables(output, []string{values.Get("table")},
+				values.Get("package"))
+		}
+
+		return nil
 	})
 
-	formList.EnableAjax(lg("success"), lg("fail"))
+	formList.EnableAjax(lg("success"), lg("fail"), s.c.Url("/info/generate/new"))
 
 	return generateTool
 }

@@ -3,8 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"go/format"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
@@ -162,7 +160,10 @@ func generating(cfgFile, connName string) {
 			Conn:           conn,
 		})))
 	}
-	generateTables(outputPath, chooseTables, packageName)
+
+	if err := tools.GenerateTables(outputPath, chooseTables, packageName); err != nil {
+		panic(err)
+	}
 
 	fmt.Println()
 	fmt.Println()
@@ -179,19 +180,6 @@ func generating(cfgFile, connName string) {
 		"blue"))
 	fmt.Println()
 	fmt.Println()
-}
-
-func camelcase(s string) string {
-	arr := strings.Split(s, "_")
-	var res = ""
-	for i := 0; i < len(arr); i++ {
-		if i == 0 {
-			res += arr[i]
-		} else {
-			res += strings.Title(arr[i])
-		}
-	}
-	return res
 }
 
 func clear(osName string) {
@@ -316,59 +304,4 @@ func singleSelect(msg string, options []string, def string) string {
 
 	return result["question"].(core.OptionAnswer).Value
 
-}
-
-func generateTables(outputPath string, tables []string, packageName string) {
-
-	tableStr := ""
-	commentStr := ""
-	const (
-		commentStrEnd = "example end"
-		tablesEnd     = "generators end"
-	)
-
-	for i := 0; i < len(tables); i++ {
-		tableStr += `
-	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
-		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
-`
-	}
-	commentStr += `//
-// ` + commentStrEnd + `
-`
-	tableStr += `
-
-	// ` + tablesEnd
-
-	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
-	tablesContent := string(tablesContentByte)
-
-	content := ""
-
-	if err == nil && tablesContent != "" && strings.Index(tablesContent, "/") != -1 {
-		tablesContent = strings.Replace(tablesContent, commentStrEnd+`
-//`, commentStr[3:]+"//", -1)
-		content = strings.Replace(tablesContent, "// "+tablesEnd, tableStr, -1)
-	} else {
-		content = `package ` + packageName + `
-
-import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-
-// The key of Generators is the prefix of table info url.
-// The corresponding value is the Form and Table data.
-//
-// http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
-//
-// example:
-//
-` + commentStr + `//
-var Generators = map[string]table.Generator{` + tableStr + `
-}
-`
-	}
-
-	c, err := format.Source([]byte(content))
-
-	checkError(err)
-	checkError(ioutil.WriteFile(outputPath+"/tables.go", c, 0644))
 }

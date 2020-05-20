@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"math"
 	"net/url"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -240,6 +241,14 @@ func humanateBytes(s uint64, base float64, sizes []string) string {
 func FileSize(s uint64) string {
 	sizes := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
 	return humanateBytes(s, 1024, sizes)
+}
+
+func FileExist(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		return os.IsExist(err)
+	}
+	return true
 }
 
 // TimeSincePro calculates the time interval and generate full user-friendly string.

@@ -122,6 +122,63 @@ func Generate(param Param) error {
 	return ioutil.WriteFile(param.Output+"/"+param.RowTable+".go", c, 0644)
 }
 
+func GenerateTables(outputPath string, tables []string, packageName string) error {
+
+	tableStr := ""
+	commentStr := ""
+	const (
+		commentStrEnd = "example end"
+		tablesEnd     = "generators end"
+	)
+
+	for i := 0; i < len(tables); i++ {
+		tableStr += `
+	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
+		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
+`
+	}
+	commentStr += `//
+// ` + commentStrEnd + `
+`
+	tableStr += `
+
+	// ` + tablesEnd
+
+	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
+	tablesContent := string(tablesContentByte)
+
+	content := ""
+
+	if err == nil && tablesContent != "" && strings.Index(tablesContent, "/") != -1 {
+		tablesContent = strings.Replace(tablesContent, commentStrEnd+`
+//`, commentStr[3:]+"//", -1)
+		content = strings.Replace(tablesContent, "// "+tablesEnd, tableStr, -1)
+	} else {
+		content = `package ` + packageName + `
+
+import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+
+// The key of Generators is the prefix of table info url.
+// The corresponding value is the Form and Table data.
+//
+// http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
+//
+// example:
+//
+` + commentStr + `//
+var Generators = map[string]table.Generator{` + tableStr + `
+}
+`
+	}
+
+	c, err := format.Source([]byte(content))
+
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(outputPath+"/tables.go", c, 0644)
+}
+
 func camelcase(s string) string {
 	arr := strings.Split(s, "_")
 	var res = ""

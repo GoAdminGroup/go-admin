@@ -287,4 +287,5 @@ var tc = LangSet{
 	"tool.no":                   "否",
 	"tool.generate success":     "生成成功",
 	"tool.hide filter area":     "隱藏篩選框",
+	"tool.use absolute path":    "使用絕對路徑",
 }

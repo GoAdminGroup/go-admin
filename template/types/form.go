@@ -1491,6 +1491,10 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 		if len(msgs) > 1 {
 			errorMsg = `"` + msgs[1] + `"`
 		}
+		jump := "data.data.url"
+		if len(msgs) > 2 {
+			jump = `"` + msgs[2] + `"`
+		}
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
 	    data = JSON.parse(data);
@@ -1503,7 +1507,7 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 			confirmButtonColor: "#3c8dbc",
 			confirmButtonText: '` + language.Get("yes") + `',
         }, function() {
-            window.location = data.data.url;
+			$.pjax({url: ` + jump + `, container: '#pjax-container'});
         });
 	} else {
 	    swal(` + errorMsg + `, '', 'error');
