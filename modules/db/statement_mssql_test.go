@@ -8,7 +8,7 @@ import (
 
 var driverTestMssqlConn Connection
 
-func init() {
+func InitMssql() {
 	driverTestMssqlConn = testConn(DriverMssql, config.Database{
 		Host: "127.0.0.1",
 		Port: "1433",

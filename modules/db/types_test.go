@@ -44,6 +44,7 @@ const (
     type_25 cidr,
     type_26 inet,
     type_27 macaddr,
+	type_28 boolean,
     CONSTRAINT all_types_pkey PRIMARY KEY (id)
 )
 WITH (
@@ -173,8 +174,8 @@ func testPG(t *testing.T, port string) {
 
 	fmt.Println("insert data")
 	_, err = conn.Exec(`INSERT INTO public.` + typeTesttableName + `(
-	id, type_1, type_2, type_3, type_4, type_5, type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13, type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21, type_22, type_23, type_24, type_25, type_26, type_27)
-	VALUES (1, 1, 1, 0.3, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);`)
+	id, type_1, type_2, type_3, type_4, type_5, type_6, type_7, type_8, type_9, type_10, type_11, type_12, type_13, type_14, type_15, type_16, type_17, type_18, type_19, type_20, type_21, type_22, type_23, type_24, type_25, type_26, type_27, type_28)
+	VALUES (1, 1, 1, 0.3, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'n');`)
 
 	assert.Equal(t, err, nil)
 
@@ -192,6 +193,7 @@ func testPG(t *testing.T, port string) {
 
 	for _, model := range columnsModel {
 		fieldTypeName := strings.ToUpper(testGetType(model[typeField].(string)))
+		fmt.Println("fieldTypeName", fieldTypeName)
 		GetDTAndCheck(fieldTypeName)
 		fmt.Println(model[fieldField].(string), GetValueFromSQLOfDatabaseType(DatabaseType(fieldTypeName), item[model[fieldField].(string)]))
 	}

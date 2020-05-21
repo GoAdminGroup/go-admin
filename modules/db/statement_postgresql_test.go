@@ -11,7 +11,7 @@ import (
 
 var driverTestPgConn Connection
 
-func init() {
+func InitPostgresql() {
 
 	cmd := exec.Command("createdb -p 5433 -U postgres " + driverTestDBName)
 	cmd.Env = os.Environ()

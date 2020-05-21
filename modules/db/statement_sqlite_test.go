@@ -8,7 +8,7 @@ import (
 
 var driverTestSQLiteConn Connection
 
-func init() {
+func InitSqlite() {
 	driverTestSQLiteConn = testConn(DriverSqlite, config.Database{File: "/admin.db"})
 }
 

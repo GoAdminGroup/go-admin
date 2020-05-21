@@ -13,7 +13,7 @@ const (
 	driverTestDBName = "go-admin-statement-test"
 )
 
-func init() {
+func InitMysql() {
 	c := testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s", driverTestDBName))
 	_, err := c.Exec(fmt.Sprintf("create database if not exists `%s`", driverTestDBName))
 	if err != nil {

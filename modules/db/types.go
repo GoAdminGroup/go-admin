@@ -75,7 +75,7 @@ const (
 
 	Interval DatabaseType = "INTERVAL"
 	Boolean  DatabaseType = "BOOLEAN"
-	Bool     DatabaseType = "Bool"
+	Bool     DatabaseType = "BOOL"
 
 	Point   DatabaseType = "POINT"
 	Line    DatabaseType = "LINE"
