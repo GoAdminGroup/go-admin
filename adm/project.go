@@ -114,6 +114,29 @@ func buildProject(cfgFile string) {
 		p.Driver = singleSelect(getWord("choose a driver"),
 			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
 	}
+
+	var cfg = config.SetDefault(config.Config{
+		Debug: true,
+		Env:   config.EnvLocal,
+		Theme: p.Theme,
+		Store: config.Store{
+			Path:   "./uploads",
+			Prefix: "uploads",
+		},
+		Language:      p.Language,
+		UrlPrefix:     p.Prefix,
+		IndexUrl:      "/",
+		AccessLogPath: "./logs/access.log",
+		ErrorLogPath:  "./logs/error.log",
+		InfoLogPath:   "./logs/info.log",
+	})
+
+	if info.DriverName == "" && p.Driver != "" {
+		info.DriverName = p.Driver
+	}
+
+	cfg.Databases = askForDBConfig(info)
+
 	if p.Orm == "" {
 		p.Orm = singleSelect(getWord("choose a orm"),
 			[]string{getWord("none"), "gorm"}, getWord("none"))
@@ -218,28 +241,6 @@ var Generators = map[string]table.Generator{
 
 	// generate config json
 
-	var cfg = config.SetDefault(config.Config{
-		Debug: true,
-		Env:   config.EnvLocal,
-		Theme: p.Theme,
-		Store: config.Store{
-			Path:   "./uploads",
-			Prefix: "uploads",
-		},
-		Language:      p.Language,
-		UrlPrefix:     p.Prefix,
-		IndexUrl:      "/",
-		AccessLogPath: "./logs/access.log",
-		ErrorLogPath:  "./logs/error.log",
-		InfoLogPath:   "./logs/info.log",
-	})
-
-	if info.DriverName == "" && p.Driver != "" {
-		info.DriverName = p.Driver
-	}
-
-	cfg.Databases = askForDBConfig(info)
-
 	if cfgFile == "" {
 		t, err := template.New("ini").Parse(admINI)
 		checkError(err)
@@ -265,10 +266,10 @@ var Generators = map[string]table.Generator{
 	fmt.Println()
 	fmt.Println(getWord("1 Import and initialize database:"))
 	fmt.Println()
-	fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.db", "blue"))
-	fmt.Println("- mssql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.mssql", "blue"))
-	fmt.Println("- postgresql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.pgsql", "blue"))
-	fmt.Println("- mysql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.sql", "blue"))
+	fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/raw/master/data/admin.db", "blue"))
+	fmt.Println("- mssql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql", "blue"))
+	fmt.Println("- postgresql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql", "blue"))
+	fmt.Println("- mysql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql", "blue"))
 	fmt.Println()
 	fmt.Println(getWord("2 Execute the following command to run:"))
 	fmt.Println()
@@ -289,6 +290,15 @@ var Generators = map[string]table.Generator{
 		}
 		fmt.Println("> make serve")
 	}
+	fmt.Println()
+	fmt.Println(getWord("3 Visit and login:"))
+	fmt.Println()
+	fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/login", "blue"))
+	fmt.Println(getWord("account: admin  password: admin"))
+	fmt.Println()
+	fmt.Println("-  " + getWord("Generate CRUD models: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/info/generate/new", "blue"))
+	fmt.Println()
+	fmt.Println(getWord("4 See more in README.md"))
 	fmt.Println()
 	if defaultLang == "cn" {
 		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",

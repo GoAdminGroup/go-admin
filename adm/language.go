@@ -12,7 +12,7 @@ var langs = map[string]map[string]string{
 		"sql username":             "用户名",
 		"sql schema":               "Schema",
 		"sql database name":        "数据库名",
-		"sql file":                 "文件地址",
+		"sql file":                 "数据库文件地址",
 		"sql password":             "密码",
 		"choose table to generate": "选择要生成的表格",
 
@@ -55,8 +55,13 @@ var langs = map[string]map[string]string{
 		"choose a orm":     "选择一个ORM",
 		"none":             "不使用",
 		"Generate project template success~~🍺🍺":   "生成项目模板成功~~🍺🍺",
-		"2 Execute the following command to run:": "2 执行以下命令运行：",
 		"1 Import and initialize database:":       "1 安装初始化数据库：",
+		"2 Execute the following command to run:": "2 执行以下命令运行：",
+		"3 Visit and login:":                      "3 访问并登陆：",
+		"4 See more in README.md":                 "4 在README.md中查看更多",
+		"account: admin  password: admin":         "账号：admin，密码：admin",
+		"Login: ":                                 "登陆：",
+		"Generate CRUD models: ":                  "生成CRUD模型：",
 
 		"port":        "端口",
 		"url prefix":  "路由前缀",

@@ -286,7 +286,7 @@ var tc = LangSet{
 	"tool.field name":           "字段名",
 	"tool.db type":              "數據類型",
 	"tool.form type":            "表單類型",
-	"tool.generate table model": "生成表單模型",
+	"tool.generate table model": "生成CRUD模型",
 	"tool.primarykey":           "主鍵",
 	"tool.field filterable":     "可篩選",
 	"tool.field sortable":       "可排序",

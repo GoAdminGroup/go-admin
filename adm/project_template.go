@@ -1344,7 +1344,6 @@ func TestMainUserAcceptance(t *testing.T) {
 var makefile = []byte(`GOCMD = go
 GOBUILD = $(GOCMD) build
 GOMOD = $(GOCMD) mod
-GOINSTALL = $(GOCMD) install
 GOTEST = $(GOCMD) test
 BINARY_NAME = goadmin
 CLI = adm
@@ -1364,7 +1363,6 @@ build:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o ./build/$(BINARY_NAME) -v ./
 
 generate:
-	$(GOINSTALL) github.com/GoAdminGroup/go-admin/adm
 	$(CLI) generate -c adm.ini
 
 test: black-box-test user-acceptance-test
@@ -1407,7 +1405,7 @@ database = {{.Database}}
 
 ; table model config 数据模型设置
 [model]
-package = main
+package = tables
 connection = default
 output = ./tables
 {{end}}`
@@ -1484,7 +1482,7 @@ GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。
 └── uploads             上传文件夹
 ` + "```" + `
 
-## 生成数据模型
+## 生成CRUD数据模型
 
 ### 在线工具
 
@@ -1493,7 +1491,7 @@ GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。
 ### 使用命令行工具
 
 ` + "```" + `
-adm generate -l cn
+adm generate -l cn -c adm.ini
 ` + "```" + `
 
 `
