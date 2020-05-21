@@ -28,6 +28,7 @@ install:
   - rm ~/chromedriver_linux64.zip
   - sudo chmod +x /home/travis/chromedriver
   - ln --symbolic /home/travis/chromedriver "${HOME}/bin/chromedriver"
+  - chromedriver --version
 
 before_script:
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
@@ -41,5 +42,4 @@ before_script:
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && go get github.com/GoAdminGroup/themes@master
 
 script:
-  - chromedriver --version
   - cd /home/travis/gopath/src/github.com/GoAdminGroup/go-admin && make test

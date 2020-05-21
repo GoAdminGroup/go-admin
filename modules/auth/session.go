@@ -205,6 +205,9 @@ func (driver *DBDriver) Update(sid string, values map[string]interface{}) error 
 		if sesModel == nil {
 			if !config.GetNoLimitLoginIP() {
 				err = driver.table().Where("values", "=", sesValue).Delete()
+				if db.CheckError(err, db.DELETE) {
+					return err
+				}
 			}
 			_, err := driver.table().Insert(dialect.H{
 				"values": sesValue,

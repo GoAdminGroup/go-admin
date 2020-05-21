@@ -263,7 +263,7 @@ var Generators = map[string]table.Generator{
 	fmt.Println()
 	fmt.Println(ansi.Color(getWord("Generate project template success~~🍺🍺"), "green"))
 	fmt.Println()
-	fmt.Println(getWord("1 Initialize database:"))
+	fmt.Println(getWord("1 Import and initialize database:"))
 	fmt.Println()
 	fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.db", "blue"))
 	fmt.Println("- mssql: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/blob/master/data/admin.mssql", "blue"))
