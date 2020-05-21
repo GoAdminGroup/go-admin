@@ -280,6 +280,7 @@ var tc = LangSet{
 	"tool.connection":           "連接",
 	"tool.package":              "包名",
 	"tool.output":               "輸出路徑",
+	"tool.output path is empty": "輸出路徑為空",
 	"tool.field":                "字段名",
 	"tool.title":                "標題",
 	"tool.field name":           "字段名",

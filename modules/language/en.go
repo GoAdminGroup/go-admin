@@ -251,6 +251,7 @@ var en = LangSet{
 	"tool.connection":           "Connection",
 	"tool.package":              "Package",
 	"tool.output":               "Output Path",
+	"tool.output path is empty": "Output path is empty",
 	"tool.field":                "Field",
 	"tool.title":                "Title",
 	"tool.field name":           "Name",

@@ -284,6 +284,7 @@ var cn = LangSet{
 	"tool.tool":                 "工具",
 	"tool.table":                "表格",
 	"tool.connection":           "连接",
+	"tool.output path is empty": "输出路径为空",
 	"tool.package":              "包名",
 	"tool.output":               "输出路径",
 	"tool.field":                "字段",

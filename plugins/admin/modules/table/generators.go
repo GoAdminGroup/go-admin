@@ -1415,7 +1415,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 			{Text: lgWithScore("no", "tool"), Value: "n"},
 		}).FieldDefault("n")
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
-		FieldDefault("").FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
+		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
 		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1461,6 +1461,12 @@ for (let i = 0; i < data.data[0].length; i++) {
 
 	formList.SetInsertFn(func(values form2.Values) error {
 
+		output := values.Get("path")
+
+		if output == "" {
+			return errors.New("output path is empty")
+		}
+
 		connName := values.Get("conn")
 
 		fields := make(tools.Fields, len(values["field_head"]))
@@ -1475,8 +1481,6 @@ for (let i = 0; i < data.data[0].length; i++) {
 				Sortable:   values["field_sortable"][i] == "y",
 			}
 		}
-
-		output := values.Get("path")
 
 		err := tools.Generate(tools.NewParamWithFields(tools.Config{
 			Connection:     connName,
