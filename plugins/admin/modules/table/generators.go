@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	tmpl "html/template"
 	"net/url"
@@ -1084,6 +1085,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		FieldHelpMsg(template.HTML(lgWithConfigScore("must bigger than 900 seconds")))
 	formList.AddField(lgWithConfigScore("custom head html"), "custom_head_html", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("custom foot Html"), "custom_foot_html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("custom 404 html"), "custom_404_html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("custom 403 html"), "custom_403_html", db.Varchar, form.Code)
+	formList.AddField(lgWithConfigScore("custom 500 Html"), "custom_500_html", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("footer info"), "footer_info", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("login logo"), "login_logo", db.Varchar, form.Code)
 	formList.AddField(lgWithConfigScore("no limit login ip"), "no_limit_login_ip", db.Varchar, form.Switch).
@@ -1091,7 +1095,21 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
-
+	formList.AddField(lgWithConfigScore("hide config center entrance"), "hide_config_center_entrance", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("hide app info entrance"), "hide_app_info_entrance", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("hide tool entrance"), "hide_tool_entrance", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("animation type"), "animation_type", db.Varchar, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
 			{Text: "", Value: ""},
@@ -1227,7 +1245,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
-		"asset_url", "title", "login_title", "session_life_time", "no_limit_login_ip", "animation_type",
+		"asset_url", "title", "login_title", "session_life_time", "no_limit_login_ip",
+		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance",
+		"animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
@@ -1236,7 +1256,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			"logger_encoder_encoding", "logger_encoder_time_key", "logger_encoder_level_key", "logger_encoder_name_key",
 			"logger_encoder_caller_key", "logger_encoder_message_key", "logger_encoder_stacktrace_key", "logger_encoder_level",
 			"logger_encoder_time", "logger_encoder_duration", "logger_encoder_caller").
-		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_html", "footer_info", "login_logo")).
+		AddGroup("logo", "mini_logo", "custom_head_html", "custom_foot_html", "footer_info", "login_logo",
+			"custom_404_html", "custom_403_html", "custom_500_html")).
 		SetTabHeaders(lgWithConfigScore("general"), lgWithConfigScore("log"), lgWithConfigScore("custom"))
 
 	formList.SetTable("goadmin_site").
@@ -1258,6 +1279,9 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		values["mini_logo"][0] = escape(values.Get("mini_logo"))
 		values["custom_head_html"][0] = escape(values.Get("custom_head_html"))
 		values["custom_foot_html"][0] = escape(values.Get("custom_foot_html"))
+		values["custom_404_html"][0] = escape(values.Get("custom_404_html"))
+		values["custom_403_html"][0] = escape(values.Get("custom_403_html"))
+		values["custom_500_html"][0] = escape(values.Get("custom_500_html"))
 		values["footer_info"][0] = escape(values.Get("footer_info"))
 		values["login_logo"][0] = escape(values.Get("login_logo"))
 
@@ -1268,6 +1292,10 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 				return err
 			}
 		}
+
+		ui.GetService(services).RemoveOrShowSiteNavButton(values["hide_config_center_entrance"][0] == "true")
+		ui.GetService(services).RemoveOrShowInfoNavButton(values["hide_app_info_entrance"][0] == "true")
+		ui.GetService(services).RemoveOrShowToolNavButton(values["hide_tool_entrance"][0] == "true")
 
 		// TODO: add transaction
 		err = models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())

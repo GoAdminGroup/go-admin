@@ -26,7 +26,7 @@ func (g *Guard) ShowNewForm(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetCanAdd() {
-		alert(ctx, panel, errors.OperationNotAllow, g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
@@ -89,7 +89,7 @@ func (g *Guard) NewForm(ctx *context.Context) {
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert(ctx, panel, errors.CreateFailWrongToken, conn)
+		alert(ctx, panel, errors.CreateFailWrongToken, conn, g.navBtns)
 		ctx.Abort()
 		return
 	}

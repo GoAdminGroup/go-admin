@@ -15,14 +15,14 @@ type DeleteParam struct {
 func (g *Guard) Delete(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 	if !panel.GetDeletable() {
-		alert(ctx, panel, errors.OperationNotAllow, g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
 
 	id := ctx.FormValue("id")
 	if id == "" {
-		alert(ctx, panel, errors.WrongID, g.conn)
+		alert(ctx, panel, errors.WrongID, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}

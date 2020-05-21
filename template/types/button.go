@@ -13,33 +13,23 @@ type Button interface {
 	URL() string
 	METHOD() string
 	ID() string
+	GetName() string
+	SetName(name string)
 }
 
 type BaseButton struct {
-	Id, Url, Method string
-	Title           template.HTML
-	Action          Action
+	Id, Url, Method, Name string
+	Title                 template.HTML
+	Action                Action
 }
 
-func (b *BaseButton) Content() (template.HTML, template.JS) {
-	return "", ""
-}
-
-func (b *BaseButton) GetAction() Action {
-	return b.Action
-}
-
-func (b *BaseButton) ID() string {
-	return b.Id
-}
-
-func (b *BaseButton) URL() string {
-	return b.Url
-}
-
-func (b *BaseButton) METHOD() string {
-	return b.Method
-}
+func (b *BaseButton) Content() (template.HTML, template.JS) { return "", "" }
+func (b *BaseButton) GetAction() Action                     { return b.Action }
+func (b *BaseButton) ID() string                            { return b.Id }
+func (b *BaseButton) URL() string                           { return b.Url }
+func (b *BaseButton) METHOD() string                        { return b.Method }
+func (b *BaseButton) GetName() string                       { return b.Name }
+func (b *BaseButton) SetName(name string)                   { b.Name = name }
 
 type DefaultButton struct {
 	*BaseButton
@@ -176,16 +166,71 @@ func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 	return btns
 }
 
+func (b Buttons) AddNavButton(ico, name string, action Action) Buttons {
+	if !b.CheckExist(name) {
+		return append(b, GetNavButton("", ico, action, name))
+	}
+	return b
+}
+
+func (b Buttons) RemoveButtonByName(name string) Buttons {
+	if name == "" {
+		return b
+	}
+
+	for i := 0; i < len(b); i++ {
+		if b[i].GetName() == name {
+			b = append(b[:i], b[i+1:]...)
+		}
+	}
+	return b
+}
+
+func (b Buttons) CheckExist(name string) bool {
+	if name == "" {
+		return false
+	}
+	for i := 0; i < len(b); i++ {
+		if b[i].GetName() == name {
+			return true
+		}
+	}
+	return false
+}
+
+const (
+	NavBtnSiteName = "go_admin_site_navbtn"
+	NavBtnInfoName = "go_admin_info_navbtn"
+	NavBtnToolName = "go_admin_tool_navbtn"
+)
+
+func (b Buttons) RemoveSiteNavButton() Buttons {
+	return b.RemoveButtonByName(NavBtnSiteName)
+}
+
+func (b Buttons) RemoveInfoNavButton() Buttons {
+	return b.RemoveButtonByName(NavBtnInfoName)
+}
+
+func (b Buttons) RemoveToolNavButton() Buttons {
+	return b.RemoveButtonByName(NavBtnToolName)
+}
+
 type NavButton struct {
 	*BaseButton
 	Icon string
 }
 
-func GetNavButton(title template.HTML, icon string, action Action) *NavButton {
+func GetNavButton(title template.HTML, icon string, action Action, names ...string) *NavButton {
 
 	id := btnUUID()
 	action.SetBtnId(id)
 	node := action.GetCallbacks()
+	name := ""
+
+	if len(names) > 0 {
+		name = names[0]
+	}
 
 	return &NavButton{
 		BaseButton: &BaseButton{
@@ -194,6 +239,7 @@ func GetNavButton(title template.HTML, icon string, action Action) *NavButton {
 			Action: action,
 			Url:    node.Path,
 			Method: node.Method,
+			Name:   name,
 		},
 		Icon: icon,
 	}
@@ -201,11 +247,11 @@ func GetNavButton(title template.HTML, icon string, action Action) *NavButton {
 
 func (n *NavButton) Content() (template.HTML, template.JS) {
 
-	icon := template.HTML("")
+	ico := template.HTML("")
 	title := template.HTML("")
 
 	if n.Icon != "" {
-		icon = template.HTML(`<i class="fa ` + n.Icon + `"></i>`)
+		ico = template.HTML(`<i class="fa ` + n.Icon + `"></i>`)
 	}
 
 	if n.Title != "" {
@@ -214,7 +260,7 @@ func (n *NavButton) Content() (template.HTML, template.JS) {
 
 	h := template.HTML(`<li>
     <a class="`+template.HTML(n.Id)+` `+n.Action.BtnClass()+`" `+n.Action.BtnAttribute()+`>
-      `+icon+`
+      `+ico+`
       `+title+`
     </a>
 </li>`) + n.Action.ExtContent()

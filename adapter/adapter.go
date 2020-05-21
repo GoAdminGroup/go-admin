@@ -143,7 +143,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 	)
 
 	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
-		panel = template.WarningPanel(errors.NoPermission)
+		panel = template.WarningPanel(errors.NoPermission, template.NoPermission403Page)
 	} else {
 		panel, err = getPanelFn(ctx)
 		if err != nil {

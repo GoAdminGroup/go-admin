@@ -1,6 +1,7 @@
 package guard
 
 import (
+	"github.com/GoAdminGroup/go-admin/template/types"
 	tmpl "html/template"
 	"mime/multipart"
 	"regexp"
@@ -31,7 +32,7 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetEditable() {
-		alert(ctx, panel, errors.OperationNotAllow, g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
@@ -56,7 +57,7 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 
 	id := ctx.Query(constant.EditPKKey)
 	if id == "" && prefix != "site" {
-		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn)
+		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
@@ -101,14 +102,14 @@ func (g *Guard) EditForm(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetEditable() {
-		alert(ctx, panel, errors.OperationNotAllow, g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
 	token := ctx.FormValue(form.TokenKey)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert(ctx, panel, errors.EditFailWrongToken, g.conn)
+		alert(ctx, panel, errors.EditFailWrongToken, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}
@@ -153,16 +154,16 @@ func GetEditFormParam(ctx *context.Context) *EditFormParam {
 	return ctx.UserValue[editFormParamKey].(*EditFormParam)
 }
 
-func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection) {
+func alert(ctx *context.Context, panel table.Table, msg string, conn db.Connection, btns *types.Buttons) {
 	if ctx.WantJSON() {
 		response.BadRequest(ctx, msg)
 	} else {
-		response.Alert(ctx, panel.GetInfo().Description, panel.GetInfo().Title, msg, conn)
+		response.Alert(ctx, panel.GetInfo().Description, panel.GetInfo().Title, msg, conn, btns)
 	}
 }
 
-func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn db.Connection) {
-	response.Alert(ctx, desc, title, msg, conn)
+func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn db.Connection, btns *types.Buttons) {
+	response.Alert(ctx, desc, title, msg, conn, btns)
 }
 
 func getAlert(msg string) tmpl.HTML {

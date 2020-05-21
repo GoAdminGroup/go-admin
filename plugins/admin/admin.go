@@ -5,7 +5,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -39,7 +38,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"site":           st.GetSiteTable,
 		"generate":       st.GetGenerateForm,
 	})
-	admin.guardian = guard.New(admin.Services, admin.Conn, admin.tableList)
+	admin.guardian = guard.New(admin.Services, admin.Conn, admin.tableList, admin.UI.NavButtons)
 	handlerCfg := controller.Config{
 		Config:     c,
 		Services:   services,
@@ -49,12 +48,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 	admin.handler.UpdateCfg(handlerCfg)
 	admin.initRouter()
 	admin.handler.SetRoutes(admin.App.Routers)
-	admin.handler.AddNavButton(admin.UI.NavButtons...)
-
-	// init site setting
-	site := models.Site().SetConn(admin.Conn)
-	site.Init(c.ToMap())
-	_ = c.Update(site.AllToMap())
+	admin.handler.AddNavButton(admin.UI.NavButtons)
 
 	table.SetServices(services)
 }

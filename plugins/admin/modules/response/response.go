@@ -42,7 +42,8 @@ func BadRequest(ctx *context.Context, msg string) {
 	})
 }
 
-func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, pageType ...template.PageType) {
+func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, btns *types.Buttons,
+	pageType ...template.PageType) {
 	user := auth.Auth(ctx)
 
 	pt := template.Error500Page
@@ -50,19 +51,22 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, pa
 		pt = pageType[0]
 	}
 
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax(), pt)
+	pageTitle, description, content := template.GetPageContentFromPageType(title, desc, msg, pt)
+
+	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 	buf := template.Execute(template.ExecuteParam{
 		User:     user,
 		TmplName: tmplName,
 		Tmpl:     tmpl,
 		Panel: types.Panel{
-			Content:     template.Get(config.GetTheme()).Alert().Warning(msg),
-			Description: template.HTML(desc),
-			Title:       template.HTML(title),
+			Content:     content,
+			Description: description,
+			Title:       pageTitle,
 		},
 		Config:    *config.Get(),
 		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: true,
+		Buttons:   *btns,
 	})
 	ctx.HTML(http.StatusOK, buf.String())
 }

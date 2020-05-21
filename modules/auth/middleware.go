@@ -84,7 +84,7 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 				})
 			} else {
 				page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
-					return template2.WarningPanel(errors.PermissionDenied), nil
+					return template2.WarningPanel(errors.PermissionDenied, template2.NoPermission403Page), nil
 				}, conn)
 			}
 		},

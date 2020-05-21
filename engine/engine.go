@@ -10,6 +10,8 @@ import (
 	errors2 "errors"
 	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/template/icon"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	template2 "html/template"
 	"net/http"
 	"runtime/debug"
@@ -32,9 +34,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/template/types/action"
 )
 
 // Engine is the core component of goAdmin. It has two attributes.
@@ -46,16 +46,16 @@ type Engine struct {
 	PluginList []plugins.Plugin
 	Adapter    adapter.WebFrameWork
 	Services   service.List
-	NavButtons types.Buttons
-
-	config *config.Config
+	NavButtons *types.Buttons
+	config     *config.Config
 }
 
 // Default return the default engine instance.
 func Default() *Engine {
 	return &Engine{
-		Adapter:  defaultAdapter,
-		Services: service.GetServices(),
+		Adapter:    defaultAdapter,
+		Services:   service.GetServices(),
+		NavButtons: new(types.Buttons),
 	}
 }
 
@@ -71,29 +71,33 @@ func (eng *Engine) Use(router interface{}) error {
 		eng.PluginList = append(eng.PluginList, admin.NewAdmin())
 	}
 
+	// init site setting
+	site := models.Site().SetConn(eng.DefaultConnection())
+	site.Init(eng.config.ToMap())
+	_ = eng.config.Update(site.AllToMap())
 	eng.Services.Add("config", config.SrvWithConfig(eng.config))
+
 	errors.Init()
 
 	if !eng.config.HideConfigCenterEntrance {
-		btn := types.GetNavButton("", icon.Gear, action.JumpInNewTab(eng.config.Url("/info/site/edit"),
-			language.GetWithScope("site setting", "config")))
-		eng.NavButtons = append(eng.NavButtons, btn)
-		navButtons = append(navButtons, btn)
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Gear, types.NavBtnSiteName,
+			action.JumpInNewTab(config.Url("/info/site/edit"),
+				language.GetWithScope("site setting", "config")))
 	}
 
 	if !eng.config.HideAppInfoEntrance {
-		btn := types.GetNavButton("", icon.Info, action.JumpInNewTab(eng.config.Url("/application/info"),
-			language.GetWithScope("system info", "system")))
-		eng.NavButtons = append(eng.NavButtons, btn)
-		navButtons = append(navButtons, btn)
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Info, types.NavBtnInfoName,
+			action.JumpInNewTab(config.Url("/application/info"),
+				language.GetWithScope("system info", "system")))
 	}
 
 	if !eng.config.HideToolEntrance {
-		btn := types.GetNavButton("", icon.Wrench, action.JumpInNewTab(eng.config.Url("/info/generate/new"),
-			language.GetWithScope("tool", "tool")))
-		eng.NavButtons = append(eng.NavButtons, btn)
-		navButtons = append(navButtons, btn)
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Wrench, types.NavBtnToolName,
+			action.JumpInNewTab(config.Url("/info/generate/new"),
+				language.GetWithScope("tool", "tool")))
 	}
+
+	navButtons = eng.NavButtons
 
 	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
 
@@ -198,7 +202,7 @@ func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 var defaultAdapter adapter.WebFrameWork
 
 // navButtons is the default buttons in the navigation bar.
-var navButtons = make([]types.Button, 0)
+var navButtons = new(types.Buttons)
 
 // Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
@@ -362,8 +366,7 @@ func (eng *Engine) wrap(handler context.Handler) context.Handlers {
 // AddNavButtons add the nav buttons.
 func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types.Action) *Engine {
 	btn := types.GetNavButton(title, icon, action)
-	eng.NavButtons = append(eng.NavButtons, btn)
-	navButtons = append(navButtons, btn)
+	*eng.NavButtons = append(*eng.NavButtons, btn)
 	return eng
 }
 
@@ -373,7 +376,7 @@ func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
 		panic("adapter is nil")
 	}
-	eng.Adapter.Content(ctx, panel, eng.NavButtons...)
+	eng.Adapter.Content(ctx, panel, *eng.NavButtons...)
 }
 
 // Content call the Content method of defaultAdapter.
@@ -382,7 +385,7 @@ func Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	defaultAdapter.Content(ctx, panel, navButtons...)
+	defaultAdapter.Content(ctx, panel, *navButtons...)
 }
 
 // Data inject the route and corresponding handler to the web framework.
@@ -549,7 +552,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 		Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:        template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
 		Assets:       template.GetComponentAssetImportHTML(),
-		Buttons:      eng.NavButtons.CheckPermission(user),
+		Buttons:      (*eng.NavButtons).CheckPermission(user),
 		TmplHeadHTML: template.Default().GetHeadHTML(),
 		TmplFootJS:   template.Default().GetFootJS(),
 	}))

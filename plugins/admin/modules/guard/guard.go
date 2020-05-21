@@ -9,19 +9,22 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type Guard struct {
 	services  service.List
 	conn      db.Connection
 	tableList table.GeneratorList
+	navBtns   *types.Buttons
 }
 
-func New(s service.List, c db.Connection, t table.GeneratorList) *Guard {
+func New(s service.List, c db.Connection, t table.GeneratorList, b *types.Buttons) *Guard {
 	return &Guard{
 		services:  s,
 		conn:      c,
 		tableList: t,
+		navBtns:   b,
 	}
 }
 
@@ -38,7 +41,8 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
 			response.BadRequest(ctx, errors.Msg)
 		} else {
-			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn, template.Missing404Page)
+			response.Alert(ctx, errors.Msg, errors.Msg, "table model not found", g.conn, g.navBtns,
+				template.Missing404Page)
 		}
 		ctx.Abort()
 		return

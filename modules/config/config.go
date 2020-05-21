@@ -288,6 +288,12 @@ type Config struct {
 	// Hide tool entrance flag
 	HideToolEntrance bool `json:"hide_tool_entrance,omitempty",yaml:"hide_tool_entrance",ini:"hide_tool_entrance"`
 
+	Custom404HTML template.HTML `json:"custom_404_html,omitempty",yaml:"custom_404_html",ini:"custom_404_html"`
+
+	Custom403HTML template.HTML `json:"custom_403_html,omitempty",yaml:"custom_403_html",ini:"custom_403_html"`
+
+	Custom500HTML template.HTML `json:"custom_500_html,omitempty",yaml:"custom_500_html",ini:"custom_500_html"`
+
 	// Update Process Function
 	UpdateProcessFn UpdateConfigProcessFn `json:"-",,omitemptyyaml:"-",ini:"-"`
 
@@ -508,6 +514,9 @@ func (c *Config) Copy() *Config {
 		SiteOff:                       c.SiteOff,
 		HideConfigCenterEntrance:      c.HideConfigCenterEntrance,
 		HideAppInfoEntrance:           c.HideAppInfoEntrance,
+		HideToolEntrance:              c.HideToolEntrance,
+		Custom404HTML:                 c.Custom404HTML,
+		Custom500HTML:                 c.Custom500HTML,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -569,6 +578,9 @@ func (c *Config) ToMap() map[string]string {
 	m["file_upload_engine"] = c.FileUploadEngine.JSON()
 	m["custom_head_html"] = string(c.CustomHeadHtml)
 	m["custom_foot_html"] = string(c.CustomFootHtml)
+	m["custom_404_html"] = string(c.Custom404HTML)
+	m["custom_403_html"] = string(c.Custom403HTML)
+	m["custom_500_html"] = string(c.Custom500HTML)
 	m["footer_info"] = string(c.FooterInfo)
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
@@ -584,6 +596,11 @@ func (c *Config) ToMap() map[string]string {
 	m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
 
 	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
+
+	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
+	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
+	m["hide_tool_entrance"] = strconv.FormatBool(c.HideToolEntrance)
+
 	return m
 }
 
@@ -649,11 +666,18 @@ func (c *Config) Update(m map[string]string) error {
 	}
 	c.CustomHeadHtml = template.HTML(m["custom_head_html"])
 	c.CustomFootHtml = template.HTML(m["custom_foot_html"])
+	c.Custom404HTML = template.HTML(m["custom_404_html"])
+	c.Custom403HTML = template.HTML(m["custom_403_html"])
+	c.Custom500HTML = template.HTML(m["custom_500_html"])
 	c.FooterInfo = template.HTML(m["footer_info"])
 	c.LoginTitle = m["login_title"]
 	c.AssetUrl = m["asset_url"]
 	c.LoginLogo = template.HTML(m["login_logo"])
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
+
+	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
+	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
+	c.HideToolEntrance = utils.ParseBool(m["hide_tool_entrance"])
 
 	c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
 
@@ -909,6 +933,18 @@ func GetUrlPrefix() string {
 
 func GetOpenAdminApi() bool {
 	return globalCfg.OpenAdminApi
+}
+
+func GetCustom500HTML() template.HTML {
+	return globalCfg.Custom500HTML
+}
+
+func GetCustom404HTML() template.HTML {
+	return globalCfg.Custom404HTML
+}
+
+func GetCustom403HTML() template.HTML {
+	return globalCfg.Custom403HTML
 }
 
 func GetTheme() string {

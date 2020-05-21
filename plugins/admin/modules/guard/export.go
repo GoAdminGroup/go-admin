@@ -17,7 +17,7 @@ type ExportParam struct {
 func (g *Guard) Export(ctx *context.Context) {
 	panel, prefix := g.table(ctx)
 	if !panel.GetExportable() {
-		alert(ctx, panel, errors.OperationNotAllow, g.conn)
+		alert(ctx, panel, errors.OperationNotAllow, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}

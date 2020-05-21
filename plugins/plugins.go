@@ -64,7 +64,7 @@ func (b *Base) InitBase(srv service.List) {
 }
 
 func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, animation ...bool) *bytes.Buffer {
-	return Execute(ctx, b.Conn, b.UI.NavButtons, auth.Auth(ctx), panel, animation...)
+	return Execute(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, animation...)
 }
 
 func (b *Base) HTML(ctx *context.Context, panel types.Panel, animation ...bool) {

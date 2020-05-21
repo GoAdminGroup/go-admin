@@ -15,7 +15,6 @@ import (
 	"sync"
 
 	c "github.com/GoAdminGroup/go-admin/modules/config"
-	e "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -62,11 +61,14 @@ type Template interface {
 	GetAssetList() []string
 	GetAssetImportHTML(exceptComponents ...string) template.HTML
 	GetAsset(string) ([]byte, error)
-	GetTemplate(bool, ...PageType) (*template.Template, string)
+	GetTemplate(bool) (*template.Template, string)
 	GetVersion() string
 	GetRequirements() []string
 	GetHeadHTML() template.HTML
 	GetFootJS() template.HTML
+	Get404HTML() template.HTML
+	Get500HTML() template.HTML
+	Get403HTML() template.HTML
 }
 
 type PageType uint8
@@ -75,6 +77,7 @@ const (
 	NormalPage PageType = iota
 	Missing404Page
 	Error500Page
+	NoPermission403Page
 )
 
 const (
@@ -170,6 +173,32 @@ func VersionCompare(toCompare string, versions []string) bool {
 		}
 	}
 	return false
+}
+
+func GetPageContentFromPageType(title, desc, msg string, pt PageType) (template.HTML, template.HTML, template.HTML) {
+	if c.GetDebug() {
+		return template.HTML(title), template.HTML(desc), Default().Alert().Warning(msg)
+	}
+
+	if pt == Missing404Page {
+		if c.GetCustom404HTML() != template.HTML("") {
+			return "", "", c.GetCustom404HTML()
+		} else {
+			return "", "", Default().Get404HTML()
+		}
+	} else if pt == NoPermission403Page {
+		if c.GetCustom404HTML() != template.HTML("") {
+			return "", "", c.GetCustom403HTML()
+		} else {
+			return "", "", Default().Get403HTML()
+		}
+	} else {
+		if c.GetCustom500HTML() != template.HTML("") {
+			return "", "", c.GetCustom500HTML()
+		} else {
+			return "", "", Default().Get500HTML()
+		}
+	}
 }
 
 var DefaultThemeNames = []string{"sword", "adminlte"}
@@ -366,11 +395,16 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 	return buf
 }
 
-func WarningPanel(msg string) types.Panel {
+func WarningPanel(msg string, pts ...PageType) types.Panel {
+	pt := Error500Page
+	if len(pts) > 0 {
+		pt = pts[0]
+	}
+	pageTitle, description, content := GetPageContentFromPageType(msg, msg, msg, pt)
 	return types.Panel{
-		Content:     Default().Alert().Warning(msg),
-		Description: template.HTML(e.Msg),
-		Title:       template.HTML(e.Msg),
+		Content:     content,
+		Description: description,
+		Title:       pageTitle,
 	}
 }
 

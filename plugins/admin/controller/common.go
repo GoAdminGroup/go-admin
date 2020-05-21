@@ -31,7 +31,7 @@ type Handler struct {
 	routes        context.RouterMap
 	generators    table.GeneratorList
 	operations    []context.Node
-	navButtons    types.Buttons
+	navButtons    *types.Buttons
 	operationLock sync.Mutex
 }
 
@@ -39,7 +39,7 @@ func New(cfg ...Config) *Handler {
 	if len(cfg) == 0 {
 		return &Handler{
 			operations: make([]context.Node, 0),
-			navButtons: make(types.Buttons, 0),
+			navButtons: new(types.Buttons),
 		}
 	}
 	return &Handler{
@@ -48,7 +48,7 @@ func New(cfg ...Config) *Handler {
 		conn:       cfg[0].Connection,
 		generators: cfg[0].Generators,
 		operations: make([]context.Node, 0),
-		navButtons: make(types.Buttons, 0),
+		navButtons: new(types.Buttons),
 	}
 }
 
@@ -128,16 +128,11 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 	h.operations = append(h.operations, addNodes...)
 }
 
-func (h *Handler) AddNavButton(btns ...types.Button) {
-	for _, btn := range btns {
-		h.navButtons = append(h.navButtons, btn)
+func (h *Handler) AddNavButton(btns *types.Buttons) {
+	h.navButtons = btns
+	for _, btn := range *btns {
 		h.addOperation(btn.GetAction().GetCallbacks())
 	}
-}
-
-func (h *Handler) AddNavButtonFront(btn types.Button) {
-	h.navButtons = append(types.Buttons{btn}, h.navButtons...)
-	h.addOperation(btn.GetAction().GetCallbacks())
 }
 
 func (h *Handler) searchOperation(path, method string) bool {
@@ -177,7 +172,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		Config:    *h.config,
 		Menu:      menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
-		Buttons:   h.navButtons.CheckPermission(user),
+		Buttons:   (*h.navButtons).CheckPermission(user),
 		Iframe:    ctx.Query(constant.IframeKey) == "true",
 	})
 }

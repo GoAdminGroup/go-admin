@@ -14,7 +14,7 @@ func (g *Guard) MenuDelete(ctx *context.Context) {
 	id := ctx.Query("id")
 
 	if id == "" {
-		alertWithTitleAndDesc(ctx, "Menu", "menu", errors.WrongID, g.conn)
+		alertWithTitleAndDesc(ctx, "Menu", "menu", errors.WrongID, g.conn, g.navBtns)
 		ctx.Abort()
 		return
 	}

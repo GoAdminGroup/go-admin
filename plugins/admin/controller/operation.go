@@ -14,7 +14,7 @@ func (h *Handler) Operation(ctx *context.Context) {
 		if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
 			response.BadRequest(ctx, errMsg)
 		} else {
-			response.Alert(ctx, errMsg, errMsg, errMsg, h.conn)
+			response.Alert(ctx, errMsg, errMsg, errMsg, h.conn, h.navButtons)
 		}
 		return
 	}
