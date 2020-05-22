@@ -20,6 +20,19 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: goadmin_site_myid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.goadmin_site_myid_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    MAXVALUE 99999999
+    CACHE 1;
+
+ALTER TABLE public.goadmin_site_myid_seq OWNER TO postgres;
+
+--
 -- Name: goadmin_site; Type: TABLE; Schema: public; Owner: postgres
 --
 

@@ -124,7 +124,7 @@ func askForDBConfig(info *dbInfo) config.DatabaseList {
 	} else {
 
 		if info.File == "" {
-			info.File = prompt("sql file")
+			info.File = promptWithDefault("sql file", "./admin.db")
 		}
 
 		return map[string]config.Database{
