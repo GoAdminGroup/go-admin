@@ -55,7 +55,6 @@ ALTER TABLE public.goadmin_site OWNER TO postgres;
 --
 
 COPY public.goadmin_site (id, key, value, type, description, state, created_at, updated_at) FROM stdin;
-2	theme	adminlte	0	\N	1	2020-04-08 17:45:00.088827	2020-04-08 17:45:00.088827
 \.
 
 
