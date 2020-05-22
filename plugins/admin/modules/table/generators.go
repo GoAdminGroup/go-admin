@@ -1358,7 +1358,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 					connName        = ctx.FormValue("conn")
 					driver          = s.c.Databases[connName].Driver
 					conn            = db.GetConnectionFromService(services.Get(driver))
-					columnsModel, _ = db.WithDriver(conn).Table(tableName).ShowColumns()
+					columnsModel, _ = db.WithDriverAndConnection(connName, conn).Table(tableName).ShowColumns()
 
 					fieldField = "Field"
 					typeField  = "Type"
