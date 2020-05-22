@@ -435,6 +435,9 @@ var DefaultFuncMap = template.FuncMap{
 	"renderRowDataJS": func(id template.HTML, content template.JS) template.JS {
 		return template.JS(types.ParseTableDataTmplWithID(id, string(content)))
 	},
+	"attr": func(s template.HTML) template.HTMLAttr {
+		return template.HTMLAttr(s)
+	},
 	"js": func(s interface{}) template.JS {
 		if ss, ok := s.(string); ok {
 			return template.JS(ss)

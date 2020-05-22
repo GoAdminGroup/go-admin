@@ -22,22 +22,54 @@ type Param struct {
 	TableTitle string `json:"table_title"`
 	TableName  string `json:"table_name"`
 
-	HideFilterArea bool `json:"hide_filter_area"`
+	HideFilterArea   bool        `json:"hide_filter_area"`
+	HideNewButton    bool        `json:"hide_new_button"`
+	HideExportButton bool        `json:"hide_export_button"`
+	HideEditButton   bool        `json:"hide_edit_button"`
+	HideDeleteButton bool        `json:"hide_delete_button"`
+	HideDetailButton bool        `json:"hide_detail_button"`
+	HideFilterButton bool        `json:"hide_filter_button"`
+	HideRowSelector  bool        `json:"hide_row_selector"`
+	HidePagination   bool        `json:"hide_pagination"`
+	HideQueryInfo    bool        `json:"hide_query_info"`
+	FilterFormLayout form.Layout `json:"filter_form_layout"`
+
+	HideContinueEditCheckBox bool `json:"hide_continue_edit_check_box"`
+	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
+	HideResetButton          bool `json:"hide_reset_button"`
+	HideBackButton           bool `json:"hide_back_button"`
 
 	Fields Fields
+
+	FormFields Fields
 
 	Output string `json:"output"`
 }
 
 type Config struct {
-	Connection     string        `json:"connection"`
-	Driver         string        `json:"driver"`
-	Package        string        `json:"package"`
-	Table          string        `json:"table"`
-	Schema         string        `json:"schema"`
-	Output         string        `json:"output"`
-	Conn           db.Connection `json:"conn"`
-	HideFilterArea bool          `json:"hide_filter_area"`
+	Connection       string        `json:"connection"`
+	Driver           string        `json:"driver"`
+	Package          string        `json:"package"`
+	Table            string        `json:"table"`
+	Schema           string        `json:"schema"`
+	Output           string        `json:"output"`
+	Conn             db.Connection `json:"conn"`
+	HideFilterArea   bool          `json:"hide_filter_area"`
+	HideNewButton    bool          `json:"hide_new_button"`
+	HideExportButton bool          `json:"hide_export_button"`
+	HideEditButton   bool          `json:"hide_edit_button"`
+	HideDeleteButton bool          `json:"hide_delete_button"`
+	HideDetailButton bool          `json:"hide_detail_button"`
+	HideFilterButton bool          `json:"hide_filter_button"`
+	HideRowSelector  bool          `json:"hide_row_selector"`
+	HidePagination   bool          `json:"hide_pagination"`
+	HideQueryInfo    bool          `json:"hide_query_info"`
+	FilterFormLayout form.Layout   `json:"filter_form_layout"`
+
+	HideContinueEditCheckBox bool `json:"hide_continue_edit_check_box"`
+	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
+	HideResetButton          bool `json:"hide_reset_button"`
+	HideBackButton           bool `json:"hide_back_button"`
 }
 
 func fixedTable(table string) string {
@@ -59,20 +91,34 @@ func NewParam(cfg Config) Param {
 	}
 
 	return Param{
-		Connection:     cfg.Connection,
-		Driver:         cfg.Driver,
-		Package:        cfg.Package,
-		Table:          fixedTable(ta),
-		TableTitle:     strings.Title(ta),
-		TableName:      dbTable,
-		HideFilterArea: cfg.HideFilterArea,
-		RowTable:       cfg.Table,
-		Fields:         getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver),
-		Output:         cfg.Output,
+		Connection:               cfg.Connection,
+		Driver:                   cfg.Driver,
+		Package:                  cfg.Package,
+		Table:                    fixedTable(ta),
+		TableTitle:               strings.Title(ta),
+		TableName:                dbTable,
+		HideFilterArea:           cfg.HideFilterArea,
+		HideNewButton:            cfg.HideNewButton,
+		HideExportButton:         cfg.HideExportButton,
+		HideEditButton:           cfg.HideEditButton,
+		HideDeleteButton:         cfg.HideDeleteButton,
+		HideDetailButton:         cfg.HideDetailButton,
+		HideFilterButton:         cfg.HideFilterButton,
+		HideRowSelector:          cfg.HideRowSelector,
+		HidePagination:           cfg.HidePagination,
+		HideQueryInfo:            cfg.HideQueryInfo,
+		FilterFormLayout:         cfg.FilterFormLayout,
+		HideContinueEditCheckBox: cfg.HideContinueEditCheckBox,
+		HideContinueNewCheckBox:  cfg.HideContinueNewCheckBox,
+		HideResetButton:          cfg.HideResetButton,
+		HideBackButton:           cfg.HideBackButton,
+		RowTable:                 cfg.Table,
+		Fields:                   getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver),
+		Output:                   cfg.Output,
 	}
 }
 
-func NewParamWithFields(cfg Config, fields Fields) Param {
+func NewParamWithFields(cfg Config, fields ...Fields) Param {
 	ta := camelcase(cfg.Table)
 	dbTable := cfg.Table
 	if cfg.Schema != "" {
@@ -80,16 +126,31 @@ func NewParamWithFields(cfg Config, fields Fields) Param {
 	}
 
 	return Param{
-		Connection:     cfg.Connection,
-		Driver:         cfg.Driver,
-		Package:        cfg.Package,
-		Table:          ta,
-		TableTitle:     strings.Title(cfg.Table),
-		TableName:      dbTable,
-		RowTable:       cfg.Table,
-		HideFilterArea: cfg.HideFilterArea,
-		Fields:         fields,
-		Output:         cfg.Output,
+		Connection:               cfg.Connection,
+		Driver:                   cfg.Driver,
+		Package:                  cfg.Package,
+		Table:                    ta,
+		TableTitle:               strings.Title(cfg.Table),
+		TableName:                dbTable,
+		RowTable:                 cfg.Table,
+		Fields:                   fields[0],
+		FormFields:               fields[1],
+		HideFilterArea:           cfg.HideFilterArea,
+		HideNewButton:            cfg.HideNewButton,
+		HideExportButton:         cfg.HideExportButton,
+		HideEditButton:           cfg.HideEditButton,
+		HideDeleteButton:         cfg.HideDeleteButton,
+		HideDetailButton:         cfg.HideDetailButton,
+		HideFilterButton:         cfg.HideFilterButton,
+		HideRowSelector:          cfg.HideRowSelector,
+		HidePagination:           cfg.HidePagination,
+		HideQueryInfo:            cfg.HideQueryInfo,
+		FilterFormLayout:         cfg.FilterFormLayout,
+		HideContinueEditCheckBox: cfg.HideContinueEditCheckBox,
+		HideContinueNewCheckBox:  cfg.HideContinueNewCheckBox,
+		HideResetButton:          cfg.HideResetButton,
+		HideBackButton:           cfg.HideBackButton,
+		Output:                   cfg.Output,
 	}
 }
 
@@ -103,6 +164,8 @@ type Field struct {
 	NotAllowAdd bool   `json:"not_allow_add"`
 	Filterable  bool   `json:"filterable"`
 	Sortable    bool   `json:"sortable"`
+	Editable    bool   `json:"editable"`
+	CanAdd      bool   `json:"can_add"`
 }
 
 func Generate(param Param) error {

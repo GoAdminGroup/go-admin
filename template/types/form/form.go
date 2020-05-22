@@ -94,6 +94,56 @@ func (l Layout) Flow() bool {
 	return l == LayoutFlow
 }
 
+func (l Layout) Default() bool {
+	return l == LayoutDefault
+}
+
+func (l Layout) String() string {
+	switch l {
+	case LayoutDefault:
+		return "LayoutDefault"
+	case LayoutTwoCol:
+		return "LayoutTwoCol"
+	case LayoutThreeCol:
+		return "LayoutThreeCol"
+	case LayoutFourCol:
+		return "LayoutFourCol"
+	case LayoutFiveCol:
+		return "LayoutFiveCol"
+	case LayoutSixCol:
+		return "LayoutSixCol"
+	case LayoutFlow:
+		return "LayoutFlow"
+	case LayoutTab:
+		return "LayoutTab"
+	default:
+		return "LayoutDefault"
+	}
+}
+
+func GetLayoutFromString(s string) Layout {
+	switch s {
+	case "LayoutDefault":
+		return LayoutDefault
+	case "LayoutTwoCol":
+		return LayoutTwoCol
+	case "LayoutThreeCol":
+		return LayoutThreeCol
+	case "LayoutFourCol":
+		return LayoutFourCol
+	case "LayoutFiveCol":
+		return LayoutFiveCol
+	case "LayoutSixCol":
+		return LayoutSixCol
+	case "LayoutFlow":
+		return LayoutFlow
+	case "LayoutTab":
+		return LayoutTab
+	default:
+		return LayoutDefault
+	}
+}
+
 func (t Type) String() string {
 	switch t {
 	case Default:
@@ -245,7 +295,7 @@ func (t Type) SelectedLabel() []template.HTML {
 	if t == Select || t == SelectSingle || t == SelectBox {
 		return []template.HTML{"selected", ""}
 	}
-	if t == Radio || t == Switch || t == Checkbox || t == CheckboxStacked {
+	if t == Radio || t == Switch || t == Checkbox || t == CheckboxStacked || t == CheckboxSingle {
 		return []template.HTML{"checked", ""}
 	}
 	return []template.HTML{"", ""}

@@ -1393,27 +1393,64 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 
 				return true, "ok", [][]string{headName, fieldName, dbTypeList, formTypeList}
 			}, `
-$("tbody").find("tr").remove();
-console.log(data.data);
-var tpl = $("template.fields-tpl").html();
+$("tbody.fields-table").find("tr").remove();
+let tpl = $("template.fields-tpl").html();
 for (let i = 0; i < data.data[0].length; i++) {
 	$("tbody.fields-table").append(tpl);
 }
-let trs = $("tbody").find("tr");
+let trs = $("tbody.fields-table").find("tr");
 for (let i = 0; i < data.data[0].length; i++) {
 	$(trs[i]).find('.field_head').val(data.data[0][i]);
 	$(trs[i]).find('.field_name').val(data.data[1][i]);
 	$(trs[i]).find('select.field_db_type').val(data.data[2][i]).select2();
-	$(trs[i]).find('select.field_form_type').val(data.data[3][i]).select2();
+}
+$("tbody.fields_form-table").find("tr").remove();
+let tpl_form = $("template.fields_form-tpl").html();
+for (let i = 0; i < data.data[0].length; i++) {
+	$("tbody.fields_form-table").append(tpl_form);
+}
+let trs_form = $("tbody.fields_form-table").find("tr");
+for (let i = 0; i < data.data[0].length; i++) {
+	$(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
+	$(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
+	$(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
+	$(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
 }
 `, `"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
-	formList.AddField(lgWithScore("hide filter area", "tool"), "hide_filter_area", db.Varchar, form.Switch).
-		FieldOptions(types.FieldOptions{
-			{Text: lgWithScore("yes", "tool"), Value: "y"},
-			{Text: lgWithScore("no", "tool"), Value: "n"},
-		}).FieldDefault("n")
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
+		panel.AddField(lgWithScore("filter form layout", "tool"), "filter_form_layout", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: form.LayoutDefault.String(), Value: form.LayoutDefault.String()},
+				{Text: form.LayoutTwoCol.String(), Value: form.LayoutTwoCol.String()},
+				{Text: form.LayoutThreeCol.String(), Value: form.LayoutThreeCol.String()},
+				{Text: form.LayoutFourCol.String(), Value: form.LayoutFourCol.String()},
+				{Text: form.LayoutFlow.String(), Value: form.LayoutFlow.String()},
+			}).FieldDefault(form.LayoutDefault.String()).
+			FieldRowWidth(4).FieldHeadWidth(3)
+	})
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "new button", "hide_new_button", "n", 2)
+		addYesNoSwitchForTool(panel, "export button", "hide_export_button", "n", 4, 3)
+		addYesNoSwitchForTool(panel, "edit button", "hide_edit_button", "n", 4, 2)
+	})
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "pagination", "hide_pagination", "n", 2)
+		addYesNoSwitchForTool(panel, "delete button", "hide_delete_button", "n", 4, 3)
+		addYesNoSwitchForTool(panel, "detail button", "hide_detail_button", "n", 4, 2)
+	})
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "filter button", "hide_filter_button", "n", 2)
+		addYesNoSwitchForTool(panel, "row selector", "hide_row_selector", "n", 4, 3)
+		addYesNoSwitchForTool(panel, "query info", "hide_query_info", "n", 4, 2)
+	})
+
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
 		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
@@ -1430,28 +1467,84 @@ for (let i = 0; i < data.data[0].length; i++) {
 				{Text: "", Value: "y"},
 				{Text: "", Value: "n"},
 			}).
-			FieldDefault("0").
+			FieldDefault("n").
 			FieldDisplay(func(value types.FieldModel) interface{} {
-				return []string{"0"}
+				return []string{"n"}
 			})
 		pa.AddField(lgWithScore("field sortable", "tool"), "field_sortable", db.Varchar, form.CheckboxSingle).
 			FieldOptions(types.FieldOptions{
 				{Text: "", Value: "y"},
 				{Text: "", Value: "n"},
 			}).
-			FieldDefault("0").
+			FieldDefault("n").
 			FieldDisplay(func(value types.FieldModel) interface{} {
-				return []string{"0"}
+				return []string{"n"}
 			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
 			return []string{""}
 		})
-		pa.AddField(lgWithScore("form type", "tool"), "field_form_type", db.Varchar, form.SelectSingle).
+	}).FieldInputWidth(11)
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
+		addYesNoSwitchForTool(panel, "reset button", "hide_reset_button", "n", 5, 3)
+	})
+
+	formList.AddRow(func(panel *types.FormPanel) {
+		addYesNoSwitchForTool(panel, "continue new checkbox", "hide_continue_new_check_box", "n", 2)
+		addYesNoSwitchForTool(panel, "back button", "hide_back_button", "n", 5, 3)
+	})
+
+	formList.AddTable(lgWithScore("field", "tool"), "fields_form", func(pa *types.FormPanel) {
+		pa.AddField(lgWithScore("title", "tool"), "field_head_form", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field name", "tool"), "field_name_form", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field editable", "tool"), "field_canedit", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("y").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"y"}
+			})
+		pa.AddField(lgWithScore("field can add", "tool"), "field_canadd", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("y").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"y"}
+			})
+		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
+			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
+			return []string{""}
+		})
+		pa.AddField(lgWithScore("form type", "tool"), "field_form_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(formTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
 			return []string{""}
 		})
 	}).FieldInputWidth(11)
+
+	formList.SetTabGroups(types.
+		NewTabGroups("conn", "table", "package", "pk", "path").
+		AddGroup("hide_filter_area", "filter_form_layout",
+			"hide_new_button", "hide_export_button", "hide_edit_button",
+			"hide_pagination", "hide_delete_button", "hide_detail_button",
+			"hide_filter_button", "hide_row_selector", "hide_query_info",
+			"fields").
+		AddGroup("hide_continue_edit_check_box", "hide_reset_button",
+			"hide_continue_new_check_box", "hide_back_button",
+			"fields_form")).
+		SetTabHeaders(lgWithScore("basic info", "tool"), lgWithScore("table info", "tool"),
+			lgWithScore("form info", "tool"))
 
 	formList.SetTable("tool").
 		SetTitle(lgWithScore("tool", "tool")).
@@ -1475,22 +1568,48 @@ for (let i = 0; i < data.data[0].length; i++) {
 			fields[i] = tools.Field{
 				Head:       values["field_head"][i],
 				Name:       values["field_name"][i],
-				FormType:   values["field_form_type"][i],
 				DBType:     values["field_db_type"][i],
 				Filterable: values["field_filterable"][i] == "y",
 				Sortable:   values["field_sortable"][i] == "y",
 			}
 		}
 
+		formFields := make(tools.Fields, len(values["field_head_form"]))
+
+		for i := 0; i < len(values["field_head_form"]); i++ {
+			formFields[i] = tools.Field{
+				Head:     values["field_head_form"][i],
+				Name:     values["field_name_form"][i],
+				FormType: values["field_form_type_form"][i],
+				DBType:   values["field_db_type_form"][i],
+				CanAdd:   values["field_canadd"][i] == "y",
+				Editable: values["field_canedit"][i] == "y",
+			}
+		}
+
 		err := tools.Generate(tools.NewParamWithFields(tools.Config{
-			Connection:     connName,
-			Driver:         s.c.Databases[connName].Driver,
-			Package:        values.Get("package"),
-			Table:          values.Get("table"),
-			HideFilterArea: values.Get("hide_filter_area") == "y",
-			Schema:         values.Get("schema"),
-			Output:         output,
-		}, fields))
+			Connection:               connName,
+			Driver:                   s.c.Databases[connName].Driver,
+			Package:                  values.Get("package"),
+			Table:                    values.Get("table"),
+			HideFilterArea:           values.Get("hide_filter_area") == "y",
+			HideNewButton:            values.Get("hide_new_button") == "y",
+			HideExportButton:         values.Get("hide_export_button") == "y",
+			HideEditButton:           values.Get("hide_edit_button") == "y",
+			HideDeleteButton:         values.Get("hide_delete_button") == "y",
+			HideDetailButton:         values.Get("hide_detail_button") == "y",
+			HideFilterButton:         values.Get("hide_filter_button") == "y",
+			HideRowSelector:          values.Get("hide_row_selector") == "y",
+			HidePagination:           values.Get("hide_pagination") == "y",
+			HideQueryInfo:            values.Get("hide_query_info") == "y",
+			HideContinueEditCheckBox: values.Get("hide_continue_edit_check_box") == "y",
+			HideContinueNewCheckBox:  values.Get("hide_continue_new_check_box") == "y",
+			HideResetButton:          values.Get("hide_reset_button") == "y",
+			HideBackButton:           values.Get("hide_back_button") == "y",
+			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
+			Schema:                   values.Get("schema"),
+			Output:                   output,
+		}, fields, formFields))
 
 		if err != nil {
 			return err
@@ -1595,6 +1714,23 @@ func interfaces(arr []string) []interface{} {
 	}
 
 	return iarr
+}
+
+func addYesNoSwitchForTool(formList *types.FormPanel, head, field, def string, row ...int) {
+	formList.AddField(lgWithScore(head, "tool"), field, db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithScore("show", "tool"), Value: "n"},
+			{Text: lgWithScore("hide", "tool"), Value: "y"},
+		}).FieldDefault(def)
+	if len(row) > 0 {
+		formList.FieldRowWidth(row[0])
+	}
+	if len(row) > 1 {
+		formList.FieldHeadWidth(row[1])
+	}
+	if len(row) > 2 {
+		formList.FieldInputWidth(row[2])
+	}
 }
 
 func formTypeOptions() types.FieldOptions {
