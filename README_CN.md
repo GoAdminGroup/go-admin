@@ -57,6 +57,7 @@ GoAdmin+vue 例子： [https://github.com/GoAdminGroup/goadmin-vue-example](http
 ### 第一步：导入 sql
 
 - [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+- [mssql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql)
 - [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
 - [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
 

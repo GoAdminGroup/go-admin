@@ -64,6 +64,7 @@ Following three steps to run it.
 ### Step 1: import sql
 
 - [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+- [mssql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql)
 - [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
 - [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
 
