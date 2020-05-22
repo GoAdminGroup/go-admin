@@ -1329,7 +1329,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		ops[i] = types.FieldOption{Text: name, Value: name}
 	}
 
-	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).FieldOptions(ops).
+	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).
+		FieldOptions(ops).
 		FieldOnChooseAjax("table", "/tool/choose/conn",
 			func(ctx *context.Context) (success bool, msg string, data interface{}) {
 				connName := ctx.FormValue("value")
@@ -1338,7 +1339,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				}
 				cfg := s.c.Databases[connName]
 				conn := db.GetConnectionFromService(services.Get(cfg.Driver))
-				tables, err := db.WithDriver(conn).Table(cfg.Name).ShowTables()
+				tables, err := db.WithDriverAndConnection(connName, conn).Table(cfg.Name).ShowTables()
 				if err != nil {
 					return false, err.Error(), nil
 				}
