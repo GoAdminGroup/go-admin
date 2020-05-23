@@ -161,7 +161,7 @@ func generating(cfgFile, connName string) {
 		})))
 	}
 
-	if err := tools.GenerateTables(outputPath, chooseTables, packageName); err != nil {
+	if err := tools.GenerateTables(outputPath, packageName, chooseTables, true); err != nil {
 		panic(err)
 	}
 

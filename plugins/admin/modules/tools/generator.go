@@ -190,7 +190,7 @@ func Generate(param Param) error {
 	return ioutil.WriteFile(filepath.FromSlash(param.Output)+"/"+param.RowTable+".go", c, 0644)
 }
 
-func GenerateTables(outputPath string, tables []string, packageName string) error {
+func GenerateTables(outputPath, packageName string, tables []string, new bool) error {
 
 	if len(outputPath) > 0 && outputPath[len(outputPath)-1] == '/' {
 		outputPath = outputPath[:len(outputPath)-1]
@@ -198,7 +198,7 @@ func GenerateTables(outputPath string, tables []string, packageName string) erro
 
 	outputPath = filepath.FromSlash(outputPath)
 
-	if !utils.FileExist(outputPath + "/tables.go") {
+	if !new && !utils.FileExist(outputPath+"/tables.go") {
 		return nil
 	}
 

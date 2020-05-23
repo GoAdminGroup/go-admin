@@ -1620,8 +1620,7 @@ NProgress.done();
 			return err
 		}
 
-		return tools.GenerateTables(output, []string{values.Get("table")},
-			values.Get("package"))
+		return tools.GenerateTables(output, values.Get("package"), []string{values.Get("table")}, false)
 	})
 
 	formList.EnableAjax(lg("success"), lg("fail"), s.c.Url("/info/generate/new"))
