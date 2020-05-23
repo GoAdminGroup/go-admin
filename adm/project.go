@@ -274,7 +274,7 @@ var Generators = map[string]table.Generator{
 	fmt.Println(getWord("2 Execute the following command to run:"))
 	fmt.Println()
 	if runtime.GOOS == "windows" {
-		fmt.Println("> GO111MODULE=on go mod init module=" + p.Module)
+		fmt.Println("> GO111MODULE=on go mod init " + p.Module)
 		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
 			fmt.Println("> GO111MODULE=on go mod tidy (设置代理为：https://goproxy.io 或 https://goproxy.cn)")
 		} else {

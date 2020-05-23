@@ -63,6 +63,11 @@ var langs = map[string]map[string]string{
 		"Login: ":                                 "登陆：",
 		"Generate CRUD models: ":                  "生成CRUD模型：",
 
+		"GoAdmin CLI error: CLI has not supported MINGW64 for now, please use cmd terminal instead.": "GoAdmin CLI" +
+			"错误：目前不支持 MINGW64，请使用 CMD 终端。",
+		"Know more: http://discuss.go-admin.com/t/goadmin-cli-adm-does-not-support-git-bash-mingw64-for-now/77": "了解更多：" +
+			"http://discuss.go-admin.com/t/goadmin-cli-adm-git-bash-mingw64/22",
+
 		"port":        "端口",
 		"url prefix":  "路由前缀",
 		"module path": "模块路径",

@@ -65,19 +65,19 @@ const (
 
 	// Form Page
 
-	saveBtn               = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[1]/button`
-	resetBtn              = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[2]/button`
-	nameField             = `//*[@id="tab-form-0"]/div[1]/div/div/input`
-	ageField              = `//*[@id="tab-form-0"]/div[2]/div/div/div/input`
-	emailField            = `//*[@id="tab-form-0"]/div[4]/div/div/input`
-	birthdayField         = `//*[@id="tab-form-0"]/div[5]/div/div/input`
-	passwordField         = `//*[@id="tab-form-0"]/div[6]/div/div/input`
-	homePageField         = `//*[@id="tab-form-0"]/div[3]/div/div/input`
-	ipField               = `//*[@id="tab-form-0"]/div[7]/div/div/input`
-	amountField           = `//*[@id="tab-form-0"]/div[9]/div/div/input`
-	appleOptField         = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
-	bananaOptField        = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[2]`
-	watermelonOptField    = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[3]`
+	saveBtn            = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[1]/button`
+	resetBtn           = `//*[@id="pjax-container"]/section[2]/div/form/div[2]/div[2]/div[2]/button`
+	nameField          = `//*[@id="tab-form-0"]/div[1]/div/div/input`
+	ageField           = `//*[@id="tab-form-0"]/div[2]/div/div/div/input`
+	emailField         = `//*[@id="tab-form-0"]/div[4]/div/div/input`
+	birthdayField      = `//*[@id="tab-form-0"]/div[5]/div/div/input`
+	passwordField      = `//*[@id="tab-form-0"]/div[6]/div/div/input`
+	homePageField      = `//*[@id="tab-form-0"]/div[3]/div/div/input`
+	ipField            = `//*[@id="tab-form-0"]/div[7]/div/div/input`
+	amountField        = `//*[@id="tab-form-0"]/div[9]/div/div/input`
+	appleOptField      = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
+	bananaOptField     = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[2]`
+	watermelonOptField = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[3]`
 	//pearOptField          = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[4]`
 	genderBoyCheckBox     = `//*[@id="tab-form-1"]/div[5]/div/div/div[1]`
 	genderGirlCheckBox    = `//*[@id="tab-form-1"]/div[5]/div/div/div[2]`
