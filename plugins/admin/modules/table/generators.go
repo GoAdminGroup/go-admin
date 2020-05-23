@@ -1482,9 +1482,10 @@ for (let i = 0; i < data.data[0].length; i++) {
 				return []string{"n"}
 			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
-			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{""}
-		})
+			FieldOptions(databaseTypeOptions()).
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"Int"}
+			})
 	}).FieldInputWidth(11)
 
 	formList.AddRow(func(panel *types.FormPanel) {
@@ -1527,7 +1528,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
-				return []string{""}
+				return []string{"Int"}
 			})
 		pa.AddField(lgWithScore("form type", "tool"), "field_form_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(formTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1617,12 +1618,8 @@ for (let i = 0; i < data.data[0].length; i++) {
 			return err
 		}
 
-		if utils.FileExist(output + "/tables.go") {
-			return tools.GenerateTables(output, []string{values.Get("table")},
-				values.Get("package"))
-		}
-
-		return nil
+		return tools.GenerateTables(output, []string{values.Get("table")},
+			values.Get("package"))
 	})
 
 	formList.EnableAjax(lg("success"), lg("fail"), s.c.Url("/info/generate/new"))
@@ -1750,30 +1747,36 @@ func databaseTypeOptions() types.FieldOptions {
 		len(db.FloatTypeList)+
 		len(db.UintTypeList)+
 		len(db.BoolTypeList))
-	for i, t := range db.IntTypeList {
+	z := 0
+	for _, t := range db.IntTypeList {
 		text := string(t)
-		v := strings.Title(text)
-		opts[i] = types.FieldOption{Text: text, Value: v}
+		v := strings.Title(strings.ToLower(text))
+		opts[z] = types.FieldOption{Text: text, Value: v}
+		z++
 	}
-	for i, t := range db.StringTypeList {
+	for _, t := range db.StringTypeList {
 		text := string(t)
-		v := strings.Title(text)
-		opts[i] = types.FieldOption{Text: text, Value: v}
+		v := strings.Title(strings.ToLower(text))
+		opts[z] = types.FieldOption{Text: text, Value: v}
+		z++
 	}
-	for i, t := range db.FloatTypeList {
+	for _, t := range db.FloatTypeList {
 		text := string(t)
-		v := strings.Title(text)
-		opts[i] = types.FieldOption{Text: text, Value: v}
+		v := strings.Title(strings.ToLower(text))
+		opts[z] = types.FieldOption{Text: text, Value: v}
+		z++
 	}
-	for i, t := range db.UintTypeList {
+	for _, t := range db.UintTypeList {
 		text := string(t)
-		v := strings.Title(text)
-		opts[i] = types.FieldOption{Text: text, Value: v}
+		v := strings.Title(strings.ToLower(text))
+		opts[z] = types.FieldOption{Text: text, Value: v}
+		z++
 	}
-	for i, t := range db.BoolTypeList {
+	for _, t := range db.BoolTypeList {
 		text := string(t)
-		v := strings.Title(text)
-		opts[i] = types.FieldOption{Text: text, Value: v}
+		v := strings.Title(strings.ToLower(text))
+		opts[z] = types.FieldOption{Text: text, Value: v}
+		z++
 	}
 	return opts
 }

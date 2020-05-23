@@ -7,6 +7,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"go/format"
 	"io/ioutil"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
@@ -125,12 +126,16 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		dbTable = cfg.Schema + "." + cfg.Table
 	}
 
+	if len(cfg.Output) > 0 && cfg.Output[len(cfg.Output)-1] == '/' {
+		cfg.Output = cfg.Output[:len(cfg.Output)-1]
+	}
+
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
 		Package:                  cfg.Package,
 		Table:                    ta,
-		TableTitle:               strings.Title(cfg.Table),
+		TableTitle:               strings.Title(ta),
 		TableName:                dbTable,
 		RowTable:                 cfg.Table,
 		Fields:                   fields[0],
@@ -182,10 +187,20 @@ func Generate(param Param) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(param.Output+"/"+param.RowTable+".go", c, 0644)
+	return ioutil.WriteFile(filepath.FromSlash(param.Output)+"/"+param.RowTable+".go", c, 0644)
 }
 
 func GenerateTables(outputPath string, tables []string, packageName string) error {
+
+	if len(outputPath) > 0 && outputPath[len(outputPath)-1] == '/' {
+		outputPath = outputPath[:len(outputPath)-1]
+	}
+
+	outputPath = filepath.FromSlash(outputPath)
+
+	if !utils.FileExist(outputPath + "/tables.go") {
+		return nil
+	}
 
 	tableStr := ""
 	commentStr := ""
