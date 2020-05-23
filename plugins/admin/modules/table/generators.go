@@ -1422,7 +1422,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
+		addSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
 		panel.AddField(lgWithScore("filter form layout", "tool"), "filter_form_layout", db.Varchar, form.SelectSingle).
 			FieldOptions(types.FieldOptions{
 				{Text: form.LayoutDefault.String(), Value: form.LayoutDefault.String()},
@@ -1435,21 +1435,21 @@ for (let i = 0; i < data.data[0].length; i++) {
 	})
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "new button", "hide_new_button", "n", 2)
-		addYesNoSwitchForTool(panel, "export button", "hide_export_button", "n", 4, 3)
-		addYesNoSwitchForTool(panel, "edit button", "hide_edit_button", "n", 4, 2)
+		addSwitchForTool(panel, "new button", "hide_new_button", "n", 2)
+		addSwitchForTool(panel, "export button", "hide_export_button", "n", 4, 3)
+		addSwitchForTool(panel, "edit button", "hide_edit_button", "n", 4, 2)
 	})
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "pagination", "hide_pagination", "n", 2)
-		addYesNoSwitchForTool(panel, "delete button", "hide_delete_button", "n", 4, 3)
-		addYesNoSwitchForTool(panel, "detail button", "hide_detail_button", "n", 4, 2)
+		addSwitchForTool(panel, "pagination", "hide_pagination", "n", 2)
+		addSwitchForTool(panel, "delete button", "hide_delete_button", "n", 4, 3)
+		addSwitchForTool(panel, "detail button", "hide_detail_button", "n", 4, 2)
 	})
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "filter button", "hide_filter_button", "n", 2)
-		addYesNoSwitchForTool(panel, "row selector", "hide_row_selector", "n", 4, 3)
-		addYesNoSwitchForTool(panel, "query info", "hide_query_info", "n", 4, 2)
+		addSwitchForTool(panel, "filter button", "hide_filter_button", "n", 2)
+		addSwitchForTool(panel, "row selector", "hide_row_selector", "n", 4, 3)
+		addSwitchForTool(panel, "query info", "hide_query_info", "n", 4, 2)
 	})
 
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
@@ -1488,13 +1488,13 @@ for (let i = 0; i < data.data[0].length; i++) {
 	}).FieldInputWidth(11)
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
-		addYesNoSwitchForTool(panel, "reset button", "hide_reset_button", "n", 5, 3)
+		addSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
+		addSwitchForTool(panel, "reset button", "hide_reset_button", "n", 5, 3)
 	})
 
 	formList.AddRow(func(panel *types.FormPanel) {
-		addYesNoSwitchForTool(panel, "continue new checkbox", "hide_continue_new_check_box", "n", 2)
-		addYesNoSwitchForTool(panel, "back button", "hide_back_button", "n", 5, 3)
+		addSwitchForTool(panel, "continue new checkbox", "hide_continue_new_check_box", "n", 2)
+		addSwitchForTool(panel, "back button", "hide_back_button", "n", 5, 3)
 	})
 
 	formList.AddTable(lgWithScore("field", "tool"), "fields_form", func(pa *types.FormPanel) {
@@ -1525,9 +1525,10 @@ for (let i = 0; i < data.data[0].length; i++) {
 				return []string{"y"}
 			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
-			FieldOptions(databaseTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{""}
-		})
+			FieldOptions(databaseTypeOptions()).
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
 		pa.AddField(lgWithScore("form type", "tool"), "field_form_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(formTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
 			return []string{""}
@@ -1717,7 +1718,7 @@ func interfaces(arr []string) []interface{} {
 	return iarr
 }
 
-func addYesNoSwitchForTool(formList *types.FormPanel, head, field, def string, row ...int) {
+func addSwitchForTool(formList *types.FormPanel, head, field, def string, row ...int) {
 	formList.AddField(lgWithScore(head, "tool"), field, db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: lgWithScore("show", "tool"), Value: "n"},
@@ -1735,111 +1736,46 @@ func addYesNoSwitchForTool(formList *types.FormPanel, head, field, def string, r
 }
 
 func formTypeOptions() types.FieldOptions {
-	return types.FieldOptions{
-		{Text: "Default", Value: "Default"},
-		{Text: "Text", Value: "Text"},
-		{Text: "SelectSingle", Value: "SelectSingle"},
-		{Text: "Select", Value: "Select"},
-		{Text: "IconPicker", Value: "IconPicker"},
-		{Text: "SelectBox", Value: "SelectBox"},
-		{Text: "File", Value: "File"},
-		{Text: "Multifile", Value: "Multifile"},
-		{Text: "Password", Value: "Password"},
-		{Text: "RichText", Value: "RichText"},
-		{Text: "Datetime", Value: "Datetime"},
-		{Text: "DatetimeRange", Value: "DatetimeRange"},
-		{Text: "Radio", Value: "Radio"},
-		{Text: "Email", Value: "Email"},
-		{Text: "Url", Value: "Url"},
-		{Text: "Ip", Value: "Ip"},
-		{Text: "Color", Value: "Color"},
-		{Text: "Array", Value: "Array"},
-		{Text: "Currency", Value: "Currency"},
-		{Text: "Number", Value: "Number"},
-		{Text: "Table", Value: "Table"},
-		{Text: "NumberRange", Value: "NumberRange"},
-		{Text: "TextArea", Value: "TextArea"},
-		{Text: "Custom", Value: "Custom"},
-		{Text: "Switch", Value: "Switch"},
-		{Text: "Code", Value: "Code"},
+	opts := make(types.FieldOptions, len(form.AllType))
+	for i := 0; i < len(form.AllType); i++ {
+		v := form.AllType[i].String()
+		opts[i] = types.FieldOption{Text: v, Value: v}
 	}
+	return opts
 }
 
 func databaseTypeOptions() types.FieldOptions {
-	return types.FieldOptions{
-		{Text: "INT", Value: "Int"},
-		{Text: "TINYINT", Value: "Tinyint"},
-		{Text: "MEDIUMINT", Value: "Mediumint"},
-		{Text: "SMALLINT", Value: "Smallint"},
-		{Text: "BIGINT", Value: "Bigint"},
-		{Text: "BIT", Value: "Bit"},
-		{Text: "INT8", Value: "Int8"},
-		{Text: "INT4", Value: "Int4"},
-		{Text: "INT2", Value: "Int2"},
-		{Text: "INTEGER", Value: "Integer"},
-		{Text: "NUMERIC", Value: "Numeric"},
-		{Text: "SMALLSERIAL", Value: "Smallserial"},
-		{Text: "SERIAL", Value: "Serial"},
-		{Text: "BIGSERIAL", Value: "Bigserial"},
-		{Text: "MONEY", Value: "Money"},
-		{Text: "REAL", Value: "Real"},
-		{Text: "FLOAT", Value: "Float"},
-		{Text: "FLOAT4", Value: "Float4"},
-		{Text: "FLOAT8", Value: "Float8"},
-		{Text: "DOUBLE", Value: "Double"},
-		{Text: "DECIMAL", Value: "Decimal"},
-		{Text: "DOUBLEPRECISION", Value: "Doubleprecision"},
-		{Text: "DATE", Value: "Date"},
-		{Text: "TIME", Value: "Time"},
-		{Text: "YEAR", Value: "Year"},
-		{Text: "DATETIME", Value: "Datetime"},
-		{Text: "TIMESTAMP", Value: "Timestamp"},
-		{Text: "TEXT", Value: "Text"},
-		{Text: "LONGTEXT", Value: "Longtext"},
-		{Text: "MEDIUMTEXT", Value: "Mediumtext"},
-		{Text: "TINYTEXT", Value: "Tinytext"},
-		{Text: "VARCHAR", Value: "Varchar"},
-		{Text: "CHAR", Value: "Char"},
-		{Text: "BPCHAR", Value: "Bpchar"},
-		{Text: "JSON", Value: "Json"},
-		{Text: "BLOB", Value: "Blob"},
-		{Text: "TINYBLOB", Value: "Tinyblob"},
-		{Text: "MEDIUMBLOB", Value: "Mediumblob"},
-		{Text: "LONGBLOB", Value: "Longblob"},
-		{Text: "INTERVAL", Value: "Interval"},
-		{Text: "BOOLEAN", Value: "Boolean"},
-		{Text: "Bool", Value: "Bool"},
-		{Text: "POINT", Value: "Point"},
-		{Text: "LINE", Value: "Line"},
-		{Text: "LSEG", Value: "Lseg"},
-		{Text: "BOX", Value: "Box"},
-		{Text: "PATH", Value: "Path"},
-		{Text: "POLYGON", Value: "Polygon"},
-		{Text: "CIRCLE", Value: "Circle"},
-		{Text: "CIDR", Value: "Cidr"},
-		{Text: "INET", Value: "Inet"},
-		{Text: "MACADDR", Value: "Macaddr"},
-		{Text: "CHARACTER", Value: "Character"},
-		{Text: "VARYINGCHARACTER", Value: "Varyingcharacter"},
-		{Text: "NCHAR", Value: "Nchar"},
-		{Text: "NATIVECHARACTER", Value: "Nativecharacter"},
-		{Text: "NVARCHAR", Value: "Nvarchar"},
-		{Text: "CLOB", Value: "Clob"},
-		{Text: "BINARY", Value: "Binary"},
-		{Text: "VARBINARY", Value: "Varbinary"},
-		{Text: "ENUM", Value: "Enum"},
-		{Text: "SET", Value: "Set"},
-		{Text: "GEOMETRY", Value: "Geometry"},
-		{Text: "MULTILINESTRING", Value: "Multilinestring"},
-		{Text: "MULTIPOLYGON", Value: "Multipolygon"},
-		{Text: "LINESTRING", Value: "Linestring"},
-		{Text: "MULTIPOINT", Value: "Multipoint"},
-		{Text: "GEOMETRYCOLLECTION", Value: "Geometrycollection"},
-		{Text: "NAME", Value: "Name"},
-		{Text: "UUID", Value: "Uuid"},
-		{Text: "TIMESTAMPTZ", Value: "Timestamptz"},
-		{Text: "TIMETZ", Value: "Timetz"},
+	opts := make(types.FieldOptions, len(db.IntTypeList)+
+		len(db.StringTypeList)+
+		len(db.FloatTypeList)+
+		len(db.UintTypeList)+
+		len(db.BoolTypeList))
+	for i, t := range db.IntTypeList {
+		text := string(t)
+		v := strings.Title(text)
+		opts[i] = types.FieldOption{Text: text, Value: v}
 	}
+	for i, t := range db.StringTypeList {
+		text := string(t)
+		v := strings.Title(text)
+		opts[i] = types.FieldOption{Text: text, Value: v}
+	}
+	for i, t := range db.FloatTypeList {
+		text := string(t)
+		v := strings.Title(text)
+		opts[i] = types.FieldOption{Text: text, Value: v}
+	}
+	for i, t := range db.UintTypeList {
+		text := string(t)
+		v := strings.Title(text)
+		opts[i] = types.FieldOption{Text: text, Value: v}
+	}
+	for i, t := range db.BoolTypeList {
+		text := string(t)
+		v := strings.Title(text)
+		opts[i] = types.FieldOption{Text: text, Value: v}
+	}
+	return opts
 }
 
 func getType(typeName string) string {

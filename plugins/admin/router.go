@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
 )
@@ -22,8 +23,14 @@ func (admin *Admin) initRouter() *Admin {
 	route.GET("/install", admin.handler.ShowInstall)
 	route.POST("/install/database/check", admin.handler.CheckDatabase)
 
-	for _, path := range template.Get(config.GetTheme()).GetAssetList() {
-		route.GET("/assets"+path, admin.handler.Assets)
+	checkRepeatedPath := make([]string, 0)
+	for _, themeName := range template.Themes() {
+		for _, path := range template.Get(themeName).GetAssetList() {
+			if !utils.InArray(checkRepeatedPath, path) {
+				checkRepeatedPath = append(checkRepeatedPath, path)
+				route.GET("/assets"+path, admin.handler.Assets)
+			}
+		}
 	}
 
 	for _, path := range template.GetComponentAsset() {

@@ -45,12 +45,12 @@ const (
 	Slider
 )
 
-var allType = []Type{Default, Text, Array, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
+var AllType = []Type{Default, Text, Array, SelectSingle, Select, IconPicker, SelectBox, File, Multifile, Password,
 	RichText, Datetime, DatetimeRange, Checkbox, CheckboxStacked, Radio, Table, Email, Url, Ip, Color, Currency, Number, NumberRange,
 	TextArea, Custom, Switch, Code, Rate, Slider, Date, DateRange, CheckboxSingle}
 
 func CheckType(t, def Type) Type {
-	for _, item := range allType {
+	for _, item := range AllType {
 		if t == item {
 			return t
 		}
