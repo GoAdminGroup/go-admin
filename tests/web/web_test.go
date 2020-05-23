@@ -78,7 +78,7 @@ const (
 	appleOptField         = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[1]`
 	bananaOptField        = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[2]`
 	watermelonOptField    = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[3]`
-	pearOptField          = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[4]`
+	//pearOptField          = `//*[@id="bootstrap-duallistbox-nonselected-list_fruit[]"]/option[4]`
 	genderBoyCheckBox     = `//*[@id="tab-form-1"]/div[5]/div/div/div[1]`
 	genderGirlCheckBox    = `//*[@id="tab-form-1"]/div[5]/div/div/div[2]`
 	experienceDropDown    = `//*[@id="tab-form-1"]/div[7]/div/span/span[1]/span/span[2]`
@@ -466,7 +466,7 @@ func checkSelectionsInForm(page *Page) {
 	page.Text(appleOptField, "Apple")
 	page.Text(bananaOptField, "Banana")
 	page.Text(watermelonOptField, "Watermelon")
-	page.Text(pearOptField, "")
+	//page.Text(pearOptField, "")
 	page.Click(experienceDropDown)
 	page.Text(twoYearsSelection, "two years")
 	page.Text(threeYearsSelection, "three years")
