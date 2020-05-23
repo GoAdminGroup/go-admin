@@ -266,7 +266,7 @@ var Generators = map[string]table.Generator{
 	fmt.Println()
 	fmt.Println(getWord("1 Import and initialize database:"))
 	fmt.Println()
-	if defaultLang == "cn" {
+	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
 		fmt.Println("- sqlite: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.db", "blue"))
 		fmt.Println("- mssql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.mssql", "blue"))
 		fmt.Println("- postgresql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.pgsql", "blue"))
@@ -283,7 +283,7 @@ var Generators = map[string]table.Generator{
 	if runtime.GOOS == "windows" {
 		fmt.Println("> GO111MODULE=on go mod init " + p.Module)
 		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-			fmt.Println("> GO111MODULE=on go mod tidy (设置代理为：https://goproxy.io 或 https://goproxy.cn)")
+			fmt.Println("> GORPOXY=https://goproxy.io GO111MODULE=on go mod tidy")
 		} else {
 			fmt.Println("> GO111MODULE=on go mod tidy")
 		}
@@ -291,7 +291,7 @@ var Generators = map[string]table.Generator{
 	} else {
 		fmt.Println("> make init module=" + p.Module)
 		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-			fmt.Println("> make install (设置代理为：https://goproxy.io 或 https://goproxy.cn)")
+			fmt.Println("> GORPOXY=https://goproxy.io make install")
 		} else {
 			fmt.Println("> make install")
 		}
