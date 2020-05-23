@@ -477,7 +477,11 @@ func (f *FormField) UpdateDefaultValue(sqls ...*db.SQL) *FormField {
 				}), f.FormType.SelectedLabel())
 
 			} else {
-				f.Options.SetSelected(string(f.Value), f.FormType.SelectedLabel())
+				f.Options.SetSelected(f.ToDisplay(FieldModel{
+					ID:    "",
+					Value: string(f.Value),
+					Row:   make(map[string]interface{}),
+				}), f.FormType.SelectedLabel())
 			}
 		} else if f.FormType.IsArray() {
 			v := f.ToDisplay(FieldModel{
