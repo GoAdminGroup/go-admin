@@ -266,10 +266,17 @@ var Generators = map[string]table.Generator{
 	fmt.Println()
 	fmt.Println(getWord("1 Import and initialize database:"))
 	fmt.Println()
-	fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/raw/master/data/admin.db", "blue"))
-	fmt.Println("- mssql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql", "blue"))
-	fmt.Println("- postgresql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql", "blue"))
-	fmt.Println("- mysql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql", "blue"))
+	if defaultLang == "cn" {
+		fmt.Println("- sqlite: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.db", "blue"))
+		fmt.Println("- mssql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.mssql", "blue"))
+		fmt.Println("- postgresql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.pgsql", "blue"))
+		fmt.Println("- mysql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.sql", "blue"))
+	} else {
+		fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/raw/master/data/admin.db", "blue"))
+		fmt.Println("- mssql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql", "blue"))
+		fmt.Println("- postgresql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql", "blue"))
+		fmt.Println("- mysql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql", "blue"))
+	}
 	fmt.Println()
 	fmt.Println(getWord("2 Execute the following command to run:"))
 	fmt.Println()
