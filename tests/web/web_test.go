@@ -466,7 +466,7 @@ func checkSelectionsInForm(page *Page) {
 	page.Text(appleOptField, "Apple")
 	page.Text(bananaOptField, "Banana")
 	page.Text(watermelonOptField, "Watermelon")
-	page.Text(pearOptField, "Pear")
+	page.Text(pearOptField, "")
 	page.Click(experienceDropDown)
 	page.Text(twoYearsSelection, "two years")
 	page.Text(threeYearsSelection, "three years")
