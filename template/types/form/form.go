@@ -144,6 +144,79 @@ func GetLayoutFromString(s string) Layout {
 	}
 }
 
+func (t Type) Name() string {
+	switch t {
+	case Default:
+		return "Default"
+	case Text:
+		return "Text"
+	case SelectSingle:
+		return "SelectSingle"
+	case Select:
+		return "Select"
+	case IconPicker:
+		return "IconPicker"
+	case SelectBox:
+		return "SelectBox"
+	case File:
+		return "File"
+	case Table:
+		return "Table"
+	case Multifile:
+		return "Multifile"
+	case Password:
+		return "Password"
+	case RichText:
+		return "RichText"
+	case Rate:
+		return "Rate"
+	case Checkbox:
+		return "Checkbox"
+	case CheckboxStacked:
+		return "CheckboxStacked"
+	case CheckboxSingle:
+		return "CheckboxSingle"
+	case Date:
+		return "Date"
+	case DateRange:
+		return "DateRange"
+	case Datetime:
+		return "Datetime"
+	case DatetimeRange:
+		return "DatetimeRange"
+	case Radio:
+		return "Radio"
+	case Slider:
+		return "Slider"
+	case Array:
+		return "Array"
+	case Email:
+		return "Email"
+	case Url:
+		return "Url"
+	case Ip:
+		return "Ip"
+	case Color:
+		return "Color"
+	case Currency:
+		return "Currency"
+	case Number:
+		return "Number"
+	case NumberRange:
+		return "NumberRange"
+	case TextArea:
+		return "TextArea"
+	case Custom:
+		return "Custom"
+	case Switch:
+		return "Switch"
+	case Code:
+		return "Code"
+	default:
+		panic("wrong form type")
+	}
+}
+
 func (t Type) String() string {
 	switch t {
 	case Default:

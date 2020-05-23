@@ -1738,7 +1738,7 @@ func addSwitchForTool(formList *types.FormPanel, head, field, def string, row ..
 func formTypeOptions() types.FieldOptions {
 	opts := make(types.FieldOptions, len(form.AllType))
 	for i := 0; i < len(form.AllType); i++ {
-		v := form.AllType[i].String()
+		v := form.AllType[i].Name()
 		opts[i] = types.FieldOption{Text: v, Value: v}
 	}
 	return opts
