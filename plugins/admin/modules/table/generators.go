@@ -1394,6 +1394,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 
 				return true, "ok", [][]string{headName, fieldName, dbTypeList, formTypeList}
 			}, `
+NProgress.start();
 $("tbody.fields-table").find("tr").remove();
 let tpl = $("template.fields-tpl").html();
 for (let i = 0; i < data.data[0].length; i++) {
@@ -1417,6 +1418,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 	$(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
 	$(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
 }
+NProgress.done();
 `, `"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
