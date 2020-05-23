@@ -1532,7 +1532,7 @@ for (let i = 0; i < data.data[0].length; i++) {
 			})
 		pa.AddField(lgWithScore("form type", "tool"), "field_form_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(formTypeOptions()).FieldDisplay(func(value types.FieldModel) interface{} {
-			return []string{""}
+			return []string{"Text"}
 		})
 	}).FieldInputWidth(11)
 
