@@ -126,7 +126,7 @@ func (b Base) Table() types.TableAttribute {
 		Name:      "table",
 		Thead:     make(types.Thead, 0),
 		InfoList:  make([]map[string]types.InfoItem, 0),
-		Type:      "normal",
+		Type:      "table",
 		Style:     "hover",
 		Layout:    "auto",
 		Attribute: b.Attribute,
@@ -136,10 +136,9 @@ func (b Base) Table() types.TableAttribute {
 func (b Base) DataTable() types.DataTableAttribute {
 	return &DataTableAttribute{
 		TableAttribute: *(b.Table().
+			SetStyle("hover").
+			SetName("data-table").
 			SetType("data-table").(*TableAttribute)),
-		EditUrl:   "",
-		NewUrl:    "",
-		Style:     "hover",
 		Attribute: b.Attribute,
 	}
 }

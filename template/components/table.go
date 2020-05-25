@@ -42,6 +42,11 @@ func (compo *TableAttribute) SetType(value string) types.TableAttribute {
 	return compo
 }
 
+func (compo *TableAttribute) SetName(name string) types.TableAttribute {
+	compo.Name = name
+	return compo
+}
+
 func (compo *TableAttribute) SetHideThead() types.TableAttribute {
 	compo.HideThead = true
 	return compo
@@ -75,7 +80,6 @@ type DataTableAttribute struct {
 	NewUrl            string
 	UpdateUrl         string
 	HideThead         bool
-	Style             string
 	DetailUrl         string
 	SortUrl           string
 	DeleteUrl         string

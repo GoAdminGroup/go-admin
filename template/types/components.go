@@ -105,6 +105,7 @@ type TableAttribute interface {
 	SetThead(value Thead) TableAttribute
 	SetInfoList(value []map[string]InfoItem) TableAttribute
 	SetType(value string) TableAttribute
+	SetName(name string) TableAttribute
 	SetMinWidth(value string) TableAttribute
 	SetHideThead() TableAttribute
 	SetLayout(value string) TableAttribute
