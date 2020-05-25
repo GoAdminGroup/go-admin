@@ -91,6 +91,8 @@ func NewParam(cfg Config) Param {
 		dbTable = cfg.Schema + "." + cfg.Table
 	}
 
+	fields := getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver)
+
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
@@ -114,7 +116,8 @@ func NewParam(cfg Config) Param {
 		HideResetButton:          cfg.HideResetButton,
 		HideBackButton:           cfg.HideBackButton,
 		RowTable:                 cfg.Table,
-		Fields:                   getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver),
+		Fields:                   fields,
+		FormFields:               fields,
 		Output:                   cfg.Output,
 	}
 }
