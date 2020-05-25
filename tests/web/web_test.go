@@ -123,6 +123,12 @@ const (
 	menuEditSaveBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
 	managerPageBtn               = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[1]/a`
+	rolesPageBtn                 = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[2]/a`
+	permissionPageBtn            = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[3]/a`
+	operationLogPageBtn          = `/html/body/div[1]/aside/section/ul/li[2]/ul/li[5]/a`
+	navLinkBtn                   = `//*[@id="firstnav"]/div[2]/ul/li[1]/a`
+	navCloseBtn                  = `//*[@id="firstnav"]/div[2]/ul/li[1]/i`
+	userPageBtn                  = `/html/body/div[1]/aside/section/ul/li[3]/a`
 	managerEditBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[3]/td[8]/a[1]`
 	operatorEditBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/a[1]`
 	managerNameField             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[2]/div/div/input`
@@ -255,6 +261,27 @@ func testLogin(page *Page) {
 }
 
 func testInfoTablePageOperations(page *Page) {
+
+	// Nav link Check
+	// =============================
+
+	printPart("nav link check")
+	page.Click(sideBarManageDropDown)
+	page.Click(managerPageBtn)
+	page.Click(rolesPageBtn)
+	page.Click(permissionPageBtn)
+	page.Click(menuPageBtn)
+	page.Click(operationLogPageBtn)
+	page.Click(navLinkBtn)
+	page.Click(navCloseBtn)
+	page.Click(navLinkBtn)
+	page.Click(navCloseBtn)
+	page.Click(navLinkBtn)
+	page.Click(navCloseBtn)
+	page.Click(navLinkBtn)
+	page.Click(navCloseBtn)
+	page.Click(navLinkBtn)
+	page.Click(navCloseBtn)
 
 	page.NavigateTo(url("/info/user"))
 

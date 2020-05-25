@@ -109,28 +109,24 @@ func GetContent(ctx *context.Context) (types.Panel, error) {
 
 	productList := productlist.New().SetData([]map[string]string{
 		{
-			"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
 			"title":       "GoAdmin",
 			"has_tabel":   "true",
 			"labeltype":   "warning",
 			"label":       "free",
 			"description": `a framework help you build the dataviz system`,
 		}, {
-			"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
 			"title":       "GoAdmin",
 			"has_tabel":   "true",
 			"labeltype":   "warning",
 			"label":       "free",
 			"description": `a framework help you build the dataviz system`,
 		}, {
-			"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
 			"title":       "GoAdmin",
 			"has_tabel":   "true",
 			"labeltype":   "warning",
 			"label":       "free",
 			"description": `a framework help you build the dataviz system`,
 		}, {
-			"img":         "http://adminlte.io/themes/AdminLTE/dist/img/default-50x50.gif",
 			"title":       "GoAdmin",
 			"has_tabel":   "true",
 			"labeltype":   "warning",

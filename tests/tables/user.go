@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
@@ -73,9 +72,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		Table:     "user_like_books",
 	})
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
-		return template.Default().Image().
-			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
-			SetHeight("120").SetWidth("120").WithModal().GetContent()
+		return "1231"
 	})
 	info.AddField("CreatedAt", "created_at", db.Timestamp).
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})

@@ -62,6 +62,10 @@ func (page *Page) Text(xpath, text string) {
 	assert.Equal(page.T, mli1, text)
 }
 
+func (page *Page) MoveMouseBy(xOffset, yOffset int) {
+	assert.Equal(page.T, page.Page.MoveMouseBy(xOffset, yOffset), nil)
+}
+
 func (page *Page) Display(xpath string) {
 	page.Css(xpath, "display", "block")
 }
