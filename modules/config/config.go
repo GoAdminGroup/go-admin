@@ -295,7 +295,7 @@ type Config struct {
 	Custom500HTML template.HTML `json:"custom_500_html,omitempty",yaml:"custom_500_html",ini:"custom_500_html"`
 
 	// Update Process Function
-	UpdateProcessFn UpdateConfigProcessFn `json:"-",,omitemptyyaml:"-",ini:"-"`
+	UpdateProcessFn UpdateConfigProcessFn `json:"-",yaml:"-",ini:"-"`
 
 	// Favicon string `json:"favicon,omitempty",yaml:"favicon",ini:"favicon"`
 
