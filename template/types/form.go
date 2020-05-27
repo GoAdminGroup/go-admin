@@ -689,6 +689,24 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 `
 	}
 
+	if formType.IsMultiFile() {
+		f.FieldList[f.curFieldListIndex].Display = func(value FieldModel) interface{} {
+			if value.Value == "" {
+				return ""
+			}
+			arr := strings.Split(value.Value, ",")
+			res := "["
+			for i, item := range arr {
+				if i == len(arr)-1 {
+					res += "'" + config.GetStore().URL(item) + "']"
+				} else {
+					res += "'" + config.GetStore().URL(item) + "',"
+				}
+			}
+			return res
+		}
+	}
+
 	return f
 }
 

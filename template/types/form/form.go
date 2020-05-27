@@ -311,6 +311,10 @@ func (t Type) IsMultiSelect() bool {
 	return t == Select || t == SelectBox || t == Checkbox || t == CheckboxStacked
 }
 
+func (t Type) IsMultiFile() bool {
+	return t == Multifile
+}
+
 func (t Type) IsRange() bool {
 	return t == DatetimeRange || t == NumberRange
 }
