@@ -165,6 +165,12 @@ type FormField struct {
 	PostFilterFn PostFieldFilterFn `json:"-"`
 }
 
+func (f *FormField) GetRawValue(columns []string, v interface{}) string {
+	isJSON := len(columns) == 0
+	return modules.AorB(isJSON || modules.InArray(columns, f.Field),
+		db.GetValueFromDatabaseType(f.TypeName, v, isJSON).String(), "")
+}
+
 func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sqls ...*db.SQL) *FormField {
 
 	// Field is under a table type field.
@@ -327,8 +333,14 @@ func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sqls
 			})
 			if v, ok := value.(template.HTML); ok {
 				f.Value = v
-			} else {
-				f.Value = template.HTML(value.(string))
+			} else if s, ok := value.(string); ok {
+				f.Value = template.HTML(s)
+			}
+
+			if f.FormType.IsFile() {
+				if f.Value != template.HTML("") {
+					f.Value2 = config.GetStore().URL(string(f.Value))
+				}
 			}
 		}
 	}
@@ -493,6 +505,23 @@ func (f *FormField) UpdateDefaultValue(sqls ...*db.SQL) *FormField {
 				f.ValueArr = arr
 			} else {
 				f.ValueArr = []string{v.(string)}
+			}
+		} else {
+			value := f.ToDisplay(FieldModel{
+				ID:    "",
+				Value: string(f.Value),
+				Row:   make(map[string]interface{}),
+			})
+			if v, ok := value.(template.HTML); ok {
+				f.Value = v
+			} else if s, ok := value.(string); ok {
+				f.Value = template.HTML(s)
+			}
+
+			if f.FormType.IsFile() {
+				if f.Value != template.HTML("") {
+					f.Value2 = config.GetStore().URL(string(f.Value))
+				}
 			}
 		}
 	}
@@ -1592,47 +1621,40 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 	)
 
 	if len(f.TabGroups) > 0 {
-		for key, value := range f.TabGroups {
+		for index, group := range f.TabGroups {
 			list := make(FormFields, 0)
-			for j := 0; j < len(value); j++ {
-				for _, field := range f.FieldList {
-					if value[j] == field.Field && !field.FatherFormType.IsTable() {
-						if field.FormType.IsTable() {
-							for z := 0; z < len(field.TableFields); z++ {
-								rowValue := modules.AorB(modules.InArray(columns, field.TableFields[z].Field) || len(columns) == 0,
-									db.GetValueFromDatabaseType(field.TableFields[z].TypeName, res[field.TableFields[z].Field], len(columns) == 0).String(), "")
-								if field.TableFields[z].Field == pk {
-									hasPK = true
-								}
-								if len(sql) > 0 {
-									field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res, sql[0]()))
-								} else {
-									field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res))
-								}
-							}
-							list = append(list, field)
-						} else {
-							if field.Field == pk {
+			for _, fieldName := range group {
+				field := f.FieldList.FindByFieldName(fieldName)
+				if field != nil && !field.FatherFormType.IsTable() {
+					if field.FormType.IsTable() {
+						for z := 0; z < len(field.TableFields); z++ {
+							rowValue := field.TableFields[z].GetRawValue(columns, res[field.TableFields[z].Field])
+							if field.TableFields[z].Field == pk {
 								hasPK = true
 							}
-							rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
-								db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
 							if len(sql) > 0 {
-								list = append(list, *(field.UpdateValue(id, rowValue, res, sql[0]())))
+								field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res, sql[0]()))
 							} else {
-								list = append(list, *(field.UpdateValue(id, rowValue, res)))
+								field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res))
 							}
 						}
-						if list[len(list)-1].FormType == form2.File && list[len(list)-1].Value != template.HTML("") {
-							list[len(list)-1].Value2 = config.GetStore().URL(string(list[len(list)-1].Value))
+						list = append(list, *field)
+					} else {
+						if field.Field == pk {
+							hasPK = true
 						}
-						break
+						rowValue := field.GetRawValue(columns, res[field.Field])
+						if len(sql) > 0 {
+							list = append(list, *(field.UpdateValue(id, rowValue, res, sql[0]())))
+						} else {
+							list = append(list, *(field.UpdateValue(id, rowValue, res)))
+						}
 					}
 				}
 			}
 
 			groupFormList = append(groupFormList, list.FillCustomContent())
-			groupHeaders = append(groupHeaders, f.TabHeaders[key])
+			groupHeaders = append(groupHeaders, f.TabHeaders[index])
 		}
 
 		if len(groupFormList) > 0 && !hasPK {
@@ -1655,51 +1677,52 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 		groupHeaders  = make([]string, 0)
 	)
 
-	for key, value := range f.TabGroups {
+	for index, group := range f.TabGroups {
 		list := make(FormFields, 0)
-		for i := 0; i < len(value); i++ {
-			for _, v := range f.FieldList {
-				if v.Field == value[i] && !v.FatherFormType.IsTable() {
-					if !v.NotAllowAdd {
-						v.Editable = true
-						if v.FormType.IsTable() {
-							for z := 0; z < len(v.TableFields); z++ {
-								if len(sql) > 0 {
-									v.TableFields[z] = *(v.TableFields[z].UpdateDefaultValue(sql[0]()).FillCustomContent())
-								} else {
-									v.TableFields[z] = *(v.TableFields[z].UpdateDefaultValue().FillCustomContent())
-								}
-							}
-							list = append(list, v)
-						} else {
+		for _, fieldName := range group {
+			field := f.FieldList.FindByFieldName(fieldName)
+			if field != nil && !field.FatherFormType.IsTable() {
+				if !field.NotAllowAdd {
+					field.Editable = true
+					if field.FormType.IsTable() {
+						for z := 0; z < len(field.TableFields); z++ {
 							if len(sql) > 0 {
-								list = append(list, *(v.UpdateDefaultValue(sql[0]()).FillCustomContent()))
+								field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(sql[0]()))
 							} else {
-								list = append(list, *(v.UpdateDefaultValue().FillCustomContent()))
+								field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue())
 							}
 						}
-						break
+						list = append(list, *field)
+					} else {
+						if len(sql) > 0 {
+							list = append(list, *(field.UpdateDefaultValue(sql[0]())))
+						} else {
+							list = append(list, *(field.UpdateDefaultValue()))
+						}
 					}
 				}
 			}
 		}
-		groupFormList = append(groupFormList, list)
-		groupHeaders = append(groupHeaders, f.TabHeaders[key])
+		groupFormList = append(groupFormList, list.FillCustomContent())
+		groupHeaders = append(groupHeaders, f.TabHeaders[index])
 	}
 
 	return groupFormList, groupHeaders
 }
 
 func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[string]interface{}, sql ...func() *db.SQL) FormFields {
-	list := make(FormFields, 0)
-	hasPK := false
+	var (
+		list  = make(FormFields, 0)
+		hasPK = false
+	)
 	for _, field := range f.FieldList {
-		rowValue := modules.AorB(modules.InArray(columns, field.Field) || len(columns) == 0,
-			db.GetValueFromDatabaseType(field.TypeName, res[field.Field], len(columns) == 0).String(), "")
+		rowValue := field.GetRawValue(columns, res[field.Field])
 		if len(sql) > 0 {
 			if field.FatherField != "" {
 				f.FieldList.FindTableField(field.Field, field.FatherField).
 					UpdateValue(id, rowValue, res, sql[0]())
+			} else if field.FormType.IsTable() {
+				list = append(list, field)
 			} else {
 				list = append(list, *(field.UpdateValue(id, rowValue, res, sql[0]())))
 			}
@@ -1707,13 +1730,11 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 			if field.FatherField != "" {
 				f.FieldList.FindTableField(field.Field, field.FatherField).
 					UpdateValue(id, rowValue, res)
+			} else if field.FormType.IsTable() {
+				list = append(list, field)
 			} else {
 				list = append(list, *(field.UpdateValue(id, rowValue, res)))
 			}
-		}
-
-		if list[len(list)-1].FormType == form2.File && list[len(list)-1].Value != template.HTML("") {
-			list[len(list)-1].Value2 = config.GetStore().URL(string(list[len(list)-1].Value))
 		}
 
 		if field.Field == pk {
@@ -1730,32 +1751,36 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 			Hide:       true,
 		})
 	}
-	return list
+	return list.FillCustomContent()
 }
 
 func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
-	var newForm = make(FormFields, 0)
+	var list = make(FormFields, 0)
 	for _, v := range f.FieldList {
 		if !v.NotAllowAdd {
 			v.Editable = true
 			if len(sql) > 0 {
 				if v.FatherField != "" {
 					f.FieldList.FindTableField(v.Field, v.FatherField).
-						UpdateDefaultValue(sql[0]()).FillCustomContent()
+						UpdateDefaultValue(sql[0]())
+				} else if v.FormType.IsTable() {
+					list = append(list, v)
 				} else {
-					newForm = append(newForm, *(v.UpdateDefaultValue(sql[0]())))
+					list = append(list, *(v.UpdateDefaultValue(sql[0]())))
 				}
 			} else {
 				if v.FatherField != "" {
 					f.FieldList.FindTableField(v.Field, v.FatherField).
-						UpdateDefaultValue().FillCustomContent()
+						UpdateDefaultValue()
+				} else if v.FormType.IsTable() {
+					list = append(list, v)
 				} else {
-					newForm = append(newForm, *(v.UpdateDefaultValue()))
+					list = append(list, *(v.UpdateDefaultValue()))
 				}
 			}
 		}
 	}
-	return newForm
+	return list.FillCustomContent().RemoveNotShow()
 }
 
 type (
