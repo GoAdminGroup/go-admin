@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/plugins"
@@ -60,6 +61,12 @@ func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
 		Base:      &plugins.Base{PlugName: "admin"},
 		handler:   controller.New(),
 	}
+}
+
+type AddOperationFn func(nodes ...context.Node)
+
+func (admin *Admin) GetAddOperationFn() AddOperationFn {
+	return admin.handler.AddOperation
 }
 
 // SetCaptcha set captcha driver.

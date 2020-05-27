@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -43,8 +44,8 @@ func (gins *Gin) Use(app interface{}, plugs []plugins.Plugin) error {
 }
 
 // Content implements the method Adapter.Content.
-func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	gins.GetContent(ctx, getPanelFn, gins, btns)
+func (gins *Gin) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+	gins.GetContent(ctx, getPanelFn, gins, btns, fn)
 }
 
 type HandlerFunc func(ctx *gin.Context) (types.Panel, error)

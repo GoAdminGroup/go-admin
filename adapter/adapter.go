@@ -15,6 +15,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -35,7 +36,7 @@ type WebFrameWork interface {
 
 	// Content add the panel html response of the given callback function to
 	// the web framework context which is the first parameter.
-	Content(ctx interface{}, fn types.GetPanelFn, navButtons ...types.Button)
+	Content(ctx interface{}, fn types.GetPanelFn, fn2 admin.AddOperationFn, navButtons ...types.Button)
 
 	// User get the auth user model from the given web framework context.
 	User(ctx interface{}) (models.UserModel, bool)
@@ -121,11 +122,13 @@ func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf Web
 }
 
 // GetContent is a helper function of adapter.Content
-func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork, navButtons types.Buttons) {
+func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork,
+	navButtons types.Buttons, fn admin.AddOperationFn) {
 
-	newBase := wf.SetContext(ctx)
-
-	cookie, hasError := newBase.GetCookie()
+	var (
+		newBase          = wf.SetContext(ctx)
+		cookie, hasError = newBase.GetCookie()
+	)
 
 	if hasError != nil || cookie == "" {
 		newBase.Redirect()
@@ -152,6 +155,8 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 			panel = template.WarningPanel(err.Error())
 		}
 	}
+
+	fn(panel.Callbacks...)
 
 	tmpl, tmplName := template.Default().GetTemplate(newBase.IsPjax())
 

@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -48,8 +49,8 @@ func (bu *Buffalo) DisableLog()                { panic("not implement") }
 func (bu *Buffalo) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	bu.GetContent(ctx, getPanelFn, bu, btns)
+func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+	bu.GetContent(ctx, getPanelFn, bu, btns, fn)
 }
 
 type HandlerFunc func(ctx buffalo.Context) (types.Panel, error)

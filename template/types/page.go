@@ -209,6 +209,8 @@ type Panel struct {
 	AutoRefresh bool
 	// Refresh page intervals, the unit is second.
 	RefreshInterval []int
+
+	Callbacks Callbacks
 }
 
 func (p Panel) GetContent(params ...bool) Panel {

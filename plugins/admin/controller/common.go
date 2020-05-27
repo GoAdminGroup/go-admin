@@ -79,24 +79,24 @@ func (h *Handler) table(prefix string, ctx *context.Context) table.Table {
 	authHandler := auth.Middleware(db.GetConnection(h.services))
 	for _, cb := range t.GetInfo().Callbacks {
 		if cb.Value[constant.ContextNodeNeedAuth] == 1 {
-			h.addOperation(context.Node{
+			h.AddOperation(context.Node{
 				Path:     cb.Path,
 				Method:   cb.Method,
 				Handlers: append([]context.Handler{authHandler}, cb.Handlers...),
 			})
 		} else {
-			h.addOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
+			h.AddOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
 		}
 	}
 	for _, cb := range t.GetForm().Callbacks {
 		if cb.Value[constant.ContextNodeNeedAuth] == 1 {
-			h.addOperation(context.Node{
+			h.AddOperation(context.Node{
 				Path:     cb.Path,
 				Method:   cb.Method,
 				Handlers: append([]context.Handler{authHandler}, cb.Handlers...),
 			})
 		} else {
-			h.addOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
+			h.AddOperation(context.Node{Path: cb.Path, Method: cb.Method, Handlers: cb.Handlers})
 		}
 	}
 	return t
@@ -114,7 +114,7 @@ func (h *Handler) routePathWithPrefix(name string, prefix string) string {
 	return h.routePath(name, "prefix", prefix)
 }
 
-func (h *Handler) addOperation(nodes ...context.Node) {
+func (h *Handler) AddOperation(nodes ...context.Node) {
 	h.operationLock.Lock()
 	defer h.operationLock.Unlock()
 	// TODO: 避免重复增加，第一次加入后，后面大部分会存在重复情况，以下循环可以优化
@@ -131,7 +131,7 @@ func (h *Handler) addOperation(nodes ...context.Node) {
 func (h *Handler) AddNavButton(btns *types.Buttons) {
 	h.navButtons = btns
 	for _, btn := range *btns {
-		h.addOperation(btn.GetAction().GetCallbacks())
+		h.AddOperation(btn.GetAction().GetCallbacks())
 	}
 }
 

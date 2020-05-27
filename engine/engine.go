@@ -52,11 +52,12 @@ type Engine struct {
 
 // Default return the default engine instance.
 func Default() *Engine {
-	return &Engine{
+	engine = &Engine{
 		Adapter:    defaultAdapter,
 		Services:   service.GetServices(),
 		NavButtons: new(types.Buttons),
 	}
+	return engine
 }
 
 // Use enable the adapter.
@@ -200,6 +201,8 @@ func (eng *Engine) AddAdapter(ada adapter.WebFrameWork) *Engine {
 
 // defaultAdapter is the default adapter of engine.
 var defaultAdapter adapter.WebFrameWork
+
+var engine *Engine
 
 // navButtons is the default buttons in the navigation bar.
 var navButtons = new(types.Buttons)
@@ -376,7 +379,7 @@ func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
 		panic("adapter is nil")
 	}
-	eng.Adapter.Content(ctx, panel, *eng.NavButtons...)
+	eng.Adapter.Content(ctx, panel, eng.AdminPlugin().GetAddOperationFn(), *eng.NavButtons...)
 }
 
 // Content call the Content method of defaultAdapter.
@@ -385,7 +388,7 @@ func Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
 		panic("adapter is nil")
 	}
-	defaultAdapter.Content(ctx, panel, *navButtons...)
+	defaultAdapter.Content(ctx, panel, engine.AdminPlugin().GetAddOperationFn(), *navButtons...)
 }
 
 // Data inject the route and corresponding handler to the web framework.
@@ -405,6 +408,8 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 		if err != nil {
 			panel = template.WarningPanel(err.Error())
 		}
+
+		eng.AdminPlugin().GetAddOperationFn()(panel.Callbacks...)
 
 		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 

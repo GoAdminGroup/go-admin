@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -47,8 +48,8 @@ func (e *Echo) DisableLog()                { panic("not implement") }
 func (e *Echo) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	e.GetContent(ctx, getPanelFn, e, btns)
+func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+	e.GetContent(ctx, getPanelFn, e, btns, fn)
 }
 
 type HandlerFunc func(ctx echo.Context) (types.Panel, error)

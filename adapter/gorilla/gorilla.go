@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -48,8 +49,8 @@ func (g *Gorilla) DisableLog()                { panic("not implement") }
 func (g *Gorilla) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
-	g.GetContent(ctx, getPanelFn, g, btns)
+func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+	g.GetContent(ctx, getPanelFn, g, btns, fn)
 }
 
 type HandlerFunc func(ctx Context) (types.Panel, error)
@@ -85,11 +86,11 @@ func (g *Gorilla) AddHandler(method, path string, handlers context.Handlers) {
 	reg1 := regexp.MustCompile(":(.*?)/")
 	reg2 := regexp.MustCompile(":(.*?)$")
 
-	url := path
-	url = reg1.ReplaceAllString(url, "{$1}/")
-	url = reg2.ReplaceAllString(url, "{$1}")
+	u := path
+	u = reg1.ReplaceAllString(u, "{$1}/")
+	u = reg2.ReplaceAllString(u, "{$1}")
 
-	g.app.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+	g.app.HandleFunc(u, func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.NewContext(r)
 
 		params := mux.Vars(r)
