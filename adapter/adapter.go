@@ -47,6 +47,8 @@ type WebFrameWork interface {
 
 	Static(prefix, path string)
 
+	Run() error
+
 	// Helper functions
 	// ================================
 

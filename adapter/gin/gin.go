@@ -57,8 +57,9 @@ func Content(handler HandlerFunc) gin.HandlerFunc {
 	}
 }
 
-func (gins *Gin) DisableLog()                {}
-func (gins *Gin) Static(prefix, path string) {}
+func (gins *Gin) Run() error                 { panic("not implement") }
+func (gins *Gin) DisableLog()                { panic("not implement") }
+func (gins *Gin) Static(prefix, path string) { panic("not implement") }
 
 // SetApp implements the method Adapter.SetApp.
 func (gins *Gin) SetApp(app interface{}) error {

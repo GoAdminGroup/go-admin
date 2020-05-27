@@ -44,8 +44,9 @@ func (fast *Fasthttp) Use(app interface{}, plugs []plugins.Plugin) error {
 	return fast.GetUse(app, plugs, fast)
 }
 
-func (fast *Fasthttp) DisableLog()                {}
-func (fast *Fasthttp) Static(prefix, path string) {}
+func (fast *Fasthttp) Run() error                 { panic("not implement") }
+func (fast *Fasthttp) DisableLog()                { panic("not implement") }
+func (fast *Fasthttp) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {

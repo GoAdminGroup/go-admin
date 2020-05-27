@@ -43,8 +43,9 @@ func (bee *Beego) Use(app interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(app, plugs, bee)
 }
 
-func (bee *Beego) DisableLog()                {}
-func (bee *Beego) Static(prefix, path string) {}
+func (bee *Beego) Run() error                 { panic("not implement") }
+func (bee *Beego) DisableLog()                { panic("not implement") }
+func (bee *Beego) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, navButtons ...types.Button) {

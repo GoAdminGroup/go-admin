@@ -43,8 +43,9 @@ func (g *Gorilla) Use(app interface{}, plugs []plugins.Plugin) error {
 	return g.GetUse(app, plugs, g)
 }
 
-func (g *Gorilla) DisableLog()                {}
-func (g *Gorilla) Static(prefix, path string) {}
+func (g *Gorilla) Run() error                 { panic("not implement") }
+func (g *Gorilla) DisableLog()                { panic("not implement") }
+func (g *Gorilla) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {

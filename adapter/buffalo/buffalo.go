@@ -43,8 +43,9 @@ func (bu *Buffalo) Use(app interface{}, plugs []plugins.Plugin) error {
 	return bu.GetUse(app, plugs, bu)
 }
 
-func (bu *Buffalo) DisableLog()                {}
-func (bu *Buffalo) Static(prefix, path string) {}
+func (bu *Buffalo) Run() error                 { panic("not implement") }
+func (bu *Buffalo) DisableLog()                { panic("not implement") }
+func (bu *Buffalo) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {

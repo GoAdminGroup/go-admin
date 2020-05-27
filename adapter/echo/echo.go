@@ -42,8 +42,9 @@ func (e *Echo) Use(app interface{}, plugs []plugins.Plugin) error {
 	return e.GetUse(app, plugs, e)
 }
 
-func (e *Echo) DisableLog()                {}
-func (e *Echo) Static(prefix, path string) {}
+func (e *Echo) Run() error                 { panic("not implement") }
+func (e *Echo) DisableLog()                { panic("not implement") }
+func (e *Echo) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {

@@ -43,8 +43,9 @@ func (is *Iris) Use(app interface{}, plugs []plugins.Plugin) error {
 	return is.GetUse(app, plugs, is)
 }
 
-func (is *Iris) DisableLog()                {}
-func (is *Iris) Static(prefix, path string) {}
+func (is *Iris) Run() error                 { panic("not implement") }
+func (is *Iris) DisableLog()                { panic("not implement") }
+func (is *Iris) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
 func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, btns ...types.Button) {
