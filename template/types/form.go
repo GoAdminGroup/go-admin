@@ -1404,7 +1404,7 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 	return groupFormList, groupHeaders
 }
 
-func (f *FormPanel) GroupField(sql func() *db.SQL) ([]FormFields, []string) {
+func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 	var (
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
@@ -1418,11 +1418,19 @@ func (f *FormPanel) GroupField(sql func() *db.SQL) ([]FormFields, []string) {
 				field.Editable = true
 				if field.FormType.IsTable() {
 					for z := 0; z < len(field.TableFields); z++ {
-						field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(sql()))
+						if len(sql) > 0 {
+							field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(sql[0]()))
+						} else {
+							field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(nil))
+						}
 					}
 					list = append(list, *field)
 				} else {
-					list = append(list, *(field.UpdateDefaultValue(sql())))
+					if len(sql) > 0 {
+						list = append(list, *(field.UpdateDefaultValue(sql[0]())))
+					} else {
+						list = append(list, *(field.UpdateDefaultValue(nil)))
+					}
 				}
 			}
 		}
