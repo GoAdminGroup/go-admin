@@ -653,7 +653,9 @@ func (f *FormPanel) FieldOptionExt2(m map[string]interface{}) *FormPanel {
 }
 
 func (f *FormPanel) FieldOptionExtJS(js template.JS) *FormPanel {
-	f.FieldList[f.curFieldListIndex].OptionExt = js
+	if js != template.JS("") {
+		f.FieldList[f.curFieldListIndex].OptionExt = js
+	}
 	return f
 }
 
@@ -1473,21 +1475,37 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 	return list.FillCustomContent()
 }
 
-func (f *FormPanel) FieldsWithDefaultValue(sql func() *db.SQL) FormFields {
+func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
 	var list = make(FormFields, 0)
 	for _, v := range f.FieldList {
 		if v.allowAdd() {
 			v.Editable = true
 			if v.FatherField != "" {
-				f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(sql())
+				if len(sql) > 0 {
+					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(sql[0]())
+				} else {
+					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(nil)
+				}
 			} else if v.FormType.IsTable() {
 				list = append(list, v)
 			} else {
-				list = append(list, *(v.UpdateDefaultValue(sql())))
+				if len(sql) > 0 {
+					list = append(list, *(v.UpdateDefaultValue(sql[0]())))
+				} else {
+					list = append(list, *(v.UpdateDefaultValue(nil)))
+				}
 			}
 		}
 	}
 	return list.FillCustomContent().RemoveNotShow()
+}
+
+func (f *FormPanel) GetNewFormFields(sql ...func() *db.SQL) (FormFields, []FormFields, []string) {
+	if len(f.TabGroups) > 0 {
+		tabFields, tabHeaders := f.GroupField(sql...)
+		return make(FormFields, 0), tabFields, tabHeaders
+	}
+	return f.FieldsWithDefaultValue(sql...), make([]FormFields, 0), make([]string, 0)
 }
 
 type (

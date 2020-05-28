@@ -131,36 +131,37 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 		panic("wrong popup action parameter, empty id")
 	}
 	modalID := "info-popup-model-" + utils.Uuid(10)
-	col1 := template2.Default().Col().GetContent()
-	btn1 := template2.Default().Button().SetType("submit").
-		SetContent(language.GetFromHtml("Save")).
-		SetThemePrimary().
-		SetOrientationRight().
-		SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + `Save`).
-		GetContent()
-	btn2 := template2.Default().Button().SetType("reset").
-		SetContent(language.GetFromHtml("Reset")).
-		SetThemeWarning().
-		SetOrientationLeft().
-		GetContent()
-	col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
-		SetContent(btn1 + btn2).GetContent()
-	panel := fn(types.NewFormPanel())
-
-	fields, headers := panel.GroupField()
-	aform := template2.Default().Form().
-		SetContent(panel.FieldList).
-		SetTabHeaders(headers).
-		SetTabContents(fields).
-		SetAjax(panel.AjaxSuccessJS, panel.AjaxErrorJS).
-		SetPrefix(config.PrefixFixSlash()).
-		SetUrl(url).
-		SetOperationFooter(col1 + col2)
 
 	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
+		col1 := template2.Default().Col().GetContent()
+		btn1 := template2.Default().Button().SetType("submit").
+			SetContent(language.GetFromHtml("Save")).
+			SetThemePrimary().
+			SetOrientationRight().
+			SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + language.GetFromHtml("Save")).
+			GetContent()
+		btn2 := template2.Default().Button().SetType("reset").
+			SetContent(language.GetFromHtml("Reset")).
+			SetThemeWarning().
+			SetOrientationLeft().
+			GetContent()
+		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
+			SetContent(btn1 + btn2).GetContent()
+		panel := fn(types.NewFormPanel())
+
+		fields, tabFields, tabHeaders := panel.GetNewFormFields()
+
 		return true, "ok", template2.Default().Box().
 			SetHeader("").
-			SetBody(aform.GetContent()).GetContent()
+			SetBody(template2.Default().Form().
+				SetContent(fields).
+				SetTabHeaders(tabHeaders).
+				SetTabContents(tabFields).
+				SetAjax(panel.AjaxSuccessJS, panel.AjaxErrorJS).
+				SetPrefix(config.PrefixFixSlash()).
+				SetUrl(url).
+				SetOperationFooter(col1 + col2).GetContent()).
+			GetContent()
 	}
 	return &PopUpAction{
 		Url:        URL(data.Id),

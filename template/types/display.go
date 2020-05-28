@@ -37,23 +37,32 @@ type FieldDisplay struct {
 func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	val := f.Display(value)
 
-	if _, ok := val.(template.HTML); !ok {
-		if _, ok2 := val.([]string); !ok2 {
-			if _, ok3 := val.([][]string); !ok3 {
-				valStr := fmt.Sprintf("%v", val)
-				for _, process := range f.DisplayProcessChains {
-					valStr = fmt.Sprintf("%v", process(FieldModel{
-						Row:   value.Row,
-						Value: valStr,
-						ID:    value.ID,
-					}))
-				}
-				return valStr
-			}
+	if len(f.DisplayProcessChains) > 0 && f.IsNotSelectRes(val) {
+		valStr := fmt.Sprintf("%v", val)
+		for _, process := range f.DisplayProcessChains {
+			valStr = fmt.Sprintf("%v", process(FieldModel{
+				Row:   value.Row,
+				Value: valStr,
+				ID:    value.ID,
+			}))
 		}
+		return valStr
 	}
 
 	return val
+}
+
+func (f FieldDisplay) IsNotSelectRes(v interface{}) bool {
+	switch v.(type) {
+	case template.HTML:
+		return false
+	case []string:
+		return false
+	case [][]string:
+		return false
+	default:
+		return true
+	}
 }
 
 func (f FieldDisplay) ToDisplayHTML(value FieldModel) template.HTML {

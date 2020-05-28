@@ -53,9 +53,9 @@ func (h *Handler) ApiDetail(ctx *context.Context) {
 
 	paramStr := param.DeleteDetailPk().GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(panel.GetEditable(), h.routePathWithPrefix("show_edit", prefix)+paramStr+
+	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix("show_edit", prefix)+paramStr+
 		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))
-	deleteUrl := modules.AorEmpty(panel.GetDeletable(), h.routePathWithPrefix("delete", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix("delete", prefix)+paramStr)
 	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
 
 	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
