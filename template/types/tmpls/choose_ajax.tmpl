@@ -1,0 +1,105 @@
+{{define "choose_ajax"}}
+    <script>
+
+        let {{.Field}}_updateBoxSelections = function (selectObj, new_opts) {
+            selectObj.html('');
+            new_opts.forEach(function (opt) {
+                selectObj.append($('<option value="' + opt["id"] + '">' + opt["text"] + '</option>'));
+            });
+            selectObj.bootstrapDualListbox('refresh', true);
+        };
+
+        let {{.Field}}_req = function (selectObj, box, event) {
+            $.ajax({
+                url: "{{.Url}}",
+                type: 'post',
+                dataType: 'text',
+                data: {
+                    'value': $("select.{{.Field}}").val(),
+                    {{.PassValue}}
+                    'event': event
+                },
+                success: function (data) {
+                    if (typeof (data) === "string") {
+                        data = JSON.parse(data);
+                    }
+                    if (data.code === 0) {
+                        {{if eq .ActionJS ""}}
+
+                        if (selectObj.length > 0) {
+                            if (typeof (data.data) === "object") {
+                                if (box) {
+                                    {{.Field}}_updateBoxSelections(selectObj, data.data)
+                                } else {
+                                    if (typeof (selectObj.attr("multiple")) !== "undefined") {
+                                        selectObj.html("");
+                                    }
+                                    selectObj.select2({
+                                        data: data.data
+                                    });
+                                }
+                            } else {
+                                if (box) {
+                                    selectObj.val(data.data).select2()
+                                } else {
+
+                                }
+                            }
+                        } else {
+                            $('.{{.ChooseField}}').val(data.data);
+                        }
+
+                        {{else}}
+
+                        {{.ActionJS}}
+
+                        {{end}}
+                    } else {
+                        swal(data.msg, '', 'error');
+                    }
+                },
+                error: function () {
+                    alert('error')
+                }
+            });
+        };
+
+        if ($("label[for='{{.Field}}']").next().find(".bootstrap-duallistbox-container").length === 0) {
+            $("select.{{.Field}}").on("select2:select", function (e) {
+                let id = '{{.ChooseField}}';
+                let selectObj = $("select." + id);
+                if (selectObj.length > 0) {
+                    selectObj.val("").select2();
+                    selectObj.html('<option value="" selected="selected"></option>')
+                }
+                {{.Field}}_req(selectObj, false, "select");
+            });
+            if (typeof ($("select.{{.Field}}").attr("multiple")) !== "undefined") {
+                $("select.{{.Field}}").on("select2:unselect", function (e) {
+                    let id = '{{.ChooseField}}';
+                    let selectObj = $("select." + id);
+                    if (selectObj.length > 0) {
+                        selectObj.val("").select2();
+                        selectObj.html('<option value="" selected="selected"></option>')
+                    }
+                    {{.Field}}_req(selectObj, false, "unselect");
+                })
+            }
+        } else {
+            let {{.Field}}_lastState = $(".{{.Field}}").val();
+
+            $(".{{.Field}}").on('change', function (e) {
+                var newState = $(this).val();
+                if ($({{.Field}}_lastState).not(newState).get().length > 0) {
+                    let id = '{{.ChooseField}}';
+                    {{.Field}}_req($("." + id), true, "unselect");
+                }
+                if ($(newState).not({{.Field}}_lastState).get().length > 0) {
+                    let id = '{{.ChooseField}}';
+                    {{.Field}}_req($("." + id), true, "select");
+                }
+                {{.Field}}_lastState = newState;
+            })
+        }
+    </script>
+{{end}}

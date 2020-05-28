@@ -1,8 +1,8 @@
 GOCMD = go
 GOBUILD = $(GOCMD) build
 BINARY_NAME = adm
-LAST_VERSION = v1.2.12
-VERSION = v1.2.13
+LAST_VERSION = v1.2.13
+VERSION = v1.2.14
 CLI = adm
 
 TEST_CONFIG_PATH=./../../common/config.json
@@ -115,6 +115,11 @@ cilint:
 
 golint:
 	GO111MODULE=off golint ./...
+
+## form tmpl build
+
+build-form-tmpl:
+	adm compile tpl --src ./template/types/tmpls/ --dist ./template/types/tmpl.go --package types --var tmpls
 
 ## cli version update
 

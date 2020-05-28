@@ -1,0 +1,7 @@
+{{define "choose_custom"}}
+    <script>
+        $("input.{{.Field}}").on("select2:select", function (e) {
+            {{.JS}}
+        })
+    </script>
+{{end}}

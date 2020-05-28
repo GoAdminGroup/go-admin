@@ -1,6 +1,6 @@
 package system
 
-const version = "v1.2.13"
+const version = "v1.2.14"
 
 var requireThemeVersion = map[string][]string{
 	"adminlte": {">=v0.0.35"},

@@ -86,10 +86,11 @@ func main() {
 				rootPath    = cmd.StringOpt("s src", "./resource/pages/", "template files src path")
 				outputPath  = cmd.StringOpt("d dist", "./template.go", "compile file output path")
 				packageName = cmd.StringOpt("p package", "newTmplTheme", "the package name")
+				varName     = cmd.StringOpt("v var", "TemplateList", "the variable name")
 			)
 
 			cmd.Action = func() {
-				compileTmpl(*rootPath, *outputPath, *packageName)
+				compileTmpl(*rootPath, *outputPath, *packageName, *varName)
 			}
 		})
 

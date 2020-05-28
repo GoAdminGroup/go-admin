@@ -303,11 +303,13 @@ func (f *FormField) fillCustom(src string) string {
 	t, err := t.Parse(src)
 	if err != nil {
 		logger.Error(err)
+		return ""
 	}
 	buf := new(bytes.Buffer)
 	err = t.Execute(buf, f)
 	if err != nil {
 		logger.Error(err)
+		return ""
 	}
 	return buf.String()
 }
@@ -930,172 +932,79 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 		}
 }
 
+func parseHTML(name string, param interface{}) template.HTML {
+	t := template.New(name)
+	t, err := t.Parse(tmpls[name])
+	if err != nil {
+		logger.Error(err)
+		return ""
+	}
+	buf := new(bytes.Buffer)
+	err = t.Execute(buf, param)
+	if err != nil {
+		logger.Error(err)
+		return ""
+	}
+	return template.HTML(buf.String())
+}
+
 func chooseCustomJS(field string, js template.HTML) template.HTML {
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	` + js + `
-})
-</script>`
+	return parseHTML("choose_custom", struct {
+		Field template.JS
+		JS    template.JS
+	}{Field: template.JS(field), JS: template.JS(js)})
 }
 
 func chooseMapJS(field string, m map[string]LinkField) template.HTML {
-	cm := template.HTML("")
-
-	for val, obejct := range m {
-		if obejct.Hide {
-			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
-		$("label[for='` + template.HTML(obejct.Field) + `']").parent().hide()
-	} else {
-		$("label[for='` + template.HTML(obejct.Field) + `']").parent().show()
-	}`
-		} else if obejct.Disable {
-			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
-		$("#` + template.HTML(obejct.Field) + `").prop('disabled', true);
-	} else {
-		$("#` + template.HTML(obejct.Field) + `").prop('disabled', false);
-	}`
-		} else {
-			cm += `if (e.params.data.text === "` + template.HTML(val) + `") {
-		if ($("select.` + template.HTML(obejct.Field) + `").length > 0) {
-			$("select.` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `").select2()
-		} else {
-			$("#` + template.HTML(obejct.Field) + `").val("` + obejct.Value + `")
-		}	
-	}`
-		}
-	}
-
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	` + cm + `
-})
-</script>`
+	return parseHTML("choose_map", struct {
+		Field template.JS
+		Data  map[string]LinkField
+	}{
+		Field: template.JS(field),
+		Data:  m,
+	})
 }
 
 func chooseJS(field, chooseField, val string, value template.HTML) template.HTML {
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	if (e.params.data.text === "` + template.HTML(val) + `") {
-		if ($("select.` + template.HTML(chooseField) + `").length > 0) {
-			$("select.` + template.HTML(chooseField) + `").val("` + value + `").select2()
-		} else {
-			$("#` + template.HTML(chooseField) + `").val("` + value + `")
-		}	
-	}
-})
-</script>`
+	return parseHTML("choose", struct {
+		Field       template.JS
+		ChooseField template.JS
+		Val         template.JS
+		Value       template.JS
+	}{
+		Field:       template.JS(field),
+		ChooseField: template.JS(chooseField),
+		Value:       template.JS(value),
+		Val:         template.JS(val),
+	})
 }
 
 func chooseAjax(field, chooseField, url string, handler Handler, js ...template.HTML) (template.HTML, context.Node) {
 
 	actionJS := template.HTML("")
-	passValue := template.HTML("")
+	passValue := template.JS("")
 
 	if len(js) > 0 {
 		actionJS = js[0]
-	} else {
-		actionJS = `if (selectObj.length > 0) {
-					if (typeof(data.data) === "object") {
-						if (box) {
-							` + template.HTML(field) + `_updateBoxSelections(selectObj, data.data)
-						} else {
-							if (typeof(selectObj.attr("multiple")) !== "undefined") {
-								selectObj.html("");
-							}
-							selectObj.select2({
-								data: data.data
-							});
-						}	
-					} else {
-						if (box) {
-							selectObj.val(data.data).select2()
-						} else {
-							
-						}
-					}
-				} else {
-					$('#` + template.HTML(chooseField) + `').val(data.data);
-				}`
 	}
 
 	if len(js) > 1 {
-		passValue = js[1]
+		passValue = template.JS(js[1])
 	}
 
-	return `<script>
-
-let ` + template.HTML(field) + `_updateBoxSelections = function(selectObj, new_opts) {
-    selectObj.html('');
-    new_opts.forEach(function (opt) {
-      	selectObj.append($('<option value="'+opt["id"]+'">'+opt["text"]+'</option>'));
-    });
-    selectObj.bootstrapDualListbox('refresh', true);
-}
-
-let ` + template.HTML(field) + `_req = function(selectObj, box, event) {
-	$.ajax({
-		url:"` + template.HTML(url) + `",
-		type: 'post',
-		dataType: 'text',
-		data: {
-			'value':$("select.` + template.HTML(field) + `").val(),
-			` + passValue + `
-			'event': event
-		},
-		success: function (data)  {
-			if (typeof (data) === "string") {
-				data = JSON.parse(data);
-			}
-			if (data.code === 0) {
-				` + actionJS + `
-			} else {
-				swal(data.msg, '', 'error');
-			}
-		},
-		error:function(){
-			alert('error')
-		}
-	})
-}
-
-if ($("label[for='` + template.HTML(field) + `']").next().find(".bootstrap-duallistbox-container").length === 0) {
-	$("select.` + template.HTML(field) + `").on("select2:select", function(e) {
-		let id = '` + template.HTML(chooseField) + `'
-		let selectObj = $("select."+id)
-		if (selectObj.length > 0) {
-			selectObj.val("").select2()
-			selectObj.html('<option value="" selected="selected"></option>')
-		}
-		` + template.HTML(field) + `_req(selectObj, false, "select");
-	})
-	if (typeof($("select.` + template.HTML(field) + `").attr("multiple")) !== "undefined") {
-		$("select.` + template.HTML(field) + `").on("select2:unselect",function(e){
-			let id = '` + template.HTML(chooseField) + `'
-			let selectObj = $("select."+id)
-			if (selectObj.length > 0) {
-				selectObj.val("").select2()
-				selectObj.html('<option value="" selected="selected"></option>')
-			}
-			` + template.HTML(field) + `_req(selectObj, false, "unselect");
-		})
-	}
-} else {
-	let ` + template.HTML(field) + `_lastState = $(".` + template.HTML(field) + `").val();
-
-	$(".` + template.HTML(field) + `").on('change',function (e) {
-    	var newState = $(this).val();                     
-		if ($(` + template.HTML(field) + `_lastState).not(newState).get().length > 0) {
-			let id = '` + template.HTML(chooseField) + `'
-			` + template.HTML(field) + `_req($("."+id), true, "unselect");
-		}
-		if ($(newState).not(` + template.HTML(field) + `_lastState).get().length > 0) {
-			let id = '` + template.HTML(chooseField) + `'
-			` + template.HTML(field) + `_req($("."+id), true, "select");
-		}
-    	` + template.HTML(field) + `_lastState = newState;
-	})
-}
-</script>`, context.Node{
+	return parseHTML("choose_ajax", struct {
+			Field       template.JS
+			ChooseField template.JS
+			PassValue   template.JS
+			ActionJS    template.JS
+			Url         template.JS
+		}{
+			Url:         template.JS(url),
+			Field:       template.JS(field),
+			ChooseField: template.JS(chooseField),
+			PassValue:   passValue,
+			ActionJS:    template.JS(actionJS),
+		}), context.Node{
 			Path:     url,
 			Method:   "post",
 			Handlers: context.Handlers{handler.Wrap()},
@@ -1108,35 +1017,15 @@ func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	hideText := template.HTML("")
-	showText := template.HTML("")
-
-	for _, f := range chooseFields {
-		hideText += `$("label[for='` + template.HTML(f) + `']").parent().hide()
-`
-		showText += `$("label[for='` + template.HTML(f) + `']").parent().show()
-`
-	}
-
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	if (e.params.data.text === "` + template.HTML(value) + `") {
-		` + hideText + `
-	} else {
-		` + showText + `
-	}
-})
-$(function(){
-	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
-	let ` + template.HTML(field) + `text = "";
-	if (` + template.HTML(field) + `data.length > 0) {
-		` + template.HTML(field) + `text = ` + template.HTML(field) + `data[0].text;
-	}
-	if (` + template.HTML(field) + `text === "` + template.HTML(value) + `") {
-		` + hideText + `
-	}
-})
-</script>`
+	return parseHTML("choose_hide", struct {
+		Field        template.JS
+		Value        template.JS
+		ChooseFields []string
+	}{
+		Field:        template.JS(field),
+		Value:        template.JS(value),
+		ChooseFields: chooseFields,
+	})
 }
 
 func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
@@ -1144,35 +1033,15 @@ func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	hideText := template.HTML("")
-	showText := template.HTML("")
-
-	for _, f := range chooseFields {
-		hideText += `$("label[for='` + template.HTML(f) + `']").parent().hide()
-`
-		showText += `$("label[for='` + template.HTML(f) + `']").parent().show()
-`
-	}
-
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	if (e.params.data.text === "` + template.HTML(value) + `") {
-		` + showText + `
-	} else {
-		` + hideText + `
-	}
-})
-$(function(){
-	let ` + template.HTML(field) + `data = $(".` + template.HTML(field) + `").select2("data");
-	let ` + template.HTML(field) + `text = "";
-	if (` + template.HTML(field) + `data.length > 0) {
-		` + template.HTML(field) + `text = ` + template.HTML(field) + `data[0].text;
-	}
-	if (` + template.HTML(field) + `text !== "` + template.HTML(value) + `") {
-		` + hideText + `
-	}
-})
-</script>`
+	return parseHTML("choose_show", struct {
+		Field        template.JS
+		Value        template.JS
+		ChooseFields []string
+	}{
+		Field:        template.JS(field),
+		Value:        template.JS(value),
+		ChooseFields: chooseFields,
+	})
 }
 
 func chooseDisableJS(field, value string, chooseFields ...string) template.HTML {
@@ -1180,25 +1049,15 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 		return ""
 	}
 
-	disableText := template.HTML("")
-	enableText := template.HTML("")
-
-	for _, f := range chooseFields {
-		disableText += `$("#` + template.HTML(f) + `").prop('disabled', true);
-`
-		enableText += `$("#` + template.HTML(f) + `").prop('disabled', false);
-`
-	}
-
-	return `<script>
-$(".` + template.HTML(field) + `").on("select2:select",function(e){
-	if (e.params.data.text === "` + template.HTML(value) + `") {
-		` + disableText + `
-	} else {
-		` + enableText + `
-	}
-})
-</script>`
+	return parseHTML("choose_disable", struct {
+		Field        template.JS
+		Value        template.JS
+		ChooseFields []string
+	}{
+		Field:        template.JS(field),
+		Value:        template.JS(value),
+		ChooseFields: chooseFields,
+	})
 }
 
 // FormPanel attribute setting functions

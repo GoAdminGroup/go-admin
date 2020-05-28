@@ -1,0 +1,33 @@
+{{define "choose_show"}}
+    <script>
+        $(".{{.Field}}").on("select2:select", function (e) {
+            if (e.params.data.text === "{{.Value}}") {
+                {{range $key, $fields := .ChooseFields}}
+
+                $("label[for='{{$fields}}']").parent().show();
+
+                {{end}}
+            } else {
+                {{range $key, $fields := .ChooseFields}}
+
+                $("label[for='{{$fields}}']").parent().hide();
+
+                {{end}}
+            }
+        });
+        $(function () {
+            let {{.Field}}data = $(".{{.Field}}").select2("data");
+            let {{.Field}}text = "";
+            if ({{.Field}}data.length > 0) {
+                {{.Field}}text = {{.Field}}data[0].text;
+            }
+            if ({{.Field}}text === "{{.Value}}") {
+                {{range $key, $fields := .ChooseFields}}
+
+                $("label[for='{{$fields}}']").parent().hide();
+
+                {{end}}
+            }
+        })
+    </script>
+{{end}}

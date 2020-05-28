@@ -1,0 +1,13 @@
+{{define "choose"}}
+    <script>
+        $("input.{{.Field}}").on("select2:select", function (e) {
+            if (e.params.data.text === "{{.Val}}") {
+                if ($("select.{{.ChooseField}}").length > 0) {
+                    $("select.{{.ChooseField}}").val("{{.Value}}").select2()
+                } else {
+                    $(".{{.ChooseField}}").val("{{.Value}}")
+                }
+            }
+        })
+    </script>
+{{end}}
