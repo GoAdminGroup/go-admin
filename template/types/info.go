@@ -172,9 +172,7 @@ type FilterFormField struct {
 func (f Field) GetFilterFormFields(params parameter.Parameters, headField string, sql ...*db.SQL) []FormField {
 
 	var (
-		filterForm = make([]FormField, 0)
-		options    = make(FieldOptions, 0)
-
+		filterForm               = make([]FormField, 0)
 		value, value2, keySuffix string
 	)
 
@@ -228,7 +226,7 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Placeholder: filter.Placeholder,
 			Value:       template.HTML(value),
 			Value2:      value2,
-			Options:     options,
+			Options:     filter.Options,
 			OptionExt:   optionExt1,
 			OptionExt2:  optionExt2,
 			OptionTable: filter.OptionTable,
@@ -238,11 +236,11 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 		field.setOptionsFromSQL(sql[0])
 
 		if filter.Type.IsSingleSelect() {
-			field.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
+			field.Options = field.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
 		}
 
 		if filter.Type.IsMultiSelect() {
-			field.Options.SetSelected(params.GetFieldValues(f.Field), filter.Type.SelectedLabel())
+			field.Options = field.Options.SetSelected(params.GetFieldValues(f.Field), filter.Type.SelectedLabel())
 		}
 
 		filterForm = append(filterForm, *field)
