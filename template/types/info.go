@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -170,7 +169,7 @@ type FilterFormField struct {
 	ProcessFn   func(string) string
 }
 
-func (f Field) GetFilterFormFields(params parameter.Parameters, headField string, sqls ...*db.SQL) []FormField {
+func (f Field) GetFilterFormFields(params parameter.Parameters, headField string, sql ...*db.SQL) []FormField {
 
 	var (
 		filterForm = make([]FormField, 0)
@@ -197,39 +196,27 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			value = params.GetFieldValue(headField + keySuffix)
 		}
 
-		options = make(FieldOptions, 0)
+		var (
+			optionExt1 = filter.OptionExt
+			optionExt2 template.JS
+		)
 
-		if len(filter.Options) == 0 && filter.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
-			sqls[0].Table(filter.OptionTable.Table).Select(filter.OptionTable.ValueField, filter.OptionTable.TextField)
-
-			if filter.OptionTable.QueryProcessFn != nil {
-				filter.OptionTable.QueryProcessFn(sqls[0])
+		if filter.OptionExt == template.JS("") {
+			op1, op2, js := filter.Type.GetDefaultOptions(headField + keySuffix)
+			if op1 != nil {
+				s, _ := json.Marshal(op1)
+				optionExt1 = template.JS(string(s))
 			}
-
-			queryRes, err := sqls[0].All()
-			if err == nil {
-				for _, item := range queryRes {
-					filter.Options = append(filter.Options, FieldOption{
-						Value: fmt.Sprintf("%v", item[filter.OptionTable.ValueField]),
-						Text:  fmt.Sprintf("%v", item[filter.OptionTable.TextField]),
-					})
-				}
+			if op2 != nil {
+				s, _ := json.Marshal(op2)
+				optionExt2 = template.JS(string(s))
 			}
-
-			if filter.OptionTable.ProcessFn != nil {
-				filter.Options = filter.OptionTable.ProcessFn(filter.Options)
+			if js != template.JS("") {
+				optionExt1 = js
 			}
 		}
 
-		if filter.Type.IsSingleSelect() {
-			options = filter.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
-		}
-
-		if filter.Type.IsMultiSelect() {
-			options = filter.Options.SetSelected(params.GetFieldValues(f.Field), filter.Type.SelectedLabel())
-		}
-
-		filterForm = append(filterForm, FormField{
+		field := &FormField{
 			Field:       headField + keySuffix,
 			FieldClass:  headField + keySuffix,
 			Head:        filter.Head,
@@ -242,10 +229,23 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Value:       template.HTML(value),
 			Value2:      value2,
 			Options:     options,
-			OptionExt:   filter.OptionExt,
+			OptionExt:   optionExt1,
+			OptionExt2:  optionExt2,
 			OptionTable: filter.OptionTable,
 			Label:       filter.Operator.Label(),
-		})
+		}
+
+		field.setOptionsFromSQL(sql[0])
+
+		if filter.Type.IsSingleSelect() {
+			field.Options.SetSelected(params.GetFieldValue(f.Field), filter.Type.SelectedLabel())
+		}
+
+		if filter.Type.IsMultiSelect() {
+			field.Options.SetSelected(params.GetFieldValues(f.Field), filter.Type.SelectedLabel())
+		}
+
+		filterForm = append(filterForm, *field)
 
 		if filter.Operator.AddOrNot() {
 			filterForm = append(filterForm, FormField{
@@ -276,8 +276,8 @@ type TableInfo struct {
 	Driver     string
 }
 
-func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string, sql ...func() *db.SQL) (Thead,
-	string, string, string, []string, []FormField) {
+func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parameters, columns []string,
+	sql ...func() *db.SQL) (Thead, string, string, string, []string, []FormField) {
 	var (
 		thead      = make(Thead, 0)
 		fields     = ""
