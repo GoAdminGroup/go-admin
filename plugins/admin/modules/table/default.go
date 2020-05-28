@@ -43,7 +43,7 @@ func NewDefaultTable(cfgs ...Config) Table {
 		cfg = DefaultConfig()
 	}
 
-	return DefaultTable{
+	return &DefaultTable{
 		BaseTable: &BaseTable{
 			Info:           types.NewInfoPanel(cfg.PrimaryKey.Name),
 			Form:           types.NewFormPanel(),
@@ -65,8 +65,8 @@ func NewDefaultTable(cfgs ...Config) Table {
 	}
 }
 
-func (tb DefaultTable) Copy() Table {
-	return DefaultTable{
+func (tb *DefaultTable) Copy() Table {
+	return &DefaultTable{
 		BaseTable: &BaseTable{
 			Form: types.NewFormPanel().SetTable(tb.Form.Table).
 				SetDescription(tb.Form.Description).
@@ -93,7 +93,7 @@ func (tb DefaultTable) Copy() Table {
 }
 
 // GetData query the data set.
-func (tb DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
+func (tb *DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -156,7 +156,7 @@ type GetDataFromURLRes struct {
 	Size int
 }
 
-func (tb DefaultTable) getDataFromURL(params parameter.Parameters) ([]map[string]interface{}, int) {
+func (tb *DefaultTable) getDataFromURL(params parameter.Parameters) ([]map[string]interface{}, int) {
 
 	u := ""
 	if strings.Contains(tb.sourceURL, "?") {
@@ -192,7 +192,7 @@ func (tb DefaultTable) getDataFromURL(params parameter.Parameters) ([]map[string
 }
 
 // GetDataWithIds query the data set.
-func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, error) {
+func (tb *DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		data      []map[string]interface{}
@@ -236,7 +236,7 @@ func (tb DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, e
 	}, nil
 }
 
-func (tb DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]types.InfoItem {
+func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]types.InfoItem {
 
 	var tempModelData = make(map[string]types.InfoItem)
 	headField := ""
@@ -314,7 +314,7 @@ func (tb DefaultTable) getTempModelData(res map[string]interface{}, params param
 	return tempModelData
 }
 
-func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
+func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
 		queryStatement = "select %s from %s %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
@@ -380,7 +380,7 @@ func (tb DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pane
 }
 
 // TODO: refactor
-func (tb DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
+func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 
 	var (
 		connection     = tb.db()
@@ -560,12 +560,11 @@ func getDataRes(list []map[string]interface{}, _ int) map[string]interface{} {
 }
 
 // GetDataWithId query the single row of data.
-func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, error) {
+func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, error) {
 
 	var (
 		res     map[string]interface{}
 		columns Columns
-		custom  = tb.getDataFun != nil || tb.sourceURL != "" || tb.Info.GetDataFn != nil
 		id      = param.PK()
 	)
 
@@ -673,11 +672,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 	)
 
 	if len(tb.Form.TabGroups) > 0 {
-		if custom {
-			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res)
-		} else {
-			groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
-		}
+		groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
 		return FormInfo{
 			FieldList:         tb.Form.FieldList,
 			GroupFieldList:    groupFormList,
@@ -687,12 +682,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 		}, nil
 	}
 
-	var fieldList types.FormFields
-	if custom {
-		fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res)
-	} else {
-		fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
-	}
+	var fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
 
 	return FormInfo{
 		FieldList:         fieldList,
@@ -704,7 +694,7 @@ func (tb DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, erro
 }
 
 // UpdateData update data.
-func (tb DefaultTable) UpdateData(dataList form.Values) error {
+func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "0")
 
@@ -768,7 +758,7 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 }
 
 // InsertData insert data.
-func (tb DefaultTable) InsertData(dataList form.Values) error {
+func (tb *DefaultTable) InsertData(dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "1")
 
@@ -830,7 +820,7 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 	return nil
 }
 
-func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ types.PostType) dialect.H {
+func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ types.PostType) dialect.H {
 
 	var (
 		value        = make(dialect.H)
@@ -906,7 +896,7 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ typ
 }
 
 // DeleteData delete data.
-func (tb DefaultTable) DeleteData(id string) error {
+func (tb *DefaultTable) DeleteData(id string) error {
 
 	var (
 		idArr = strings.Split(id, ",")
@@ -965,7 +955,7 @@ func (tb DefaultTable) DeleteData(id string) error {
 	return err
 }
 
-func (tb DefaultTable) GetNewForm() FormInfo {
+func (tb *DefaultTable) GetNewForm() FormInfo {
 
 	if len(tb.Form.TabGroups) == 0 {
 		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql)}
@@ -980,7 +970,7 @@ func (tb DefaultTable) GetNewForm() FormInfo {
 // helper function for database operation
 // ***************************************
 
-func (tb DefaultTable) delete(table, key string, values []string) error {
+func (tb *DefaultTable) delete(table, key string, values []string) error {
 
 	var vals = make([]interface{}, len(values))
 	for i, v := range values {
@@ -992,7 +982,7 @@ func (tb DefaultTable) delete(table, key string, values []string) error {
 		Delete()
 }
 
-func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
+func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
 	string, string, string, []string, []types.FormField) {
 
 	return tb.Info.FieldList.GetTheadAndFilterForm(types.TableInfo{
@@ -1006,26 +996,26 @@ func (tb DefaultTable) getTheadAndFilterForm(params parameter.Parameters, column
 }
 
 // db is a helper function return raw db connection.
-func (tb DefaultTable) db() db.Connection {
+func (tb *DefaultTable) db() db.Connection {
 	if tb.connectionDriver != "" && tb.getDataFromDB() {
 		return db.GetConnectionFromService(services.Get(tb.connectionDriver))
 	}
 	return nil
 }
 
-func (tb DefaultTable) delimiter() string {
+func (tb *DefaultTable) delimiter() string {
 	if tb.getDataFromDB() {
 		return tb.db().GetDelimiter()
 	}
 	return ""
 }
 
-func (tb DefaultTable) getDataFromDB() bool {
+func (tb *DefaultTable) getDataFromDB() bool {
 	return tb.sourceURL == "" && tb.getDataFun == nil && tb.Info.GetDataFn == nil && tb.Detail.GetDataFn == nil
 }
 
 // sql is a helper function return db sql.
-func (tb DefaultTable) sql() *db.SQL {
+func (tb *DefaultTable) sql() *db.SQL {
 	if tb.connectionDriver != "" && tb.getDataFromDB() {
 		return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
 	}
@@ -1034,7 +1024,7 @@ func (tb DefaultTable) sql() *db.SQL {
 
 type Columns []string
 
-func (tb DefaultTable) getColumns(table string) (Columns, bool) {
+func (tb *DefaultTable) getColumns(table string) (Columns, bool) {
 
 	columnsModel, _ := tb.sql().Table(table).ShowColumns()
 
