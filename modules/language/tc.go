@@ -107,8 +107,7 @@ var tc = LangSet{
 	"wrong captcha":                                 "錯誤的驗證碼",
 	"modify success":                                "修改成功",
 
-	"login overdue or login with different ips, please login again": "登錄信息過期或多個IP登錄，請重新登錄",
-	"login overdue, please login again":                             "登錄信息過期，請重新登錄",
+	"login overdue, please login again": "登錄信息過期，請重新登錄",
 
 	"second":  "秒",
 	"seconds": "秒",

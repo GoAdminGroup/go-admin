@@ -43,6 +43,8 @@ const (
 	multiSelectLi3          = `/html/body/span/span/span/ul/li[3]`
 	multiSelectRes          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[1]/div/div/div[2]/div/span/span[1]/span/ul/li[1]`
 	filterNameField         = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[1]/div/div/div[1]/div/div/input`
+	filterCreatedStart      = `//*[@id="created_at_start__goadmin"]`
+	filterCreatedEnd        = `//*[@id="created_at_end__goadmin"]`
 	radio                   = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div[3]/div/div/div[1]/div/div[1]`
 	searchBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 	filterResetBtn          = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[2]/a`
@@ -352,6 +354,9 @@ func testInfoTablePageOperations(page *Page) {
 	page.Click(radio)
 
 	page.Fill(filterNameField, "Jack")
+
+	//page.Fill(filterCreatedStart, "2020-03-08 15:24:00")
+	//page.Click(filterCreatedEnd)
 
 	page.Click(searchBtn, 2)
 

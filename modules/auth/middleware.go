@@ -60,11 +60,7 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 					"Location": u,
 				}, ``)
 			} else {
-				msg := "login overdue or login with different ips, please login again"
-				if config.GetNoLimitLoginIP() {
-					msg = "login overdue, please login again"
-				}
-				msg = language.Get(msg)
+				msg := language.Get("login overdue, please login again")
 				ctx.HTML(http.StatusOK, `<script>
 	if (typeof(swal) === "function") {
 		swal("`+msg+`", '', 'warning');

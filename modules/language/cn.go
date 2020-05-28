@@ -113,8 +113,7 @@ var cn = LangSet{
 	"wrong captcha":                                 "错误的验证码",
 	"modify success":                                "修改成功",
 
-	"login overdue or login with different ips, please login again": "登录信息过期或多个IP登录，请重新登录",
-	"login overdue, please login again":                             "登录信息过期，请重新登录",
+	"login overdue, please login again": "登录信息过期，请重新登录",
 
 	"second":  "秒",
 	"seconds": "秒",
