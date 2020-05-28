@@ -2,6 +2,8 @@ package types
 
 import (
 	"fmt"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html"
 	"html/template"
 	"strings"
@@ -52,6 +54,84 @@ func (f FieldDisplay) ToDisplay(value FieldModel) interface{} {
 	}
 
 	return val
+}
+
+func (f FieldDisplay) ToDisplayHTML(value FieldModel) template.HTML {
+	v := f.ToDisplay(value)
+	if h, ok := v.(template.HTML); ok {
+		return h
+	} else if s, ok := v.(string); ok {
+		return template.HTML(s)
+	} else if arr, ok := v.([]string); ok && len(arr) > 0 {
+		return template.HTML(arr[0])
+	} else if arr, ok := v.([]template.HTML); ok && len(arr) > 0 {
+		return arr[0]
+	} else if v != nil {
+		return template.HTML(fmt.Sprintf("%v", v))
+	} else {
+		return ""
+	}
+}
+
+func (f FieldDisplay) ToDisplayString(value FieldModel) string {
+	v := f.ToDisplay(value)
+	if h, ok := v.(template.HTML); ok {
+		return string(h)
+	} else if s, ok := v.(string); ok {
+		return s
+	} else if arr, ok := v.([]string); ok && len(arr) > 0 {
+		return arr[0]
+	} else if arr, ok := v.([]template.HTML); ok && len(arr) > 0 {
+		return string(arr[0])
+	} else if v != nil {
+		return fmt.Sprintf("%v", v)
+	} else {
+		return ""
+	}
+}
+
+func (f FieldDisplay) ToDisplayStringArray(value FieldModel) []string {
+	v := f.ToDisplay(value)
+	if h, ok := v.(template.HTML); ok {
+		return []string{string(h)}
+	} else if s, ok := v.(string); ok {
+		return []string{s}
+	} else if arr, ok := v.([]string); ok && len(arr) > 0 {
+		return arr
+	} else if arr, ok := v.([]template.HTML); ok && len(arr) > 0 {
+		ss := make([]string, len(arr))
+		for k, a := range arr {
+			ss[k] = string(a)
+		}
+		return ss
+	} else if v != nil {
+		return []string{fmt.Sprintf("%v", v)}
+	} else {
+		return []string{}
+	}
+}
+
+func (f FieldDisplay) ToDisplayStringArrayArray(value FieldModel) [][]string {
+	v := f.ToDisplay(value)
+	if h, ok := v.(template.HTML); ok {
+		return [][]string{{string(h)}}
+	} else if s, ok := v.(string); ok {
+		return [][]string{{s}}
+	} else if arr, ok := v.([]string); ok && len(arr) > 0 {
+		return [][]string{arr}
+	} else if arr, ok := v.([][]string); ok && len(arr) > 0 {
+		return arr
+	} else if arr, ok := v.([]template.HTML); ok && len(arr) > 0 {
+		ss := make([]string, len(arr))
+		for k, a := range arr {
+			ss[k] = string(a)
+		}
+		return [][]string{ss}
+	} else if v != nil {
+		return [][]string{{fmt.Sprintf("%v", v)}}
+	} else {
+		return [][]string{}
+	}
 }
 
 func (f FieldDisplay) AddLimit(limit int) DisplayProcessFnChains {
@@ -244,4 +324,29 @@ func addXssJsFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
 		return replacer.Replace(value.Value)
 	})
 	return chains
+}
+
+func setDefaultDisplayFnOfFormType(f *FormPanel, typ form.Type) {
+	if typ.IsMultiFile() {
+		f.FieldList[f.curFieldListIndex].Display = func(value FieldModel) interface{} {
+			if value.Value == "" {
+				return ""
+			}
+			arr := strings.Split(value.Value, ",")
+			res := "["
+			for i, item := range arr {
+				if i == len(arr)-1 {
+					res += "'" + config.GetStore().URL(item) + "']"
+				} else {
+					res += "'" + config.GetStore().URL(item) + "',"
+				}
+			}
+			return res
+		}
+	}
+	if typ.IsSelect() {
+		f.FieldList[f.curFieldListIndex].Display = func(value FieldModel) interface{} {
+			return strings.Split(value.Value, ",")
+		}
+	}
 }

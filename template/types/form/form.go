@@ -378,7 +378,7 @@ func (t Type) SelectedLabel() []template.HTML {
 	return []template.HTML{"", ""}
 }
 
-func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[string]interface{}) {
+func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[string]interface{}, template.JS) {
 	switch t {
 	case File, Multifile:
 		return map[string]interface{}{
@@ -389,7 +389,7 @@ func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[strin
 			"previewClass":         "preview-" + field,
 			"showUpload":           false,
 			"allowedFileTypes":     []string{"image"},
-		}, nil
+		}, nil, ""
 	case Slider:
 		return map[string]interface{}{
 			"type":     "single",
@@ -399,18 +399,27 @@ func (t Type) GetDefaultOptions(field string) (map[string]interface{}, map[strin
 			"min":      1,
 			"step":     1,
 			"postfix":  "",
-		}, nil
+		}, nil, ""
 	case DatetimeRange:
-		return getDateTimeRangeOptions(DatetimeRange)
+		op1, op2 := getDateTimeRangeOptions(DatetimeRange)
+		return op1, op2, ""
 	case Datetime:
-		return getDateTimeOptions(Datetime), nil
+		return getDateTimeOptions(Datetime), nil, ""
 	case Date:
-		return getDateTimeOptions(Date), nil
+		return getDateTimeOptions(Date), nil, ""
 	case DateRange:
-		return getDateTimeRangeOptions(DateRange)
+		op1, op2 := getDateTimeRangeOptions(DateRange)
+		return op1, op2, ""
+	case Code:
+		return nil, nil, `
+	theme = "monokai";
+	font_size = 14;
+	language = "html";
+	options = {useWorker: false};
+`
 	}
 
-	return nil, nil
+	return nil, nil, ""
 }
 
 func getDateTimeOptions(f Type) map[string]interface{} {

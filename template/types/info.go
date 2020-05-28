@@ -29,13 +29,41 @@ type FieldModel struct {
 
 	// The current row data.
 	Row map[string]interface{}
+
+	// Post type
+	PostType PostType
+}
+
+type PostType uint8
+
+const (
+	PostTypeCreate = iota
+	PostTypeUpdate
+)
+
+func (m FieldModel) IsCreate() bool {
+	return m.PostType == PostTypeCreate
+}
+
+func (m FieldModel) IsUpdate() bool {
+	return m.PostType == PostTypeUpdate
 }
 
 // PostFieldModel contains ID and value of the single query result and the current row data.
 type PostFieldModel struct {
 	ID    string
 	Value FieldModelValue
-	Row   map[string]interface{}
+	Row   map[string]string
+	// Post type
+	PostType PostType
+}
+
+func (m PostFieldModel) IsCreate() bool {
+	return m.PostType == PostTypeCreate
+}
+
+func (m PostFieldModel) IsUpdate() bool {
+	return m.PostType == PostTypeUpdate
 }
 
 type InfoList []map[string]InfoItem

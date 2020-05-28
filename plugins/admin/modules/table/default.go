@@ -754,7 +754,7 @@ func (tb DefaultTable) UpdateData(dataList form.Values) error {
 
 	_, err = tb.sql().Table(tb.Form.Table).
 		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
-		Update(tb.getInjectValueFromFormValue(dataList))
+		Update(tb.getInjectValueFromFormValue(dataList, types.PostTypeUpdate))
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.UPDATE) {
@@ -819,7 +819,7 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 		return err
 	}
 
-	id, err = tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList))
+	id, err = tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList, types.PostTypeCreate))
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.INSERT) {
@@ -830,7 +830,7 @@ func (tb DefaultTable) InsertData(dataList form.Values) error {
 	return nil
 }
 
-func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect.H {
+func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ types.PostType) dialect.H {
 
 	var (
 		value        = make(dialect.H)
@@ -875,8 +875,10 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				vv := modules.RemoveBlankFromArray(v)
 				if fun != nil {
 					value[k] = fun(types.PostFieldModel{
-						ID:    dataList.Get(tb.PrimaryKey.Name),
-						Value: vv,
+						ID:       dataList.Get(tb.PrimaryKey.Name),
+						Value:    vv,
+						Row:      dataList.ToMap(),
+						PostType: typ,
 					})
 				} else {
 					if len(vv) > 1 {
@@ -891,8 +893,10 @@ func (tb DefaultTable) getInjectValueFromFormValue(dataList form.Values) dialect
 				field := tb.Form.FieldList.FindByFieldName(k)
 				if field != nil && field.PostFilterFn != nil {
 					field.PostFilterFn(types.PostFieldModel{
-						ID:    dataList.Get(tb.PrimaryKey.Name),
-						Value: modules.RemoveBlankFromArray(v),
+						ID:       dataList.Get(tb.PrimaryKey.Name),
+						Value:    modules.RemoveBlankFromArray(v),
+						Row:      dataList.ToMap(),
+						PostType: typ,
 					})
 				}
 			}

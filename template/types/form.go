@@ -10,6 +10,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -171,74 +172,63 @@ func (f *FormField) GetRawValue(columns []string, v interface{}) string {
 		db.GetValueFromDatabaseType(f.TypeName, v, isJSON).String(), "")
 }
 
-func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sqls ...*db.SQL) *FormField {
+func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sql ...*db.SQL) *FormField {
+	return f.updateValue(id, val, res, PostTypeUpdate, sql...)
+}
+
+func (f *FormField) UpdateDefaultValue(sql ...*db.SQL) *FormField {
+	f.Value = f.Default
+	return f.updateValue("", string(f.Value), make(map[string]interface{}), PostTypeCreate, sql...)
+}
+
+func (f *FormField) setOptionsFromSQL(sql ...*db.SQL) {
+	if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sql) > 0 && sql[0] != nil {
+
+		sql[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
+
+		if f.OptionTable.QueryProcessFn != nil {
+			f.OptionTable.QueryProcessFn(sql[0])
+		}
+
+		queryRes, err := sql[0].All()
+		if err == nil {
+			for _, item := range queryRes {
+				f.Options = append(f.Options, FieldOption{
+					Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
+					Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
+				})
+			}
+		}
+
+		if f.OptionTable.ProcessFn != nil {
+			f.Options = f.OptionTable.ProcessFn(f.Options)
+		}
+	}
+}
+
+func (f *FormField) updateValue(id, val string, res map[string]interface{}, typ PostType, sql ...*db.SQL) *FormField {
+
+	m := FieldModel{
+		ID:       id,
+		Value:    val,
+		Row:      res,
+		PostType: typ,
+	}
 
 	// Field is under a table type field.
 	if f.FatherField != "" {
 		if f.FormType.IsSelect() {
 			if len(f.OptionsArr) == 0 && f.OptionArrInitFn != nil {
-				f.OptionsArr = f.OptionArrInitFn(FieldModel{
-					ID:    id,
-					Value: val,
-					Row:   res,
-				})
+				f.OptionsArr = f.OptionArrInitFn(m)
 				for i := 0; i < len(f.OptionsArr); i++ {
 					f.OptionsArr[i] = f.OptionsArr[i].SetSelectedLabel(f.FormType.SelectedLabel())
 				}
-			} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
-
-				sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
-
-				if f.OptionTable.QueryProcessFn != nil {
-					f.OptionTable.QueryProcessFn(sqls[0])
-				}
-
-				queryRes, err := sqls[0].All()
-				if err == nil {
-					for _, item := range queryRes {
-						f.Options = append(f.Options, FieldOption{
-							Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
-							Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
-						})
-					}
-				}
-
-				if f.OptionTable.ProcessFn != nil {
-					f.Options = f.OptionTable.ProcessFn(f.Options)
-				}
-
-				if f.FormType.IsSingleSelect() {
-					values := f.ToDisplay(FieldModel{
-						ID:    id,
-						Value: val,
-						Row:   res,
-					}).([]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				} else {
-					values := f.ToDisplay(FieldModel{
-						ID:    id,
-						Value: val,
-						Row:   res,
-					}).([][]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				}
 			} else {
+
+				f.setOptionsFromSQL(sql...)
+
 				if f.FormType.IsSingleSelect() {
-					values := f.ToDisplay(FieldModel{
-						ID:    id,
-						Value: val,
-						Row:   res,
-					}).([]string)
+					values := f.ToDisplayStringArray(m)
 					f.OptionsArr = make([]FieldOptions, len(values))
 					for k, value := range values {
 						newOptions := make(FieldOptions, len(f.Options))
@@ -246,11 +236,7 @@ func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sqls
 						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
 					}
 				} else {
-					values := f.ToDisplay(FieldModel{
-						ID:    id,
-						Value: val,
-						Row:   res,
-					}).([][]string)
+					values := f.ToDisplayStringArrayArray(m)
 					f.OptionsArr = make([]FieldOptions, len(values))
 					for k, value := range values {
 						newOptions := make(FieldOptions, len(f.Options))
@@ -260,264 +246,20 @@ func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sqls
 				}
 			}
 		} else {
-			v := f.ToDisplay(FieldModel{
-				ID:    id,
-				Value: val,
-				Row:   res,
-			})
-			if arr, ok := v.([]string); ok {
-				f.ValueArr = arr
-			} else {
-				f.ValueArr = []string{v.(string)}
-			}
+			f.ValueArr = f.ToDisplayStringArray(m)
 		}
 	} else {
 		if f.FormType.IsSelect() {
 			if len(f.Options) == 0 && f.OptionInitFn != nil {
-				f.Options = f.OptionInitFn(FieldModel{
-					ID:    id,
-					Value: val,
-					Row:   res,
-				}).SetSelectedLabel(f.FormType.SelectedLabel())
-			} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
-
-				sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
-
-				if f.OptionTable.QueryProcessFn != nil {
-					f.OptionTable.QueryProcessFn(sqls[0])
-				}
-
-				queryRes, err := sqls[0].All()
-				if err == nil {
-					for _, item := range queryRes {
-						f.Options = append(f.Options, FieldOption{
-							Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
-							Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
-						})
-					}
-				}
-
-				if f.OptionTable.ProcessFn != nil {
-					f.Options = f.OptionTable.ProcessFn(f.Options)
-				}
-
-				f.Options.SetSelected(f.ToDisplay(FieldModel{
-					ID:    id,
-					Value: val,
-					Row:   res,
-				}), f.FormType.SelectedLabel())
-
+				f.Options = f.OptionInitFn(m).SetSelectedLabel(f.FormType.SelectedLabel())
 			} else {
-				f.Options.SetSelected(f.ToDisplay(FieldModel{
-					ID:    id,
-					Value: val,
-					Row:   res,
-				}), f.FormType.SelectedLabel())
+				f.setOptionsFromSQL(sql...)
+				f.Options.SetSelected(f.ToDisplay(m), f.FormType.SelectedLabel())
 			}
 		} else if f.FormType.IsArray() {
-			v := f.ToDisplay(FieldModel{
-				ID:    id,
-				Value: val,
-				Row:   res,
-			})
-			if arr, ok := v.([]string); ok {
-				f.ValueArr = arr
-			} else {
-				f.ValueArr = []string{v.(string)}
-			}
+			f.ValueArr = f.ToDisplayStringArray(m)
 		} else {
-			value := f.ToDisplay(FieldModel{
-				ID:    id,
-				Value: val,
-				Row:   res,
-			})
-			if v, ok := value.(template.HTML); ok {
-				f.Value = v
-			} else if s, ok := value.(string); ok {
-				f.Value = template.HTML(s)
-			}
-
-			if f.FormType.IsFile() {
-				if f.Value != template.HTML("") {
-					f.Value2 = config.GetStore().URL(string(f.Value))
-				}
-			}
-		}
-	}
-
-	return f
-}
-
-func (f *FormField) UpdateDefaultValue(sqls ...*db.SQL) *FormField {
-	f.Value = f.Default
-
-	if f.FatherField != "" {
-		if f.FormType.IsSelect() {
-			if len(f.Options) == 0 && f.OptionInitFn != nil {
-				f.OptionsArr = f.OptionArrInitFn(FieldModel{
-					ID:    "",
-					Value: string(f.Value),
-					Row:   make(map[string]interface{}),
-				})
-				for i := 0; i < len(f.OptionsArr); i++ {
-					f.OptionsArr[i] = f.OptionsArr[i].SetSelectedLabel(f.FormType.SelectedLabel())
-				}
-			} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
-				sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
-
-				if f.OptionTable.QueryProcessFn != nil {
-					f.OptionTable.QueryProcessFn(sqls[0])
-				}
-				res, err := sqls[0].All()
-
-				if err == nil {
-					for _, item := range res {
-						f.Options = append(f.Options, FieldOption{
-							Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
-							Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
-						})
-					}
-				}
-
-				if f.OptionTable.ProcessFn != nil {
-					f.Options = f.OptionTable.ProcessFn(f.Options)
-				}
-
-				if f.FormType.IsSingleSelect() {
-					values := f.ToDisplay(FieldModel{
-						ID:    "",
-						Value: string(f.Value),
-						Row:   make(map[string]interface{}),
-					}).([]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				} else {
-					values := f.ToDisplay(FieldModel{
-						ID:    "",
-						Value: string(f.Value),
-						Row:   make(map[string]interface{}),
-					}).([][]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				}
-			} else {
-				if f.FormType.IsSingleSelect() {
-					values := f.ToDisplay(FieldModel{
-						ID:    "",
-						Value: string(f.Value),
-						Row:   make(map[string]interface{}),
-					}).([]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				} else {
-					values := f.ToDisplay(FieldModel{
-						ID:    "",
-						Value: string(f.Value),
-						Row:   make(map[string]interface{}),
-					}).([][]string)
-					f.OptionsArr = make([]FieldOptions, len(values))
-					for k, value := range values {
-						newOptions := make(FieldOptions, len(f.Options))
-						copy(newOptions, f.Options)
-						f.OptionsArr[k] = newOptions.SetSelected(value, f.FormType.SelectedLabel())
-					}
-				}
-			}
-			if len(f.OptionsArr) > 0 {
-				f.Options = f.OptionsArr[0]
-			}
-		} else {
-			v := f.ToDisplay(FieldModel{
-				ID:    "",
-				Value: string(f.Value),
-				Row:   make(map[string]interface{}),
-			})
-			if arr, ok := v.([]string); ok {
-				f.ValueArr = arr
-			} else {
-				f.ValueArr = []string{v.(string)}
-			}
-			if len(f.ValueArr) > 0 {
-				f.Value = template.HTML(f.ValueArr[0])
-			}
-		}
-	} else {
-		if f.FormType.IsSelect() {
-			if len(f.Options) == 0 && f.OptionInitFn != nil {
-				f.Options = f.OptionInitFn(FieldModel{
-					ID:    "",
-					Value: string(f.Value),
-					Row:   make(map[string]interface{}),
-				}).SetSelectedLabel(f.FormType.SelectedLabel())
-			} else if len(f.Options) == 0 && f.OptionTable.Table != "" && len(sqls) > 0 && sqls[0] != nil {
-				sqls[0].Table(f.OptionTable.Table).Select(f.OptionTable.ValueField, f.OptionTable.TextField)
-
-				if f.OptionTable.QueryProcessFn != nil {
-					f.OptionTable.QueryProcessFn(sqls[0])
-				}
-				res, err := sqls[0].All()
-
-				if err == nil {
-					for _, item := range res {
-						f.Options = append(f.Options, FieldOption{
-							Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
-							Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
-						})
-					}
-				}
-
-				if f.OptionTable.ProcessFn != nil {
-					f.Options = f.OptionTable.ProcessFn(f.Options)
-				}
-
-				f.Options.SetSelected(f.ToDisplay(FieldModel{
-					ID:    "",
-					Value: string(f.Value),
-					Row:   make(map[string]interface{}),
-				}), f.FormType.SelectedLabel())
-
-			} else {
-				f.Options.SetSelected(f.ToDisplay(FieldModel{
-					ID:    "",
-					Value: string(f.Value),
-					Row:   make(map[string]interface{}),
-				}), f.FormType.SelectedLabel())
-			}
-		} else if f.FormType.IsArray() {
-			v := f.ToDisplay(FieldModel{
-				ID:    "",
-				Value: string(f.Value),
-				Row:   make(map[string]interface{}),
-			})
-			if arr, ok := v.([]string); ok {
-				f.ValueArr = arr
-			} else {
-				f.ValueArr = []string{v.(string)}
-			}
-		} else {
-			value := f.ToDisplay(FieldModel{
-				ID:    "",
-				Value: string(f.Value),
-				Row:   make(map[string]interface{}),
-			})
-			if v, ok := value.(template.HTML); ok {
-				f.Value = v
-			} else if s, ok := value.(string); ok {
-				f.Value = template.HTML(s)
-			}
-
+			f.Value = f.ToDisplayHTML(m)
 			if f.FormType.IsFile() {
 				if f.Value != template.HTML("") {
 					f.Value2 = config.GetStore().URL(string(f.Value))
@@ -545,9 +287,15 @@ func (f *FormField) FillCustomContent() *FormField {
 
 func (f *FormField) fillCustom(src string) string {
 	t := template.New("custom")
-	t, _ = t.Parse(src)
+	t, err := t.Parse(src)
+	if err != nil {
+		logger.Error(err)
+	}
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, f)
+	err = t.Execute(buf, f)
+	if err != nil {
+		logger.Error(err)
+	}
 	return buf.String()
 }
 
@@ -699,42 +447,14 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 	})
 	f.curFieldListIndex++
 
-	op1, op2 := formType.GetDefaultOptions(field)
+	// Set default options of different form type
+	op1, op2, js := formType.GetDefaultOptions(field)
+	f.FieldOptionExt(op1)
+	f.FieldOptionExt2(op2)
+	f.FieldOptionExtJS(js)
 
-	if op1 != nil {
-		f.FieldOptionExt(op1)
-	}
-
-	if op2 != nil {
-		f.FieldOptionExt2(op2)
-	}
-
-	if formType.IsCode() {
-		f.FieldList[f.curFieldListIndex].OptionExt = `
-	theme = "monokai";
-	font_size = 14;
-	language = "html";
-	options = {useWorker: false};
-`
-	}
-
-	if formType.IsMultiFile() {
-		f.FieldList[f.curFieldListIndex].Display = func(value FieldModel) interface{} {
-			if value.Value == "" {
-				return ""
-			}
-			arr := strings.Split(value.Value, ",")
-			res := "["
-			for i, item := range arr {
-				if i == len(arr)-1 {
-					res += "'" + config.GetStore().URL(item) + "']"
-				} else {
-					res += "'" + config.GetStore().URL(item) + "',"
-				}
-			}
-			return res
-		}
-	}
+	// Set default Display Filter Function of different form type
+	setDefaultDisplayFnOfFormType(f, formType)
 
 	return f
 }
@@ -865,6 +585,10 @@ func (f *FormPanel) FieldOptionInitFn(fn OptionInitFn) *FormPanel {
 
 func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 
+	if m == nil {
+		return f
+	}
+
 	if f.FieldList[f.curFieldListIndex].FormType.IsCode() {
 		f.FieldList[f.curFieldListIndex].OptionExt = template.JS(fmt.Sprintf(`
 	theme = "%s";
@@ -893,6 +617,10 @@ func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 }
 
 func (f *FormPanel) FieldOptionExt2(m map[string]interface{}) *FormPanel {
+
+	if m == nil {
+		return f
+	}
 
 	m = f.FieldList[f.curFieldListIndex].FormType.FixOptions(m)
 
