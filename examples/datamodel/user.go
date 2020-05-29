@@ -168,11 +168,11 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 				}
 			}
 			return true, "ok", data
-		})
+		}, "", `'phone':$(".phone").val(),`)
 	formList.AddField("Phone", "phone", db.Varchar, form.Custom).
 		FieldCustomContent(`
 <span class="input-group-addon"><i class="fa fa-pencil fa-fw"></i></span>
-<input type="text" id="{{.Field}}" name="{{.Field}}" value="{{.Value}}" class="form-control json" placeholder="please input phone">`)
+<input type="text" name="{{.Field}}" value="{{.Value}}" class="form-control {{.Field}}" placeholder="please input {{.Head}}">`)
 	formList.AddField("City", "city", db.Varchar, form.SelectSingle).
 		FieldOptionInitFn(func(val types.FieldModel) types.FieldOptions {
 			return types.FieldOptions{

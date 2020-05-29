@@ -31,16 +31,16 @@ import (
 // mssql, the other configurations will be ignored, except for
 // MaxIdleCon and MaxOpenCon.
 type Database struct {
-	Host       string `json:"host,omitempty" yaml:"host" ini:"host"`
-	Port       string `json:"port,omitempty" yaml:"port" ini:"port"`
-	User       string `json:"user,omitempty" yaml:"user" ini:"user"`
-	Pwd        string `json:"pwd,omitempty" yaml:"pwd" ini:"pwd"`
-	Name       string `json:"name,omitempty" yaml:"name" ini:"name"`
-	MaxIdleCon int    `json:"max_idle_con,omitempty" yaml:"max_idle_con" ini:"max_idle_con"`
-	MaxOpenCon int    `json:"max_open_con,omitempty" yaml:"max_open_con" ini:"max_open_con"`
-	Driver     string `json:"driver,omitempty" yaml:"driver" ini:"driver"`
-	File       string `json:"file,omitempty" yaml:"file" ini:"file"`
-	Dsn        string `json:"dsn,omitempty" yaml:"dsn" ini:"dsn"`
+	Host       string `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
+	Port       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
+	User       string `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
+	Pwd        string `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
+	Name       string `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
+	MaxIdleCon int    `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
+	MaxOpenCon int    `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
+	Driver     string `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
+	File       string `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
+	Dsn        string `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
 }
 
 // DatabaseList is a map of Database.
@@ -122,8 +122,8 @@ const (
 // Store is the file store config. Path is the local store path.
 // and prefix is the url prefix used to visit it.
 type Store struct {
-	Path   string `json:"path,omitempty" yaml:"path" ini:"path"`
-	Prefix string `json:"prefix,omitempty" yaml:"prefix" ini:"prefix"`
+	Path   string `json:"path,omitempty" yaml:"path,omitempty" ini:"path,omitempty"`
+	Prefix string `json:"prefix,omitempty" yaml:"prefix,omitempty" ini:"prefix,omitempty"`
 }
 
 func (s Store) URL(suffix string) string {
@@ -176,164 +176,164 @@ type Config struct {
 	// An map supports multi database connection. The first
 	// element of Databases is the default connection. See the
 	// file connection.go.
-	Databases DatabaseList `json:"database,omitempty" yaml:"database" ini:"database"`
+	Databases DatabaseList `json:"database,omitempty" yaml:"database,omitempty" ini:"database,omitempty"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
-	Domain string `json:"domain,omitempty" yaml:"domain" ini:"domain"`
+	Domain string `json:"domain,omitempty" yaml:"domain,omitempty" ini:"domain,omitempty"`
 
 	// Used to set as the localize language which show in the
 	// interface.
-	Language string `json:"language,omitempty" yaml:"language" ini:"language"`
+	Language string `json:"language,omitempty" yaml:"language,omitempty" ini:"language,omitempty"`
 
 	// The global url prefix.
-	UrlPrefix string `json:"prefix,omitempty" yaml:"prefix" ini:"prefix"`
+	UrlPrefix string `json:"prefix,omitempty" yaml:"prefix,omitempty" ini:"prefix,omitempty"`
 
 	// The theme name of template.
-	Theme string `json:"theme,omitempty" yaml:"theme" ini:"theme"`
+	Theme string `json:"theme,omitempty" yaml:"theme,omitempty" ini:"theme,omitempty"`
 
 	// The path where files will be stored into.
-	Store Store `json:"store,omitempty" yaml:"store" ini:"store"`
+	Store Store `json:"store,omitempty" yaml:"store,omitempty" ini:"store,omitempty"`
 
 	// The title of web page.
-	Title string `json:"title,omitempty" yaml:"title" ini:"title"`
+	Title string `json:"title,omitempty" yaml:"title,omitempty" ini:"title,omitempty"`
 
 	// Logo is the top text in the sidebar.
-	Logo template.HTML `json:"logo,omitempty" yaml:"logo" ini:"logo"`
+	Logo template.HTML `json:"logo,omitempty" yaml:"logo,omitempty" ini:"logo,omitempty"`
 
 	// Mini-logo is the top text in the sidebar when folding.
-	MiniLogo template.HTML `json:"mini_logo,omitempty" yaml:"mini_logo" ini:"mini_logo"`
+	MiniLogo template.HTML `json:"mini_logo,omitempty" yaml:"mini_logo,omitempty" ini:"mini_logo,omitempty"`
 
 	// The url redirect to after login.
-	IndexUrl string `json:"index,omitempty" yaml:"index" ini:"index"`
+	IndexUrl string `json:"index,omitempty" yaml:"index,omitempty" ini:"index,omitempty"`
 
 	// Login page URL
-	LoginUrl string `json:"login_url,omitempty" yaml:"login_url" ini:"login_url"`
+	LoginUrl string `json:"login_url,omitempty" yaml:"login_url,omitempty" ini:"login_url,omitempty"`
 
 	// Debug mode
-	Debug bool `json:"debug,omitempty" yaml:"debug" ini:"debug"`
+	Debug bool `json:"debug,omitempty" yaml:"debug,omitempty" ini:"debug,omitempty"`
 
 	// Env is the environment,which maybe local,test,prod.
-	Env string `json:"env,omitempty" yaml:"env" ini:"env"`
+	Env string `json:"env,omitempty" yaml:"env,omitempty" ini:"env,omitempty"`
 
 	// Info log path.
-	InfoLogPath string `json:"info_log,omitempty" yaml:"info_log" ini:"info_log"`
+	InfoLogPath string `json:"info_log,omitempty" yaml:"info_log,omitempty" ini:"info_log,omitempty"`
 
 	// Error log path.
-	ErrorLogPath string `json:"error_log,omitempty" yaml:"error_log" ini:"error_log"`
+	ErrorLogPath string `json:"error_log,omitempty" yaml:"error_log,omitempty" ini:"error_log,omitempty"`
 
 	// Access log path.
-	AccessLogPath string `json:"access_log,omitempty" yaml:"access_log" ini:"access_log"`
+	AccessLogPath string `json:"access_log,omitempty" yaml:"access_log,omitempty" ini:"access_log,omitempty"`
 
 	// Access assets log off
-	AccessAssetsLogOff bool `json:"access_assets_log_off,omitempty" yaml:"access_assets_log_off" ini:"access_assets_log_off"`
+	AccessAssetsLogOff bool `json:"access_assets_log_off,omitempty" yaml:"access_assets_log_off,omitempty" ini:"access_assets_log_off,omitempty"`
 
 	// Sql operator record log switch.
-	SqlLog bool `json:"sql_log,omitempty" yaml:"sql_log" ini:"sql_log"`
+	SqlLog bool `json:"sql_log,omitempty" yaml:"sql_log,omitempty" ini:"sql_log,omitempty"`
 
-	AccessLogOff bool `json:"access_log_off,omitempty" yaml:"access_log_off" ini:"access_log_off"`
-	InfoLogOff   bool `json:"info_log_off,omitempty" yaml:"info_log_off" ini:"info_log_off"`
-	ErrorLogOff  bool `json:"error_log_off,omitempty" yaml:"error_log_off" ini:"error_log_off"`
+	AccessLogOff bool `json:"access_log_off,omitempty" yaml:"access_log_off,omitempty" ini:"access_log_off,omitempty"`
+	InfoLogOff   bool `json:"info_log_off,omitempty" yaml:"info_log_off,omitempty" ini:"info_log_off,omitempty"`
+	ErrorLogOff  bool `json:"error_log_off,omitempty" yaml:"error_log_off,omitempty" ini:"error_log_off,omitempty"`
 
-	Logger Logger `json:"logger,omitempty" yaml:"logger" ini:"logger"`
+	Logger Logger `json:"logger,omitempty" yaml:"logger,omitempty" ini:"logger,omitempty"`
 
 	// Color scheme.
-	ColorScheme string `json:"color_scheme,omitempty" yaml:"color_scheme" ini:"color_scheme"`
+	ColorScheme string `json:"color_scheme,omitempty" yaml:"color_scheme,omitempty" ini:"color_scheme,omitempty"`
 
 	// Session valid time duration,units are seconds. Default 7200.
-	SessionLifeTime int `json:"session_life_time,omitempty" yaml:"session_life_time" ini:"session_life_time"`
+	SessionLifeTime int `json:"session_life_time,omitempty" yaml:"session_life_time,omitempty" ini:"session_life_time,omitempty"`
 
 	// Assets visit link.
-	AssetUrl string `json:"asset_url,omitempty" yaml:"asset_url" ini:"asset_url"`
+	AssetUrl string `json:"asset_url,omitempty" yaml:"asset_url,omitempty" ini:"asset_url,omitempty"`
 
 	// File upload engine,default "local"
-	FileUploadEngine FileUploadEngine `json:"file_upload_engine,omitempty" yaml:"file_upload_engine" ini:"file_upload_engine"`
+	FileUploadEngine FileUploadEngine `json:"file_upload_engine,omitempty" yaml:"file_upload_engine,omitempty" ini:"file_upload_engine,omitempty"`
 
 	// Custom html in the tag head.
-	CustomHeadHtml template.HTML `json:"custom_head_html,omitempty" yaml:"custom_head_html" ini:"custom_head_html"`
+	CustomHeadHtml template.HTML `json:"custom_head_html,omitempty" yaml:"custom_head_html,omitempty" ini:"custom_head_html,omitempty"`
 
 	// Custom html after body.
-	CustomFootHtml template.HTML `json:"custom_foot_html,omitempty" yaml:"custom_foot_html" ini:"custom_foot_html"`
+	CustomFootHtml template.HTML `json:"custom_foot_html,omitempty" yaml:"custom_foot_html,omitempty" ini:"custom_foot_html,omitempty"`
 
 	// Footer Info html
-	FooterInfo template.HTML `json:"footer_info,omitempty" yaml:"footer_info" ini:"footer_info"`
+	FooterInfo template.HTML `json:"footer_info,omitempty" yaml:"footer_info,omitempty" ini:"footer_info,omitempty"`
 
 	// Login page title
-	LoginTitle string `json:"login_title,omitempty" yaml:"login_title" ini:"login_title"`
+	LoginTitle string `json:"login_title,omitempty" yaml:"login_title,omitempty" ini:"login_title,omitempty"`
 
 	// Login page logo
-	LoginLogo template.HTML `json:"login_logo,omitempty" yaml:"login_logo" ini:"login_logo"`
+	LoginLogo template.HTML `json:"login_logo,omitempty" yaml:"login_logo,omitempty" ini:"login_logo,omitempty"`
 
 	// Auth user table
-	AuthUserTable string `json:"auth_user_table,omitempty" yaml:"auth_user_table" ini:"auth_user_table"`
+	AuthUserTable string `json:"auth_user_table,omitempty" yaml:"auth_user_table,omitempty" ini:"auth_user_table,omitempty"`
 
 	// Extra config info
-	Extra ExtraInfo `json:"extra,omitempty" yaml:"extra" ini:"extra"`
+	Extra ExtraInfo `json:"extra,omitempty" yaml:"extra,omitempty" ini:"extra,omitempty"`
 
 	// Page animation
-	Animation PageAnimation `json:"animation,omitempty" yaml:"animation" ini:"animation"`
+	Animation PageAnimation `json:"animation,omitempty" yaml:"animation,omitempty" ini:"animation,omitempty"`
 
 	// Limit login with different IPs
-	NoLimitLoginIP bool `json:"no_limit_login_ip,omitempty" yaml:"no_limit_login_ip" ini:"no_limit_login_ip"`
+	NoLimitLoginIP bool `json:"no_limit_login_ip,omitempty" yaml:"no_limit_login_ip,omitempty" ini:"no_limit_login_ip,omitempty"`
 
 	// When site off is true, website will be closed
-	SiteOff bool `json:"site_off,omitempty" yaml:"site_off" ini:"site_off"`
+	SiteOff bool `json:"site_off,omitempty" yaml:"site_off,omitempty" ini:"site_off,omitempty"`
 
 	// Hide config center entrance flag
-	HideConfigCenterEntrance bool `json:"hide_config_center_entrance,omitempty" yaml:"hide_config_center_entrance" ini:"hide_config_center_entrance"`
+	HideConfigCenterEntrance bool `json:"hide_config_center_entrance,omitempty" yaml:"hide_config_center_entrance,omitempty" ini:"hide_config_center_entrance,omitempty"`
 
 	// Hide app info entrance flag
-	HideAppInfoEntrance bool `json:"hide_app_info_entrance,omitempty" yaml:"hide_app_info_entrance" ini:"hide_app_info_entrance"`
+	HideAppInfoEntrance bool `json:"hide_app_info_entrance,omitempty" yaml:"hide_app_info_entrance,omitempty" ini:"hide_app_info_entrance,omitempty"`
 
 	// Hide tool entrance flag
-	HideToolEntrance bool `json:"hide_tool_entrance,omitempty" yaml:"hide_tool_entrance" ini:"hide_tool_entrance"`
+	HideToolEntrance bool `json:"hide_tool_entrance,omitempty" yaml:"hide_tool_entrance,omitempty" ini:"hide_tool_entrance,omitempty"`
 
-	Custom404HTML template.HTML `json:"custom_404_html,omitempty" yaml:"custom_404_html" ini:"custom_404_html"`
+	Custom404HTML template.HTML `json:"custom_404_html,omitempty" yaml:"custom_404_html,omitempty" ini:"custom_404_html,omitempty"`
 
-	Custom403HTML template.HTML `json:"custom_403_html,omitempty" yaml:"custom_403_html" ini:"custom_403_html"`
+	Custom403HTML template.HTML `json:"custom_403_html,omitempty" yaml:"custom_403_html,omitempty" ini:"custom_403_html,omitempty"`
 
-	Custom500HTML template.HTML `json:"custom_500_html,omitempty" yaml:"custom_500_html" ini:"custom_500_html"`
+	Custom500HTML template.HTML `json:"custom_500_html,omitempty" yaml:"custom_500_html,omitempty" ini:"custom_500_html,omitempty"`
 
 	// Update Process Function
-	UpdateProcessFn UpdateConfigProcessFn `json:"-" yaml:"-" ini:"-"`
+	UpdateProcessFn UpdateConfigProcessFn `json:"-" yaml:"-" ,omitemptyini:"-,omitempty"`
 
-	// Favicon string `json:"favicon,omitempty" yaml:"favicon" ini:"favicon"`
+	// Favicon string `json:"favicon,omitempty" yaml:"favicon,omitempty" ini:"favicon,omitempty"`
 
 	// Is open admin plugin json api
-	OpenAdminApi bool `json:"open_admin_api,omitempty" yaml:"open_admin_api" ini:"open_admin_api"`
+	OpenAdminApi bool `json:"open_admin_api,omitempty" yaml:"open_admin_api,omitempty" ini:"open_admin_api,omitempty"`
 
-	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance,omitempty" yaml:"hide_visitor_user_center_entrance" ini:"hide_visitor_user_center_entrance"`
+	HideVisitorUserCenterEntrance bool `json:"hide_visitor_user_center_entrance,omitempty" yaml:"hide_visitor_user_center_entrance,omitempty" ini:"hide_visitor_user_center_entrance,omitempty"`
 
-	ExcludeThemeComponents []string `json:"exclude_theme_components,omitempty" yaml:"exclude_theme_components" ini:"exclude_theme_components"`
+	ExcludeThemeComponents []string `json:"exclude_theme_components,omitempty" yaml:"exclude_theme_components,omitempty" ini:"exclude_theme_components,omitempty"`
 
 	prefix string
 }
 
 type Logger struct {
-	Encoder EncoderCfg `json:"encoder,omitempty" yaml:"encoder" ini:"encoder"`
-	Rotate  RotateCfg  `json:"rotate,omitempty" yaml:"rotate" ini:"rotate"`
-	Level   int8       `json:"level,omitempty" yaml:"level" ini:"level"`
+	Encoder EncoderCfg `json:"encoder,omitempty" yaml:"encoder,omitempty" ini:"encoder,omitempty"`
+	Rotate  RotateCfg  `json:"rotate,omitempty" yaml:"rotate,omitempty" ini:"rotate,omitempty"`
+	Level   int8       `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
 }
 
 type EncoderCfg struct {
-	TimeKey       string `json:"time_key,omitempty" yaml:"time_key" ini:"time_key"`
-	LevelKey      string `json:"level_key,omitempty" yaml:"level_key" ini:"level_key"`
-	NameKey       string `json:"name_key,omitempty" yaml:"name_key" ini:"name_key"`
-	CallerKey     string `json:"caller_key,omitempty" yaml:"caller_key" ini:"caller_key"`
-	MessageKey    string `json:"message_key,omitempty" yaml:"message_key" ini:"message_key"`
-	StacktraceKey string `json:"stacktrace_key,omitempty" yaml:"stacktrace_key" ini:"stacktrace_key"`
-	Level         string `json:"level,omitempty" yaml:"level" ini:"level"`
-	Time          string `json:"time,omitempty" yaml:"time" ini:"time"`
-	Duration      string `json:"duration,omitempty" yaml:"duration" ini:"duration"`
-	Caller        string `json:"caller,omitempty" yaml:"caller" ini:"caller"`
-	Encoding      string `json:"encoding,omitempty" yaml:"encoding" ini:"encoding"`
+	TimeKey       string `json:"time_key,omitempty" yaml:"time_key,omitempty" ini:"time_key,omitempty"`
+	LevelKey      string `json:"level_key,omitempty" yaml:"level_key,omitempty" ini:"level_key,omitempty"`
+	NameKey       string `json:"name_key,omitempty" yaml:"name_key,omitempty" ini:"name_key,omitempty"`
+	CallerKey     string `json:"caller_key,omitempty" yaml:"caller_key,omitempty" ini:"caller_key,omitempty"`
+	MessageKey    string `json:"message_key,omitempty" yaml:"message_key,omitempty" ini:"message_key,omitempty"`
+	StacktraceKey string `json:"stacktrace_key,omitempty" yaml:"stacktrace_key,omitempty" ini:"stacktrace_key,omitempty"`
+	Level         string `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
+	Time          string `json:"time,omitempty" yaml:"time,omitempty" ini:"time,omitempty"`
+	Duration      string `json:"duration,omitempty" yaml:"duration,omitempty" ini:"duration,omitempty"`
+	Caller        string `json:"caller,omitempty" yaml:"caller,omitempty" ini:"caller,omitempty"`
+	Encoding      string `json:"encoding,omitempty" yaml:"encoding,omitempty" ini:"encoding,omitempty"`
 }
 
 type RotateCfg struct {
-	MaxSize    int  `json:"max_size,omitempty" yaml:"max_size" ini:"max_size"`
-	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups" ini:"max_backups"`
-	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age" ini:"max_age"`
-	Compress   bool `json:"compress,omitempty" yaml:"compress" ini:"compress"`
+	MaxSize    int  `json:"max_size,omitempty" yaml:"max_size,omitempty" ini:"max_size,omitempty"`
+	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups,omitempty" ini:"max_backups,omitempty"`
+	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age,omitempty" ini:"max_age,omitempty"`
+	Compress   bool `json:"compress,omitempty" yaml:"compress,omitempty" ini:"compress,omitempty"`
 }
 
 type ExtraInfo map[string]interface{}
@@ -342,9 +342,9 @@ type UpdateConfigProcessFn func(values form.Values) (form.Values, error)
 
 // see more: https://daneden.github.io/animate.css/
 type PageAnimation struct {
-	Type     string  `json:"type,omitempty" yaml:"type" ini:"type"`
-	Duration float32 `json:"duration,omitempty" yaml:"duration" ini:"duration"`
-	Delay    float32 `json:"delay,omitempty" yaml:"delay" ini:"delay"`
+	Type     string  `json:"type,omitempty" yaml:"type,omitempty" ini:"type,omitempty"`
+	Duration float32 `json:"duration,omitempty" yaml:"duration,omitempty" ini:"duration,omitempty"`
+	Delay    float32 `json:"delay,omitempty" yaml:"delay,omitempty" ini:"delay,omitempty"`
 }
 
 func (p PageAnimation) JSON() string {
@@ -354,19 +354,10 @@ func (p PageAnimation) JSON() string {
 	return utils.JSON(p)
 }
 
-func GetPageAnimationFromJSON(m string) PageAnimation {
-	var p PageAnimation
-	if m == "" {
-		return p
-	}
-	_ = json.Unmarshal([]byte(m), &p)
-	return p
-}
-
 // FileUploadEngine is a file upload engine.
 type FileUploadEngine struct {
-	Name   string                 `json:"name,omitempty" yaml:"name" ini:"name"`
-	Config map[string]interface{} `json:"config,omitempty" yaml:"config" ini:"config"`
+	Name   string                 `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
+	Config map[string]interface{} `json:"config,omitempty" yaml:"config,omitempty" ini:"config,omitempty"`
 }
 
 func (f FileUploadEngine) JSON() string {
@@ -756,12 +747,23 @@ func ReadFromINI(path string) Config {
 		panic(err)
 	}
 
-	var cfg Config
+	var cfg = Config{
+		Databases: make(DatabaseList),
+	}
 
 	err = iniCfg.MapTo(&cfg)
 
 	if err != nil {
 		panic(err)
+	}
+
+	for _, child := range iniCfg.ChildSections("database") {
+		var d Database
+		err = child.MapTo(&d)
+		if err != nil {
+			panic(err)
+		}
+		cfg.Databases[child.Name()[9:]] = d
 	}
 
 	return cfg

@@ -97,11 +97,6 @@ func TestConfig_PrefixFixSlash(t *testing.T) {
 	assert.Equal(t, Get().PrefixFixSlash(), "/admin")
 }
 
-func TestSetDefault(t *testing.T) {
-	assert.Equal(t, setDefault("/", "/", "/admin"), "/admin")
-	assert.Equal(t, setDefault("/", "/ad", "/admin"), "/")
-}
-
 func TestSet(t *testing.T) {
 	testSetCfg(Config{Theme: "abc"})
 	testSetCfg(Config{Theme: "bcd"})
@@ -135,6 +130,30 @@ func TestStore_URL(t *testing.T) {
 	})
 
 	assert.Equal(t, Get().Store.URL("http://xxxxx.com/xxxx/file/xxxx.png"), "http://xxxxx.com/xxxx/file/xxxx.png")
+}
+
+func TestReadFromYaml(t *testing.T) {
+	cfg := ReadFromYaml("./config.yaml")
+	assert.Equal(t, cfg.Databases.GetDefault().Driver, "mssql")
+	assert.Equal(t, cfg.Domain, "localhost")
+	assert.Equal(t, cfg.UrlPrefix, "admin")
+	assert.Equal(t, cfg.Store.Path, "./uploads")
+	assert.Equal(t, cfg.IndexUrl, "/")
+	assert.Equal(t, cfg.Debug, true)
+	assert.Equal(t, cfg.OpenAdminApi, true)
+	assert.Equal(t, cfg.ColorScheme, "skin-black")
+}
+
+func TestReadFromINI(t *testing.T) {
+	cfg := ReadFromINI("./config.ini")
+	assert.Equal(t, cfg.Databases.GetDefault().Driver, "postgresql")
+	assert.Equal(t, cfg.Domain, "localhost")
+	assert.Equal(t, cfg.UrlPrefix, "admin")
+	assert.Equal(t, cfg.Store.Path, "./uploads")
+	assert.Equal(t, cfg.IndexUrl, "/")
+	assert.Equal(t, cfg.Debug, true)
+	assert.Equal(t, cfg.OpenAdminApi, true)
+	assert.Equal(t, cfg.ColorScheme, "skin-black")
 }
 
 func testSetCfg(cfg Config) {
