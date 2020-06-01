@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"errors"
 	"github.com/GoAdminGroup/go-admin/adapter"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/kataras/iris/v12"
@@ -49,7 +48,7 @@ func (is *Iris) DisableLog()                { panic("not implement") }
 func (is *Iris) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	is.GetContent(ctx, getPanelFn, is, btns, fn)
 }
 

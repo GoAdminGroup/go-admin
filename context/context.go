@@ -69,6 +69,8 @@ func (r Router) GetURL(value ...string) string {
 	return u
 }
 
+type NodeProcessor func(...Node)
+
 type Node struct {
 	Path     string
 	Method   string

@@ -30,7 +30,7 @@ import (
 // something like init the database and set the config and register
 // the routes. The Plugin must implement the three methods.
 type Plugin interface {
-	GetHandler() context.HandlerMap
+	GetHandler() context.HandlerMap // 返回路由和控制器方法
 	InitPlugin(services service.List)
 	Name() string
 	Prefix() string

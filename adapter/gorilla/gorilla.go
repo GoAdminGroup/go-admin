@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -49,7 +48,7 @@ func (g *Gorilla) DisableLog()                { panic("not implement") }
 func (g *Gorilla) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	g.GetContent(ctx, getPanelFn, g, btns, fn)
 }
 

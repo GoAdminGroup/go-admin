@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -50,7 +49,7 @@ func (fast *Fasthttp) DisableLog()                { panic("not implement") }
 func (fast *Fasthttp) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, btns ...types.Button) {
+func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	fast.GetContent(ctx, getPanelFn, fast, btns, fn)
 }
 

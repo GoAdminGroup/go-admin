@@ -126,6 +126,12 @@ type PopUpData struct {
 
 type GetForm func(panel *types.FormPanel) *types.FormPanel
 
+var operationHandlerSetter context.NodeProcessor
+
+func InitOperationHandlerSetter(p context.NodeProcessor) {
+	operationHandlerSetter = p
+}
+
 func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 	if data.Id == "" {
 		panic("wrong popup action parameter, empty id")
@@ -148,6 +154,8 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
 			SetContent(btn1 + btn2).GetContent()
 		panel := fn(types.NewFormPanel())
+
+		operationHandlerSetter(panel.Callbacks...)
 
 		fields, tabFields, tabHeaders := panel.GetNewFormFields()
 

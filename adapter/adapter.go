@@ -15,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -36,7 +35,7 @@ type WebFrameWork interface {
 
 	// Content add the panel html response of the given callback function to
 	// the web framework context which is the first parameter.
-	Content(ctx interface{}, fn types.GetPanelFn, fn2 admin.AddOperationFn, navButtons ...types.Button)
+	Content(ctx interface{}, fn types.GetPanelFn, fn2 context.NodeProcessor, navButtons ...types.Button)
 
 	// User get the auth user model from the given web framework context.
 	User(ctx interface{}) (models.UserModel, bool)
@@ -123,7 +122,7 @@ func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf Web
 
 // GetContent is a helper function of adapter.Content
 func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork,
-	navButtons types.Buttons, fn admin.AddOperationFn) {
+	navButtons types.Buttons, fn context.NodeProcessor) {
 
 	var (
 		newBase          = wf.SetContext(ctx)

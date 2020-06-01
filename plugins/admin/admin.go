@@ -9,6 +9,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 	_ "github.com/GoAdminGroup/go-admin/template/types/display"
 )
 
@@ -52,6 +53,8 @@ func (admin *Admin) InitPlugin(services service.List) {
 	admin.handler.AddNavButton(admin.UI.NavButtons)
 
 	table.SetServices(services)
+
+	action.InitOperationHandlerSetter(admin.GetAddOperationFn())
 }
 
 // NewAdmin return the global Admin plugin.
@@ -63,9 +66,7 @@ func NewAdmin(tableCfg ...table.GeneratorList) *Admin {
 	}
 }
 
-type AddOperationFn func(nodes ...context.Node)
-
-func (admin *Admin) GetAddOperationFn() AddOperationFn {
+func (admin *Admin) GetAddOperationFn() context.NodeProcessor {
 	return admin.handler.AddOperation
 }
 

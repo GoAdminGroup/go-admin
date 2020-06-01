@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -49,7 +48,7 @@ func (bee *Beego) DisableLog()                { panic("not implement") }
 func (bee *Beego) Static(prefix, path string) { panic("not implement") }
 
 // Content implements the method Adapter.Content.
-func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn admin.AddOperationFn, navButtons ...types.Button) {
+func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn gctx.NodeProcessor, navButtons ...types.Button) {
 	bee.GetContent(ctx, getPanelFn, bee, navButtons, fn)
 }
 
