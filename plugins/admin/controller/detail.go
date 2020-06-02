@@ -15,21 +15,23 @@ import (
 )
 
 func (h *Handler) ShowDetail(ctx *context.Context) {
-	prefix := ctx.Query(constant.PrefixKey)
-	id := ctx.Query(constant.DetailPKKey)
-	panel := h.table(prefix, ctx)
-	user := auth.Auth(ctx)
 
-	newPanel := panel.Copy()
+	var (
+		prefix    = ctx.Query(constant.PrefixKey)
+		id        = ctx.Query(constant.DetailPKKey)
+		panel     = h.table(prefix, ctx)
+		user      = auth.Auth(ctx)
+		newPanel  = panel.Copy()
+		detail    = panel.GetDetail()
+		info      = panel.GetInfo()
+		formModel = newPanel.GetForm()
+		fieldList = make(types.FieldList, 0)
+	)
 
-	formModel := newPanel.GetForm()
-
-	var fieldList types.FieldList
-
-	if len(panel.GetDetail().FieldList) == 0 {
-		fieldList = panel.GetInfo().FieldList
+	if len(detail.FieldList) == 0 {
+		fieldList = info.FieldList
 	} else {
-		fieldList = panel.GetDetail().FieldList
+		fieldList = detail.FieldList
 	}
 
 	formModel.FieldList = make([]types.FormField, len(fieldList))
@@ -47,16 +49,22 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 		}
 	}
 
+	if detail.Table != "" {
+		formModel.Table = detail.Table
+	} else {
+		formModel.Table = info.Table
+	}
+
 	param := parameter.GetParam(ctx.Request.URL,
-		panel.GetInfo().DefaultPageSize,
-		panel.GetInfo().SortField,
-		panel.GetInfo().GetSort())
+		info.DefaultPageSize,
+		info.SortField,
+		info.GetSort())
 
 	paramStr := param.DeleteDetailPk().GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix("show_edit", prefix)+paramStr+
+	editUrl := modules.AorEmpty(!info.IsHideEditButton, h.routePathWithPrefix("show_edit", prefix)+paramStr+
 		"&"+constant.EditPKKey+"="+ctx.Query(constant.DetailPKKey))
-	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix("delete", prefix)+paramStr)
+	deleteUrl := modules.AorEmpty(!info.IsHideDeleteButton, h.routePathWithPrefix("delete", prefix)+paramStr)
 	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
 
 	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
@@ -110,20 +118,20 @@ $('.delete-btn').on('click', function (event) {
 	isNotIframe := ctx.Query(constant.IframeKey) != "true"
 
 	if isNotIframe {
-		title = panel.GetDetail().Title
+		title = detail.Title
 
 		if title == "" {
-			title = panel.GetInfo().Title + language.Get("Detail")
+			title = info.Title + language.Get("Detail")
 		}
 
-		desc = panel.GetDetail().Description
+		desc = detail.Description
 
 		if desc == "" {
-			desc = panel.GetInfo().Description + language.Get("Detail")
+			desc = info.Description + language.Get("Detail")
 		}
 	}
 
-	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
+	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id).WithDetail())
 
 	if err != nil {
 		h.HTML(ctx, user, types.Panel{
