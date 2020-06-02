@@ -113,6 +113,8 @@ var tc = LangSet{
 	"seconds": "秒",
 	"minute":  "分",
 	"minutes": "分",
+	"hour":    "小時",
+	"hours":   "小時",
 	"day":     "天",
 	"days":    "天",
 	"week":    "周",

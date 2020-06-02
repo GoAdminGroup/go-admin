@@ -100,6 +100,8 @@ var jp = LangSet{
 	"seconds": "seconds",
 	"minute":  "minute",
 	"minutes": "minutes",
+	"hour":    "hour",
+	"hours":   "hours",
 	"day":     "day",
 	"days":    "days",
 	"week":    "week",

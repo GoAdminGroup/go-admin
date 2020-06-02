@@ -119,6 +119,8 @@ var cn = LangSet{
 	"seconds": "秒",
 	"minute":  "分",
 	"minutes": "分",
+	"hour":    "小时",
+	"hours":   "小时",
 	"day":     "天",
 	"days":    "天",
 	"week":    "周",
