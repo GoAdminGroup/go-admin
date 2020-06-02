@@ -131,7 +131,7 @@ $('.delete-btn').on('click', function (event) {
 		}
 	}
 
-	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id).WithDetail())
+	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
 
 	if err != nil {
 		h.HTML(ctx, user, types.Panel{
