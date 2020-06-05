@@ -16,6 +16,8 @@ type AjaxAction struct {
 	Data      AjaxData
 	Alert     bool
 	AlertData AlertData
+	SuccessJS template.JS
+	ErrorJS   template.JS
 	Handlers  []context.Handler
 }
 
@@ -34,9 +36,19 @@ func Ajax(id string, handler types.Handler) *AjaxAction {
 		panic("wrong ajax action parameter, empty id")
 	}
 	return &AjaxAction{
-		Url:      URL(id),
-		Method:   "post",
-		Data:     NewAjaxData(),
+		Url:    URL(id),
+		Method: "post",
+		Data:   NewAjaxData(),
+		SuccessJS: `if (data.code === 0) {
+                                    swal(data.msg, '', 'success');
+                                } else {
+                                    swal(data.msg, '', 'error');
+                                }`,
+		ErrorJS: `if (data.responseText !== "") {
+									swal(data.responseJSON.msg, '', 'error');								
+								} else {
+									swal('error', '', 'error');
+								}`,
 		Handlers: context.Handlers{handler.Wrap()},
 	}
 }
@@ -69,6 +81,16 @@ func (ajax *AjaxAction) SetUrl(url string) *AjaxAction {
 	return ajax
 }
 
+func (ajax *AjaxAction) SetSuccessJS(successJS template.JS) *AjaxAction {
+	ajax.SuccessJS = successJS
+	return ajax
+}
+
+func (ajax *AjaxAction) SetErrorJS(errorJS template.JS) *AjaxAction {
+	ajax.ErrorJS = errorJS
+	return ajax
+}
+
 func (ajax *AjaxAction) SetMethod(method string) *AjaxAction {
 	ajax.Method = method
 	return ajax
@@ -90,18 +112,10 @@ func (ajax *AjaxAction) Js() template.JS {
                             url: "` + ajax.Url + `",
                             data: data,
                             success: function (data) { 
-                                if (data.code === 0) {
-                                    swal(data.msg, '', 'success');
-                                } else {
-                                    swal(data.msg, '', 'error');
-                                }
+                                ` + string(ajax.SuccessJS) + `
                             },
 							error: function (data) {
-								if (data.responseText !== "") {
-									swal(data.responseJSON.msg, '', 'error');								
-								} else {
-									swal('error', '', 'error');
-								}
+								` + string(ajax.ErrorJS) + `
 							},
                         });`
 
