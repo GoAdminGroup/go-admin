@@ -373,7 +373,7 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 				whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
 			} else {
 				for _, v := range value {
-					whereArgs = append(whereArgs, v)
+					whereArgs = append(whereArgs, filterProcess(key, v, keyIndexSuffix))
 				}
 			}
 		} else {
@@ -393,7 +393,7 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 					whereArgs = append(whereArgs, "%"+val+"%")
 				} else {
 					for _, v := range value {
-						whereArgs = append(whereArgs, v)
+						whereArgs = append(whereArgs, filterProcess(key, v, keyIndexSuffix))
 					}
 				}
 			}
