@@ -296,4 +296,7 @@ var en = LangSet{
 	"tool.continue new checkbox":  "Continue New Checkbox",
 	"tool.reset button":           "Reset Button",
 	"tool.back button":            "Back Button",
+
+	"tool.generate table model success": "generate success",
+	"tool.generate table model fail":    "generate fail",
 }

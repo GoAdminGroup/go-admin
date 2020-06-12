@@ -331,4 +331,7 @@ var cn = LangSet{
 	"tool.continue new checkbox":  "继续新增按钮",
 	"tool.reset button":           "重设按钮",
 	"tool.back button":            "返回按钮",
+
+	"tool.generate table model success": "生成成功",
+	"tool.generate table model fail":    "生成失败",
 }
