@@ -1142,16 +1142,24 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 	f.Ajax = true
 	if f.AjaxSuccessJS == template.JS("") {
 		successMsg := "data.msg"
-		if len(msgs) > 0 {
+		if len(msgs) > 0 && msgs[0] != "" {
 			successMsg = `"` + msgs[0] + `"`
 		}
 		errorMsg := "data.msg"
-		if len(msgs) > 1 {
+		if len(msgs) > 1 && msgs[1] != "" {
 			errorMsg = `"` + msgs[1] + `"`
 		}
 		jump := "data.data.url"
-		if len(msgs) > 2 {
+		if len(msgs) > 2 && msgs[2] != "" {
 			jump = `"` + msgs[2] + `"`
+		}
+		text := ""
+		if len(msgs) > 3 && msgs[3] != "" {
+			text = `text:"` + msgs[3] + `",`
+		}
+		wrongText := ""
+		if len(msgs) > 4 && msgs[4] != "" {
+			wrongText = `text:"` + msgs[4] + `",`
 		}
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
@@ -1161,14 +1169,22 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 	    swal({
 			type: "success",
 			title: ` + successMsg + `,
+			` + text + `
 			showCancelButton: false,
 			confirmButtonColor: "#3c8dbc",
-			confirmButtonText: '` + language.Get("yes") + `',
+			confirmButtonText: '` + language.Get("got it") + `',
         }, function() {
 			$.pjax({url: ` + jump + `, container: '#pjax-container'});
         });
 	} else {
-	    swal(` + errorMsg + `, '', 'error');
+		swal({
+			type: "error",
+			title: ` + errorMsg + `,
+			` + wrongText + `
+			showCancelButton: false,
+			confirmButtonColor: "#3c8dbc",
+			confirmButtonText: '` + language.Get("got it") + `',
+        })
 	}
 `)
 	}

@@ -41,6 +41,7 @@ var tc = LangSet{
 	"are you sure to delete": "你確定要刪除嗎",
 	"delete succeed":         "刪除成功",
 	"yes":                    "確定",
+	"got it":                 "知道了",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",
 
@@ -108,6 +109,7 @@ var tc = LangSet{
 	"modify success":                                "修改成功",
 
 	"login overdue, please login again": "登錄信息過期，請重新登錄",
+	"login info":                        "登錄信息",
 
 	"second":  "秒",
 	"seconds": "秒",
@@ -221,6 +223,10 @@ var tc = LangSet{
 	"config.language." + EN:                  "英文",
 	"config.language." + JP:                  "日文",
 	"config.language." + strings.ToLower(TC): "繁體中文",
+
+	"config.modify site config":         "修改網站配置",
+	"config.modify site config success": "修改網站配置成功",
+	"config.modify site config fail":    "修改網站配置失敗",
 
 	"system.system info":     "應用系統信息",
 	"system.application":     "應用信息",

@@ -54,8 +54,12 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 			}
 
 			u := config.Url(config.GetLoginUrl() + param)
+			_, err := ctx.Request.Cookie(DefaultCookieKey)
+			referer := ctx.Headers("Referer")
 
-			if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
+			if (ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET") ||
+				err != nil ||
+				referer == "" {
 				ctx.Write(302, map[string]string{
 					"Location": u,
 				}, ``)
@@ -63,7 +67,14 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 				msg := language.Get("login overdue, please login again")
 				ctx.HTML(http.StatusOK, `<script>
 	if (typeof(swal) === "function") {
-		swal("`+msg+`", '', 'warning');
+		swal({
+			type: "info",
+			title: `+language.Get("login info")+`,
+			text: "`+msg+`",
+			showCancelButton: false,
+			confirmButtonColor: "#3c8dbc",
+			confirmButtonText: '`+language.Get("got it")+`',
+        })
 		setTimeout(function(){ location.href = "`+u+`"; }, 3000);
 	} else {
 		alert("`+msg+`")

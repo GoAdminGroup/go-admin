@@ -54,6 +54,7 @@ var jp = LangSet{
 
 	"are you sure to delete": "本当に削除しますか",
 	"yes":                    "はい",
+	"got it":                 "はい",
 	"cancel":                 "キャンセル",
 	"refresh succeeded":      "更新に成功しました",
 	"edit fail":              "編集に失敗しました",
@@ -204,6 +205,10 @@ var jp = LangSet{
 	"config.language." + EN:                  "English",
 	"config.language." + JP:                  "Japanese",
 	"config.language." + strings.ToLower(TC): "Traditional Chinese",
+
+	"config.modify site config":         "Site Configuration Modification",
+	"config.modify site config success": "modified success",
+	"config.modify site config fail":    "modified failed",
 
 	"system.system info":     "System And Application Info",
 	"system.application":     "Application Info",

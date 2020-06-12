@@ -55,9 +55,10 @@ var cn = LangSet{
 	"fail":              "失败",
 	"current page":      "当前页",
 
-	"are you sure to delete": "你确定要删除吗",
+	"are you sure to delete": "你确定要删除吗？",
 	"yes":                    "确定",
 	"confirm":                "确认",
+	"got it":                 "知道了",
 	"cancel":                 "取消",
 	"refresh succeeded":      "刷新成功",
 	"delete succeed":         "删除成功",
@@ -114,6 +115,7 @@ var cn = LangSet{
 	"modify success":                                "修改成功",
 
 	"login overdue, please login again": "登录信息过期，请重新登录",
+	"login info":                        "登录信息",
 
 	"second":  "秒",
 	"seconds": "秒",
@@ -227,6 +229,10 @@ var cn = LangSet{
 	"config.language." + EN:                  "英文",
 	"config.language." + JP:                  "日文",
 	"config.language." + strings.ToLower(TC): "繁体中文",
+
+	"config.modify site config":         "修改网站配置",
+	"config.modify site config success": "修改网站配置成功",
+	"config.modify site config fail":    "修改网站配置失败",
 
 	"system.system info":     "应用系统信息",
 	"system.application":     "应用信息",

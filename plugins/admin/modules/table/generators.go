@@ -1305,7 +1305,11 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		return s.c.Update(values.ToMap())
 	})
 
-	formList.EnableAjax(lg("success"), lg("fail"))
+	formList.EnableAjax(lgWithConfigScore("modify site config"),
+		lgWithConfigScore("modify site config"),
+		"",
+		lgWithConfigScore("modify site config success"),
+		lgWithConfigScore("modify site config fail"))
 
 	return
 }

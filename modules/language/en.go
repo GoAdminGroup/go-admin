@@ -38,6 +38,7 @@ var en = LangSet{
 
 	"are you sure to delete":               "Are you sure to delete",
 	"yes":                                  "yes",
+	"got it":                               "got it",
 	"cancel":                               "cancel",
 	"refresh succeeded":                    "Refresh succeeded",
 	"reload succeeded":                     "Reload succeeded",
@@ -193,6 +194,10 @@ var en = LangSet{
 	"config.language." + EN:                  "English",
 	"config.language." + JP:                  "Japanese",
 	"config.language." + strings.ToLower(TC): "Traditional Chinese",
+
+	"config.modify site config":         "Site Configuration Modification",
+	"config.modify site config success": "modified success",
+	"config.modify site config fail":    "modified failed",
 
 	"system.system info":     "System And Application Info",
 	"system.application":     "Application Info",
