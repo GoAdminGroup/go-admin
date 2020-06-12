@@ -1191,15 +1191,33 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 	if f.AjaxErrorJS == template.JS("") {
 		errorMsg := "data.responseJSON.msg"
 		error2Msg := "'" + language.Get("error") + "'"
-		if len(msgs) > 1 {
+		if len(msgs) > 1 && msgs[1] != "" {
 			errorMsg = `"` + msgs[1] + `"`
 			error2Msg = errorMsg
 		}
+		wrongText := ""
+		if len(msgs) > 4 && msgs[4] != "" {
+			wrongText = `text:"` + msgs[4] + `",`
+		}
 		f.AjaxErrorJS = template.JS(`
 	if (data.responseText !== "") {
-		swal(` + errorMsg + `, '', 'error');								
+		swal({
+			type: "error",
+			title: ` + errorMsg + `,
+			` + wrongText + `
+			showCancelButton: false,
+			confirmButtonColor: "#3c8dbc",
+			confirmButtonText: '` + language.Get("got it") + `',
+        })								
 	} else {
-		swal(` + error2Msg + `, '', 'error');
+		swal({
+			type: "error",
+			title: ` + error2Msg + `,
+			` + wrongText + `
+			showCancelButton: false,
+			confirmButtonColor: "#3c8dbc",
+			confirmButtonText: '` + language.Get("got it") + `',
+        })
 	}
 `)
 	}
