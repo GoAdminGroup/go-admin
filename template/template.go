@@ -429,11 +429,11 @@ var DefaultFuncMap = template.FuncMap{
 	"divide": func(a, b int) int {
 		return a / b
 	},
-	"renderRowDataHTML": func(id, content template.HTML) template.HTML {
-		return template.HTML(types.ParseTableDataTmplWithID(id, string(content)))
+	"renderRowDataHTML": func(id, content template.HTML, value ...map[string]types.InfoItem) template.HTML {
+		return template.HTML(types.ParseTableDataTmplWithID(id, string(content), value...))
 	},
-	"renderRowDataJS": func(id template.HTML, content template.JS) template.JS {
-		return template.JS(types.ParseTableDataTmplWithID(id, string(content)))
+	"renderRowDataJS": func(id template.HTML, content template.JS, value ...map[string]types.InfoItem) template.JS {
+		return template.JS(types.ParseTableDataTmplWithID(id, string(content), value...))
 	},
 	"attr": func(s template.HTML) template.HTMLAttr {
 		return template.HTMLAttr(s)

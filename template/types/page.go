@@ -161,8 +161,9 @@ type SystemInfo struct {
 }
 
 type TableRowData struct {
-	Id  template.HTML
-	Ids template.HTML
+	Id    template.HTML
+	Ids   template.HTML
+	Value map[string]InfoItem
 }
 
 func ParseTableDataTmpl(content interface{}) string {
@@ -184,11 +185,19 @@ func ParseTableDataTmpl(content interface{}) string {
 	return buf.String()
 }
 
-func ParseTableDataTmplWithID(id template.HTML, content string) string {
+func ParseTableDataTmplWithID(id template.HTML, content string, value ...map[string]InfoItem) string {
 	t := template.New("row_data_tmpl")
 	t, _ = t.Parse(content)
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, TableRowData{Id: id, Ids: `typeof(selectedRows)==="function" ? selectedRows().join() : ""`})
+	v := make(map[string]InfoItem)
+	if len(value) > 0 {
+		v = value[0]
+	}
+	_ = t.Execute(buf, TableRowData{
+		Id:    id,
+		Ids:   `typeof(selectedRows)==="function" ? selectedRows().join() : ""`,
+		Value: v,
+	})
 	return buf.String()
 }
 
