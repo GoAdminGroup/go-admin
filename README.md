@@ -13,6 +13,7 @@
     <a href="./README_CN.md">中文介绍</a> |
     <a href="https://demo.go-admin.com">DEMO</a> |
     <a href="https://demo.go-admin.cn">中文DEMO</a> |
+    <a href="https://twitter.com/cg3365688034">Twitter</a> |
     <a href="http://discuss.go-admin.com">Forum</a>
 </p>
 
