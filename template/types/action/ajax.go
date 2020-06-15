@@ -11,14 +11,15 @@ import (
 
 type AjaxAction struct {
 	BaseAction
-	Url       string
-	Method    string
-	Data      AjaxData
-	Alert     bool
-	AlertData AlertData
-	SuccessJS template.JS
-	ErrorJS   template.JS
-	Handlers  []context.Handler
+	Url         string
+	Method      string
+	Data        AjaxData
+	Alert       bool
+	AlertData   AlertData
+	SuccessJS   template.JS
+	ErrorJS     template.JS
+	ParameterJS template.JS
+	Handlers    []context.Handler
 }
 
 type AlertData struct {
@@ -91,6 +92,11 @@ func (ajax *AjaxAction) SetErrorJS(errorJS template.JS) *AjaxAction {
 	return ajax
 }
 
+func (ajax *AjaxAction) SetParameterJS(parameterJS template.JS) *AjaxAction {
+	ajax.ParameterJS += parameterJS
+	return ajax
+}
+
 func (ajax *AjaxAction) SetMethod(method string) *AjaxAction {
 	ajax.Method = method
 	return ajax
@@ -127,13 +133,14 @@ func (ajax *AjaxAction) Js() template.JS {
 					});`
 	}
 
-	return template.JS(`$('.` + ajax.BtnId + `').on('click', function (event) {
-						let data = ` + ajax.Data.JSON() + `;
+	return template.JS(`$('.`+ajax.BtnId+`').on('click', function (event) {
+						let data = `+ajax.Data.JSON()+`;
+						`) + ajax.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");
 						if (id && id !== "") {
 							data["id"] = id;
 						}
-						` + ajaxStatement + `
+						`+ajaxStatement+`
             		});`)
 }
 

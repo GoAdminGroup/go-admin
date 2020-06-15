@@ -17,18 +17,19 @@ import (
 
 type PopUpAction struct {
 	BaseAction
-	Url        string
-	Method     string
-	Id         string
-	Title      string
-	Draggable  bool
-	Width      string
-	Height     string
-	HasIframe  bool
-	HideFooter bool
-	BtnTitle   template.HTML
-	Data       AjaxData
-	Handlers   []context.Handler
+	Url         string
+	Method      string
+	Id          string
+	Title       string
+	Draggable   bool
+	Width       string
+	Height      string
+	HasIframe   bool
+	HideFooter  bool
+	BtnTitle    template.HTML
+	ParameterJS template.JS
+	Data        AjaxData
+	Handlers    []context.Handler
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
@@ -63,6 +64,11 @@ func (pop *PopUpAction) SetWidth(width string) *PopUpAction {
 
 func (pop *PopUpAction) SetHeight(height string) *PopUpAction {
 	pop.Height = height
+	return pop
+}
+
+func (pop *PopUpAction) SetParameterJS(parameterJS template.JS) *PopUpAction {
+	pop.ParameterJS += parameterJS
 	return pop
 }
 
@@ -211,23 +217,24 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 }
 
 func (pop *PopUpAction) Js() template.JS {
-	return template.JS(`$('.` + pop.BtnId + `').on('click', function (event) {
-						let data = ` + pop.Data.JSON() + `;
+	return template.JS(`$('.`+pop.BtnId+`').on('click', function (event) {
+						let data = `+pop.Data.JSON()+`;
+						`) + pop.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");
 						if (id && id !== "") {
 							data["id"] = id;
 						}
-						data['popup_id'] = "` + pop.Id + `"
+						data['popup_id'] = "`+pop.Id+`"
 						$.ajax({
-                            method: '` + pop.Method + `',
-                            url: "` + pop.Url + `",
+                            method: '`+pop.Method+`',
+                            url: "`+pop.Url+`",
                             data: data,
                             success: function (data) {
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
                                 }
                                 if (data.code === 0) {
-                                    $('#` + pop.Id + ` .modal-body').html(data.data);
+                                    $('#`+pop.Id+` .modal-body').html(data.data);
                                 } else {
                                     swal(data.msg, '', 'error');
                                 }
@@ -239,7 +246,7 @@ func (pop *PopUpAction) Js() template.JS {
 									swal('error', '', 'error');
 								}
 								setTimeout(function() {
-									$('#` + pop.Id + `').hide();
+									$('#`+pop.Id+`').hide();
 									$('.modal-backdrop.fade.in').hide();
 								}, 500)
 							},
