@@ -72,9 +72,10 @@ func (pop *PopUpAction) SetUrl(url string) *PopUpAction {
 }
 
 type IframeData struct {
-	Width  string
-	Height string
-	Src    string
+	Width          string
+	Height         string
+	Src            string
+	AddParameterFn func(ctx *context.Context) string
 }
 
 func PopUpWithIframe(id, title string, data IframeData, width, height string) *PopUpAction {
@@ -94,11 +95,15 @@ func PopUpWithIframe(id, title string, data IframeData, width, height string) *P
 	}
 	modalID := "info-popup-model-" + utils.Uuid(10)
 	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
+		param := ""
+		if data.AddParameterFn != nil {
+			param = data.AddParameterFn(ctx)
+		}
 		return true, "ok", fmt.Sprintf(`<iframe style="width:%s;height:%s;" 
 			scrolling="auto" 
 			allowtransparency="true" 
 			frameborder="0"
-			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true&__goadmin_iframe_id=%s"><iframe>`,
+			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true&__goadmin_iframe_id=%s`+param+`"><iframe>`,
 			data.Width, data.Height, data.Src, modalID)
 	}
 	return &PopUpAction{

@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -954,7 +955,12 @@ func (i *InfoPanel) AddColumnButtons(head string, buttons ...Button) *InfoPanel 
 		FieldDisplay: FieldDisplay{
 			Display: func(value FieldModel) interface{} {
 				pk := db.GetValueFromDatabaseType(i.primaryKey.Type, value.Row[i.primaryKey.Name], i.isFromJSON())
-				return template.HTML(ParseTableDataTmplWithID(pk.HTML(), string(content)))
+				var v = make(map[string]InfoItem)
+				for key, item := range value.Row {
+					itemValue := fmt.Sprintf("%v", item)
+					v[key] = InfoItem{Value: itemValue, Content: template.HTML(itemValue)}
+				}
+				return template.HTML(ParseTableDataTmplWithID(pk.HTML(), string(content), v))
 			},
 			DisplayProcessChains: chooseDisplayProcessChains(i.processChains),
 		},
