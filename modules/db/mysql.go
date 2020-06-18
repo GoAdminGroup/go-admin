@@ -44,7 +44,8 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 		for conn, cfg := range cfgs {
 
 			if cfg.Dsn == "" {
-				cfg.Dsn = cfg.User + ":" + cfg.Pwd + "@tcp(" + cfg.Host + ":" + cfg.Port + ")/" + cfg.Name + "?charset=utf8mb4"
+				cfg.Dsn = cfg.User + ":" + cfg.Pwd + "@tcp(" + cfg.Host + ":" + cfg.Port + ")/" +
+					cfg.Name + cfg.ParamStr()
 			}
 
 			sqlDB, err := sql.Open("mysql", cfg.Dsn)

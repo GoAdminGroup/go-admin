@@ -72,7 +72,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 		for conn, cfg := range cfgList {
 
 			if cfg.Dsn == "" {
-				cfg.Dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+				cfg.Dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s"+cfg.ParamStr(),
 					cfg.Host, cfg.Port, cfg.User, cfg.Pwd, cfg.Name)
 			}
 

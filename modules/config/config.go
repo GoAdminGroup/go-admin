@@ -31,16 +31,59 @@ import (
 // mssql, the other configurations will be ignored, except for
 // MaxIdleCon and MaxOpenCon.
 type Database struct {
-	Host       string `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
-	Port       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
-	User       string `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
-	Pwd        string `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
-	Name       string `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
-	MaxIdleCon int    `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
-	MaxOpenCon int    `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
-	Driver     string `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
-	File       string `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
-	Dsn        string `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
+	Host       string            `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
+	Port       string            `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
+	User       string            `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
+	Pwd        string            `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
+	Name       string            `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
+	MaxIdleCon int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
+	MaxOpenCon int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
+	Driver     string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
+	File       string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
+	Dsn        string            `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
+	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
+}
+
+func (d Database) ParamStr() string {
+	p := ""
+	if d.Driver == DriverMysql || d.Driver == DriverSqlite {
+		if d.Driver == DriverMysql {
+			if _, ok := d.Params["charset"]; !ok {
+				d.Params["charset"] = "utf8mb4"
+			}
+		}
+		if len(d.Params) > 0 {
+			p = "?"
+		}
+		for k, v := range d.Params {
+			p += k + "=" + v + "&"
+		}
+		if len(d.Params) > 0 {
+			p = p[:len(p)-1]
+		}
+	}
+	if d.Driver == DriverMssql {
+		if _, ok := d.Params["encrypt"]; !ok {
+			d.Params["encrypt"] = "disable"
+		}
+		for k, v := range d.Params {
+			p += k + "=" + v + ";"
+		}
+		p = p[:len(p)-1]
+	}
+	if d.Driver == DriverPostgresql {
+		if _, ok := d.Params["sslmode"]; !ok {
+			d.Params["sslmode"] = "disable"
+		}
+		if len(d.Params) > 0 {
+			p = " "
+		}
+		for k, v := range d.Params {
+			p += k + "=" + v + " "
+		}
+		p = p[:len(p)-1]
+	}
+	return p
 }
 
 // DatabaseList is a map of Database.

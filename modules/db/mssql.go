@@ -231,7 +231,7 @@ func (db *Mssql) InitDB(cfglist map[string]config.Database) Connection {
 
 			if cfg.Dsn == "" {
 
-				cfg.Dsn = fmt.Sprintf("user id=%s;password=%s;server=%s;port=%s;database=%s;encrypt=disable",
+				cfg.Dsn = fmt.Sprintf("user id=%s;password=%s;server=%s;port=%s;database=%s;"+cfg.ParamStr(),
 					cfg.User, cfg.Pwd, cfg.Host, cfg.Port, cfg.Name)
 			}
 

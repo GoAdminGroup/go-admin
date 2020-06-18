@@ -132,6 +132,16 @@ func TestStore_URL(t *testing.T) {
 	assert.Equal(t, Get().Store.URL("http://xxxxx.com/xxxx/file/xxxx.png"), "http://xxxxx.com/xxxx/file/xxxx.png")
 }
 
+func TestDatabase_ParamStr(t *testing.T) {
+	cfg := Database{
+		Driver: DriverMysql,
+		Params: map[string]string{
+			"parseTime": "true",
+		},
+	}
+	assert.Equal(t, cfg.ParamStr(), "?charset=utf8mb4&parseTime=true")
+}
+
 func TestReadFromYaml(t *testing.T) {
 	cfg := ReadFromYaml("./config.yaml")
 	assert.Equal(t, cfg.Databases.GetDefault().Driver, "mssql")
