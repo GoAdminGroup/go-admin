@@ -54,11 +54,9 @@ func (d Database) ParamStr() string {
 		}
 		if len(d.Params) > 0 {
 			p = "?"
-		}
-		for k, v := range d.Params {
-			p += k + "=" + v + "&"
-		}
-		if len(d.Params) > 0 {
+			for k, v := range d.Params {
+				p += k + "=" + v + "&"
+			}
 			p = p[:len(p)-1]
 		}
 	}
@@ -75,9 +73,7 @@ func (d Database) ParamStr() string {
 		if _, ok := d.Params["sslmode"]; !ok {
 			d.Params["sslmode"] = "disable"
 		}
-		if len(d.Params) > 0 {
-			p = " "
-		}
+		p = " "
 		for k, v := range d.Params {
 			p += k + "=" + v + " "
 		}
