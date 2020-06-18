@@ -46,6 +46,9 @@ type Database struct {
 
 func (d Database) ParamStr() string {
 	p := ""
+	if d.Params == nil {
+		d.Params = make(map[string]string)
+	}
 	if d.Driver == DriverMysql || d.Driver == DriverSqlite {
 		if d.Driver == DriverMysql {
 			if _, ok := d.Params["charset"]; !ok {
