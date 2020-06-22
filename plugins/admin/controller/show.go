@@ -342,23 +342,35 @@ func (h *Handler) Export(ctx *context.Context) {
 		fileName  string
 		err       error
 		tableInfo = panel.GetInfo()
+		params    parameter.Parameters
 	)
 
-	if len(param.Id) == 0 {
-		params := parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
+	if fn := panel.GetInfo().ExportProcessFn; fn != nil {
+		params = parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
 			tableInfo.GetSort())
-		infoData, err = panel.GetData(params.WithIsAll(param.IsAll))
-		fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", tableInfo.Title, time.Now().Unix(),
-			params.Page, params.PageSize)
+		p, err := fn(params.WithIsAll(param.IsAll))
+		if err != nil {
+			response.Error(ctx, "export error")
+			return
+		}
+		infoData.Thead = p.Thead
+		infoData.InfoList = p.InfoList
 	} else {
-		infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
-			tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()).WithPKs(param.Id...))
-		fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
-	}
-
-	if err != nil {
-		response.Error(ctx, "export error")
-		return
+		if len(param.Id) == 0 {
+			params = parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
+				tableInfo.GetSort())
+			infoData, err = panel.GetData(params.WithIsAll(param.IsAll))
+			fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", tableInfo.Title, time.Now().Unix(),
+				params.Page, params.PageSize)
+		} else {
+			infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
+				tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()).WithPKs(param.Id...))
+			fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
+			if err != nil {
+				response.Error(ctx, "export error")
+				return
+			}
+		}
 	}
 
 	columnIndex := 0

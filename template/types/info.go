@@ -506,6 +506,8 @@ type primaryKey struct {
 	Name string
 }
 
+type ExportProcessFn func(param parameter.Parameters) (PanelInfo, error)
+
 // InfoPanel
 type InfoPanel struct {
 	FieldList         FieldList
@@ -525,7 +527,8 @@ type InfoPanel struct {
 	PageSizeList    []int
 	DefaultPageSize int
 
-	ExportType int
+	ExportType      int
+	ExportProcessFn ExportProcessFn
 
 	primaryKey primaryKey
 
@@ -869,6 +872,11 @@ func (i *InfoPanel) AddXssFilter() *InfoPanel {
 
 func (i *InfoPanel) AddXssJsFilter() *InfoPanel {
 	i.processChains = addXssJsFilter(i.processChains)
+	return i
+}
+
+func (i *InfoPanel) SetExportProcessFn(fn ExportProcessFn) *InfoPanel {
+	i.ExportProcessFn = fn
 	return i
 }
 

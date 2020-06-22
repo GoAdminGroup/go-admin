@@ -211,6 +211,11 @@ type PopupAttribute interface {
 	GetContent() template.HTML
 }
 
+type PanelInfo struct {
+	Thead    Thead    `json:"thead"`
+	InfoList InfoList `json:"info_list"`
+}
+
 type Thead []TheadItem
 
 type TheadItem struct {
