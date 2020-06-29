@@ -93,13 +93,14 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		SetHeadWidth(f.HeadWidth).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetUrl(editUrl).
+		SetTitle(f.FormEditTitle).
 		SetAjax(f.AjaxSuccessJS, f.AjaxErrorJS).
 		SetLayout(f.Layout).
 		SetHiddenFields(hiddenFields).
 		SetOperationFooter(formFooter(footerKind,
 			f.IsHideContinueEditCheckBox,
 			f.IsHideContinueNewCheckBox,
-			f.IsHideResetButton)).
+			f.IsHideResetButton, f.FormEditBtnWord)).
 		SetHeader(f.HeaderHtml).
 		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe, f.IsHideBackButton, f.Header)
 

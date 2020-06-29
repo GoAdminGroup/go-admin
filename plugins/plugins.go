@@ -16,11 +16,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
 	"net/http"
 	"plugin"
+	"time"
 )
 
 // Plugin as one of the key components of goAdmin has three
@@ -30,10 +32,31 @@ import (
 // something like init the database and set the config and register
 // the routes. The Plugin must implement the three methods.
 type Plugin interface {
-	GetHandler() context.HandlerMap // 返回路由和控制器方法
+	GetHandler() context.HandlerMap
 	InitPlugin(services service.List)
 	Name() string
 	Prefix() string
+	GetInfo() Info
+	GetInstallationPage() (skip bool, gen table.Generator)
+	IsInstalled() bool
+	CheckUpdate() (update bool, version string)
+	Translate(word string) string
+	Uninstall() error
+	Upgrade() error
+}
+
+type Info struct {
+	Title       string    `json:"title" yaml:"title" ini:"title"`
+	Description string    `json:"description" yaml:"description" ini:"description"`
+	Version     string    `json:"version" yaml:"version" ini:"version"`
+	Author      string    `json:"author" yaml:"author" ini:"author"`
+	Banners     []string  `json:"banners" yaml:"banners" ini:"banners"`
+	Url         string    `json:"url" yaml:"url" ini:"url"`
+	Cover       string    `json:"cover" yaml:"cover" ini:"cover"`
+	Website     string    `json:"website" yaml:"website" ini:"website"`
+	Agreement   string    `json:"agreement" yaml:"agreement" ini:"agreement"`
+	CreatedAt   time.Time `json:"created_at" yaml:"created_at" ini:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at" yaml:"updated_at" ini:"updated_at"`
 }
 
 type Base struct {
@@ -45,17 +68,16 @@ type Base struct {
 	URLPrefix string
 }
 
-func (b *Base) GetHandler() context.HandlerMap {
-	return b.App.Handlers
-}
-
-func (b *Base) Name() string {
-	return b.PlugName
-}
-
-func (b *Base) Prefix() string {
-	return b.URLPrefix
-}
+func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
+func (b *Base) Name() string                                          { return b.PlugName }
+func (b *Base) GetInfo() Info                                         { return Info{} }
+func (b *Base) Translate(word string) string                          { return word }
+func (b *Base) Prefix() string                                        { return b.URLPrefix }
+func (b *Base) IsInstalled() bool                                     { return false }
+func (b *Base) Uninstall() error                                      { return nil }
+func (b *Base) Upgrade() error                                        { return nil }
+func (b *Base) CheckUpdate() (update bool, version string)            { return false, "" }
+func (b *Base) GetInstallationPage() (skip bool, gen table.Generator) { return true, nil }
 
 func (b *Base) InitBase(srv service.List) {
 	b.Services = srv
@@ -155,4 +177,32 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: len(animation) > 1 && animation[1],
 	})
+}
+
+type Plugins []Plugin
+
+func (pp Plugins) Add(p Plugin) Plugins {
+	if !pp.Exist(p) {
+		pp = append(pp, p)
+	}
+	return pp
+}
+
+func (pp Plugins) Exist(p Plugin) bool {
+	for _, v := range pp {
+		if v.Name() == p.Name() {
+			return true
+		}
+	}
+	return false
+}
+
+var pluginList = make(Plugins, 0)
+
+func Add(p Plugin) {
+	pluginList = pluginList.Add(p)
+}
+
+func Get() Plugins {
+	return pluginList
 }

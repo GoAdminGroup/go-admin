@@ -53,6 +53,8 @@ func (admin *Admin) initRouter() *Admin {
 	authRoute.GET("/menu/edit/show", admin.handler.ShowEditMenu).Name("menu_edit_show")
 	authRoute.GET("/menu/new", admin.handler.ShowNewMenu).Name("menu_new_show")
 
+	authRoute.GET("/plugins", admin.handler.Plugins).Name("plugins")
+
 	// add delete modify query
 	authPrefixRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")
 	authPrefixRoute.GET("/info/:__prefix/edit", admin.guardian.ShowForm, admin.handler.ShowForm).Name("show_edit")

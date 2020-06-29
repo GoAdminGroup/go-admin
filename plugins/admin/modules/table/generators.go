@@ -4,8 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/ui"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	tmpl "html/template"
 	"net/url"
 	"regexp"
@@ -21,10 +19,12 @@ import (
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
@@ -1110,6 +1110,11 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
+	formList.AddField(lgWithConfigScore("hide plugin entrance"), "hide_plugin_entrance", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("animation type"), "animation_type", db.Varchar, form.SelectSingle).
 		FieldOptions(types.FieldOptions{
 			{Text: "", Value: ""},
@@ -1246,7 +1251,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
 		"asset_url", "title", "login_title", "session_life_time", "no_limit_login_ip",
-		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance",
+		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance", "hide_plugin_entrance",
 		"animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
@@ -1296,6 +1301,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		ui.GetService(services).RemoveOrShowSiteNavButton(values["hide_config_center_entrance"][0] == "true")
 		ui.GetService(services).RemoveOrShowInfoNavButton(values["hide_app_info_entrance"][0] == "true")
 		ui.GetService(services).RemoveOrShowToolNavButton(values["hide_tool_entrance"][0] == "true")
+		ui.GetService(services).RemoveOrShowPlugNavButton(values["hide_plugin_entrance"][0] == "true")
 
 		// TODO: add transaction
 		err = models.Site().SetConn(s.conn).Update(values.RemoveSysRemark())

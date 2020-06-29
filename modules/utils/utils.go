@@ -117,6 +117,13 @@ func SetDefault(value, condition, def string) string {
 	return value
 }
 
+func AorB(condition bool, a, b string) string {
+	if condition {
+		return a
+	}
+	return b
+}
+
 func IsJSON(str string) bool {
 	var js json.RawMessage
 	return json.Unmarshal([]byte(str), &js) == nil
@@ -136,6 +143,12 @@ func CopyMap(m map[string]string) map[string]string {
 		panic(err)
 	}
 	return cm
+}
+
+func ParseTime(stringTime string) time.Time {
+	loc, _ := time.LoadLocation("Local")
+	theTime, _ := time.ParseInLocation("2006-01-02 15:04:05", stringTime, loc)
+	return theTime
 }
 
 func CompareVersion(src, toCompare string) bool {

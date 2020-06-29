@@ -213,6 +213,10 @@ func aCol() types.ColAttribute {
 	return aTemplate().Col()
 }
 
+func aImage() types.ImgAttribute {
+	return aTemplate().Image()
+}
+
 func aButton() types.ButtonAttribute {
 	return aTemplate().Button()
 }
@@ -245,7 +249,7 @@ func isPjax(ctx *context.Context) bool {
 	return ctx.IsPjax()
 }
 
-func formFooter(page string, isHideEdit, isHideNew, isHideReset bool) template2.HTML {
+func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord template2.HTML) template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 
 	var (
@@ -324,7 +328,7 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool) template2.
 	}
 
 	btn1 := aButton().SetType("submit").
-		SetContent(language.GetFromHtml("Save")).
+		SetContent(btnWord).
 		SetThemePrimary().
 		SetOrientationRight().
 		GetContent()

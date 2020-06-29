@@ -352,6 +352,11 @@ type FormPanel struct {
 	InputWidth int
 	HeadWidth  int
 
+	FormNewTitle    template.HTML
+	FormNewBtnWord  template.HTML
+	FormEditTitle   template.HTML
+	FormEditBtnWord template.HTML
+
 	Ajax          bool
 	AjaxSuccessJS template.JS
 	AjaxErrorJS   template.JS
@@ -373,6 +378,10 @@ func NewFormPanel() *FormPanel {
 		curFieldListIndex: -1,
 		Callbacks:         make(Callbacks, 0),
 		Layout:            form2.LayoutDefault,
+		FormNewTitle:      "New",
+		FormEditTitle:     "Edit",
+		FormNewBtnWord:    language.GetFromHtml("Save"),
+		FormEditBtnWord:   language.GetFromHtml("Save"),
 	}
 }
 
@@ -1133,34 +1142,47 @@ func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) SetFormNewTitle(title template.HTML) *FormPanel {
+	f.FormNewTitle = title
+	return f
+}
+
+func (f *FormPanel) SetFormNewBtnWord(word template.HTML) *FormPanel {
+	f.FormNewBtnWord = word
+	return f
+}
+
+func (f *FormPanel) SetFormEditTitle(title template.HTML) *FormPanel {
+	f.FormEditTitle = title
+	return f
+}
+
+func (f *FormPanel) SetFormEditBtnWord(word template.HTML) *FormPanel {
+	f.FormEditBtnWord = word
+	return f
+}
+
 func (f *FormPanel) SetResponder(responder Responder) *FormPanel {
 	f.Responder = responder
 	return f
 }
 
-func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
+type AjaxData struct {
+	SuccessTitle   string
+	SuccessText    string
+	ErrorTitle     string
+	ErrorText      string
+	SuccessJumpURL string
+}
+
+func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 	f.Ajax = true
 	if f.AjaxSuccessJS == template.JS("") {
-		successMsg := "data.msg"
-		if len(msgs) > 0 && msgs[0] != "" {
-			successMsg = `"` + msgs[0] + `"`
-		}
-		errorMsg := "data.msg"
-		if len(msgs) > 1 && msgs[1] != "" {
-			errorMsg = `"` + msgs[1] + `"`
-		}
-		jump := "data.data.url"
-		if len(msgs) > 2 && msgs[2] != "" {
-			jump = `"` + msgs[2] + `"`
-		}
-		text := ""
-		if len(msgs) > 3 && msgs[3] != "" {
-			text = `text:"` + msgs[3] + `",`
-		}
-		wrongText := ""
-		if len(msgs) > 4 && msgs[4] != "" {
-			wrongText = `text:"` + msgs[4] + `",`
-		}
+		successMsg := modules.AorB(data.SuccessTitle != "", `"`+data.SuccessTitle+`"`, "data.msg")
+		errorMsg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "data.msg")
+		jump := modules.AorB(data.SuccessJumpURL != "", `"`+data.SuccessJumpURL+`"`, "data.data.url")
+		text := modules.AorB(data.SuccessText != "", `text:"`+data.SuccessText+`",`, "")
+		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "")
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
 	    data = JSON.parse(data);
@@ -1189,16 +1211,9 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 `)
 	}
 	if f.AjaxErrorJS == template.JS("") {
-		errorMsg := "data.responseJSON.msg"
-		error2Msg := "'" + language.Get("error") + "'"
-		if len(msgs) > 1 && msgs[1] != "" {
-			errorMsg = `"` + msgs[1] + `"`
-			error2Msg = errorMsg
-		}
-		wrongText := ""
-		if len(msgs) > 4 && msgs[4] != "" {
-			wrongText = `text:"` + msgs[4] + `",`
-		}
+		errorMsg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "data.responseJSON.msg")
+		error2Msg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "'"+language.Get("error")+"'")
+		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "")
 		f.AjaxErrorJS = template.JS(`
 	if (data.responseText !== "") {
 		swal({
@@ -1222,6 +1237,26 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 `)
 	}
 	return f
+}
+
+func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
+	var data AjaxData
+	if len(msgs) > 0 && msgs[0] != "" {
+		data.SuccessTitle = msgs[0]
+	}
+	if len(msgs) > 1 && msgs[1] != "" {
+		data.ErrorTitle = msgs[0]
+	}
+	if len(msgs) > 2 && msgs[2] != "" {
+		data.SuccessJumpURL = msgs[0]
+	}
+	if len(msgs) > 3 && msgs[3] != "" {
+		data.SuccessText = msgs[0]
+	}
+	if len(msgs) > 4 && msgs[4] != "" {
+		data.ErrorText = msgs[0]
+	}
+	return f.EnableAjaxData(data)
 }
 
 func (f *FormPanel) SetAjaxSuccessJS(js template.JS) *FormPanel {

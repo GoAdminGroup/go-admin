@@ -117,6 +117,8 @@ var cn = LangSet{
 	"login overdue, please login again": "登录信息过期，请重新登录",
 	"login info":                        "登录信息",
 
+	"plugins": "插件",
+
 	"second":  "秒",
 	"seconds": "秒",
 	"minute":  "分",
@@ -171,6 +173,7 @@ var cn = LangSet{
 	"config.hide config center entrance": "隐藏配置中心入口",
 	"config.hide app info entrance":      "隐藏应用信息入口",
 	"config.hide tool entrance":          "隐藏工具入口",
+	"config.hide plugin entrance":        "隐藏插件列表入口",
 	"config.footer info":                 "自定义底部信息",
 	"config.login logo":                  "登录Logo",
 	"config.no limit login ip":           "取消限制多IP登录",
@@ -334,4 +337,16 @@ var cn = LangSet{
 
 	"tool.generate table model success": "生成成功",
 	"tool.generate table model fail":    "生成失败",
+
+	"plugin.plugin":         "插件",
+	"plugin.plugin detail":  "插件详情",
+	"plugin.introduction":   "介绍",
+	"plugin.website":        "网站",
+	"plugin.version":        "版本",
+	"plugin.created at":     "创建日期",
+	"plugin.updated at":     "更新日期",
+	"plugin.provided by %s": "由 %s 提供",
+	"plugin.upgrade":        "升级",
+	"plugin.install":        "安装",
+	"plugin.info":           "详细信息",
 }

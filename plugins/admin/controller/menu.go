@@ -55,7 +55,8 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu"),
 			}).
-			SetOperationFooter(formFooter("new", false, false, false)),
+			SetOperationFooter(formFooter("new", false, false, false,
+				panel.GetForm().FormNewBtnWord)),
 			false, ctx.Query(constant.IframeKey) == "true", false, ""),
 		Description: template2.HTML(panel.GetForm().Description),
 		Title:       template2.HTML(panel.GetForm().Title),
@@ -98,15 +99,18 @@ func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, er
 		alert = aAlert().Warning(err.Error())
 	}
 
+	panel := h.table("menu", ctx)
+
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(h.config.PrefixFixSlash()).
-			SetPrimaryKey(h.table("menu", ctx).GetPrimaryKey().Name).
+			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(h.routePath("menu_edit")).
-			SetOperationFooter(formFooter("edit", false, false, false)).
+			SetOperationFooter(formFooter("edit", false, false, false,
+				panel.GetForm().FormEditBtnWord)).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu"),
@@ -232,18 +236,20 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 	header := aTree().GetTreeHeader()
 	box := aBox().SetHeader(header).SetBody(tree).GetContent()
 	col1 := aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
+	panel := h.table("menu", ctx)
 
-	formInfo := h.table("menu", ctx).GetNewForm()
+	formInfo := panel.GetNewForm()
 
 	newForm := menuFormContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetUrl(h.routePath("menu_new")).
-		SetPrimaryKey(h.table("menu", ctx).GetPrimaryKey().Name).
+		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetHiddenFields(map[string]string{
 			form2.TokenKey:    h.authSrv().AddToken(),
 			form2.PreviousKey: h.routePath("menu"),
 		}).
-		SetOperationFooter(formFooter("menu", false, false, false)).
+		SetOperationFooter(formFooter("menu", false, false, false,
+			panel.GetForm().FormNewBtnWord)).
 		SetTitle("New").
 		SetContent(formInfo.FieldList).
 		SetTabContents(formInfo.GroupFieldList).

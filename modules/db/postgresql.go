@@ -6,7 +6,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"strconv"
 	"strings"
@@ -68,15 +67,11 @@ func filterQuery(query string) string {
 
 // InitDB implements the method Connection.InitDB.
 func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
+	db.Configs = cfgList
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
-			if cfg.Dsn == "" {
-				cfg.Dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s"+cfg.ParamStr(),
-					cfg.Host, cfg.Port, cfg.User, cfg.Pwd, cfg.Name)
-			}
-
-			sqlDB, err := sql.Open("postgres", cfg.Dsn)
+			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
 				panic(err)
 			}

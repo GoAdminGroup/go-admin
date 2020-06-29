@@ -202,6 +202,7 @@ const (
 	NavBtnSiteName = "go_admin_site_navbtn"
 	NavBtnInfoName = "go_admin_info_navbtn"
 	NavBtnToolName = "go_admin_tool_navbtn"
+	NavBtnPlugName = "go_admin_plug_navbtn"
 )
 
 func (b Buttons) RemoveSiteNavButton() Buttons {
@@ -214,6 +215,10 @@ func (b Buttons) RemoveInfoNavButton() Buttons {
 
 func (b Buttons) RemoveToolNavButton() Buttons {
 	return b.RemoveButtonByName(NavBtnToolName)
+}
+
+func (b Buttons) RemovePlugNavButton() Buttons {
+	return b.RemoveButtonByName(NavBtnPlugName)
 }
 
 type NavButton struct {

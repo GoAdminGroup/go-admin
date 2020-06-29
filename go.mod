@@ -26,4 +26,5 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/ini.v1 v1.51.0 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
+	xorm.io/xorm v1.0.2 // indirect
 )

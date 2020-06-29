@@ -67,3 +67,14 @@ func (s *Service) RemoveOrShowToolNavButton(remove bool) {
 	}
 
 }
+
+func (s *Service) RemoveOrShowPlugNavButton(remove bool) {
+	if remove {
+		*s.NavButtons = (*s.NavButtons).RemovePlugNavButton()
+	} else {
+		*s.NavButtons = (*s.NavButtons).AddNavButton(icon.Plug, types.NavBtnToolName,
+			action.JumpInNewTab(config.Url("/plugin"),
+				language.GetWithScope("plugin", "plugin")))
+	}
+
+}

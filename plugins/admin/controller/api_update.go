@@ -81,6 +81,6 @@ func (h *Handler) ApiUpdateForm(ctx *context.Context) {
 		"prefix": h.config.PrefixFixSlash(),
 		"token":  h.authSrv().AddToken(),
 		"operation_footer": formFooter(footerKind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
-			f.IsHideResetButton),
+			f.IsHideResetButton, f.FormEditBtnWord),
 	})
 }

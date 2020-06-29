@@ -72,6 +72,8 @@ func (eng *Engine) Use(router interface{}) error {
 		eng.PluginList = append(eng.PluginList, admin.NewAdmin())
 	}
 
+	eng.AddPluginList(plugins.Get())
+
 	// init site setting
 	site := models.Site().SetConn(eng.DefaultConnection())
 	site.Init(eng.config.ToMap())
@@ -86,16 +88,22 @@ func (eng *Engine) Use(router interface{}) error {
 				language.GetWithScope("site setting", "config")))
 	}
 
+	if !eng.config.HideToolEntrance {
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Wrench, types.NavBtnToolName,
+			action.JumpInNewTab(config.Url("/info/generate/new"),
+				language.GetWithScope("tool", "tool")))
+	}
+
 	if !eng.config.HideAppInfoEntrance {
 		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Info, types.NavBtnInfoName,
 			action.JumpInNewTab(config.Url("/application/info"),
 				language.GetWithScope("system info", "system")))
 	}
 
-	if !eng.config.HideToolEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Wrench, types.NavBtnToolName,
-			action.JumpInNewTab(config.Url("/info/generate/new"),
-				language.GetWithScope("tool", "tool")))
+	if !eng.config.HidePluginEntrance {
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Plug, types.NavBtnPlugName,
+			action.JumpInNewTab(config.Url("/plugins"),
+				language.GetWithScope("plugin", "plugin")))
 	}
 
 	navButtons = eng.NavButtons
@@ -108,17 +116,38 @@ func (eng *Engine) Use(router interface{}) error {
 
 	// Initialize plugins
 	for i := range eng.PluginList {
-		eng.PluginList[i].InitPlugin(eng.Services)
+		if eng.PluginList[i].Name() != "admin" {
+			eng.PluginList[i].InitPlugin(eng.Services)
+			skip, gen := eng.PluginList[i].GetInstallationPage()
+			if !skip && gen != nil {
+				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), gen)
+			}
+		}
 	}
+	adm := eng.AdminPlugin()
+	adm.InitPlugin(eng.Services)
+	plugins.Add(adm)
 
 	return eng.Adapter.Use(router, eng.PluginList)
 }
 
-// AddPlugins add the plugins and initialize them.
+// AddPlugins add the plugins
 func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 
 	if len(plugs) == 0 {
-		panic("wrong plugins")
+		return eng
+	}
+
+	eng.PluginList = append(eng.PluginList, plugs...)
+
+	return eng
+}
+
+// AddPluginList add the plugins
+func (eng *Engine) AddPluginList(plugs plugins.Plugins) *Engine {
+
+	if len(plugs) == 0 {
+		return eng
 	}
 
 	eng.PluginList = append(eng.PluginList, plugs...)

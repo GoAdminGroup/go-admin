@@ -299,4 +299,16 @@ var en = LangSet{
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",
+
+	"plugin.plugin":         "Plugin",
+	"plugin.plugin detail":  "Plugin Detail",
+	"plugin.introduction":   "Introduction",
+	"plugin.website":        "Website",
+	"plugin.version":        "Version",
+	"plugin.created at":     "Created At",
+	"plugin.updated at":     "Updated At",
+	"plugin.provided by %s": "Provided by %s",
+	"plugin.upgrade":        "Upgrade",
+	"plugin.install":        "Install",
+	"plugin.info":           "Detail",
 }

@@ -4,6 +4,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
+	"github.com/GoAdminGroup/go-admin/modules/system"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
@@ -55,6 +57,22 @@ func (admin *Admin) InitPlugin(services service.List) {
 	table.SetServices(services)
 
 	action.InitOperationHandlerSetter(admin.GetAddOperationFn())
+}
+
+func (admin *Admin) GetInfo() plugins.Info {
+	return plugins.Info{
+		Title:       "Basic Admin",
+		Website:     "https://www.go-admin.cn",
+		Description: "A built-in plugins of GoAdmin which help you to build a crud manager platform quickly.",
+		Author:      "official",
+		Version:     system.Version(),
+		CreatedAt:   utils.ParseTime("2018-07-08 00:00:00"),
+		UpdatedAt:   utils.ParseTime("2020-06-28 00:00:00"),
+	}
+}
+
+func (admin *Admin) IsInstalled() bool {
+	return true
 }
 
 // NewAdmin return the global Admin plugin.

@@ -2,13 +2,17 @@ package db
 
 import (
 	"database/sql"
+	"errors"
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"sync"
+	"xorm.io/xorm"
 )
 
 // Base is a common Connection.
 type Base struct {
-	DbList map[string]*sql.DB
-	Once   sync.Once
+	DbList  map[string]*sql.DB
+	Once    sync.Once
+	Configs config.DatabaseList
 }
 
 // Close implements the method Connection.Close.
@@ -23,4 +27,27 @@ func (db *Base) Close() []error {
 // GetDB implements the method Connection.GetDB.
 func (db *Base) GetDB(key string) *sql.DB {
 	return db.DbList[key]
+}
+
+func (db *Base) CreateDB(name string, beans ...interface{}) error {
+	cfg := db.GetConfig(name)
+	if cfg.Driver == "" {
+		return errors.New("wrong connection name")
+	}
+	engine, err := xorm.NewEngine(cfg.Driver, cfg.GetDSN())
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = engine.Close()
+	}()
+	err = engine.Sync(beans...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (db *Base) GetConfig(name string) config.Database {
+	return db.Configs[name]
 }

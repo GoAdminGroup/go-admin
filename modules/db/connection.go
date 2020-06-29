@@ -65,6 +65,10 @@ type Connection interface {
 	GetDelimiter() string
 
 	GetDB(key string) *sql.DB
+
+	GetConfig(name string) config.Database
+
+	CreateDB(name string, beans ...interface{}) error
 }
 
 // GetConnectionByDriver return the Connection by given driver name.

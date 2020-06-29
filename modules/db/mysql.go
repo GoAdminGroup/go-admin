@@ -40,15 +40,11 @@ func (db *Mysql) GetDelimiter() string {
 
 // InitDB implements the method Connection.InitDB.
 func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
+	db.Configs = cfgs
 	db.Once.Do(func() {
 		for conn, cfg := range cfgs {
 
-			if cfg.Dsn == "" {
-				cfg.Dsn = cfg.User + ":" + cfg.Pwd + "@tcp(" + cfg.Host + ":" + cfg.Port + ")/" +
-					cfg.Name + cfg.ParamStr()
-			}
-
-			sqlDB, err := sql.Open("mysql", cfg.Dsn)
+			sqlDB, err := sql.Open("mysql", cfg.GetDSN())
 
 			if err != nil {
 				if sqlDB != nil {

@@ -206,6 +206,7 @@ type PopupAttribute interface {
 	SetWidth(width string) PopupAttribute
 	SetHeight(height string) PopupAttribute
 	SetFooter(value template.HTML) PopupAttribute
+	SetFooterHTML(value template.HTML) PopupAttribute
 	SetBody(value template.HTML) PopupAttribute
 	SetSize(value string) PopupAttribute
 	GetContent() template.HTML

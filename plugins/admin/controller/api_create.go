@@ -60,6 +60,6 @@ func (h *Handler) ApiCreateForm(ctx *context.Context) {
 		"prefix": h.config.PrefixFixSlash(),
 		"token":  h.authSrv().AddToken(),
 		"operation_footer": formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
-			f.IsHideResetButton),
+			f.IsHideResetButton, f.FormNewBtnWord),
 	})
 }

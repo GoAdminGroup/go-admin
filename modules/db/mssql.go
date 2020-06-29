@@ -225,17 +225,12 @@ func (db *Mssql) Exec(query string, args ...interface{}) (sql.Result, error) {
 }
 
 // InitDB implements the method Connection.InitDB.
-func (db *Mssql) InitDB(cfglist map[string]config.Database) Connection {
+func (db *Mssql) InitDB(cfgs map[string]config.Database) Connection {
+	db.Configs = cfgs
 	db.Once.Do(func() {
-		for conn, cfg := range cfglist {
+		for conn, cfg := range cfgs {
 
-			if cfg.Dsn == "" {
-
-				cfg.Dsn = fmt.Sprintf("user id=%s;password=%s;server=%s;port=%s;database=%s;"+cfg.ParamStr(),
-					cfg.User, cfg.Pwd, cfg.Host, cfg.Port, cfg.Name)
-			}
-
-			sqlDB, err := sql.Open("sqlserver", cfg.Dsn)
+			sqlDB, err := sql.Open("sqlserver", cfg.GetDSN())
 
 			if sqlDB == nil {
 				panic("invalid connection")

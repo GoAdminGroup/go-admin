@@ -73,6 +73,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		prefix   = ctx.Query(constant.PrefixKey)
 		panel    = h.table(prefix, ctx)
 		f        = panel.GetForm()
+		btnWord  template2.HTML
 	)
 
 	if kind == "edit" {
@@ -80,14 +81,16 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
 		}
-		formInfo, _ = h.table(prefix, ctx).GetDataWithId(parameter.GetParam(ctx.Request.URL,
+		formInfo, _ = panel.GetDataWithId(parameter.GetParam(ctx.Request.URL,
 			panel.GetInfo().DefaultPageSize,
 			panel.GetInfo().SortField,
 			panel.GetInfo().GetSort()).WithPKs(id))
+		btnWord = panel.GetForm().FormEditBtnWord
 	} else {
 		formInfo = panel.GetNewForm()
 		formInfo.Title = f.Title
 		formInfo.Description = f.Description
+		btnWord = panel.GetForm().FormNewBtnWord
 	}
 
 	queryParam := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize,
@@ -107,7 +110,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			}).
 			SetUrl(h.config.Url("/"+kind+"/"+prefix)).
 			SetOperationFooter(formFooter(kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
-				f.IsHideResetButton)).
+				f.IsHideResetButton, btnWord)).
 			SetHeader(f.HeaderHtml).
 			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0,
 			ctx.Query(constant.IframeKey) == "true",

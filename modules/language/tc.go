@@ -165,6 +165,7 @@ var tc = LangSet{
 	"config.hide config center entrance": "隱藏配置中心入口",
 	"config.hide app info entrance":      "隱藏應用信息入口",
 	"config.hide tool entrance":          "隱藏工具入口",
+	"config.hide plugin entrance":        "隱藏插件列表入口",
 	"config.footer info":                 "自定義底部信息",
 	"config.login logo":                  "登錄Logo",
 	"config.no limit login ip":           "取消限制多IP登錄",
@@ -328,4 +329,16 @@ var tc = LangSet{
 
 	"tool.generate table model success": "生成成功",
 	"tool.generate table model fail":    "生成失敗",
+
+	"plugin.plugin":         "插件",
+	"plugin.plugin detail":  "插件詳情",
+	"plugin.introduction":   "介紹",
+	"plugin.website":        "網站",
+	"plugin.version":        "版本",
+	"plugin.created at":     "創建日期",
+	"plugin.updated at":     "更新日期",
+	"plugin.provided by %s": "由 %s 提供",
+	"plugin.upgrade":        "升級",
+	"plugin.install":        "安裝",
+	"plugin.info":           "詳細信息",
 }

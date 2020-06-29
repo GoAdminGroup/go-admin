@@ -71,9 +71,9 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetLayout(f.Layout).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetHiddenFields(hiddenFields).
-		SetTitle("New").
+		SetTitle(f.FormNewTitle).
 		SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
-			f.IsHideResetButton)).
+			f.IsHideResetButton, f.FormNewBtnWord)).
 		SetHeader(f.HeaderHtml).
 		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe, f.IsHideBackButton, f.Header)
 

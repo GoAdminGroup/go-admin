@@ -148,6 +148,7 @@ var jp = LangSet{
 	"config.hide config center entrance": "Hide Config Button",
 	"config.hide app info entrance":      "Hide App Info Button",
 	"config.hide tool entrance":          "Hide Tool Button",
+	"config.hide plugin entrance":        "Hide Plugin List Button",
 	"config.footer info":                 "Footer Info",
 	"config.login logo":                  "Login Logo",
 	"config.no limit login ip":           "No Limit Login Multi IPs",
@@ -310,4 +311,16 @@ var jp = LangSet{
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",
+
+	"plugin.plugin":         "Plugin",
+	"plugin.plugin detail":  "Plugin Detail",
+	"plugin.introduction":   "Introduction",
+	"plugin.website":        "Website",
+	"plugin.version":        "Version",
+	"plugin.created at":     "Created At",
+	"plugin.updated at":     "Updated At",
+	"plugin.provided by %s": "Provided by %s",
+	"plugin.upgrade":        "Upgrade",
+	"plugin.install":        "Install",
+	"plugin.info":           "Detail",
 }

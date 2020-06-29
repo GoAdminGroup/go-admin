@@ -44,6 +44,29 @@ type Database struct {
 	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
 }
 
+func (d Database) GetDSN() string {
+	if d.Dsn != "" {
+		return d.Dsn
+	}
+
+	if d.Driver == DriverMysql {
+		return d.User + ":" + d.Pwd + "@tcp(" + d.Host + ":" + d.Port + ")/" +
+			d.Name + d.ParamStr()
+	}
+	if d.Driver == DriverPostgresql {
+		return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s"+d.ParamStr(),
+			d.Host, d.Port, d.User, d.Pwd, d.Name)
+	}
+	if d.Driver == DriverMssql {
+		return fmt.Sprintf("user id=%s;password=%s;server=%s;port=%s;database=%s;"+d.ParamStr(),
+			d.User, d.Pwd, d.Host, d.Port, d.Name)
+	}
+	if d.Driver == DriverSqlite {
+		return d.File + d.ParamStr()
+	}
+	return ""
+}
+
 func (d Database) ParamStr() string {
 	p := ""
 	if d.Params == nil {
@@ -330,6 +353,8 @@ type Config struct {
 	// Hide tool entrance flag
 	HideToolEntrance bool `json:"hide_tool_entrance,omitempty" yaml:"hide_tool_entrance,omitempty" ini:"hide_tool_entrance,omitempty"`
 
+	HidePluginEntrance bool `json:"hide_plugin_entrance,omitempty" yaml:"hide_plugin_entrance,omitempty" ini:"hide_plugin_entrance,omitempty"`
+
 	Custom404HTML template.HTML `json:"custom_404_html,omitempty" yaml:"custom_404_html,omitempty" ini:"custom_404_html,omitempty"`
 
 	Custom403HTML template.HTML `json:"custom_403_html,omitempty" yaml:"custom_403_html,omitempty" ini:"custom_403_html,omitempty"`
@@ -548,6 +573,7 @@ func (c *Config) Copy() *Config {
 		HideConfigCenterEntrance:      c.HideConfigCenterEntrance,
 		HideAppInfoEntrance:           c.HideAppInfoEntrance,
 		HideToolEntrance:              c.HideToolEntrance,
+		HidePluginEntrance:            c.HidePluginEntrance,
 		Custom404HTML:                 c.Custom404HTML,
 		Custom500HTML:                 c.Custom500HTML,
 		UpdateProcessFn:               c.UpdateProcessFn,
@@ -633,6 +659,7 @@ func (c *Config) ToMap() map[string]string {
 	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
 	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
 	m["hide_tool_entrance"] = strconv.FormatBool(c.HideToolEntrance)
+	m["hide_plugin_entrance"] = strconv.FormatBool(c.HidePluginEntrance)
 
 	return m
 }
@@ -711,6 +738,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
 	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
 	c.HideToolEntrance = utils.ParseBool(m["hide_tool_entrance"])
+	c.HidePluginEntrance = utils.ParseBool(m["hide_plugin_entrance"])
 
 	c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
 
