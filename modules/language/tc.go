@@ -111,6 +111,14 @@ var tc = LangSet{
 	"login overdue, please login again": "登錄信息過期，請重新登錄",
 	"login info":                        "登錄信息",
 
+	"initialize configuration":        "初始化配置",
+	"initialize error":                "初始化錯誤代碼",
+	"initialize navigation buttons":   "初始化導航欄按鈕",
+	"initialize plugins":              "初始化插件",
+	"initialize database connections": "初始化數據庫連接",
+
+	"plugins": "插件",
+
 	"second":  "秒",
 	"seconds": "秒",
 	"minute":  "分",
@@ -156,6 +164,7 @@ var tc = LangSet{
 
 	"config.logo":                        "Logo",
 	"config.mini logo":                   "Mini Logo",
+	"config.plugin file path":            "插件文件路徑",
 	"config.session life time":           "Session時長",
 	"config.custom head html":            "自定義Head HTML",
 	"config.custom foot html":            "自定義Foot HTML",
@@ -341,4 +350,14 @@ var tc = LangSet{
 	"plugin.upgrade":        "升級",
 	"plugin.install":        "安裝",
 	"plugin.info":           "詳細信息",
+	"plugin.download":       "下载",
+
+	"plugin.download fail, wrong name":            "下載失敗，錯誤的參數",
+	"plugin.download fail, plugin not exist":      "下載失敗，插件不存在",
+	"plugin.download fail":                        "下載失敗",
+	"plugin.download success, restart to install": "下載成功，重啟程序進行安裝",
+
+	"admin.basic admin": "基礎Admin",
+	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "壹個內置GoAdmin插件，幫助您快速搭建curd簡易管理後臺。",
+	"admin.official": "GoAdmin官方",
 }

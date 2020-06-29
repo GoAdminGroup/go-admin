@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/filemanager"
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/themes/sword"

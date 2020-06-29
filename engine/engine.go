@@ -74,13 +74,19 @@ func (eng *Engine) Use(router interface{}) error {
 
 	eng.AddPluginList(plugins.Get())
 
+	logger.Info("=====> " + language.Get("initialize configuration"))
+
 	// init site setting
 	site := models.Site().SetConn(eng.DefaultConnection())
 	site.Init(eng.config.ToMap())
 	_ = eng.config.Update(site.AllToMap())
 	eng.Services.Add("config", config.SrvWithConfig(eng.config))
 
+	logger.Info("=====> " + language.Get("initialize error"))
+
 	errors.Init()
+
+	logger.Info("=====> " + language.Get("initialize navigation buttons"))
 
 	if !eng.config.HideConfigCenterEntrance {
 		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Gear, types.NavBtnSiteName,
@@ -113,6 +119,8 @@ func (eng *Engine) Use(router interface{}) error {
 	defaultConnection := db.GetConnection(eng.Services)
 	defaultAdapter.SetConnection(defaultConnection)
 	eng.Adapter.SetConnection(defaultConnection)
+
+	logger.Info("=====> " + language.Get("initialize plugins"))
 
 	// Initialize plugins
 	for i := range eng.PluginList {
@@ -212,6 +220,7 @@ func (eng *Engine) AddConfigFromINI(path string) *Engine {
 
 // InitDatabase initialize all database connection.
 func (eng *Engine) InitDatabase() *Engine {
+	logger.Info("=====> " + language.Get("initialize database connections"))
 	for driver, databaseCfg := range eng.config.Databases.GroupByDriver() {
 		eng.Services.Add(driver, db.GetConnectionByDriver(driver).InitDB(databaseCfg))
 	}

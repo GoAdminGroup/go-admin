@@ -97,6 +97,14 @@ var jp = LangSet{
 	"slug or http_path or name should not be empty": "スラッグ、http_pathまたユーザー名が正しく入力されていることを確認してください",
 	"no roles":                                      "ロールなし",
 
+	"initialize configuration":        "Initialize configuration",
+	"initialize error":                "Initialize error",
+	"initialize navigation buttons":   "Initialize navigation buttons",
+	"initialize plugins":              "Initialize plugins",
+	"initialize database connections": "Initialize database connections",
+
+	"plugins": "Plugins",
+
 	"second":  "second",
 	"seconds": "seconds",
 	"minute":  "minute",
@@ -139,6 +147,7 @@ var jp = LangSet{
 
 	"config.logo":                        "Logo",
 	"config.mini logo":                   "Mini Logo",
+	"config.plugin file path":            "Plugin File Path",
 	"config.session life time":           "Session Life Time",
 	"config.custom head html":            "Head HTML",
 	"config.custom foot html":            "Foot HTML",
@@ -323,4 +332,14 @@ var jp = LangSet{
 	"plugin.upgrade":        "Upgrade",
 	"plugin.install":        "Install",
 	"plugin.info":           "Detail",
+	"plugin.download":       "Download",
+
+	"plugin.download fail, wrong name":            "Download fail, wrong name",
+	"plugin.download fail, plugin not exist":      "Download fail, plugin not exist",
+	"plugin.download fail":                        "Download fail",
+	"plugin.download success, restart to install": "Download success, restart to install",
+
+	"admin.basic admin": "Basic Admin",
+	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "A built-in plugins of GoAdmin which help you to build a crud manager platform quickly.",
+	"admin.official": "Official",
 }

@@ -54,6 +54,7 @@ func (admin *Admin) initRouter() *Admin {
 	authRoute.GET("/menu/new", admin.handler.ShowNewMenu).Name("menu_new_show")
 
 	authRoute.GET("/plugins", admin.handler.Plugins).Name("plugins")
+	authRoute.POST("/plugin/download", admin.handler.PluginDownload).Name("plugin_download")
 
 	// add delete modify query
 	authPrefixRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")

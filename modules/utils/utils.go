@@ -1,15 +1,20 @@
 package utils
 
 import (
+	"archive/zip"
 	"bytes"
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"github.com/NebulousLabs/fastrand"
 	"html/template"
+	"io"
 	"math"
+	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -103,6 +108,18 @@ func JSON(a interface{}) string {
 func ParseBool(s string) bool {
 	b1, _ := strconv.ParseBool(s)
 	return b1
+}
+
+func PackageName(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+
+	val := reflect.ValueOf(v)
+	if val.Kind() == reflect.Ptr {
+		return val.Elem().Type().PkgPath()
+	}
+	return val.Type().PkgPath()
 }
 
 func ParseFloat32(f string) float32 {
@@ -351,4 +368,102 @@ func computeTimeDiff(diff int64, m map[string]string) (int64, string) {
 		diff = 0
 	}
 	return diff, diffStr
+}
+
+func DownloadTo(url, output string) error {
+
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		return err
+	}
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
+	file, err := os.Create(output)
+
+	_, err = io.Copy(file, res.Body)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UnzipDir(src, dest string) error {
+	r, err := zip.OpenReader(src)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := r.Close(); err != nil {
+			panic(err)
+		}
+	}()
+
+	err = os.MkdirAll(dest, 0755)
+
+	if err != nil {
+		return err
+	}
+
+	// Closure to address file descriptors issue with all the deferred .Close() methods
+	extractAndWriteFile := func(f *zip.File) error {
+		rc, err := f.Open()
+		if err != nil {
+			return err
+		}
+		defer func() {
+			if err := rc.Close(); err != nil {
+				panic(err)
+			}
+		}()
+
+		path := filepath.Join(dest, f.Name)
+
+		if f.FileInfo().IsDir() {
+			err = os.MkdirAll(path, f.Mode())
+			if err != nil {
+				return err
+			}
+		} else {
+			err = os.MkdirAll(filepath.Dir(path), f.Mode())
+			if err != nil {
+				return err
+			}
+			f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				return err
+			}
+			defer func() {
+				if err := f.Close(); err != nil {
+					panic(err)
+				}
+			}()
+
+			_, err = io.Copy(f, rc)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	for _, f := range r.File {
+		err := extractAndWriteFile(f)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

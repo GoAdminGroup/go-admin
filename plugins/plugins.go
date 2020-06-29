@@ -6,7 +6,9 @@ package plugins
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -20,6 +22,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
+	"io/ioutil"
 	"net/http"
 	"plugin"
 	"time"
@@ -57,6 +60,9 @@ type Info struct {
 	Agreement   string    `json:"agreement" yaml:"agreement" ini:"agreement"`
 	CreatedAt   time.Time `json:"created_at" yaml:"created_at" ini:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at" yaml:"updated_at" ini:"updated_at"`
+	ModulePath  string    `json:"module_path" yaml:"module_path" ini:"module_path"`
+	Name        string    `json:"name" yaml:"name" ini:"name"`
+	Downloaded  bool      `json:"downloaded" yaml:"downloaded" ini:"downloaded"`
 }
 
 type Base struct {
@@ -68,6 +74,7 @@ type Base struct {
 	URLPrefix string
 }
 
+func (b *Base) InitPlugin(services service.List)                      { return }
 func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
 func (b *Base) Name() string                                          { return b.PlugName }
 func (b *Base) GetInfo() Info                                         { return Info{} }
@@ -135,6 +142,26 @@ func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, file
 	b.HTML(ctx, panel, animation...)
 }
 
+type BasePlugin struct {
+	Base
+	Info Info
+}
+
+func (b *BasePlugin) GetInfo() Info { return b.Info }
+func (b *BasePlugin) Name() string  { return b.Info.Name }
+
+func NewBasePluginWithInfo(info Info) Plugin {
+	return &BasePlugin{Info: info}
+}
+
+func GetPluginsWithInfos(info []Info) Plugins {
+	p := make(Plugins, len(info))
+	for k, i := range info {
+		p[k] = NewBasePluginWithInfo(i)
+	}
+	return p
+}
+
 func LoadFromPlugin(mod string) Plugin {
 
 	plug, err := plugin.Open(mod)
@@ -197,12 +224,69 @@ func (pp Plugins) Exist(p Plugin) bool {
 	return false
 }
 
-var pluginList = make(Plugins, 0)
+func FindByName(name string) (Plugin, bool) {
+	for _, v := range allPluginList {
+		if v.Name() == name {
+			return v, true
+		}
+	}
+	return nil, false
+}
+
+var (
+	pluginList    = make(Plugins, 0)
+	allPluginList = make(Plugins, 0)
+)
 
 func Add(p Plugin) {
 	pluginList = pluginList.Add(p)
 }
 
+func GetAll() Plugins {
+	if len(allPluginList) == 0 {
+		allPluginList = make(Plugins, len(pluginList))
+		copy(allPluginList, pluginList)
+	}
+	for _, p := range GetOnline() {
+		exist := false
+		for _, pp := range allPluginList {
+			if pp.Name() == p.Name() {
+				exist = true
+				break
+			}
+		}
+		fmt.Println("p", p.Name())
+		if !exist {
+			allPluginList = append(allPluginList, p)
+		}
+	}
+	return allPluginList
+}
+
 func Get() Plugins {
 	return pluginList
+}
+
+func GetOnline() Plugins {
+	infos := make([]Info, 0)
+	res, err := http.Get("https://www.go-admin.com/api/plugin/list")
+	if err != nil {
+		logger.Error("get online plugins: ", err)
+		return make(Plugins, 0)
+	}
+	defer func() {
+		_ = res.Body.Close()
+	}()
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		logger.Error("get online plugins: ", err)
+		return make(Plugins, 0)
+	}
+
+	err = json.Unmarshal(body, &infos)
+	if err != nil {
+		logger.Error("get online plugins: ", err)
+		return make(Plugins, 0)
+	}
+	return GetPluginsWithInfos(infos)
 }

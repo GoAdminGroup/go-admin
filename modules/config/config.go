@@ -373,6 +373,8 @@ type Config struct {
 
 	ExcludeThemeComponents []string `json:"exclude_theme_components,omitempty" yaml:"exclude_theme_components,omitempty" ini:"exclude_theme_components,omitempty"`
 
+	PluginFilePath string `json:"plugin_file_path,omitempty" yaml:"plugin_file_path,omitempty" ini:"plugin_file_path,omitempty"`
+
 	prefix string
 }
 
@@ -576,6 +578,7 @@ func (c *Config) Copy() *Config {
 		HidePluginEntrance:            c.HidePluginEntrance,
 		Custom404HTML:                 c.Custom404HTML,
 		Custom500HTML:                 c.Custom500HTML,
+		PluginFilePath:                c.PluginFilePath,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -640,6 +643,7 @@ func (c *Config) ToMap() map[string]string {
 	m["custom_404_html"] = string(c.Custom404HTML)
 	m["custom_403_html"] = string(c.Custom403HTML)
 	m["custom_500_html"] = string(c.Custom500HTML)
+	m["plugin_file_path"] = c.PluginFilePath
 	m["footer_info"] = string(c.FooterInfo)
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
@@ -729,6 +733,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.Custom404HTML = template.HTML(m["custom_404_html"])
 	c.Custom403HTML = template.HTML(m["custom_403_html"])
 	c.Custom500HTML = template.HTML(m["custom_500_html"])
+	c.PluginFilePath = m["plugin_file_path"]
 	c.FooterInfo = template.HTML(m["footer_info"])
 	c.LoginTitle = m["login_title"]
 	c.AssetUrl = m["asset_url"]
