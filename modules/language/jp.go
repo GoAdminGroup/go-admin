@@ -333,6 +333,7 @@ var jp = LangSet{
 	"plugin.install":        "Install",
 	"plugin.info":           "Detail",
 	"plugin.download":       "Download",
+	"plugin.downloading":    "Downloading",
 
 	"plugin.download fail, wrong name":            "Download fail, wrong name",
 	"plugin.download fail, plugin not exist":      "Download fail, plugin not exist",

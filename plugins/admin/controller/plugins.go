@@ -74,6 +74,7 @@ function pluginDownload(name, ele) {
 	}
 	NProgress.start();
 	downloadLock = true;
+	$(ele).html('<i class="fa fa-refresh fa-spin text-primary" style="color: white;"></i> ` + plugWord("downloading") + `')
 	$.ajax({
 		dataType: 'json',
 		type: 'POST',
@@ -96,6 +97,7 @@ function pluginDownload(name, ele) {
 					confirmButtonText: '` + language.Get("got it") + `',
         		})
 			} else {
+				$(ele).html('` + plugWord("download") + `')
 				swal({
 					type: "error",
 					title: data.msg,
@@ -107,6 +109,7 @@ function pluginDownload(name, ele) {
 		},
 		error: function (data) {
 			downloadLock = false;
+			$(ele).html('` + plugWord("download") + `')
 			alert('download fail');	
 		}
 	});
@@ -305,9 +308,9 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		}
 	}
 
-	if h.config.PluginFilePath != "" && utils.FileExist(h.config.PluginFilePath) {
-		content, _ := ioutil.ReadFile(h.config.PluginFilePath)
-		_ = ioutil.WriteFile(h.config.PluginFilePath, []byte(string(content)+`
+	if h.config.BootstrapFilePath != "" && utils.FileExist(h.config.BootstrapFilePath) {
+		content, _ := ioutil.ReadFile(h.config.BootstrapFilePath)
+		_ = ioutil.WriteFile(h.config.BootstrapFilePath, []byte(string(content)+`
 import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 	}
 

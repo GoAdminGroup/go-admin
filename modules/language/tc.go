@@ -351,6 +351,7 @@ var tc = LangSet{
 	"plugin.install":        "安裝",
 	"plugin.info":           "詳細信息",
 	"plugin.download":       "下载",
+	"plugin.downloading":    "下载中",
 
 	"plugin.download fail, wrong name":            "下載失敗，錯誤的參數",
 	"plugin.download fail, plugin not exist":      "下載失敗，插件不存在",

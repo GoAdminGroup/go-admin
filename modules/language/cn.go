@@ -357,6 +357,7 @@ var cn = LangSet{
 	"plugin.install":        "安装",
 	"plugin.info":           "详细信息",
 	"plugin.download":       "下载",
+	"plugin.downloading":    "下载中",
 
 	"plugin.download fail, wrong name":            "下载失败，错误的参数",
 	"plugin.download fail, plugin not exist":      "下载失败，插件不存在",

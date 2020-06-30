@@ -1080,7 +1080,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.Code).FieldMust()
-	formList.AddField(lgWithConfigScore("plugin file path"), "plugin_file_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("plugin file path"), "bootstrap_file_path", db.Varchar, form.Text)
 	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number).
 		FieldMust().
 		FieldHelpMsg(template.HTML(lgWithConfigScore("must bigger than 900 seconds")))
@@ -1251,7 +1251,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
-		"asset_url", "title", "login_title", "session_life_time", "plugin_file_path", "no_limit_login_ip",
+		"asset_url", "title", "login_title", "session_life_time", "bootstrap_file_path", "no_limit_login_ip",
 		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance", "hide_plugin_entrance",
 		"animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").

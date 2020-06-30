@@ -320,6 +320,7 @@ var en = LangSet{
 	"plugin.upgrade":        "Upgrade",
 	"plugin.install":        "Install",
 	"plugin.download":       "Download",
+	"plugin.downloading":    "Downloading",
 	"plugin.info":           "Detail",
 
 	"plugin.download fail, wrong name":            "Download fail, wrong name",
