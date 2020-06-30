@@ -31,7 +31,8 @@ func (h *Handler) Plugins(ctx *context.Context) {
 		skip, _ := list[i].GetInstallationPage()
 
 		box1 := aBox().
-			SetBody(h.pluginBox(list[i].GetInfo(), list[i].IsInstalled(), updated, skip, list[i].Name())).
+			SetBody(h.pluginBox(list[i].GetInfo(), list[i].IsInstalled(), updated, skip, plugins.Exist(list[i]),
+				list[i].Name())).
 			GetContent()
 		col1 := aCol().SetSize(size).SetContent(box1).GetContent()
 		box2, col2, box3, col3 := template.HTML(""), template.HTML(""), template.HTML(""), template.HTML("")
@@ -39,20 +40,24 @@ func (h *Handler) Plugins(ctx *context.Context) {
 			updated, _ := list[i+1].CheckUpdate()
 			skip, _ := list[i+1].GetInstallationPage()
 			box2 = aBox().
-				SetBody(h.pluginBox(list[i+1].GetInfo(), list[i+1].IsInstalled(), updated, skip, list[i+1].Name())).
+				SetBody(h.pluginBox(list[i+1].GetInfo(), list[i+1].IsInstalled(), updated, skip,
+					plugins.Exist(list[i+1]), list[i+1].Name())).
 				GetContent()
 			col2 = aCol().SetSize(size).SetContent(box2).GetContent()
 			if i+2 < len(list) {
 				updated, _ := list[i+2].CheckUpdate()
 				skip, _ := list[i+2].GetInstallationPage()
 				box3 = aBox().
-					SetBody(h.pluginBox(list[i+2].GetInfo(), list[i+2].IsInstalled(), updated, skip, list[i+2].Name())).
+					SetBody(h.pluginBox(list[i+2].GetInfo(), list[i+2].IsInstalled(), updated, skip,
+						plugins.Exist(list[i+2]), list[i+2].Name())).
 					GetContent()
 				col3 = aCol().SetSize(size).SetContent(box3).GetContent()
 			}
 		}
 		rows += aRow().SetContent(col1 + col2 + col3).GetContent()
 	}
+
+	// TODO: 分页、筛选、排序
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content: rows,
@@ -61,8 +66,14 @@ func (h *Handler) Plugins(ctx *context.Context) {
 	location.href="` + h.config.Prefix() + `/info/plugin_"+name+"/new"
 }
 
-function pluginDownload(name) {
+var downloadLock = false;
+
+function pluginDownload(name, ele) {
+	if (downloadLock) {
+		return
+	}
 	NProgress.start();
+	downloadLock = true;
 	$.ajax({
 		dataType: 'json',
 		type: 'POST',
@@ -73,7 +84,10 @@ function pluginDownload(name) {
 		},
 		success: function (data) {
 			NProgress.done();
+			downloadLock = false;
 			if (data.code == 0) {
+				$(ele).attr('onclick', 'pluginRebootInstall()')
+				$(ele).html('` + plugWord("install") + `')
 				swal({
 					type: "success",
 					title: data.msg,
@@ -92,9 +106,20 @@ function pluginDownload(name) {
 			}
 		},
 		error: function (data) {
-			alert('download fail');
+			downloadLock = false;
+			alert('download fail');	
 		}
 	});
+}
+
+function pluginRebootInstall() {
+	swal({
+		type: "success",
+		title: "` + plugWord("restart to install") + `",
+		showCancelButton: false,
+		confirmButtonColor: "#3c8dbc",
+		confirmButtonText: '` + language.Get("got it") + `',
+	})
 }
 `),
 		Description: language.GetFromHtml("plugins"),
@@ -102,9 +127,13 @@ function pluginDownload(name) {
 	})
 }
 
-func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip bool, name string) template.HTML {
+func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip, downloadReboot bool, name string) template.HTML {
+	cover := template2.HTML(info.Cover)
+	if cover == template2.HTML("") {
+		cover = "/admin/assets/dist/img/avatar04.png"
+	}
 	col1 := template.HTML(`<div class="plugin-item-img">`) + aImage().
-		SetSrc("http://localhost:9033/admin/assets/dist/img/avatar04.png").
+		SetSrc(cover).
 		SetHeight("110px").
 		SetWidth("110px").
 		GetContent() + template.HTML(`</div>`)
@@ -119,7 +148,7 @@ func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip bool, name
 <div class="plugin-detail">
 <div class="plugin-detail-head">
 <div class="plugin-detail-head-logo">
-	<img src="http://localhost:9033/admin/assets/dist/img/avatar04.png" width="110px" height="110px">
+	<img src="` + string(cover) + `" width="110px" height="110px">
 </div>
 <div class="plugin-detail-head-title">
 	<div class="plugin-detail-title">` + language.GetWithScope(info.Title, name) + `</div>
@@ -156,17 +185,25 @@ func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip bool, name
 		}
 	} else {
 		if info.Downloaded {
-			if skip {
-				footer += template.HTML(`<button class="btn btn-primary installation">`) + plugWordHTML("install") + template.HTML("</button>")
+			if downloadReboot {
+				if skip {
+					footer += template.HTML(`<button class="btn btn-primary installation">`) + plugWordHTML("install") + template.HTML("</button>")
+				} else {
+					btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginInstall('`+name+`')">`) + plugWordHTML("install") + template.HTML("</button>")
+					footer += template2.HTML(`<a href="`+h.config.Prefix()+`/info/plugin_`+name+`/new"><button class="btn btn-primary installation" >`) +
+						plugWordHTML("install") + template.HTML("</button></a>")
+					popupModel = popupModel.SetFooterHTML(btn)
+				}
 			} else {
-				btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginInstall('`+name+`')">`) + plugWordHTML("install") + template.HTML("</button>")
-				footer += template2.HTML(`<a href="`+h.config.Prefix()+`/info/plugin_`+name+`/new"><button class="btn btn-primary installation" >`) +
-					plugWordHTML("install") + template.HTML("</button></a>")
+				btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginRebootInstall()">`) + plugWordHTML("install") + template.HTML("</button>")
+				footer += template2.HTML(`<button class="btn btn-primary installation"  onclick="pluginRebootInstall()">`) +
+					plugWordHTML("install") + template.HTML("</button>")
 				popupModel = popupModel.SetFooterHTML(btn)
 			}
 		} else {
-			btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginDownload('`+name+`')">`) + plugWordHTML("download") + template.HTML("</button>")
-			footer += template2.HTML(`<button class="btn btn-primary installation" onclick="pluginDownload('`+name+`')">`) +
+			// TODO: 增加手动下载
+			btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginDownload('`+name+`', this)">`) + plugWordHTML("download") + template.HTML("</button>")
+			footer += template2.HTML(`<button class="btn btn-primary installation" onclick="pluginDownload('`+name+`', this)">`) +
 				plugWordHTML("download") + template.HTML("</button>")
 			popupModel = popupModel.SetFooterHTML(btn)
 		}
@@ -181,7 +218,6 @@ func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip bool, name
 }
 
 func (h *Handler) PluginDownload(ctx *context.Context) {
-	// TODO:
 
 	name := ctx.FormValue("name")
 
@@ -203,7 +239,9 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		return
 	}
 
-	err := utils.DownloadTo(plug.GetInfo().Url, "./temp.zip")
+	tempFile := "./temp-" + utils.Uuid(10) + ".zip"
+
+	err := utils.DownloadTo(plug.GetInfo().Url, tempFile)
 
 	if err != nil {
 		ctx.JSON(http.StatusOK, map[string]interface{}{
@@ -218,15 +256,13 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	base := filepath.Dir(plug.GetInfo().ModulePath)
 	installPath := ""
 
-	fmt.Println(`gopath + "/src/" + base`, gopath+"/src/"+base)
-
 	if gomodule == "off" {
 		installPath = filepath.ToSlash(gopath + "/src/" + base)
 	} else {
 		installPath = filepath.ToSlash(gopath + "/pkg/mod/" + base)
 	}
 
-	err = utils.UnzipDir("./temp.zip", installPath)
+	err = utils.UnzipDir(tempFile, installPath)
 
 	if err != nil {
 		ctx.JSON(http.StatusOK, map[string]interface{}{
@@ -236,7 +272,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		return
 	}
 
-	_ = os.Remove("./temp.zip")
+	_ = os.Remove(tempFile)
 
 	if len(plug.GetInfo().Url) > 18 && plug.GetInfo().Url[:18] == "https://github.com" {
 		name := filepath.Base(plug.GetInfo().ModulePath)
@@ -274,6 +310,8 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		_ = ioutil.WriteFile(h.config.PluginFilePath, []byte(string(content)+`
 import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 	}
+
+	plug.(*plugins.BasePlugin).Info.Downloaded = true
 
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"code": 0,

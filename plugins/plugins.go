@@ -63,6 +63,7 @@ type Info struct {
 	ModulePath  string    `json:"module_path" yaml:"module_path" ini:"module_path"`
 	Name        string    `json:"name" yaml:"name" ini:"name"`
 	Downloaded  bool      `json:"downloaded" yaml:"downloaded" ini:"downloaded"`
+	Price       uint      `json:"price" yaml:"price" ini:"price"`
 }
 
 type Base struct {
@@ -238,6 +239,10 @@ var (
 	allPluginList = make(Plugins, 0)
 )
 
+func Exist(p Plugin) bool {
+	return pluginList.Exist(p)
+}
+
 func Add(p Plugin) {
 	pluginList = pluginList.Add(p)
 }
@@ -268,8 +273,9 @@ func Get() Plugins {
 }
 
 func GetOnline() Plugins {
+	// TODO: add cache
 	infos := make([]Info, 0)
-	res, err := http.Get("https://www.go-admin.com/api/plugin/list")
+	res, err := http.Get("https://www.go-admin.com/api/plugin/list?lang=" + config.GetLanguage())
 	if err != nil {
 		logger.Error("get online plugins: ", err)
 		return make(Plugins, 0)

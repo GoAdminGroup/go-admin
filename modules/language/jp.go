@@ -338,6 +338,7 @@ var jp = LangSet{
 	"plugin.download fail, plugin not exist":      "Download fail, plugin not exist",
 	"plugin.download fail":                        "Download fail",
 	"plugin.download success, restart to install": "Download success, restart to install",
+	"plugin.restart to install":                   "Restart to install",
 
 	"admin.basic admin": "Basic Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "A built-in plugins of GoAdmin which help you to build a crud manager platform quickly.",

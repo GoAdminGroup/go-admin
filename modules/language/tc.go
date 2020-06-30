@@ -356,6 +356,7 @@ var tc = LangSet{
 	"plugin.download fail, plugin not exist":      "下載失敗，插件不存在",
 	"plugin.download fail":                        "下載失敗",
 	"plugin.download success, restart to install": "下載成功，重啟程序進行安裝",
+	"plugin.restart to install":                   "重啟程序進行安裝",
 
 	"admin.basic admin": "基礎Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "壹個內置GoAdmin插件，幫助您快速搭建curd簡易管理後臺。",

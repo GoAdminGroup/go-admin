@@ -362,6 +362,7 @@ var cn = LangSet{
 	"plugin.download fail, plugin not exist":      "下载失败，插件不存在",
 	"plugin.download fail":                        "下载失败",
 	"plugin.download success, restart to install": "下载成功，重启程序进行安装",
+	"plugin.restart to install":                   "重启程序进行安装",
 
 	"admin.basic admin": "基础Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "一个内置GoAdmin插件，帮助您快速搭建curd简易管理后台。",
