@@ -1,25 +1,27 @@
 package parameter
 
 import (
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 )
 
 type Parameters struct {
-	Page        string
-	PageInt     int
-	PageSize    string
-	PageSizeInt int
-	SortField   string
-	Columns     []string
-	SortType    string
-	Animation   bool
-	URLPath     string
-	Fields      map[string][]string
+	Page         string
+	PageInt      int
+	PageSize     string
+	PageSizeInt  int
+	SortField    string
+	Columns      []string
+	SortType     string
+	Animation    bool
+	URLPath      string
+	Fields       map[string][]string
+	OrConditions map[string]string
 }
 
 const (
@@ -116,16 +118,17 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 	pageSizeInt, _ := strconv.Atoi(pageSize)
 
 	return Parameters{
-		Page:        page,
-		PageSize:    pageSize,
-		PageSizeInt: pageSizeInt,
-		PageInt:     pageInt,
-		URLPath:     u.Path,
-		SortField:   sortField,
-		SortType:    sortType,
-		Fields:      fields,
-		Animation:   animation,
-		Columns:     columnsArr,
+		Page:         page,
+		PageSize:     pageSize,
+		PageSizeInt:  pageSizeInt,
+		PageInt:      pageInt,
+		URLPath:      u.Path,
+		SortField:    sortField,
+		SortType:     sortType,
+		Fields:       fields,
+		OrConditions: map[string]string{},
+		Animation:    animation,
+		Columns:      columnsArr,
 	}
 }
 
@@ -404,6 +407,28 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 
 	if len(wheres) > 3 {
 		wheres = wheres[:len(wheres)-4]
+	}
+
+	for key, value := range param.OrConditions {
+		columns = strings.Split(key, ",")
+		op := "="
+		if strings.Contains(value, "%") {
+			op = "like"
+		}
+		if len(wheres) > 0 {
+			wheres += " and "
+		}
+		wheres += "("
+		for _, column := range columns {
+			keys := strings.Split(column, FilterParamJoinInfix)
+			if len(keys) > 1 {
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? or "
+			} else {
+				wheres += modules.FilterField(column, delimiter) + " " + op + " ? or "
+			}
+			whereArgs = append(whereArgs, value)
+		}
+		wheres = strings.TrimSuffix(wheres, "or ") + ")"
 	}
 
 	return wheres, whereArgs, existKeys

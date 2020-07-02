@@ -4,6 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
@@ -15,12 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type DefaultTable struct {
@@ -101,6 +102,11 @@ func (tb *DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) 
 		beginTime = time.Now()
 	)
 
+	if tb.Info.UpdateParametersFns != nil {
+		for _, fn := range tb.Info.UpdateParametersFns {
+			fn(&params)
+		}
+	}
 	if tb.Info.QueryFilterFn != nil {
 		ids, stop := tb.Info.QueryFilterFn(params, tb.db())
 		if stop {

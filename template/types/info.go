@@ -3,6 +3,12 @@ package types
 import (
 	"encoding/json"
 	"fmt"
+	"html"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -12,11 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/go-admin/template/types/table"
-	"html"
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 // FieldModel is the single query result.
@@ -156,6 +157,7 @@ type Field struct {
 }
 
 type QueryFilterFn func(param parameter.Parameters, conn db.Connection) (ids []string, stopQuery bool)
+type UpdateParametersFn func(param *parameter.Parameters)
 
 type FilterFormField struct {
 	Type        form.Type
@@ -390,8 +392,10 @@ func (f FieldList) GetFieldFilterProcessValue(key, value, keyIndex string) strin
 	if keyIndex != "" {
 		index, _ = strconv.Atoi(keyIndex)
 	}
-	if field.FilterFormFields[index].ProcessFn != nil {
-		value = field.FilterFormFields[index].ProcessFn(value)
+	if field.FilterFormFields != nil && len(field.FilterFormFields) > index {
+		if field.FilterFormFields[index].ProcessFn != nil {
+			value = field.FilterFormFields[index].ProcessFn(value)
+		}
 	}
 	return value
 }
@@ -570,7 +574,8 @@ type InfoPanel struct {
 
 	DisplayGeneratorRecords map[string]struct{}
 
-	QueryFilterFn QueryFilterFn
+	QueryFilterFn       QueryFilterFn
+	UpdateParametersFns []UpdateParametersFn
 
 	Wrapper ContentWrapper
 
@@ -895,6 +900,11 @@ func (i *InfoPanel) SetQueryFilterFn(fn QueryFilterFn) *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) AddUpdateParametersFn(fn UpdateParametersFn) *InfoPanel {
+	i.UpdateParametersFns = append(i.UpdateParametersFns, fn)
+	return i
+}
+
 func (i *InfoPanel) SetWrapper(wrapper ContentWrapper) *InfoPanel {
 	i.Wrapper = wrapper
 	return i
@@ -995,6 +1005,10 @@ func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *Info
 	})
 	i.curFieldListIndex++
 	return i
+}
+
+func (i *InfoPanel) AddFilter(head, field string, typeName db.DatabaseType, fn UpdateParametersFn, filterType ...FilterType) *InfoPanel {
+	return i.AddField(head, field, typeName).FieldHide().FieldFilterable(filterType...).AddUpdateParametersFn(fn)
 }
 
 // Field attribute setting functions
