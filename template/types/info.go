@@ -296,17 +296,17 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		headField := field.Field
 
 		if field.Joins.Valid() {
-			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
 			joinFields += db.GetAggregationExpression(info.Driver, field.Joins.Last().Table+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
 			for _, join := range field.Joins {
-				if !modules.InArray(joinTables, join.Table) {
-					joinTables = append(joinTables, join.Table)
+				if !modules.InArray(joinTables, join.GetTableName()) {
+					joinTables = append(joinTables, join.GetTableName())
 					if join.BaseTable == "" {
 						join.BaseTable = info.Table
 					}
-					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " on " +
-						join.Table + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
+					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " " + join.TableAlias + " on " +
+						join.GetTableName() + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
 						join.BaseTable + "." + modules.FilterField(join.Field, info.Delimiter)
 				}
 			}
@@ -354,15 +354,15 @@ func (f FieldList) GetThead(info TableInfo, params parameter.Parameters, columns
 		headField := field.Field
 
 		if field.Joins.Valid() {
-			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
 			for _, join := range field.Joins {
-				if !modules.InArray(joinTables, join.Table) {
-					joinTables = append(joinTables, join.Table)
+				if !modules.InArray(joinTables, join.GetTableName()) {
+					joinTables = append(joinTables, join.GetTableName())
 					if join.BaseTable == "" {
 						join.BaseTable = info.Table
 					}
-					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " on " +
-						join.Table + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
+					joins += " left join " + modules.FilterField(join.Table, info.Delimiter) + " " + join.TableAlias + " on " +
+						join.GetTableName() + "." + modules.FilterField(join.JoinField, info.Delimiter) + " = " +
 						join.BaseTable + "." + modules.FilterField(join.Field, info.Delimiter)
 				}
 			}
@@ -413,7 +413,7 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 		if field.Field == name {
 			return field
 		}
-		if JoinField(field.Joins.Last().Table, field.Field) == name {
+		if JoinField(field.Joins.Last().GetTableName(), field.Field) == name {
 			return field
 		}
 	}
@@ -434,10 +434,11 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 // ... left join roles on roles.id = users.role_id ...
 //
 type Join struct {
-	Table     string
-	Field     string
-	JoinField string
-	BaseTable string
+	Table      string
+	TableAlias string
+	Field      string
+	JoinField  string
+	BaseTable  string
 }
 
 type Joins []Join
@@ -468,6 +469,13 @@ func (j Joins) Last() Join {
 
 func (j Join) Valid() bool {
 	return j.Table != "" && j.Field != "" && j.JoinField != ""
+}
+
+func (j Join) GetTableName() string {
+	if j.TableAlias != "" {
+		return j.TableAlias
+	}
+	return j.Table
 }
 
 var JoinFieldValueDelimiter = utils.Uuid(8)

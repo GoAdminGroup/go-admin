@@ -254,7 +254,7 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 		headField = field.Field
 
 		if field.Joins.Valid() {
-			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
 		}
 
 		if field.Hide {
@@ -613,17 +613,17 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			headField := field.Field
 
 			if field.Joins.Valid() {
-				headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+				headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
 				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().Table+"."+
 					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
 				for _, join := range field.Joins {
-					if !modules.InArray(joinTables, join.Table) {
-						joinTables = append(joinTables, join.Table)
+					if !modules.InArray(joinTables, join.GetTableName()) {
+						joinTables = append(joinTables, join.GetTableName())
 						if join.BaseTable == "" {
 							join.BaseTable = tableName
 						}
-						joins += " left join " + modules.FilterField(join.Table, delimiter) + " on " +
-							join.Table + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
+						joins += " left join " + modules.FilterField(join.Table, delimiter) + " " + join.TableAlias + " on " +
+							join.GetTableName() + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
 							join.BaseTable + "." + modules.FilterField(join.Field, delimiter)
 					}
 				}
