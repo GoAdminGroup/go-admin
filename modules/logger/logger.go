@@ -252,7 +252,7 @@ func Debugf(template string, args ...interface{}) {
 
 // Info print the info message.
 func Info(info ...interface{}) {
-	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
+	if logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
 		logger.sugaredLogger.Info(info...)
 	}
 }
