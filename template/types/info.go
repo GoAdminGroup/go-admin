@@ -297,7 +297,7 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 
 		if field.Joins.Valid() {
 			headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
-			joinFields += db.GetAggregationExpression(info.Driver, field.Joins.Last().Table+"."+
+			joinFields += db.GetAggregationExpression(info.Driver, field.Joins.Last().GetTableName()+"."+
 				modules.FilterField(field.Field, info.Delimiter), headField, JoinFieldValueDelimiter) + ","
 			for _, join := range field.Joins {
 				if !modules.InArray(joinTables, join.GetTableName()) {

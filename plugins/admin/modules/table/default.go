@@ -614,7 +614,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 
 			if field.Joins.Valid() {
 				headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
-				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().Table+"."+
+				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().GetTableName()+"."+
 					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
 				for _, join := range field.Joins {
 					if !modules.InArray(joinTables, join.GetTableName()) {
