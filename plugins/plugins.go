@@ -8,13 +8,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
+	"github.com/GoAdminGroup/go-admin/modules/remote_server"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/modules/ui"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
@@ -22,7 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	template2 "html/template"
-	"io/ioutil"
 	"net/http"
 	"plugin"
 	"time"
@@ -43,7 +42,6 @@ type Plugin interface {
 	GetInstallationPage() (skip bool, gen table.Generator)
 	IsInstalled() bool
 	CheckUpdate() (update bool, version string)
-	Translate(word string) string
 	Uninstall() error
 	Upgrade() error
 }
@@ -56,14 +54,27 @@ type Info struct {
 	Banners     []string  `json:"banners" yaml:"banners" ini:"banners"`
 	Url         string    `json:"url" yaml:"url" ini:"url"`
 	Cover       string    `json:"cover" yaml:"cover" ini:"cover"`
+	MiniCover   string    `json:"mini_cover" yaml:"mini_cover" ini:"mini_cover"`
 	Website     string    `json:"website" yaml:"website" ini:"website"`
 	Agreement   string    `json:"agreement" yaml:"agreement" ini:"agreement"`
-	CreatedAt   time.Time `json:"created_at" yaml:"created_at" ini:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at" yaml:"updated_at" ini:"updated_at"`
+	CreateDate  time.Time `json:"create_date" yaml:"create_date" ini:"create_date"`
+	UpdateDate  time.Time `json:"update_date" yaml:"update_date" ini:"update_date"`
 	ModulePath  string    `json:"module_path" yaml:"module_path" ini:"module_path"`
 	Name        string    `json:"name" yaml:"name" ini:"name"`
+	Uuid        string    `json:"uuid" yaml:"uuid" ini:"uuid"`
 	Downloaded  bool      `json:"downloaded" yaml:"downloaded" ini:"downloaded"`
-	Price       uint      `json:"price" yaml:"price" ini:"price"`
+	Price       []string  `json:"price" yaml:"price" ini:"price"`
+	GoodUUIDs   []string  `json:"good_uuids" yaml:"good_uuids" ini:"good_uuids"`
+	GoodNum     int64     `json:"good_num" yaml:"good_num" ini:"good_num"`
+	CommentNum  int64     `json:"comment_num" yaml:"comment_num" ini:"comment_num"`
+	Order       int64     `json:"order" yaml:"order" ini:"order"`
+	Features    string    `json:"features" yaml:"features" ini:"features"`
+	Questions   []string  `json:"questions" yaml:"questions" ini:"questions"`
+	HasBought   bool      `json:"has_bought" yaml:"has_bought" ini:"has_bought"`
+}
+
+func (i Info) IsFree() bool {
+	return len(i.Price) == 0
 }
 
 type Base struct {
@@ -79,7 +90,6 @@ func (b *Base) InitPlugin(services service.List)                      { return }
 func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
 func (b *Base) Name() string                                          { return b.PlugName }
 func (b *Base) GetInfo() Info                                         { return Info{} }
-func (b *Base) Translate(word string) string                          { return word }
 func (b *Base) Prefix() string                                        { return b.URLPrefix }
 func (b *Base) IsInstalled() bool                                     { return false }
 func (b *Base) Uninstall() error                                      { return nil }
@@ -247,12 +257,40 @@ func Add(p Plugin) {
 	pluginList = pluginList.Add(p)
 }
 
-func GetAll() Plugins {
-	if len(allPluginList) == 0 {
-		allPluginList = make(Plugins, len(pluginList))
-		copy(allPluginList, pluginList)
+func GetAll(req remote_server.GetOnlineReq, token string) (Plugins, Page) {
+
+	plugs := make(Plugins, 0)
+	page := Page{}
+
+	res, err := remote_server.GetOnline(req, token)
+
+	if err != nil {
+		return plugs, page
 	}
-	for _, p := range GetOnline() {
+
+	var data GetOnlineRes
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return plugs, page
+	}
+
+	if data.Code != 0 {
+		return plugs, page
+	}
+
+	plugs = GetPluginsWithInfos(data.Data.List)
+	page = data.Data.Page
+
+	for index, p := range plugs {
+		for key, value := range pluginList {
+			if value.Name() == p.Name() {
+				plugs[index] = pluginList[key]
+				break
+			}
+		}
+	}
+
+	for _, p := range plugs {
 		exist := false
 		for _, pp := range allPluginList {
 			if pp.Name() == p.Name() {
@@ -260,39 +298,33 @@ func GetAll() Plugins {
 				break
 			}
 		}
-		fmt.Println("p", p.Name())
 		if !exist {
 			allPluginList = append(allPluginList, p)
 		}
 	}
-	return allPluginList
+
+	return plugs, page
 }
 
 func Get() Plugins {
 	return pluginList
 }
 
-func GetOnline() Plugins {
-	// TODO: add cache
-	infos := make([]Info, 0)
-	res, err := http.Get("https://www.go-admin.com/api/plugin/list?lang=" + config.GetLanguage())
-	if err != nil {
-		logger.Error("get online plugins: ", err)
-		return make(Plugins, 0)
-	}
-	defer func() {
-		_ = res.Body.Close()
-	}()
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		logger.Error("get online plugins: ", err)
-		return make(Plugins, 0)
-	}
+type GetOnlineRes struct {
+	Code int              `json:"code"`
+	Msg  string           `json:"msg"`
+	Data GetOnlineResData `json:"data"`
+}
 
-	err = json.Unmarshal(body, &infos)
-	if err != nil {
-		logger.Error("get online plugins: ", err)
-		return make(Plugins, 0)
-	}
-	return GetPluginsWithInfos(infos)
+type GetOnlineResData struct {
+	List    []Info `json:"list"`
+	Count   int    `json:"count"`
+	HasMore bool   `json:"has_more"`
+	Page    Page   `json:"page"`
+}
+
+type Page struct {
+	CSS  string `json:"css"`
+	HTML string `json:"html"`
+	JS   string `json:"js"`
 }

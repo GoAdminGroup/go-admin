@@ -5,51 +5,55 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/remote_server"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/GoAdminGroup/html"
+	"github.com/gin-gonic/gin"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func (h *Handler) Plugins(ctx *context.Context) {
-
+	ctx.GetContentType()
 	var (
-		size = types.Size(12, 6, 4)
-		rows = template.HTML("")
-		list = plugins.GetAll()
+		size       = types.Size(12, 6, 4)
+		list, page = plugins.GetAll(
+			remote_server.GetOnlineReq{
+				Page:       ctx.Query("page"),
+				Free:       ctx.Query("free"),
+				PageSize:   ctx.Query("page_size"),
+				Filter:     ctx.Query("filter"),
+				Order:      ctx.Query("order"),
+				Lang:       h.config.Language,
+				CategoryId: ctx.Query("category_id"),
+			}, ctx.Cookie(remote_server.TokenKey))
+		rows = template.HTML(page.HTML)
 	)
 
 	for i := 0; i < len(list); i += 3 {
-
-		updated, _ := list[i].CheckUpdate()
-		skip, _ := list[i].GetInstallationPage()
-
 		box1 := aBox().
-			SetBody(h.pluginBox(list[i].GetInfo(), list[i].IsInstalled(), updated, skip, plugins.Exist(list[i]),
-				list[i].Name())).
+			SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i]))).
 			GetContent()
 		col1 := aCol().SetSize(size).SetContent(box1).GetContent()
 		box2, col2, box3, col3 := template.HTML(""), template.HTML(""), template.HTML(""), template.HTML("")
 		if i+1 < len(list) {
-			updated, _ := list[i+1].CheckUpdate()
-			skip, _ := list[i+1].GetInstallationPage()
 			box2 = aBox().
-				SetBody(h.pluginBox(list[i+1].GetInfo(), list[i+1].IsInstalled(), updated, skip,
-					plugins.Exist(list[i+1]), list[i+1].Name())).
+				SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i+1]))).
 				GetContent()
 			col2 = aCol().SetSize(size).SetContent(box2).GetContent()
 			if i+2 < len(list) {
-				updated, _ := list[i+2].CheckUpdate()
-				skip, _ := list[i+2].GetInstallationPage()
 				box3 = aBox().
-					SetBody(h.pluginBox(list[i+2].GetInfo(), list[i+2].IsInstalled(), updated, skip,
-						plugins.Exist(list[i+2]), list[i+2].Name())).
+					SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i+2]))).
 					GetContent()
 				col3 = aCol().SetSize(size).SetContent(box3).GetContent()
 			}
@@ -57,170 +61,188 @@ func (h *Handler) Plugins(ctx *context.Context) {
 		rows += aRow().SetContent(col1 + col2 + col3).GetContent()
 	}
 
-	// TODO: 分页、筛选、排序
+	detailPopupModal := template2.Default().Popup().SetID("detail-popup-modal").
+		SetTitle(plugWordHTML("plugin detail")).
+		SetBody(pluginsPageDetailPopupBody()).
+		SetWidth("730px").
+		SetHeight("400px").
+		SetFooter("123").
+		GetContent()
+
+	buyPopupModal := template2.Default().Popup().SetID("buy-popup-modal").
+		SetTitle(plugWordHTML("plugin detail")).
+		SetWidth("730px").
+		SetHeight("400px").
+		SetFooter("123").
+		GetContent()
+
+	loginPopupModal := template2.Default().Popup().SetID("login-popup-modal").
+		SetTitle(plugWordHTML("login to goadmin member system")).
+		SetBody(aForm().SetContent(types.FormFields{
+			{Field: "name", Head: plugWord("account"), FormType: form.Text, Editable: true},
+			{Field: "password", Head: plugWord("password"), FormType: form.Password, Editable: true,
+				HelpMsg: template.HTML(fmt.Sprintf(plugWord("no account? click %s here %s to register."),
+					"<a target='_blank' href='http://www.go-admin.cn/register'>", "</a>"))},
+		}).GetContent()).
+		SetWidth("540px").
+		SetHeight("250px").
+		SetFooterHTML(template.HTML(`<button type="button" class="btn btn-primary" onclick="login()">` +
+			plugWord("login") + `</button>`)).
+		GetContent()
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
-		Content: rows,
-		CSS:     pluginCSS,
-		JS: template2.JS(`function pluginInstall(name){
-	location.href="` + h.config.Prefix() + `/info/plugin_"+name+"/new"
-}
-
-var downloadLock = false;
-
-function pluginDownload(name, ele) {
-	if (downloadLock) {
-		return
-	}
-	NProgress.start();
-	downloadLock = true;
-	$(ele).html('<i class="fa fa-refresh fa-spin text-primary" style="color: white;"></i> ` + plugWord("downloading") + `')
-	$.ajax({
-		dataType: 'json',
-		type: 'POST',
-		url: '` + h.config.Prefix() + `/plugin/download',
-		async: 'true',
-		data: {
-			'name': name
-		},
-		success: function (data) {
-			NProgress.done();
-			downloadLock = false;
-			if (data.code == 0) {
-				$(ele).attr('onclick', 'pluginRebootInstall()')
-				$(ele).html('` + plugWord("install") + `')
-				swal({
-					type: "success",
-					title: data.msg,
-					showCancelButton: false,
-					confirmButtonColor: "#3c8dbc",
-					confirmButtonText: '` + language.Get("got it") + `',
-        		})
-			} else {
-				$(ele).html('` + plugWord("download") + `')
-				swal({
-					type: "error",
-					title: data.msg,
-					showCancelButton: false,
-					confirmButtonColor: "#3c8dbc",
-					confirmButtonText: '` + language.Get("got it") + `',
-        		})
-			}
-		},
-		error: function (data) {
-			downloadLock = false;
-			$(ele).html('` + plugWord("download") + `')
-			alert('download fail');	
-		}
-	});
-}
-
-function pluginRebootInstall() {
-	swal({
-		type: "success",
-		title: "` + plugWord("restart to install") + `",
-		showCancelButton: false,
-		confirmButtonColor: "#3c8dbc",
-		confirmButtonText: '` + language.Get("got it") + `',
-	})
-}
-`),
+		Content:     rows + detailPopupModal + buyPopupModal + loginPopupModal,
+		CSS:         pluginsPageCSS + template.CSS(page.CSS),
+		JS:          template.JS(page.JS) + GetPluginsPageJS(PluginsPageJSData{Prefix: h.config.Prefix()}),
 		Description: language.GetFromHtml("plugins"),
 		Title:       language.GetFromHtml("plugins"),
 	})
 }
 
-func (h *Handler) pluginBox(info plugins.Info, install, upgrade, skip, downloadReboot bool, name string) template.HTML {
-	cover := template2.HTML(info.Cover)
+func (h *Handler) PluginDetail(ctx *context.Context) {
+
+	name := ctx.Query("name")
+
+	plug, exist := plugins.FindByName(name)
+	if !exist {
+		ctx.JSON(http.StatusOK, gin.H{
+			"code": 400,
+			"msg":  "bad request",
+		})
+		return
+	}
+
+	info := plug.GetInfo()
+
+	updated, _ := plug.CheckUpdate()
+	skip, _ := plug.GetInstallationPage()
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "ok",
+		"data": gin.H{
+			"mini_cover":      info.MiniCover,
+			"title":           language.GetWithScope(info.Title, name),
+			"author":          fmt.Sprintf(plugWord("provided by %s"), language.GetWithScope(info.Author, name)),
+			"introduction":    language.GetWithScope(info.Description, name),
+			"website":         language.GetWithScope(info.Website, name),
+			"version":         language.GetWithScope(info.Version, name),
+			"created_at":      language.GetWithScope(info.CreateDate.Format("2006-01-02"), name),
+			"updated_at":      language.GetWithScope(info.UpdateDate.Format("2006-01-02"), name),
+			"downloaded":      info.Downloaded,
+			"download_reboot": plugins.Exist(plug),
+			"skip":            skip,
+			"upgrade":         updated,
+			"install":         plug.IsInstalled(),
+			"free":            info.IsFree(),
+		},
+	})
+}
+
+type PluginBoxParam struct {
+	Info           plugins.Info
+	Install        bool
+	Upgrade        bool
+	Skip           bool
+	DownloadReboot bool
+	Name           string
+}
+
+func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
+
+	updated, _ := plug.CheckUpdate()
+	skip, _ := plug.GetInstallationPage()
+
+	return PluginBoxParam{
+		Info:           plug.GetInfo(),
+		Install:        plug.IsInstalled(),
+		Upgrade:        updated,
+		Skip:           skip,
+		DownloadReboot: plugins.Exist(plug),
+		Name:           plug.Name(),
+	}
+}
+
+func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
+	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
 		cover = "/admin/assets/dist/img/avatar04.png"
 	}
-	col1 := template.HTML(`<div class="plugin-item-img">`) + aImage().
-		SetSrc(cover).
-		SetHeight("110px").
-		SetWidth("110px").
-		GetContent() + template.HTML(`</div>`)
-	uid := utils.Uuid(18)
-	footer := template.HTML(`<button data-toggle="modal" data-target="#`+uid+`"  class="btn btn-primary plugin-info">`) +
-		plugWordHTML("info") + template.HTML("</button>")
-	popupModel := template2.Default().Popup().SetID(uid).
-		SetTitle(plugWordHTML("plugin detail")).
-		SetWidth("730px").
-		SetHeight("400px").
-		SetBody(template.HTML(`
-<div class="plugin-detail">
-<div class="plugin-detail-head">
-<div class="plugin-detail-head-logo">
-	<img src="` + string(cover) + `" width="110px" height="110px">
-</div>
-<div class="plugin-detail-head-title">
-	<div class="plugin-detail-title">` + language.GetWithScope(info.Title, name) + `</div>
-	<div class="plugin-detail-provider">` +
-			fmt.Sprintf(plugWord("provided by %s"), language.GetWithScope(info.Author, name)) + `</div>
-</div>
-</div>
-<div class="plugin-detail-info">
-	<div class="plugin-detail-info-item">
-		<div class="plugin-detail-info-item-head">` + plugWord("introduction") + `</div>
-		<div class="plugin-detail-info-item-content">` + language.GetWithScope(info.Description, name) + `</div>
-	</div>
-	<div class="plugin-detail-info-item">
-		<div class="plugin-detail-info-item-head">` + plugWord("website") + `</div>
-		<div class="plugin-detail-info-item-content">` + language.GetWithScope(info.Website, name) + `</div>
-	</div>
-	<div class="plugin-detail-info-item">
-		<div class="plugin-detail-info-item-head">` + plugWord("version") + `</div>
-		<div class="plugin-detail-info-item-content">` + language.GetWithScope(info.Version, name) + `</div>
-	</div>
-	<div class="plugin-detail-info-item">
-		<div class="plugin-detail-info-item-head">` + plugWord("created at") + `</div>
-		<div class="plugin-detail-info-item-content">` + language.GetWithScope(info.CreatedAt.Format("2006-01-02"), name) + `</div>
-	</div>
-	<div class="plugin-detail-info-item">
-		<div class="plugin-detail-info-item-head">` + plugWord("updated at") + `</div>
-		<div class="plugin-detail-info-item-content">` + language.GetWithScope(info.UpdatedAt.Format("2006-01-02"), name) + `</div>
-	</div>
-</div>
-</div>`))
-	if install {
-		if upgrade {
-			footer += template.HTML(`<button class="btn btn-primary installation">`) + plugWordHTML("upgrade") + template.HTML("</button>")
+	col1 := html.DivEl().SetClass("plugin-item-img").
+		SetContent(aImage().
+			SetSrc(cover).
+			SetHeight("110px").
+			SetWidth("110px").
+			GetContent()).
+		Get()
+	footer := html.ButtonEl().SetClass(pluginBtnClass("plugin-info")...).
+		SetAttr("onclick", `pluginDetail('`+param.Name+`','`+param.Info.Uuid+`')`).
+		SetContent(plugWordHTML("info")).
+		Get()
+	if param.Install {
+		if param.Upgrade {
+			footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+				SetContent(plugWordHTML("upgrade")).
+				Get()
 		}
 	} else {
-		if info.Downloaded {
-			if downloadReboot {
-				if skip {
-					footer += template.HTML(`<button class="btn btn-primary installation">`) + plugWordHTML("install") + template.HTML("</button>")
+		if param.Info.Downloaded {
+			if param.DownloadReboot {
+				if param.Skip {
+					footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+						SetContent(plugWordHTML("install")).
+						Get()
 				} else {
-					btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginInstall('`+name+`')">`) + plugWordHTML("install") + template.HTML("</button>")
-					footer += template2.HTML(`<a href="`+h.config.Prefix()+`/info/plugin_`+name+`/new"><button class="btn btn-primary installation" >`) +
-						plugWordHTML("install") + template.HTML("</button></a>")
-					popupModel = popupModel.SetFooterHTML(btn)
+					footer += html.AEl().SetAttr("href", h.config.Url(`/info/plugin_`+param.Name+`/new`)).
+						SetContent(
+							html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+								SetContent(plugWordHTML("install")).
+								Get(),
+						).Get()
 				}
 			} else {
-				btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginRebootInstall()">`) + plugWordHTML("install") + template.HTML("</button>")
-				footer += template2.HTML(`<button class="btn btn-primary installation"  onclick="pluginRebootInstall()">`) +
-					plugWordHTML("install") + template.HTML("</button>")
-				popupModel = popupModel.SetFooterHTML(btn)
+				footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+					SetAttr("onclick", `pluginRebootInstall()`).
+					SetContent(plugWordHTML("install")).
+					Get()
 			}
 		} else {
-			// TODO: 增加手动下载
-			btn := template2.HTML(`<button class="btn btn-primary" onclick="pluginDownload('`+name+`', this)">`) + plugWordHTML("download") + template.HTML("</button>")
-			footer += template2.HTML(`<button class="btn btn-primary installation" onclick="pluginDownload('`+name+`', this)">`) +
-				plugWordHTML("download") + template.HTML("</button>")
-			popupModel = popupModel.SetFooterHTML(btn)
+			if param.Info.IsFree() || param.Info.HasBought {
+				footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+					SetAttr("onclick", `pluginDownload('`+param.Name+`', this)`).
+					SetContent(plugWordHTML("download")).
+					Get()
+			} else {
+				footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+					SetAttr("onclick", `pluginBuy('`+param.Name+`', '`+param.Info.Uuid+`')`).
+					SetContent(plugWordHTML("buy")).
+					Get()
+			}
 		}
 	}
-	popup := popupModel.GetContent()
-	col2 := template.HTML(`<div class="plugin-item-content">`) +
-		template.HTML(`<div class="plugin-item-content-title">`+language.GetWithScope(info.Title, name)+`</div>
-	<div class="plugin-item-content-description">`+language.GetWithScope(info.Description, name)+"</div>") +
-		footer + template.HTML(`</div>`)
 
-	return `<div class="clear:both;">` + col1 + col2 + `</div>` + popup
+	col2 := html.DivEl().SetClass("plugin-item-content").SetContent(
+		html.DivEl().SetClass("plugin-item-content-title").
+			SetContent(language.GetFromHtml(template.HTML(param.Info.Title), param.Name)).
+			Get() +
+			html.DivEl().SetClass("plugin-item-content-description").
+				SetContent(language.GetFromHtml(template.HTML(param.Info.Description), param.Name)).
+				Get() +
+			footer,
+	).Get()
+
+	return html.Div(col1+col2, html.M{"clear": "both"})
 }
 
 func (h *Handler) PluginDownload(ctx *context.Context) {
+
+	if h.config.Debug {
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": 400,
+			"msg":  plugWord("change to debug mode first"),
+		})
+		return
+	}
 
 	name := ctx.FormValue("name")
 
@@ -242,9 +264,31 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		return
 	}
 
+	if !plug.GetInfo().IsFree() && !plug.GetInfo().HasBought {
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": 400,
+			"msg":  plugWord("download fail, plugin has not been bought"),
+		})
+		return
+	}
+
+	downloadURL := plug.GetInfo().Url
+
+	if !plug.GetInfo().IsFree() {
+		var err error
+		downloadURL, err = remote_server.GetDownloadURL(plug.GetInfo().Uuid, ctx.Cookie(remote_server.TokenKey))
+		if err != nil {
+			ctx.JSON(http.StatusOK, map[string]interface{}{
+				"code": 500,
+				"msg":  plugWord("download fail"),
+			})
+			return
+		}
+	}
+
 	tempFile := "./temp-" + utils.Uuid(10) + ".zip"
 
-	err := utils.DownloadTo(plug.GetInfo().Url, tempFile)
+	err := utils.DownloadTo(downloadURL, tempFile)
 
 	if err != nil {
 		ctx.JSON(http.StatusOK, map[string]interface{}{
@@ -277,7 +321,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 
 	_ = os.Remove(tempFile)
 
-	if len(plug.GetInfo().Url) > 18 && plug.GetInfo().Url[:18] == "https://github.com" {
+	if len(downloadURL) > 18 && downloadURL[:18] == "https://github.com" {
 		name := filepath.Base(plug.GetInfo().ModulePath)
 		version := strings.Replace(plug.GetInfo().Version, "v", "", -1)
 		rawPath := installPath + "/" + name
@@ -322,6 +366,29 @@ import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 	})
 }
 
+func (h *Handler) ServerLogin(ctx *context.Context) {
+	param := guard.GetServerLoginParam(ctx)
+	res := remote_server.Login(param.Account, param.Password)
+	if res.Code == 0 && res.Data.Token != "" {
+		ctx.SetCookie(&http.Cookie{
+			Name:     remote_server.TokenKey,
+			Value:    res.Data.Token,
+			Expires:  time.Now().Add(time.Second * time.Duration(res.Data.Expire/1000)),
+			HttpOnly: true,
+			Path:     "/",
+		})
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": res.Code,
+		"data": res.Data,
+		"msg":  res.Msg,
+	})
+}
+
+func pluginBtnClass(class ...string) []string {
+	return append([]string{"btn", "btn-primary"}, class...)
+}
+
 func plugWord(word string) string {
 	return language.GetWithScope(word, "plugin")
 }
@@ -329,77 +396,3 @@ func plugWord(word string) string {
 func plugWordHTML(word template.HTML) template.HTML {
 	return language.GetFromHtml(word, "plugin")
 }
-
-var pluginCSS = template.CSS(`
-	.plugin-item-content {
-		margin-left: 15px;
-	}
-	.plugin-item-content-title {
-		font-size: 15px;
-		margin-bottom: 10px;
-		font-weight: bold;
-	}
-	.plugin-item-content {
-		position: absolute;
-		margin-left: 121px;
-		padding-right: 10px;
-		top: 7px;
-    	width: 100%;
-    	padding-right: 139px;
-	}
-	.plugin-item-content-description {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		word-break: break-all;
-		display: -webkit-box;
-		font-size: 15px;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		height: 42px;
-	}
-	.installation {
-		float: right;
-		margin-top: 10px;
-	}
-	.plugin-info {
-		float: right;
-		margin-top: 10px;
-		margin-left: 10px;
-	}
-	.plugin-detail {
-		padding: 10px;
-	}
-	.plugin-detail-head {
-		clear: both;
-		height: 112px;
-    	margin-bottom: 33px;
-	}
-	.plugin-detail-title {
-		font-size: 30px;
-	}
-	.plugin-detail-provider {
-    	font-size: 15px;
-    	margin-top: 4px;
-	}
-	.plugin-detail-head-logo {
-		width: 120px;
-		float: left;
-	}
-	.plugin-detail-head-title {
-		float: left;
-		margin-left: 10px;
-	}
-	.plugin-detail-info-item {
-		clear: both;
-		height: 15px;
-		margin-bottom: 17px;
-	}
-	.plugin-detail-info-item-head {
-		width: 80px;
-		float: left;
-		font-weight: bold;
-	}
-	.plugin-detail-info-item-content {
-		float: left;
-		margin-left: 10px;
-	}`)

@@ -391,6 +391,15 @@ func (ctx *Context) GetContentType() string {
 	return ctx.Request.Header.Get("")
 }
 
+func (ctx *Context) Cookie(name string) string {
+	for _, ck := range ctx.Request.Cookies() {
+		if ck.Name == name {
+			return ck.Value
+		}
+	}
+	return ""
+}
+
 // User return the current login user.
 func (ctx *Context) User() interface{} {
 	return ctx.UserValue["user"]

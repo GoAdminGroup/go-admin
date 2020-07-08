@@ -66,8 +66,8 @@ func (admin *Admin) GetInfo() plugins.Info {
 		Description: "A built-in plugins of GoAdmin which help you to build a crud manager platform quickly.",
 		Author:      "official",
 		Version:     system.Version(),
-		CreatedAt:   utils.ParseTime("2018-07-08 00:00:00"),
-		UpdatedAt:   utils.ParseTime("2020-06-28 00:00:00"),
+		CreateDate:  utils.ParseTime("2018-07-08 00:00:00"),
+		UpdateDate:  utils.ParseTime("2020-06-28 00:00:00"),
 	}
 }
 
