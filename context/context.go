@@ -416,10 +416,10 @@ func (ctx *Context) ServeContent(content io.ReadSeeker, filename string, modtime
 		return nil
 	}
 
-	if ctx.GetContentType() == "" {
-		ctx.SetContentType(filename)
-	}
-
+// 	if ctx.GetContentType() == "" {
+// 		ctx.SetContentType(filename)
+// 	}
+	ctx.Response.Header.Set("Content-Disposition", "attachment;filename="+filename)
 	buf, _ := ioutil.ReadAll(content)
 	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(buf))
 	return nil
