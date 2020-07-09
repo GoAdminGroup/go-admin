@@ -4,6 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
@@ -15,12 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"io/ioutil"
-	"net/http"
-	"strconv"
-	"strings"
-	"time"
 )
 
 type DefaultTable struct {
@@ -101,6 +102,11 @@ func (tb *DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) 
 		beginTime = time.Now()
 	)
 
+	if tb.Info.UpdateParametersFns != nil {
+		for _, fn := range tb.Info.UpdateParametersFns {
+			fn(&params)
+		}
+	}
 	if tb.Info.QueryFilterFn != nil {
 		ids, stop := tb.Info.QueryFilterFn(params, tb.db())
 		if stop {
@@ -248,7 +254,7 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 		headField = field.Field
 
 		if field.Joins.Valid() {
-			headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
+			headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
 		}
 
 		if field.Hide {
@@ -607,17 +613,17 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			headField := field.Field
 
 			if field.Joins.Valid() {
-				headField = field.Joins.Last().Table + parameter.FilterParamJoinInfix + field.Field
-				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().Table+"."+
+				headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
+				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().GetTableName()+"."+
 					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
 				for _, join := range field.Joins {
-					if !modules.InArray(joinTables, join.Table) {
-						joinTables = append(joinTables, join.Table)
+					if !modules.InArray(joinTables, join.GetTableName()) {
+						joinTables = append(joinTables, join.GetTableName())
 						if join.BaseTable == "" {
 							join.BaseTable = tableName
 						}
-						joins += " left join " + modules.FilterField(join.Table, delimiter) + " on " +
-							join.Table + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
+						joins += " left join " + modules.FilterField(join.Table, delimiter) + " " + join.TableAlias + " on " +
+							join.GetTableName() + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
 							join.BaseTable + "." + modules.FilterField(join.Field, delimiter)
 					}
 				}

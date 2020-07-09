@@ -1,14 +1,16 @@
 package action
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
 	"html/template"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 type JumpAction struct {
 	BaseAction
 	Url         string
+	Target      string
 	Ext         template.HTML
 	NewTabTitle string
 }
@@ -31,15 +33,28 @@ func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
 	return &JumpAction{Url: url, NewTabTitle: title}
 }
 
+func JumpWithTarget(url, target string, ext ...template.HTML) *JumpAction {
+	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
+	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
+	if len(ext) > 0 {
+		return &JumpAction{Url: url, Target: target, Ext: ext[0]}
+	}
+	return &JumpAction{Url: url, Target: target}
+}
+
 func (jump *JumpAction) GetCallbacks() context.Node {
 	return context.Node{Path: jump.Url, Method: "GET"}
 }
 
 func (jump *JumpAction) BtnAttribute() template.HTML {
+	html := template.HTML(`href="` + jump.Url + `"`)
 	if jump.NewTabTitle != "" {
-		return template.HTML(`href="` + jump.Url + `" data-title="` + jump.NewTabTitle + `"`)
+		html += template.HTML(` data-title="` + jump.NewTabTitle + `"`)
 	}
-	return template.HTML(`href="` + jump.Url + `"`)
+	if jump.Target != "" {
+		html += template.HTML(` target="` + jump.Target + `"`)
+	}
+	return html
 }
 
 func (jump *JumpAction) BtnClass() template.HTML {
