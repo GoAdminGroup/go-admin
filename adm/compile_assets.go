@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/jteeuwen/go-bindata"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/jteeuwen/go-bindata"
 )
 
 func compileAsset(rootPath, outputPath, packageName string) {

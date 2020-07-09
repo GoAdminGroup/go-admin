@@ -1,9 +1,10 @@
 package main
 
 import (
+	"testing"
+
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/magiconair/properties/assert"
-	"testing"
 )
 
 func TestGetLatestVersion(t *testing.T) {

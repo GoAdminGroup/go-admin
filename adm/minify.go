@@ -5,9 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/tdewolff/minify"
-	"github.com/tdewolff/minify/css"
-	"github.com/tdewolff/minify/js"
 	"io/ioutil"
 	"log"
 	"os"
@@ -15,6 +12,10 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/tdewolff/minify"
+	"github.com/tdewolff/minify/css"
+	"github.com/tdewolff/minify/js"
 )
 
 func cssMinifier(inputDir, outputFile string, hash bool) {

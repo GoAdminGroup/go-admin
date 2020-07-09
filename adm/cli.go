@@ -10,11 +10,12 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
 
 	"fmt"
-	cli "github.com/jawher/mow.cli"
-	"github.com/mgutz/ansi"
 	"os"
 	"runtime"
 	"runtime/debug"
+
+	cli "github.com/jawher/mow.cli"
+	"github.com/mgutz/ansi"
 )
 
 func main() {

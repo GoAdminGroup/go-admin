@@ -152,9 +152,9 @@ const (
 	permissionPathInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/textarea`
 	permissionSaveBtn      = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
-	userNavMenuBtn = `//*[@id="firstnav"]/div[4]/ul/li[8]`
-	userSettingBtn = `//*[@id="firstnav"]/div[4]/ul/li[8]/ul/li[2]/div[1]/a`
-	userSignOutBtn = `//*[@id="firstnav"]/div[4]/ul/li[8]/ul/li[2]/div[2]/a`
+	userNavMenuBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]`
+	userSettingBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]/ul/li[2]/div[1]/a`
+	userSignOutBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]/ul/li[2]/div[2]/a`
 
 	loginPageUserNameInput = `//*[@id="username"]`
 	loginPagePasswordInput = `//*[@id="password"]`

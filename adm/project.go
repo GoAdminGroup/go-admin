@@ -5,18 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	template2 "github.com/GoAdminGroup/go-admin/template"
-	"github.com/mgutz/ansi"
 	"go/format"
-	"gopkg.in/ini.v1"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"text/template"
+
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	template2 "github.com/GoAdminGroup/go-admin/template"
+	"github.com/mgutz/ansi"
+	"gopkg.in/ini.v1"
 )
 
 type Project struct {
@@ -123,12 +124,13 @@ func buildProject(cfgFile string) {
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Language:      p.Language,
-		UrlPrefix:     p.Prefix,
-		IndexUrl:      "/",
-		AccessLogPath: "./logs/access.log",
-		ErrorLogPath:  "./logs/error.log",
-		InfoLogPath:   "./logs/info.log",
+		Language:          p.Language,
+		UrlPrefix:         p.Prefix,
+		IndexUrl:          "/",
+		AccessLogPath:     "./logs/access.log",
+		ErrorLogPath:      "./logs/error.log",
+		InfoLogPath:       "./logs/info.log",
+		BootstrapFilePath: "./bootstrap.go",
 	})
 
 	if info.DriverName == "" && p.Driver != "" {
