@@ -3,9 +3,10 @@ package chartjs
 import (
 	"bytes"
 	"fmt"
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	template2 "github.com/GoAdminGroup/go-admin/template"
-	"html/template"
 )
 
 type Chart struct {

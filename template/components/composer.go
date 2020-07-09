@@ -3,9 +3,10 @@ package components
 import (
 	"bytes"
 	"fmt"
-	template2 "github.com/GoAdminGroup/go-admin/template"
 	"html/template"
 	"strings"
+
+	template2 "github.com/GoAdminGroup/go-admin/template"
 )
 
 func ComposeHtml(temList map[string]string, compo interface{}, templateName ...string) template.HTML {

@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 )
 

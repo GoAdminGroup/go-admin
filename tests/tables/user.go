@@ -2,6 +2,8 @@ package tables
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -13,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	selection "github.com/GoAdminGroup/go-admin/template/types/form/select"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
-	"strings"
 )
 
 // GetUserTable return the model of table user.

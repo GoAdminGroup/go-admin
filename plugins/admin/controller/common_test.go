@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"github.com/magiconair/properties/assert"
 	"testing"
+
+	"github.com/magiconair/properties/assert"
 )
 
 func TestIsInfoUrl(t *testing.T) {

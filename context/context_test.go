@@ -2,8 +2,9 @@ package context
 
 import (
 	"fmt"
-	"github.com/magiconair/properties/assert"
 	"testing"
+
+	"github.com/magiconair/properties/assert"
 )
 
 func TestSlash(t *testing.T) {

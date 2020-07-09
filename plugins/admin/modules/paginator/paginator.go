@@ -1,14 +1,15 @@
 package paginator
 
 import (
+	"html/template"
+	"math"
+	"strconv"
+
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/components"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"math"
-	"strconv"
 )
 
 type Config struct {

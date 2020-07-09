@@ -1,8 +1,9 @@
 package icon
 
 import (
-	"github.com/GoAdminGroup/html"
 	"html/template"
+
+	"github.com/GoAdminGroup/html"
 )
 
 func Icon(class string, num ...int) template.HTML {

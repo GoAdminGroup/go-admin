@@ -2,6 +2,10 @@ package action
 
 import (
 	"fmt"
+	"html/template"
+	"regexp"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
@@ -10,9 +14,6 @@ import (
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"regexp"
-	"strings"
 )
 
 type PopUpAction struct {

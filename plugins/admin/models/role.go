@@ -2,10 +2,11 @@ package models
 
 import (
 	"database/sql"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
 	"time"
+
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 )
 
 // RoleModel is role model structure.

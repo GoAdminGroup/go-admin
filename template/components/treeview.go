@@ -2,9 +2,10 @@ package components
 
 import (
 	"encoding/json"
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
 )
 
 type TreeViewAttribute struct {

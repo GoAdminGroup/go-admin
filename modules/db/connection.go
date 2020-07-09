@@ -7,9 +7,10 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
-	"strings"
 )
 
 const (

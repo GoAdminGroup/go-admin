@@ -1,9 +1,10 @@
 package utils
 
 import (
-	"github.com/stretchr/testify/assert"
 	"html/template"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCompressedContent(t *testing.T) {

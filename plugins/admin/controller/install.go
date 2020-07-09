@@ -3,9 +3,10 @@ package controller
 import (
 	"bytes"
 	"database/sql"
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
-	"net/http"
 )
 
 // ShowInstall show install page.

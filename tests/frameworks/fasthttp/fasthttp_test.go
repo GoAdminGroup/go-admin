@@ -1,10 +1,11 @@
 package fasthttp
 
 import (
-	"github.com/GoAdminGroup/go-admin/tests/common"
-	"github.com/gavv/httpexpect"
 	"net/http"
 	"testing"
+
+	"github.com/GoAdminGroup/go-admin/tests/common"
+	"github.com/gavv/httpexpect"
 )
 
 func TestFasthttp(t *testing.T) {

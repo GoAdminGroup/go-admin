@@ -2,9 +2,10 @@ package web
 
 import (
 	"fmt"
-	"github.com/mgutz/ansi"
 	"testing"
 	"time"
+
+	"github.com/mgutz/ansi"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"

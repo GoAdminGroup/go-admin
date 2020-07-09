@@ -3,8 +3,9 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"sync"
+
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	"xorm.io/xorm"
 )
 

@@ -6,15 +6,16 @@ package auth
 
 import (
 	"encoding/json"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"net/http"
-	"strconv"
-	"time"
 )
 
 const DefaultCookieKey = "go_admin_session"

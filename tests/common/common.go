@@ -2,10 +2,11 @@ package common
 
 import (
 	"fmt"
+	"regexp"
+
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 	"github.com/mgutz/ansi"
-	"regexp"
 )
 
 var reg, _ = regexp.Compile("<input type=\"hidden\" name=\"" + form.TokenKey + "\" value='(.*?)'>")

@@ -7,6 +7,10 @@ package echo
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -16,9 +20,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 // Echo structure value is an Echo GoAdmin adapter.

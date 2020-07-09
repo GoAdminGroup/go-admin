@@ -2,6 +2,8 @@ package controller
 
 import (
 	"encoding/json"
+	template2 "html/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -17,7 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
 )
 
 // ShowMenu show menu info page.

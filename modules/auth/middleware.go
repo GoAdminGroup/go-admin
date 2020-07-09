@@ -5,6 +5,9 @@
 package auth
 
 import (
+	"net/http"
+	"net/url"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
@@ -16,8 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"net/http"
-	"net/url"
 )
 
 // Invoker contains the callback functions which are used

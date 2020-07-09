@@ -2,9 +2,10 @@ package display
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"strconv"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type ProgressBar struct {

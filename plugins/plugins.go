@@ -8,6 +8,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	template2 "html/template"
+	"net/http"
+	"plugin"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -21,10 +26,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
-	"net/http"
-	"plugin"
-	"time"
 )
 
 // Plugin as one of the key components of goAdmin has three

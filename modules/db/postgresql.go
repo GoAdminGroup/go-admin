@@ -6,9 +6,10 @@ package db
 
 import (
 	"database/sql"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"strconv"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/config"
 )
 
 // Postgresql is a Connection of postgresql.

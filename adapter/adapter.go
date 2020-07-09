@@ -7,6 +7,8 @@ package adapter
 import (
 	"bytes"
 	"fmt"
+	"net/url"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -18,7 +20,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"net/url"
 )
 
 // WebFrameWork is an interface which is used as an adapter of

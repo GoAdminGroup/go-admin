@@ -7,13 +7,14 @@ package iris
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/kataras/iris/v12"
-	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"

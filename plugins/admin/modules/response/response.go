@@ -1,6 +1,8 @@
 package response
 
 import (
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -10,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"net/http"
 )
 
 func Ok(ctx *context.Context) {

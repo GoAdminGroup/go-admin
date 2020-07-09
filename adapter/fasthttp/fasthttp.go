@@ -7,6 +7,11 @@ package fasthttp
 import (
 	"bytes"
 	"errors"
+	"io"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -17,10 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	"io"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 // Fasthttp structure value is a Fasthttp GoAdmin adapter.

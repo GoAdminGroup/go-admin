@@ -2,6 +2,7 @@ package datamodel
 
 import (
 	"fmt"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
@@ -11,7 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"github.com/GoAdminGroup/go-admin/template/types/form/select"
+	selection "github.com/GoAdminGroup/go-admin/template/types/form/select"
 	editType "github.com/GoAdminGroup/go-admin/template/types/table"
 )
 

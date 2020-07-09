@@ -1,6 +1,10 @@
 package guard
 
 import (
+	"html/template"
+	"mime/multipart"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -10,9 +14,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"html/template"
-	"mime/multipart"
-	"strings"
 )
 
 type ShowNewFormParam struct {

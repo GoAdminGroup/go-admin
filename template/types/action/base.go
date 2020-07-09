@@ -2,12 +2,13 @@ package action
 
 import (
 	"encoding/json"
+	"html/template"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"strings"
 )
 
 type AjaxData map[string]interface{}

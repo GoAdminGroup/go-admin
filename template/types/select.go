@@ -1,10 +1,11 @@
 package types
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"html/template"
 	"strconv"
+
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 )
 
 type DefaultSelection struct {

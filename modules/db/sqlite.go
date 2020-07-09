@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 )
 

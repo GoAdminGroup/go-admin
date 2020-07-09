@@ -1,6 +1,8 @@
 package datamodel
 
 import (
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	tmpl "github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
@@ -12,7 +14,6 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte/components/productlist"
 	"github.com/GoAdminGroup/themes/adminlte/components/progress_group"
 	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
-	"html/template"
 )
 
 // GetContent return the content of index page.

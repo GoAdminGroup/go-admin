@@ -2,6 +2,12 @@ package controller
 
 import (
 	"bytes"
+	template2 "html/template"
+	"net/http"
+	"regexp"
+	"strings"
+	"sync"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
@@ -16,11 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
-	"net/http"
-	"regexp"
-	"strings"
-	"sync"
 )
 
 type Handler struct {

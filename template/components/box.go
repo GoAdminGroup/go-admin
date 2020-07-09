@@ -2,8 +2,9 @@ package components
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type BoxAttribute struct {

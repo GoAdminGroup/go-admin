@@ -1,6 +1,11 @@
 package controller
 
 import (
+	template2 "html/template"
+	"regexp"
+	"runtime/debug"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
@@ -11,10 +16,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	template2 "html/template"
-	"regexp"
-	"runtime/debug"
-	"strings"
 )
 
 // GlobalDeferHandler is a global error handler of admin plugin.

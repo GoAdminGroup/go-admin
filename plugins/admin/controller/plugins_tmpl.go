@@ -2,9 +2,10 @@ package controller
 
 import (
 	"bytes"
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"html/template"
 )
 
 func GetPluginsPageJS(data PluginsPageJSData) template.JS {

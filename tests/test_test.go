@@ -1,9 +1,10 @@
 package tests
 
 import (
+	"testing"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
-	"testing"
 )
 
 func TestBlackBoxTestSuitOfBuiltInTables(t *testing.T) {

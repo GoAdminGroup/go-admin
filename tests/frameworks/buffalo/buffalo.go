@@ -22,13 +22,14 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
+	"net/http"
+	"os"
+
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/gobuffalo/buffalo"
-	"net/http"
-	"os"
 )
 
 func newHandler() http.Handler {

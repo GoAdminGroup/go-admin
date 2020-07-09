@@ -4,6 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html"
+	"html/template"
+	"net/http"
+	"strconv"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
@@ -15,11 +21,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
-	"html"
-	"html/template"
-	"net/http"
-	"strconv"
-	"strings"
 )
 
 type FieldOption struct {

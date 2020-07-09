@@ -5,10 +5,11 @@
 package types
 
 import (
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"html/template"
 )
 
 type FormAttribute interface {

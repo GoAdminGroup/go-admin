@@ -7,17 +7,18 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
-	"gopkg.in/ini.v1"
-	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
 	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
+
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"gopkg.in/ini.v1"
+	"gopkg.in/yaml.v2"
 )
 
 // Database is a type of database connection config.

@@ -1,6 +1,10 @@
 package tests
 
 import (
+	"net/http"
+	"strings"
+	"testing"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -9,9 +13,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/tests/frameworks/fasthttp"
 	"github.com/gavv/httpexpect"
 	fasthttp2 "github.com/valyala/fasthttp"
-	"net/http"
-	"strings"
-	"testing"
 )
 
 func Cleaner(config config.DatabaseList) {

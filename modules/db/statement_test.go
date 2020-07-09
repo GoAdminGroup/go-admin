@@ -2,10 +2,11 @@ package db
 
 import (
 	"database/sql"
+	"testing"
+
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	"github.com/magiconair/properties/assert"
-	"testing"
 )
 
 func testSQLWhereIn(t *testing.T, conn Connection) {

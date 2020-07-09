@@ -1,9 +1,10 @@
 package modules
 
 import (
-	"github.com/satori/go.uuid"
 	"html/template"
 	"strconv"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 func InArray(arr []string, str string) bool {

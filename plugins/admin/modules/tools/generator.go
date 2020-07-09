@@ -2,15 +2,16 @@ package tools
 
 import (
 	"bytes"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"go/format"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 type Param struct {

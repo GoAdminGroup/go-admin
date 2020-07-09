@@ -1,8 +1,9 @@
 package components
 
 import (
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type PaginatorAttribute struct {

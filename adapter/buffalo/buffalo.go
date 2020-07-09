@@ -7,6 +7,11 @@ package buffalo
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	neturl "net/url"
+	"regexp"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -16,10 +21,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gobuffalo/buffalo"
-	"net/http"
-	neturl "net/url"
-	"regexp"
-	"strings"
 )
 
 // Buffalo structure value is a Buffalo GoAdmin adapter.

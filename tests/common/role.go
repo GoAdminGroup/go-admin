@@ -2,12 +2,13 @@ package common
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
-	"net/http"
 )
 
 func roleTest(e *httpexpect.Expect, sesID *http.Cookie) {

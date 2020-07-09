@@ -2,11 +2,12 @@ package action
 
 import (
 	"encoding/json"
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
 )
 
 type AjaxAction struct {

@@ -1,6 +1,8 @@
 package example
 
 import (
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/page"
@@ -13,7 +15,6 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte/components/productlist"
 	"github.com/GoAdminGroup/themes/adminlte/components/progress_group"
 	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
-	"html/template"
 )
 
 func (e *Example) TestHandler(ctx *context.Context) {

@@ -1,6 +1,10 @@
 package table
 
 import (
+	"html/template"
+	"sync"
+	"sync/atomic"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -8,9 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"html/template"
-	"sync"
-	"sync/atomic"
 )
 
 type Generator func(ctx *context.Context) Table

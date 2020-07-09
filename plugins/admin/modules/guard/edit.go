@@ -1,11 +1,12 @@
 package guard
 
 import (
-	"github.com/GoAdminGroup/go-admin/template/types"
 	tmpl "html/template"
 	"mime/multipart"
 	"regexp"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"

@@ -1,9 +1,10 @@
 package display
 
 import (
+	"strconv"
+
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"strconv"
 )
 
 type FileSize struct {

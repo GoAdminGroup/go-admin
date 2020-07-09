@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"net/url"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/file"
@@ -9,7 +11,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"net/url"
 )
 
 func (h *Handler) ApiUpdate(ctx *context.Context) {

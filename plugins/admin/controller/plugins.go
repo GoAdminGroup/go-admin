@@ -2,6 +2,14 @@ package controller
 
 import (
 	"fmt"
+	"html/template"
+	"io/ioutil"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -14,13 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/html"
 	"github.com/gin-gonic/gin"
-	"html/template"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
 func (h *Handler) Plugins(ctx *context.Context) {

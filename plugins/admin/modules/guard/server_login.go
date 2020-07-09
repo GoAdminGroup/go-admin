@@ -2,9 +2,10 @@ package guard
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"io/ioutil"
 )
 
 type ServerLoginParam struct {

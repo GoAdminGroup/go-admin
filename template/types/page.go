@@ -7,14 +7,15 @@ package types
 import (
 	"bytes"
 	"fmt"
+	"html/template"
+	"strconv"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/system"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"html/template"
-	"strconv"
 )
 
 // Attribute is the component interface of template. Every component of

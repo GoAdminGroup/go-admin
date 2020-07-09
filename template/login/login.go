@@ -3,10 +3,11 @@ package login
 import (
 	"bytes"
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"html/template"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 )
 
 type Login struct {

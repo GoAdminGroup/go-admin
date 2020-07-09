@@ -106,6 +106,7 @@ lint: fmt golint govet cilint
 
 fmt:
 	GO111MODULE=off go fmt ./...
+	GO111MODULE=off goimports -l -w .
 
 govet:
 	GO111MODULE=off go vet ./...

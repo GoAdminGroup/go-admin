@@ -7,6 +7,11 @@ package gorilla
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"regexp"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -16,10 +21,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gorilla/mux"
-	"net/http"
-	"net/url"
-	"regexp"
-	"strings"
 )
 
 // Gorilla structure value is a Gorilla GoAdmin adapter.

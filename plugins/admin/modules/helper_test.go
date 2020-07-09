@@ -1,9 +1,10 @@
 package modules
 
 import (
-	"github.com/magiconair/properties/assert"
 	"regexp"
 	"testing"
+
+	"github.com/magiconair/properties/assert"
 )
 
 func TestInArray(t *testing.T) {

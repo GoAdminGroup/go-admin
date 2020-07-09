@@ -6,7 +6,6 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
-	"github.com/NebulousLabs/fastrand"
 	"html/template"
 	"io"
 	"math"
@@ -19,6 +18,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/NebulousLabs/fastrand"
 )
 
 func Uuid(length int64) string {

@@ -2,9 +2,10 @@ package controller
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	template2 "html/template"
 	"net/http"
+
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"

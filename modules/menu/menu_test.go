@@ -1,8 +1,9 @@
 package menu
 
 import (
-	"github.com/magiconair/properties/assert"
 	"testing"
+
+	"github.com/magiconair/properties/assert"
 )
 
 func TestMenu_AddMaxOrder(t *testing.T) {

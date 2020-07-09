@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"

@@ -7,6 +7,10 @@ package beego
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -17,9 +21,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/context"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 // Beego structure value is a Beego GoAdmin adapter.

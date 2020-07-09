@@ -19,6 +19,9 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
+	"net/http"
+	"os"
+
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
@@ -26,8 +29,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"os"
 )
 
 func newHandler() http.Handler {

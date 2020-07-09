@@ -2,10 +2,11 @@ package models
 
 import (
 	"encoding/json"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"strconv"
 	"time"
+
+	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 )
 
 // MenuModel is menu model structure.

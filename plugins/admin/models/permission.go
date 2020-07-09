@@ -1,9 +1,10 @@
 package models
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/db"
 	"strconv"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/db"
 )
 
 // PermissionModel is permission model structure.

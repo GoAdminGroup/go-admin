@@ -1,10 +1,11 @@
 package language
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/stretchr/testify/assert"
 	"html/template"
 	"testing"
+
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAdd(t *testing.T) {

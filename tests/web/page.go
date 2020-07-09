@@ -2,12 +2,13 @@ package web
 
 import (
 	"fmt"
-	"github.com/sclevine/agouti"
-	"github.com/stretchr/testify/assert"
 	"runtime/debug"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/sclevine/agouti"
+	"github.com/stretchr/testify/assert"
 )
 
 type Page struct {

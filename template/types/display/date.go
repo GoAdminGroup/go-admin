@@ -1,9 +1,10 @@
 package display
 
 import (
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"strconv"
 	"time"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type Date struct {

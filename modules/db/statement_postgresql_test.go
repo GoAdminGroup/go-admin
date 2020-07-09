@@ -2,11 +2,12 @@ package db
 
 import (
 	"fmt"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	"os"
 	"os/exec"
 	"path"
 	"testing"
+
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 )
 
 var driverTestPgConn Connection

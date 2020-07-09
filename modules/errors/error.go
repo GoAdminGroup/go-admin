@@ -1,9 +1,10 @@
 package errors
 
 import (
+	"html/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/icon"
-	"html/template"
 )
 
 var (

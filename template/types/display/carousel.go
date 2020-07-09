@@ -1,9 +1,10 @@
 package display
 
 import (
-	"github.com/GoAdminGroup/go-admin/template/types"
 	"html/template"
 	"strconv"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type Carousel struct {

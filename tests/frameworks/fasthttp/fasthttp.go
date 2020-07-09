@@ -14,6 +14,8 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
+	"os"
+
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -25,7 +27,6 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
-	"os"
 )
 
 func newHandler() fasthttp.RequestHandler {

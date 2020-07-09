@@ -2,11 +2,12 @@ package types
 
 import (
 	"fmt"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
 	"html"
 	"html/template"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 type DisplayFnGenerator interface {
