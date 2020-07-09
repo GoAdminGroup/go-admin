@@ -309,7 +309,11 @@ var Generators = map[string]table.Generator{
 	fmt.Println()
 	fmt.Println(getWord("3 Visit and login:"))
 	fmt.Println()
-	fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/login", "blue"))
+	if p.Port != "80" {
+		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/login", "blue"))
+	} else {
+		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1/"+p.Prefix+"/login", "blue"))
+	}
 	fmt.Println(getWord("account: admin  password: admin"))
 	fmt.Println()
 	fmt.Println("-  " + getWord("Generate CRUD models: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/info/generate/new", "blue"))
