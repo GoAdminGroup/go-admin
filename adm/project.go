@@ -116,6 +116,12 @@ func buildProject(cfgFile string) {
 			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
 	}
 
+	rootPath, err := os.Getwd()
+
+	if err != nil {
+		rootPath = "."
+	}
+
 	var cfg = config.SetDefault(config.Config{
 		Debug: true,
 		Env:   config.EnvLocal,
@@ -127,10 +133,10 @@ func buildProject(cfgFile string) {
 		Language:          p.Language,
 		UrlPrefix:         p.Prefix,
 		IndexUrl:          "/",
-		AccessLogPath:     "./logs/access.log",
-		ErrorLogPath:      "./logs/error.log",
-		InfoLogPath:       "./logs/info.log",
-		BootstrapFilePath: "./bootstrap.go",
+		AccessLogPath:     filepath.ToSlash(rootPath) + "/logs/access.log",
+		ErrorLogPath:      filepath.ToSlash(rootPath) + "/logs/error.log",
+		InfoLogPath:       filepath.ToSlash(rootPath) + "/logs/info.log",
+		BootstrapFilePath: filepath.ToSlash(rootPath) + "/bootstrap.go",
 	})
 
 	if info.DriverName == "" && p.Driver != "" {
@@ -192,6 +198,7 @@ func Init(c db.Connection) {
 	checkError(ioutil.WriteFile("./logs/access.log", []byte{}, os.ModePerm))
 	checkError(ioutil.WriteFile("./logs/info.log", []byte{}, os.ModePerm))
 	checkError(ioutil.WriteFile("./logs/error.log", []byte{}, os.ModePerm))
+	checkError(ioutil.WriteFile("./bootstrap.go", []byte(`package main`), os.ModePerm))
 
 	if p.Theme == "sword" {
 		checkError(ioutil.WriteFile("./pages/index.go", swordIndexPage, 0644))
