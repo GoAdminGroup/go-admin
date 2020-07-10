@@ -44,7 +44,7 @@ import (
 // plugin is that the adapter use the plugin which contains routers and
 // controller methods to inject into the framework entity and make it work.
 type Engine struct {
-	PluginList []plugins.Plugin
+	PluginList plugins.Plugins
 	Adapter    adapter.WebFrameWork
 	Services   service.List
 	NavButtons *types.Buttons
@@ -67,11 +67,7 @@ func (eng *Engine) Use(router interface{}) error {
 		panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
 	}
 
-	_, exist := eng.FindPluginByName("admin")
-
-	if !exist {
-		eng.PluginList = append(eng.PluginList, admin.NewAdmin())
-	}
+	eng.PluginList = eng.PluginList.Add(admin.NewAdmin())
 
 	eng.AddPluginList(plugins.Get())
 
@@ -126,6 +122,7 @@ func (eng *Engine) Use(router interface{}) error {
 	// Initialize plugins
 	for i := range eng.PluginList {
 		if eng.PluginList[i].Name() != "admin" {
+			logger.Info("=====> " + eng.PluginList[i].Name())
 			eng.PluginList[i].InitPlugin(eng.Services)
 			skip, gen := eng.PluginList[i].GetInstallationPage()
 			if !skip && gen != nil {
@@ -147,7 +144,9 @@ func (eng *Engine) AddPlugins(plugs ...plugins.Plugin) *Engine {
 		return eng
 	}
 
-	eng.PluginList = append(eng.PluginList, plugs...)
+	for _, plug := range plugs {
+		eng.PluginList = eng.PluginList.Add(plug)
+	}
 
 	return eng
 }
@@ -159,7 +158,9 @@ func (eng *Engine) AddPluginList(plugs plugins.Plugins) *Engine {
 		return eng
 	}
 
-	eng.PluginList = append(eng.PluginList, plugs...)
+	for _, plug := range plugs {
+		eng.PluginList = eng.PluginList.Add(plug)
+	}
 
 	return eng
 }

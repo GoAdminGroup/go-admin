@@ -223,6 +223,11 @@ type Panel struct {
 	Callbacks Callbacks
 }
 
+func (p Panel) AddJS(js template.JS) Panel {
+	p.JS += js
+	return p
+}
+
 func (p Panel) GetContent(params ...bool) Panel {
 
 	prod := false

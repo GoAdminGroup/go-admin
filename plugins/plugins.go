@@ -104,12 +104,31 @@ func (b *Base) InitBase(srv service.List) {
 	b.UI = ui.GetService(b.Services)
 }
 
-func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, animation ...bool) *bytes.Buffer {
-	return Execute(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, animation...)
+func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, options ...bool) *bytes.Buffer {
+	return Execute(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, options...)
+}
+
+func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) *bytes.Buffer {
+	return ExecuteWithMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, options...)
+}
+
+func (b *Base) ExecuteTmplWithMenuAndNavButtons(ctx *context.Context, panel types.Panel, menu *menu.Menu,
+	btns types.Buttons, options ...bool) *bytes.Buffer {
+	return ExecuteWithMenu(ctx, btns, auth.Auth(ctx), panel, menu, options...)
 }
 
 func (b *Base) HTML(ctx *context.Context, panel types.Panel, animation ...bool) {
 	buf := b.ExecuteTmpl(ctx, panel, animation...)
+	ctx.HTMLByte(http.StatusOK, buf.Bytes())
+}
+
+func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, animation ...bool) {
+	buf := b.ExecuteTmplWithMenu(ctx, panel, menu, animation...)
+	ctx.HTMLByte(http.StatusOK, buf.Bytes())
+}
+
+func (b *Base) HTMLMenuWithBtns(ctx *context.Context, panel types.Panel, menu *menu.Menu, btns types.Buttons, animation ...bool) {
+	buf := b.ExecuteTmplWithMenuAndNavButtons(ctx, panel, menu, btns, animation...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
@@ -202,8 +221,12 @@ func LoadFromPlugin(mod string) Plugin {
 func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
 
 func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons, user models.UserModel,
-	panel types.Panel, animation ...bool) *bytes.Buffer {
+	panel types.Panel, options ...bool) *bytes.Buffer {
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+
+	animation := len(options) > 0 && options[0] || len(options) == 0
+	noCompress := len(options) > 1 && options[1]
+	updateMenu := len(options) > 2 && options[2]
 
 	return template.Execute(template.ExecuteParam{
 		User:       user,
@@ -212,9 +235,36 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 		Panel:      panel,
 		Config:     *config.Get(),
 		Menu:       menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
-		Animation:  len(animation) > 0 && animation[0] || len(animation) == 0,
+		Animation:  animation,
 		Buttons:    navButtons.CheckPermission(user),
-		NoCompress: len(animation) > 1 && animation[1],
+		NoCompress: noCompress,
+		UpdateMenu: updateMenu,
+		IsPjax:     ctx.IsPjax(),
+	})
+}
+
+func ExecuteWithMenu(ctx *context.Context,
+	navButtons types.Buttons,
+	user models.UserModel,
+	panel types.Panel,
+	menu *menu.Menu, options ...bool) *bytes.Buffer {
+	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+
+	animation := len(options) > 0 && options[0] || len(options) == 0
+	noCompress := len(options) > 1 && options[1]
+
+	return template.Execute(template.ExecuteParam{
+		User:       user,
+		TmplName:   tmplName,
+		Tmpl:       tmpl,
+		Panel:      panel,
+		Config:     *config.Get(),
+		Menu:       menu,
+		Animation:  animation,
+		Buttons:    navButtons.CheckPermission(user),
+		NoCompress: noCompress,
+		UpdateMenu: true,
+		IsPjax:     ctx.IsPjax(),
 	})
 }
 

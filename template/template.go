@@ -366,6 +366,8 @@ type ExecuteParam struct {
 	User       models.UserModel
 	Tmpl       *template.Template
 	TmplName   string
+	IsPjax     bool
+	UpdateMenu bool
 	Panel      types.Panel
 	Config     c.Config
 	Menu       *menu.Menu
@@ -380,9 +382,11 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
 		types.NewPage(types.NewPageParam{
-			User:         param.User,
-			Menu:         param.Menu,
-			Panel:        param.Panel.GetContent(append([]bool{param.Config.IsProductionEnvironment() && (!param.NoCompress)}, param.Animation)...),
+			User: param.User,
+			Menu: param.Menu,
+			Panel: param.Panel.
+				GetContent(append([]bool{param.Config.IsProductionEnvironment() && !param.NoCompress},
+					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.UpdateMenu && param.IsPjax)),
 			Assets:       GetComponentAssetImportHTML(),
 			Buttons:      param.Buttons,
 			Iframe:       param.Iframe,

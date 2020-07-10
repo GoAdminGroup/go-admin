@@ -5,6 +5,7 @@
 package menu
 
 import (
+	"encoding/json"
 	"html/template"
 	"regexp"
 	"strconv"
@@ -16,20 +17,31 @@ import (
 
 // Item is an menu item.
 type Item struct {
-	Name         string
-	ID           string
-	Url          string
-	Icon         string
-	Header       string
-	Active       string
-	ChildrenList []Item
+	Name         string `json:"name"`
+	ID           string `json:"id"`
+	Url          string `json:"url"`
+	IsLinkUrl    bool   `json:"isLinkUrl"`
+	Icon         string `json:"icon"`
+	Header       string `json:"header"`
+	Active       string `json:"active"`
+	ChildrenList []Item `json:"childrenList"`
 }
 
 // Menu contains list of menu items and other info.
 type Menu struct {
-	List     []Item
-	Options  []map[string]string
-	MaxOrder int64
+	List     []Item              `json:"list"`
+	Options  []map[string]string `json:"options"`
+	MaxOrder int64               `json:"maxOrder"`
+}
+
+func (menu *Menu) GetUpdateJS(updateFlag bool) template.JS {
+	if updateFlag {
+		jsonByte, _ := json.Marshal(menu)
+		return `if (typeof updateMenu !== "undefined") {
+	updateMenu(JSON.parse("` + template.JS(jsonByte) + `"))
+}`
+	}
+	return ""
 }
 
 // SetMaxOrder set the max order of menu.
