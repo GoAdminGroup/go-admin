@@ -117,22 +117,22 @@ func (b *Base) ExecuteTmplWithMenuAndNavButtons(ctx *context.Context, panel type
 	return ExecuteWithMenu(ctx, btns, auth.Auth(ctx), panel, menu, options...)
 }
 
-func (b *Base) HTML(ctx *context.Context, panel types.Panel, animation ...bool) {
-	buf := b.ExecuteTmpl(ctx, panel, animation...)
+func (b *Base) HTML(ctx *context.Context, panel types.Panel, options ...bool) {
+	buf := b.ExecuteTmpl(ctx, panel, options...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, animation ...bool) {
-	buf := b.ExecuteTmplWithMenu(ctx, panel, menu, animation...)
+func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) {
+	buf := b.ExecuteTmplWithMenu(ctx, panel, menu, options...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLMenuWithBtns(ctx *context.Context, panel types.Panel, menu *menu.Menu, btns types.Buttons, animation ...bool) {
-	buf := b.ExecuteTmplWithMenuAndNavButtons(ctx, panel, menu, btns, animation...)
+func (b *Base) HTMLMenuWithBtns(ctx *context.Context, panel types.Panel, menu *menu.Menu, btns types.Buttons, options ...bool) {
+	buf := b.ExecuteTmplWithMenuAndNavButtons(ctx, panel, menu, btns, options...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]interface{}, animation ...bool) {
+func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]interface{}, options ...bool) {
 
 	buf := new(bytes.Buffer)
 	var panel types.Panel
@@ -150,10 +150,10 @@ func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]inter
 		}
 	}
 
-	b.HTML(ctx, panel, animation...)
+	b.HTML(ctx, panel, options...)
 }
 
-func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, files []string, animation ...bool) {
+func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, files []string, options ...bool) {
 	buf := new(bytes.Buffer)
 	var panel types.Panel
 
@@ -170,7 +170,7 @@ func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, file
 		}
 	}
 
-	b.HTML(ctx, panel, animation...)
+	b.HTML(ctx, panel, options...)
 }
 
 type BasePlugin struct {
