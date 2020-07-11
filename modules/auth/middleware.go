@@ -70,7 +70,7 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 	if (typeof(swal) === "function") {
 		swal({
 			type: "info",
-			title: `+language.Get("login info")+`,
+			title: "`+language.Get("login info")+`",
 			text: "`+msg+`",
 			showCancelButton: false,
 			confirmButtonColor: "#3c8dbc",

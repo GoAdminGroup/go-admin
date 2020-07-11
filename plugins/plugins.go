@@ -40,6 +40,7 @@ type Plugin interface {
 	Name() string
 	Prefix() string
 	GetInfo() Info
+	GetIndexURL() string
 	GetInstallationPage() (skip bool, gen table.Generator)
 	IsInstalled() bool
 	CheckUpdate() (update bool, version string)
@@ -95,6 +96,7 @@ func (b *Base) Prefix() string                                        { return b
 func (b *Base) IsInstalled() bool                                     { return false }
 func (b *Base) Uninstall() error                                      { return nil }
 func (b *Base) Upgrade() error                                        { return nil }
+func (b *Base) GetIndexURL() string                                   { return "" }
 func (b *Base) CheckUpdate() (update bool, version string)            { return false, "" }
 func (b *Base) GetInstallationPage() (skip bool, gen table.Generator) { return true, nil }
 
