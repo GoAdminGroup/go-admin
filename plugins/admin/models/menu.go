@@ -46,15 +46,16 @@ func (t MenuModel) Find(id interface{}) MenuModel {
 }
 
 // New create a new menu model.
-func (t MenuModel) New(title, icon, uri, header string, parentId, order int64) (MenuModel, error) {
+func (t MenuModel) New(title, icon, uri, header, pluginName string, parentId, order int64) (MenuModel, error) {
 
 	id, err := t.Table(t.TableName).Insert(dialect.H{
-		"title":     title,
-		"parent_id": parentId,
-		"icon":      icon,
-		"uri":       uri,
-		"order":     order,
-		"header":    header,
+		"title":       title,
+		"parent_id":   parentId,
+		"icon":        icon,
+		"uri":         uri,
+		"order":       order,
+		"header":      header,
+		"plugin_name": pluginName,
 	})
 
 	t.Id = id
@@ -85,16 +86,17 @@ func (t MenuModel) Delete() {
 }
 
 // Update update the menu model.
-func (t MenuModel) Update(title, icon, uri, header string, parentId int64) (int64, error) {
+func (t MenuModel) Update(title, icon, uri, header, pluginName string, parentId int64) (int64, error) {
 	return t.Table(t.TableName).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
-			"title":      title,
-			"parent_id":  parentId,
-			"icon":       icon,
-			"uri":        uri,
-			"header":     header,
-			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
+			"title":       title,
+			"parent_id":   parentId,
+			"icon":        icon,
+			"plugin_name": pluginName,
+			"uri":         uri,
+			"header":      header,
+			"updated_at":  time.Now().Format("2006-01-02 15:04:05"),
 		})
 }
 
@@ -115,43 +117,48 @@ func (t MenuModel) ResetOrder(data []byte) {
 	for _, v := range items {
 		if len(v.Children) > 0 {
 			_, _ = t.Table(t.TableName).
-				Where("id", "=", v.ID).Update(dialect.H{
-				"order":     count,
-				"parent_id": 0,
-			})
+				Where("id", "=", v.ID).
+				Update(dialect.H{
+					"order":     count,
+					"parent_id": 0,
+				})
 
 			for _, v2 := range v.Children {
 				if len(v2.Children) > 0 {
 
 					_, _ = t.Table(t.TableName).
-						Where("id", "=", v2.ID).Update(dialect.H{
-						"order":     count,
-						"parent_id": v.ID,
-					})
+						Where("id", "=", v2.ID).
+						Update(dialect.H{
+							"order":     count,
+							"parent_id": v.ID,
+						})
 
 					for _, v3 := range v2.Children {
 						_, _ = t.Table(t.TableName).
-							Where("id", "=", v3.ID).Update(dialect.H{
-							"order":     count,
-							"parent_id": v2.ID,
-						})
+							Where("id", "=", v3.ID).
+							Update(dialect.H{
+								"order":     count,
+								"parent_id": v2.ID,
+							})
 						count++
 					}
 				} else {
 					_, _ = t.Table(t.TableName).
-						Where("id", "=", v2.ID).Update(dialect.H{
-						"order":     count,
-						"parent_id": v.ID,
-					})
+						Where("id", "=", v2.ID).
+						Update(dialect.H{
+							"order":     count,
+							"parent_id": v.ID,
+						})
 					count++
 				}
 			}
 		} else {
 			_, _ = t.Table(t.TableName).
-				Where("id", "=", v.ID).Update(dialect.H{
-				"order":     count,
-				"parent_id": 0,
-			})
+				Where("id", "=", v.ID).
+				Update(dialect.H{
+					"order":     count,
+					"parent_id": 0,
+				})
 			count++
 		}
 	}

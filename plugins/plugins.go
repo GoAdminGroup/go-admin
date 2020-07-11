@@ -108,22 +108,46 @@ func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, options ...b
 	return Execute(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, options...)
 }
 
-func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) *bytes.Buffer {
-	return ExecuteWithMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, options...)
+func (b *Base) ExecuteTmplWithNavButtons(ctx *context.Context, panel types.Panel, btns types.Buttons,
+	options ...bool) *bytes.Buffer {
+	return Execute(ctx, b.Conn, btns, auth.Auth(ctx), panel, options...)
+}
+
+func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, options ...bool) *bytes.Buffer {
+	return ExecuteWithMenu(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, b.Name(), options...)
+}
+
+func (b *Base) ExecuteTmplWithCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) *bytes.Buffer {
+	return ExecuteWithCustomMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, options...)
 }
 
 func (b *Base) ExecuteTmplWithMenuAndNavButtons(ctx *context.Context, panel types.Panel, menu *menu.Menu,
 	btns types.Buttons, options ...bool) *bytes.Buffer {
-	return ExecuteWithMenu(ctx, btns, auth.Auth(ctx), panel, menu, options...)
+	return ExecuteWithMenu(ctx, b.Conn, btns, auth.Auth(ctx), panel, b.Name(), options...)
 }
 
 func (b *Base) HTML(ctx *context.Context, panel types.Panel, options ...bool) {
-	buf := b.ExecuteTmpl(ctx, panel, options...)
+	if len(options) > 2 && options[2] {
+		buf := b.ExecuteTmplWithMenu(ctx, panel, options...)
+		ctx.HTMLByte(http.StatusOK, buf.Bytes())
+	} else {
+		buf := b.ExecuteTmpl(ctx, panel, options...)
+		ctx.HTMLByte(http.StatusOK, buf.Bytes())
+	}
+}
+
+func (b *Base) HTMLCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) {
+	buf := b.ExecuteTmplWithCustomMenu(ctx, panel, menu, options...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...bool) {
-	buf := b.ExecuteTmplWithMenu(ctx, panel, menu, options...)
+func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, options ...bool) {
+	buf := b.ExecuteTmplWithMenu(ctx, panel, options...)
+	ctx.HTMLByte(http.StatusOK, buf.Bytes())
+}
+
+func (b *Base) HTMLBtns(ctx *context.Context, panel types.Panel, btns types.Buttons, options ...bool) {
+	buf := b.ExecuteTmplWithNavButtons(ctx, panel, btns, options...)
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
@@ -243,11 +267,12 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 	})
 }
 
-func ExecuteWithMenu(ctx *context.Context,
+func ExecuteWithCustomMenu(ctx *context.Context,
 	navButtons types.Buttons,
 	user models.UserModel,
 	panel types.Panel,
 	menu *menu.Menu, options ...bool) *bytes.Buffer {
+
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	animation := len(options) > 0 && options[0] || len(options) == 0
@@ -260,6 +285,33 @@ func ExecuteWithMenu(ctx *context.Context,
 		Panel:      panel,
 		Config:     *config.Get(),
 		Menu:       menu,
+		Animation:  animation,
+		Buttons:    navButtons.CheckPermission(user),
+		NoCompress: noCompress,
+		UpdateMenu: true,
+		IsPjax:     ctx.IsPjax(),
+	})
+}
+
+func ExecuteWithMenu(ctx *context.Context,
+	conn db.Connection,
+	navButtons types.Buttons,
+	user models.UserModel,
+	panel types.Panel,
+	name string, options ...bool) *bytes.Buffer {
+
+	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+
+	animation := len(options) > 0 && options[0] || len(options) == 0
+	noCompress := len(options) > 1 && options[1]
+
+	return template.Execute(template.ExecuteParam{
+		User:       user,
+		TmplName:   tmplName,
+		Tmpl:       tmpl,
+		Panel:      panel,
+		Config:     *config.Get(),
+		Menu:       menu.GetGlobalMenu(user, conn, name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation:  animation,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: noCompress,

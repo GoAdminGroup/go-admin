@@ -11,14 +11,15 @@ import (
 )
 
 type MenuEditParam struct {
-	Id       string
-	Title    string
-	Header   string
-	ParentId int64
-	Icon     string
-	Uri      string
-	Roles    []string
-	Alert    template.HTML
+	Id         string
+	Title      string
+	Header     string
+	PluginName string
+	ParentId   int64
+	Icon       string
+	Uri        string
+	Roles      []string
+	Alert      template.HTML
 }
 
 func (e MenuEditParam) HasAlert() bool {
@@ -46,17 +47,16 @@ func (g *Guard) MenuEdit(ctx *context.Context) {
 		alert = checkEmpty(ctx, "id", "title", "icon")
 	}
 
-	// TODO: check the user permission
-
 	ctx.SetUserValue(editMenuParamKey, &MenuEditParam{
-		Id:       ctx.FormValue("id"),
-		Title:    ctx.FormValue("title"),
-		Header:   ctx.FormValue("header"),
-		ParentId: int64(parentIdInt),
-		Icon:     ctx.FormValue("icon"),
-		Uri:      ctx.FormValue("uri"),
-		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    alert,
+		Id:         ctx.FormValue("id"),
+		Title:      ctx.FormValue("title"),
+		Header:     ctx.FormValue("header"),
+		PluginName: ctx.FormValue("plugin_name"),
+		ParentId:   int64(parentIdInt),
+		Icon:       ctx.FormValue("icon"),
+		Uri:        ctx.FormValue("uri"),
+		Roles:      ctx.Request.Form["roles[]"],
+		Alert:      alert,
 	})
 	ctx.Next()
 }

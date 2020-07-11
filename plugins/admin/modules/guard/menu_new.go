@@ -11,13 +11,14 @@ import (
 )
 
 type MenuNewParam struct {
-	Title    string
-	Header   string
-	ParentId int64
-	Icon     string
-	Uri      string
-	Roles    []string
-	Alert    template.HTML
+	Title      string
+	Header     string
+	ParentId   int64
+	Icon       string
+	PluginName string
+	Uri        string
+	Roles      []string
+	Alert      template.HTML
 }
 
 func (e MenuNewParam) HasAlert() bool {
@@ -47,13 +48,14 @@ func (g *Guard) MenuNew(ctx *context.Context) {
 	parentIdInt, _ := strconv.Atoi(parentId)
 
 	ctx.SetUserValue(newMenuParamKey, &MenuNewParam{
-		Title:    ctx.FormValue("title"),
-		Header:   ctx.FormValue("header"),
-		ParentId: int64(parentIdInt),
-		Icon:     ctx.FormValue("icon"),
-		Uri:      ctx.FormValue("uri"),
-		Roles:    ctx.Request.Form["roles[]"],
-		Alert:    alert,
+		Title:      ctx.FormValue("title"),
+		Header:     ctx.FormValue("header"),
+		PluginName: ctx.FormValue("plugin_name"),
+		ParentId:   int64(parentIdInt),
+		Icon:       ctx.FormValue("icon"),
+		Uri:        ctx.FormValue("uri"),
+		Roles:      ctx.Request.Form["roles[]"],
+		Alert:      alert,
 	})
 	ctx.Next()
 }

@@ -869,7 +869,9 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 	menuTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := menuTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	name := ctx.Query("__plugin_name")
+
+	info := menuTable.GetInfo().AddXssJsFilter().HideFilterArea().Where("plugin_name", "=", name)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("parent"), "parent_id", db.Int)
@@ -923,6 +925,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 
 	allMenus, _ := s.connection().Table("goadmin_menu").
 		Where("parent_id", "=", 0).
+		Where("plugin_name", "=", name).
 		Select("id", "title").
 		OrderBy("order", "asc").
 		All()
@@ -935,6 +938,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 
 		secondLevelMenus, _ := s.connection().Table("goadmin_menu").
 			WhereIn("parent_id", allMenuIDs).
+			Where("plugin_name", "=", name).
 			Select("id", "title", "parent_id").
 			All()
 
@@ -975,6 +979,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 	formList.AddField(lg("header"), "header", db.Varchar, form.Text)
 	formList.AddField(lg("icon"), "icon", db.Varchar, form.IconPicker)
 	formList.AddField(lg("uri"), "uri", db.Varchar, form.Text)
+	formList.AddField("PluginName", "plugin_name", db.Varchar, form.Text).FieldDefault(name).FieldHide()
 	formList.AddField(lg("role"), "roles", db.Int, form.Select).
 		FieldOptionsFromTable("goadmin_roles", "slug", "id").
 		FieldDisplay(func(model types.FieldModel) interface{} {

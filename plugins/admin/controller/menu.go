@@ -23,7 +23,7 @@ import (
 
 // ShowMenu show menu info page.
 func (h *Handler) ShowMenu(ctx *context.Context) {
-	h.getMenuInfoPanel(ctx, "")
+	h.getMenuInfoPanel(ctx, "", "")
 }
 
 // ShowNewMenu show new menu page.
@@ -68,7 +68,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 func (h *Handler) ShowEditMenu(ctx *context.Context) {
 
 	if ctx.Query("id") == "" {
-		h.getMenuInfoPanel(ctx, template.Get(h.config.Theme).Alert().Warning(errors.WrongID))
+		h.getMenuInfoPanel(ctx, "", template.Get(h.config.Theme).Alert().Warning(errors.WrongID))
 
 		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
@@ -89,10 +89,10 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 		return
 	}
 
-	h.showEditMenu(ctx, formInfo, nil)
+	h.showEditMenu(ctx, "", formInfo, nil)
 }
 
-func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, err error) {
+func (h *Handler) showEditMenu(ctx *context.Context, params string, formInfo table.FormInfo, err error) {
 
 	var alert template2.HTML
 
@@ -114,7 +114,7 @@ func (h *Handler) showEditMenu(ctx *context.Context, formInfo table.FormInfo, er
 				panel.GetForm().FormEditBtnWord)).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
-				form2.PreviousKey: h.routePath("menu"),
+				form2.PreviousKey: h.routePath("menu") + params,
 			}), false, ctx.Query(constant.IframeKey) == "true", false, ""),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
@@ -132,11 +132,15 @@ func (h *Handler) DeleteMenu(ctx *context.Context) {
 func (h *Handler) EditMenu(ctx *context.Context) {
 
 	param := guard.GetMenuEditParam(ctx)
+	params := ""
+	if param.PluginName != "" {
+		params = "?__plugin_name=" + param.PluginName
+	}
 
 	if param.HasAlert() {
-		h.getMenuInfoPanel(ctx, param.Alert)
+		h.getMenuInfoPanel(ctx, param.PluginName, param.Alert)
 		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 		return
 	}
 
@@ -146,43 +150,47 @@ func (h *Handler) EditMenu(ctx *context.Context) {
 	deleteRolesErr := menuModel.DeleteRoles()
 	if db.CheckError(deleteRolesErr, db.DELETE) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-		h.showEditMenu(ctx, formInfo, deleteRolesErr)
-		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+		h.showEditMenu(ctx, params, formInfo, deleteRolesErr)
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 		return
 	}
 	for _, roleId := range param.Roles {
 		_, addRoleErr := menuModel.AddRole(roleId)
 		if db.CheckError(addRoleErr, db.INSERT) {
 			formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-			h.showEditMenu(ctx, formInfo, addRoleErr)
-			ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+			h.showEditMenu(ctx, params, formInfo, addRoleErr)
+			ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 			return
 		}
 	}
 
-	_, updateErr := menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.ParentId)
+	_, updateErr := menuModel.Update(param.Title, param.Icon, param.Uri, param.Header, param.PluginName, param.ParentId)
 
 	if db.CheckError(updateErr, db.UPDATE) {
 		formInfo, _ := h.table("menu", ctx).GetDataWithId(parameter.BaseParam().WithPKs(param.Id))
-		h.showEditMenu(ctx, formInfo, updateErr)
-		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+		h.showEditMenu(ctx, params, formInfo, updateErr)
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 		return
 	}
 
-	h.getMenuInfoPanel(ctx, "")
+	h.getMenuInfoPanel(ctx, param.PluginName, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-	ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+	ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 }
 
 // NewMenu create a new menu item.
 func (h *Handler) NewMenu(ctx *context.Context) {
 
 	param := guard.GetMenuNewParam(ctx)
+	params := ""
+	if param.PluginName != "" {
+		params = "?__plugin_name=" + param.PluginName
+	}
 
 	if param.HasAlert() {
-		h.getMenuInfoPanel(ctx, param.Alert)
+		h.getMenuInfoPanel(ctx, param.PluginName, param.Alert)
 		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 		return
 	}
 
@@ -190,7 +198,8 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 
 	// TODO: use transaction
 	menuModel, createErr := models.Menu().SetConn(h.conn).
-		New(param.Title, param.Icon, param.Uri, param.Header, param.ParentId, (menu.GetGlobalMenu(user, h.conn)).MaxOrder+1)
+		New(param.Title, param.Icon, param.Uri, param.Header, param.PluginName, param.ParentId,
+			(menu.GetGlobalMenu(user, h.conn, param.PluginName)).MaxOrder+1)
 
 	if db.CheckError(createErr, db.INSERT) {
 		h.showNewMenu(ctx, createErr)
@@ -205,11 +214,11 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 		}
 	}
 
-	menu.GetGlobalMenu(user, h.conn).AddMaxOrder()
+	menu.GetGlobalMenu(user, h.conn, param.PluginName).AddMaxOrder()
 
-	h.getMenuInfoPanel(ctx, "")
+	h.getMenuInfoPanel(ctx, param.PluginName, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
-	ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu"))
+	ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+params)
 }
 
 // MenuOrder change the order of menu items.
@@ -223,11 +232,15 @@ func (h *Handler) MenuOrder(ctx *context.Context) {
 	response.Ok(ctx)
 }
 
-func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
+func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert template2.HTML) {
 	user := auth.Auth(ctx)
 
+	if plugName == "" {
+		plugName = ctx.Query("__plugin_name")
+	}
+
 	tree := aTree().
-		SetTree((menu.GetGlobalMenu(user, h.conn)).List).
+		SetTree((menu.GetGlobalMenu(user, h.conn, plugName)).List).
 		SetEditUrl(h.routePath("menu_edit_show")).
 		SetUrlPrefix(h.config.Prefix()).
 		SetDeleteUrl(h.routePath("menu_delete")).
@@ -241,13 +254,19 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, alert template2.HTML) {
 
 	formInfo := panel.GetNewForm()
 
+	previousURL := h.routePath("menu")
+
+	if plugName != "" {
+		previousURL += "?__plugin_name=" + plugName
+	}
+
 	newForm := menuFormContent(aForm().
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetUrl(h.routePath("menu_new")).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetHiddenFields(map[string]string{
 			form2.TokenKey:    h.authSrv().AddToken(),
-			form2.PreviousKey: h.routePath("menu"),
+			form2.PreviousKey: previousURL,
 		}).
 		SetOperationFooter(formFooter("menu", false, false, false,
 			panel.GetForm().FormNewBtnWord)).

@@ -29,9 +29,11 @@ type Item struct {
 
 // Menu contains list of menu items and other info.
 type Menu struct {
-	List     []Item              `json:"list"`
-	Options  []map[string]string `json:"options"`
-	MaxOrder int64               `json:"maxOrder"`
+	List        []Item              `json:"list"`
+	Options     []map[string]string `json:"options"`
+	MaxOrder    int64               `json:"maxOrder"`
+	PluginName  string              `json:"pluginName"`
+	ForceUpdate bool                `json:"forceUpdate"`
 }
 
 func (menu *Menu) GetUpdateJS(updateFlag bool) template.JS {
@@ -114,18 +116,24 @@ func (menu *Menu) GetEditMenuList() []Item {
 }
 
 // GetGlobalMenu return Menu of given user model.
-func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
+func GetGlobalMenu(user models.UserModel, conn db.Connection, pluginNames ...string) *Menu {
 
 	var (
 		menus      []map[string]interface{}
 		menuOption = make([]map[string]string, 0)
+		plugName   = ""
 	)
+
+	if len(pluginNames) > 0 {
+		plugName = pluginNames[0]
+	}
 
 	user.WithRoles().WithMenus()
 
 	if user.IsSuperAdmin() {
 		menus, _ = db.WithDriver(conn).Table("goadmin_menu").
 			Where("id", ">", 0).
+			Where("plugin_name", "=", plugName).
 			OrderBy("order", "asc").
 			All()
 	} else {
@@ -137,6 +145,7 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
 
 		menus, _ = db.WithDriver(conn).Table("goadmin_menu").
 			WhereIn("id", ids).
+			Where("plugin_name", "=", plugName).
 			OrderBy("order", "asc").
 			All()
 	}
@@ -157,11 +166,16 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection) *Menu {
 	}
 
 	menuList := constructMenuTree(menus, 0)
+	maxOrder := int64(0)
+	if len(menus) > 0 {
+		maxOrder = menus[len(menus)-1]["parent_id"].(int64)
+	}
 
 	return &Menu{
-		List:     menuList,
-		Options:  menuOption,
-		MaxOrder: menus[len(menus)-1]["parent_id"].(int64),
+		List:       menuList,
+		Options:    menuOption,
+		MaxOrder:   maxOrder,
+		PluginName: plugName,
 	}
 }
 
