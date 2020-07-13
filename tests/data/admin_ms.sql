@@ -30,6 +30,8 @@ CREATE TABLE [dbo].[goadmin_menu] (
 	[icon] varchar(50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 	[uri] varchar(3000) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL DEFAULT '',
 	[header] varchar(150) COLLATE SQL_Latin1_General_CP1_CI_AS NULL DEFAULT NULL,
+	[uuid] varchar(150) COLLATE SQL_Latin1_General_CP1_CI_AS NULL DEFAULT NULL,
+	[plugin_name] varchar(150) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL DEFAULT '',
 	[created_at] datetime NULL DEFAULT (getdate()),
 	[updated_at] datetime NULL DEFAULT (getdate())
 )

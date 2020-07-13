@@ -61,6 +61,7 @@ CREATE TABLE public.goadmin_menu (
     plugin_name character varying(100) NOT NULL,
     icon character varying(50) NOT NULL,
     uri character varying(3000) NOT NULL,
+    uuid character varying(100),
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()
 );
