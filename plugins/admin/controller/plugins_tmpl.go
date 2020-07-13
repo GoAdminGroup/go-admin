@@ -221,6 +221,26 @@ function pluginRebootInstall() {
 `
 
 var pluginsPageCSS = template.CSS(`
+	.plugin-item-img {
+		text-align: center;
+	}
+	.plugin-item-img img {
+		width: 100%;
+		height: auto;
+	}
+	.plugin-item-title {
+		margin-top: 10px;
+		color: #717171;
+		overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+	}
+`)
+
+var pluginsStorePageCSS = template.CSS(`
 	.plugin-item-content {
 		margin-left: 15px;
 	}

@@ -123,7 +123,9 @@ var cn = LangSet{
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化数据库连接",
 
-	"plugins": "插件",
+	"plugins":          "插件",
+	"plugin store":     "插件商店",
+	"get more plugins": "获取更多插件",
 
 	"second":  "秒",
 	"seconds": "秒",

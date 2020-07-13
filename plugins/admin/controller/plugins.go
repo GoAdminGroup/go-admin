@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/modules/config"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -25,7 +27,37 @@ import (
 )
 
 func (h *Handler) Plugins(ctx *context.Context) {
-	ctx.GetContentType()
+	list := plugins.Get()
+	size := types.Size(12, 3, 2)
+	rows := template.HTML("")
+	list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{Title: "get more plugins", Name: ""},
+		config.Url("/plugins/store")))
+	for i := 0; i < len(list); i += 6 {
+		box1 := aBox().
+			SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i]))).
+			GetContent()
+		content := aCol().SetSize(size).SetContent(box1).GetContent()
+		offset := len(list) - i
+		if offset > 6 {
+			offset = 6
+		}
+		for j := i + 1; j < offset; j++ {
+			box2 := aBox().
+				SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[j]))).
+				GetContent()
+			content += aCol().SetSize(size).SetContent(box2).GetContent()
+		}
+		rows += aRow().SetContent(content).GetContent()
+	}
+	h.HTML(ctx, auth.Auth(ctx), types.Panel{
+		Content:     rows,
+		CSS:         pluginsPageCSS,
+		Description: language.GetFromHtml("plugins"),
+		Title:       language.GetFromHtml("plugins"),
+	})
+}
+
+func (h *Handler) PluginStore(ctx *context.Context) {
 	var (
 		size       = types.Size(12, 6, 4)
 		list, page = plugins.GetAll(
@@ -43,18 +75,18 @@ func (h *Handler) Plugins(ctx *context.Context) {
 
 	for i := 0; i < len(list); i += 3 {
 		box1 := aBox().
-			SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i]))).
+			SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i]))).
 			GetContent()
 		col1 := aCol().SetSize(size).SetContent(box1).GetContent()
 		box2, col2, box3, col3 := template.HTML(""), template.HTML(""), template.HTML(""), template.HTML("")
 		if i+1 < len(list) {
 			box2 = aBox().
-				SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i+1]))).
+				SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i+1]))).
 				GetContent()
 			col2 = aCol().SetSize(size).SetContent(box2).GetContent()
 			if i+2 < len(list) {
 				box3 = aBox().
-					SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i+2]))).
+					SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i+2]))).
 					GetContent()
 				col3 = aCol().SetSize(size).SetContent(box3).GetContent()
 			}
@@ -93,10 +125,10 @@ func (h *Handler) Plugins(ctx *context.Context) {
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content:     rows + detailPopupModal + buyPopupModal + loginPopupModal,
-		CSS:         pluginsPageCSS + template.CSS(page.CSS),
+		CSS:         pluginsStorePageCSS + template.CSS(page.CSS),
 		JS:          template.JS(page.JS) + GetPluginsPageJS(PluginsPageJSData{Prefix: h.config.Prefix()}),
-		Description: language.GetFromHtml("plugins"),
-		Title:       language.GetFromHtml("plugins"),
+		Description: language.GetFromHtml("plugin store"),
+		Title:       language.GetFromHtml("plugin store"),
 	})
 }
 
@@ -147,6 +179,7 @@ type PluginBoxParam struct {
 	Skip           bool
 	DownloadReboot bool
 	Name           string
+	IndexURL       string
 }
 
 func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
@@ -161,15 +194,16 @@ func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
 		Skip:           skip,
 		DownloadReboot: plugins.Exist(plug),
 		Name:           plug.Name(),
+		IndexURL:       plug.GetIndexURL(),
 	}
 }
 
-func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
+func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
 		cover = "/admin/assets/dist/img/avatar04.png"
 	}
-	col1 := html.DivEl().SetClass("plugin-item-img").
+	col1 := html.DivEl().SetClass("plugin-store-item-img").
 		SetContent(aImage().
 			SetSrc(cover).
 			SetHeight("110px").
@@ -233,6 +267,21 @@ func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
 	).Get()
 
 	return html.Div(col1+col2, html.M{"clear": "both"})
+}
+
+func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
+	cover := template2.HTML(param.Info.MiniCover)
+	if cover == template2.HTML("") {
+		cover = "/admin/assets/dist/img/avatar04.png"
+	}
+	col1 := html.AEl().SetContent(html.DivEl().SetClass("plugin-item-img").
+		SetContent(aImage().
+			SetSrc(cover).
+			GetContent()+
+			html.PEl().SetContent(language.GetFromHtml(template.HTML(param.Info.Title), param.Name)).
+				SetClass("plugin-item-title").Get()).
+		Get()).SetAttr("href", param.IndexURL).Get()
+	return col1
 }
 
 func (h *Handler) PluginDownload(ctx *context.Context) {

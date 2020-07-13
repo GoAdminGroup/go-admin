@@ -59,6 +59,10 @@ func (admin *Admin) InitPlugin(services service.List) {
 	action.InitOperationHandlerSetter(admin.GetAddOperationFn())
 }
 
+func (admin *Admin) GetIndexURL() string {
+	return config.GetIndexURL()
+}
+
 func (admin *Admin) GetInfo() plugins.Info {
 	return plugins.Info{
 		Title:       "Basic Admin",

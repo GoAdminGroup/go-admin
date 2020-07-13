@@ -54,6 +54,7 @@ func (admin *Admin) initRouter() *Admin {
 	authRoute.GET("/menu/new", admin.handler.ShowNewMenu).Name("menu_new_show")
 
 	authRoute.GET("/plugins", admin.handler.Plugins).Name("plugins")
+	authRoute.GET("/plugins/store", admin.handler.PluginStore).Name("plugins_store")
 	authRoute.POST("/plugin/download", admin.handler.PluginDownload).Name("plugin_download")
 	authRoute.POST("/plugin/detail", admin.handler.PluginDetail).Name("plugin_detail")
 	authRoute.POST("/server/login", admin.guardian.ServerLogin, admin.handler.ServerLogin).Name("server_login")

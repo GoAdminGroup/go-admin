@@ -104,7 +104,7 @@ func (eng *Engine) Use(router interface{}) error {
 	}
 
 	if !eng.config.HidePluginEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Plug, types.NavBtnPlugName,
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Th, types.NavBtnPlugName,
 			action.JumpInNewTab(config.Url("/plugins"),
 				language.GetWithScope("plugin", "plugin")))
 	}

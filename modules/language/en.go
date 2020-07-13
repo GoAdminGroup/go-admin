@@ -92,7 +92,9 @@ var en = LangSet{
 	"initialize plugins":              "Initialize plugins",
 	"initialize database connections": "Initialize database connections",
 
-	"plugins": "Plugins",
+	"plugins":          "Plugins",
+	"plugin store":     "Plugin Store",
+	"get more plugins": "Get more plugins",
 
 	"second":  "second",
 	"seconds": "seconds",

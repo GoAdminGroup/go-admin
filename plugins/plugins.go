@@ -201,14 +201,20 @@ func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, file
 
 type BasePlugin struct {
 	Base
-	Info Info
+	Info     Info
+	IndexURL string
 }
 
-func (b *BasePlugin) GetInfo() Info { return b.Info }
-func (b *BasePlugin) Name() string  { return b.Info.Name }
+func (b *BasePlugin) GetInfo() Info       { return b.Info }
+func (b *BasePlugin) Name() string        { return b.Info.Name }
+func (b *BasePlugin) GetIndexURL() string { return b.IndexURL }
 
 func NewBasePluginWithInfo(info Info) Plugin {
 	return &BasePlugin{Info: info}
+}
+
+func NewBasePluginWithInfoAndIndexURL(info Info, u string) Plugin {
+	return &BasePlugin{Info: info, IndexURL: u}
 }
 
 func GetPluginsWithInfos(info []Info) Plugins {
@@ -359,6 +365,7 @@ func Exist(p Plugin) bool {
 }
 
 func Add(p Plugin) {
+	// TODO: 验证插件合法性
 	pluginList = pluginList.Add(p)
 }
 
@@ -412,7 +419,9 @@ func GetAll(req remote_server.GetOnlineReq, token string) (Plugins, Page) {
 }
 
 func Get() Plugins {
-	return pluginList
+	var plugs = make(Plugins, len(pluginList))
+	copy(plugs, pluginList)
+	return plugs
 }
 
 type GetOnlineRes struct {

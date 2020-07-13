@@ -117,7 +117,9 @@ var tc = LangSet{
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化數據庫連接",
 
-	"plugins": "插件",
+	"plugins":          "插件",
+	"plugin store":     "插件商店",
+	"get more plugins": "獲取更多插件",
 
 	"second":  "秒",
 	"seconds": "秒",

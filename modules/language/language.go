@@ -128,7 +128,9 @@ func Add(key string, lang map[string]string) {
 func JoinScopes(scopes []string) string {
 	j := ""
 	for _, scope := range scopes {
-		j += scope + "."
+		if scope != "" {
+			j += scope + "."
+		}
 	}
 	return j
 }

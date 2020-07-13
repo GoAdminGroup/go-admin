@@ -389,7 +389,7 @@ func (ctx *Context) SetHeader(key, value string) {
 }
 
 func (ctx *Context) GetContentType() string {
-	return ctx.Request.Header.Get("")
+	return ctx.Request.Header.Get("Content-Type")
 }
 
 func (ctx *Context) Cookie(name string) string {
