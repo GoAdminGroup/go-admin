@@ -314,14 +314,14 @@ ALTER TABLE public.goadmin_users OWNER TO postgres;
 -- Data for Name: goadmin_menu; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.goadmin_menu (id, parent_id, type, "order", title, header, icon, uri, created_at, updated_at) FROM stdin;
-1	0	1	2	Admin	\N	fa-tasks		2019-09-10 00:00:00	2019-09-10 00:00:00
-2	1	1	2	Users	\N	fa-users	/info/manager	2019-09-10 00:00:00	2019-09-10 00:00:00
-3	1	1	3	Roles	\N	fa-user	/info/roles	2019-09-10 00:00:00	2019-09-10 00:00:00
-4	1	1	4	Permission	\N	fa-ban	/info/permission	2019-09-10 00:00:00	2019-09-10 00:00:00
-5	1	1	5	Menu	\N	fa-bars	/menu	2019-09-10 00:00:00	2019-09-10 00:00:00
-6	1	1	6	Operation log	\N	fa-history	/info/op	2019-09-10 00:00:00	2019-09-10 00:00:00
-7	0	1	1	Dashboard	\N	fa-bar-chart	/	2019-09-10 00:00:00	2019-09-10 00:00:00
+COPY public.goadmin_menu (id, parent_id, type, "order", title, plugin_name, header, icon, uri, created_at, updated_at) FROM stdin;
+1	0	1	2	Admin		\N	fa-tasks		2019-09-10 00:00:00	2019-09-10 00:00:00
+2	1	1	2	Users		\N	fa-users	/info/manager	2019-09-10 00:00:00	2019-09-10 00:00:00
+3	1	1	3	Roles		\N	fa-user	/info/roles	2019-09-10 00:00:00	2019-09-10 00:00:00
+4	1	1	4	Permission		\N	fa-ban	/info/permission	2019-09-10 00:00:00	2019-09-10 00:00:00
+5	1	1	5	Menu		\N	fa-bars	/menu	2019-09-10 00:00:00	2019-09-10 00:00:00
+6	1	1	6	Operation log		\N	fa-history	/info/op	2019-09-10 00:00:00	2019-09-10 00:00:00
+7	0	1	1	Dashboard		\N	fa-bar-chart	/	2019-09-10 00:00:00	2019-09-10 00:00:00
 \.
 
 
