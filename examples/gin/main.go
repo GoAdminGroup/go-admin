@@ -10,7 +10,6 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/themes/sword"
 
-	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -18,7 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types/action"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gin-gonic/gin"
 )
@@ -91,11 +89,6 @@ func main() {
 		AddGenerator("user", datamodel.GetUserTable).
 		AddDisplayFilterXssJsFilter().
 		AddPlugins(examplePlugin).
-		AddNavButtons("Website Info", "", action.PopUp("/website/info", "Website Info",
-			func(ctx *context.Context) (success bool, msg string, data interface{}) {
-				return true, "ok", `<p>created by <a href="https://github.com/chenhg5">cg33<a/></p>`
-			})).
-		AddNavButtons("Google", "", action.Jump("https://www.google.com")).
 		Use(r); err != nil {
 		panic(err)
 	}
