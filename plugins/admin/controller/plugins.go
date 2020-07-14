@@ -31,11 +31,13 @@ func (h *Handler) Plugins(ctx *context.Context) {
 	list := plugins.Get()
 	size := types.Size(6, 3, 2)
 	rows := template.HTML("")
-	getMoreCover := config.Url("/assets/dist/img/plugin_more.png")
-	list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{
-		Title: "get more plugins", Name: "",
-		MiniCover: getMoreCover, Cover: getMoreCover},
-		config.Url("/plugins/store")))
+	if h.config.IsNotProductionEnvironment() {
+		getMoreCover := config.Url("/assets/dist/img/plugin_more.png")
+		list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{
+			Title: "get more plugins", Name: "",
+			MiniCover: getMoreCover, Cover: getMoreCover},
+			config.Url("/plugins/store")))
+	}
 	for i := 0; i < len(list); i += 6 {
 		box1 := aBox().
 			SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i]))).

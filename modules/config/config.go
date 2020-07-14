@@ -487,6 +487,11 @@ func (c *Config) IsProductionEnvironment() bool {
 	return c.Env == EnvProd
 }
 
+// IsNotProductionEnvironment check the environment if it is not production.
+func (c *Config) IsNotProductionEnvironment() bool {
+	return c.Env != EnvProd
+}
+
 // URLRemovePrefix remove prefix from the given url.
 func (c *Config) URLRemovePrefix(url string) string {
 	if url == c.prefix {
@@ -963,6 +968,11 @@ func GetIndexURL() string {
 // IsProductionEnvironment check the environment if it is production.
 func IsProductionEnvironment() bool {
 	return globalCfg.IsProductionEnvironment()
+}
+
+// IsNotProductionEnvironment check the environment if it is not production.
+func IsNotProductionEnvironment() bool {
+	return globalCfg.IsNotProductionEnvironment()
 }
 
 // URLRemovePrefix remove prefix from the given url.
