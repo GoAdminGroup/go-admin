@@ -119,6 +119,8 @@ func (eng *Engine) Use(router interface{}) error {
 
 	logger.Info("=====> " + language.Get("initialize plugins"))
 
+	var plugGenerators = make(table.GeneratorList)
+
 	// Initialize plugins
 	for i := range eng.PluginList {
 		if eng.PluginList[i].Name() != "admin" {
@@ -128,9 +130,10 @@ func (eng *Engine) Use(router interface{}) error {
 			if !skip && gen != nil {
 				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), gen)
 			}
+			plugGenerators = plugGenerators.Combine(eng.PluginList[i].GetGenerators())
 		}
 	}
-	adm := eng.AdminPlugin()
+	adm := eng.AdminPlugin().AddGenerators(plugGenerators)
 	adm.InitPlugin(eng.Services)
 	plugins.Add(adm)
 

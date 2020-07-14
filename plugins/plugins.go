@@ -37,6 +37,7 @@ import (
 type Plugin interface {
 	GetHandler() context.HandlerMap
 	InitPlugin(services service.List)
+	GetGenerators() table.GeneratorList
 	Name() string
 	Prefix() string
 	GetInfo() Info
@@ -90,6 +91,7 @@ type Base struct {
 }
 
 func (b *Base) InitPlugin(services service.List)                      { return }
+func (b *Base) GetGenerators() table.GeneratorList                    { return make(table.GeneratorList) }
 func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
 func (b *Base) Name() string                                          { return b.PlugName }
 func (b *Base) GetInfo() Info                                         { return Info{} }
