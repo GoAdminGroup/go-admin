@@ -78,19 +78,20 @@ func Login(account, password string) LoginRes {
 type GetDownloadURLRes struct {
 	Code int `json:"code"`
 	Data struct {
-		Url string `json:"url"`
+		Url      string `json:"url"`
+		ExtraUrl string `json:"extra_url"`
 	} `json:"data"`
 	Msg string `json:"msg"`
 }
 
-func GetDownloadURL(uuid, token string) (string, error) {
+func GetDownloadURL(uuid, token string) (string, string, error) {
 	var resData GetDownloadURLRes
 
 	req, err := http.NewRequest("GET", ServerHostApi+"/plugin/download", strings.NewReader(`{"uuid":"`+uuid+`"}`))
 
 	if err != nil {
 		logger.Error("get plugin download url error: ", err)
-		return "", err
+		return "", "", err
 	}
 
 	req.Header.Add(TokenKey, token)
@@ -99,24 +100,24 @@ func GetDownloadURL(uuid, token string) (string, error) {
 	res, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer func() {
 		_ = res.Body.Close()
 	}()
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	err = json.Unmarshal(body, &resData)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	if resData.Code != 0 {
-		return "", err
+		return "", "", err
 	}
-	return resData.Data.Url, nil
+	return resData.Data.Url, resData.Data.ExtraUrl, nil
 }
 
 const TokenKey = "GOADMIN_OFFICIAL_SESS"

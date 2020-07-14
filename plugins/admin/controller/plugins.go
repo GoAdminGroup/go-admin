@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -351,10 +353,11 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	}
 
 	downloadURL := plug.GetInfo().Url
+	extraDownloadURL := plug.GetInfo().ExtraDownloadUrl
 
 	if !plug.GetInfo().IsFree() {
 		var err error
-		downloadURL, err = remote_server.GetDownloadURL(plug.GetInfo().Uuid, ctx.Cookie(remote_server.TokenKey))
+		downloadURL, extraDownloadURL, err = remote_server.GetDownloadURL(plug.GetInfo().Uuid, ctx.Cookie(remote_server.TokenKey))
 		if err != nil {
 			ctx.JSON(http.StatusOK, map[string]interface{}{
 				"code": 500,
@@ -455,6 +458,14 @@ import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 	}
 
 	// TODO: 实现运行环境与编译环境隔离
+
+	if plug.GetInfo().ExtraDownloadUrl != "" {
+		err = utils.DownloadTo(extraDownloadURL, "./"+plug.Name()+"_extra_"+
+			fmt.Sprintf("%d", time.Now().Unix())+".zip")
+		if err != nil {
+			logger.Error("failed to download "+plug.Name()+" extra data: ", err)
+		}
+	}
 
 	plug.(*plugins.BasePlugin).Info.Downloaded = true
 	plug.(*plugins.BasePlugin).Info.CanUpdate = false
