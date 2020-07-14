@@ -33,6 +33,8 @@ type UserModel struct {
 
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+
+	cacheReplacer *strings.Replacer
 }
 
 // User return a default user model.
@@ -103,7 +105,17 @@ func (t UserModel) HideUserCenterEntrance() bool {
 	return t.IsVisitor() && config.GetHideVisitorUserCenterEntrance()
 }
 
+func (t UserModel) Template(str string) string {
+	if t.cacheReplacer == nil {
+		t.cacheReplacer = strings.NewReplacer("{{.Id}}", strconv.Itoa(int(t.Id)),
+			"{{.Name}}", t.Name, "{{.UserName}}", t.UserName)
+	}
+	return t.cacheReplacer.Replace(str)
+}
+
 func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams url.Values) bool {
+
+	// path, _ = url.PathUnescape(path)
 
 	if t.IsSuperAdmin() {
 		return true
@@ -143,11 +155,11 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 
 			for i := 0; i < len(v.HttpPath); i++ {
 
-				matchPath := config.Url(strings.TrimSpace(v.HttpPath[i]))
+				matchPath := config.Url(t.Template(strings.TrimSpace(v.HttpPath[i])))
 				matchPath, matchParam := getParam(matchPath)
 
 				if matchPath == path {
-					if checkParam(params, matchParam) {
+					if t.checkParam(params, matchParam) {
 						return true
 					}
 				}
@@ -160,7 +172,7 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 				}
 
 				if reg.FindString(path) == path {
-					if checkParam(params, matchParam) {
+					if t.checkParam(params, matchParam) {
 						return true
 					}
 				}
@@ -180,7 +192,7 @@ func getParam(u string) (string, url.Values) {
 	return urr[0], m
 }
 
-func checkParam(src, comp url.Values) bool {
+func (t UserModel) checkParam(src, comp url.Values) bool {
 	if len(comp) == 0 {
 		return true
 	}
@@ -199,7 +211,7 @@ func checkParam(src, comp url.Values) bool {
 			return false
 		}
 		for i := 0; i < len(v); i++ {
-			if v[i] == value[i] {
+			if v[i] == t.Template(value[i]) {
 				continue
 			} else {
 				return false
