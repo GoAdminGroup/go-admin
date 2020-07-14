@@ -242,6 +242,12 @@ var pluginsPageCSS = template.CSS(`
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
 	}
+	@media screen and (min-width: 1200px) {
+		.pjax-container-content .row .col-lg-2 {
+			width: 14%;
+			max-width: 200px;
+		}
+	}
 `)
 
 var pluginsStorePageCSS = template.CSS(`
