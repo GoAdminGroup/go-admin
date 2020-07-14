@@ -138,7 +138,8 @@ var en = LangSet{
 
 	"config.logo":                        "Logo",
 	"config.mini logo":                   "Mini Logo",
-	"config.plugin file path":            "Plugin File Path",
+	"config.bootstrap file path":         "Bootstrap File Path",
+	"config.go mod file path":            "go.mod File Path",
 	"config.session life time":           "Session Life Time",
 	"config.custom head html":            "Head HTML",
 	"config.custom foot html":            "Foot HTML",
@@ -336,6 +337,7 @@ var en = LangSet{
 	"plugin.change to debug mode first":                   "Change to debug mode first",
 	"plugin.download fail, plugin not exist":              "Download fail, plugin not exist",
 	"plugin.download fail":                                "Download fail",
+	"plugin.golang develop environment does not exist":    "Golang develop environment does not exist",
 	"plugin.download success, restart to install":         "Download success, restart to install",
 	"plugin.restart to install":                           "Restart to install",
 	"plugin.can not connect to the goadmin remote server": "Failed to connect the GoAdmin remote server, check your network connection.",

@@ -376,6 +376,8 @@ type Config struct {
 
 	BootstrapFilePath string `json:"bootstrap_file_path,omitempty" yaml:"bootstrap_file_path,omitempty" ini:"bootstrap_file_path,omitempty"`
 
+	GoModFilePath string `json:"go_mod_file_path,omitempty" yaml:"go_mod_file_path,omitempty" ini:"go_mod_file_path,omitempty"`
+
 	prefix string
 }
 
@@ -580,6 +582,7 @@ func (c *Config) Copy() *Config {
 		Custom404HTML:                 c.Custom404HTML,
 		Custom500HTML:                 c.Custom500HTML,
 		BootstrapFilePath:             c.BootstrapFilePath,
+		GoModFilePath:                 c.GoModFilePath,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -645,6 +648,7 @@ func (c *Config) ToMap() map[string]string {
 	m["custom_403_html"] = string(c.Custom403HTML)
 	m["custom_500_html"] = string(c.Custom500HTML)
 	m["bootstrap_file_path"] = c.BootstrapFilePath
+	m["go_mod_file_path"] = c.GoModFilePath
 	m["footer_info"] = string(c.FooterInfo)
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
@@ -735,6 +739,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.Custom403HTML = template.HTML(m["custom_403_html"])
 	c.Custom500HTML = template.HTML(m["custom_500_html"])
 	c.BootstrapFilePath = m["bootstrap_file_path"]
+	c.GoModFilePath = m["go_mod_file_path"]
 	c.FooterInfo = template.HTML(m["footer_info"])
 	c.LoginTitle = m["login_title"]
 	c.AssetUrl = m["asset_url"]

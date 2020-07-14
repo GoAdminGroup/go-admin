@@ -166,7 +166,8 @@ var tc = LangSet{
 
 	"config.logo":                        "Logo",
 	"config.mini logo":                   "Mini Logo",
-	"config.plugin file path":            "插件文件路徑",
+	"config.bootstrap file path":         "引导文件路徑",
+	"config.go mod file path":            "go.mod文件路徑",
 	"config.session life time":           "Session時長",
 	"config.custom head html":            "自定義Head HTML",
 	"config.custom foot html":            "自定義Foot HTML",
@@ -366,6 +367,7 @@ var tc = LangSet{
 	"plugin.change to debug mode first":                   "先切換到debug模式",
 	"plugin.download fail, plugin not exist":              "下載失敗，插件不存在",
 	"plugin.download fail":                                "下載失敗",
+	"plugin.golang develop environment does not exist":    "golang開發環境不存在",
 	"plugin.download success, restart to install":         "下載成功，重啟程序進行安裝",
 	"plugin.restart to install":                           "重啟程序進行安裝",
 	"plugin.can not connect to the goadmin remote server": "不能連接到GoAdmin遠程服務器，請檢查您的網絡連接。",

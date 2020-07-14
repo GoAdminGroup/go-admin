@@ -120,6 +120,8 @@ func buildProject(cfgFile string) {
 
 	if err != nil {
 		rootPath = "."
+	} else {
+		rootPath = filepath.ToSlash(rootPath)
 	}
 
 	var cfg = config.SetDefault(config.Config{
@@ -133,10 +135,11 @@ func buildProject(cfgFile string) {
 		Language:          p.Language,
 		UrlPrefix:         p.Prefix,
 		IndexUrl:          "/",
-		AccessLogPath:     filepath.ToSlash(rootPath) + "/logs/access.log",
-		ErrorLogPath:      filepath.ToSlash(rootPath) + "/logs/error.log",
-		InfoLogPath:       filepath.ToSlash(rootPath) + "/logs/info.log",
-		BootstrapFilePath: filepath.ToSlash(rootPath) + "/bootstrap.go",
+		AccessLogPath:     rootPath + "/logs/access.log",
+		ErrorLogPath:      rootPath + "/logs/error.log",
+		InfoLogPath:       rootPath + "/logs/info.log",
+		BootstrapFilePath: rootPath + "/bootstrap.go",
+		GoModFilePath:     rootPath + "/go.mod",
 	})
 
 	if info.DriverName == "" && p.Driver != "" {

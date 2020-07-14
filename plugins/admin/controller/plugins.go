@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -168,7 +169,6 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 
 	info := plug.GetInfo()
 
-	updated, _ := plug.CheckUpdate()
 	skip, _ := plug.GetInstallationPage()
 
 	if info.MiniCover == "" {
@@ -191,7 +191,7 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 			"download_reboot": plugins.Exist(plug),
 			"skip":            skip,
 			"uuid":            info.Uuid,
-			"upgrade":         updated,
+			"upgrade":         plug.GetInfo().CanUpdate,
 			"install":         plug.IsInstalled(),
 			"free":            info.IsFree(),
 		},
@@ -210,13 +210,12 @@ type PluginBoxParam struct {
 
 func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
 
-	updated, _ := plug.CheckUpdate()
 	skip, _ := plug.GetInstallationPage()
 
 	return PluginBoxParam{
 		Info:           plug.GetInfo(),
 		Install:        plug.IsInstalled(),
-		Upgrade:        updated,
+		Upgrade:        plug.GetInfo().CanUpdate,
 		Skip:           skip,
 		DownloadReboot: plugins.Exist(plug),
 		Name:           plug.Name(),
@@ -243,6 +242,7 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	if param.Install {
 		if param.Upgrade {
 			footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+				SetAttr("onclick", `pluginDownload('`+param.Name+`', this)`).
 				SetContent(plugWordHTML("upgrade")).
 				Get()
 		}
@@ -375,6 +375,15 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	}
 
 	gopath := os.Getenv("GOPATH")
+
+	if gopath == "" {
+		ctx.JSON(http.StatusOK, map[string]interface{}{
+			"code": 500,
+			"msg":  plugWord("golang develop environment does not exist"),
+		})
+		return
+	}
+
 	gomodule := os.Getenv("GO111MODULE")
 	base := filepath.Dir(plug.GetInfo().ModulePath)
 	installPath := ""
@@ -434,7 +443,19 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 	}
 
+	if h.config.GoModFilePath != "" && utils.FileExist(h.config.GoModFilePath) &&
+		plug.GetInfo().CanUpdate && plug.GetInfo().OldVersion != "" {
+		content, _ := ioutil.ReadFile(h.config.BootstrapFilePath)
+		src := plug.GetInfo().ModulePath + " " + plug.GetInfo().OldVersion
+		dist := plug.GetInfo().ModulePath + " " + plug.GetInfo().Version
+		content = bytes.Replace(content, []byte(src), []byte(dist), -1)
+		_ = ioutil.WriteFile(h.config.BootstrapFilePath, content, 0644)
+	}
+
+	// TODO: 实现运行环境与编译环境隔离
+
 	plug.(*plugins.BasePlugin).Info.Downloaded = true
+	plug.(*plugins.BasePlugin).Info.CanUpdate = false
 
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"code": 0,

@@ -116,7 +116,7 @@ function pluginDetail(name, uuid) {
 
 				if (data.data.install) {
 					if (data.data.upgrade) {
-						$(footer_ele).html('{{plugWord "upgrade"}}')
+						$(footer_ele).html('{{plugWord "upgrade"}}').attr("onclick", "pluginDownload('"+ name +"', this)")
 					}
 				} else {
 					if (data.data.downloaded) {

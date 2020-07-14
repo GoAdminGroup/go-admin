@@ -1076,16 +1076,10 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 		}).FieldHelpMsg(template.HTML(lgWithConfigScore("It will work when theme is adminlte")))
 	formList.AddField(lgWithConfigScore("login title"), "login_title", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lgWithConfigScore("extra"), "extra", db.Varchar, form.TextArea)
-	//formList.AddField(lgWithConfigScore("databases"), "databases", db.Varchar, form.TextArea).
-	//	FieldDisplay(func(value types.FieldModel) interface{} {
-	//		var buf = new(bytes.Buffer)
-	//		_ = json.Indent(buf, []byte(value.Value), "", "    ")
-	//		return template.HTML(buf.String())
-	//	}).FieldNotAllowEdit()
-
 	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("plugin file path"), "bootstrap_file_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("go mod file path"), "go_mod_file_path", db.Varchar, form.Text)
 	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number).
 		FieldMust().
 		FieldHelpMsg(template.HTML(lgWithConfigScore("must bigger than 900 seconds")))
@@ -1256,7 +1250,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
-		"asset_url", "title", "login_title", "session_life_time", "bootstrap_file_path", "no_limit_login_ip",
+		"asset_url", "title", "login_title", "session_life_time", "bootstrap_file_path", "go_mod_file_path", "no_limit_login_ip",
 		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance", "hide_plugin_entrance",
 		"animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").

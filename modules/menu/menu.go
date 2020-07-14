@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
@@ -113,6 +115,47 @@ func (menu Menu) FormatPath() template.HTML {
 // GetEditMenuList return menu items list.
 func (menu *Menu) GetEditMenuList() []Item {
 	return menu.List
+}
+
+type NewMenuData struct {
+	ParentId   int64  `json:"parent_id"`
+	Type       int64  `json:"type"`
+	Order      int64  `json:"order"`
+	Title      string `json:"title"`
+	Icon       string `json:"icon"`
+	PluginName string `json:"plugin_name"`
+	Uri        string `json:"uri"`
+	Header     string `json:"header"`
+	Uuid       string `json:"uuid"`
+}
+
+func NewMenu(conn db.Connection, data NewMenuData) (int64, error) {
+	maxOrder := data.Order
+	checkOrder, _ := db.WithDriver(conn).Table("goadmin_menu").
+		Where("plugin_name", "=", data.PluginName).
+		OrderBy("order", "desc").
+		First()
+
+	if checkOrder != nil {
+		maxOrder = checkOrder["order"].(int64)
+	}
+
+	id, err := db.WithDriver(conn).Table("goadmin_menu").
+		Insert(dialect.H{
+			"parent_id":   data.ParentId,
+			"type":        data.Type,
+			"order":       maxOrder,
+			"title":       data.Title,
+			"uuid":        data.Uuid,
+			"icon":        data.Icon,
+			"plugin_name": data.PluginName,
+			"uri":         data.Uri,
+			"header":      data.Header,
+		})
+	if !db.CheckError(err, db.INSERT) {
+		return id, nil
+	}
+	return id, err
 }
 
 // GetGlobalMenu return Menu of given user model.
