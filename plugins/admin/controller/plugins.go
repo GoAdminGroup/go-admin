@@ -28,9 +28,12 @@ import (
 
 func (h *Handler) Plugins(ctx *context.Context) {
 	list := plugins.Get()
-	size := types.Size(12, 3, 2)
+	size := types.Size(6, 3, 2)
 	rows := template.HTML("")
-	list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{Title: "get more plugins", Name: ""},
+	getMoreCover := config.Url("/assets/dist/img/plugin_more.png")
+	list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{
+		Title: "get more plugins", Name: "",
+		MiniCover: getMoreCover, Cover: getMoreCover},
 		config.Url("/plugins/store")))
 	for i := 0; i < len(list); i += 6 {
 		box1 := aBox().
@@ -72,6 +75,24 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 			}, ctx.Cookie(remote_server.TokenKey))
 		rows = template.HTML(page.HTML)
 	)
+
+	if ctx.Query("page") == "" && len(list) == 0 {
+		h.HTML(ctx, auth.Auth(ctx), types.Panel{
+			Content: pluginStore404(),
+			CSS: template.CSS(`.plugin-store-404-content {
+    margin: auto;
+    width: 80%;
+    text-align: center;
+    color: #9e9e9e;
+    font-size: 17px;
+    height: 250px;
+    line-height: 250px;
+}`),
+			Description: language.GetFromHtml("plugin store"),
+			Title:       language.GetFromHtml("plugin store"),
+		})
+		return
+	}
 
 	for i := 0; i < len(list); i += 3 {
 		box1 := aBox().
@@ -150,6 +171,10 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 	updated, _ := plug.CheckUpdate()
 	skip, _ := plug.GetInstallationPage()
 
+	if info.MiniCover == "" {
+		info.MiniCover = config.Url("/assets/dist/img/plugin_default.png")
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"code": 0,
 		"msg":  "ok",
@@ -165,6 +190,7 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 			"downloaded":      info.Downloaded,
 			"download_reboot": plugins.Exist(plug),
 			"skip":            skip,
+			"uuid":            info.Uuid,
 			"upgrade":         updated,
 			"install":         plug.IsInstalled(),
 			"free":            info.IsFree(),
@@ -201,7 +227,7 @@ func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
 func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
-		cover = "/admin/assets/dist/img/avatar04.png"
+		cover = template2.HTML(config.Url("/assets/dist/img/plugin_default.png"))
 	}
 	col1 := html.DivEl().SetClass("plugin-store-item-img").
 		SetContent(aImage().
@@ -272,7 +298,7 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
-		cover = "/admin/assets/dist/img/avatar04.png"
+		cover = "/admin/assets/dist/img/plugin_default.png"
 	}
 	col1 := html.AEl().SetContent(html.DivEl().SetClass("plugin-item-img").
 		SetContent(aImage().

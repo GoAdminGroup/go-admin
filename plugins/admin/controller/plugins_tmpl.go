@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/modules/remote_server"
+
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 )
@@ -41,7 +43,7 @@ function pluginInstall(name){
 var downloadLock = false;
 const apiTokenKey = "GOADMIN_SERVER_API_TOKEN";
 const apiTokenExpireKey = "GOADMIN_SERVER_API_TOKEN_EXPIRE";
-const serverHost = "http://localhost:8055"
+const serverHost = "` + remote_server.ServerHost + `"
 
 function login() {
 	$.ajax({
@@ -108,6 +110,7 @@ function pluginDetail(name, uuid) {
 				$(item_ele).eq(2).find(".plugin-detail-info-item-content").html(data.data.version);
 				$(item_ele).eq(3).find(".plugin-detail-info-item-content").html(data.data.created_at);
 				$(item_ele).eq(4).find(".plugin-detail-info-item-content").html(data.data.updated_at);
+				$(item_ele).eq(5).find("a").attr("href", "https://www.go-admin.cn/plugins/detail/" + data.data.uuid);
 
 				let footer_ele = "#detail-popup-modal .modal-footer .btn.btn-primary";
 
@@ -227,6 +230,7 @@ var pluginsPageCSS = template.CSS(`
 	.plugin-item-img img {
 		width: 100%;
 		height: auto;
+		border: 1px solid #f5f4f4;
 	}
 	.plugin-item-title {
 		margin-top: 10px;
@@ -244,10 +248,14 @@ var pluginsStorePageCSS = template.CSS(`
 	.plugin-item-content {
 		margin-left: 15px;
 	}
+	.plugin-store-item-img img, .plugin-detail-head-logo img {
+		border: 1px solid #f5f4f4;
+	}
 	.plugin-item-content-title {
 		font-size: 15px;
-		margin-bottom: 10px;
+		margin-bottom: 6px;
 		font-weight: bold;
+		padding-top: 2px;
 	}
 	.plugin-item-content {
 		position: absolute;
@@ -305,7 +313,7 @@ var pluginsStorePageCSS = template.CSS(`
 		margin-bottom: 17px;
 	}
 	.plugin-detail-info-item-head {
-		width: 80px;
+		width: 120px;
 		float: left;
 		font-weight: bold;
 	}
@@ -314,6 +322,12 @@ var pluginsStorePageCSS = template.CSS(`
 		margin-left: 10px;
 	}
 `)
+
+var pluginStore404 = func() template.HTML {
+	return template.HTML(`
+<div class="plugin-store-404-content"><p>` + plugWord("can not connect to the goadmin remote server") + `</p></div>
+`)
+}
 
 var pluginsPageDetailPopupBody = func() template.HTML {
 	return template.HTML(`
@@ -347,6 +361,9 @@ var pluginsPageDetailPopupBody = func() template.HTML {
 	<div class="plugin-detail-info-item">
 		<div class="plugin-detail-info-item-head">` + plugWord("updated at") + `</div>
 		<div class="plugin-detail-info-item-content"></div>
+	</div>
+	<div class="plugin-detail-info-item">
+		<a target="_blank" href=""><div class="plugin-detail-info-item-head">` + plugWord("learn more") + `</div></a>
 	</div>
 </div>
 </div>`)

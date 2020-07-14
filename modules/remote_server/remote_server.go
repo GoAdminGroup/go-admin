@@ -9,7 +9,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 )
 
-const ServerHost = "http://localhost:8055/api"
+const (
+	// ServerHost    = "http://localhost:8055"
+	// ServerHostApi = "http://localhost:8055/api"
+
+	ServerHost    = "https://www.go-admin.cn"
+	ServerHostApi = "https://www.go-admin.cn/api"
+)
 
 type LoginRes struct {
 	Code int `json:"code"`
@@ -24,7 +30,7 @@ type LoginRes struct {
 func Login(account, password string) LoginRes {
 	var resData LoginRes
 
-	req, err := http.NewRequest("POST", ServerHost+"/signin", strings.NewReader(`{"account":"`+account+
+	req, err := http.NewRequest("POST", ServerHostApi+"/signin", strings.NewReader(`{"account":"`+account+
 		`","password":"`+password+`"}`))
 
 	if err != nil {
@@ -80,7 +86,7 @@ type GetDownloadURLRes struct {
 func GetDownloadURL(uuid, token string) (string, error) {
 	var resData GetDownloadURLRes
 
-	req, err := http.NewRequest("GET", ServerHost+"/plugin/download", strings.NewReader(`{"uuid":"`+uuid+`"}`))
+	req, err := http.NewRequest("GET", ServerHostApi+"/plugin/download", strings.NewReader(`{"uuid":"`+uuid+`"}`))
 
 	if err != nil {
 		logger.Error("get plugin download url error: ", err)
@@ -156,7 +162,7 @@ func (req GetOnlineReq) Format() string {
 
 func GetOnline(reqData GetOnlineReq, token string) ([]byte, error) {
 	// TODO: add cache
-	req, err := http.NewRequest("GET", ServerHost+"/plugin/list?"+reqData.Format(), nil)
+	req, err := http.NewRequest("GET", ServerHostApi+"/plugin/list?"+reqData.Format(), nil)
 
 	if err != nil {
 		logger.Error("get online plugins: ", err)

@@ -73,6 +73,7 @@ type Info struct {
 	Features    string    `json:"features" yaml:"features" ini:"features"`
 	Questions   []string  `json:"questions" yaml:"questions" ini:"questions"`
 	HasBought   bool      `json:"has_bought" yaml:"has_bought" ini:"has_bought"`
+	Legal       bool      `json:"legal" yaml:"legal" ini:"legal"`
 }
 
 func (i Info) IsFree() bool {
