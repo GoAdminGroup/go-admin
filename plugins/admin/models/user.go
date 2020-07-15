@@ -107,8 +107,8 @@ func (t UserModel) HideUserCenterEntrance() bool {
 
 func (t UserModel) Template(str string) string {
 	if t.cacheReplacer == nil {
-		t.cacheReplacer = strings.NewReplacer("{{.Id}}", strconv.Itoa(int(t.Id)),
-			"{{.Name}}", t.Name, "{{.UserName}}", t.UserName)
+		t.cacheReplacer = strings.NewReplacer("{{.AuthId}}", strconv.Itoa(int(t.Id)),
+			"{{.AuthName}}", t.Name, "{{.AuthUserName}}", t.UserName)
 	}
 	return t.cacheReplacer.Replace(str)
 }
