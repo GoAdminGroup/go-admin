@@ -111,12 +111,23 @@ func main() {
 	app.Command("develop", "commands for developing", func(cmd *cli.Cmd) {
 		cmd.Command("tpl", "generate a theme project from a remote template", func(cmd *cli.Cmd) {
 			var (
-				moduleName = cmd.StringOpt("m module", "github.com/GoAdminGroup/themes/newTmpl", "the module name of your theme")
+				moduleName = cmd.StringOpt("m module", "", "the module path of your theme")
 				themeName  = cmd.StringOpt("n name", "newTmplTheme", "the name of your theme")
 			)
 
 			cmd.Action = func() {
 				getThemeTemplate(*moduleName, *themeName)
+			}
+		})
+
+		cmd.Command("plug", "initialize a plugin project", func(cmd *cli.Cmd) {
+			var (
+				moduleName = cmd.StringOpt("m module", "", "the module path of your plugin")
+				themeName  = cmd.StringOpt("n name", "", "the name of your plugin")
+			)
+
+			cmd.Action = func() {
+				getPluginTemplate(*moduleName, *themeName)
 			}
 		})
 	})
