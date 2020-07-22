@@ -1197,6 +1197,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			confirmButtonColor: "#3c8dbc",
 			confirmButtonText: '` + language.Get("got it") + `',
         }, function() {
+			$(".modal-backdrop.fade.in").remove();
 			$.pjax({url: ` + jump + `, container: '#pjax-container'});
         });
 	} else {
