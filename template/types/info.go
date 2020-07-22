@@ -249,9 +249,10 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 		filterForm = append(filterForm, *field)
 
 		if filter.Operator.AddOrNot() {
+			ff := headField + parameter.FilterParamOperatorSuffix + keySuffix
 			filterForm = append(filterForm, FormField{
-				Field:      headField + parameter.FilterParamOperatorSuffix + keySuffix,
-				FieldClass: headField + parameter.FilterParamOperatorSuffix + keySuffix,
+				Field:      ff,
+				FieldClass: ff,
 				Head:       f.Head,
 				TypeName:   f.TypeName,
 				Value:      template.HTML(filter.Operator.Value()),

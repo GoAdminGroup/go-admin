@@ -360,45 +360,49 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 			op = "in"
 		} else if !strings.Contains(key, FilterParamOperatorSuffix) {
 			op = operators[param.GetFieldOperator(key, keyIndexSuffix)]
+		} else {
+			continue
 		}
 
-		if modules.InArray(columns, key) {
+		if strings.Contains(key, FilterParamJoinInfix) {
+			keys := strings.Split(key, FilterParamJoinInfix)
+			val := filterProcess(key, value[0], keyIndexSuffix)
 			if op == "in" {
 				qmark := ""
 				for range value {
 					qmark += "?,"
 				}
-				wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 			} else {
-				wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " ? and "
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
 			}
-			if op == "like" && !strings.Contains(value[0], "%") {
-				whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
+			if op == "like" && !strings.Contains(val, "%") {
+				whereArgs = append(whereArgs, "%"+val+"%")
 			} else {
 				for _, v := range value {
 					whereArgs = append(whereArgs, filterProcess(key, v, keyIndexSuffix))
 				}
 			}
 		} else {
-			keys := strings.Split(key, FilterParamJoinInfix)
-			if len(keys) > 1 {
-				val := filterProcess(key, value[0], keyIndexSuffix)
+			if modules.InArray(columns, key) {
 				if op == "in" {
 					qmark := ""
 					for range value {
 						qmark += "?,"
 					}
-					wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+					wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 				} else {
-					wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
+					wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " ? and "
 				}
-				if op == "like" && !strings.Contains(val, "%") {
-					whereArgs = append(whereArgs, "%"+val+"%")
+				if op == "like" && !strings.Contains(value[0], "%") {
+					whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
 				} else {
 					for _, v := range value {
 						whereArgs = append(whereArgs, filterProcess(key, v, keyIndexSuffix))
 					}
 				}
+			} else {
+				continue
 			}
 		}
 
