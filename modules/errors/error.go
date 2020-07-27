@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"errors"
 	"html/template"
 
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -31,4 +32,18 @@ func Init() {
 	Msg = language.Get("error")
 	MsgHTML = language.GetFromHtml("error")
 	MsgWithIcon = icon.Icon(icon.Warning, 2) + MsgHTML + `!`
+
+	PageError404 = errors.New(language.Get("not found"))
+	PageError500 = errors.New(language.Get("internal error"))
+	PageError403 = errors.New(language.Get("permission denied"))
+	PageError401 = errors.New(language.Get("unauthorized"))
 }
+
+type PageError error
+
+var (
+	PageError404 PageError
+	PageError500 PageError
+	PageError403 PageError
+	PageError401 PageError
+)

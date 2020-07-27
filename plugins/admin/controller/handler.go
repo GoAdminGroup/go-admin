@@ -6,6 +6,8 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/GoAdminGroup/go-admin/template"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
@@ -59,11 +61,7 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		h.HTML(ctx, auth.Auth(ctx), types.Panel{
-			Content:     aAlert().Warning(errMsg),
-			Description: template2.HTML(errors.Msg),
-			Title:       template2.HTML(errors.Msg),
-		})
+		h.HTML(ctx, auth.Auth(ctx), template.WarningPanelWithDescAndTitle(errMsg, errors.Msg, errors.Msg))
 	}
 }
 

@@ -15,6 +15,7 @@ import (
 	"sync"
 
 	c "github.com/GoAdminGroup/go-admin/modules/config"
+	errors2 "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
@@ -79,6 +80,18 @@ const (
 	Error500Page
 	NoPermission403Page
 )
+
+func GetPageTypeFromPageError(err errors2.PageError) PageType {
+	if err == nil {
+		return NormalPage
+	} else if err == errors2.PageError403 {
+		return NoPermission403Page
+	} else if err == errors2.PageError404 {
+		return Missing404Page
+	} else {
+		return Error500Page
+	}
+}
 
 const (
 	CompCol       = "col"
@@ -177,7 +190,7 @@ func VersionCompare(toCompare string, versions []string) bool {
 
 func GetPageContentFromPageType(title, desc, msg string, pt PageType) (template.HTML, template.HTML, template.HTML) {
 	if c.GetDebug() {
-		return template.HTML(title), template.HTML(desc), Default().Alert().Warning(msg)
+		return template.HTML(title), template.HTML(desc), Default().Alert().SetTitle(errors2.MsgWithIcon).Warning(msg)
 	}
 
 	if pt == Missing404Page {
@@ -405,6 +418,19 @@ func WarningPanel(msg string, pts ...PageType) types.Panel {
 		pt = pts[0]
 	}
 	pageTitle, description, content := GetPageContentFromPageType(msg, msg, msg, pt)
+	return types.Panel{
+		Content:     content,
+		Description: description,
+		Title:       pageTitle,
+	}
+}
+
+func WarningPanelWithDescAndTitle(msg, desc, title string, pts ...PageType) types.Panel {
+	pt := Error500Page
+	if len(pts) > 0 {
+		pt = pts[0]
+	}
+	pageTitle, description, content := GetPageContentFromPageType(msg, desc, title, pt)
 	return types.Panel{
 		Content:     content,
 		Description: description,

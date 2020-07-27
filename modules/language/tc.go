@@ -108,6 +108,10 @@ var tc = LangSet{
 	"wrong captcha":                                 "錯誤的驗證碼",
 	"modify success":                                "修改成功",
 
+	"not found":      "找不到記錄",
+	"internal error": "系統內部錯誤",
+	"unauthorized":   "未認證",
+
 	"login overdue, please login again": "登錄信息過期，請重新登錄",
 	"login info":                        "登錄信息",
 

@@ -14,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/file"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -370,6 +371,9 @@ type FormPanel struct {
 
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
+
+	PageError     errors.PageError
+	PageErrorHTML template.HTML
 }
 
 type Responder func(ctx *context.Context)
@@ -1100,6 +1104,38 @@ func (f *FormPanel) SetHeaderHtml(header template.HTML) *FormPanel {
 
 func (f *FormPanel) SetFooterHtml(footer template.HTML) *FormPanel {
 	f.FooterHtml += footer
+	return f
+}
+
+func (f *FormPanel) HasError() bool {
+	return f.PageError != nil
+}
+
+func (f *FormPanel) SetError(err errors.PageError, content ...template.HTML) *FormPanel {
+	f.PageError = err
+	if len(content) > 0 {
+		f.PageErrorHTML = content[0]
+	}
+	return f
+}
+
+func (f *FormPanel) Set404Error(content ...template.HTML) *FormPanel {
+	f.SetError(errors.PageError404, content...)
+	return f
+}
+
+func (f *FormPanel) Set403Error(content ...template.HTML) *FormPanel {
+	f.SetError(errors.PageError403, content...)
+	return f
+}
+
+func (f *FormPanel) Set400Error(content ...template.HTML) *FormPanel {
+	f.SetError(errors.PageError401, content...)
+	return f
+}
+
+func (f *FormPanel) Set500Error(content ...template.HTML) *FormPanel {
+	f.SetError(errors.PageError500, content...)
 	return f
 }
 

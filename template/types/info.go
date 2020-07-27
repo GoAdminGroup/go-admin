@@ -11,6 +11,7 @@ import (
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
@@ -592,6 +593,9 @@ type InfoPanel struct {
 	Action     template.HTML
 	HeaderHtml template.HTML
 	FooterHtml template.HTML
+
+	PageError     errors.PageError
+	PageErrorHTML template.HTML
 }
 
 type Where struct {
@@ -1446,6 +1450,38 @@ func (i *InfoPanel) SetHeaderHtml(header template.HTML) *InfoPanel {
 
 func (i *InfoPanel) SetFooterHtml(footer template.HTML) *InfoPanel {
 	i.FooterHtml += footer
+	return i
+}
+
+func (i *InfoPanel) HasError() bool {
+	return i.PageError != nil
+}
+
+func (i *InfoPanel) SetError(err errors.PageError, content ...template.HTML) *InfoPanel {
+	i.PageError = err
+	if len(content) > 0 {
+		i.PageErrorHTML = content[0]
+	}
+	return i
+}
+
+func (i *InfoPanel) Set404Error(content ...template.HTML) *InfoPanel {
+	i.SetError(errors.PageError404, content...)
+	return i
+}
+
+func (i *InfoPanel) Set403Error(content ...template.HTML) *InfoPanel {
+	i.SetError(errors.PageError403, content...)
+	return i
+}
+
+func (i *InfoPanel) Set400Error(content ...template.HTML) *InfoPanel {
+	i.SetError(errors.PageError401, content...)
+	return i
+}
+
+func (i *InfoPanel) Set500Error(content ...template.HTML) *InfoPanel {
+	i.SetError(errors.PageError500, content...)
 	return i
 }
 

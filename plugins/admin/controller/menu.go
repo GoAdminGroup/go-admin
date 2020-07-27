@@ -81,11 +81,8 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	if err != nil {
-		h.HTML(ctx, user, types.Panel{
-			Content:     aAlert().Warning(err.Error()),
-			Description: template2.HTML(model.GetForm().Description),
-			Title:       template2.HTML(model.GetForm().Title),
-		})
+		h.HTML(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(),
+			model.GetForm().Description, model.GetForm().Title))
 		return
 	}
 

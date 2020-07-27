@@ -100,15 +100,20 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
-		return h.Execute(ctx, auth.Auth(ctx), types.Panel{
-			Content: aAlert().SetTitle(errors.MsgWithIcon).
-				SetTheme("warning").
-				SetContent(template2.HTML(err.Error())).
-				GetContent(),
-			Description: template2.HTML(errors.Msg),
-			Title:       template2.HTML(errors.Msg),
-		}, params.Animation)
+		return h.Execute(ctx, auth.Auth(ctx),
+			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), params.Animation)
 	}
+
+	if panel.GetInfo().HasError() {
+		if panel.GetInfo().PageErrorHTML != template2.HTML("") {
+			return h.Execute(ctx, auth.Auth(ctx),
+				types.Panel{Content: panel.GetInfo().PageErrorHTML}, params.Animation)
+		}
+		return h.Execute(ctx, auth.Auth(ctx),
+			template.WarningPanel(panel.GetInfo().PageError.Error(),
+				template.GetPageTypeFromPageError(panel.GetInfo().PageError)), params.Animation)
+	}
+
 	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
 		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
 	user := auth.Auth(ctx)

@@ -114,6 +114,10 @@ var cn = LangSet{
 	"wrong captcha":                                 "错误的验证码",
 	"modify success":                                "修改成功",
 
+	"not found":      "找不到记录",
+	"internal error": "系统内部错误",
+	"unauthorized":   "未认证",
+
 	"login overdue, please login again": "登录信息过期，请重新登录",
 	"login info":                        "登录信息",
 

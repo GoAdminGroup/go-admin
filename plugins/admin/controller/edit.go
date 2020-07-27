@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/GoAdminGroup/go-admin/template"
+
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -31,6 +33,18 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 
 	panel := h.table(prefix, ctx)
 
+	if panel.GetForm().HasError() {
+		if panel.GetForm().PageErrorHTML != template2.HTML("") {
+			h.HTML(ctx, auth.Auth(ctx),
+				types.Panel{Content: panel.GetForm().PageErrorHTML}, param.Animation)
+			return
+		}
+		h.HTML(ctx, auth.Auth(ctx),
+			template.WarningPanel(panel.GetForm().PageError.Error(),
+				template.GetPageTypeFromPageError(panel.GetForm().PageError)), param.Animation)
+		return
+	}
+
 	user := auth.Auth(ctx)
 
 	paramStr := param.GetRouteParamStr()
@@ -46,11 +60,9 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
 
 	if err != nil {
-		h.HTML(ctx, user, types.Panel{
-			Content:     aAlert().Warning(err.Error()),
-			Description: template2.HTML(panel.GetForm().Description),
-			Title:       template2.HTML(panel.GetForm().Title),
-		}, alert == "" || ((len(animation) > 0) && animation[0]))
+		h.HTML(ctx, user, template.
+			WarningPanelWithDescAndTitle(err.Error(), panel.GetForm().Description, panel.GetForm().Title),
+			alert == "" || ((len(animation) > 0) && animation[0]))
 
 		if isEdit {
 			ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)

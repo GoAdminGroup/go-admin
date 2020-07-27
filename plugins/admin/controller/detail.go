@@ -135,11 +135,7 @@ $('.delete-btn').on('click', function (event) {
 	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
 
 	if err != nil {
-		h.HTML(ctx, user, types.Panel{
-			Content:     aAlert().Warning(err.Error()),
-			Description: template.HTML(desc),
-			Title:       template.HTML(title),
-		}, param.Animation)
+		h.HTML(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(), desc, title), param.Animation)
 		return
 	}
 

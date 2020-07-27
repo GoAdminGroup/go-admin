@@ -92,6 +92,10 @@ var en = LangSet{
 	"initialize plugins":              "Initialize plugins",
 	"initialize database connections": "Initialize database connections",
 
+	"not found":      "Not found",
+	"internal error": "Internal error",
+	"unauthorized":   "Unauthorized",
+
 	"plugins":          "Plugins",
 	"plugin store":     "Plugin Store",
 	"get more plugins": "Get more plugins",
