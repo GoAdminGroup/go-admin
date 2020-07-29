@@ -399,10 +399,11 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 			Menu: param.Menu,
 			Panel: param.Panel.
 				GetContent(append([]bool{param.Config.IsProductionEnvironment() && !param.NoCompress},
-					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.UpdateMenu && param.IsPjax)),
+					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.IsPjax)),
 			Assets:       GetComponentAssetImportHTML(),
 			Buttons:      param.Buttons,
 			Iframe:       param.Iframe,
+			UpdateMenu:   param.IsPjax,
 			TmplHeadHTML: Default().GetHeadHTML(),
 			TmplFootJS:   Default().GetFootJS(),
 		}))

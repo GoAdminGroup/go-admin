@@ -255,12 +255,14 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 			if param.DownloadReboot {
 				if param.Skip {
 					footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+						SetAttr("onclick", `pluginInstall('`+param.Name+`')`).
 						SetContent(plugWordHTML("install")).
 						Get()
 				} else {
 					footer += html.AEl().SetAttr("href", h.config.Url(`/info/plugin_`+param.Name+`/new`)).
 						SetContent(
 							html.ButtonEl().SetClass(pluginBtnClass("installation")...).
+								SetAttr("onclick", `pluginInstall('`+param.Name+`')`).
 								SetContent(plugWordHTML("install")).
 								Get(),
 						).Get()
@@ -359,6 +361,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		var err error
 		downloadURL, extraDownloadURL, err = remote_server.GetDownloadURL(plug.GetInfo().Uuid, ctx.Cookie(remote_server.TokenKey))
 		if err != nil {
+			logger.Error("download plugins error", err)
 			ctx.JSON(http.StatusOK, map[string]interface{}{
 				"code": 500,
 				"msg":  plugWord("download fail"),
@@ -372,6 +375,10 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	err := utils.DownloadTo(downloadURL, tempFile)
 
 	if err != nil {
+		logger.Error("download plugins error", map[string]interface{}{
+			"error":       err,
+			"downloadURL": downloadURL,
+		})
 		ctx.JSON(http.StatusOK, map[string]interface{}{
 			"code": 500,
 			"msg":  plugWord("download fail"),
@@ -402,6 +409,10 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	err = utils.UnzipDir(tempFile, installPath)
 
 	if err != nil {
+		logger.Error("download plugins, unzip error", map[string]interface{}{
+			"error":       err,
+			"installPath": installPath,
+		})
 		ctx.JSON(http.StatusOK, map[string]interface{}{
 			"code": 500,
 			"msg":  plugWord("download fail"),
@@ -422,6 +433,11 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 			err = os.Rename(nowPath, rawPath+"@"+plug.GetInfo().Version)
 		}
 		if err != nil {
+			logger.Error("download plugins, rename error", map[string]interface{}{
+				"error":   err,
+				"nowPath": nowPath,
+				"rawPath": rawPath,
+			})
 			ctx.JSON(http.StatusOK, map[string]interface{}{
 				"code": 500,
 				"msg":  plugWord("download fail"),
@@ -433,6 +449,10 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 			rawPath := installPath + "/" + name
 			err = os.Rename(rawPath, rawPath+"@"+plug.GetInfo().Version)
 			if err != nil {
+				logger.Error("download plugins, rename error", map[string]interface{}{
+					"error":   err,
+					"rawPath": rawPath,
+				})
 				ctx.JSON(http.StatusOK, map[string]interface{}{
 					"code": 500,
 					"msg":  plugWord("download fail"),

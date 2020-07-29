@@ -1078,7 +1078,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.AddField(lgWithConfigScore("extra"), "extra", db.Varchar, form.TextArea)
 	formList.AddField(lgWithConfigScore("logo"), "logo", db.Varchar, form.Code).FieldMust()
 	formList.AddField(lgWithConfigScore("mini logo"), "mini_logo", db.Varchar, form.Code).FieldMust()
-	formList.AddField(lgWithConfigScore("plugin file path"), "bootstrap_file_path", db.Varchar, form.Text)
+	formList.AddField(lgWithConfigScore("bootstrap file path"), "bootstrap_file_path", db.Varchar, form.Text)
 	formList.AddField(lgWithConfigScore("go mod file path"), "go_mod_file_path", db.Varchar, form.Text)
 	formList.AddField(lgWithConfigScore("session life time"), "session_life_time", db.Varchar, form.Number).
 		FieldMust().

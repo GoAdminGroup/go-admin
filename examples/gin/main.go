@@ -57,7 +57,8 @@ func main() {
 		Animation: config.PageAnimation{
 			Type: "fadeInUp",
 		},
-		ColorScheme: adminlte.ColorschemeSkinBlack,
+		ColorScheme:       adminlte.ColorschemeSkinBlack,
+		BootstrapFilePath: "./../datamodel/bootstrap.go",
 	}
 
 	template.AddComp(chartjs.NewChart())

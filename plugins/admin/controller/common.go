@@ -175,6 +175,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
 		Buttons:   (*h.navButtons).CheckPermission(user),
 		Iframe:    ctx.Query(constant.IframeKey) == "true",
+		IsPjax:    isPjax(ctx),
 	})
 }
 

@@ -5,7 +5,6 @@
 package menu
 
 import (
-	"encoding/json"
 	"html/template"
 	"regexp"
 	"strconv"
@@ -39,13 +38,20 @@ type Menu struct {
 }
 
 func (menu *Menu) GetUpdateJS(updateFlag bool) template.JS {
-	if updateFlag {
-		jsonByte, _ := json.Marshal(menu)
-		return `if (typeof updateMenu !== "undefined") {
-	updateMenu(JSON.parse("` + template.JS(jsonByte) + `"))
-}`
+	if !updateFlag {
+		return ""
 	}
-	return ""
+
+	forceUpdate := "false"
+	if menu.ForceUpdate {
+		forceUpdate = "true"
+	}
+	return template.JS(`$(function () {
+	let curMenuPlug = $(".main-sidebar section.sidebar ul.sidebar-menu").attr("data-plug");
+    if (curMenuPlug !== '` + menu.PluginName + `' || ` + forceUpdate + `) {
+        $(".main-sidebar section.sidebar").html($("#sidebar-menu-tmpl").html())
+    }
+});`)
 }
 
 // SetMaxOrder set the max order of menu.

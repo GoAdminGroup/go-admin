@@ -77,6 +77,9 @@ type Page struct {
 	// Load as Iframe or not
 	Iframe bool
 
+	// Whether update menu or not
+	UpdateMenu bool
+
 	// Top Nav Buttons
 	navButtons     Buttons
 	NavButtonsHTML template.HTML
@@ -85,6 +88,7 @@ type Page struct {
 type NewPageParam struct {
 	User         models.UserModel
 	Menu         *menu.Menu
+	UpdateMenu   bool
 	Panel        Panel
 	Assets       template.HTML
 	Buttons      Buttons
@@ -114,9 +118,10 @@ func NewPage(param NewPageParam) *Page {
 	navBtn, btnJS := param.NavButtonsAndJS()
 
 	return &Page{
-		User:  param.User,
-		Menu:  *param.Menu,
-		Panel: param.Panel,
+		User:       param.User,
+		Menu:       *param.Menu,
+		Panel:      param.Panel,
+		UpdateMenu: param.UpdateMenu,
 		System: SystemInfo{
 			Version: system.Version(),
 			Theme:   config.GetTheme(),

@@ -13,17 +13,17 @@ import (
 	"plugin"
 	"time"
 
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/menu"
 	"github.com/GoAdminGroup/go-admin/modules/remote_server"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 	"github.com/GoAdminGroup/go-admin/modules/ui"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -411,6 +411,9 @@ func GetAll(req remote_server.GetOnlineReq, token string) (Plugins, Page) {
 				info := pluginList[key].GetInfo()
 				info.CanUpdate = utils.CompareVersion(info.Version, plugs[index].GetInfo().Version)
 				info.OldVersion = info.Version
+				info.Downloaded = true
+				info.Description = language.GetWithScope(info.Description, info.Name)
+				info.Title = language.GetWithScope(info.Title, info.Name)
 				info.Version = plugs[index].GetInfo().Version
 				plugs[index] = NewBasePluginWithInfo(info)
 				break
