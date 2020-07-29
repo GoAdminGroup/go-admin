@@ -29,10 +29,10 @@ func (g *Guard) ServerLogin(ctx *context.Context) {
 		logger.Error("unmarshal server login parameter error: ", err)
 	}
 
-	ctx.SetUserValue(servrerLoginParamKey, &p)
+	ctx.SetUserValue(serverLoginParamKey, &p)
 	ctx.Next()
 }
 
 func GetServerLoginParam(ctx *context.Context) *ServerLoginParam {
-	return ctx.UserValue[servrerLoginParamKey].(*ServerLoginParam)
+	return ctx.UserValue[serverLoginParamKey].(*ServerLoginParam)
 }

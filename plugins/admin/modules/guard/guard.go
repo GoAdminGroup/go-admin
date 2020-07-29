@@ -52,15 +52,15 @@ func (g *Guard) CheckPrefix(ctx *context.Context) {
 }
 
 const (
-	editFormParamKey     = "edit_form_param"
-	deleteParamKey       = "delete_param"
-	exportParamKey       = "export_param"
-	servrerLoginParamKey = "server_login_param"
-	deleteMenuParamKey   = "delete_menu_param"
-	editMenuParamKey     = "edit_menu_param"
-	newMenuParamKey      = "new_menu_param"
-	newFormParamKey      = "new_form_param"
-	updateParamKey       = "update_param"
-	showFormParamKey     = "show_form_param"
-	showNewFormParam     = "show_new_form_param"
+	editFormParamKey    = "edit_form_param"
+	deleteParamKey      = "delete_param"
+	exportParamKey      = "export_param"
+	serverLoginParamKey = "server_login_param"
+	deleteMenuParamKey  = "delete_menu_param"
+	editMenuParamKey    = "edit_menu_param"
+	newMenuParamKey     = "new_menu_param"
+	newFormParamKey     = "new_form_param"
+	updateParamKey      = "update_param"
+	showFormParamKey    = "show_form_param"
+	showNewFormParam    = "show_new_form_param"
 )
