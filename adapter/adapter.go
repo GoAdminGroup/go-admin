@@ -114,7 +114,11 @@ func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf Web
 
 	for _, plug := range plugin {
 		for path, handlers := range plug.GetHandler() {
-			wf.AddHandler(path.Method, path.URL, handlers)
+			if plug.Prefix() == "" {
+				wf.AddHandler(path.Method, path.URL, handlers)
+			} else {
+				wf.AddHandler(path.Method, config.Url("/"+plug.Prefix()+path.URL), handlers)
+			}
 		}
 	}
 

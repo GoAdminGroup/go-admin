@@ -18,7 +18,7 @@ var Plugin = &Example{
 }
 
 func (example *Example) InitPlugin(srv service.List) {
-	example.InitBase(srv)
+	example.InitBase(srv, "example")
 	Plugin.App = example.initRouter(c.Prefix(), srv)
 }
 

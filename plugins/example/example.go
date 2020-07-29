@@ -17,6 +17,6 @@ func NewExample() *Example {
 }
 
 func (e *Example) InitPlugin(srv service.List) {
-	e.InitBase(srv)
+	e.InitBase(srv, "example")
 	e.App = e.initRouter(c.Prefix(), srv)
 }

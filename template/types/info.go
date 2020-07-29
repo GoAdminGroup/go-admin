@@ -746,6 +746,8 @@ type Action interface {
 	GetCallbacks() context.Node
 }
 
+type Actions []Action
+
 type DefaultAction struct {
 	Attr   template.HTML
 	JS     template.JS

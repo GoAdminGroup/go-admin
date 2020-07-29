@@ -13,6 +13,9 @@ import (
 	"plugin"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/template/icon"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -92,13 +95,14 @@ type Base struct {
 	UI        *ui.Service
 	PlugName  string
 	URLPrefix string
+	Info      Info
 }
 
 func (b *Base) InitPlugin(services service.List)                      { return }
 func (b *Base) GetGenerators() table.GeneratorList                    { return make(table.GeneratorList) }
 func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
 func (b *Base) Name() string                                          { return b.PlugName }
-func (b *Base) GetInfo() Info                                         { return Info{} }
+func (b *Base) GetInfo() Info                                         { return b.Info }
 func (b *Base) Prefix() string                                        { return b.URLPrefix }
 func (b *Base) IsInstalled() bool                                     { return false }
 func (b *Base) Uninstall() error                                      { return nil }
@@ -106,10 +110,19 @@ func (b *Base) Upgrade() error                                        { return n
 func (b *Base) GetIndexURL() string                                   { return "" }
 func (b *Base) GetInstallationPage() (skip bool, gen table.Generator) { return true, nil }
 
-func (b *Base) InitBase(srv service.List) {
+func (b *Base) InitBase(srv service.List, prefix string) {
 	b.Services = srv
 	b.Conn = db.GetConnection(b.Services)
 	b.UI = ui.GetService(b.Services)
+	b.URLPrefix = prefix
+}
+
+func (b *Base) SetInfo(info Info) {
+	b.Info = info
+}
+
+func (b *Base) Title() string {
+	return language.GetWithScope(b.Info.Title, b.Name())
 }
 
 func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, options HTMLOptions) *bytes.Buffer {
@@ -122,16 +135,16 @@ func (b *Base) ExecuteTmplWithNavButtons(ctx *context.Context, panel types.Panel
 }
 
 func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, options HTMLOptions) *bytes.Buffer {
-	return ExecuteWithMenu(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, b.Name(), options)
+	return ExecuteWithMenu(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, b.Name(), b.Title(), options)
 }
 
 func (b *Base) ExecuteTmplWithCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options HTMLOptions) *bytes.Buffer {
-	return ExecuteWithCustomMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, options)
+	return ExecuteWithCustomMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, b.Title(), options)
 }
 
 func (b *Base) ExecuteTmplWithMenuAndNavButtons(ctx *context.Context, panel types.Panel, menu *menu.Menu,
 	btns types.Buttons, options HTMLOptions) *bytes.Buffer {
-	return ExecuteWithMenu(ctx, b.Conn, btns, auth.Auth(ctx), panel, b.Name(), options)
+	return ExecuteWithMenu(ctx, b.Conn, btns, auth.Auth(ctx), panel, b.Name(), b.Title(), options)
 }
 
 func (b *Base) NewMenu(data menu.NewMenuData) (int64, error) {
@@ -144,11 +157,12 @@ func (b *Base) HTML(ctx *context.Context, panel types.Panel, options ...HTMLOpti
 }
 
 type HTMLOptions struct {
-	Animation   bool
-	NoCompress  bool
-	HideSideBar bool
-	HideHeader  bool
-	UpdateMenu  bool
+	Animation         bool
+	NoCompress        bool
+	HideSideBar       bool
+	HideHeader        bool
+	UpdateMenu        bool
+	NavDropDownButton []*types.NavDropDownItemButton
 }
 
 var DefaultHTMLOptions = HTMLOptions{Animation: true}
@@ -288,7 +302,6 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 		Animation:  options.Animation,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: options.NoCompress,
-		UpdateMenu: options.UpdateMenu,
 		IsPjax:     ctx.IsPjax(),
 	})
 }
@@ -297,7 +310,7 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 	navButtons types.Buttons,
 	user models.UserModel,
 	panel types.Panel,
-	menu *menu.Menu, options HTMLOptions) *bytes.Buffer {
+	menu *menu.Menu, logo string, options HTMLOptions) *bytes.Buffer {
 
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
@@ -311,7 +324,7 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 		Animation:  options.Animation,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: options.NoCompress,
-		UpdateMenu: true,
+		Logo:       template2.HTML(logo),
 		IsPjax:     ctx.IsPjax(),
 	})
 }
@@ -321,21 +334,36 @@ func ExecuteWithMenu(ctx *context.Context,
 	navButtons types.Buttons,
 	user models.UserModel,
 	panel types.Panel,
-	name string, options HTMLOptions) *bytes.Buffer {
+	name, logo string, options HTMLOptions) *bytes.Buffer {
 
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
+	btns := options.NavDropDownButton
+	if btns == nil {
+		btns = []*types.NavDropDownItemButton{
+			types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
+				action.Jump(config.Url("/menu?__plugin_name="+name))),
+		}
+	} else {
+		btns = append(btns, types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
+			action.Jump(config.Url("/menu?__plugin_name="+name))))
+	}
+
 	return template.Execute(template.ExecuteParam{
-		User:       user,
-		TmplName:   tmplName,
-		Tmpl:       tmpl,
-		Panel:      panel,
-		Config:     *config.Get(),
-		Menu:       menu.GetGlobalMenu(user, conn, name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
-		Animation:  options.Animation,
-		Buttons:    navButtons.CheckPermission(user),
+		User:      user,
+		TmplName:  tmplName,
+		Tmpl:      tmpl,
+		Panel:     panel,
+		Config:    *config.Get(),
+		Menu:      menu.GetGlobalMenu(user, conn, name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Animation: options.Animation,
+		Buttons: navButtons.Copy().
+			RemoveInfoNavButton().
+			RemoveSiteNavButton().
+			RemoveToolNavButton().
+			Add(types.GetDropDownButton("", icon.Gear, btns)).CheckPermission(user),
 		NoCompress: options.NoCompress,
-		UpdateMenu: true,
+		Logo:       template2.HTML(logo),
 		IsPjax:     ctx.IsPjax(),
 	})
 }

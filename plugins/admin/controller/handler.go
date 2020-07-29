@@ -61,7 +61,7 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		h.HTML(ctx, auth.Auth(ctx), template.WarningPanelWithDescAndTitle(errMsg, errors.Msg, errors.Msg))
+		h.HTML(ctx, auth.Auth(ctx), template.WarningPanelWithDescAndTitle(errMsg, errors.Msg, errors.Msg), "")
 	}
 }
 
@@ -116,7 +116,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			f.IsHideBackButton, f.Header),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
-	})
+	}, "")
 
 	ctx.AddHeader(constant.PjaxUrlHeader, h.config.Url("/info/"+prefix+"/"+kind+queryParam))
 }

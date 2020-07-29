@@ -380,14 +380,23 @@ type ExecuteParam struct {
 	Tmpl       *template.Template
 	TmplName   string
 	IsPjax     bool
-	UpdateMenu bool
 	Panel      types.Panel
+	Logo       template.HTML
 	Config     c.Config
 	Menu       *menu.Menu
 	Animation  bool
 	Buttons    types.Buttons
 	NoCompress bool
 	Iframe     bool
+}
+
+func updateLogoJS(logo template.HTML) template.JS {
+	if logo == template.HTML("") {
+		return ""
+	}
+	return `$(function () {
+	$(".logo-lg").html("` + template.JS(logo) + `")
+});`
 }
 
 func Execute(param ExecuteParam) *bytes.Buffer {
@@ -399,13 +408,14 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 			Menu: param.Menu,
 			Panel: param.Panel.
 				GetContent(append([]bool{param.Config.IsProductionEnvironment() && !param.NoCompress},
-					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.IsPjax)),
+					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.IsPjax)).AddJS(updateLogoJS(param.Logo)),
 			Assets:       GetComponentAssetImportHTML(),
 			Buttons:      param.Buttons,
 			Iframe:       param.Iframe,
 			UpdateMenu:   param.IsPjax,
 			TmplHeadHTML: Default().GetHeadHTML(),
 			TmplFootJS:   Default().GetFootJS(),
+			Logo:         param.Logo,
 		}))
 	if err != nil {
 		logger.Error("template execute error", err)

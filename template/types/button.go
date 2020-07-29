@@ -14,20 +14,24 @@ type Button interface {
 	URL() string
 	METHOD() string
 	ID() string
+	Type() string
 	GetName() string
 	SetName(name string)
+	IsType(t string) bool
 }
 
 type BaseButton struct {
-	Id, Url, Method, Name string
-	Title                 template.HTML
-	Action                Action
+	Id, Url, Method, Name, TypeName string
+	Title                           template.HTML
+	Action                          Action
 }
 
 func (b *BaseButton) Content() (template.HTML, template.JS) { return "", "" }
 func (b *BaseButton) GetAction() Action                     { return b.Action }
 func (b *BaseButton) ID() string                            { return b.Id }
 func (b *BaseButton) URL() string                           { return b.Url }
+func (b *BaseButton) Type() string                          { return b.TypeName }
+func (b *BaseButton) IsType(t string) bool                  { return b.TypeName == t }
 func (b *BaseButton) METHOD() string                        { return b.Method }
 func (b *BaseButton) GetName() string                       { return b.Name }
 func (b *BaseButton) SetName(name string)                   { b.Name = name }
@@ -136,6 +140,10 @@ func (b *ActionButton) Content() (template.HTML, template.JS) {
 
 type Buttons []Button
 
+func (b Buttons) Add(btn Button) Buttons {
+	return append(b, btn)
+}
+
 func (b Buttons) Content() (template.HTML, template.JS) {
 	h := template.HTML("")
 	j := template.JS("")
@@ -146,6 +154,12 @@ func (b Buttons) Content() (template.HTML, template.JS) {
 		j += jj
 	}
 	return h, j
+}
+
+func (b Buttons) Copy() Buttons {
+	var c = make(Buttons, len(b))
+	copy(c, b)
+	return c
 }
 
 func (b Buttons) FooterContent() template.HTML {
@@ -160,8 +174,20 @@ func (b Buttons) FooterContent() template.HTML {
 func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 	btns := make(Buttons, 0)
 	for _, btn := range b {
-		if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
-			btns = append(btns, btn)
+		if btn.IsType(ButtonTypeNavDropDown) {
+			items := make([]Button, 0)
+			for _, navItem := range btn.(*NavDropDownButton).Items {
+				if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
+					items = append(items, navItem)
+				}
+			}
+			if len(items) > 0 {
+				btns = append(btns, btn)
+			}
+		} else {
+			if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
+				btns = append(btns, btn)
+			}
 		}
 	}
 	return btns
@@ -270,5 +296,123 @@ func (n *NavButton) Content() (template.HTML, template.JS) {
       `+title+`
     </a>
 </li>`) + n.Action.ExtContent()
+	return h, n.Action.Js()
+}
+
+type NavDropDownButton struct {
+	*BaseButton
+	Icon  string
+	Items []*NavDropDownItemButton
+}
+
+type NavDropDownItemButton struct {
+	*BaseButton
+}
+
+func GetDropDownButton(title template.HTML, icon string, items []*NavDropDownItemButton, names ...string) *NavDropDownButton {
+	id := btnUUID()
+	name := ""
+
+	if len(names) > 0 {
+		name = names[0]
+	}
+
+	return &NavDropDownButton{
+		BaseButton: &BaseButton{
+			Id:       id,
+			Title:    title,
+			Name:     name,
+			TypeName: ButtonTypeNavDropDown,
+		},
+		Items: items,
+		Icon:  icon,
+	}
+}
+
+func (n *NavDropDownButton) SetItems(items []*NavDropDownItemButton) {
+	n.Items = items
+}
+
+func (n *NavDropDownButton) AddItem(item *NavDropDownItemButton) {
+	n.Items = append(n.Items, item)
+}
+
+func (n *NavDropDownButton) Content() (template.HTML, template.JS) {
+
+	ico := template.HTML("")
+	title := template.HTML("")
+
+	if n.Icon != "" {
+		ico = template.HTML(`<i class="fa ` + n.Icon + `"></i>`)
+	}
+
+	if n.Title != "" {
+		title = `<span>` + n.Title + `</span>`
+	}
+
+	content := template.HTML("")
+	js := template.JS("")
+
+	for _, item := range n.Items {
+		c, j := item.Content()
+		content += c
+		js += j
+	}
+
+	did := utils.Uuid(10)
+
+	h := template.HTML(`<li class="dropdown" id="` + template.HTML(did) + `">
+    <a class="` + template.HTML(n.Id) + ` dropdown-toggle" data-toggle="dropdown" style="cursor:pointer;">
+      ` + ico + `
+      ` + title + `
+    </a>
+	<ul class="dropdown-menu"  aria-labelledby="` + template.HTML(did) + `">
+    	` + content + `
+	</ul>
+</li>`)
+
+	return h, js
+}
+
+const (
+	ButtonTypeNavDropDownItem = "navdropdownitem"
+	ButtonTypeNavDropDown     = "navdropdown"
+)
+
+func GetDropDownItemButton(title template.HTML, action Action, names ...string) *NavDropDownItemButton {
+	id := btnUUID()
+	action.SetBtnId(id)
+	node := action.GetCallbacks()
+	name := ""
+
+	if len(names) > 0 {
+		name = names[0]
+	}
+
+	return &NavDropDownItemButton{
+		BaseButton: &BaseButton{
+			Id:       id,
+			Title:    title,
+			Action:   action,
+			Url:      node.Path,
+			Method:   node.Method,
+			Name:     name,
+			TypeName: ButtonTypeNavDropDownItem,
+		},
+	}
+}
+
+func (n *NavDropDownItemButton) Content() (template.HTML, template.JS) {
+
+	title := template.HTML("")
+
+	if n.Title != "" {
+		title = `<span>` + n.Title + `</span>`
+	}
+
+	h := template.HTML(`<li><a class="dropdown-item `+template.HTML(n.Id)+` `+
+		n.Action.BtnClass()+`" `+n.Action.BtnAttribute()+`>
+      `+title+`
+</a></li>`) + n.Action.ExtContent()
 	return h, n.Action.Js()
 }

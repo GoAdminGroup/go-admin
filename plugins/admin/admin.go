@@ -28,7 +28,7 @@ type Admin struct {
 func (admin *Admin) InitPlugin(services service.List) {
 
 	// DO NOT DELETE
-	admin.InitBase(services)
+	admin.InitBase(services, "")
 
 	c := config.GetService(services.Get("config"))
 	st := table.NewSystemTable(admin.Conn, c)

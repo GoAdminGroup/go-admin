@@ -62,7 +62,7 @@ func (h *Handler) Plugins(ctx *context.Context) {
 		CSS:         pluginsPageCSS,
 		Description: language.GetFromHtml("plugins"),
 		Title:       language.GetFromHtml("plugins"),
-	})
+	}, "")
 }
 
 func (h *Handler) PluginStore(ctx *context.Context) {
@@ -95,7 +95,7 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 }`),
 			Description: language.GetFromHtml("plugin store"),
 			Title:       language.GetFromHtml("plugin store"),
-		})
+		}, "")
 		return
 	}
 
@@ -155,7 +155,7 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 		JS:          template.JS(page.JS) + GetPluginsPageJS(PluginsPageJSData{Prefix: h.config.Prefix()}),
 		Description: language.GetFromHtml("plugin store"),
 		Title:       language.GetFromHtml("plugin store"),
-	})
+	}, "")
 }
 
 func (h *Handler) PluginDetail(ctx *context.Context) {

@@ -157,12 +157,12 @@ func (h *Handler) OperationHandler(path string, ctx *context.Context) bool {
 	return false
 }
 
-func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) {
-	buf := h.Execute(ctx, user, panel, animation...)
+func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) {
+	buf := h.Execute(ctx, user, panel, plugName, animation...)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) *bytes.Buffer {
+func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) *bytes.Buffer {
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 
 	return template.Execute(template.ExecuteParam{
@@ -171,7 +171,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		Tmpl:      tmpl,
 		Panel:     panel,
 		Config:    *h.config,
-		Menu:      menu.GetGlobalMenu(user, h.conn).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		Menu:      menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
 		Buttons:   (*h.navButtons).CheckPermission(user),
 		Iframe:    ctx.Query(constant.IframeKey) == "true",

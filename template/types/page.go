@@ -90,6 +90,7 @@ type NewPageParam struct {
 	Menu         *menu.Menu
 	UpdateMenu   bool
 	Panel        Panel
+	Logo         template.HTML
 	Assets       template.HTML
 	Buttons      Buttons
 	Iframe       bool
@@ -103,10 +104,21 @@ func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 	btnJS := template.JS("")
 
 	for _, btn := range param.Buttons {
-		navBtnFooter += btn.GetAction().FooterContent()
-		content, js := btn.Content()
-		navBtn += content
-		btnJS += js
+		if btn.IsType(ButtonTypeNavDropDown) {
+			content, js := btn.Content()
+			navBtn += content
+			btnJS += js
+			for _, item := range btn.(*NavDropDownButton).Items {
+				navBtnFooter += item.GetAction().FooterContent()
+				_, js := item.Content()
+				btnJS += js
+			}
+		} else {
+			navBtnFooter += btn.GetAction().FooterContent()
+			content, js := btn.Content()
+			navBtn += content
+			btnJS += js
+		}
 	}
 
 	return template.HTML(ParseTableDataTmpl(navBtn)),
@@ -116,6 +128,11 @@ func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 func NewPage(param NewPageParam) *Page {
 
 	navBtn, btnJS := param.NavButtonsAndJS()
+
+	logo := param.Logo
+	if logo == template.HTML("") {
+		logo = config.GetLogo()
+	}
 
 	return &Page{
 		User:       param.User,
@@ -128,7 +145,7 @@ func NewPage(param NewPageParam) *Page {
 		},
 		UrlPrefix:      config.AssertPrefix(),
 		Title:          config.GetTitle(),
-		Logo:           config.GetLogo(),
+		Logo:           logo,
 		MiniLogo:       config.GetMiniLogo(),
 		ColorScheme:    config.GetColorScheme(),
 		IndexUrl:       config.GetIndexURL(),
