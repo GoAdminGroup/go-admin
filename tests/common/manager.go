@@ -46,10 +46,10 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 
 	// show form: without id
 
-	printlnWithColor("show form: without id", "green")
-	e.GET(config.Url("/info/manager/edit")).
-		WithCookie(sesID.Name, sesID.Value).
-		Expect().Status(200).Body().Contains(errors.WrongID)
+	//printlnWithColor("show form: without id", "green")
+	//e.GET(config.Url("/info/manager/edit")).
+	//	WithCookie(sesID.Name, sesID.Value).
+	//	Expect().Status(200).Body().Contains(errors.WrongID)
 
 	// show form
 
