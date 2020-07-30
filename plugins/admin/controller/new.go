@@ -5,6 +5,8 @@ import (
 	template2 "html/template"
 	"net/http"
 
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -26,29 +28,24 @@ func (h *Handler) ShowNewForm(ctx *context.Context) {
 
 func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix, paramStr string, isNew bool) {
 
-	user := auth.Auth(ctx)
-
-	panel := h.table(prefix, ctx)
-
-	formInfo := panel.GetNewForm()
-
-	infoUrl := h.routePathWithPrefix("info", prefix) + paramStr
-	newUrl := h.routePathWithPrefix("new", prefix)
-	showNewUrl := h.routePathWithPrefix("show_new", prefix) + paramStr
-
-	referer := ctx.Headers("Referer")
+	var (
+		user         = auth.Auth(ctx)
+		panel        = h.table(prefix, ctx)
+		formInfo     = panel.GetNewForm()
+		infoUrl      = h.routePathWithPrefix("info", prefix) + paramStr
+		newUrl       = h.routePathWithPrefix("new", prefix)
+		showNewUrl   = h.routePathWithPrefix("show_new", prefix) + paramStr
+		referer      = ctx.Headers("Referer")
+		f            = panel.GetForm()
+		isNotIframe  = ctx.Query(constant.IframeKey) != "true"
+		hiddenFields = map[string]string{
+			form2.TokenKey:    h.authSrv().AddToken(),
+			form2.PreviousKey: infoUrl,
+		}
+	)
 
 	if referer != "" && !isInfoUrl(referer) && !isNewUrl(referer, ctx.Query(constant.PrefixKey)) {
 		infoUrl = referer
-	}
-
-	f := panel.GetForm()
-
-	isNotIframe := ctx.Query(constant.IframeKey) != "true"
-
-	hiddenFields := map[string]string{
-		form2.TokenKey:    h.authSrv().AddToken(),
-		form2.PreviousKey: infoUrl,
 	}
 
 	if ctx.Query(constant.IframeKey) != "" {
@@ -86,7 +83,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		Content:     alert + content,
 		Description: template2.HTML(f.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(f.Title), ""),
-	}, "", alert == "")
+	}, alert == "")
 
 	if isNew {
 		ctx.AddHeader(constant.PjaxUrlHeader, showNewUrl)
@@ -102,6 +99,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
+			logger.Error("get file engine error: ", err)
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
@@ -113,6 +111,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 
 	err := param.Panel.InsertData(param.Value())
 	if err != nil {
+		logger.Error("insert data error: ", err)
 		if ctx.WantJSON() {
 			response.Error(ctx, err.Error())
 		} else {

@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+
 	"github.com/GoAdminGroup/go-admin/template"
 
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -36,12 +38,12 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	if panel.GetForm().HasError() {
 		if panel.GetForm().PageErrorHTML != template2.HTML("") {
 			h.HTML(ctx, auth.Auth(ctx),
-				types.Panel{Content: panel.GetForm().PageErrorHTML}, "", param.Animation)
+				types.Panel{Content: panel.GetForm().PageErrorHTML}, param.Animation)
 			return
 		}
 		h.HTML(ctx, auth.Auth(ctx),
 			template.WarningPanel(panel.GetForm().PageError.Error(),
-				template.GetPageTypeFromPageError(panel.GetForm().PageError)), "", param.Animation)
+				template.GetPageTypeFromPageError(panel.GetForm().PageError)), param.Animation)
 		return
 	}
 
@@ -57,14 +59,14 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 
 	formInfo, err := panel.GetDataWithId(param)
 
-	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
-
 	if err != nil {
+		logger.Error("receive data error: ", err)
 		h.HTML(ctx, user, template.
 			WarningPanelWithDescAndTitle(err.Error(), panel.GetForm().Description, panel.GetForm().Title),
-			"", alert == "" || ((len(animation) > 0) && animation[0]))
+			alert == "" || ((len(animation) > 0) && animation[0]))
 
 		if isEdit {
+			showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
 			ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
 		}
 		return
@@ -125,9 +127,10 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		Content:     alert + content,
 		Description: template2.HTML(formInfo.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
-	}, "", alert == "" || ((len(animation) > 0) && animation[0]))
+	}, alert == "" || ((len(animation) > 0) && animation[0]))
 
 	if isEdit {
+		showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
 		ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
 	}
 }
@@ -139,6 +142,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
+			logger.Error("get file engine error: ", err)
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
@@ -158,6 +162,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	err := param.Panel.UpdateData(param.Value())
 	if err != nil {
+		logger.Error("update data error: ", err)
 		if ctx.WantJSON() {
 			response.Error(ctx, err.Error())
 		} else {

@@ -57,12 +57,8 @@ func (g *Guard) ShowForm(ctx *context.Context) {
 	}
 
 	id := ctx.Query(constant.EditPKKey)
-	if id == "" && prefix != "site" {
-		alert(ctx, panel, errors.WrongPK(panel.GetPrimaryKey().Name), g.conn, g.navBtns)
-		ctx.Abort()
-		return
-	}
-	if prefix == "site" {
+
+	if id == "" {
 		id = "1"
 	}
 

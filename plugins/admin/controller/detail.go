@@ -135,7 +135,7 @@ $('.delete-btn').on('click', function (event) {
 	formInfo, err := newPanel.GetDataWithId(param.WithPKs(id))
 
 	if err != nil {
-		h.HTML(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(), desc, title), "", param.Animation)
+		h.HTML(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(), desc, title), param.Animation)
 		return
 	}
 
@@ -150,5 +150,5 @@ $('.delete-btn').on('click', function (event) {
 			SetPrefix(h.config.PrefixFixSlash()), editUrl, deleteUrl, !isNotIframe),
 		Description: template.HTML(desc),
 		Title:       template.HTML(title),
-	}, "", param.Animation)
+	}, param.Animation)
 }

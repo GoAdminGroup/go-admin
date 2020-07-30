@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/GoAdminGroup/go-admin/template/types/action"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
@@ -157,12 +159,52 @@ func (h *Handler) OperationHandler(path string, ctx *context.Context) bool {
 	return false
 }
 
-func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) {
-	buf := h.Execute(ctx, user, panel, plugName, animation...)
+func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) {
+	buf := h.Execute(ctx, user, panel, "", animation...)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) *bytes.Buffer {
+func (h *Handler) HTMLPlug(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) {
+	var btns types.Buttons
+	if plugName == "" {
+		btns = (*h.navButtons).CheckPermission(user)
+	} else {
+		btns = (*h.navButtons).Copy().
+			RemoveToolNavButton().
+			RemoveSiteNavButton().
+			RemoveInfoNavButton().
+			Add(types.GetDropDownButton("", icon.Gear, []*types.NavDropDownItemButton{
+				types.GetDropDownItemButton(language.GetFromHtml("plugin setting"),
+					action.Jump(h.config.Url("/info/plugin_"+plugName+"/edit"))),
+				types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
+					action.Jump(h.config.Url("/menu?__plugin_name="+plugName))),
+			})).
+			CheckPermission(user)
+	}
+	buf := h.ExecuteWithBtns(ctx, user, panel, plugName, btns, animation...)
+	ctx.HTML(http.StatusOK, buf.String())
+}
+
+func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, btns types.Buttons,
+	animation ...bool) *bytes.Buffer {
+	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+
+	return template.Execute(template.ExecuteParam{
+		User:      user,
+		TmplName:  tmplName,
+		Tmpl:      tmpl,
+		Panel:     panel,
+		Config:    *h.config,
+		Menu:      menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
+		Buttons:   btns,
+		Iframe:    ctx.Query(constant.IframeKey) == "true",
+		IsPjax:    isPjax(ctx),
+	})
+}
+
+func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string,
+	animation ...bool) *bytes.Buffer {
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 
 	return template.Execute(template.ExecuteParam{

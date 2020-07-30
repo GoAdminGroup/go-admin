@@ -65,7 +65,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 		alert = aAlert().Warning(err.Error())
 	}
 
-	h.HTML(ctx, user, types.Panel{
+	h.HTMLPlug(ctx, user, types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -104,7 +104,7 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	if err != nil {
-		h.HTML(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(),
+		h.HTMLPlug(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(),
 			model.GetForm().Description, model.GetForm().Title), plugName)
 		return
 	}
@@ -124,7 +124,7 @@ func (h *Handler) showEditMenu(ctx *context.Context, plugName string, formInfo t
 
 	panel := h.table("menu", ctx)
 
-	h.HTML(ctx, auth.Auth(ctx), types.Panel{
+	h.HTMLPlug(ctx, auth.Auth(ctx), types.Panel{
 		Content: alert + formContent(aForm().
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
@@ -289,7 +289,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 
 	row := aRow().SetContent(col1 + col2).GetContent()
 
-	h.HTML(ctx, user, types.Panel{
+	h.HTMLPlug(ctx, user, types.Panel{
 		Content:     alert + row,
 		Description: "Menus Manage",
 		Title:       "Menus Manage",

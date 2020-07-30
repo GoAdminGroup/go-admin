@@ -166,7 +166,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		Content:     row,
 		Description: language.GetFromHtml("system info", "system"),
 		Title:       language.GetFromHtml("system info", "system"),
-	}, "")
+	})
 }
 
 func stripedTable(list []map[string]types.InfoItem) template.HTML {
