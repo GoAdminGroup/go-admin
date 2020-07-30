@@ -124,6 +124,8 @@ var tc = LangSet{
 	"plugins":          "插件",
 	"plugin store":     "插件商店",
 	"get more plugins": "獲取更多插件",
+	"uninstalled":      "未安裝",
+	"plugin setting":   "插件設置",
 
 	"second":  "秒",
 	"seconds": "秒",

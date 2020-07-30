@@ -58,27 +58,38 @@ func (plug *{{.PluginTitle}}) InitPlugin(srv service.List) {
 
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
+
+	f.SetInfo(info)
 }
 
-func (plug *{{.PluginTitle}}) GetInfo() plugins.Info {
-	return plugins.Info{
-		Website:     "",
-		Title:       "{{.PluginTitle}}",
-		Description: "",
-		Version:     "",
-		Author:      "",
-		Url:         "",
-		Cover:       "",
-		Agreement:   "",
-		CreateDate:  utils.ParseTime("2000-01-11"),
-		UpdateDate:  utils.ParseTime("2000-01-11"),
-	}
+var info = plugins.Info{
+	Website:     "",
+	Title:       "{{.PluginTitle}}",
+	Description: "",
+	Version:     "",
+	Author:      "",
+	Url:         "",
+	Cover:       "",
+	Agreement:   "",
+	Uuid:        "",
+	Name:        "",
+	ModulePath:  "",
+	CreateDate:  utils.ParseTime("2000-01-11"),
+	UpdateDate:  utils.ParseTime("2000-01-11"),
 }
 
-func (plug *{{.PluginTitle}}) GetInstallationPage() (bool, table.Generator) {
-	return false, func(ctx *context.Context) ({{.PluginName}}Configuration table.Table) {
-		{{.PluginName}}Configuration = table.NewDefaultTable(table.DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
-			SetOnlyNewForm())
+func (plug *{{.PluginTitle}}) GetSettingPage() table.Generator {
+	return func(ctx *context.Context) ({{.PluginName}}Configuration table.Table) {
+
+		cfg := table.DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver)
+
+		if !plug.IsInstalled() {
+			cfg = cfg.SetOnlyNewForm()
+		} else {
+			cfg = cfg.SetOnlyUpdateForm()
+		}
+
+		{{.PluginName}}Configuration = table.NewDefaultTable(cfg)
 
 		formList := {{.PluginName}}Configuration.GetForm().
 			AddXssJsFilter().

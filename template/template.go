@@ -390,12 +390,25 @@ type ExecuteParam struct {
 	Iframe     bool
 }
 
-func updateLogoJS(logo template.HTML) template.JS {
+func updateNavAndLogoJS(logo template.HTML) template.JS {
 	if logo == template.HTML("") {
 		return ""
 	}
 	return `$(function () {
-	$(".logo-lg").html("` + template.JS(logo) + `")
+	$(".logo-lg").html("` + template.JS(logo) + `");
+});`
+}
+
+func updateNavJS(isPjax bool) template.JS {
+	if !isPjax {
+		return ""
+	}
+	return `$(function () {
+	let lis = $(".navbar-custom-menu .nav.navbar-nav li");
+	for (var i = lis.length - 8; i > -1; i--) {
+		$(lis[i]).remove();
+	}
+	$(".navbar-custom-menu .nav.navbar-nav").prepend($("#navbar-nav-custom").html());
 });`
 }
 
@@ -404,15 +417,16 @@ func Execute(param ExecuteParam) *bytes.Buffer {
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
 		types.NewPage(types.NewPageParam{
-			User: param.User,
-			Menu: param.Menu,
+			User:       param.User,
+			Menu:       param.Menu,
+			Assets:     GetComponentAssetImportHTML(),
+			Buttons:    param.Buttons,
+			Iframe:     param.Iframe,
+			UpdateMenu: param.IsPjax,
 			Panel: param.Panel.
 				GetContent(append([]bool{param.Config.IsProductionEnvironment() && !param.NoCompress},
-					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.IsPjax)).AddJS(updateLogoJS(param.Logo)),
-			Assets:       GetComponentAssetImportHTML(),
-			Buttons:      param.Buttons,
-			Iframe:       param.Iframe,
-			UpdateMenu:   param.IsPjax,
+					param.Animation)...).AddJS(param.Menu.GetUpdateJS(param.IsPjax)).
+				AddJS(updateNavAndLogoJS(param.Logo)).AddJS(updateNavJS(param.IsPjax)),
 			TmplHeadHTML: Default().GetHeadHTML(),
 			TmplFootJS:   Default().GetFootJS(),
 			Logo:         param.Logo,

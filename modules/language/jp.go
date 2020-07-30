@@ -110,6 +110,8 @@ var jp = LangSet{
 	"plugins":          "Plugins",
 	"plugin store":     "Plugin Store",
 	"get more plugins": "Get more plugins",
+	"uninstalled":      "Uninstalled",
+	"plugin setting":   "Plugin Setting",
 
 	"second":  "second",
 	"seconds": "seconds",

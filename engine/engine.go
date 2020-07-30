@@ -126,9 +126,8 @@ func (eng *Engine) Use(router interface{}) error {
 		if eng.PluginList[i].Name() != "admin" {
 			logger.Info("=====> " + eng.PluginList[i].Name())
 			eng.PluginList[i].InitPlugin(eng.Services)
-			skip, gen := eng.PluginList[i].GetInstallationPage()
-			if !skip && gen != nil {
-				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), gen)
+			if !eng.PluginList[i].GetInfo().SkipInstallation {
+				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), eng.PluginList[i].GetSettingPage())
 			}
 			plugGenerators = plugGenerators.Combine(eng.PluginList[i].GetGenerators())
 		}

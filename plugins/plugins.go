@@ -47,7 +47,7 @@ type Plugin interface {
 	Prefix() string
 	GetInfo() Info
 	GetIndexURL() string
-	GetInstallationPage() (skip bool, gen table.Generator)
+	GetSettingPage() table.Generator
 	IsInstalled() bool
 	Uninstall() error
 	Upgrade() error
@@ -82,6 +82,7 @@ type Info struct {
 	HasBought        bool      `json:"has_bought" yaml:"has_bought" ini:"has_bought"`
 	CanUpdate        bool      `json:"can_update" yaml:"can_update" ini:"can_update"`
 	Legal            bool      `json:"legal" yaml:"legal" ini:"legal"`
+	SkipInstallation bool      `json:"skip_installation" yaml:"skip_installation" ini:"skip_installation"`
 }
 
 func (i Info) IsFree() bool {
@@ -98,17 +99,17 @@ type Base struct {
 	Info      Info
 }
 
-func (b *Base) InitPlugin(services service.List)                      { return }
-func (b *Base) GetGenerators() table.GeneratorList                    { return make(table.GeneratorList) }
-func (b *Base) GetHandler() context.HandlerMap                        { return b.App.Handlers }
-func (b *Base) Name() string                                          { return b.PlugName }
-func (b *Base) GetInfo() Info                                         { return b.Info }
-func (b *Base) Prefix() string                                        { return b.URLPrefix }
-func (b *Base) IsInstalled() bool                                     { return false }
-func (b *Base) Uninstall() error                                      { return nil }
-func (b *Base) Upgrade() error                                        { return nil }
-func (b *Base) GetIndexURL() string                                   { return "" }
-func (b *Base) GetInstallationPage() (skip bool, gen table.Generator) { return true, nil }
+func (b *Base) InitPlugin(services service.List)   { return }
+func (b *Base) GetGenerators() table.GeneratorList { return make(table.GeneratorList) }
+func (b *Base) GetHandler() context.HandlerMap     { return b.App.Handlers }
+func (b *Base) Name() string                       { return b.PlugName }
+func (b *Base) GetInfo() Info                      { return b.Info }
+func (b *Base) Prefix() string                     { return b.URLPrefix }
+func (b *Base) IsInstalled() bool                  { return false }
+func (b *Base) Uninstall() error                   { return nil }
+func (b *Base) Upgrade() error                     { return nil }
+func (b *Base) GetIndexURL() string                { return "" }
+func (b *Base) GetSettingPage() table.Generator    { return nil }
 
 func (b *Base) InitBase(srv service.List, prefix string) {
 	b.Services = srv
@@ -237,20 +238,22 @@ func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, file
 
 type BasePlugin struct {
 	Base
-	Info     Info
-	IndexURL string
+	Info      Info
+	IndexURL  string
+	Installed bool
 }
 
 func (b *BasePlugin) GetInfo() Info       { return b.Info }
 func (b *BasePlugin) Name() string        { return b.Info.Name }
 func (b *BasePlugin) GetIndexURL() string { return b.IndexURL }
+func (b *BasePlugin) IsInstalled() bool   { return b.Installed }
 
 func NewBasePluginWithInfo(info Info) Plugin {
 	return &BasePlugin{Info: info}
 }
 
-func NewBasePluginWithInfoAndIndexURL(info Info, u string) Plugin {
-	return &BasePlugin{Info: info, IndexURL: u}
+func NewBasePluginWithInfoAndIndexURL(info Info, u string, installed bool) Plugin {
+	return &BasePlugin{Info: info, IndexURL: u, Installed: installed}
 }
 
 func GetPluginsWithInfos(info []Info) Plugins {
@@ -341,12 +344,18 @@ func ExecuteWithMenu(ctx *context.Context,
 	btns := options.NavDropDownButton
 	if btns == nil {
 		btns = []*types.NavDropDownItemButton{
+			types.GetDropDownItemButton(language.GetFromHtml("plugin setting"),
+				action.Jump(config.Url("/info/plugin_"+name+"/edit"))),
 			types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
 				action.Jump(config.Url("/menu?__plugin_name="+name))),
 		}
 	} else {
-		btns = append(btns, types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
-			action.Jump(config.Url("/menu?__plugin_name="+name))))
+		btns = append(btns, []*types.NavDropDownItemButton{
+			types.GetDropDownItemButton(language.GetFromHtml("plugin setting"),
+				action.Jump(config.Url("/info/plugin_"+name+"/edit"))),
+			types.GetDropDownItemButton(language.GetFromHtml("menus manage"),
+				action.Jump(config.Url("/menu?__plugin_name="+name))),
+		}...)
 	}
 
 	return template.Execute(template.ExecuteParam{
@@ -443,7 +452,7 @@ func GetAll(req remote_server.GetOnlineReq, token string) (Plugins, Page) {
 				info.Description = language.GetWithScope(info.Description, info.Name)
 				info.Title = language.GetWithScope(info.Title, info.Name)
 				info.Version = plugs[index].GetInfo().Version
-				plugs[index] = NewBasePluginWithInfo(info)
+				plugs[index] = NewBasePluginWithInfoAndIndexURL(info, value.GetIndexURL(), value.IsInstalled())
 				break
 			}
 		}

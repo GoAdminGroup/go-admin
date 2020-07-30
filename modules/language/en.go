@@ -95,10 +95,12 @@ var en = LangSet{
 	"not found":      "Not found",
 	"internal error": "Internal error",
 	"unauthorized":   "Unauthorized",
+	"plugin setting": "Plugin Setting",
 
 	"plugins":          "Plugins",
 	"plugin store":     "Plugin Store",
 	"get more plugins": "Get more plugins",
+	"uninstalled":      "Uninstalled",
 
 	"second":  "second",
 	"seconds": "seconds",

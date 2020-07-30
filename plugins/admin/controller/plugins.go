@@ -36,9 +36,11 @@ func (h *Handler) Plugins(ctx *context.Context) {
 	if h.config.IsNotProductionEnvironment() {
 		getMoreCover := config.Url("/assets/dist/img/plugin_more.png")
 		list = list.Add(plugins.NewBasePluginWithInfoAndIndexURL(plugins.Info{
-			Title: "get more plugins", Name: "",
-			MiniCover: getMoreCover, Cover: getMoreCover},
-			config.Url("/plugins/store")))
+			Title:     "get more plugins",
+			Name:      "",
+			MiniCover: getMoreCover,
+			Cover:     getMoreCover,
+		}, config.Url("/plugins/store"), true))
 	}
 	for i := 0; i < len(list); i += 6 {
 		box1 := aBox().
@@ -173,8 +175,6 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 
 	info := plug.GetInfo()
 
-	skip, _ := plug.GetInstallationPage()
-
 	if info.MiniCover == "" {
 		info.MiniCover = config.Url("/assets/dist/img/plugin_default.png")
 	}
@@ -193,9 +193,9 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 			"updated_at":      language.GetWithScope(info.UpdateDate.Format("2006-01-02"), name),
 			"downloaded":      info.Downloaded,
 			"download_reboot": plugins.Exist(plug),
-			"skip":            skip,
+			"skip":            info.SkipInstallation,
 			"uuid":            info.Uuid,
-			"upgrade":         plug.GetInfo().CanUpdate,
+			"upgrade":         info.CanUpdate,
 			"install":         plug.IsInstalled(),
 			"free":            info.IsFree(),
 		},
@@ -213,14 +213,11 @@ type PluginBoxParam struct {
 }
 
 func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
-
-	skip, _ := plug.GetInstallationPage()
-
 	return PluginBoxParam{
 		Info:           plug.GetInfo(),
 		Install:        plug.IsInstalled(),
 		Upgrade:        plug.GetInfo().CanUpdate,
-		Skip:           skip,
+		Skip:           plug.GetInfo().SkipInstallation,
 		DownloadReboot: plugins.Exist(plug),
 		Name:           plug.Name(),
 		IndexURL:       plug.GetIndexURL(),
@@ -253,12 +250,9 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	} else {
 		if param.Info.Downloaded {
 			if param.DownloadReboot {
-				if param.Skip {
-					footer += html.ButtonEl().SetClass(pluginBtnClass("installation")...).
-						SetAttr("onclick", `pluginInstall('`+param.Name+`')`).
-						SetContent(plugWordHTML("install")).
-						Get()
-				} else {
+				fmt.Println("====================")
+				fmt.Println("param.Skip", param.Skip, "param.Install", param.Install)
+				if !param.Skip && !param.Install {
 					footer += html.AEl().SetAttr("href", h.config.Url(`/info/plugin_`+param.Name+`/new`)).
 						SetContent(
 							html.ButtonEl().SetClass(pluginBtnClass("installation")...).
@@ -306,13 +300,20 @@ func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
 	if cover == template2.HTML("") {
 		cover = "/admin/assets/dist/img/plugin_default.png"
 	}
+
+	jump := param.IndexURL
+	label := template.HTML("")
+	if !param.Install {
+		jump = h.config.Url("/info/plugin_" + param.Name + "/new")
+		label = html.SpanEl().SetClass("plugin-item-label").SetContent(language.GetFromHtml("uninstalled")).Get()
+	}
 	col1 := html.AEl().SetContent(html.DivEl().SetClass("plugin-item-img").
 		SetContent(aImage().
 			SetSrc(cover).
 			GetContent()+
 			html.PEl().SetContent(language.GetFromHtml(template.HTML(param.Info.Title), param.Name)).
 				SetClass("plugin-item-title").Get()).
-		Get()).SetAttr("href", param.IndexURL).Get()
+		Get()+label).SetAttr("href", jump).Get()
 	return col1
 }
 

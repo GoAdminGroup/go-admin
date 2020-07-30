@@ -130,6 +130,8 @@ var cn = LangSet{
 	"plugins":          "插件",
 	"plugin store":     "插件商店",
 	"get more plugins": "获取更多插件",
+	"uninstalled":      "未安装",
+	"plugin setting":   "插件设置",
 
 	"second":  "秒",
 	"seconds": "秒",

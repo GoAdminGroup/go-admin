@@ -248,6 +248,16 @@ var pluginsPageCSS = template.CSS(`
 			max-width: 200px;
 		}
 	}
+	.plugin-item-label {
+		color: white;
+		background-color: red;
+		padding: 4px;
+		border-radius: 3px;
+		font-size: 12px;
+		position: absolute;
+		top: 5px;
+		right: 5px;
+	}
 `)
 
 var pluginsStorePageCSS = template.CSS(`

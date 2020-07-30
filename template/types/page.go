@@ -86,16 +86,18 @@ type Page struct {
 }
 
 type NewPageParam struct {
-	User         models.UserModel
-	Menu         *menu.Menu
-	UpdateMenu   bool
-	Panel        Panel
-	Logo         template.HTML
-	Assets       template.HTML
-	Buttons      Buttons
-	Iframe       bool
-	TmplHeadHTML template.HTML
-	TmplFootJS   template.HTML
+	User           models.UserModel
+	Menu           *menu.Menu
+	UpdateMenu     bool
+	Panel          Panel
+	Logo           template.HTML
+	Assets         template.HTML
+	Buttons        Buttons
+	Iframe         bool
+	TmplHeadHTML   template.HTML
+	TmplFootJS     template.HTML
+	NavButtonsHTML template.HTML
+	NavButtonsJS   template.HTML
 }
 
 func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
@@ -127,7 +129,9 @@ func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 
 func NewPage(param NewPageParam) *Page {
 
-	navBtn, btnJS := param.NavButtonsAndJS()
+	if param.NavButtonsHTML == template.HTML("") {
+		param.NavButtonsHTML, param.NavButtonsJS = param.NavButtonsAndJS()
+	}
 
 	logo := param.Logo
 	if logo == template.HTML("") {
@@ -151,12 +155,12 @@ func NewPage(param NewPageParam) *Page {
 		IndexUrl:       config.GetIndexURL(),
 		CdnUrl:         config.GetAssetUrl(),
 		CustomHeadHtml: config.GetCustomHeadHtml(),
-		CustomFootHtml: config.GetCustomFootHtml() + btnJS,
+		CustomFootHtml: config.GetCustomFootHtml() + param.NavButtonsJS,
 		FooterInfo:     config.GetFooterInfo(),
 		AssetsList:     param.Assets,
 		navButtons:     param.Buttons,
 		Iframe:         param.Iframe,
-		NavButtonsHTML: navBtn,
+		NavButtonsHTML: param.NavButtonsHTML,
 		TmplHeadHTML:   param.TmplHeadHTML,
 		TmplFootJS:     param.TmplFootJS,
 	}
