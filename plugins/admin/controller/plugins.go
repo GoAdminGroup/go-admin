@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/modules/system"
+
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -78,6 +80,7 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 				Filter:     ctx.Query("filter"),
 				Order:      ctx.Query("order"),
 				Lang:       h.config.Language,
+				Version:    system.Version(),
 				CategoryId: ctx.Query("category_id"),
 			}, ctx.Cookie(remote_server.TokenKey))
 		rows = template.HTML(page.HTML)

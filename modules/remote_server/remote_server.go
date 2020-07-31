@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/GoAdminGroup/go-admin/modules/system"
+
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 )
 
@@ -87,7 +89,7 @@ type GetDownloadURLRes struct {
 func GetDownloadURL(uuid, token string) (string, string, error) {
 	var resData GetDownloadURLRes
 
-	req, err := http.NewRequest("GET", ServerHostApi+"/plugin/download", strings.NewReader(`{"uuid":"`+uuid+`"}`))
+	req, err := http.NewRequest("GET", ServerHostApi+"/plugin/download", strings.NewReader(`{"uuid":"`+uuid+`", "version":"`+system.Version()+`"}`))
 
 	if err != nil {
 		logger.Error("get plugin download url error: ", err)
@@ -130,6 +132,7 @@ type GetOnlineReq struct {
 	Order      string `json:"order"`
 	Lang       string `json:"lang"`
 	CategoryId string `json:"category_id"`
+	Version    string `json:"version"`
 }
 
 func (req GetOnlineReq) Format() string {
@@ -154,6 +157,9 @@ func (req GetOnlineReq) Format() string {
 	}
 	if req.Free != "" {
 		res += "free=" + req.Free + "&"
+	}
+	if req.Version != "" {
+		res += "version=" + req.Version + "&"
 	}
 	if res != "" {
 		return res[:len(res)-1]
