@@ -22,12 +22,12 @@ func apiTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		Expect().
 		Status(200).JSON().Object().ValueEqual("code", 200)
 
-	printlnWithColor("update form without id", "green")
-	e.GET(config.Url("/api/edit/form/manager")).
-		WithHeader("Accept", "application/json, text/plain, */*").
-		WithCookie(sesID.Name, sesID.Value).
-		Expect().
-		Status(400).JSON().Object().ValueEqual("code", 400)
+	//printlnWithColor("update form without id", "green")
+	//e.GET(config.Url("/api/edit/form/manager")).
+	//	WithHeader("Accept", "application/json, text/plain, */*").
+	//	WithCookie(sesID.Name, sesID.Value).
+	//	Expect().
+	//	Status(400).JSON().Object().ValueEqual("code", 400)
 
 	printlnWithColor("update form", "green")
 	e.GET(config.Url("/api/edit/form/manager")).
