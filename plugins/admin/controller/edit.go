@@ -47,12 +47,13 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		return
 	}
 
-	user := auth.Auth(ctx)
+	var (
+		user       = auth.Auth(ctx)
+		paramStr   = param.GetRouteParamStr()
+		newUrl     = modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
+		footerKind = "edit"
+	)
 
-	paramStr := param.GetRouteParamStr()
-
-	newUrl := modules.AorEmpty(panel.GetCanAdd(), h.routePathWithPrefix("show_new", prefix)+paramStr)
-	footerKind := "edit"
 	if newUrl == "" || !user.CheckPermissionByUrlMethod(newUrl, h.route("show_new").Method(), url.Values{}) {
 		footerKind = "edit_only"
 	}
@@ -76,7 +77,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		parameter.PrimaryKey).GetRouteParamStr()
 	editUrl := h.routePathWithPrefix("edit", prefix)
 
-	referer := ctx.Headers("Referer")
+	referer := ctx.Referer()
 
 	if referer != "" && !isInfoUrl(referer) && !isEditUrl(referer, ctx.Query(constant.PrefixKey)) {
 		infoUrl = referer

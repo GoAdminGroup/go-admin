@@ -29,23 +29,24 @@ func (h *Handler) ShowNewForm(ctx *context.Context) {
 func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix, paramStr string, isNew bool) {
 
 	var (
-		user         = auth.Auth(ctx)
-		panel        = h.table(prefix, ctx)
-		formInfo     = panel.GetNewForm()
-		infoUrl      = h.routePathWithPrefix("info", prefix) + paramStr
-		newUrl       = h.routePathWithPrefix("new", prefix)
-		showNewUrl   = h.routePathWithPrefix("show_new", prefix) + paramStr
-		referer      = ctx.Headers("Referer")
-		f            = panel.GetForm()
-		isNotIframe  = ctx.Query(constant.IframeKey) != "true"
-		hiddenFields = map[string]string{
-			form2.TokenKey:    h.authSrv().AddToken(),
-			form2.PreviousKey: infoUrl,
-		}
+		user        = auth.Auth(ctx)
+		panel       = h.table(prefix, ctx)
+		formInfo    = panel.GetNewForm()
+		infoUrl     = h.routePathWithPrefix("info", prefix) + paramStr
+		newUrl      = h.routePathWithPrefix("new", prefix)
+		showNewUrl  = h.routePathWithPrefix("show_new", prefix) + paramStr
+		referer     = ctx.Referer()
+		f           = panel.GetForm()
+		isNotIframe = ctx.Query(constant.IframeKey) != "true"
 	)
 
 	if referer != "" && !isInfoUrl(referer) && !isNewUrl(referer, ctx.Query(constant.PrefixKey)) {
 		infoUrl = referer
+	}
+
+	hiddenFields := map[string]string{
+		form2.TokenKey:    h.authSrv().AddToken(),
+		form2.PreviousKey: infoUrl,
 	}
 
 	if ctx.Query(constant.IframeKey) != "" {

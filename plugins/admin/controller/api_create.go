@@ -29,18 +29,16 @@ func (h *Handler) ApiCreate(ctx *context.Context) {
 }
 
 func (h *Handler) ApiCreateForm(ctx *context.Context) {
-	params := guard.GetShowNewFormParam(ctx)
 
-	prefix, paramStr := params.Prefix, params.Param.GetRouteParamStr()
-
-	panel := h.table(prefix, ctx)
-
-	formInfo := panel.GetNewForm()
-
-	infoUrl := h.routePathWithPrefix("api_info", prefix) + paramStr
-	newUrl := h.routePathWithPrefix("api_new", prefix)
-
-	referer := ctx.Headers("Referer")
+	var (
+		params           = guard.GetShowNewFormParam(ctx)
+		prefix, paramStr = params.Prefix, params.Param.GetRouteParamStr()
+		panel            = h.table(prefix, ctx)
+		formInfo         = panel.GetNewForm()
+		infoUrl          = h.routePathWithPrefix("api_info", prefix) + paramStr
+		newUrl           = h.routePathWithPrefix("api_new", prefix)
+		referer          = ctx.Referer()
+	)
 
 	if referer != "" && !isInfoUrl(referer) && !isNewUrl(referer, ctx.Query(constant.PrefixKey)) {
 		infoUrl = referer

@@ -65,7 +65,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 		return
 	}
 
-	if ref := ctx.Headers("Referer"); ref != "" {
+	if ref := ctx.Referer(); ref != "" {
 		if u, err := url.Parse(ref); err == nil {
 			v := u.Query()
 			if r := v.Get("ref"); r != "" {

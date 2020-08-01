@@ -50,13 +50,13 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 				return
 			}
 			param := ""
-			if ref := ctx.Headers("Referer"); ref != "" {
+			if ref := ctx.Referer(); ref != "" {
 				param = "?ref=" + url.QueryEscape(ref)
 			}
 
 			u := config.Url(config.GetLoginUrl() + param)
 			_, err := ctx.Request.Cookie(DefaultCookieKey)
-			referer := ctx.Headers("Referer")
+			referer := ctx.Referer()
 
 			if (ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET") ||
 				err != nil ||

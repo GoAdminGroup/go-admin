@@ -34,7 +34,7 @@ func (h *Handler) ShowNewMenu(ctx *context.Context) {
 
 func getPlugNameFromReferer(ctx *context.Context) string {
 	plugName := ""
-	if ref := ctx.Headers("Referer"); ref != "" {
+	if ref := ctx.Referer(); ref != "" {
 		if u, err := url.Parse(ref); err == nil && u != nil {
 			plugName = u.Query().Get("__plugin_name")
 		}
