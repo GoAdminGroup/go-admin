@@ -1219,7 +1219,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		errorMsg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "data.msg")
 		jump := modules.AorB(data.SuccessJumpURL != "", `"`+data.SuccessJumpURL+`"`, "data.data.url")
 		text := modules.AorB(data.SuccessText != "", `text:"`+data.SuccessText+`",`, "")
-		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "")
+		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
 	    data = JSON.parse(data);
@@ -1251,7 +1251,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 	if f.AjaxErrorJS == template.JS("") {
 		errorMsg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "data.responseJSON.msg")
 		error2Msg := modules.AorB(data.ErrorTitle != "", `"`+data.ErrorTitle+`"`, "'"+language.Get("error")+"'")
-		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "")
+		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		f.AjaxErrorJS = template.JS(`
 	if (data.responseText !== "") {
 		swal({

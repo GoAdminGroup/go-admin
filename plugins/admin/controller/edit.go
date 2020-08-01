@@ -72,7 +72,8 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		return
 	}
 
-	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey).GetRouteParamStr()
+	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey,
+		parameter.PrimaryKey).GetRouteParamStr()
 	editUrl := h.routePathWithPrefix("edit", prefix)
 
 	referer := ctx.Headers("Referer")

@@ -82,12 +82,13 @@ func (e NewFormParam) Value() form.Values {
 }
 
 func (g *Guard) NewForm(ctx *context.Context) {
-	previous := ctx.FormValue(form.PreviousKey)
-	panel, prefix := g.table(ctx)
 
-	conn := db.GetConnection(g.services)
-
-	token := ctx.FormValue(form.TokenKey)
+	var (
+		previous      = ctx.FormValue(form.PreviousKey)
+		panel, prefix = g.table(ctx)
+		conn          = db.GetConnection(g.services)
+		token         = ctx.FormValue(form.TokenKey)
+	)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
 		alert(ctx, panel, errors.CreateFailWrongToken, conn, g.navBtns)

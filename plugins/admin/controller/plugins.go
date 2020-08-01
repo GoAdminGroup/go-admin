@@ -253,8 +253,6 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	} else {
 		if param.Info.Downloaded {
 			if param.DownloadReboot {
-				fmt.Println("====================")
-				fmt.Println("param.Skip", param.Skip, "param.Install", param.Install)
 				if !param.Skip && !param.Install {
 					footer += html.AEl().SetAttr("href", h.config.Url(`/info/plugin_`+param.Name+`/new`)).
 						SetContent(

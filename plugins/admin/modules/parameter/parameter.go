@@ -22,6 +22,8 @@ type Parameters struct {
 	URLPath      string
 	Fields       map[string][]string
 	OrConditions map[string]string
+
+	cacheFixedStr url.Values
 }
 
 const (
@@ -209,8 +211,10 @@ func (param Parameters) AddField(field, value string) Parameters {
 	return param
 }
 
-func (param Parameters) DeleteField(field string) Parameters {
-	delete(param.Fields, field)
+func (param Parameters) DeleteField(fields ...string) Parameters {
+	for _, field := range fields {
+		delete(param.Fields, field)
+	}
 	return param
 }
 
@@ -279,14 +283,35 @@ func (param Parameters) GetRouteParamStrWithoutPageSize(page string) string {
 	return "?" + p.Encode()
 }
 
-func (param Parameters) GetLastPageRouteParamStr() string {
-	p := param.GetFixedParamStr()
+func (param Parameters) GetFixedParamStrFromCache() url.Values {
+	p := url.Values{}
+	if param.cacheFixedStr != nil {
+		p = param.cacheFixedStr
+	} else {
+		p = param.GetFixedParamStr()
+		param.cacheFixedStr = p
+	}
+	return p
+}
+
+func (param Parameters) GetLastPageRouteParamStr(cache ...bool) string {
+	p := url.Values{}
+	if len(cache) > 0 && cache[0] {
+		p = param.GetFixedParamStrFromCache()
+	} else {
+		p = param.GetFixedParamStr()
+	}
 	p.Add(Page, strconv.Itoa(param.PageInt-1))
 	return "?" + p.Encode()
 }
 
-func (param Parameters) GetNextPageRouteParamStr() string {
-	p := param.GetFixedParamStr()
+func (param Parameters) GetNextPageRouteParamStr(cache ...bool) string {
+	p := url.Values{}
+	if len(cache) > 0 && cache[0] {
+		p = param.GetFixedParamStrFromCache()
+	} else {
+		p = param.GetFixedParamStr()
+	}
 	p.Add(Page, strconv.Itoa(param.PageInt+1))
 	return "?" + p.Encode()
 }

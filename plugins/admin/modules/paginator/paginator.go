@@ -29,7 +29,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 		paginator.PreviousUrl = cfg.Param.URLPath
 	} else {
 		paginator.PreviousClass = ""
-		paginator.PreviousUrl = cfg.Param.URLPath + cfg.Param.GetLastPageRouteParamStr()
+		paginator.PreviousUrl = cfg.Param.URLPath + cfg.Param.GetLastPageRouteParamStr(true)
 	}
 
 	if cfg.Param.PageInt == totalPage {
@@ -37,7 +37,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 		paginator.NextUrl = cfg.Param.URLPath
 	} else {
 		paginator.NextClass = ""
-		paginator.NextUrl = cfg.Param.URLPath + cfg.Param.GetNextPageRouteParamStr()
+		paginator.NextUrl = cfg.Param.URLPath + cfg.Param.GetNextPageRouteParamStr(true)
 	}
 	paginator.Url = cfg.Param.URLPath + cfg.Param.GetRouteParamStrWithoutPageSize("1") + "&" + form.NoAnimationKey + "=true"
 	paginator.CurPageEndIndex = strconv.Itoa((cfg.Param.PageInt) * cfg.Param.PageSizeInt)

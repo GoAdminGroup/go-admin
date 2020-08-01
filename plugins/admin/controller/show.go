@@ -78,12 +78,12 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 
 	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
 	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix))
+	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix)+paramStr)
 	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
 	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
 
 	infoUrl := h.routePathWithPrefix(urlNamePrefix+"info", prefix)
-	updateUrl := h.routePathWithPrefix(urlNamePrefix+"update", prefix)
+	updateUrl := h.routePathWithPrefix(urlNamePrefix+"update", prefix) + paramStr
 
 	user := auth.Auth(ctx)
 

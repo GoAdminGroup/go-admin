@@ -349,6 +349,27 @@ func (ctx *Context) Headers(key string) string {
 	return ctx.Request.Header.Get(key)
 }
 
+// Referer get the url.URL object of request header Referer.
+func (ctx *Context) Referer() *url.URL {
+	ref := ctx.Headers("Referer")
+	if ref == "" {
+		return nil
+	}
+	u, err := url.Parse(ref)
+	if err != nil {
+		return nil
+	}
+	return u
+}
+
+// RefererQuery retrieve the value of given key from url.URL object of request header Referer.
+func (ctx *Context) RefererQuery(key string) string {
+	if u := ctx.Referer(); u != nil {
+		return u.Query().Get(key)
+	}
+	return ""
+}
+
 // FormValue get the value of request form key.
 func (ctx *Context) FormValue(key string) string {
 	return ctx.Request.FormValue(key)
