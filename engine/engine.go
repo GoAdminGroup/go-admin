@@ -201,8 +201,8 @@ func (eng *Engine) setConfig(cfg config.Config) *Engine {
 			eng.config.Theme, strings.Join(template.Default().GetRequirements(), ",")))
 	}
 	if !themeCheck {
-		panic(fmt.Sprintf("wrong Theme version, GoAdmin %s required Theme version are %s",
-			system.Version(), strings.Join(system.RequireThemeVersion()[eng.config.Theme], ",")))
+		panic(fmt.Sprintf("wrong Theme version, GoAdmin %s required version of theme %s is %s",
+			system.Version(), eng.config.Theme, strings.Join(system.RequireThemeVersion()[eng.config.Theme], ",")))
 	}
 	return eng
 }

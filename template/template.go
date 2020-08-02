@@ -165,10 +165,14 @@ func Add(name string, temp Template) {
 	templateMap[name] = temp
 }
 
+// CheckRequirements check the theme and GoAdmin interdependence limit.
+// The first return parameter means that whether GoAdmin version meets the requirement of the theme used or not.
+// The second return parameter means that whether the version of theme used meets the requirement of GoAdmin or not.
 func CheckRequirements() (bool, bool) {
 	if !CheckThemeRequirements() {
 		return false, true
 	}
+	// The theme which is not in the default official themes will be ignored.
 	if !utils.InArray(DefaultThemeNames, Default().Name()) {
 		return true, true
 	}
