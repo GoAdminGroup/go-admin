@@ -110,7 +110,8 @@ $('.delete-btn').on('click', function (event) {
 	DeletePost(%s)
 });
 
-</script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
+</script>`, language.Get("are you sure to delete"), language.Get("yes"),
+			language.Get("cancel"), deleteUrl, infoUrl, id)
 	}
 
 	title := ""
@@ -143,7 +144,8 @@ $('.delete-btn').on('click', function (event) {
 		Content: detailContent(aForm().
 			SetTitle(template.HTML(title)).
 			SetContent(formInfo.FieldList).
-			SetFooter(template.HTML(deleteJs)).
+			SetHeader(detail.HeaderHtml).
+			SetFooter(template.HTML(deleteJs)+detail.FooterHtml).
 			SetHiddenFields(map[string]string{
 				form2.PreviousKey: infoUrl,
 			}).
