@@ -130,14 +130,14 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 		SetBody(pluginsPageDetailPopupBody()).
 		SetWidth("730px").
 		SetHeight("400px").
-		SetFooter("123").
+		SetFooter("1").
 		GetContent()
 
 	buyPopupModal := template2.Default().Popup().SetID("buy-popup-modal").
 		SetTitle(plugWordHTML("plugin detail")).
 		SetWidth("730px").
 		SetHeight("400px").
-		SetFooter("123").
+		SetFooter("1").
 		GetContent()
 
 	loginPopupModal := template2.Default().Popup().SetID("login-popup-modal").
@@ -320,7 +320,7 @@ func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
 
 func (h *Handler) PluginDownload(ctx *context.Context) {
 
-	if h.config.Debug {
+	if !h.config.Debug {
 		ctx.JSON(http.StatusOK, map[string]interface{}{
 			"code": 400,
 			"msg":  plugWord("change to debug mode first"),

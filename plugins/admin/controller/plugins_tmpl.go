@@ -116,7 +116,10 @@ function pluginDetail(name, uuid) {
 
 				if (data.data.install) {
 					if (data.data.upgrade) {
-						$(footer_ele).html('{{plugWord "upgrade"}}').attr("onclick", "pluginDownload('"+ name +"', this)")
+						$(footer_ele).html('{{plugWord "upgrade"}}').attr("onclick", "pluginDownload('"+ name +"', this)");
+						$(footer_ele).show();
+					} else {
+						$(footer_ele).hide();
 					}
 				} else {
 					if (data.data.downloaded) {
@@ -136,6 +139,7 @@ function pluginDetail(name, uuid) {
 							$(footer_ele).html('{{plugWord "buy"}}').attr("onclick", "pluginBuy('"+ name +"', '"+ uuid +"')")
 						}
 					}
+					$(footer_ele).show();
 				}
 
 				$("#detail-popup-modal").modal('show');
