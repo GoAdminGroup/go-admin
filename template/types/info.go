@@ -596,6 +596,8 @@ type InfoPanel struct {
 
 	PageError     errors.PageError
 	PageErrorHTML template.HTML
+
+	AutoRefresh uint
 }
 
 type Where struct {
@@ -789,6 +791,7 @@ func NewInfoPanel(pk string) *InfoPanel {
 		TableLayout:             "auto",
 		FilterFormInputWidth:    10,
 		FilterFormHeadWidth:     2,
+		AutoRefresh:             0,
 	}
 }
 
@@ -1464,6 +1467,11 @@ func (i *InfoPanel) SetError(err errors.PageError, content ...template.HTML) *In
 	if len(content) > 0 {
 		i.PageErrorHTML = content[0]
 	}
+	return i
+}
+
+func (i *InfoPanel) SetAutoRefresh(interval uint) *InfoPanel {
+	i.AutoRefresh = interval
 	return i
 }
 

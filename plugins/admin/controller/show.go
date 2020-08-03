@@ -285,10 +285,18 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		content = info.Wrapper(content)
 	}
 
+	interval := make([]int, 0)
+	autoRefresh := info.AutoRefresh != uint(0)
+	if autoRefresh {
+		interval = append(interval, int(info.AutoRefresh))
+	}
+
 	return h.Execute(ctx, user, types.Panel{
-		Content:     content,
-		Description: template2.HTML(panelInfo.Description),
-		Title:       modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
+		Content:         content,
+		Description:     template2.HTML(panelInfo.Description),
+		Title:           modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
+		AutoRefresh:     autoRefresh,
+		RefreshInterval: interval,
 	}, "", template.ExecuteOptions{Animation: params.Animation})
 }
 

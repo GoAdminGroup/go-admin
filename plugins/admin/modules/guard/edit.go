@@ -95,7 +95,7 @@ func (e EditFormParam) Value() form.Values {
 }
 
 func (g *Guard) EditForm(ctx *context.Context) {
-	previous := ctx.FormValue(form.PreviousKey)
+
 	panel, prefix := g.table(ctx)
 
 	if !panel.GetEditable() {
@@ -111,20 +111,22 @@ func (g *Guard) EditForm(ctx *context.Context) {
 		return
 	}
 
-	fromList := isInfoUrl(previous)
-
-	param := parameter.GetParamFromURL(previous, panel.GetInfo().DefaultPageSize,
-		panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
+	var (
+		previous = ctx.FormValue(form.PreviousKey)
+		fromList = isInfoUrl(previous)
+		param    = parameter.GetParamFromURL(previous, panel.GetInfo().DefaultPageSize,
+			panel.GetInfo().GetSort(), panel.GetPrimaryKey().Name)
+	)
 
 	if fromList {
 		previous = config.Url("/info/" + prefix + param.GetRouteParamStr())
 	}
 
-	multiForm := ctx.Request.MultipartForm
-
-	id := multiForm.Value[panel.GetPrimaryKey().Name][0]
-
-	values := ctx.Request.MultipartForm.Value
+	var (
+		multiForm = ctx.Request.MultipartForm
+		id        = multiForm.Value[panel.GetPrimaryKey().Name][0]
+		values    = ctx.Request.MultipartForm.Value
+	)
 
 	ctx.SetUserValue(editFormParamKey, &EditFormParam{
 		Panel:        panel,
