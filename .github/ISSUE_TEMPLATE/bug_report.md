@@ -9,7 +9,7 @@ assignees: ''
 
 ### Bug Description [describe the bug in detail]
 
-### How to reproduction [describe the steps how to reproduce the bug]
+### How to reproduce [describe the steps how to reproduce the bug]
 
 ### Expect [describe your expect result]
 

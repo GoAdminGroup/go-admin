@@ -97,6 +97,8 @@ func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 			buf := new(bytes.Buffer)
 			_, _ = buf.ReadFrom(ctx.Response.Body)
 			_ = c.String(ctx.Response.StatusCode, buf.String())
+		} else {
+			c.Response().WriteHeader(ctx.Response.StatusCode)
 		}
 		return nil
 	})
