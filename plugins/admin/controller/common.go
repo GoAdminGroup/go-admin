@@ -159,12 +159,14 @@ func (h *Handler) OperationHandler(path string, ctx *context.Context) bool {
 	return false
 }
 
-func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel, animation ...bool) {
-	buf := h.Execute(ctx, user, panel, "", animation...)
+func (h *Handler) HTML(ctx *context.Context, user models.UserModel, panel types.Panel,
+	options ...template.ExecuteOptions) {
+	buf := h.Execute(ctx, user, panel, "", options...)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) HTMLPlug(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, animation ...bool) {
+func (h *Handler) HTMLPlug(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string,
+	options ...template.ExecuteOptions) {
 	var btns types.Buttons
 	if plugName == "" {
 		btns = (*h.navButtons).CheckPermission(user)
@@ -181,43 +183,49 @@ func (h *Handler) HTMLPlug(ctx *context.Context, user models.UserModel, panel ty
 			})).
 			CheckPermission(user)
 	}
-	buf := h.ExecuteWithBtns(ctx, user, panel, plugName, btns, animation...)
+	buf := h.ExecuteWithBtns(ctx, user, panel, plugName, btns, options...)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
 func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, btns types.Buttons,
-	animation ...bool) *bytes.Buffer {
+	options ...template.ExecuteOptions) *bytes.Buffer {
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	option := template.GetExecuteOptions(options)
 
 	return template.Execute(template.ExecuteParam{
-		User:      user,
-		TmplName:  tmplName,
-		Tmpl:      tmpl,
-		Panel:     panel,
-		Config:    *h.config,
-		Menu:      menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
-		Buttons:   btns,
-		Iframe:    ctx.Query(constant.IframeKey) == "true",
-		IsPjax:    isPjax(ctx),
+		User:       user,
+		TmplName:   tmplName,
+		Tmpl:       tmpl,
+		Panel:      panel,
+		Config:     *h.config,
+		Menu:       menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		Animation:  option.Animation,
+		Buttons:    btns,
+		Iframe:     ctx.Query(constant.IframeKey) == "true",
+		IsPjax:     isPjax(ctx),
+		NoCompress: option.NoCompress,
 	})
 }
 
 func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string,
-	animation ...bool) *bytes.Buffer {
+	options ...template.ExecuteOptions) *bytes.Buffer {
+
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	option := template.GetExecuteOptions(options)
 
 	return template.Execute(template.ExecuteParam{
-		User:      user,
-		TmplName:  tmplName,
-		Tmpl:      tmpl,
-		Panel:     panel,
-		Config:    *h.config,
-		Menu:      menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
-		Animation: len(animation) > 0 && animation[0] || len(animation) == 0,
-		Buttons:   (*h.navButtons).CheckPermission(user),
-		Iframe:    ctx.Query(constant.IframeKey) == "true",
-		IsPjax:    isPjax(ctx),
+		User:       user,
+		TmplName:   tmplName,
+		Tmpl:       tmpl,
+		Panel:      panel,
+		Config:     *h.config,
+		Menu:       menu.GetGlobalMenu(user, h.conn, plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
+		Animation:  option.Animation,
+		Buttons:    (*h.navButtons).CheckPermission(user),
+		Iframe:     ctx.Query(constant.IframeKey) == "true",
+		IsPjax:     isPjax(ctx),
+		NoCompress: option.NoCompress,
 	})
 }
 

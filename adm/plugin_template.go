@@ -121,12 +121,12 @@ func (plug *{{.PluginTitle}}) GetSettingPage() table.Generator {
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template"
 )
 
 type Handler struct {
-	HTML     func(ctx *context.Context, panel types.Panel, ops ...plugins.HTMLOptions)
-	HTMLMenu func(ctx *context.Context, panel types.Panel, ops ...plugins.HTMLOptions)
+	HTML     func(ctx *context.Context, panel types.Panel, ops ...template.ExecuteOptions)
+	HTMLMenu func(ctx *context.Context, panel types.Panel, ops ...template.ExecuteOptions)
 }
 
 func NewHandler(/*...*/) *Handler {

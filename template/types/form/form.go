@@ -348,6 +348,18 @@ func (t Type) IsCode() bool {
 	return t == Code
 }
 
+func (t Type) IsRichText() bool {
+	return t == RichText
+}
+
+func (t Type) IsTextarea() bool {
+	return t == TextArea
+}
+
+func (t Type) IsEditor() bool {
+	return t == TextArea || t == Code || t == RichText
+}
+
 func (t Type) IsCustom() bool {
 	return t == Custom
 }

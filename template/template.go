@@ -416,6 +416,22 @@ func updateNavJS(isPjax bool) template.JS {
 });`
 }
 
+type ExecuteOptions struct {
+	Animation         bool
+	NoCompress        bool
+	HideSideBar       bool
+	HideHeader        bool
+	UpdateMenu        bool
+	NavDropDownButton []*types.NavDropDownItemButton
+}
+
+func GetExecuteOptions(options []ExecuteOptions) ExecuteOptions {
+	if len(options) == 0 {
+		return ExecuteOptions{Animation: true}
+	}
+	return options[0]
+}
+
 func Execute(param ExecuteParam) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)

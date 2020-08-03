@@ -318,62 +318,64 @@ func (f *FormField) fillCustom(src string) string {
 
 // FormPanel
 type FormPanel struct {
-	FieldList         FormFields
+	FieldList         FormFields `json:"field_list"`
 	curFieldListIndex int
 
-	// Warn: may be deprecated in the future.
-	TabGroups  TabGroups
-	TabHeaders TabHeaders
+	// Warn: may be deprecated in the future. `json:""
+	TabGroups  TabGroups  `json:"tab_groups"`
+	TabHeaders TabHeaders `json:"tab_headers"`
 
-	Table       string
-	Title       string
-	Description string
+	Table       string `json:"table"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 
-	Validator    FormPostFn
-	PostHook     FormPostFn
-	PreProcessFn FormPreProcessFn
+	Validator    FormPostFn       `json:"validator"`
+	PostHook     FormPostFn       `json:"post_hook"`
+	PreProcessFn FormPreProcessFn `json:"pre_process_fn"`
 
-	Callbacks Callbacks
+	Callbacks Callbacks `json:"callbacks"`
 
 	primaryKey primaryKey
 
-	UpdateFn FormPostFn
-	InsertFn FormPostFn
+	UpdateFn FormPostFn `json:"update_fn"`
+	InsertFn FormPostFn `json:"insert_fn"`
 
-	IsHideContinueEditCheckBox bool
-	IsHideContinueNewCheckBox  bool
-	IsHideResetButton          bool
-	IsHideBackButton           bool
+	IsHideContinueEditCheckBox bool `json:"is_hide_continue_edit_check_box"`
+	IsHideContinueNewCheckBox  bool `json:"is_hide_continue_new_check_box"`
+	IsHideResetButton          bool `json:"is_hide_reset_button"`
+	IsHideBackButton           bool `json:"is_hide_back_button"`
 
-	Layout form2.Layout
+	Layout form2.Layout `json:"layout"`
 
-	HTMLContent template.HTML
+	HTMLContent template.HTML `json:"html_content"`
 
-	Header template.HTML
+	Header template.HTML `json:"header"`
 
-	InputWidth int
-	HeadWidth  int
+	InputWidth int `json:"input_width"`
+	HeadWidth  int `json:"head_width"`
 
-	FormNewTitle    template.HTML
-	FormNewBtnWord  template.HTML
-	FormEditTitle   template.HTML
-	FormEditBtnWord template.HTML
+	FormNewTitle    template.HTML `json:"form_new_title"`
+	FormNewBtnWord  template.HTML `json:"form_new_btn_word"`
+	FormEditTitle   template.HTML `json:"form_edit_title"`
+	FormEditBtnWord template.HTML `json:"form_edit_btn_word"`
 
-	Ajax          bool
-	AjaxSuccessJS template.JS
-	AjaxErrorJS   template.JS
+	Ajax          bool        `json:"ajax"`
+	AjaxSuccessJS template.JS `json:"ajax_success_js"`
+	AjaxErrorJS   template.JS `json:"ajax_error_js"`
 
-	Responder Responder
+	Responder Responder `json:"responder"`
 
-	Wrapper ContentWrapper
+	Wrapper ContentWrapper `json:"wrapper"`
 
 	processChains DisplayProcessFnChains
 
-	HeaderHtml template.HTML
-	FooterHtml template.HTML
+	HeaderHtml template.HTML `json:"header_html"`
+	FooterHtml template.HTML `json:"footer_html"`
 
-	PageError     errors.PageError
-	PageErrorHTML template.HTML
+	PageError     errors.PageError `json:"page_error"`
+	PageErrorHTML template.HTML    `json:"page_error_html"`
+
+	NoCompress bool `json:"no_compress"`
 }
 
 type Responder func(ctx *context.Context)
@@ -484,6 +486,10 @@ func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, form
 
 	// Set default Display Filter Function of different form type
 	setDefaultDisplayFnOfFormType(f, formType)
+
+	if formType.IsEditor() {
+		f.NoCompress = true
+	}
 
 	return f
 }
@@ -1116,6 +1122,11 @@ func (f *FormPanel) SetError(err errors.PageError, content ...template.HTML) *Fo
 	if len(content) > 0 {
 		f.PageErrorHTML = content[0]
 	}
+	return f
+}
+
+func (f *FormPanel) SetNoCompress() *FormPanel {
+	f.NoCompress = true
 	return f
 }
 

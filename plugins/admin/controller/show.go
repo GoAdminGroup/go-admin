@@ -101,17 +101,20 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
 		return h.Execute(ctx, auth.Auth(ctx),
-			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), "", params.Animation)
+			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), "",
+			template.ExecuteOptions{Animation: params.Animation})
 	}
 
 	if panel.GetInfo().HasError() {
 		if panel.GetInfo().PageErrorHTML != template2.HTML("") {
 			return h.Execute(ctx, auth.Auth(ctx),
-				types.Panel{Content: panel.GetInfo().PageErrorHTML}, "", params.Animation)
+				types.Panel{Content: panel.GetInfo().PageErrorHTML}, "",
+				template.ExecuteOptions{Animation: params.Animation})
 		}
 		return h.Execute(ctx, auth.Auth(ctx),
 			template.WarningPanel(panel.GetInfo().PageError.Error(),
-				template.GetPageTypeFromPageError(panel.GetInfo().PageError)), "", params.Animation)
+				template.GetPageTypeFromPageError(panel.GetInfo().PageError)), "",
+			template.ExecuteOptions{Animation: params.Animation})
 	}
 
 	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
@@ -286,7 +289,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Content:     content,
 		Description: template2.HTML(panelInfo.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
-	}, "", params.Animation)
+	}, "", template.ExecuteOptions{Animation: params.Animation})
 }
 
 // Assets return front-end assets according the request path.

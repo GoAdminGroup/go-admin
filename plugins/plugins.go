@@ -126,25 +126,25 @@ func (b *Base) Title() string {
 	return language.GetWithScope(b.Info.Title, b.Name())
 }
 
-func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, options HTMLOptions) *bytes.Buffer {
+func (b *Base) ExecuteTmpl(ctx *context.Context, panel types.Panel, options template.ExecuteOptions) *bytes.Buffer {
 	return Execute(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, options)
 }
 
 func (b *Base) ExecuteTmplWithNavButtons(ctx *context.Context, panel types.Panel, btns types.Buttons,
-	options HTMLOptions) *bytes.Buffer {
+	options template.ExecuteOptions) *bytes.Buffer {
 	return Execute(ctx, b.Conn, btns, auth.Auth(ctx), panel, options)
 }
 
-func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, options HTMLOptions) *bytes.Buffer {
+func (b *Base) ExecuteTmplWithMenu(ctx *context.Context, panel types.Panel, options template.ExecuteOptions) *bytes.Buffer {
 	return ExecuteWithMenu(ctx, b.Conn, *b.UI.NavButtons, auth.Auth(ctx), panel, b.Name(), b.Title(), options)
 }
 
-func (b *Base) ExecuteTmplWithCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options HTMLOptions) *bytes.Buffer {
+func (b *Base) ExecuteTmplWithCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options template.ExecuteOptions) *bytes.Buffer {
 	return ExecuteWithCustomMenu(ctx, *b.UI.NavButtons, auth.Auth(ctx), panel, menu, b.Title(), options)
 }
 
 func (b *Base) ExecuteTmplWithMenuAndNavButtons(ctx *context.Context, panel types.Panel, menu *menu.Menu,
-	btns types.Buttons, options HTMLOptions) *bytes.Buffer {
+	btns types.Buttons, options template.ExecuteOptions) *bytes.Buffer {
 	return ExecuteWithMenu(ctx, b.Conn, btns, auth.Auth(ctx), panel, b.Name(), b.Title(), options)
 }
 
@@ -152,50 +152,32 @@ func (b *Base) NewMenu(data menu.NewMenuData) (int64, error) {
 	return menu.NewMenu(b.Conn, data)
 }
 
-func (b *Base) HTML(ctx *context.Context, panel types.Panel, options ...HTMLOptions) {
-	buf := b.ExecuteTmpl(ctx, panel, GetHTMLOptions(options))
+func (b *Base) HTML(ctx *context.Context, panel types.Panel, options ...template.ExecuteOptions) {
+	buf := b.ExecuteTmpl(ctx, panel, template.GetExecuteOptions(options))
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-type HTMLOptions struct {
-	Animation         bool
-	NoCompress        bool
-	HideSideBar       bool
-	HideHeader        bool
-	UpdateMenu        bool
-	NavDropDownButton []*types.NavDropDownItemButton
-}
-
-var DefaultHTMLOptions = HTMLOptions{Animation: true}
-
-func GetHTMLOptions(options []HTMLOptions) HTMLOptions {
-	if len(options) == 0 {
-		return DefaultHTMLOptions
-	}
-	return options[0]
-}
-
-func (b *Base) HTMLCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...HTMLOptions) {
-	buf := b.ExecuteTmplWithCustomMenu(ctx, panel, menu, GetHTMLOptions(options))
+func (b *Base) HTMLCustomMenu(ctx *context.Context, panel types.Panel, menu *menu.Menu, options ...template.ExecuteOptions) {
+	buf := b.ExecuteTmplWithCustomMenu(ctx, panel, menu, template.GetExecuteOptions(options))
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, options ...HTMLOptions) {
-	buf := b.ExecuteTmplWithMenu(ctx, panel, GetHTMLOptions(options))
+func (b *Base) HTMLMenu(ctx *context.Context, panel types.Panel, options ...template.ExecuteOptions) {
+	buf := b.ExecuteTmplWithMenu(ctx, panel, template.GetExecuteOptions(options))
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLBtns(ctx *context.Context, panel types.Panel, btns types.Buttons, options ...HTMLOptions) {
-	buf := b.ExecuteTmplWithNavButtons(ctx, panel, btns, GetHTMLOptions(options))
+func (b *Base) HTMLBtns(ctx *context.Context, panel types.Panel, btns types.Buttons, options ...template.ExecuteOptions) {
+	buf := b.ExecuteTmplWithNavButtons(ctx, panel, btns, template.GetExecuteOptions(options))
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLMenuWithBtns(ctx *context.Context, panel types.Panel, menu *menu.Menu, btns types.Buttons, options ...HTMLOptions) {
-	buf := b.ExecuteTmplWithMenuAndNavButtons(ctx, panel, menu, btns, GetHTMLOptions(options))
+func (b *Base) HTMLMenuWithBtns(ctx *context.Context, panel types.Panel, menu *menu.Menu, btns types.Buttons, options ...template.ExecuteOptions) {
+	buf := b.ExecuteTmplWithMenuAndNavButtons(ctx, panel, menu, btns, template.GetExecuteOptions(options))
 	ctx.HTMLByte(http.StatusOK, buf.Bytes())
 }
 
-func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]interface{}, options ...HTMLOptions) {
+func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]interface{}, options ...template.ExecuteOptions) {
 
 	buf := new(bytes.Buffer)
 	var panel types.Panel
@@ -216,7 +198,7 @@ func (b *Base) HTMLFile(ctx *context.Context, path string, data map[string]inter
 	b.HTML(ctx, panel, options...)
 }
 
-func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, files []string, options ...HTMLOptions) {
+func (b *Base) HTMLFiles(ctx *context.Context, data map[string]interface{}, files []string, options ...template.ExecuteOptions) {
 	buf := new(bytes.Buffer)
 	var panel types.Panel
 
@@ -292,7 +274,7 @@ func LoadFromPlugin(mod string) Plugin {
 func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
 
 func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons, user models.UserModel,
-	panel types.Panel, options HTMLOptions) *bytes.Buffer {
+	panel types.Panel, options template.ExecuteOptions) *bytes.Buffer {
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	return template.Execute(template.ExecuteParam{
@@ -313,7 +295,7 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 	navButtons types.Buttons,
 	user models.UserModel,
 	panel types.Panel,
-	menu *menu.Menu, logo string, options HTMLOptions) *bytes.Buffer {
+	menu *menu.Menu, logo string, options template.ExecuteOptions) *bytes.Buffer {
 
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
@@ -337,7 +319,7 @@ func ExecuteWithMenu(ctx *context.Context,
 	navButtons types.Buttons,
 	user models.UserModel,
 	panel types.Panel,
-	name, logo string, options HTMLOptions) *bytes.Buffer {
+	name, logo string, options template.ExecuteOptions) *bytes.Buffer {
 
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 

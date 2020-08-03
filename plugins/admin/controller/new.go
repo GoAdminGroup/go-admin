@@ -5,6 +5,8 @@ import (
 	template2 "html/template"
 	"net/http"
 
+	"github.com/GoAdminGroup/go-admin/template"
+
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
@@ -84,7 +86,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		Content:     alert + content,
 		Description: template2.HTML(f.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(f.Title), ""),
-	}, alert == "")
+	}, template.ExecuteOptions{Animation: alert == ""})
 
 	if isNew {
 		ctx.AddHeader(constant.PjaxUrlHeader, showNewUrl)

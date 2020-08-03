@@ -256,16 +256,17 @@ func (p Panel) AddJS(js template.JS) Panel {
 
 func (p Panel) GetContent(params ...bool) Panel {
 
-	prod := false
+	compress := false
 
 	if len(params) > 0 {
-		prod = params[0]
+		compress = params[0]
 	}
 
-	animation := template.HTML("")
-	style := template.HTML("")
-	remove := template.HTML("")
-	ani := config.GetAnimation()
+	var (
+		animation, style, remove = template.HTML(""), template.HTML(""), template.HTML("")
+		ani                      = config.GetAnimation()
+	)
+
 	if ani.Type != "" && (len(params) < 2 || params[1]) {
 		animation = template.HTML(` class='pjax-container-content animated ` + ani.Type + `'`)
 		if ani.Delay != 0 {
@@ -301,7 +302,8 @@ window.setTimeout(function(){
 }, ` + template.HTML(strconv.Itoa(refreshTime*1000)) + `);
 </script>`
 	}
-	if prod {
+
+	if compress {
 		utils.CompressedContent(&p.Content)
 	}
 
