@@ -465,9 +465,16 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	}
 
 	if h.config.BootstrapFilePath != "" && utils.FileExist(h.config.BootstrapFilePath) {
-		content, _ := ioutil.ReadFile(h.config.BootstrapFilePath)
-		_ = ioutil.WriteFile(h.config.BootstrapFilePath, []byte(string(content)+`
+		content, err := ioutil.ReadFile(h.config.BootstrapFilePath)
+		if err != nil {
+			logger.Error("read bootstrap file error: ", err)
+		} else {
+			err = ioutil.WriteFile(h.config.BootstrapFilePath, []byte(string(content)+`
 import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
+			if err != nil {
+				logger.Error("write bootstrap file error: ", err)
+			}
+		}
 	}
 
 	if h.config.GoModFilePath != "" && utils.FileExist(h.config.GoModFilePath) &&

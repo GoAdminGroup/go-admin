@@ -29,26 +29,31 @@ type {{.PluginTitle}} struct {
 
 func init() {
 	plugins.Add(&{{.PluginTitle}}{
-		Base: &plugins.Base{PlugName: "{{.PluginName}}"},
+		Base: &plugins.Base{PlugName: "{{.PluginName}}", URLPrefix: "{{.PluginName}}"},
 		// ....
 	})
 }
 
 func New{{.PluginTitle}}(/*...*/) *{{.PluginTitle}} {
 	return &{{.PluginTitle}}{
-		Base: &plugins.Base{PlugName: "{{.PluginName}}"},
+		Base: &plugins.Base{PlugName: "{{.PluginName}}", URLPrefix: "{{.PluginName}}"},
 		// ...
 	}
 }
 
 func (plug *{{.PluginTitle}}) IsInstalled() bool {
-	panic("implement it")
+	// ... implement it
+	return true
+}
+
+func (plug *{{.PluginTitle}}) GetIndexURL() string {
+	return config.Url("/{{.PluginName}}/example?param=helloworld")
 }
 
 func (plug *{{.PluginTitle}}) InitPlugin(srv service.List) {
 
 	// DO NOT DELETE
-	plug.InitBase(srv)
+	plug.InitBase(srv, "{{.PluginName}}")
 
 	plug.handler = controller.NewHandler(/*...*/)
 	plug.guard = guard.New(/*...*/)
@@ -59,7 +64,7 @@ func (plug *{{.PluginTitle}}) InitPlugin(srv service.List) {
 	language.Lang[language.CN].Combine(language2.CN)
 	language.Lang[language.EN].Combine(language2.EN)
 
-	f.SetInfo(info)
+	plug.SetInfo(info)
 }
 
 var info = plugins.Info{
@@ -120,8 +125,8 @@ func (plug *{{.PluginTitle}}) GetSettingPage() table.Generator {
 
 import (
 	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
 type Handler struct {
@@ -187,7 +192,7 @@ type ExampleParam struct {
 
 func (g *Guardian) Example(ctx *context.Context) {
 
-	param := ctx.FormValue("param")
+	param := ctx.Query("param")
 
 	ctx.SetUserValue("example", &ExampleParam{
 		Param: param,
@@ -212,17 +217,15 @@ test:
 import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
 )
 
 func (plug *{{.PluginTitle}}) initRouter(srv service.List) *context.App {
 
 	app := context.NewApp()
-	route := app.Group(config.GetUrlPrefix())
-	authRoute := route.Group("/", auth.Middleware(plug.Conn))
+	authRoute := app.Group("/", auth.Middleware(plug.Conn))
 	
-	authRoute.POST("/{{.PluginName}}/example", plug.guard.Example, plug.handler.Example)
+	authRoute.GET("/example", plug.guard.Example, plug.handler.Example)
 
 	return app
 }`,
