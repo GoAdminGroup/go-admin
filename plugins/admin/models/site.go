@@ -45,7 +45,7 @@ func (t SiteModel) WithTx(tx *sql.Tx) SiteModel {
 	return t
 }
 
-func (t SiteModel) Init(cfg map[string]string) {
+func (t SiteModel) Init(cfg map[string]string) SiteModel {
 	items, err := t.Table(t.TableName).All()
 	if db.CheckError(err, db.QUERY) {
 		panic(err)
@@ -75,6 +75,7 @@ func (t SiteModel) Init(cfg map[string]string) {
 		//	}
 		//}
 	}
+	return t
 }
 
 func (t SiteModel) AllToMap() map[string]string {

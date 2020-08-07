@@ -307,6 +307,16 @@ func Fatalf(template string, args ...interface{}) {
 	}
 }
 
+// Fatal print the panic message.
+func Panic(info ...interface{}) {
+	logger.sugaredLogger.Panic(info...)
+}
+
+// Panicf print the panic message.
+func Panicf(template string, args ...interface{}) {
+	logger.sugaredLogger.Panicf(template, args...)
+}
+
 // Access print the access message.
 func Access(ctx *context.Context) {
 	if !logger.accessLogOff && logger.Level <= zapcore.InfoLevel {

@@ -64,77 +64,12 @@ func Default() *Engine {
 // Use enable the adapter.
 func (eng *Engine) Use(router interface{}) error {
 	if eng.Adapter == nil {
-		panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
+		logger.Panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
 	}
 
-	eng.PluginList = eng.PluginList.Add(admin.NewAdmin())
-
-	eng.AddPluginList(plugins.Get())
-
-	logger.Info("=====> " + language.Get("initialize configuration"))
-
-	// init site setting
-	site := models.Site().SetConn(eng.DefaultConnection())
-	site.Init(eng.config.ToMap())
-	_ = eng.config.Update(site.AllToMap())
-	eng.Services.Add("config", config.SrvWithConfig(eng.config))
-
-	logger.Info("=====> " + language.Get("initialize error"))
-
-	errors.Init()
-
-	logger.Info("=====> " + language.Get("initialize navigation buttons"))
-
-	if !eng.config.HideConfigCenterEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Gear, types.NavBtnSiteName,
-			action.JumpInNewTab(config.Url("/info/site/edit"),
-				language.GetWithScope("site setting", "config")))
-	}
-
-	if !eng.config.HideToolEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Wrench, types.NavBtnToolName,
-			action.JumpInNewTab(config.Url("/info/generate/new"),
-				language.GetWithScope("tool", "tool")))
-	}
-
-	if !eng.config.HideAppInfoEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Info, types.NavBtnInfoName,
-			action.JumpInNewTab(config.Url("/application/info"),
-				language.GetWithScope("system info", "system")))
-	}
-
-	if !eng.config.HidePluginEntrance {
-		*eng.NavButtons = (*eng.NavButtons).AddNavButton(icon.Th, types.NavBtnPlugName,
-			action.JumpInNewTab(config.Url("/plugins"),
-				language.GetWithScope("plugin", "plugin")))
-	}
-
-	navButtons = eng.NavButtons
-
-	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
-
-	defaultConnection := db.GetConnection(eng.Services)
-	defaultAdapter.SetConnection(defaultConnection)
-	eng.Adapter.SetConnection(defaultConnection)
-
-	logger.Info("=====> " + language.Get("initialize plugins"))
-
-	var plugGenerators = make(table.GeneratorList)
-
-	// Initialize plugins
-	for i := range eng.PluginList {
-		if eng.PluginList[i].Name() != "admin" {
-			logger.Info("=====> " + eng.PluginList[i].Name())
-			eng.PluginList[i].InitPlugin(eng.Services)
-			if !eng.PluginList[i].GetInfo().SkipInstallation {
-				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), eng.PluginList[i].GetSettingPage())
-			}
-			plugGenerators = plugGenerators.Combine(eng.PluginList[i].GetGenerators())
-		}
-	}
-	adm := eng.AdminPlugin().AddGenerators(plugGenerators)
-	adm.InitPlugin(eng.Services)
-	plugins.Add(adm)
+	eng.initSiteSetting()
+	eng.initJumpNavButtons()
+	eng.initPlugins()
 
 	return eng.Adapter.Use(router, eng.PluginList)
 }
@@ -189,7 +124,7 @@ func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
 
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(cfg).InitDatabase()
+	return eng.setConfig(cfg).initDatabase()
 }
 
 // setConfig set the config of engine.
@@ -197,40 +132,43 @@ func (eng *Engine) setConfig(cfg config.Config) *Engine {
 	eng.config = config.Set(cfg)
 	sysCheck, themeCheck := template.CheckRequirements()
 	if !sysCheck {
-		panic(fmt.Sprintf("wrong GoAdmin version, theme %s required GoAdmin version are %s",
-			eng.config.Theme, strings.Join(template.Default().GetRequirements(), ",")))
+		logger.Panicf("wrong GoAdmin version, theme %s required GoAdmin version are %s",
+			eng.config.Theme, strings.Join(template.Default().GetRequirements(), ","))
 	}
 	if !themeCheck {
-		panic(fmt.Sprintf("wrong Theme version, GoAdmin %s required version of theme %s is %s",
-			system.Version(), eng.config.Theme, strings.Join(system.RequireThemeVersion()[eng.config.Theme], ",")))
+		logger.Panicf("wrong Theme version, GoAdmin %s required version of theme %s is %s",
+			system.Version(), eng.config.Theme, strings.Join(system.RequireThemeVersion()[eng.config.Theme], ","))
 	}
 	return eng
 }
 
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
-	return eng.setConfig(config.ReadFromJson(path)).InitDatabase()
+	return eng.setConfig(config.ReadFromJson(path)).initDatabase()
 }
 
 // AddConfigFromYAML set the global config from yaml file.
 func (eng *Engine) AddConfigFromYAML(path string) *Engine {
-	return eng.setConfig(config.ReadFromYaml(path)).InitDatabase()
+	return eng.setConfig(config.ReadFromYaml(path)).initDatabase()
 }
 
 // AddConfigFromINI set the global config from ini file.
 func (eng *Engine) AddConfigFromINI(path string) *Engine {
-	return eng.setConfig(config.ReadFromINI(path)).InitDatabase()
+	return eng.setConfig(config.ReadFromINI(path)).initDatabase()
 }
 
 // InitDatabase initialize all database connection.
-func (eng *Engine) InitDatabase() *Engine {
-	logger.Info("=====> " + language.Get("initialize database connections"))
+func (eng *Engine) initDatabase() *Engine {
+	printInitMsg(language.Get("initialize database connections"))
 	for driver, databaseCfg := range eng.config.Databases.GroupByDriver() {
 		eng.Services.Add(driver, db.GetConnectionByDriver(driver).InitDB(databaseCfg))
 	}
 	if defaultAdapter == nil {
-		panic("adapter is nil")
+		logger.Panic("adapter is nil")
 	}
+	defaultConnection := db.GetConnection(eng.Services)
+	defaultAdapter.SetConnection(defaultConnection)
+	eng.Adapter.SetConnection(defaultConnection)
 	return eng
 }
 
@@ -252,7 +190,7 @@ var navButtons = new(types.Buttons)
 // Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
 	if ada == nil {
-		panic("adapter is nil")
+		logger.Panic("adapter is nil")
 	}
 	defaultAdapter = ada
 }
@@ -405,7 +343,7 @@ func (eng *Engine) wrap(handler context.Handler) context.Handlers {
 }
 
 // ============================
-// HTML Content Render APIs
+// Initialize methods
 // ============================
 
 // AddNavButtons add the nav buttons.
@@ -415,11 +353,119 @@ func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types
 	return eng
 }
 
+type navJumpButtonParam struct {
+	Exist      bool
+	Icon       string
+	BtnName    string
+	URL        string
+	Title      string
+	TitleScore string
+}
+
+func (eng *Engine) addJumpNavButton(param navJumpButtonParam) *Engine {
+	if param.Exist {
+		*eng.NavButtons = (*eng.NavButtons).AddNavButton(param.Icon, param.BtnName,
+			action.JumpInNewTab(config.Url(param.URL),
+				language.GetWithScope(param.Title, param.TitleScore)))
+	}
+	return eng
+}
+
+func printInitMsg(msg string) {
+	logger.Info("=====> " + msg)
+}
+
+func (eng *Engine) initJumpNavButtons() {
+	printInitMsg(language.Get("initialize navigation buttons"))
+	for _, param := range eng.initNavJumpButtonParams() {
+		eng.addJumpNavButton(param)
+	}
+	navButtons = eng.NavButtons
+	eng.Services.Add(ui.ServiceKey, ui.NewService(eng.NavButtons))
+}
+
+func (eng *Engine) initPlugins() {
+
+	printInitMsg(language.Get("initialize plugins"))
+
+	eng.AddPlugins(admin.NewAdmin()).AddPluginList(plugins.Get())
+
+	var plugGenerators = make(table.GeneratorList)
+
+	for i := range eng.PluginList {
+		if eng.PluginList[i].Name() != "admin" {
+			printInitMsg(eng.PluginList[i].Name())
+			eng.PluginList[i].InitPlugin(eng.Services)
+			if !eng.PluginList[i].GetInfo().SkipInstallation {
+				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), eng.PluginList[i].GetSettingPage())
+			}
+			plugGenerators = plugGenerators.Combine(eng.PluginList[i].GetGenerators())
+		}
+	}
+	adm := eng.AdminPlugin().AddGenerators(plugGenerators)
+	adm.InitPlugin(eng.Services)
+	plugins.Add(adm)
+}
+
+func (eng *Engine) initNavJumpButtonParams() []navJumpButtonParam {
+	return []navJumpButtonParam{
+		{
+			Exist:      !eng.config.HideConfigCenterEntrance,
+			Icon:       icon.Gear,
+			BtnName:    types.NavBtnSiteName,
+			URL:        "/info/site/edit",
+			Title:      "site setting",
+			TitleScore: "config",
+		}, {
+			Exist:      !eng.config.HideToolEntrance,
+			Icon:       icon.Wrench,
+			BtnName:    types.NavBtnToolName,
+			URL:        "/info/generate/new",
+			Title:      "tool",
+			TitleScore: "tool",
+		}, {
+			Exist:      !eng.config.HideAppInfoEntrance,
+			Icon:       icon.Info,
+			BtnName:    types.NavBtnInfoName,
+			URL:        "/application/info",
+			Title:      "system info",
+			TitleScore: "system",
+		}, {
+			Exist:      !eng.config.HidePluginEntrance,
+			Icon:       icon.Th,
+			BtnName:    types.NavBtnPlugName,
+			URL:        "/plugins",
+			Title:      "plugin",
+			TitleScore: "plugin",
+		},
+	}
+}
+
+func (eng *Engine) initSiteSetting() {
+
+	printInitMsg(language.Get("initialize configuration"))
+
+	err := eng.config.Update(models.Site().
+		SetConn(eng.DefaultConnection()).
+		Init(eng.config.ToMap()).
+		AllToMap())
+	if err != nil {
+		logger.Panic(err)
+	}
+	eng.Services.Add("config", config.SrvWithConfig(eng.config))
+
+	errors.Init()
+}
+
+// ============================
+// HTML Content Render APIs
+// ============================
+
 // Content call the Content method of engine adapter.
 // If adapter is nil, it will panic.
 func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
-		panic("adapter is nil")
+		logger.Panic("adapter is nil")
 	}
 	eng.Adapter.Content(ctx, panel, eng.AdminPlugin().GetAddOperationFn(), *eng.NavButtons...)
 }
@@ -428,7 +474,7 @@ func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 // If defaultAdapter is nil, it will panic.
 func Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
-		panic("adapter is nil")
+		logger.Panic("adapter is nil")
 	}
 	defaultAdapter.Content(ctx, panel, engine.AdminPlugin().GetAddOperationFn(), *navButtons...)
 }
@@ -453,11 +499,13 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 
 		eng.AdminPlugin().GetAddOperationFn()(panel.Callbacks...)
 
-		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
+		var (
+			tmpl, tmplName = template.Default().GetTemplate(ctx.IsPjax())
 
-		user := auth.Auth(ctx)
+			user = auth.Auth(ctx)
+			buf  = new(bytes.Buffer)
+		)
 
-		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User:         user,
 			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
@@ -501,11 +549,13 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 			}
 		}
 
-		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
+		var (
+			tmpl, tmplName = template.Default().GetTemplate(ctx.IsPjax())
 
-		user := auth.Auth(ctx)
+			user = auth.Auth(ctx)
+			buf  = new(bytes.Buffer)
+		)
 
-		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
@@ -562,11 +612,13 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 			}
 		}
 
-		tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
+		var (
+			tmpl, tmplName = template.Default().GetTemplate(ctx.IsPjax())
 
-		user := auth.Auth(ctx)
+			user = auth.Auth(ctx)
+			buf  = new(bytes.Buffer)
+		)
 
-		buf := new(bytes.Buffer)
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
@@ -591,7 +643,6 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err error) {
 
 	user := auth.Auth(ctx)
-
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
 	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
