@@ -116,7 +116,6 @@ var tc = LangSet{
 	"login info":                        "登錄信息",
 
 	"initialize configuration":        "初始化配置",
-	"initialize error":                "初始化錯誤代碼",
 	"initialize navigation buttons":   "初始化導航欄按鈕",
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化數據庫連接",

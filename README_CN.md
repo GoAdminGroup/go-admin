@@ -178,6 +178,6 @@ inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 
 留下您的github/gitee用户名，我们将会展示在[捐赠名单](DONATION.md)中。
 
-> 目前GoAdmin项目捐赠达666元，联系作者可进vip用户群，vip群中您的问题将得到优先解答，同时也会根据您的需求进行分析和优先安排，vip群也会提供其他关于golang的福利。
+> 目前GoAdmin项目捐赠达666元，联系[作者](http://quick.go-admin.cn/resource/wechat_qrcode.jpg)可进vip用户群，vip群中您的问题将得到优先解答，同时也会根据您的需求进行分析和优先安排，vip群也会提供其他关于golang的福利。
 
 <img src="http://quick.go-admin.cn/official/assets/imgs/shoukuan.jpg" width="650" />

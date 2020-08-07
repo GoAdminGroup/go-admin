@@ -87,7 +87,6 @@ var en = LangSet{
 	"home":      "Home",
 
 	"initialize configuration":        "Initialize configuration",
-	"initialize error":                "Initialize error",
 	"initialize navigation buttons":   "Initialize navigation buttons",
 	"initialize plugins":              "Initialize plugins",
 	"initialize database connections": "Initialize database connections",

@@ -122,7 +122,6 @@ var cn = LangSet{
 	"login info":                        "登录信息",
 
 	"initialize configuration":        "初始化配置",
-	"initialize error":                "初始化错误代码",
 	"initialize navigation buttons":   "初始化导航栏按钮",
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化数据库连接",
