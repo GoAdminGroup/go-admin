@@ -382,10 +382,10 @@ func (h *Handler) Export(ctx *context.Context) {
 			infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
 				tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()).WithPKs(param.Id...))
 			fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
-			if err != nil {
-				response.Error(ctx, "export error")
-				return
-			}
+		}
+		if err != nil {
+			response.Error(ctx, "export error")
+			return
 		}
 	}
 
