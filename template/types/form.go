@@ -1297,13 +1297,13 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 		data.ErrorTitle = msgs[0]
 	}
 	if len(msgs) > 2 && msgs[2] != "" {
-		data.SuccessJumpURL = msgs[0]
+		data.SuccessJumpURL = msgs[2]
 	}
 	if len(msgs) > 3 && msgs[3] != "" {
-		data.SuccessText = msgs[0]
+		data.SuccessText = msgs[3]
 	}
 	if len(msgs) > 4 && msgs[4] != "" {
-		data.ErrorText = msgs[0]
+		data.ErrorText = msgs[4]
 	}
 	return f.EnableAjaxData(data)
 }
