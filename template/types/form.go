@@ -1221,6 +1221,7 @@ type AjaxData struct {
 	ErrorTitle     string
 	ErrorText      string
 	SuccessJumpURL string
+	DisableJump    bool
 }
 
 func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
@@ -1231,6 +1232,10 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		jump := modules.AorB(data.SuccessJumpURL != "", `"`+data.SuccessJumpURL+`"`, "data.data.url")
 		text := modules.AorB(data.SuccessText != "", `text:"`+data.SuccessText+`",`, "")
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
+		jumpURL := ""
+		if !data.DisableJump {
+			jumpURL = `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
+		}
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
 	    data = JSON.parse(data);
@@ -1245,7 +1250,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			confirmButtonText: '` + language.Get("got it") + `',
         }, function() {
 			$(".modal-backdrop.fade.in").remove();
-			$.pjax({url: ` + jump + `, container: '#pjax-container'});
+			` + jumpURL + `
         });
 	} else {
 		swal({
