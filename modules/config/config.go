@@ -378,7 +378,9 @@ type Config struct {
 
 	GoModFilePath string `json:"go_mod_file_path,omitempty" yaml:"go_mod_file_path,omitempty" ini:"go_mod_file_path,omitempty"`
 
-	AllowDelOperationLog bool `json:"allow_del_operation_log" yaml:"allow_del_operation_log,omitempty" ini:"allow_del_operation_log,omitempty"`
+	AllowDelOperationLog bool `json:"allow_del_operation_log,omitempty" yaml:"allow_del_operation_log,omitempty" ini:"allow_del_operation_log,omitempty"`
+
+	OperationLogOff bool `json:"operation_log_off,omitempty" yaml:"operation_log_off,omitempty" ini:"operation_log_off,omitempty"`
 
 	prefix string
 }
@@ -591,6 +593,7 @@ func (c *Config) Copy() *Config {
 		BootstrapFilePath:             c.BootstrapFilePath,
 		GoModFilePath:                 c.GoModFilePath,
 		AllowDelOperationLog:          c.AllowDelOperationLog,
+		OperationLogOff:               c.OperationLogOff,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -672,8 +675,8 @@ func (c *Config) ToMap() map[string]string {
 	m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
 
 	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
-
 	m["allow_del_operation_log"] = strconv.FormatBool(c.AllowDelOperationLog)
+	m["operation_log_off"] = strconv.FormatBool(c.OperationLogOff)
 
 	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
 	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
@@ -756,6 +759,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.LoginLogo = template.HTML(m["login_logo"])
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
 	c.AllowDelOperationLog = utils.ParseBool(m["allow_del_operation_log"])
+	c.OperationLogOff = utils.ParseBool(m["operation_log_off"])
 
 	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
 	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
@@ -1036,6 +1040,10 @@ func GetOpenAdminApi() bool {
 
 func GetAllowDelOperationLog() bool {
 	return globalCfg.AllowDelOperationLog
+}
+
+func GetOperationLogOff() bool {
+	return globalCfg.OperationLogOff
 }
 
 func GetCustom500HTML() template.HTML {

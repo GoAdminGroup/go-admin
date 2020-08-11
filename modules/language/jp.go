@@ -169,6 +169,7 @@ var jp = LangSet{
 	"config.footer info":                 "Footer Info",
 	"config.login logo":                  "Login Logo",
 	"config.no limit login ip":           "No Limit Login Multi IPs",
+	"config.operation log off":           "Operation Log Off",
 	"config.allow delete operation log":  "Allow Delete Operation Log",
 	"config.animation type":              "Animation Type",
 	"config.animation duration":          "Animation Duration(s)",

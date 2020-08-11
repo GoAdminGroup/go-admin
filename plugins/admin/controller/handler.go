@@ -25,7 +25,9 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 	logger.Access(ctx)
 
-	h.RecordOperationLog(ctx)
+	if !h.config.OperationLogOff {
+		h.RecordOperationLog(ctx)
+	}
 
 	if err := recover(); err != nil {
 		logger.Error(err)

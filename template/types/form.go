@@ -1222,6 +1222,7 @@ type AjaxData struct {
 	ErrorText      string
 	SuccessJumpURL string
 	DisableJump    bool
+	SuccessJS      string
 }
 
 func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
@@ -1251,6 +1252,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
         }, function() {
 			$(".modal-backdrop.fade.in").remove();
 			` + jumpURL + `
+			` + data.SuccessJS + `
         });
 	} else {
 		swal({

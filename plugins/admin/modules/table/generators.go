@@ -1099,6 +1099,11 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
+	formList.AddField(lgWithConfigScore("operation log off"), "operation_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("allow delete operation log"), "allow_del_operation_log", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
@@ -1260,8 +1265,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
 		"asset_url", "title", "login_title", "session_life_time", "bootstrap_file_path", "go_mod_file_path", "no_limit_login_ip",
-		"allow_del_operation_log", "hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance", "hide_plugin_entrance",
-		"animation_type",
+		"operation_log_off", "allow_del_operation_log", "hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance",
+		"hide_plugin_entrance", "animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
@@ -1649,7 +1654,51 @@ NProgress.done();
 		SuccessText:    lgWithScore("generate table model success", "tool"),
 		ErrorText:      lgWithScore("generate table model fail", "tool"),
 		DisableJump:    true,
+		SuccessJS: `
+let package = $(".package").val();
+let pk = $(".pk").val();
+let path = $(".path").val();
+$("tbody.fields-table").find("tr").remove();
+$("tbody.fields_form-table").find("tr").remove();
+$("form")[0].reset();
+$(".package").val(package);
+$(".pk").val(pk);
+$(".path").val(path);
+$("select.conn").select2();
+$("select.table").select2();
+`,
 	})
+
+	formList.SetFooterHtml(`<script>
+	$(function () {
+		let package = localStorage.getItem("go_admin_generator_package");
+		let pk = localStorage.getItem("go_admin_generator_pk");
+		let path = localStorage.getItem("go_admin_generator_path");
+		if (package !== "") {
+			$(".package").val(package);
+		}
+		if (pk !== "") {
+			$(".pk").val(pk);
+		}
+		if (path !== "") {
+			$(".path").val(path);
+		}
+	});
+	$(".btn-group.pull-right .btn.btn-primary").on("click", function() {
+		let package = $(".package").val();
+		let pk = $(".pk").val();
+		let path = $(".path").val();
+		if (package !== "") {
+			localStorage.setItem("go_admin_generator_package", package);
+		}
+		if (pk !== "") {
+			localStorage.setItem("go_admin_generator_pk", pk);
+		}
+		if (path !== "") {
+			localStorage.setItem("go_admin_generator_path", path);
+		}
+	})
+</script>`)
 
 	return generateTool
 }
