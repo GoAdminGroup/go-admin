@@ -74,18 +74,20 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 		return panel, panelInfo, nil, err
 	}
 
-	paramStr := params.DeleteIsAll().GetRouteParamStr()
+	var (
+		paramStr = params.DeleteIsAll().GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
-	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix)+paramStr)
-	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
-	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
+		editUrl   = modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
+		newUrl    = modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
+		deleteUrl = modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix)+paramStr)
+		exportUrl = modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
+		detailUrl = modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
 
-	infoUrl := h.routePathWithPrefix(urlNamePrefix+"info", prefix)
-	updateUrl := h.routePathWithPrefix(urlNamePrefix+"update", prefix) + paramStr
+		infoUrl   = h.routePathWithPrefix(urlNamePrefix+"info", prefix)
+		updateUrl = h.routePathWithPrefix(urlNamePrefix+"update", prefix) + paramStr
 
-	user := auth.Auth(ctx)
+		user = auth.Auth(ctx)
+	)
 
 	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route(urlNamePrefix+"show_edit").Method())
 	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route(urlNamePrefix+"show_new").Method())
@@ -119,11 +121,12 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
 		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
-	user := auth.Auth(ctx)
 
 	var (
-		body       template2.HTML
-		dataTable  types.DataTableAttribute
+		body      template2.HTML
+		dataTable types.DataTableAttribute
+
+		user       = auth.Auth(ctx)
 		info       = panel.GetInfo()
 		actionBtns = info.Action
 		actionJs   template2.JS
@@ -137,7 +140,6 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	}
 
 	btns, btnsJs := allBtns.Content()
-
 	allActionBtns := make(types.Buttons, 0)
 
 	for _, b := range info.ActionButtons {
@@ -247,7 +249,6 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	}
 
 	isNotIframe := ctx.Query(constant.IframeKey) != "true"
-
 	paginator := panelInfo.Paginator
 
 	if !isNotIframe {

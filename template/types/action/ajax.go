@@ -3,6 +3,7 @@ package action
 import (
 	"encoding/json"
 	"html/template"
+	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
@@ -85,6 +86,27 @@ func (ajax *AjaxAction) SetUrl(url string) *AjaxAction {
 
 func (ajax *AjaxAction) SetSuccessJS(successJS template.JS) *AjaxAction {
 	ajax.SuccessJS = successJS
+	return ajax
+}
+
+func (ajax *AjaxAction) ChangeHTMLWhenSuccess(identify string, text ...string) *AjaxAction {
+	data := template.JS("data.data")
+	if len(text) > 0 {
+		if len(text[0]) > 5 && text[0][:5] == "data." {
+			data = template.JS(text[0])
+		} else {
+			data = `"` + template.JS(text[0]) + `"`
+		}
+	}
+	selector := template.JS(identify)
+	if strings.Contains(identify, "$") {
+		selector = `$("` + template.JS(identify) + `")`
+	}
+	ajax.SuccessJS = `if (data.code === 0) {
+                                    ` + selector + `.html(` + data + `);
+                                } else {
+                                    swal(data.msg, '', 'error');
+                                }`
 	return ajax
 }
 
