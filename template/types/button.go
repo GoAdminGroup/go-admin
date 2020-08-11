@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/url"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 )
@@ -223,6 +224,14 @@ func (b Buttons) CheckExist(name string) bool {
 		}
 	}
 	return false
+}
+
+func (b Buttons) Callbacks() []context.Node {
+	cbs := make([]context.Node, 0)
+	for _, btn := range b {
+		cbs = append(cbs, btn.GetAction().GetCallbacks())
+	}
+	return cbs
 }
 
 const (
