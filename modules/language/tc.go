@@ -186,6 +186,7 @@ var tc = LangSet{
 	"config.footer info":                 "自定義底部信息",
 	"config.login logo":                  "登錄Logo",
 	"config.no limit login ip":           "取消限制多IP登錄",
+	"config.allow delete operation log":  "允許刪除操作日誌",
 	"config.animation type":              "動畫類型",
 	"config.animation duration":          "動畫間隔（秒）",
 	"config.animation delay":             "動畫延遲（秒）",

@@ -192,6 +192,7 @@ var cn = LangSet{
 	"config.footer info":                 "自定义底部信息",
 	"config.login logo":                  "登录Logo",
 	"config.no limit login ip":           "取消限制多IP登录",
+	"config.allow delete operation log":  "允许删除操作日志",
 	"config.animation type":              "动画类型",
 	"config.animation duration":          "动画间隔（秒）",
 	"config.animation delay":             "动画延迟（秒）",

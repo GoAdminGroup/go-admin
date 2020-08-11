@@ -378,6 +378,8 @@ type Config struct {
 
 	GoModFilePath string `json:"go_mod_file_path,omitempty" yaml:"go_mod_file_path,omitempty" ini:"go_mod_file_path,omitempty"`
 
+	AllowDelOperationLog bool `json:"allow_del_operation_log" yaml:"allow_del_operation_log,omitempty" ini:"allow_del_operation_log,omitempty"`
+
 	prefix string
 }
 
@@ -588,6 +590,7 @@ func (c *Config) Copy() *Config {
 		Custom500HTML:                 c.Custom500HTML,
 		BootstrapFilePath:             c.BootstrapFilePath,
 		GoModFilePath:                 c.GoModFilePath,
+		AllowDelOperationLog:          c.AllowDelOperationLog,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -670,6 +673,8 @@ func (c *Config) ToMap() map[string]string {
 
 	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
 
+	m["allow_del_operation_log"] = strconv.FormatBool(c.AllowDelOperationLog)
+
 	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
 	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
 	m["hide_tool_entrance"] = strconv.FormatBool(c.HideToolEntrance)
@@ -750,6 +755,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.AssetUrl = m["asset_url"]
 	c.LoginLogo = template.HTML(m["login_logo"])
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
+	c.AllowDelOperationLog = utils.ParseBool(m["allow_del_operation_log"])
 
 	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
 	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
@@ -1026,6 +1032,10 @@ func GetUrlPrefix() string {
 
 func GetOpenAdminApi() bool {
 	return globalCfg.OpenAdminApi
+}
+
+func GetAllowDelOperationLog() bool {
+	return globalCfg.AllowDelOperationLog
 }
 
 func GetCustom500HTML() template.HTML {

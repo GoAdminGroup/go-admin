@@ -157,6 +157,7 @@ var en = LangSet{
 	"config.footer info":                 "Footer Info",
 	"config.login logo":                  "Login Logo",
 	"config.no limit login ip":           "No Limit Login Multi IPs",
+	"config.allow delete operation log":  "Allow Delete Operation Log",
 	"config.animation type":              "Animation Type",
 	"config.animation duration":          "Animation Duration(s)",
 	"config.animation delay":             "Animation Delay(s)",
