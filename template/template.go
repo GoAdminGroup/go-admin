@@ -555,6 +555,11 @@ func (b *BaseComponent) GetAsset(name string) ([]byte, error) { return nil, nil 
 func (b *BaseComponent) GetJS() template.JS                   { return b.JS }
 func (b *BaseComponent) GetCSS() template.CSS                 { return b.CSS }
 func (b *BaseComponent) GetCallbacks() types.Callbacks        { return b.Callbacks }
+func (b *BaseComponent) BindActionTo(action types.Action, id string) {
+	action.SetBtnId(id)
+	b.JS += action.Js()
+	b.HTMLData += string(action.ExtContent())
+}
 func (b *BaseComponent) GetContentWithData(obj interface{}) template.HTML {
 	buffer := new(bytes.Buffer)
 	tmpl, defineName := b.GetTemplate()

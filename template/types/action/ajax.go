@@ -21,6 +21,7 @@ type AjaxAction struct {
 	SuccessJS   template.JS
 	ErrorJS     template.JS
 	ParameterJS template.JS
+	Event       Event
 	Handlers    []context.Handler
 }
 
@@ -53,6 +54,7 @@ func Ajax(id string, handler types.Handler) *AjaxAction {
 									swal('error', '', 'error');
 								}`,
 		Handlers: context.Handlers{handler.Wrap()},
+		Event:    EventClick,
 	}
 }
 
@@ -122,6 +124,11 @@ func (ajax *AjaxAction) ChangeHTMLWhenSuccess(identify string, text ...string) *
 	return ajax
 }
 
+func (ajax *AjaxAction) SetEvent(event Event) *AjaxAction {
+	ajax.Event = event
+	return ajax
+}
+
 func (ajax *AjaxAction) SetErrorJS(errorJS template.JS) *AjaxAction {
 	ajax.ErrorJS = errorJS
 	return ajax
@@ -168,7 +175,7 @@ func (ajax *AjaxAction) Js() template.JS {
 					});`
 	}
 
-	return template.JS(`$('.`+ajax.BtnId+`').on('click', function (event) {
+	return template.JS(`$('.`+ajax.BtnId+`').on('`+string(ajax.Event)+`', function (event) {
 						let data = `+ajax.Data.JSON()+`;
 						`) + ajax.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");

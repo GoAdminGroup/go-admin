@@ -249,6 +249,21 @@ type Panel struct {
 	Callbacks Callbacks
 }
 
+type Component interface {
+	GetContent() template.HTML
+	GetJS() template.JS
+	GetCSS() template.CSS
+	GetCallbacks() Callbacks
+}
+
+func (p Panel) AddComponent(comp Component) Panel {
+	p.JS += comp.GetJS()
+	p.CSS += comp.GetCSS()
+	p.Content += comp.GetContent()
+	p.Callbacks = append(p.Callbacks, comp.GetCallbacks()...)
+	return p
+}
+
 func (p Panel) AddJS(js template.JS) Panel {
 	p.JS += js
 	return p
