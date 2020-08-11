@@ -2,9 +2,10 @@ package login
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/template/types"
 
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -65,7 +66,11 @@ func (l *Login) GetContent() template.HTML {
 	tmpl, defineName := l.GetTemplate()
 	err := tmpl.ExecuteTemplate(buffer, defineName, l)
 	if err != nil {
-		fmt.Println("ComposeHtml Error:", err)
+		logger.Error("login ComposeHtml Error:", err)
 	}
 	return template.HTML(buffer.String())
 }
+
+func (l *Login) GetJS() template.JS            { return "" }
+func (l *Login) GetCSS() template.CSS          { return "" }
+func (l *Login) GetCallbacks() types.Callbacks { return make(types.Callbacks, 0) }

@@ -74,8 +74,13 @@ func (ajax *AjaxAction) WithAlert(data ...AlertData) *AjaxAction {
 	return ajax
 }
 
-func (ajax *AjaxAction) SetData(data map[string]interface{}) *AjaxAction {
+func (ajax *AjaxAction) AddData(data map[string]interface{}) *AjaxAction {
 	ajax.Data = ajax.Data.Add(data)
+	return ajax
+}
+
+func (ajax *AjaxAction) SetData(data map[string]interface{}) *AjaxAction {
+	ajax.Data = data
 	return ajax
 }
 
@@ -99,14 +104,21 @@ func (ajax *AjaxAction) ChangeHTMLWhenSuccess(identify string, text ...string) *
 		}
 	}
 	selector := template.JS(identify)
-	if strings.Contains(identify, "$") {
+	if !strings.Contains(identify, "$") {
 		selector = `$("` + template.JS(identify) + `")`
 	}
-	ajax.SuccessJS = `if (data.code === 0) {
-                                    ` + selector + `.html(` + data + `);
-                                } else {
-                                    swal(data.msg, '', 'error');
-                                }`
+	ajax.SuccessJS = `
+	if (data.code === 0) {
+		if (` + selector + `.is("input")) {
+			` + selector + `.val(` + data + `);
+		} else if (` + selector + `.is("select")) {
+			` + selector + `.val(` + data + `);
+		} else {
+			` + selector + `.html(` + data + `);
+		}
+	} else {
+		swal(data.msg, '', 'error');
+	}`
 	return ajax
 }
 

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+
+	template2 "github.com/GoAdminGroup/go-admin/template"
 )
 
 type LineChart struct {
@@ -259,6 +261,10 @@ func (l *LineDataSet) SetYAxisID(yAxisID string) *LineDataSet {
 func Line() *LineChart {
 	return &LineChart{
 		Chart: &Chart{
+			BaseComponent: &template2.BaseComponent{
+				Name:     "chartjs",
+				HTMLData: List["chartjs"],
+			},
 			dataSetIndex: -1,
 		},
 		JsContent: LineJsContent{

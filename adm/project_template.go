@@ -11,7 +11,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"                    // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}" // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}" // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                       // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -72,7 +72,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego"                   // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -133,7 +133,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -199,7 +199,7 @@ import (
 	"strings"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/chi"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -282,7 +282,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -340,7 +340,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/fasthttp"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -401,7 +401,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -461,7 +461,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -521,7 +521,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+
+	template2 "github.com/GoAdminGroup/go-admin/template"
 )
 
 type BarChart struct {
@@ -124,6 +126,10 @@ func (l *BarDataSet) SetYAxisID(yAxisID string) *BarDataSet {
 func Bar() *BarChart {
 	return &BarChart{
 		Chart: &Chart{
+			BaseComponent: &template2.BaseComponent{
+				Name:     "chartjs",
+				HTMLData: List["chartjs"],
+			},
 			dataSetIndex: -1,
 		},
 		JsContent: BarJsContent{

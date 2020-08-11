@@ -2,9 +2,10 @@ package components
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/logger"
 
 	template2 "github.com/GoAdminGroup/go-admin/template"
 )
@@ -15,9 +16,15 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 		text += temList["components/"+v]
 	}
 
+	tmplName := ""
+	if len(templateName) > 0 {
+		tmplName = templateName[0] + " "
+	}
+
 	tmpl, err := template.New("comp").Funcs(template2.DefaultFuncMap).Parse(text)
 	if err != nil {
-		panic("ComposeHtml Error:" + err.Error())
+		logger.Panic(tmplName + "ComposeHtml Error:" + err.Error())
+		return ""
 	}
 	buffer := new(bytes.Buffer)
 
@@ -26,7 +33,7 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 
 	err = tmpl.ExecuteTemplate(buffer, defineName, compo)
 	if err != nil {
-		fmt.Println("ComposeHtml Error:", err)
+		logger.Error(tmplName+"ComposeHtml Error:", err)
 	}
 	return template.HTML(buffer.String())
 }

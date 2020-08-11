@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+
+	template2 "github.com/GoAdminGroup/go-admin/template"
 )
 
 type PieChart struct {
@@ -106,6 +108,10 @@ func (l *PieDataSet) SetHoverBorderWidth(hoverBorderWidth float64) *PieDataSet {
 func Pie() *PieChart {
 	return &PieChart{
 		Chart: &Chart{
+			BaseComponent: &template2.BaseComponent{
+				Name:     "chartjs",
+				HTMLData: List["chartjs"],
+			},
 			dataSetIndex: -1,
 		},
 		JsContent: PieJsContent{

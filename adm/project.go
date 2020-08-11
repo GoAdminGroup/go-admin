@@ -13,6 +13,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/GoAdminGroup/go-admin/modules/db"
+
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	template2 "github.com/GoAdminGroup/go-admin/template"
@@ -21,14 +23,15 @@ import (
 )
 
 type Project struct {
-	Port      string
-	Theme     string
-	Prefix    string
-	Language  string
-	Driver    string
-	Framework string
-	Module    string
-	Orm       string
+	Port         string
+	Theme        string
+	Prefix       string
+	Language     string
+	Driver       string
+	DriverModule string
+	Framework    string
+	Module       string
+	Orm          string
 }
 
 func buildProject(cfgFile string) {
@@ -115,6 +118,10 @@ func buildProject(cfgFile string) {
 		p.Driver = singleSelect(getWord("choose a driver"),
 			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
 	}
+	p.DriverModule = p.Driver
+	if p.Driver == db.DriverPostgresql {
+		p.DriverModule = "postgres"
+	}
 
 	rootPath, err := os.Getwd()
 
@@ -189,7 +196,7 @@ var (
 )
 
 func Init(c db.Connection) {
-	orm, err = gorm.Open("`+p.Driver+`", c.GetDB("default"))
+	orm, err = gorm.Open("`+p.DriverModule+`", c.GetDB("default"))
 
 	if err != nil {
 		panic("initialize orm failed")

@@ -837,7 +837,7 @@ func (i *InfoPanel) AddButtonRaw(btn Button, action Action) *InfoPanel {
 }
 
 func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {
-	i.addButton(GetDefaultButton(title, icon, action, color...)).
+	i.addButton(GetDefaultButtonGroup(title, icon, action, color...)).
 		addFooterHTML(action.FooterContent()).
 		addCallback(action.GetCallbacks())
 	return i
