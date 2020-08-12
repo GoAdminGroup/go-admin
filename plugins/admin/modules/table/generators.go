@@ -1685,7 +1685,7 @@ $("select.table").select2();
 	formList.SetFormNewBtnWord(template.HTML(lgWithScore("generate", "tool")))
 	formList.SetWrapper(func(content tmpl.HTML) tmpl.HTML {
 		headli := html.LiEl().SetClass("list-group-item", "list-head").
-			SetContent("生成过的表格").Get()
+			SetContent(template.HTML(lgWithScore("generated tables", "tool"))).Get()
 		return html.UlEl().SetClass("save_table_list", "list-group").SetContent(
 			headli).Get() + content
 	})

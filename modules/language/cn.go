@@ -348,6 +348,7 @@ var cn = LangSet{
 	"tool.query info":           "查询信息",
 	"tool.filter form layout":   "筛选表单布局",
 	"tool.generate":             "生成",
+	"tool.generated tables":     "生成过的表格",
 
 	"tool.continue edit checkbox": "继续编辑按钮",
 	"tool.continue new checkbox":  "继续新增按钮",

@@ -347,6 +347,7 @@ var tc = LangSet{
 	"tool.reset button":           "重設按鈕",
 	"tool.back button":            "返回按鈕",
 	"tool.generate":               "生成",
+	"tool.generated tables":       "生成過的表格",
 
 	"tool.generate table model success": "生成成功",
 	"tool.generate table model fail":    "生成失敗",

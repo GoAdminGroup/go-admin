@@ -317,6 +317,7 @@ var en = LangSet{
 	"tool.reset button":           "Reset Button",
 	"tool.back button":            "Back Button",
 	"tool.generate":               "Generate",
+	"tool.generated tables":       "Generated Tables",
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",
