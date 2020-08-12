@@ -1641,7 +1641,6 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		SuccessJumpURL: s.c.Url("/info/generate/new"),
 		SuccessText:    lgWithScore("generate table model success", "tool"),
 		ErrorText:      lgWithScore("generate table model fail", "tool"),
-		DisableJump:    true,
 		SuccessJS: `
 let package = $(".package").val();
 let pk = $(".pk").val();
