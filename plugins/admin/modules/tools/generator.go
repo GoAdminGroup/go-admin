@@ -41,9 +41,11 @@ type Param struct {
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
 
-	Fields Fields
+	ExtraImport string `json:"extra_import"`
 
-	FormFields Fields
+	Fields Fields `json:"fields"`
+
+	FormFields Fields `json:"form_fields"`
 
 	Output string `json:"output"`
 }
@@ -67,6 +69,7 @@ type Config struct {
 	HidePagination   bool          `json:"hide_pagination"`
 	HideQueryInfo    bool          `json:"hide_query_info"`
 	FilterFormLayout form.Layout   `json:"filter_form_layout"`
+	ExtraImport      string        `json:"extra_import"`
 
 	HideContinueEditCheckBox bool `json:"hide_continue_edit_check_box"`
 	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
@@ -120,6 +123,7 @@ func NewParam(cfg Config) Param {
 		Fields:                   fields,
 		FormFields:               fields,
 		Output:                   cfg.Output,
+		ExtraImport:              cfg.ExtraImport,
 	}
 }
 
@@ -160,6 +164,7 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		HideResetButton:          cfg.HideResetButton,
 		HideBackButton:           cfg.HideBackButton,
 		Output:                   cfg.Output,
+		ExtraImport:              cfg.ExtraImport,
 	}
 }
 
@@ -174,6 +179,7 @@ type Field struct {
 	Filterable  bool   `json:"filterable"`
 	Sortable    bool   `json:"sortable"`
 	Editable    bool   `json:"editable"`
+	Default     string `json:"default"`
 	CanAdd      bool   `json:"can_add"`
 }
 

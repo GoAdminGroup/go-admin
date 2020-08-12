@@ -1439,6 +1439,9 @@ let trs_form = $("tbody.fields_form-table").find("tr");
 for (let i = 0; i < data.data[0].length; i++) {
 	$(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
 	$(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
+	if (data.data[1][i] == "created_at") {
+		$(trs_form[i]).find('.field_default').val('time.Now().Format("2006-01-02 15:04:05")');
+	}
 	$(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
 	$(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
 }
@@ -1551,6 +1554,10 @@ NProgress.done();
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"y"}
 			})
+		pa.AddField(lgWithScore("field default", "tool"), "field_default", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1604,11 +1611,20 @@ NProgress.done();
 		}
 
 		formFields := make(tools.Fields, len(values["field_head_form"]))
+		extraImport := ""
 
 		for i := 0; i < len(values["field_head_form"]); i++ {
+			if values["field_default"][i] == `time.Now().Format("2006-01-02 15:04:05")` &&
+				!strings.Contains(extraImport, "time") {
+				extraImport += `
+	"time"`
+			} else if values["field_default"][i] != "" && !strings.Contains(values["field_default"][i], `"`) {
+				values["field_default"][i] = `"` + values["field_default"][i] + `"`
+			}
 			formFields[i] = tools.Field{
 				Head:     values["field_head_form"][i],
 				Name:     values["field_name_form"][i],
+				Default:  values["field_default"][i],
 				FormType: values["field_form_type_form"][i],
 				DBType:   values["field_db_type_form"][i],
 				CanAdd:   values["field_canadd"][i] == "y",
@@ -1638,6 +1654,7 @@ NProgress.done();
 			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
 			Schema:                   values.Get("schema"),
 			Output:                   output,
+			ExtraImport:              extraImport,
 		}, fields, formFields))
 
 		if err != nil {

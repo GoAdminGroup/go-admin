@@ -227,24 +227,24 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 }
 
 func (pop *PopUpAction) Js() template.JS {
-	return template.JS(`$('.` + pop.BtnId + `').on('` + string(pop.Event) + `', function (event) {
-						let data = ` + pop.Data.JSON() + `;
+	return template.JS(`$('.`+pop.BtnId+`').on('`+string(pop.Event)+`', function (event) {
+						let data = `+pop.Data.JSON()+`;
 						`) + pop.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");
 						if (id && id !== "") {
 							data["id"] = id;
 						}
-						data['popup_id'] = "` + pop.Id + `"
+						data['popup_id'] = "`+pop.Id+`"
 						$.ajax({
-                            method: '` + pop.Method + `',
-                            url: "` + pop.Url + `",
+                            method: '`+pop.Method+`',
+                            url: "`+pop.Url+`",
                             data: data,
                             success: function (data) {
                                 if (typeof (data) === "string") {
                                     data = JSON.parse(data);
                                 }
                                 if (data.code === 0) {
-                                    $('#` + pop.Id + ` .modal-body').html(data.data);
+                                    $('#`+pop.Id+` .modal-body').html(data.data);
                                 } else {
                                     swal(data.msg, '', 'error');
                                 }
@@ -256,7 +256,7 @@ func (pop *PopUpAction) Js() template.JS {
 									swal('error', '', 'error');
 								}
 								setTimeout(function() {
-									$('#` + pop.Id + `').hide();
+									$('#`+pop.Id+`').hide();
 									$('.modal-backdrop.fade.in').hide();
 								}, 500)
 							},

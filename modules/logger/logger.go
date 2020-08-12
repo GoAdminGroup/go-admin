@@ -111,7 +111,7 @@ func (l *Logger) Init() {
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.infoLogPath), infoLevelEnabler),
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.errorLogPath), errorLevelEnabler),
 		zapcore.NewCore(l.getEncoder(""), l.getLogWriter(l.accessLogPath), accessLevelEnabler),
-	), zap.AddCaller(), zap.AddCallerSkip(1))
+	), zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(errorLevelEnabler))
 	l.sugaredLogger = zapLogger.Sugar()
 	l.logger = zapLogger
 }

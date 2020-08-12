@@ -335,6 +335,7 @@ var cn = LangSet{
 	"tool.form info":            "表单信息",
 	"tool.field editable":       "允许编辑",
 	"tool.field can add":        "允许新增",
+	"tool.field default":        "默认值",
 	"tool.filter area":          "筛选框",
 	"tool.new button":           "新建按钮",
 	"tool.export button":        "导出按钮",

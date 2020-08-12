@@ -4,6 +4,7 @@ const tableModelTmpl = `{{define "table_model"}}
 package {{.Package}}
 
 import (
+	{{.ExtraImport}}
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -40,7 +41,7 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	formList := {{.Table}}.GetForm()
 
 	{{- range $key, $field := .FormFields}}
-	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if $field.NotAllowAdd}}.FieldNotAllowAdd(){{end -}}
+	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if $field.NotAllowAdd}}.FieldNotAllowAdd(){{end -}}{{if ne $field.Default ""}}.FieldDefault({{$field.Default}}){{end -}}
 	{{- end}}
 
 	{{if .HideContinueEditCheckBox}}formList.HideContinueEditCheckBox(){{end}} 
