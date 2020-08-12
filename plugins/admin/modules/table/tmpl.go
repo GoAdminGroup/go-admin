@@ -109,22 +109,15 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     save_table_list = JSON.parse(save_table_list_str);
                 }
                 let table_index = save_table_list.indexOf(table);
-                if (save_table_list.indexOf(table) !== -1) {
+                if (table_index !== -1) {
                     if (table_index === save_table_list.length - 1) {
-                        save_table_list.splice(0, 1);
+                        save_table_list = save_table_list.splice(0, 1);
                     } else {
-                        save_table_list.splice(table_index + 1, 1);
+                        save_table_list = save_table_list.splice(table_index + 1, 1);
                     }
                 }
                 save_table_list.push(table);
                 localStorage.setItem("{{index . "prefix"}}save_table_list", JSON.stringify(save_table_list));
-                let addLi = $("<li class='list-group-item list-group-item-action'>" + table + "</li>");
-                addLi.insertAfter($('li.list-group-item:eq(0)'));
-                addLi.on("click", restoreTableData);
-                if (save_table_list.length > 6) {
-                    $("li.list-group-item.list-group-item-action:last").remove();
-                }
-                $(".list-group.save_table_list").show();
                 localStorage.setItem("{{index . "prefix"}}save_table_" + table, getItemObjData());
             }
         });
