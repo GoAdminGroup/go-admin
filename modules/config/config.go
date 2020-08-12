@@ -244,6 +244,9 @@ type Config struct {
 	// file connection.go.
 	Databases DatabaseList `json:"database,omitempty" yaml:"database,omitempty" ini:"database,omitempty"`
 
+	// The application unique ID. Once generated, don't modify.
+	AppID string `json:"app_id,omitempty" yaml:"app_id,omitempty" ini:"app_id,omitempty"`
+
 	// The cookie domain used in the auth modules. see
 	// the session.go.
 	Domain string `json:"domain,omitempty" yaml:"domain,omitempty" ini:"domain,omitempty"`
@@ -661,6 +664,7 @@ func (c *Config) ToMap() map[string]string {
 	m["bootstrap_file_path"] = c.BootstrapFilePath
 	m["go_mod_file_path"] = c.GoModFilePath
 	m["footer_info"] = string(c.FooterInfo)
+	m["app_id"] = c.AppID
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
 	m["auth_user_table"] = c.AuthUserTable
@@ -689,6 +693,9 @@ func (c *Config) ToMap() map[string]string {
 func (c *Config) Update(m map[string]string) error {
 	updateLock.Lock()
 	defer updateLock.Unlock()
+	if m["app_id"] != "" {
+		c.AppID = m["app_id"]
+	}
 	c.Language = m["language"]
 	c.Domain = m["domain"]
 	c.Theme = m["theme"]
@@ -888,6 +895,7 @@ func SetDefault(cfg Config) Config {
 		// default two hours
 		cfg.SessionLifeTime = 7200
 	}
+	cfg.AppID = utils.Uuid(12)
 	return cfg
 }
 
@@ -1028,6 +1036,10 @@ func GetDomain() string {
 
 func GetLanguage() string {
 	return globalCfg.Language
+}
+
+func GetAppID() string {
+	return globalCfg.AppID
 }
 
 func GetUrlPrefix() string {

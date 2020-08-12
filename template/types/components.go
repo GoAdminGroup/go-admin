@@ -92,6 +92,8 @@ type ButtonAttribute interface {
 	SetMarginRight(int) ButtonAttribute
 	SetThemePrimary() ButtonAttribute
 	SetSmallSize() ButtonAttribute
+	AddClass(class string) ButtonAttribute
+	SetID(id string) ButtonAttribute
 	SetMiddleSize() ButtonAttribute
 	SetHref(string) ButtonAttribute
 	SetThemeWarning() ButtonAttribute

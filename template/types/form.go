@@ -952,31 +952,15 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 		}
 }
 
-func parseHTML(name string, param interface{}) template.HTML {
-	t := template.New(name)
-	t, err := t.Parse(tmpls[name])
-	if err != nil {
-		logger.Error(err)
-		return ""
-	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, param)
-	if err != nil {
-		logger.Error(err)
-		return ""
-	}
-	return template.HTML(buf.String())
-}
-
 func chooseCustomJS(field string, js template.HTML) template.HTML {
-	return parseHTML("choose_custom", struct {
+	return utils.ParseHTML("choose_custom", tmpls["choose_custom"], struct {
 		Field template.JS
 		JS    template.JS
 	}{Field: template.JS(field), JS: template.JS(js)})
 }
 
 func chooseMapJS(field string, m map[string]LinkField) template.HTML {
-	return parseHTML("choose_map", struct {
+	return utils.ParseHTML("choose_map", tmpls["choose_map"], struct {
 		Field template.JS
 		Data  map[string]LinkField
 	}{
@@ -986,7 +970,7 @@ func chooseMapJS(field string, m map[string]LinkField) template.HTML {
 }
 
 func chooseJS(field, chooseField, val string, value template.HTML) template.HTML {
-	return parseHTML("choose", struct {
+	return utils.ParseHTML("choose", tmpls["choose"], struct {
 		Field       template.JS
 		ChooseField template.JS
 		Val         template.JS
@@ -1012,7 +996,7 @@ func chooseAjax(field, chooseField, url string, handler Handler, js ...template.
 		passValue = template.JS(js[1])
 	}
 
-	return parseHTML("choose_ajax", struct {
+	return utils.ParseHTML("choose_ajax", tmpls["choose_ajax"], struct {
 			Field       template.JS
 			ChooseField template.JS
 			PassValue   template.JS
@@ -1037,7 +1021,7 @@ func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	return parseHTML("choose_hide", struct {
+	return utils.ParseHTML("choose_hide", tmpls["choose_hide"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string
@@ -1053,7 +1037,7 @@ func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	return parseHTML("choose_show", struct {
+	return utils.ParseHTML("choose_show", tmpls["choose_show"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string
@@ -1069,7 +1053,7 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 		return ""
 	}
 
-	return parseHTML("choose_disable", struct {
+	return utils.ParseHTML("choose_disable", tmpls["choose_disable"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string

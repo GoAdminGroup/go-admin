@@ -117,10 +117,11 @@ cilint:
 golint:
 	GO111MODULE=off golint ./...
 
-## form tmpl build
-
-build-form-tmpl:
+build-tmpl:
+    ## form tmpl build
 	adm compile tpl --src ./template/types/tmpls/ --dist ./template/types/tmpl.go --package types --var tmpls
+    ## generator tmpl build
+	adm compile tpl --src ./plugins/admin/modules/table/tmpl --dist ./plugins/admin/modules/table/tmpl.go --package table --var tmpls
 
 ## cli version update
 

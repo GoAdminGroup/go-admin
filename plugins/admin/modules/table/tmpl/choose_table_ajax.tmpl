@@ -1,0 +1,47 @@
+{{define "choose_table_ajax"}}
+        NProgress.start();
+        let info_table = $("tbody.fields-table");
+        info_table.find("tr").remove();
+        let tpl = $("template.fields-tpl").html();
+        for (let i = 0; i < data.data[0].length; i++) {
+            info_table.append(tpl);
+        }
+        let trs = info_table.find("tr");
+        for (let i = 0; i < data.data[0].length; i++) {
+            $(trs[i]).find('.field_head').val(data.data[0][i]);
+            $(trs[i]).find('.field_name').val(data.data[1][i]);
+            $(trs[i]).find('select.field_db_type').val(data.data[2][i]).select2();
+        }
+        let form_table = $("tbody.fields_form-table");
+        form_table.find("tr").remove();
+        let tpl_form = $("template.fields_form-tpl").html();
+        for (let i = 0; i < data.data[0].length; i++) {
+            form_table.append(tpl_form);
+        }
+        let trs_form = form_table.find("tr");
+        for (let i = 0; i < data.data[0].length; i++) {
+            $(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
+            $(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
+            if (data.data[1][i] === "created_at") {
+                $(trs_form[i]).find('.field_default').val('time.Now().Format("2006-01-02 15:04:05")');
+            }
+            $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
+            $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
+        }
+        $(".hide_filter_area.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_new_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_export_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_edit_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_pagination.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_delete_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_detail_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_filter_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_row_selector.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_query_info.ga_checkbox").bootstrapSwitch('state', true);
+        $(".filter_form_layout.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_continue_edit_check_box.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_reset_button.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_continue_new_check_box.ga_checkbox").bootstrapSwitch('state', true);
+        $(".hide_back_button.ga_checkbox").bootstrapSwitch('state', true);
+        NProgress.done();
+{{end}}

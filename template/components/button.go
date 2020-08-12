@@ -5,6 +5,7 @@ import (
 	"html/template"
 
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
@@ -18,6 +19,8 @@ type ButtonAttribute struct {
 	Type        string
 	Size        string
 	Href        string
+	Class       string
+	ID          string
 	Style       template.HTMLAttr
 	MarginLeft  int
 	MarginRight int
@@ -84,6 +87,16 @@ func (compo *ButtonAttribute) SetHref(href string) types.ButtonAttribute {
 	return compo
 }
 
+func (compo *ButtonAttribute) AddClass(class string) types.ButtonAttribute {
+	compo.Class += " " + class
+	return compo
+}
+
+func (compo *ButtonAttribute) SetID(id string) types.ButtonAttribute {
+	compo.ID = id
+	return compo
+}
+
 func (compo *ButtonAttribute) SetTheme(value string) types.ButtonAttribute {
 	compo.Theme = value
 	return compo
@@ -106,6 +119,10 @@ func (compo *ButtonAttribute) GetContent() template.HTML {
 
 	if compo.LoadingText == "" {
 		compo.LoadingText = icon.Icon(icon.Spinner, 1) + language.GetFromHtml(`Save`)
+	}
+
+	if compo.ID == "" {
+		compo.ID = utils.Uuid(15) + "_btn"
 	}
 
 	return ComposeHtml(compo.TemplateList, *compo, "button")

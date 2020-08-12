@@ -1342,8 +1342,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		SetHeadWidth(1).
 		SetInputWidth(4).
 		HideBackButton().
-		HideContinueNewCheckBox().
-		HideResetButton()
+		HideContinueNewCheckBox()
 
 	formList.AddField("ID", "id", db.Varchar, form.Default).FieldDefault("1").FieldHide()
 
@@ -1417,36 +1416,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				}
 
 				return true, "ok", [][]string{headName, fieldName, dbTypeList, formTypeList}
-			}, `
-NProgress.start();
-$("tbody.fields-table").find("tr").remove();
-let tpl = $("template.fields-tpl").html();
-for (let i = 0; i < data.data[0].length; i++) {
-	$("tbody.fields-table").append(tpl);
-}
-let trs = $("tbody.fields-table").find("tr");
-for (let i = 0; i < data.data[0].length; i++) {
-	$(trs[i]).find('.field_head').val(data.data[0][i]);
-	$(trs[i]).find('.field_name').val(data.data[1][i]);
-	$(trs[i]).find('select.field_db_type').val(data.data[2][i]).select2();
-}
-$("tbody.fields_form-table").find("tr").remove();
-let tpl_form = $("template.fields_form-tpl").html();
-for (let i = 0; i < data.data[0].length; i++) {
-	$("tbody.fields_form-table").append(tpl_form);
-}
-let trs_form = $("tbody.fields_form-table").find("tr");
-for (let i = 0; i < data.data[0].length; i++) {
-	$(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
-	$(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
-	if (data.data[1][i] == "created_at") {
-		$(trs_form[i]).find('.field_default').val('time.Now().Format("2006-01-02 15:04:05")');
-	}
-	$(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
-	$(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
-}
-NProgress.done();
-`, `"conn":$('.conn').val(),`)
+			}, template.HTML(utils.ParseText("choose_table_ajax", tmpls["choose_table_ajax"], nil)),
+			`"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 
@@ -1686,36 +1657,38 @@ $("select.table").select2();
 `,
 	})
 
-	formList.SetFooterHtml(`<script>
-	$(function () {
-		let package = localStorage.getItem("go_admin_generator_package");
-		let pk = localStorage.getItem("go_admin_generator_pk");
-		let path = localStorage.getItem("go_admin_generator_path");
-		if (package !== "") {
-			$(".package").val(package);
-		}
-		if (pk !== "") {
-			$(".pk").val(pk);
-		}
-		if (path !== "") {
-			$(".path").val(path);
-		}
-	});
-	$(".btn-group.pull-right .btn.btn-primary").on("click", function() {
-		let package = $(".package").val();
-		let pk = $(".pk").val();
-		let path = $(".path").val();
-		if (package !== "") {
-			localStorage.setItem("go_admin_generator_package", package);
-		}
-		if (pk !== "") {
-			localStorage.setItem("go_admin_generator_pk", pk);
-		}
-		if (path !== "") {
-			localStorage.setItem("go_admin_generator_path", path);
-		}
+	formList.SetFooterHtml(utils.ParseHTML("generator", tmpls["generator"], map[string]string{
+		"prefix": "go_admin_" + config.GetAppID() + "_generator_",
+	}) + `
+<style>
+	.save_table_list {
+		position: absolute;
+		right: 45px;
+		top: 200px;
+		background-color: white;
+		width: 300px;
+		min-height: 50px;
+		z-index: 9999;
+		display: none;
+	}
+	.list-group-item.list-head {
+		background-color: #5a5a5a;
+    	border-color: #5a5a5a;
+    	font-weight: bold;
+		color: white;
+	}
+	.list-group-item.list-group-item-action {
+		cursor: pointer;
+	}
+</style>`)
+
+	formList.SetFormNewBtnWord(template.HTML(lgWithScore("generate", "tool")))
+	formList.SetWrapper(func(content tmpl.HTML) tmpl.HTML {
+		headli := html.LiEl().SetClass("list-group-item", "list-head").
+			SetContent("生成过的表格").Get()
+		return html.UlEl().SetClass("save_table_list", "list-group").SetContent(
+			headli).Get() + content
 	})
-</script>`)
 
 	return generateTool
 }

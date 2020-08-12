@@ -116,8 +116,6 @@ func (b Base) Row() types.RowAttribute {
 func (b Base) Button() types.ButtonAttribute {
 	return &ButtonAttribute{
 		Name:      "button",
-		Content:   "",
-		Href:      "",
 		Attribute: b.Attribute,
 	}
 }

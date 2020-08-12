@@ -379,14 +379,18 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 `)
 	}
 
-	btn1 := aButton().SetType("submit").
+	btn1 := aButton().
+		SetType("submit").
+		AddClass("submit").
 		SetContent(btnWord).
 		SetThemePrimary().
 		SetOrientationRight().
 		GetContent()
 	btn2 := template.HTML("")
 	if !isHideReset {
-		btn2 = aButton().SetType("reset").
+		btn2 = aButton().
+			SetType("reset").
+			AddClass("reset").
 			SetContent(language.GetFromHtml("Reset")).
 			SetThemeWarning().
 			SetOrientationLeft().
@@ -400,6 +404,7 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 func filterFormFooter(infoUrl string) template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 	btn1 := aButton().SetType("submit").
+		AddClass("submit").
 		SetContent(icon.Icon(icon.Search, 2) + language.GetFromHtml("search")).
 		SetThemePrimary().
 		SetSmallSize().
@@ -407,6 +412,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 		SetLoadingText(icon.Icon(icon.Spinner, 1) + language.GetFromHtml("search")).
 		GetContent()
 	btn2 := aButton().SetType("reset").
+		AddClass("reset").
 		SetContent(icon.Icon(icon.Undo, 2) + language.GetFromHtml("reset")).
 		SetThemeDefault().
 		SetOrientationLeft().
