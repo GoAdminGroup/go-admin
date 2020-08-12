@@ -24,9 +24,6 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
         for (let i = 0; i < data.data[0].length; i++) {
             $(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
             $(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
-            if (data.data[1][i] === "created_at") {
-                $(trs_form[i]).find('.field_default').val('time.Now().Format("2006-01-02 15:04:05")');
-            }
             $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
             $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
         }

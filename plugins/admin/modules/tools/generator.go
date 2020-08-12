@@ -182,6 +182,7 @@ type Field struct {
 	Editable    bool   `json:"editable"`
 	Default     string `json:"default"`
 	CanAdd      bool   `json:"can_add"`
+	ExtraFun    string `json:"extra_fun"`
 }
 
 func Generate(param Param) error {

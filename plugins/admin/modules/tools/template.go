@@ -41,7 +41,7 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	formList := {{.Table}}.GetForm()
 
 	{{- range $key, $field := .FormFields}}
-	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if $field.NotAllowAdd}}.FieldNotAllowAdd(){{end -}}{{if ne $field.Default ""}}.FieldDefault({{$field.Default}}){{end -}}
+	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if $field.NotAllowAdd}}.FieldNotAllowAdd(){{end -}}{{if ne $field.Default ""}}.FieldDefault({{$field.Default}}){{end -}}{{$field.ExtraFun}}
 	{{- end}}
 
 	{{if .HideContinueEditCheckBox}}formList.HideContinueEditCheckBox(){{end}} 

@@ -1582,13 +1582,13 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		}
 
 		formFields := make(tools.Fields, len(values["field_head_form"]))
-		extraImport := ""
 
 		for i := 0; i < len(values["field_head_form"]); i++ {
-			if values["field_default"][i] == `time.Now().Format("2006-01-02 15:04:05")` &&
-				!strings.Contains(extraImport, "time") {
-				extraImport += `
-	"time"`
+			extraFun := ""
+			if values["field_name_form"][i] == `created_at` {
+				extraFun += `.FieldNowWhenInsert()`
+			} else if values["field_name_form"][i] == `updated_at` {
+				extraFun += `.FieldNowWhenUpdate()`
 			} else if values["field_default"][i] != "" && !strings.Contains(values["field_default"][i], `"`) {
 				values["field_default"][i] = `"` + values["field_default"][i] + `"`
 			}
@@ -1600,6 +1600,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				DBType:   values["field_db_type_form"][i],
 				CanAdd:   values["field_canadd"][i] == "y",
 				Editable: values["field_canedit"][i] == "y",
+				ExtraFun: extraFun,
 			}
 		}
 
@@ -1625,7 +1626,6 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
 			Schema:                   values.Get("schema"),
 			Output:                   output,
-			ExtraImport:              extraImport,
 		}, fields, formFields))
 
 		if err != nil {

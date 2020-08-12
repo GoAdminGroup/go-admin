@@ -125,7 +125,10 @@ func (r FieldModelValue) Value() string {
 }
 
 func (r FieldModelValue) First() string {
-	return r[0]
+	if len(r) > 0 {
+		return r[0]
+	}
+	return ""
 }
 
 // FieldDisplay is filter function of data.

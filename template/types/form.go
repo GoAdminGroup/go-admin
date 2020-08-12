@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -801,6 +802,33 @@ func (f *FormPanel) FieldDefaultOptionDelimiter(delimiter string) *FormPanel {
 
 func (f *FormPanel) FieldPostFilterFn(post PostFieldFilterFn) *FormPanel {
 	f.FieldList[f.curFieldListIndex].PostFilterFn = post
+	return f
+}
+
+func (f *FormPanel) FieldNow() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		return time.Now().Format("2006-01-02 15:04:05")
+	}
+	return f
+}
+
+func (f *FormPanel) FieldNowWhenUpdate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		if value.IsUpdate() {
+			return time.Now().Format("2006-01-02 15:04:05")
+		}
+		return value.Value.Value()
+	}
+	return f
+}
+
+func (f *FormPanel) FieldNowWhenInsert() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		if value.IsCreate() {
+			return time.Now().Format("2006-01-02 15:04:05")
+		}
+		return value.Value.Value()
+	}
 	return f
 }
 
