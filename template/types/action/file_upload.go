@@ -49,12 +49,12 @@ func (file *FileUploadAction) GetCallbacks() context.Node {
 
 func (file *FileUploadAction) Js() template.JS {
 
-	return template.JS(`$('.` + file.BtnId + `').on('click', function(){
-  $('#` + file.BtnId + `_input').click();
+	return template.JS(`$('` + file.BtnId + `').on('click', function(){
+  $('` + file.BtnId + `_input').click();
 });
 
-$("#` + file.BtnId + `_input").on("change", function () {
-  var files = $('#` + file.BtnId + `_input').prop('files');
+$("` + file.BtnId + `_input").on("change", function () {
+  var files = $('` + file.BtnId + `_input').prop('files');
 
   var data = new FormData();
   data.append('` + file.FileName + `', files[0]);

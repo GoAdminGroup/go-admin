@@ -227,7 +227,7 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 }
 
 func (pop *PopUpAction) Js() template.JS {
-	return template.JS(`$('.`+pop.BtnId+`').on('`+string(pop.Event)+`', function (event) {
+	return template.JS(`$('`+pop.BtnId+`').on('`+string(pop.Event)+`', function (event) {
 						let data = `+pop.Data.JSON()+`;
 						`) + pop.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");

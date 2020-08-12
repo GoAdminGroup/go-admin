@@ -56,7 +56,7 @@ func GetDefaultButtonGroup(title template.HTML, icon string, action Action, colo
 
 func defaultButton(title, direction template.HTML, icon string, action Action, group bool, colors ...template.HTML) *DefaultButton {
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 
 	var color, textColor template.HTML
 	if len(colors) > 0 {
@@ -131,7 +131,7 @@ func GetActionButton(title template.HTML, action Action, ids ...string) *ActionB
 		id = "action-info-btn-" + utils.Uuid(10)
 	}
 
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 
 	return &ActionButton{
@@ -277,7 +277,7 @@ type NavButton struct {
 func GetNavButton(title template.HTML, icon string, action Action, names ...string) *NavButton {
 
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 	name := ""
 
@@ -402,7 +402,7 @@ const (
 
 func GetDropDownItemButton(title template.HTML, action Action, names ...string) *NavDropDownItemButton {
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 	name := ""
 

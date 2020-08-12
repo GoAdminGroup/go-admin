@@ -973,7 +973,7 @@ func (i *InfoPanel) AddColumn(head string, fun FieldFilterFn) *InfoPanel {
 func (i *InfoPanel) AddColumnButtons(head string, buttons ...Button) *InfoPanel {
 	var content, js template.HTML
 	for _, btn := range buttons {
-		btn.GetAction().SetBtnId(btn.ID())
+		btn.GetAction().SetBtnId("." + btn.ID())
 		btnContent, btnJs := btn.Content()
 		content += btnContent
 		js += template.HTML(btnJs)

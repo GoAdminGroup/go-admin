@@ -559,6 +559,7 @@ func (b *BaseComponent) BindActionTo(action types.Action, id string) {
 	action.SetBtnId(id)
 	b.JS += action.Js()
 	b.HTMLData += string(action.ExtContent())
+	b.Callbacks = append(b.Callbacks, action.GetCallbacks())
 }
 func (b *BaseComponent) GetContentWithData(obj interface{}) template.HTML {
 	buffer := new(bytes.Buffer)

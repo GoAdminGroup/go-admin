@@ -39,7 +39,13 @@ type BaseAction struct {
 	JS      template.JS
 }
 
-func (base *BaseAction) SetBtnId(btnId string)        { base.BtnId = btnId }
+func (base *BaseAction) SetBtnId(btnId string) {
+	if btnId[0] != '.' && btnId[0] != '#' {
+		base.BtnId = "." + btnId
+	} else {
+		base.BtnId = btnId
+	}
+}
 func (base *BaseAction) Js() template.JS              { return base.JS }
 func (base *BaseAction) BtnClass() template.HTML      { return "" }
 func (base *BaseAction) BtnAttribute() template.HTML  { return "" }

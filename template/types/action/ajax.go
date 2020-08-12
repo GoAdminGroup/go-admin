@@ -175,7 +175,7 @@ func (ajax *AjaxAction) Js() template.JS {
 					});`
 	}
 
-	return template.JS(`$('.`+ajax.BtnId+`').on('`+string(ajax.Event)+`', function (event) {
+	return template.JS(`$('`+ajax.BtnId+`').on('`+string(ajax.Event)+`', function (event) {
 						let data = `+ajax.Data.JSON()+`;
 						`) + ajax.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");
