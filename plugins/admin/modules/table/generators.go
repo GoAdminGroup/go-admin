@@ -1424,6 +1424,21 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 
+	formList.AddField(lgWithScore("extra import package", "tool"), "extra_import_package", db.Varchar, form.Select).
+		FieldOptions(types.FieldOptions{
+			{Text: "time", Value: "time"},
+			{Text: "log", Value: "log"},
+			{Text: "fmt", Value: "fmt"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/db/dialect", Value: "github.com/GoAdminGroup/go-admin/modules/db/dialect"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/db", Value: "github.com/GoAdminGroup/go-admin/modules/db"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/language", Value: "github.com/GoAdminGroup/go-admin/modules/language"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/logger", Value: "github.com/GoAdminGroup/go-admin/modules/logger"},
+		}).
+		FieldDefault("").
+		FieldOptionExt(map[string]interface{}{
+			"tags": true,
+		})
+
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
 		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 
@@ -1571,7 +1586,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	}).FieldInputWidth(11)
 
 	formList.SetTabGroups(types.
-		NewTabGroups("conn", "table", "package", "pk", "path").
+		NewTabGroups("conn", "table", "package", "pk", "extra_import_package", "path").
 		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
 			"hide_new_button", "hide_export_button", "hide_edit_button",
 			"hide_pagination", "hide_delete_button", "hide_detail_button",
@@ -1610,6 +1625,15 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				Sortable:     values["field_sortable"][i] == "y",
 				InfoEditable: values["info_field_editable"][i] == "y",
 			}
+		}
+
+		extraImport := ""
+		for _, pack := range values["extra_import_package"] {
+			if extraImport != "" {
+				extraImport += `
+`
+			}
+			extraImport += `	"` + pack + `"`
 		}
 
 		formFields := make(tools.Fields, len(values["field_head_form"]))
@@ -1661,6 +1685,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FormDescription:          values.Get("form_description"),
 			TableTitle:               values.Get("table_title"),
 			TableDescription:         values.Get("table_description"),
+			ExtraImport:              extraImport,
 		}, fields, formFields))
 
 		if err != nil {

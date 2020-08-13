@@ -342,6 +342,7 @@ var cn = LangSet{
 	"tool.export button":        "导出按钮",
 	"tool.edit button":          "编辑按钮",
 	"tool.delete button":        "删除按钮",
+	"tool.extra import package": "导入包",
 	"tool.detail button":        "详情按钮",
 	"tool.filter button":        "筛选按钮",
 	"tool.row selector":         "列选择按钮",

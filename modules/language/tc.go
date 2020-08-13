@@ -330,6 +330,7 @@ var tc = LangSet{
 	"tool.form info":              "表單信息",
 	"tool.field editable":         "編輯顯示",
 	"tool.info field editable":    "可編輯",
+	"tool.extra import package":   "導入包",
 	"tool.field can add":          "新增顯示",
 	"tool.field default":          "默認值",
 	"tool.filter area":            "篩選框",

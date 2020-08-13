@@ -316,6 +316,7 @@ var jp = LangSet{
 	"tool.field default":          "Default",
 	"tool.filter area":            "Filter Area",
 	"tool.new button":             "New Button",
+	"tool.extra import package":   "Import Package",
 	"tool.export button":          "Export Button",
 	"tool.edit button":            "Edit Button",
 	"tool.delete button":          "Delete Button",

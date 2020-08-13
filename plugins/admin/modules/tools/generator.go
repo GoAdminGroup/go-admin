@@ -250,10 +250,10 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 
 	for i := 0; i < len(tables); i++ {
 		if !strings.Contains(tablesContent, `"`+tables[i]+`"`) {
-			tableStr += fmt.Sprintf(`	
-	"%s": Get%sTable,`, tables[i], strings.Title(camelcase(tables[i])))
+			tableStr += fmt.Sprintf(`
+	"%s": Get%sTable, `, tables[i], strings.Title(camelcase(tables[i])))
 			commentStr += fmt.Sprintf(`
-// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
+	// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
 		}
 	}
 

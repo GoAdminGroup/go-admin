@@ -300,6 +300,7 @@ var en = LangSet{
 	"tool.form info":              "Form",
 	"tool.field editable":         "Editable",
 	"tool.info field editable":    "Editable",
+	"tool.extra import package":   "Import Package",
 	"tool.field can add":          "Can Add",
 	"tool.field default":          "Default",
 	"tool.filter area":            "Filter Area",

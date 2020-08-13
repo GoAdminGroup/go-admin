@@ -138,6 +138,11 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $("select.table").val(data.table).select2();
                 }, 2000);
 
+                $(".table_title").val(data.table_title);
+                $(".table_description").val(data.table_description);
+                $(".form_title").val(data.form_title);
+                $(".form_description").val(data.form_description);
+
                 let info_table = $("tbody.fields-table");
                 info_table.find("tr").remove();
                 let tpl = $("template.fields-tpl").html();
@@ -151,6 +156,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $(trs[i]).find('.field_name').val(data.infos[i][1]);
                     checkItemSwitch($(trs[i]).find('input.field_filterable'), data.infos[i][2]);
                     checkItemSwitch($(trs[i]).find('input.field_sortable'), data.infos[i][3]);
+                    checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][4]);
                     $(trs[i]).find('select.field_db_type').val(data.infos[i][4]).select2();
                 }
 
@@ -221,6 +227,10 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.pk = $(".pk").val();
             data.path = $(".path").val();
             data.table = $("select.table").val();
+            data.table_title = $(".table_title").val();
+            data.table_description = $(".table_description").val();
+            data.form_title = $(".form_title").val();
+            data.form_description = $(".form_description").val();
 
             let infos = [];
             let trs = $("tbody.fields-table").find("tr");
@@ -230,6 +240,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 infos[i].push($(trs[i]).find('.field_name').val());
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_filterable').parent()));
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_sortable').parent()));
+                infos[i].push(getItemSwitchValue($(trs[i]).find('input.info_field_editable').parent()));
                 infos[i].push($(trs[i]).find('select.field_db_type').val());
             }
             data.infos = infos;
