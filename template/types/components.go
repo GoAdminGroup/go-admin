@@ -237,11 +237,11 @@ func (t Thead) GroupBy(group [][]string) []Thead {
 	var res = make([]Thead, len(group))
 
 	for key, value := range group {
-		var newThead = make(Thead, len(t))
+		var newThead = make(Thead, 0)
 
-		for index, info := range t {
+		for _, info := range t {
 			if modules.InArray(value, info.Field) {
-				newThead[index] = info
+				newThead = append(newThead, info)
 			}
 		}
 

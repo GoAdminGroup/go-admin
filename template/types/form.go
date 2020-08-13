@@ -569,6 +569,7 @@ func (f *FormPanel) FieldHide() *FormPanel {
 	return f
 }
 
+// FieldHideWhenCreate is deprecated.
 func (f *FormPanel) FieldHideWhenCreate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].CreateHide = true
 	return f
