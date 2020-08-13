@@ -111,14 +111,16 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     save_table_list = JSON.parse(save_table_list_str);
                 }
                 let table_index = save_table_list.indexOf(table);
-                if (table_index !== -1) {
+                if (table_index !== -1 && save_table_list.length !== 1) {
                     if (table_index === save_table_list.length - 1) {
                         save_table_list = save_table_list.splice(0, 1);
                     } else {
                         save_table_list = save_table_list.splice(table_index + 1, 1);
                     }
                 }
-                save_table_list.push(table);
+                if (!(table_index !== -1 && save_table_list.length === 1)) {
+                    save_table_list.push(table);
+                }
                 localStorage.setItem("{{index . "prefix"}}save_table_list", JSON.stringify(save_table_list));
                 localStorage.setItem("{{index . "prefix"}}save_table_" + table, getItemObjData());
             }
@@ -157,7 +159,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     checkItemSwitch($(trs[i]).find('input.field_filterable'), data.infos[i][2]);
                     checkItemSwitch($(trs[i]).find('input.field_sortable'), data.infos[i][3]);
                     checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][4]);
-                    $(trs[i]).find('select.field_db_type').val(data.infos[i][4]).select2();
+                    $(trs[i]).find('select.field_db_type').val(data.infos[i][5]).select2();
                 }
 
                 let form_table = $("tbody.fields_form-table");
