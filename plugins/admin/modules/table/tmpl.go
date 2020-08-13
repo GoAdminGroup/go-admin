@@ -21,9 +21,14 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             form_table.append(tpl_form);
         }
         let trs_form = form_table.find("tr");
+        let pk = $(".pk").val();
         for (let i = 0; i < data.data[0].length; i++) {
             $(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
             $(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
+            $(trs_form[i]).find('input.field_canedit').iCheck("check");
+            if (!(data.data[1][i] === pk || (pk === "" && data.data[1][i] === "id"))) {
+                $(trs_form[i]).find('input.field_canadd').iCheck("check");
+            }
             $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
             $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
         }
@@ -187,7 +192,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
         }
 
         function toggleItemSwitch(obj, val) {
-            if (val === "n") {
+            if (val === "y") {
                 $(obj).bootstrapSwitch('state', true);
             } else {
                 $(obj).bootstrapSwitch('state', false);
@@ -263,4 +268,27 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             return JSON.stringify(data)
         }
     </script>
+    <style>
+        .save_table_list {
+            position: absolute;
+            right: 45px;
+            top: 200px;
+            background-color: white;
+            width: 300px;
+            min-height: 50px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .list-group-item.list-head {
+            background-color: #5a5a5a;
+            border-color: #5a5a5a;
+            font-weight: bold;
+            color: white;
+        }
+
+        .list-group-item.list-group-item-action {
+            cursor: pointer;
+        }
+    </style>
 {{end}}`}

@@ -1658,28 +1658,7 @@ $("select.table").select2();
 
 	formList.SetFooterHtml(utils.ParseHTML("generator", tmpls["generator"], map[string]string{
 		"prefix": "go_admin_" + config.GetAppID() + "_generator_",
-	}) + `
-<style>
-	.save_table_list {
-		position: absolute;
-		right: 45px;
-		top: 200px;
-		background-color: white;
-		width: 300px;
-		min-height: 50px;
-		z-index: 9999;
-		display: none;
-	}
-	.list-group-item.list-head {
-		background-color: #5a5a5a;
-    	border-color: #5a5a5a;
-    	font-weight: bold;
-		color: white;
-	}
-	.list-group-item.list-group-item-action {
-		cursor: pointer;
-	}
-</style>`)
+	}))
 
 	formList.SetFormNewBtnWord(template.HTML(lgWithScore("generate", "tool")))
 	formList.SetWrapper(func(content tmpl.HTML) tmpl.HTML {

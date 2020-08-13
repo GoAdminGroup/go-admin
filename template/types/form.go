@@ -146,10 +146,13 @@ type FormField struct {
 	CustomJs      template.JS   `json:"custom_js"`
 	CustomCss     template.CSS  `json:"custom_css"`
 
-	Editable    bool `json:"editable"`
-	NotAllowAdd bool `json:"not_allow_add"`
-	Must        bool `json:"must"`
-	Hide        bool `json:"hide"`
+	Editable         bool `json:"editable"`
+	HideWhenEdit     bool `json:"hide_when_edit"`
+	NotAllowAdd      bool `json:"not_allow_add"`
+	DisplayButNotAdd bool `json:"display_but_not_add"`
+	Must             bool `json:"must"`
+	Hide             bool `json:"hide"`
+	CreateHide       bool `json:"create_hide"`
 
 	Width int `json:"width"`
 
@@ -566,6 +569,11 @@ func (f *FormPanel) FieldHide() *FormPanel {
 	return f
 }
 
+func (f *FormPanel) FieldHideWhenCreate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].CreateHide = true
+	return f
+}
+
 func (f *FormPanel) FieldPlaceholder(placeholder string) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Placeholder = placeholder
 	return f
@@ -751,13 +759,27 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 	return f
 }
 
+// FieldNotAllowEdit means the field can not edit but will still be displayed.
 func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
 
+// FieldHideWhenEdit means the field can not edit and will not be displayed.
+func (f *FormPanel) FieldHideWhenEdit() *FormPanel {
+	f.FieldList[f.curFieldListIndex].HideWhenEdit = true
+	return f
+}
+
+// FieldNotAllowAdd means the field can not add and will not be displayed.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
+	return f
+}
+
+// FieldDisplayButNotAdd means the field can not add but will still be displayed.
+func (f *FormPanel) FieldDisplayButNotAdd() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayButNotAdd = true
 	return f
 }
 
@@ -1364,7 +1386,7 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 			list := make(FormFields, 0)
 			for _, fieldName := range group {
 				field := f.FieldList.FindByFieldName(fieldName)
-				if field != nil && field.isNotBelongToATable() {
+				if field != nil && field.isNotBelongToATable() && !field.HideWhenEdit {
 					if field.FormType.IsTable() {
 						for z := 0; z < len(field.TableFields); z++ {
 							rowValue := field.TableFields[z].GetRawValue(columns, res[field.TableFields[z].Field])
@@ -1413,7 +1435,7 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 		for _, fieldName := range group {
 			field := f.FieldList.FindByFieldName(fieldName)
 			if field != nil && field.isNotBelongToATable() && field.allowAdd() {
-				field.Editable = true
+				field.Editable = !field.DisplayButNotAdd
 				if field.FormType.IsTable() {
 					for z := 0; z < len(field.TableFields); z++ {
 						if len(sql) > 0 {
@@ -1445,17 +1467,19 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 		hasPK = false
 	)
 	for _, field := range f.FieldList {
-		rowValue := field.GetRawValue(columns, res[field.Field])
-		if field.FatherField != "" {
-			f.FieldList.FindTableField(field.Field, field.FatherField).UpdateValue(id, rowValue, res, sql())
-		} else if field.FormType.IsTable() {
-			list = append(list, field)
-		} else {
-			list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
-		}
+		if !field.HideWhenEdit {
+			rowValue := field.GetRawValue(columns, res[field.Field])
+			if field.FatherField != "" {
+				f.FieldList.FindTableField(field.Field, field.FatherField).UpdateValue(id, rowValue, res, sql())
+			} else if field.FormType.IsTable() {
+				list = append(list, field)
+			} else {
+				list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
+			}
 
-		if field.Field == pk {
-			hasPK = true
+			if field.Field == pk {
+				hasPK = true
+			}
 		}
 	}
 	if !hasPK {
@@ -1475,7 +1499,7 @@ func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
 	var list = make(FormFields, 0)
 	for _, v := range f.FieldList {
 		if v.allowAdd() {
-			v.Editable = true
+			v.Editable = !v.DisplayButNotAdd
 			if v.FatherField != "" {
 				if len(sql) > 0 {
 					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(sql[0]())

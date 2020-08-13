@@ -172,17 +172,16 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 type Fields []Field
 
 type Field struct {
-	Head        string `json:"head"`
-	Name        string `json:"name"`
-	DBType      string `json:"db_type"`
-	FormType    string `json:"form_type"`
-	NotAllowAdd bool   `json:"not_allow_add"`
-	Filterable  bool   `json:"filterable"`
-	Sortable    bool   `json:"sortable"`
-	Editable    bool   `json:"editable"`
-	Default     string `json:"default"`
-	CanAdd      bool   `json:"can_add"`
-	ExtraFun    string `json:"extra_fun"`
+	Head       string `json:"head"`
+	Name       string `json:"name"`
+	DBType     string `json:"db_type"`
+	FormType   string `json:"form_type"`
+	Filterable bool   `json:"filterable"`
+	Sortable   bool   `json:"sortable"`
+	Editable   bool   `json:"editable"`
+	Default    string `json:"default"`
+	CanAdd     bool   `json:"can_add"`
+	ExtraFun   string `json:"extra_fun"`
 }
 
 func Generate(param Param) error {

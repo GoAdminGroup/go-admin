@@ -142,7 +142,7 @@
         }
 
         function toggleItemSwitch(obj, val) {
-            if (val === "n") {
+            if (val === "y") {
                 $(obj).bootstrapSwitch('state', true);
             } else {
                 $(obj).bootstrapSwitch('state', false);
@@ -218,4 +218,27 @@
             return JSON.stringify(data)
         }
     </script>
+    <style>
+        .save_table_list {
+            position: absolute;
+            right: 45px;
+            top: 200px;
+            background-color: white;
+            width: 300px;
+            min-height: 50px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .list-group-item.list-head {
+            background-color: #5a5a5a;
+            border-color: #5a5a5a;
+            font-weight: bold;
+            color: white;
+        }
+
+        .list-group-item.list-group-item-action {
+            cursor: pointer;
+        }
+    </style>
 {{end}}

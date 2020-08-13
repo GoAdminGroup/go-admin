@@ -19,9 +19,14 @@
             form_table.append(tpl_form);
         }
         let trs_form = form_table.find("tr");
+        let pk = $(".pk").val();
         for (let i = 0; i < data.data[0].length; i++) {
             $(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
             $(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
+            $(trs_form[i]).find('input.field_canedit').iCheck("check");
+            if (!(data.data[1][i] === pk || (pk === "" && data.data[1][i] === "id"))) {
+                $(trs_form[i]).find('input.field_canadd').iCheck("check");
+            }
             $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
             $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
         }
