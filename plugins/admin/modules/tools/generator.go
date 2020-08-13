@@ -42,6 +42,11 @@ type Param struct {
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
 
+	TablePageTitle   string `json:"table_title"`
+	TableDescription string `json:"table_description"`
+	FormTitle        string `json:"form_title"`
+	FormDescription  string `json:"form_description"`
+
 	ExtraImport string `json:"extra_import"`
 
 	Fields Fields `json:"fields"`
@@ -72,6 +77,11 @@ type Config struct {
 	FilterFormLayout form.Layout   `json:"filter_form_layout"`
 	ExtraImport      string        `json:"extra_import"`
 
+	TableTitle       string `json:"table_title"`
+	TableDescription string `json:"table_description"`
+	FormTitle        string `json:"form_title"`
+	FormDescription  string `json:"form_description"`
+
 	HideContinueEditCheckBox bool `json:"hide_continue_edit_check_box"`
 	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
 	HideResetButton          bool `json:"hide_reset_button"`
@@ -97,13 +107,14 @@ func NewParam(cfg Config) Param {
 	}
 
 	fields := getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver)
+	tt := strings.Title(ta)
 
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
 		Package:                  cfg.Package,
 		Table:                    fixedTable(ta),
-		TableTitle:               strings.Title(ta),
+		TableTitle:               tt,
 		TableName:                dbTable,
 		HideFilterArea:           cfg.HideFilterArea,
 		HideNewButton:            cfg.HideNewButton,
@@ -125,6 +136,10 @@ func NewParam(cfg Config) Param {
 		FormFields:               fields,
 		Output:                   cfg.Output,
 		ExtraImport:              cfg.ExtraImport,
+		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
+		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
+		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
+		FormDescription:          utils.SetDefault(cfg.FormDescription, "", tt),
 	}
 }
 
@@ -139,12 +154,14 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		cfg.Output = cfg.Output[:len(cfg.Output)-1]
 	}
 
+	tt := strings.Title(ta)
+
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
 		Package:                  cfg.Package,
 		Table:                    ta,
-		TableTitle:               strings.Title(ta),
+		TableTitle:               tt,
 		TableName:                dbTable,
 		RowTable:                 cfg.Table,
 		Fields:                   fields[0],
@@ -166,22 +183,27 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		HideBackButton:           cfg.HideBackButton,
 		Output:                   cfg.Output,
 		ExtraImport:              cfg.ExtraImport,
+		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
+		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
+		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
+		FormDescription:          utils.SetDefault(cfg.FormDescription, "", tt),
 	}
 }
 
 type Fields []Field
 
 type Field struct {
-	Head       string `json:"head"`
-	Name       string `json:"name"`
-	DBType     string `json:"db_type"`
-	FormType   string `json:"form_type"`
-	Filterable bool   `json:"filterable"`
-	Sortable   bool   `json:"sortable"`
-	Editable   bool   `json:"editable"`
-	Default    string `json:"default"`
-	CanAdd     bool   `json:"can_add"`
-	ExtraFun   string `json:"extra_fun"`
+	Head         string `json:"head"`
+	Name         string `json:"name"`
+	DBType       string `json:"db_type"`
+	FormType     string `json:"form_type"`
+	Filterable   bool   `json:"filterable"`
+	Sortable     bool   `json:"sortable"`
+	InfoEditable bool   `json:"info_editable"`
+	Editable     bool   `json:"editable"`
+	Default      string `json:"default"`
+	CanAdd       bool   `json:"can_add"`
+	ExtraFun     string `json:"extra_fun"`
 }
 
 func Generate(param Param) error {

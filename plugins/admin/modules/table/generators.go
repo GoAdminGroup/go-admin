@@ -1352,6 +1352,9 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		ops[i] = types.FieldOption{Text: name, Value: name}
 	}
 
+	// General options
+	// ================================
+
 	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).
 		FieldOptions(ops).
 		FieldOnChooseAjax("table", "/tool/choose/conn",
@@ -1421,6 +1424,15 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 
+	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
+		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
+
+	// Info table generate options
+	// ================================
+
+	formList.AddField(lgWithScore("table title", "tool"), "table_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("table description", "tool"), "table_description", db.Varchar, form.Text)
+
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
 		panel.AddField(lgWithScore("filter form layout", "tool"), "filter_form_layout", db.Varchar, form.SelectSingle).
@@ -1452,8 +1464,6 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		addSwitchForTool(panel, "query info", "hide_query_info", "n", 4, 2)
 	})
 
-	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
-		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
 		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1481,12 +1491,32 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"n"}
 			})
+		pa.AddField(lgWithScore("info field editable", "tool"), "info_field_editable", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("n").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"n"}
+			})
+		//pa.AddField(lgWithScore("db display type", "tool"), "field_display_type", db.Varchar, form.SelectSingle).
+		//	FieldOptions(infoFieldDisplayTypeOptions()).
+		//	FieldDisplay(func(value types.FieldModel) interface{} {
+		//		return []string{""}
+		//	})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"Int"}
 			})
 	}).FieldInputWidth(11)
+
+	// Form generate options
+	// ================================
+
+	formList.AddField(lgWithScore("form title", "tool"), "form_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("form description", "tool"), "form_description", db.Varchar, form.Text)
 
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
@@ -1542,12 +1572,12 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 
 	formList.SetTabGroups(types.
 		NewTabGroups("conn", "table", "package", "pk", "path").
-		AddGroup("hide_filter_area", "filter_form_layout",
+		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
 			"hide_new_button", "hide_export_button", "hide_edit_button",
 			"hide_pagination", "hide_delete_button", "hide_detail_button",
 			"hide_filter_button", "hide_row_selector", "hide_query_info",
 			"fields").
-		AddGroup("hide_continue_edit_check_box", "hide_reset_button",
+		AddGroup("form_title", "form_description", "hide_continue_edit_check_box", "hide_reset_button",
 			"hide_continue_new_check_box", "hide_back_button",
 			"fields_form")).
 		SetTabHeaders(lgWithScore("basic info", "tool"), lgWithScore("table info", "tool"),
@@ -1573,11 +1603,12 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 
 		for i := 0; i < len(values["field_head"]); i++ {
 			fields[i] = tools.Field{
-				Head:       values["field_head"][i],
-				Name:       values["field_name"][i],
-				DBType:     values["field_db_type"][i],
-				Filterable: values["field_filterable"][i] == "y",
-				Sortable:   values["field_sortable"][i] == "y",
+				Head:         values["field_head"][i],
+				Name:         values["field_name"][i],
+				DBType:       values["field_db_type"][i],
+				Filterable:   values["field_filterable"][i] == "y",
+				Sortable:     values["field_sortable"][i] == "y",
+				InfoEditable: values["info_field_editable"][i] == "y",
 			}
 		}
 
@@ -1626,6 +1657,10 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
 			Schema:                   values.Get("schema"),
 			Output:                   output,
+			FormTitle:                values.Get("form_title"),
+			FormDescription:          values.Get("form_description"),
+			TableTitle:               values.Get("table_title"),
+			TableDescription:         values.Get("table_description"),
 		}, fields, formFields))
 
 		if err != nil {
@@ -1783,6 +1818,25 @@ func formTypeOptions() types.FieldOptions {
 		opts[i] = types.FieldOption{Text: v, Value: v}
 	}
 	return opts
+}
+
+func infoFieldDisplayTypeOptions() types.FieldOptions {
+	return types.FieldOptions{
+		{Text: lgWithScore("label", "tool"), Value: "label"},
+		{Text: lgWithScore("image", "tool"), Value: "image"},
+		{Text: lgWithScore("bool", "tool"), Value: "bool"},
+		{Text: lgWithScore("link", "tool"), Value: "link"},
+		{Text: lgWithScore("fileSize", "tool"), Value: "fileSize"},
+		{Text: lgWithScore("date", "tool"), Value: "date"},
+		{Text: lgWithScore("icon", "tool"), Value: "icon"},
+		{Text: lgWithScore("dot", "tool"), Value: "dot"},
+		{Text: lgWithScore("progressBar", "tool"), Value: "progressBar"},
+		{Text: lgWithScore("loading", "tool"), Value: "loading"},
+		{Text: lgWithScore("downLoadable", "tool"), Value: "downLoadable"},
+		{Text: lgWithScore("copyable", "tool"), Value: "copyable"},
+		{Text: lgWithScore("carousel", "tool"), Value: "carousel"},
+		{Text: lgWithScore("qrcode", "tool"), Value: "qrcode"},
+	}
 }
 
 func databaseTypeOptions() types.FieldOptions {

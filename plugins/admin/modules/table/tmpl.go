@@ -192,7 +192,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
         }
 
         function toggleItemSwitch(obj, val) {
-            if (val === "y") {
+            if (val === "n") {
                 $(obj).bootstrapSwitch('state', true);
             } else {
                 $(obj).bootstrapSwitch('state', false);
