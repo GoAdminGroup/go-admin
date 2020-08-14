@@ -371,6 +371,7 @@ var cn = LangSet{
 	"tool.qrcode":               "二维码",
 	"tool.field hide":           "隐藏",
 	"tool.field display":        "显示",
+	"tool.table permission":     "生成表格权限",
 
 	"tool.continue edit checkbox": "继续编辑按钮",
 	"tool.continue new checkbox":  "继续新增按钮",
@@ -384,6 +385,14 @@ var cn = LangSet{
 
 	"tool.generate table model success": "生成成功",
 	"tool.generate table model fail":    "生成失败",
+
+	"generator.query":                 "查询",
+	"generator.show edit form page":   "编辑页显示",
+	"generator.show create form page": "新建记录页显示",
+	"generator.edit":                  "编辑",
+	"generator.create":                "新建",
+	"generator.delete":                "删除",
+	"generator.export":                "导出",
 
 	"plugin.plugin":                         "插件",
 	"plugin.plugin detail":                  "插件详情",

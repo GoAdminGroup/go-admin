@@ -186,6 +186,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][7]).select2();
                 }
 
+                toggleItemSwitch($(".permission.ga_checkbox"), data.permission);
                 toggleItemSwitch($(".hide_filter_area.ga_checkbox"), data.hide_filter_area);
                 toggleItemSwitch($(".hide_new_button.ga_checkbox"), data.hide_new_button);
                 toggleItemSwitch($(".hide_export_button.ga_checkbox"), data.hide_export_button);
@@ -240,6 +241,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.form_title = $(".form_title").val();
             data.form_description = $(".form_description").val();
 
+
             let infos = [];
             let trs = $("tbody.fields-table").find("tr");
             for (let i = 0; i < trs.length; i++) {
@@ -268,6 +270,8 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 forms[i].push($(trs_form[i]).find('select.field_form_type_form').val());
             }
             data.forms = forms;
+            
+            data.permission = $("input[name='permission']").val();
 
             data.hide_filter_area = $("input[name='hide_filter_area']").val();
             data.hide_new_button = $("input[name='hide_new_button']").val();

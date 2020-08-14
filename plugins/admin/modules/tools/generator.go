@@ -10,6 +10,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
@@ -312,6 +315,50 @@ var Generators = map[string]table.Generator{%s
 		return err
 	}
 	return ioutil.WriteFile(outputPath+"/tables.go", c, 0644)
+}
+
+func InsertPermissionOfTable(conn db.Connection, table string) {
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("query", "generator"), table+"_query", "GET", "/info/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("show edit form page", "generator"), table+"_show_edit", "GET",
+		"/info/"+table+"/edit")
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("show create form page", "generator"), table+"_show_create", "GET",
+		"/info/"+table+"/new")
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("edit", "generator"), table+"_edit", "POST",
+		"/edit/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("create", "generator"), table+"_create", "POST",
+		"/new/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("delete", "generator"), table+"_delete", "POST",
+		"/delete/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("export", "generator"), table+"_export", "POST",
+		"/export/"+table)
+}
+
+func InsertPermissionInfoDB(conn db.Connection, name, slug, httpMethod, httpPath string) {
+	checkExist, err := db.WithDriver(conn).Table("goadmin_permissions").
+		Where("slug", "=", slug).
+		First()
+
+	if db.CheckError(err, db.QUERY) {
+		panic(err)
+	}
+
+	if checkExist != nil {
+		return
+	}
+
+	_, err = db.WithDriver(conn).Table("goadmin_permissions").
+		Insert(dialect.H{
+			"name":        name,
+			"slug":        slug,
+			"http_method": httpMethod,
+			"http_path":   httpPath,
+		})
+
+	if db.CheckError(err, db.INSERT) {
+		panic(err)
+	}
+
+	return
 }
 
 func camelcase(s string) string {

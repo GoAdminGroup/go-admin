@@ -1424,6 +1424,12 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
 
+	formList.AddField(lgWithScore("table permission", "tool"), "permission", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithScore("yes", "tool"), Value: "y"},
+			{Text: lgWithScore("no", "tool"), Value: "n"},
+		}).FieldDefault("n")
+
 	formList.AddField(lgWithScore("extra import package", "tool"), "extra_import_package", db.Varchar, form.Select).
 		FieldOptions(types.FieldOptions{
 			{Text: "time", Value: "time"},
@@ -1605,7 +1611,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	}).FieldInputWidth(11)
 
 	formList.SetTabGroups(types.
-		NewTabGroups("conn", "table", "package", "pk", "extra_import_package", "path").
+		NewTabGroups("conn", "table", "package", "pk", "permission", "extra_import_package", "path").
 		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
 			"hide_new_button", "hide_export_button", "hide_edit_button",
 			"hide_pagination", "hide_delete_button", "hide_detail_button",
@@ -1624,6 +1630,16 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			lgWithScore("generate table model", "tool") + `</h3>`))
 
 	formList.SetInsertFn(func(values form2.Values) error {
+
+		table := values.Get("table")
+
+		if table == "" {
+			return errors.New("table is empty")
+		}
+
+		if values.Get("permission") == "y" {
+			tools.InsertPermissionOfTable(s.conn, table)
+		}
 
 		output := values.Get("path")
 
@@ -1686,7 +1702,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			Connection:               connName,
 			Driver:                   s.c.Databases[connName].Driver,
 			Package:                  values.Get("package"),
-			Table:                    values.Get("table"),
+			Table:                    table,
 			HideFilterArea:           values.Get("hide_filter_area") == "y",
 			HideNewButton:            values.Get("hide_new_button") == "y",
 			HideExportButton:         values.Get("hide_export_button") == "y",
@@ -1715,7 +1731,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			return err
 		}
 
-		return tools.GenerateTables(output, values.Get("package"), []string{values.Get("table")}, false)
+		return tools.GenerateTables(output, values.Get("package"), []string{table}, false)
 	})
 
 	formList.EnableAjaxData(types.AjaxData{

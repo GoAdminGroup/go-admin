@@ -570,16 +570,6 @@ func (f *FormPanel) FieldHide() *FormPanel {
 	return f
 }
 
-func (f *FormPanel) FieldHideWhenCreate() *FormPanel {
-	f.FieldList[f.curFieldListIndex].CreateHide = true
-	return f
-}
-
-func (f *FormPanel) FieldHideWhenUpdate() *FormPanel {
-	f.FieldList[f.curFieldListIndex].EditHide = true
-	return f
-}
-
 func (f *FormPanel) FieldPlaceholder(placeholder string) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Placeholder = placeholder
 	return f
@@ -765,27 +755,39 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 	return f
 }
 
-// FieldNotAllowEdit means the field can not edit but will still be displayed.
+// FieldNotAllowEdit means when update record the field can not be edited but will still be displayed and submitted.
 func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
 
-// FieldHideWhenEdit means the field can not edit and will not be displayed.
+// FieldDisableEdit means when update record the field can not be edited, displayed and submitted.
 func (f *FormPanel) FieldDisableEdit() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowEdit = true
 	return f
 }
 
-// FieldNotAllowAdd means the field can not add and will not be displayed.
+// FieldNotAllowAdd means when create record the field can not be edited, displayed and submitted.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f
 }
 
-// FieldDisplayButNotAdd means the field can not add but will still be displayed.
+// FieldDisplayButNotAdd means when create record the field can not be edited but will still be displayed and submitted.
 func (f *FormPanel) FieldDisplayButNotAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayButNotAdd = true
+	return f
+}
+
+// FieldHideWhenCreate means when create record the field can not be edited and displayed, but will be submitted.
+func (f *FormPanel) FieldHideWhenCreate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].CreateHide = true
+	return f
+}
+
+// FieldHideWhenUpdate means when update record the field can not be edited and displayed, but will be submitted.
+func (f *FormPanel) FieldHideWhenUpdate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].EditHide = true
 	return f
 }
 

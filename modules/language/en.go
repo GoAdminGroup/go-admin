@@ -340,6 +340,7 @@ var en = LangSet{
 	"tool.qrcode":                 "Qrcode",
 	"tool.field hide":             "Hide",
 	"tool.field display":          "Display",
+	"tool.table permission":       "Generate Permissions",
 
 	"tool.field display normal":     "Normal",
 	"tool.field diplay hide":        "Hide",
@@ -348,6 +349,14 @@ var en = LangSet{
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",
+
+	"generator.query":                 "Query",
+	"generator.show edit form page":   "Show Edit Form Page",
+	"generator.show create form page": "Show Create Form Page",
+	"generator.edit":                  "Edit",
+	"generator.create":                "Create",
+	"generator.delete":                "Delete",
+	"generator.export":                "Export",
 
 	"plugin.plugin":                         "Plugin",
 	"plugin.plugin detail":                  "Plugin Detail",

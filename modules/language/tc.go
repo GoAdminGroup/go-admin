@@ -370,6 +370,7 @@ var tc = LangSet{
 	"tool.qrcode":                 "二維碼",
 	"tool.field hide":             "隱藏",
 	"tool.field display":          "顯示",
+	"tool.table permission":       "生成表格權限",
 
 	"tool.field display normal":     "顯示",
 	"tool.field diplay hide":        "隱藏",
@@ -378,6 +379,14 @@ var tc = LangSet{
 
 	"tool.generate table model success": "生成成功",
 	"tool.generate table model fail":    "生成失敗",
+
+	"generator.query":                 "查詢",
+	"generator.show edit form page":   "編輯頁顯示",
+	"generator.show create form page": "新建記錄頁顯示",
+	"generator.edit":                  "編輯",
+	"generator.create":                "新建",
+	"generator.delete":                "刪除",
+	"generator.export":                "導出",
 
 	"plugin.plugin":                         "插件",
 	"plugin.plugin detail":                  "插件詳情",
