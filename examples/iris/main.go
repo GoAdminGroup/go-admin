@@ -94,7 +94,7 @@ func main() {
 		_ = app.Run(iris.Addr(":8099"))
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

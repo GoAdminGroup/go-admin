@@ -55,6 +55,9 @@ var AssetPaths = map[string]string{
 }`
 
 		err = ioutil.WriteFile(outputPath+"/assets_list.go", []byte(listContent), 0644)
+		if err != nil {
+			return
+		}
 		err = ioutil.WriteFile(outputPath+"/assets_path.go", []byte(pathsContent), 0644)
 		if err != nil {
 			return

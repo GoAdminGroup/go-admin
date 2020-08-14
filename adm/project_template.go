@@ -55,7 +55,7 @@ func startServer() {
 
 	_ = r.Run(":{{.Port}}")
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -115,7 +115,7 @@ func startServer() {
 	beego.BConfig.Listen.HTTPPort = {{.Port}}
 	go app.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -179,7 +179,7 @@ func startServer() {
 		_ = bu.Serve()
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -244,7 +244,7 @@ func startServer() {
 		_ = http.ListenAndServe(":{{.Port}}", r)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -323,7 +323,7 @@ func startServer() {
 
 	go e.Logger.Fatal(e.Start(":{{.Port}}"))
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -384,7 +384,7 @@ func startServer() {
 		_ = fasthttp.ListenAndServe(":{{.Port}}", router.Handler)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -443,7 +443,7 @@ func startServer() {
 	s.SetPort({{.Port}})
 	go s.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -504,7 +504,7 @@ func startServer() {
 		_ = http.ListenAndServe(":{{.Port}}", app)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -568,7 +568,7 @@ func startServer() {
 		_ = app.Run(iris.Addr(":{{.Port}}"))
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

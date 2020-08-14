@@ -88,7 +88,7 @@ func main() {
 		_ = http.ListenAndServe(":9033", app)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

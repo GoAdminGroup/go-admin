@@ -209,7 +209,7 @@ func testPG(t *testing.T, port string) {
 func testGetType(typeName string) string {
 	r, _ := regexp.Compile(`\((.*?)\)`)
 	typeName = r.ReplaceAllString(typeName, "")
-	return strings.ToLower(strings.Replace(typeName, " unsigned", "", -1))
+	return strings.ToLower(strings.ReplaceAll(typeName, " unsigned", ""))
 }
 
 func testConnDSN(driver, dsn string) Connection {

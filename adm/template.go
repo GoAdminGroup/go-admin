@@ -49,6 +49,8 @@ func downloadTo(url, output string) {
 
 	file, err := os.Create(output)
 
+	checkError(err)
+
 	_, err = io.Copy(file, res.Body)
 
 	checkError(err)

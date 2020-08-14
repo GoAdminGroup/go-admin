@@ -89,7 +89,7 @@ func main() {
 	// Start server
 	go e.Logger.Fatal(e.Start(":1323"))
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

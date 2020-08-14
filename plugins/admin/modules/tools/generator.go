@@ -362,8 +362,6 @@ func InsertPermissionInfoDB(conn db.Connection, name, slug, httpMethod, httpPath
 	if db.CheckError(err, db.INSERT) {
 		panic(err)
 	}
-
-	return
 }
 
 func camelcase(s string) string {

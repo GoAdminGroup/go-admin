@@ -268,13 +268,13 @@ var Generators = map[string]table.Generator{
 	}
 
 	configByte, err := json.MarshalIndent(cfg, "", "	")
-	configByte = bytes.Replace(configByte, []byte(`
+	configByte = bytes.ReplaceAll(configByte, []byte(`
 	"logger": {
 		"encoder": {},
 		"rotate": {}
-	},`), []byte{}, -1)
-	configByte = bytes.Replace(configByte, []byte(`,
-	"animation": {}`), []byte{}, -1)
+	},`), []byte{})
+	configByte = bytes.ReplaceAll(configByte, []byte(`,
+	"animation": {}`), []byte{})
 	checkError(err)
 	checkError(ioutil.WriteFile("./config.json", configByte, 0644))
 

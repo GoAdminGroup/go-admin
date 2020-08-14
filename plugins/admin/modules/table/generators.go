@@ -1878,25 +1878,6 @@ func formTypeOptions() types.FieldOptions {
 	return opts
 }
 
-func infoFieldDisplayTypeOptions() types.FieldOptions {
-	return types.FieldOptions{
-		{Text: lgWithScore("label", "tool"), Value: "label"},
-		{Text: lgWithScore("image", "tool"), Value: "image"},
-		{Text: lgWithScore("bool", "tool"), Value: "bool"},
-		{Text: lgWithScore("link", "tool"), Value: "link"},
-		{Text: lgWithScore("fileSize", "tool"), Value: "fileSize"},
-		{Text: lgWithScore("date", "tool"), Value: "date"},
-		{Text: lgWithScore("icon", "tool"), Value: "icon"},
-		{Text: lgWithScore("dot", "tool"), Value: "dot"},
-		{Text: lgWithScore("progressBar", "tool"), Value: "progressBar"},
-		{Text: lgWithScore("loading", "tool"), Value: "loading"},
-		{Text: lgWithScore("downLoadable", "tool"), Value: "downLoadable"},
-		{Text: lgWithScore("copyable", "tool"), Value: "copyable"},
-		{Text: lgWithScore("carousel", "tool"), Value: "carousel"},
-		{Text: lgWithScore("qrcode", "tool"), Value: "qrcode"},
-	}
-}
-
 func databaseTypeOptions() types.FieldOptions {
 	opts := make(types.FieldOptions, len(db.IntTypeList)+
 		len(db.StringTypeList)+

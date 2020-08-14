@@ -93,7 +93,7 @@ func main() {
 	s.SetPort(9033)
 	go s.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

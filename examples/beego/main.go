@@ -91,7 +91,7 @@ func main() {
 	beego.BConfig.Listen.HTTPPort = 9087
 	go app.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

@@ -96,15 +96,6 @@ func (n *node) printChildren() {
 	}
 }
 
-func (n *node) printLeafChildren() {
-	if len(n.handle) > 0 {
-		n.print()
-	}
-	for _, child := range n.children {
-		child.printLeafChildren()
-	}
-}
-
 func stringToArr(path string) []string {
 	var (
 		paths      = make([]string, 0)

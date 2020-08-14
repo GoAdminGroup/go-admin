@@ -96,7 +96,7 @@ func (t SiteModel) AllToMap() map[string]string {
 
 func (t SiteModel) AllToMapInterface() map[string]interface{} {
 
-	var m = make(map[string]interface{}, 0)
+	var m = make(map[string]interface{})
 
 	items, err := t.Table(t.TableName).Where("state", "=", SiteItemOpenState).All()
 	if db.CheckError(err, db.QUERY) {

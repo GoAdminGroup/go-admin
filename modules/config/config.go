@@ -159,7 +159,7 @@ func (d DatabaseList) Connections() []string {
 }
 
 func GetDatabaseListFromJSON(m string) DatabaseList {
-	var d = make(DatabaseList, 0)
+	var d = make(DatabaseList)
 	if m == "" {
 		panic("wrong config")
 	}
@@ -780,7 +780,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.Animation.Delay = utils.ParseFloat32(m["animation_delay"])
 
 	if m["extra"] != "" {
-		var extra = make(map[string]interface{}, 0)
+		var extra = make(map[string]interface{})
 		_ = json.Unmarshal([]byte(m["extra"]), &extra)
 		c.Extra = extra
 	}

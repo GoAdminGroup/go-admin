@@ -480,7 +480,7 @@ import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 		content, _ := ioutil.ReadFile(h.config.BootstrapFilePath)
 		src := plug.GetInfo().ModulePath + " " + plug.GetInfo().OldVersion
 		dist := plug.GetInfo().ModulePath + " " + plug.GetInfo().Version
-		content = bytes.Replace(content, []byte(src), []byte(dist), -1)
+		content = bytes.ReplaceAll(content, []byte(src), []byte(dist))
 		_ = ioutil.WriteFile(h.config.BootstrapFilePath, content, 0644)
 	}
 

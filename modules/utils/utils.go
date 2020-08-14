@@ -277,16 +277,6 @@ const (
 	EByte = PByte * 1024
 )
 
-var bytesSizeTable = map[string]uint64{
-	"b":  Byte,
-	"kb": KByte,
-	"mb": MByte,
-	"gb": GByte,
-	"tb": TByte,
-	"pb": PByte,
-	"eb": EByte,
-}
-
 func logn(n, b float64) float64 {
 	return math.Log(n) / math.Log(b)
 }
@@ -428,6 +418,10 @@ func DownloadTo(url, output string) error {
 	}()
 
 	file, err := os.Create(output)
+
+	if err != nil {
+		return err
+	}
 
 	_, err = io.Copy(file, res.Body)
 
