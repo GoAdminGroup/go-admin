@@ -108,8 +108,9 @@
                     $(trs[i]).find('.field_name').val(data.infos[i][1]);
                     checkItemSwitch($(trs[i]).find('input.field_filterable'), data.infos[i][2]);
                     checkItemSwitch($(trs[i]).find('input.field_sortable'), data.infos[i][3]);
-                    checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][4]);
-                    $(trs[i]).find('select.field_db_type').val(data.infos[i][5]).select2();
+                    checkItemSwitch($(trs[i]).find('input.field_hide'), data.infos[i][4]);
+                    checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][5]);
+                    $(trs[i]).find('select.field_db_type').val(data.infos[i][6]).select2();
                 }
 
                 let form_table = $("tbody.fields_form-table");
@@ -126,8 +127,9 @@
                     checkItemSwitch($(trs_form[i]).find('input.field_canedit'), data.forms[i][2]);
                     checkItemSwitch($(trs_form[i]).find('input.field_canadd'), data.forms[i][3]);
                     $(trs_form[i]).find('.field_default').val(data.forms[i][4]);
-                    $(trs_form[i]).find('select.field_db_type_form').val(data.forms[i][5]).select2();
-                    $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][6]).select2();
+                    $(trs_form[i]).find('select.field_display').val(data.forms[i][5]).select2();
+                    $(trs_form[i]).find('select.field_db_type_form').val(data.forms[i][6]).select2();
+                    $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][7]).select2();
                 }
 
                 toggleItemSwitch($(".hide_filter_area.ga_checkbox"), data.hide_filter_area);
@@ -192,6 +194,7 @@
                 infos[i].push($(trs[i]).find('.field_name').val());
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_filterable').parent()));
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_sortable').parent()));
+                infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_hide').parent()));
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.info_field_editable').parent()));
                 infos[i].push($(trs[i]).find('select.field_db_type').val());
             }
@@ -206,6 +209,7 @@
                 forms[i].push(getItemSwitchValue($(trs_form[i]).find('input.field_canedit').parent()));
                 forms[i].push(getItemSwitchValue($(trs_form[i]).find('input.field_canadd').parent()));
                 forms[i].push($(trs_form[i]).find('.field_default').val());
+                forms[i].push($(trs_form[i]).find('select.field_display').val());
                 forms[i].push($(trs_form[i]).find('select.field_db_type_form').val());
                 forms[i].push($(trs_form[i]).find('select.field_form_type_form').val());
             }

@@ -338,6 +338,13 @@ var en = LangSet{
 	"tool.copyable":               "Copyable",
 	"tool.carousel":               "Carousel",
 	"tool.qrcode":                 "Qrcode",
+	"tool.field hide":             "Hide",
+	"tool.field display":          "Display",
+
+	"tool.field display normal":     "Normal",
+	"tool.field diplay hide":        "Hide",
+	"tool.field diplay edit hide":   "Edit Hide",
+	"tool.field diplay create hide": "Create Hide",
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",

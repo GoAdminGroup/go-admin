@@ -1506,6 +1506,15 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"n"}
 			})
+		pa.AddField(lgWithScore("field hide", "tool"), "field_hide", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("n").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"n"}
+			})
 		pa.AddField(lgWithScore("info field editable", "tool"), "info_field_editable", db.Varchar, form.CheckboxSingle).
 			FieldOptions(types.FieldOptions{
 				{Text: "", Value: "y"},
@@ -1574,6 +1583,16 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{""}
 			})
+		pa.AddField(lgWithScore("field display", "tool"), "field_display", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: lgWithScore("field display normal", "tool"), Value: "0"},
+				{Text: lgWithScore("field diplay hide", "tool"), Value: "1"},
+				{Text: lgWithScore("field diplay edit hide", "tool"), Value: "2"},
+				{Text: lgWithScore("field diplay create hide", "tool"), Value: "3"},
+			}).
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"0"}
+			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1623,6 +1642,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				DBType:       values["field_db_type"][i],
 				Filterable:   values["field_filterable"][i] == "y",
 				Sortable:     values["field_sortable"][i] == "y",
+				Hide:         values["field_hide"][i] == "y",
 				InfoEditable: values["info_field_editable"][i] == "y",
 			}
 		}
@@ -1648,14 +1668,17 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				values["field_default"][i] = `"` + values["field_default"][i] + `"`
 			}
 			formFields[i] = tools.Field{
-				Head:     values["field_head_form"][i],
-				Name:     values["field_name_form"][i],
-				Default:  values["field_default"][i],
-				FormType: values["field_form_type_form"][i],
-				DBType:   values["field_db_type_form"][i],
-				CanAdd:   values["field_canadd"][i] == "y",
-				Editable: values["field_canedit"][i] == "y",
-				ExtraFun: extraFun,
+				Head:       values["field_head_form"][i],
+				Name:       values["field_name_form"][i],
+				Default:    values["field_default"][i],
+				FormType:   values["field_form_type_form"][i],
+				DBType:     values["field_db_type_form"][i],
+				CanAdd:     values["field_canadd"][i] == "y",
+				Editable:   values["field_canedit"][i] == "y",
+				FormHide:   values["field_display"][i] == "1",
+				CreateHide: values["field_display"][i] == "2",
+				EditHide:   values["field_display"][i] == "3",
+				ExtraFun:   extraFun,
 			}
 		}
 

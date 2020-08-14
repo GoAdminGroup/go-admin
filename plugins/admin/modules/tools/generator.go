@@ -201,6 +201,10 @@ type Field struct {
 	Sortable     bool   `json:"sortable"`
 	InfoEditable bool   `json:"info_editable"`
 	Editable     bool   `json:"editable"`
+	Hide         bool   `json:"hide"`
+	FormHide     bool   `json:"form_hide"`
+	EditHide     bool   `json:"edit_hide"`
+	CreateHide   bool   `json:"create_hide"`
 	Default      string `json:"default"`
 	CanAdd       bool   `json:"can_add"`
 	ExtraFun     string `json:"extra_fun"`

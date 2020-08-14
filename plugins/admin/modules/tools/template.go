@@ -36,7 +36,8 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.
 		FieldFilterable(){{end -}}{{if $field.Sortable}}.
 		FieldSortable(){{end -}}{{if $field.InfoEditable}}.
-		FieldEditAble(){{end -}}
+		FieldEditAble(){{end -}}{{if $field.Hide}}.
+		FieldHide(){{end -}}
 	{{- end}}
 
 	info.SetTable("{{.TableName}}").SetTitle("{{.TablePageTitle}}").SetDescription("{{.TableDescription}}")
@@ -47,7 +48,10 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if ne $field.Default ""}}.
 		FieldDefault({{$field.Default}}){{end -}}{{if not $field.CanAdd}}.
 		FieldNotAllowAdd(){{end -}}{{if not $field.Editable}}.
-		FieldHideWhenEdit(){{end -}}{{$field.ExtraFun}}
+		FieldDisableEdit(){{end -}}{{if $field.FormHide}}.
+		FieldHide(){{end -}}{{if $field.EditHide}}.
+		FieldHideWhenUpdate(){{end -}}{{if $field.CreateHide}}.
+		FieldHideWhenCreate(){{end -}}{{$field.ExtraFun}}
 	{{- end}}
 
 	{{if .HideContinueEditCheckBox}}formList.HideContinueEditCheckBox(){{end}} 

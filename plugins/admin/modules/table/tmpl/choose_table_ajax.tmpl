@@ -27,6 +27,9 @@
             if (!(data.data[1][i] === pk || (pk === "" && data.data[1][i] === "id"))) {
                 $(trs_form[i]).find('input.field_canadd').iCheck("check");
             }
+            if (data.data[1][i] === "created_at" || data.data[1][i] === "updated_at") {
+                $(trs_form[i]).find('select.field_display').val("1").select2();
+            }
             $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
             $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
         }

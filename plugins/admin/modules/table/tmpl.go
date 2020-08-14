@@ -29,6 +29,9 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             if (!(data.data[1][i] === pk || (pk === "" && data.data[1][i] === "id"))) {
                 $(trs_form[i]).find('input.field_canadd').iCheck("check");
             }
+            if (data.data[1][i] === "created_at" || data.data[1][i] === "updated_at") {
+                $(trs_form[i]).find('select.field_display').val("1").select2();
+            }
             $(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
             $(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
         }
@@ -158,8 +161,9 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $(trs[i]).find('.field_name').val(data.infos[i][1]);
                     checkItemSwitch($(trs[i]).find('input.field_filterable'), data.infos[i][2]);
                     checkItemSwitch($(trs[i]).find('input.field_sortable'), data.infos[i][3]);
-                    checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][4]);
-                    $(trs[i]).find('select.field_db_type').val(data.infos[i][5]).select2();
+                    checkItemSwitch($(trs[i]).find('input.field_hide'), data.infos[i][4]);
+                    checkItemSwitch($(trs[i]).find('input.info_field_editable'), data.infos[i][5]);
+                    $(trs[i]).find('select.field_db_type').val(data.infos[i][6]).select2();
                 }
 
                 let form_table = $("tbody.fields_form-table");
@@ -176,8 +180,9 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     checkItemSwitch($(trs_form[i]).find('input.field_canedit'), data.forms[i][2]);
                     checkItemSwitch($(trs_form[i]).find('input.field_canadd'), data.forms[i][3]);
                     $(trs_form[i]).find('.field_default').val(data.forms[i][4]);
-                    $(trs_form[i]).find('select.field_db_type_form').val(data.forms[i][5]).select2();
-                    $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][6]).select2();
+                    $(trs_form[i]).find('select.field_display').val(data.forms[i][5]).select2();
+                    $(trs_form[i]).find('select.field_db_type_form').val(data.forms[i][6]).select2();
+                    $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][7]).select2();
                 }
 
                 toggleItemSwitch($(".hide_filter_area.ga_checkbox"), data.hide_filter_area);
@@ -242,6 +247,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 infos[i].push($(trs[i]).find('.field_name').val());
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_filterable').parent()));
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_sortable').parent()));
+                infos[i].push(getItemSwitchValue($(trs[i]).find('input.field_hide').parent()));
                 infos[i].push(getItemSwitchValue($(trs[i]).find('input.info_field_editable').parent()));
                 infos[i].push($(trs[i]).find('select.field_db_type').val());
             }
@@ -256,6 +262,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 forms[i].push(getItemSwitchValue($(trs_form[i]).find('input.field_canedit').parent()));
                 forms[i].push(getItemSwitchValue($(trs_form[i]).find('input.field_canadd').parent()));
                 forms[i].push($(trs_form[i]).find('.field_default').val());
+                forms[i].push($(trs_form[i]).find('select.field_display').val());
                 forms[i].push($(trs_form[i]).find('select.field_db_type_form').val());
                 forms[i].push($(trs_form[i]).find('select.field_form_type_form').val());
             }
