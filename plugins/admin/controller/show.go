@@ -150,14 +150,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	if actionBtns == template.HTML("") && len(allActionBtns) > 0 {
 
-		ext := template.HTML("")
+		ext := template2.HTML("")
 		if deleteUrl != "" {
 			ext = html.LiEl().SetClass("divider").Get()
 			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
 				types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
 					ext, "", ""), "grid-row-delete")}, allActionBtns...)
 		}
-		ext = template.HTML("")
+		ext = template2.HTML("")
 		if detailUrl != "" {
 			if editUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()

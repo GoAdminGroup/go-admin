@@ -96,7 +96,8 @@ func generating(cfgFile, connName string) {
 		}
 		tables = append([]string{"[" + getWord("select all") + "]"}, tables...)
 
-		survey.SelectQuestionTemplate = strings.Replace(survey.SelectQuestionTemplate, "<enter> to select", "<space> to select", -1)
+		survey.SelectQuestionTemplate = strings.ReplaceAll(survey.SelectQuestionTemplate, "<enter> to select",
+			"<space> to select")
 
 		chooseTables = selects(tables)
 		if len(chooseTables) == 0 {

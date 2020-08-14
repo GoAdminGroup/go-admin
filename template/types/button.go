@@ -197,10 +197,8 @@ func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 			if len(items) > 0 {
 				btns = append(btns, btn)
 			}
-		} else {
-			if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
-				btns = append(btns, btn)
-			}
+		} else if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
+			btns = append(btns, btn)
 		}
 	}
 	return btns

@@ -47,7 +47,7 @@ func cssMinifier(inputDir, outputFile string, hash bool) {
 		m5 := md5.New()
 		m5.Write([]byte(minifiedString))
 		m5res := hex.EncodeToString(m5.Sum(nil))
-		outputFile = strings.Replace(outputFile, ".css", "."+m5res[len(m5res)-10:]+".css", -1)
+		outputFile = strings.ReplaceAll(outputFile, ".css", "."+m5res[len(m5res)-10:]+".css")
 	}
 
 	err = writeOutputFile(minifiedString, outputFile)
@@ -104,7 +104,7 @@ func jsMinifier(inputDir, outputFile string, hash bool) {
 		m5 := md5.New()
 		m5.Write(b.Bytes())
 		m5res := hex.EncodeToString(m5.Sum(nil))
-		outputFile = strings.Replace(outputFile, ".js", "."+m5res[len(m5res)-10:]+".js", -1)
+		outputFile = strings.ReplaceAll(outputFile, ".js", "."+m5res[len(m5res)-10:]+".js")
 	}
 
 	err = writeOutputFile(b.String(), outputFile)

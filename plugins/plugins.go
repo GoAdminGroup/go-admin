@@ -99,7 +99,7 @@ type Base struct {
 	Info      Info
 }
 
-func (b *Base) InitPlugin(services service.List)   { return }
+func (b *Base) InitPlugin(services service.List)   {}
 func (b *Base) GetGenerators() table.GeneratorList { return make(table.GeneratorList) }
 func (b *Base) GetHandler() context.HandlerMap     { return b.App.Handlers }
 func (b *Base) Name() string                       { return b.PlugName }

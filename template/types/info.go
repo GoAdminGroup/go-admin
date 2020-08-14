@@ -662,26 +662,25 @@ func (wh WhereRaw) check() int {
 	for i := 0; i < len(wh.Raw); i++ {
 		if wh.Raw[i] == ' ' {
 			continue
-		} else {
-			if wh.Raw[i] == 'a' {
-				if len(wh.Raw) < i+3 {
-					break
-				} else {
-					if wh.Raw[i+1] == 'n' && wh.Raw[i+2] == 'd' {
-						index = i + 3
-					}
-				}
-			} else if wh.Raw[i] == 'o' {
-				if len(wh.Raw) < i+2 {
-					break
-				} else {
-					if wh.Raw[i+1] == 'r' {
-						index = i + 2
-					}
-				}
-			} else {
+		}
+		if wh.Raw[i] == 'a' {
+			if len(wh.Raw) < i+3 {
 				break
+			} else {
+				if wh.Raw[i+1] == 'n' && wh.Raw[i+2] == 'd' {
+					index = i + 3
+				}
 			}
+		} else if wh.Raw[i] == 'o' {
+			if len(wh.Raw) < i+2 {
+				break
+			} else {
+				if wh.Raw[i+1] == 'r' {
+					index = i + 2
+				}
+			}
+		} else {
+			break
 		}
 	}
 	return index

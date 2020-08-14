@@ -443,8 +443,8 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 				if field.TypeName == db.Text || field.TypeName == db.Longtext {
 					f := modules.Delimiter(connection.GetDelimiter(), field.Field)
 					headField := tb.Info.Table + "." + f
-					allFields = strings.Replace(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
-					groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+					allFields = strings.ReplaceAll(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
+					groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 				}
 			}
 		}
@@ -640,8 +640,8 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 					if field.TypeName == db.Text || field.TypeName == db.Longtext {
 						f := modules.Delimiter(connection.GetDelimiter(), field.Field)
 						headField := tb.Info.Table + "." + f
-						fields = strings.Replace(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
-						groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+						fields = strings.ReplaceAll(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
+						groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 					}
 				}
 			}
@@ -858,7 +858,7 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 	dataList = dataList.RemoveRemark()
 
 	for k, v := range dataList {
-		k = strings.Replace(k, "[]", "", -1)
+		k = strings.ReplaceAll(k, "[]", "")
 		if !modules.InArray(exceptString, k) {
 			if modules.InArray(columns, k) {
 				field := tb.Form.FieldList.FindByFieldName(k)
@@ -908,7 +908,7 @@ func (tb *DefaultTable) PreProcessValue(dataList form.Values, typ types.PostType
 	var fun types.PostFieldFilterFn
 
 	for k, v := range dataList {
-		k = strings.Replace(k, "[]", "", -1)
+		k = strings.ReplaceAll(k, "[]", "")
 		if !modules.InArray(exceptString, k) {
 			field := tb.Form.FieldList.FindByFieldName(k)
 			if field != nil {
@@ -1023,9 +1023,7 @@ func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, colum
 		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
-	}, params, columns, func() *db.SQL {
-		return tb.sql()
-	})
+	}, params, columns, tb.sql)
 }
 
 // db is a helper function return raw db connection.

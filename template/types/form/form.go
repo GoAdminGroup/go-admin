@@ -365,8 +365,7 @@ func (t Type) IsCustom() bool {
 }
 
 func (t Type) FixOptions(m map[string]interface{}) map[string]interface{} {
-	switch t {
-	case Slider:
+	if t == Slider {
 		if _, ok := m["type"]; !ok {
 			m["type"] = "single"
 		}

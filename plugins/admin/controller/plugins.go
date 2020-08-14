@@ -426,7 +426,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 
 	if len(downloadURL) > 18 && downloadURL[:18] == "https://github.com" {
 		name := filepath.Base(plug.GetInfo().ModulePath)
-		version := strings.Replace(plug.GetInfo().Version, "v", "", -1)
+		version := strings.ReplaceAll(plug.GetInfo().Version, "v", "")
 		rawPath := installPath + "/" + name
 		nowPath := rawPath + "-" + version
 		if gomodule == "off" {
@@ -446,21 +446,19 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 			})
 			return
 		}
-	} else {
-		if gomodule != "off" {
-			rawPath := installPath + "/" + name
-			err = os.Rename(rawPath, rawPath+"@"+plug.GetInfo().Version)
-			if err != nil {
-				logger.Error("download plugins, rename error", map[string]interface{}{
-					"error":   err,
-					"rawPath": rawPath,
-				})
-				ctx.JSON(http.StatusOK, map[string]interface{}{
-					"code": 500,
-					"msg":  plugWord("download fail"),
-				})
-				return
-			}
+	} else if gomodule != "off" {
+		rawPath := installPath + "/" + name
+		err = os.Rename(rawPath, rawPath+"@"+plug.GetInfo().Version)
+		if err != nil {
+			logger.Error("download plugins, rename error", map[string]interface{}{
+				"error":   err,
+				"rawPath": rawPath,
+			})
+			ctx.JSON(http.StatusOK, map[string]interface{}{
+				"code": 500,
+				"msg":  plugWord("download fail"),
+			})
+			return
 		}
 	}
 

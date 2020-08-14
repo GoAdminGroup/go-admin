@@ -278,7 +278,7 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 
 	content := ""
 
-	if tablesContent != "" && strings.Index(tablesContent, "/") != -1 {
+	if tablesContent != "" && strings.Contains(tablesContent, "/") {
 		replacer := strings.NewReplacer(`// `+commentStrEnd, commentStr, `// `+tablesEnd, tableStr)
 		tablesContent = replacer.Replace(tablesContent)
 		keep := `// example:

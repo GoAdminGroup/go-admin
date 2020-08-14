@@ -606,7 +606,7 @@ func (c *Config) Copy() *Config {
 }
 
 func (c *Config) ToMap() map[string]string {
-	var m = make(map[string]string, 0)
+	var m = make(map[string]string)
 	m["language"] = c.Language
 	m["databases"] = c.Databases.JSON()
 	m["domain"] = c.Domain

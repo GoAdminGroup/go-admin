@@ -325,13 +325,13 @@ func Access(ctx *context.Context) {
 			if filepath.Ext(ctx.Path()) == "" {
 				logger.sugaredLogger.Warnf(temp,
 					ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-					ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+					ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
 					ctx.Path())
 			}
 		} else {
 			logger.sugaredLogger.Warnf(temp,
 				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-				ansi.Color(" "+string(ctx.Method()[:])+"   ", "white:blue+h"),
+				ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
 				ctx.Path())
 		}
 	}

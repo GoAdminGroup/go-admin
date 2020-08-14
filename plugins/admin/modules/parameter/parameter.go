@@ -102,10 +102,10 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 				}
 			} else {
 				if strings.Contains(key, FilterParamOperatorSuffix) &&
-					values.Get(strings.Replace(key, FilterParamOperatorSuffix, "", -1)) == "" {
+					values.Get(strings.ReplaceAll(key, FilterParamOperatorSuffix, "")) == "" {
 					continue
 				}
-				fields[strings.Replace(key, "[]", "", -1)] = value
+				fields[strings.ReplaceAll(key, "[]", "")] = value
 			}
 		}
 	}
@@ -376,10 +376,10 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 
 		var op string
 		if strings.Contains(key, FilterRangeParamEndSuffix) {
-			key = strings.Replace(key, FilterRangeParamEndSuffix, "", -1)
+			key = strings.ReplaceAll(key, FilterRangeParamEndSuffix, "")
 			op = "<="
 		} else if strings.Contains(key, FilterRangeParamStartSuffix) {
-			key = strings.Replace(key, FilterRangeParamStartSuffix, "", -1)
+			key = strings.ReplaceAll(key, FilterRangeParamStartSuffix, "")
 			op = ">="
 		} else if len(value) > 1 {
 			op = "in"

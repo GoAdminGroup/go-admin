@@ -47,7 +47,7 @@ func getContentFromDir(content, dirPath, rootPath string) string {
 
 		if suffix == ".tmpl" {
 			fmt.Println(dirPath + f.Name())
-			content += `"` + strings.Replace(dirPath, rootPath, "", -1) + onlyName + `":` + "`" + str + "`,"
+			content += `"` + strings.ReplaceAll(dirPath, rootPath, "") + onlyName + `":` + "`" + str + "`,"
 		}
 	}
 

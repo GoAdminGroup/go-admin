@@ -164,9 +164,7 @@ func buildProject(cfgFile string) {
 	}
 
 	t, err := template.New("project").Funcs(map[string]interface{}{
-		"title": func(s string) string {
-			return strings.Title(s)
-		},
+		"title": strings.Title,
 	}).Parse(projectTemplate[p.Framework])
 	checkError(err)
 	buf := new(bytes.Buffer)
@@ -349,5 +347,5 @@ func GetCurrentDirectory() string {
 	if err != nil {
 		panic(err)
 	}
-	return strings.Replace(dir, "\\", "/", -1)
+	return strings.ReplaceAll(dir, "\\", "/")
 }

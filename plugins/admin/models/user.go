@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 )
 
@@ -135,8 +136,7 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 		path = path[:len(path)-1]
 	}
 
-	path = strings.Replace(path, constant.EditPKKey, "id", -1)
-	path = strings.Replace(path, constant.DetailPKKey, "id", -1)
+	path = utils.ReplaceAll(path, constant.EditPKKey, "id", constant.DetailPKKey, "id")
 
 	path, params := getParam(path)
 	for key, value := range formParams {

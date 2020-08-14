@@ -431,10 +431,8 @@ func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, heade
 	}
 	if iframe {
 		header = ""
-	} else {
-		if header == template2.HTML("") {
-			header = form.GetDefaultBoxHeader(isHideBack)
-		}
+	} else if header == template2.HTML("") {
+		header = form.GetDefaultBoxHeader(isHideBack)
 	}
 	return aBox().
 		SetHeader(header).

@@ -1773,7 +1773,7 @@ func encodePassword(pwd []byte) string {
 	if err != nil {
 		return ""
 	}
-	return string(hash[:])
+	return string(hash)
 }
 
 func label() types.LabelAttribute {

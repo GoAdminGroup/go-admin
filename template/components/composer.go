@@ -3,10 +3,9 @@ package components
 import (
 	"bytes"
 	"html/template"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/modules/logger"
-
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	template2 "github.com/GoAdminGroup/go-admin/template"
 )
 
@@ -28,12 +27,11 @@ func ComposeHtml(temList map[string]string, compo interface{}, templateName ...s
 	}
 	buffer := new(bytes.Buffer)
 
-	defineName := strings.Replace(templateName[0], "table/", "", -1)
-	defineName = strings.Replace(defineName, "form/", "", -1)
+	defineName := utils.ReplaceAll(templateName[0], "table/", "", "form/", "")
 
 	err = tmpl.ExecuteTemplate(buffer, defineName, compo)
 	if err != nil {
-		logger.Error(tmplName+"ComposeHtml Error:", err)
+		logger.Error(tmplName+" ComposeHtml Error:", err)
 	}
 	return template.HTML(buffer.String())
 }

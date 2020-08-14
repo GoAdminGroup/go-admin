@@ -81,9 +81,9 @@ func (bee *Beego) AddHandler(method, path string, handlers gctx.Handlers) {
 	bee.app.Handlers.AddMethod(method, path, func(c *context.Context) {
 		for key, value := range c.Input.Params() {
 			if c.Request.URL.RawQuery == "" {
-				c.Request.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+				c.Request.URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + value
 			} else {
-				c.Request.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+				c.Request.URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + value
 			}
 		}
 		ctx := gctx.NewContext(c.Request)

@@ -83,9 +83,9 @@ func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 
 		for _, key := range c.ParamNames() {
 			if c.Request().URL.RawQuery == "" {
-				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
+				c.Request().URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + c.Param(key)
 			} else {
-				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + c.Param(key)
+				c.Request().URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + c.Param(key)
 			}
 		}
 

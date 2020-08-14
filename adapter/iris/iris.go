@@ -88,9 +88,9 @@ func (is *Iris) AddHandler(method, path string, handlers context.Handlers) {
 
 		for key, value := range params {
 			if c.Request().URL.RawQuery == "" {
-				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+				c.Request().URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + value
 			} else {
-				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+				c.Request().URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + value
 			}
 		}
 

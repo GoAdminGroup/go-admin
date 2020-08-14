@@ -89,14 +89,14 @@ func InArray(arr []string, str string) bool {
 func WrapURL(u string) string {
 	uarr := strings.Split(u, "?")
 	if len(uarr) < 2 {
-		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+		return url.QueryEscape(strings.ReplaceAll(u, "/", "_"))
 	}
 	v, err := url.ParseQuery(uarr[1])
 	if err != nil {
-		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+		return url.QueryEscape(strings.ReplaceAll(u, "/", "_"))
 	}
-	return url.QueryEscape(strings.Replace(uarr[0], "/", "_", -1)) + "?" +
-		strings.Replace(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}", -1)
+	return url.QueryEscape(strings.ReplaceAll(uarr[0], "/", "_")) + "?" +
+		strings.ReplaceAll(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}")
 }
 
 func JSON(a interface{}) string {
@@ -110,6 +110,11 @@ func JSON(a interface{}) string {
 func ParseBool(s string) bool {
 	b1, _ := strconv.ParseBool(s)
 	return b1
+}
+
+func ReplaceAll(s string, oldnew ...string) string {
+	repl := strings.NewReplacer(oldnew...)
+	return repl.Replace(s)
 }
 
 func PackageName(v interface{}) string {
@@ -219,7 +224,7 @@ func CompareVersion(src, toCompare string) bool {
 		op = srcs[0]
 	}
 
-	toCompare = strings.Replace(toCompare, "v", "", -1)
+	toCompare = strings.ReplaceAll(toCompare, "v", "")
 
 	if op == "=" {
 		return srcs[1] == toCompare
@@ -229,7 +234,7 @@ func CompareVersion(src, toCompare string) bool {
 		return true
 	}
 
-	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
+	toCompareArr := strings.Split(strings.ReplaceAll(toCompare, "v", ""), ".")
 	for i := 0; i < len(srcArr); i++ {
 		v, err := strconv.Atoi(srcArr[i])
 		if err != nil {

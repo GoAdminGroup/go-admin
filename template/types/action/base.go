@@ -3,7 +3,6 @@ package action
 import (
 	"encoding/json"
 	"html/template"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -26,11 +25,10 @@ func (a AjaxData) Add(m map[string]interface{}) AjaxData {
 
 func (a AjaxData) JSON() string {
 	b, _ := json.Marshal(a)
-	s := strings.Replace(string(b), `"{%id}"`, "{{.Id}}", -1)
-	s = strings.Replace(s, `"{%ids}"`, "{{.Ids}}", -1)
-	s = strings.Replace(s, `"{{.Ids}}"`, "{{.Ids}}", -1)
-	s = strings.Replace(s, `"{{.Id}}"`, "{{.Id}}", -1)
-	return s
+	return utils.ReplaceAll(string(b), `"{%id}"`, "{{.Id}}",
+		`"{%ids}"`, "{{.Ids}}",
+		`"{{.Ids}}"`, "{{.Ids}}",
+		`"{{.Id}}"`, "{{.Id}}")
 }
 
 type BaseAction struct {

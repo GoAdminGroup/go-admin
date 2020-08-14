@@ -61,9 +61,9 @@ func filterQuery(query string) string {
 	for i := 1; i < queCount+1; i++ {
 		query = strings.Replace(query, "?", "$"+strconv.Itoa(i), 1)
 	}
-	query = strings.Replace(query, "`", "", -1)
+	query = strings.ReplaceAll(query, "`", "")
 	// TODO: add " to the keyword
-	return strings.Replace(query, "by order ", `by "order" `, -1)
+	return strings.ReplaceAll(query, "by order ", `by "order" `)
 }
 
 // InitDB implements the method Connection.InitDB.

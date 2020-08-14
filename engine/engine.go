@@ -300,7 +300,7 @@ func (eng *Engine) deferHandler(conn db.Connection) context.Handler {
 
 			if err := recover(); err != nil {
 				logger.Error(err)
-				logger.Error(string(debug.Stack()[:]))
+				logger.Error(string(debug.Stack()))
 
 				var (
 					errMsg string
@@ -542,11 +542,9 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
 			return
-		} else {
-			if err := t.Execute(cbuf, data); err != nil {
-				eng.errorPanelHTML(ctx, cbuf, err)
-				return
-			}
+		} else if err := t.Execute(cbuf, data); err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		}
 
 		var (
@@ -605,11 +603,9 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
 			return
-		} else {
-			if err := t.Execute(cbuf, data); err != nil {
-				eng.errorPanelHTML(ctx, cbuf, err)
-				return
-			}
+		} else if err := t.Execute(cbuf, data); err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		}
 
 		var (

@@ -97,9 +97,9 @@ func (bu *Buffalo) AddHandler(method, path string, handlers context.Handlers) {
 
 		for key, param := range params {
 			if c.Request().URL.RawQuery == "" {
-				c.Request().URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param[0]
+				c.Request().URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + param[0]
 			} else {
-				c.Request().URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param[0]
+				c.Request().URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + param[0]
 			}
 		}
 
