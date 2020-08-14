@@ -72,17 +72,20 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 addTableToList(JSON.parse(save_table_list_str));
             }
         });
+        
+        function getLis() {
+            return $("li.list-group-item.list-group-item-action")
+        }
 
         function addTableToList(save_table_list) {
             let list_group = $(".list-group.save_table_list");
-            let lis = $("li.list-group-item.list-group-item-action");
-            lis.remove();
+            getLis().remove();
             for (let i = save_table_list.length - 1; i > save_table_list.length - 6 && i > -1; i--) {
                 let new_li = "<li class='list-group-item list-group-item-action'>" + save_table_list[i] + "</li>";
                 list_group.append(new_li);
             }
             list_group.show();
-            lis.on("click", restoreTableData);
+            getLis().on("click", restoreTableData);
         }
 
         $(".nav.nav-tabs li a").on("click", function () {
@@ -144,12 +147,13 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $("select.table").val(data.table).select2();
                 }, 2000);
 
+                $(".extra_import_package").val(data.extra_import_package).select2();
                 $(".table_title").val(data.table_title);
                 $(".table_description").val(data.table_description);
                 $(".form_title").val(data.form_title);
                 $(".form_description").val(data.form_description);
 
-                if (extra_codeeditor) {
+                if (extra_codeeditor && data.extra_code && data.extra_code !== "") {
                     extra_codeeditor.setValue(decodeURIComponent(data.extra_code));
                 }
 
@@ -245,6 +249,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.table_description = $(".table_description").val();
             data.form_title = $(".form_title").val();
             data.form_description = $(".form_description").val();
+            data.extra_import_package = $(".extra_import_package").val();
 
             let infos = [];
             let trs = $("tbody.fields-table").find("tr");

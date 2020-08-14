@@ -911,10 +911,8 @@ func (tb *DefaultTable) PreProcessValue(dataList form.Values, typ types.PostType
 		k = strings.Replace(k, "[]", "", -1)
 		if !modules.InArray(exceptString, k) {
 			field := tb.Form.FieldList.FindByFieldName(k)
-			delimiter := ","
 			if field != nil {
 				fun = field.PostFilterFn
-				delimiter = modules.SetDefault(field.DefaultOptionDelimiter, ",")
 			}
 			vv := modules.RemoveBlankFromArray(v)
 			if fun != nil {
@@ -924,14 +922,6 @@ func (tb *DefaultTable) PreProcessValue(dataList form.Values, typ types.PostType
 					Row:      dataList.ToMap(),
 					PostType: typ,
 				})))
-			} else {
-				if len(vv) > 1 {
-					dataList.Add(k, strings.Join(vv, delimiter))
-				} else if len(vv) > 0 {
-					dataList.Add(k, vv[0])
-				} else {
-					dataList.Add(k, "")
-				}
 			}
 		}
 	}

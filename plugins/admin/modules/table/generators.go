@@ -1667,7 +1667,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		}
 
 		extraImport := ""
-		for _, pack := range values["extra_import_package"] {
+		for _, pack := range values["extra_import_package[]"] {
 			if extraImport != "" {
 				extraImport += `
 `
