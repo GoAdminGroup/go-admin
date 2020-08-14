@@ -1448,6 +1448,9 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
 		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 
+	formList.AddField(lgWithScore("extra code", "tool"), "extra_code", db.Varchar, form.Code).
+		FieldDefault("").FieldInputWidth(11)
+
 	// Info table generate options
 	// ================================
 
@@ -1611,7 +1614,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	}).FieldInputWidth(11)
 
 	formList.SetTabGroups(types.
-		NewTabGroups("conn", "table", "package", "pk", "permission", "extra_import_package", "path").
+		NewTabGroups("conn", "table", "package", "pk", "permission", "extra_import_package", "path", "extra_code").
 		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
 			"hide_new_button", "hide_export_button", "hide_edit_button",
 			"hide_pagination", "hide_delete_button", "hide_detail_button",
@@ -1725,6 +1728,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			TableTitle:               values.Get("table_title"),
 			TableDescription:         values.Get("table_description"),
 			ExtraImport:              extraImport,
+			ExtraCode:                escape(values.Get("extra_code")),
 		}, fields, formFields))
 
 		if err != nil {
@@ -1815,7 +1819,7 @@ func escape(s string) string {
 	}
 	s, err := url.QueryUnescape(s)
 	if err != nil {
-		logger.Error("config set error", err)
+		logger.Error("escape error", err)
 	}
 	return s
 }

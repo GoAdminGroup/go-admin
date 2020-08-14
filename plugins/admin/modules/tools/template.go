@@ -61,6 +61,8 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 
 	formList.SetTable("{{.TableName}}").SetTitle("{{.FormTitle}}").SetDescription("{{.FormDescription}}")
 
+	{{.ExtraCode}}
+
 	return {{.Table}}
 }
 {{end}}`

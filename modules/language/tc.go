@@ -371,6 +371,7 @@ var tc = LangSet{
 	"tool.field hide":             "隱藏",
 	"tool.field display":          "顯示",
 	"tool.table permission":       "生成表格權限",
+	"tool.extra code":             "額外代碼",
 
 	"tool.field display normal":     "顯示",
 	"tool.field diplay hide":        "隱藏",

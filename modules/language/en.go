@@ -341,6 +341,7 @@ var en = LangSet{
 	"tool.field hide":             "Hide",
 	"tool.field display":          "Display",
 	"tool.table permission":       "Generate Permissions",
+	"tool.extra code":             "Extra Code",
 
 	"tool.field display normal":     "Normal",
 	"tool.field diplay hide":        "Hide",

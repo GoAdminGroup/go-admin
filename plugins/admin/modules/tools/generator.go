@@ -51,6 +51,7 @@ type Param struct {
 	FormDescription  string `json:"form_description"`
 
 	ExtraImport string `json:"extra_import"`
+	ExtraCode   string `json:"extra_code"`
 
 	Fields Fields `json:"fields"`
 
@@ -89,6 +90,8 @@ type Config struct {
 	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
+
+	ExtraCode string `json:"extra_code"`
 }
 
 func fixedTable(table string) string {
@@ -139,6 +142,7 @@ func NewParam(cfg Config) Param {
 		FormFields:               fields,
 		Output:                   cfg.Output,
 		ExtraImport:              cfg.ExtraImport,
+		ExtraCode:                cfg.ExtraCode,
 		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
 		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
 		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
@@ -186,6 +190,7 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		HideBackButton:           cfg.HideBackButton,
 		Output:                   cfg.Output,
 		ExtraImport:              cfg.ExtraImport,
+		ExtraCode:                cfg.ExtraCode,
 		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
 		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
 		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),

@@ -149,6 +149,10 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 $(".form_title").val(data.form_title);
                 $(".form_description").val(data.form_description);
 
+                if (extra_codeeditor) {
+                    extra_codeeditor.setValue(decodeURIComponent(data.extra_code));
+                }
+
                 let info_table = $("tbody.fields-table");
                 info_table.find("tr").remove();
                 let tpl = $("template.fields-tpl").html();
@@ -235,12 +239,12 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.package = $(".package").val();
             data.pk = $(".pk").val();
             data.path = $(".path").val();
+            data.extra_code = $("#extra_code_input").val();
             data.table = $("select.table").val();
             data.table_title = $(".table_title").val();
             data.table_description = $(".table_description").val();
             data.form_title = $(".form_title").val();
             data.form_description = $(".form_description").val();
-
 
             let infos = [];
             let trs = $("tbody.fields-table").find("tr");
@@ -270,7 +274,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 forms[i].push($(trs_form[i]).find('select.field_form_type_form').val());
             }
             data.forms = forms;
-            
+
             data.permission = $("input[name='permission']").val();
 
             data.hide_filter_area = $("input[name='hide_filter_area']").val();

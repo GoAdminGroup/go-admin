@@ -372,6 +372,7 @@ var cn = LangSet{
 	"tool.field hide":           "隐藏",
 	"tool.field display":        "显示",
 	"tool.table permission":     "生成表格权限",
+	"tool.extra code":           "额外代码",
 
 	"tool.continue edit checkbox": "继续编辑按钮",
 	"tool.continue new checkbox":  "继续新增按钮",
