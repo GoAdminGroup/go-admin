@@ -116,7 +116,9 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	if err != nil {
 		logger.Error("insert data error: ", err)
 		if ctx.WantJSON() {
-			response.Error(ctx, err.Error())
+			response.Error(ctx, err.Error(), map[string]interface{}{
+				"token": h.authSrv().AddToken(),
+			})
 		} else {
 			h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
 		}
@@ -130,7 +132,8 @@ func (h *Handler) NewForm(ctx *context.Context) {
 
 	if ctx.WantJSON() && !param.IsIframe {
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": param.PreviousPath,
+			"url":   param.PreviousPath,
+			"token": h.authSrv().AddToken(),
 		})
 		return
 	}

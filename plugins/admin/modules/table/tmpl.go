@@ -69,16 +69,21 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
 
             let save_table_list_str = localStorage.getItem("{{index . "prefix"}}save_table_list");
             if (save_table_list_str && save_table_list_str !== "") {
-                let save_table_list = JSON.parse(save_table_list_str);
-                let list_group = $(".list-group.save_table_list");
-                for (let i = save_table_list.length - 1; i > save_table_list.length - 6 && i > -1; i--) {
-                    let new_li = "<li class='list-group-item list-group-item-action'>" + save_table_list[i] + "</li>";
-                    list_group.append(new_li);
-                }
-                list_group.show();
-                $("li.list-group-item.list-group-item-action").on("click", restoreTableData);
+                addTableToList(JSON.parse(save_table_list_str));
             }
         });
+
+        function addTableToList(save_table_list) {
+            let list_group = $(".list-group.save_table_list");
+            let lis = $("li.list-group-item.list-group-item-action");
+            lis.remove();
+            for (let i = save_table_list.length - 1; i > save_table_list.length - 6 && i > -1; i--) {
+                let new_li = "<li class='list-group-item list-group-item-action'>" + save_table_list[i] + "</li>";
+                list_group.append(new_li);
+            }
+            list_group.show();
+            lis.on("click", restoreTableData);
+        }
 
         $(".nav.nav-tabs li a").on("click", function () {
             let href = $(this).attr("href");
@@ -114,18 +119,14 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     save_table_list = JSON.parse(save_table_list_str);
                 }
                 let table_index = save_table_list.indexOf(table);
-                if (table_index !== -1 && save_table_list.length !== 1) {
-                    if (table_index === save_table_list.length - 1) {
-                        save_table_list = save_table_list.splice(0, 1);
-                    } else {
-                        save_table_list = save_table_list.splice(table_index + 1, 1);
-                    }
+                if (table_index !== -1) {
+                    save_table_list.splice(table_index, 1);
                 }
-                if (!(table_index !== -1 && save_table_list.length === 1)) {
-                    save_table_list.push(table);
-                }
+                save_table_list.push(table);
                 localStorage.setItem("{{index . "prefix"}}save_table_list", JSON.stringify(save_table_list));
                 localStorage.setItem("{{index . "prefix"}}save_table_" + table, getItemObjData());
+
+                addTableToList(save_table_list);
             }
         });
 

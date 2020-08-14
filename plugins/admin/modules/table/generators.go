@@ -1724,19 +1724,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		SuccessJumpURL: s.c.Url("/info/generate/new"),
 		SuccessText:    lgWithScore("generate table model success", "tool"),
 		ErrorText:      lgWithScore("generate table model fail", "tool"),
-		SuccessJS: `
-let package = $(".package").val();
-let pk = $(".pk").val();
-let path = $(".path").val();
-$("tbody.fields-table").find("tr").remove();
-$("tbody.fields_form-table").find("tr").remove();
-$("form")[0].reset();
-$(".package").val(package);
-$(".pk").val(pk);
-$(".path").val(path);
-$("select.conn").select2();
-$("select.table").select2();
-`,
+		DisableJump:    true,
 	})
 
 	formList.SetFooterHtml(utils.ParseHTML("generator", tmpls["generator"], map[string]string{

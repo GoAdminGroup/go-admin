@@ -166,7 +166,9 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if err != nil {
 		logger.Error("update data error: ", err)
 		if ctx.WantJSON() {
-			response.Error(ctx, err.Error())
+			response.Error(ctx, err.Error(), map[string]interface{}{
+				"token": h.authSrv().AddToken(),
+			})
 		} else {
 			h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
 		}
@@ -180,7 +182,8 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	if ctx.WantJSON() && !param.IsIframe {
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": param.PreviousPath,
+			"url":   param.PreviousPath,
+			"token": h.authSrv().AddToken(),
 		})
 		return
 	}

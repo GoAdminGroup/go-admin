@@ -1276,6 +1276,11 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		jumpURL := ""
 		if !data.DisableJump {
 			jumpURL = `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
+		} else {
+			jumpURL = `
+		if (data.data && data.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.data.token)
+		}`
 		}
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
@@ -1295,6 +1300,9 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			` + data.SuccessJS + `
         });
 	} else {
+		if (data.data && data.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.data.token);
+		}
 		swal({
 			type: "error",
 			title: ` + errorMsg + `,
@@ -1312,6 +1320,9 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		f.AjaxErrorJS = template.JS(`
 	if (data.responseText !== "") {
+		if (data.responseJSON.data && data.responseJSON.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.responseJSON.data.token)
+		}
 		swal({
 			type: "error",
 			title: ` + errorMsg + `,
@@ -1319,7 +1330,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			showCancelButton: false,
 			confirmButtonColor: "#3c8dbc",
 			confirmButtonText: '` + language.Get("got it") + `',
-        })								
+        })
 	} else {
 		swal({
 			type: "error",
