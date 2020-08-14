@@ -350,10 +350,6 @@ func (h *Handler) Export(ctx *context.Context) {
 	index := f.NewSheet(tableName)
 	f.SetActiveSheet(index)
 
-	// TODO: support any numbers of fields.
-	orders := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-
 	var (
 		infoData  table.PanelInfo
 		fileName  string
@@ -387,6 +383,21 @@ func (h *Handler) Export(ctx *context.Context) {
 		if err != nil {
 			response.Error(ctx, "export error")
 			return
+		}
+	}
+
+	// TODO: support any numbers of fields.
+	orders := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+	if len(infoData.Thead) > 26 {
+		j := -1
+		for i := 0; i < len(infoData.Thead)-26; i++ {
+			if i%26 == 0 {
+				j++
+			}
+			letter := orders[j] + orders[i%26]
+			orders = append(orders, letter)
 		}
 	}
 
