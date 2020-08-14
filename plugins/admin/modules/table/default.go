@@ -741,7 +741,7 @@ func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 
 	if tb.Form.UpdateFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		err = tb.Form.UpdateFn(dataList)
+		err = tb.Form.UpdateFn(tb.PreProcessValue(dataList, types.PostTypeUpdate))
 		if err != nil {
 			errMsg = "post error: " + err.Error()
 		}
@@ -808,7 +808,7 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 
 	if tb.Form.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		err = tb.Form.InsertFn(dataList)
+		err = tb.Form.InsertFn(tb.PreProcessValue(dataList, types.PostTypeCreate))
 		if err != nil {
 			errMsg = "post error: " + err.Error()
 		}
@@ -829,9 +829,8 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ types.PostType) dialect.H {
 
 	var (
-		value        = make(dialect.H)
-		exceptString = make([]string, 0)
-
+		value         = make(dialect.H)
+		exceptString  = make([]string, 0)
 		columns, auto = tb.getColumns(tb.Form.Table)
 
 		fun types.PostFieldFilterFn
@@ -899,6 +898,44 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 		}
 	}
 	return value
+}
+
+func (tb *DefaultTable) PreProcessValue(dataList form.Values, typ types.PostType) form.Values {
+
+	exceptString := []string{form.PreviousKey, form.MethodKey, form.TokenKey,
+		constant.IframeKey, constant.IframeIDKey}
+	dataList = dataList.RemoveRemark()
+	var fun types.PostFieldFilterFn
+
+	for k, v := range dataList {
+		k = strings.Replace(k, "[]", "", -1)
+		if !modules.InArray(exceptString, k) {
+			field := tb.Form.FieldList.FindByFieldName(k)
+			delimiter := ","
+			if field != nil {
+				fun = field.PostFilterFn
+				delimiter = modules.SetDefault(field.DefaultOptionDelimiter, ",")
+			}
+			vv := modules.RemoveBlankFromArray(v)
+			if fun != nil {
+				dataList.Add(k, fmt.Sprintf("%s", fun(types.PostFieldModel{
+					ID:       dataList.Get(tb.PrimaryKey.Name),
+					Value:    vv,
+					Row:      dataList.ToMap(),
+					PostType: typ,
+				})))
+			} else {
+				if len(vv) > 1 {
+					dataList.Add(k, strings.Join(vv, delimiter))
+				} else if len(vv) > 0 {
+					dataList.Add(k, vv[0])
+				} else {
+					dataList.Add(k, "")
+				}
+			}
+		}
+	}
+	return dataList
 }
 
 // DeleteData delete data.
