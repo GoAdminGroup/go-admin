@@ -86,6 +86,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		Content:     alert + content,
 		Description: template2.HTML(f.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(f.Title), ""),
+		MiniSidebar: f.HideSideBar,
 	}, template.ExecuteOptions{Animation: alert == ""})
 
 	if isNew {

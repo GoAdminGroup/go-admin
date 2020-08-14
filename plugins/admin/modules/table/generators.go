@@ -1759,6 +1759,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			headli).Get() + content
 	})
 
+	formList.SetHideSideBar()
+
 	return generateTool
 }
 

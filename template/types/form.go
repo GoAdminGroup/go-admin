@@ -372,6 +372,8 @@ type FormPanel struct {
 
 	Wrapper ContentWrapper `json:"wrapper"`
 
+	HideSideBar bool `json:"hide_side_bar"`
+
 	processChains DisplayProcessFnChains
 
 	HeaderHtml template.HTML `json:"header_html"`
@@ -1229,6 +1231,11 @@ func (f *FormPanel) SetHeadWidth(width int) *FormPanel {
 
 func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
 	f.Wrapper = wrapper
+	return f
+}
+
+func (f *FormPanel) SetHideSideBar() *FormPanel {
+	f.HideSideBar = true
 	return f
 }
 

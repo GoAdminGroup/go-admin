@@ -129,6 +129,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		Content:     alert + content,
 		Description: template2.HTML(formInfo.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
+		MiniSidebar: f.HideSideBar,
 	}, template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0]), NoCompress: f.NoCompress})
 
 	if isEdit {
