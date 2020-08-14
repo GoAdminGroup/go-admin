@@ -131,7 +131,7 @@ func buildProject(cfgFile string) {
 		rootPath = filepath.ToSlash(rootPath)
 	}
 
-	var cfg = config.SetDefault(config.Config{
+	var cfg = config.SetDefault(&config.Config{
 		Debug: true,
 		Env:   config.EnvLocal,
 		Theme: p.Theme,

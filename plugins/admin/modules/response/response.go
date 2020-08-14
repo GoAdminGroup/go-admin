@@ -55,7 +55,7 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, bt
 	pageTitle, description, content := template.GetPageContentFromPageType(title, desc, msg, pt)
 
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
-	buf := template.Execute(template.ExecuteParam{
+	buf := template.Execute(&template.ExecuteParam{
 		User:     user,
 		TmplName: tmplName,
 		Tmpl:     tmpl,

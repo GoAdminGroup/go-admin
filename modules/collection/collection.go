@@ -17,12 +17,10 @@ func (c Collection) Where(key string, values ...interface{}) Collection {
 				d = append(d, value)
 			}
 		}
-	} else {
-		if values[0].(string) == "=" {
-			for _, value := range c {
-				if value[key] == values[1] {
-					d = append(d, value)
-				}
+	} else if values[0].(string) == "=" {
+		for _, value := range c {
+			if value[key] == values[1] {
+				d = append(d, value)
 			}
 		}
 	}

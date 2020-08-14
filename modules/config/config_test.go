@@ -7,7 +7,7 @@ import (
 )
 
 func TestConfig_GetIndexUrl(t *testing.T) {
-	Set(Config{
+	Set(&Config{
 		UrlPrefix: "admin",
 		IndexUrl:  "/",
 	})
@@ -169,5 +169,5 @@ func TestReadFromINI(t *testing.T) {
 
 func testSetCfg(cfg Config) {
 	count = 0
-	Set(cfg)
+	Set(&cfg)
 }

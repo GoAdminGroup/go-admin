@@ -744,7 +744,7 @@ func (c *Config) Update(m map[string]string) error {
 		c.Logger.Encoder.Caller = m["logger_encoder_caller"]
 	}
 
-	initLogger(*c)
+	initLogger(c)
 
 	if c.Theme == "adminlte" {
 		c.ColorScheme = m["color_scheme"]
@@ -877,7 +877,7 @@ var (
 	lock  sync.Mutex
 )
 
-func SetDefault(cfg Config) Config {
+func SetDefault(cfg *Config) *Config {
 	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
 	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
 	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
@@ -900,7 +900,7 @@ func SetDefault(cfg Config) Config {
 }
 
 // Set sets the config.
-func Set(cfg Config) *Config {
+func Set(cfg *Config) *Config {
 
 	lock.Lock()
 	defer lock.Unlock()
@@ -934,12 +934,12 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 		})
 	}
 
-	globalCfg = &cfg
+	globalCfg = cfg
 
 	return globalCfg
 }
 
-func initLogger(cfg Config) {
+func initLogger(cfg *Config) {
 	logger.InitWithConfig(logger.Config{
 		InfoLogOff:         cfg.InfoLogOff,
 		ErrorLogOff:        cfg.ErrorLogOff,

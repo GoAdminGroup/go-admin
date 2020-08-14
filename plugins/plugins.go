@@ -277,7 +277,7 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 	panel types.Panel, options template.ExecuteOptions) *bytes.Buffer {
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -299,7 +299,7 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 
 	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -340,7 +340,7 @@ func ExecuteWithMenu(ctx *context.Context,
 		}...)
 	}
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:      user,
 		TmplName:  tmplName,
 		Tmpl:      tmpl,

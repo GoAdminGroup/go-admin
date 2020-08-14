@@ -124,11 +124,11 @@ func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
 
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(cfg).initDatabase()
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // setConfig set the config of engine.
-func (eng *Engine) setConfig(cfg config.Config) *Engine {
+func (eng *Engine) setConfig(cfg *config.Config) *Engine {
 	eng.config = config.Set(cfg)
 	sysCheck, themeCheck := template.CheckRequirements()
 	if !sysCheck {
@@ -144,17 +144,20 @@ func (eng *Engine) setConfig(cfg config.Config) *Engine {
 
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
-	return eng.setConfig(config.ReadFromJson(path)).initDatabase()
+	cfg := config.ReadFromJson(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // AddConfigFromYAML set the global config from yaml file.
 func (eng *Engine) AddConfigFromYAML(path string) *Engine {
-	return eng.setConfig(config.ReadFromYaml(path)).initDatabase()
+	cfg := config.ReadFromYaml(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // AddConfigFromINI set the global config from ini file.
 func (eng *Engine) AddConfigFromINI(path string) *Engine {
-	return eng.setConfig(config.ReadFromINI(path)).initDatabase()
+	cfg := config.ReadFromINI(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // InitDatabase initialize all database connection.

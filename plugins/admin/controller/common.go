@@ -193,7 +193,7 @@ func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, p
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -214,7 +214,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,

@@ -436,7 +436,7 @@ func GetExecuteOptions(options []ExecuteOptions) ExecuteOptions {
 	return options[0]
 }
 
-func Execute(param ExecuteParam) *bytes.Buffer {
+func Execute(param *ExecuteParam) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
