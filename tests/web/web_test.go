@@ -27,7 +27,7 @@ const (
 	genderActionDropDown    = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[7]/div/span/span[1]/span/span[2]`
 	menOptionActionBtn      = `/html/body/span/span/span[2]/ul/li[2]`
 	idOrderBtn              = `//*[@id="sort-id"]`
-	rowActionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/a`
+	rowActionDropDown       = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/div/div/a`
 	popupBtn                = `//*[@id="pjax-container"]/section[2]/div/div/div[1]/div/div[5]/a`
 	popup                   = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]`
 	popupCloseBtn           = `//*[@id="pjax-container"]/section[2]/div/div/div[4]/div[3]/div/div/div[3]/button`
