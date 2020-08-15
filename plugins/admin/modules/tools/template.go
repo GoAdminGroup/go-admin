@@ -47,7 +47,7 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{- range $key, $field := .FormFields}}
 	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if ne $field.Default ""}}.
 		FieldDefault({{$field.Default}}){{end -}}{{if not $field.CanAdd}}.
-		FieldNotAllowAdd(){{end -}}{{if not $field.Editable}}.
+		FieldDisableEditWhenCreate(){{end -}}{{if not $field.Editable}}.
 		FieldDisableEdit(){{end -}}{{if $field.FormHide}}.
 		FieldHide(){{end -}}{{if $field.EditHide}}.
 		FieldHideWhenUpdate(){{end -}}{{if $field.CreateHide}}.

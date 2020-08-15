@@ -758,7 +758,14 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 }
 
 // FieldNotAllowEdit means when update record the field can not be edited but will still be displayed and submitted.
+// Deprecated: Use FieldDisplayButCanNotEditWhenUpdate instead.
 func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
+	f.FieldList[f.curFieldListIndex].Editable = false
+	return f
+}
+
+// FieldDisplayButCanNotEditWhenUpdate means when update record the field can not be edited but will still be displayed and submitted.
+func (f *FormPanel) FieldDisplayButCanNotEditWhenUpdate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
@@ -770,13 +777,20 @@ func (f *FormPanel) FieldDisableEdit() *FormPanel {
 }
 
 // FieldNotAllowAdd means when create record the field can not be edited, displayed and submitted.
+// Deprecated: Use FieldDisableEditWhenCreate instead.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f
 }
 
-// FieldDisplayButNotAdd means when create record the field can not be edited but will still be displayed and submitted.
-func (f *FormPanel) FieldDisplayButNotAdd() *FormPanel {
+// FieldDisableEditWhenCreate means when create record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableEditWhenCreate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
+	return f
+}
+
+// FieldDisplayButCanNotEditWhenCreate means when create record the field can not be edited but will still be displayed and submitted.
+func (f *FormPanel) FieldDisplayButCanNotEditWhenCreate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayButNotAdd = true
 	return f
 }
