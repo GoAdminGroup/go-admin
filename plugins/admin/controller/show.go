@@ -74,18 +74,20 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 		return panel, panelInfo, nil, err
 	}
 
-	paramStr := params.DeleteIsAll().GetRouteParamStr()
+	var (
+		paramStr = params.DeleteIsAll().GetRouteParamStr()
 
-	editUrl := modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
-	newUrl := modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
-	deleteUrl := modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix)+paramStr)
-	exportUrl := modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
-	detailUrl := modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
+		editUrl   = modules.AorEmpty(!panel.GetInfo().IsHideEditButton, h.routePathWithPrefix(urlNamePrefix+"show_edit", prefix)+paramStr)
+		newUrl    = modules.AorEmpty(!panel.GetInfo().IsHideNewButton, h.routePathWithPrefix(urlNamePrefix+"show_new", prefix)+paramStr)
+		deleteUrl = modules.AorEmpty(!panel.GetInfo().IsHideDeleteButton, h.routePathWithPrefix(urlNamePrefix+"delete", prefix)+paramStr)
+		exportUrl = modules.AorEmpty(!panel.GetInfo().IsHideExportButton, h.routePathWithPrefix(urlNamePrefix+"export", prefix)+paramStr)
+		detailUrl = modules.AorEmpty(!panel.GetInfo().IsHideDetailButton, h.routePathWithPrefix(urlNamePrefix+"detail", prefix)+paramStr)
 
-	infoUrl := h.routePathWithPrefix(urlNamePrefix+"info", prefix)
-	updateUrl := h.routePathWithPrefix(urlNamePrefix+"update", prefix) + paramStr
+		infoUrl   = h.routePathWithPrefix(urlNamePrefix+"info", prefix)
+		updateUrl = h.routePathWithPrefix(urlNamePrefix+"update", prefix) + paramStr
 
-	user := auth.Auth(ctx)
+		user = auth.Auth(ctx)
+	)
 
 	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route(urlNamePrefix+"show_edit").Method())
 	newUrl = user.GetCheckPermissionByUrlMethod(newUrl, h.route(urlNamePrefix+"show_new").Method())
@@ -119,11 +121,12 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl,
 		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
-	user := auth.Auth(ctx)
 
 	var (
-		body       template2.HTML
-		dataTable  types.DataTableAttribute
+		body      template2.HTML
+		dataTable types.DataTableAttribute
+
+		user       = auth.Auth(ctx)
 		info       = panel.GetInfo()
 		actionBtns = info.Action
 		actionJs   template2.JS
@@ -137,7 +140,6 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	}
 
 	btns, btnsJs := allBtns.Content()
-
 	allActionBtns := make(types.Buttons, 0)
 
 	for _, b := range info.ActionButtons {
@@ -148,14 +150,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	if actionBtns == template.HTML("") && len(allActionBtns) > 0 {
 
-		ext := template.HTML("")
+		ext := template2.HTML("")
 		if deleteUrl != "" {
 			ext = html.LiEl().SetClass("divider").Get()
 			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
 				types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
 					ext, "", ""), "grid-row-delete")}, allActionBtns...)
 		}
-		ext = template.HTML("")
+		ext = template2.HTML("")
 		if detailUrl != "" {
 			if editUrl == "" && deleteUrl == "" {
 				ext = html.LiEl().SetClass("divider").Get()
@@ -247,7 +249,6 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	}
 
 	isNotIframe := ctx.Query(constant.IframeKey) != "true"
-
 	paginator := panelInfo.Paginator
 
 	if !isNotIframe {
@@ -349,10 +350,6 @@ func (h *Handler) Export(ctx *context.Context) {
 	index := f.NewSheet(tableName)
 	f.SetActiveSheet(index)
 
-	// TODO: support any numbers of fields.
-	orders := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
-
 	var (
 		infoData  table.PanelInfo
 		fileName  string
@@ -386,6 +383,21 @@ func (h *Handler) Export(ctx *context.Context) {
 		if err != nil {
 			response.Error(ctx, "export error")
 			return
+		}
+	}
+
+	// TODO: support any numbers of fields.
+	orders := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+		"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+	if len(infoData.Thead) > 26 {
+		j := -1
+		for i := 0; i < len(infoData.Thead)-26; i++ {
+			if i%26 == 0 {
+				j++
+			}
+			letter := orders[j] + orders[i%26]
+			orders = append(orders, letter)
 		}
 	}
 

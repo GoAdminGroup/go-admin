@@ -50,7 +50,7 @@ func EncodePassword(pwd []byte) string {
 	if err != nil {
 		return ""
 	}
-	return string(hash[:])
+	return string(hash)
 }
 
 // SetCookie set the cookie.

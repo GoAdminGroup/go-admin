@@ -31,6 +31,7 @@ type PopUpAction struct {
 	ParameterJS template.JS
 	Data        AjaxData
 	Handlers    []context.Handler
+	Event       Event
 }
 
 func PopUp(id, title string, handler types.Handler) *PopUpAction {
@@ -45,6 +46,7 @@ func PopUp(id, title string, handler types.Handler) *PopUpAction {
 		Data:     NewAjaxData(),
 		Id:       "info-popup-model-" + utils.Uuid(10),
 		Handlers: context.Handlers{handler.Wrap()},
+		Event:    EventClick,
 	}
 }
 
@@ -126,6 +128,7 @@ func PopUpWithIframe(id, title string, data IframeData, width, height string) *P
 		Data:       NewAjaxData(),
 		Id:         modalID,
 		Handlers:   context.Handlers{handler.Wrap()},
+		Event:      EventClick,
 	}
 }
 
@@ -195,11 +198,17 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 		Data:       NewAjaxData(),
 		Id:         modalID,
 		Handlers:   context.Handlers{handler.Wrap()},
+		Event:      EventClick,
 	}
 }
 
 func (pop *PopUpAction) SetBtnTitle(title template.HTML) *PopUpAction {
 	pop.BtnTitle = title
+	return pop
+}
+
+func (pop *PopUpAction) SetEvent(event Event) *PopUpAction {
+	pop.Event = event
 	return pop
 }
 
@@ -218,7 +227,7 @@ func (pop *PopUpAction) GetCallbacks() context.Node {
 }
 
 func (pop *PopUpAction) Js() template.JS {
-	return template.JS(`$('.`+pop.BtnId+`').on('click', function (event) {
+	return template.JS(`$('`+pop.BtnId+`').on('`+string(pop.Event)+`', function (event) {
 						let data = `+pop.Data.JSON()+`;
 						`) + pop.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");

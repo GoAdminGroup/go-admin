@@ -795,7 +795,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     false,
 		Editable:   false,
-		Deletable:  false,
+		Deletable:  config.GetAllowDelOperationLog(),
 		Exportable: true,
 		Connection: "default",
 		PrimaryKey: PrimaryKey{
@@ -805,7 +805,11 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 	})
 
 	info := opTable.GetInfo().AddXssJsFilter().
-		HideFilterArea().HideDeleteButton().HideDetailButton().HideEditButton().HideNewButton()
+		HideFilterArea().HideDetailButton().HideEditButton().HideNewButton()
+
+	if !config.GetAllowDelOperationLog() {
+		info = info.HideDeleteButton()
+	}
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("userID", "user_id", db.Int).FieldHide()
@@ -1095,6 +1099,16 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 			{Text: trueStr, Value: "true"},
 			{Text: falseStr, Value: "false"},
 		})
+	formList.AddField(lgWithConfigScore("operation log off"), "operation_log_off", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
+	formList.AddField(lgWithConfigScore("allow delete operation log"), "allow_del_operation_log", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: trueStr, Value: "true"},
+			{Text: falseStr, Value: "false"},
+		})
 	formList.AddField(lgWithConfigScore("hide config center entrance"), "hide_config_center_entrance", db.Varchar, form.Switch).
 		FieldOptions(types.FieldOptions{
 			{Text: trueStr, Value: "true"},
@@ -1251,8 +1265,8 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 	formList.HideBackButton().HideContinueEditCheckBox().HideContinueNewCheckBox()
 	formList.SetTabGroups(types.NewTabGroups("id", "debug", "env", "language", "theme", "color_scheme",
 		"asset_url", "title", "login_title", "session_life_time", "bootstrap_file_path", "go_mod_file_path", "no_limit_login_ip",
-		"hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance", "hide_plugin_entrance",
-		"animation_type",
+		"operation_log_off", "allow_del_operation_log", "hide_config_center_entrance", "hide_app_info_entrance", "hide_tool_entrance",
+		"hide_plugin_entrance", "animation_type",
 		"animation_duration", "animation_delay", "file_upload_engine", "extra").
 		AddGroup("access_log_off", "access_assets_log_off", "info_log_off", "error_log_off", "sql_log", "logger_level",
 			"info_log_path", "error_log_path",
@@ -1328,8 +1342,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		SetHeadWidth(1).
 		SetInputWidth(4).
 		HideBackButton().
-		HideContinueNewCheckBox().
-		HideResetButton()
+		HideContinueNewCheckBox()
 
 	formList.AddField("ID", "id", db.Varchar, form.Default).FieldDefault("1").FieldHide()
 
@@ -1338,6 +1351,9 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	for i, name := range connNames {
 		ops[i] = types.FieldOption{Text: name, Value: name}
 	}
+
+	// General options
+	// ================================
 
 	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).
 		FieldOptions(ops).
@@ -1403,35 +1419,43 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				}
 
 				return true, "ok", [][]string{headName, fieldName, dbTypeList, formTypeList}
-			}, `
-NProgress.start();
-$("tbody.fields-table").find("tr").remove();
-let tpl = $("template.fields-tpl").html();
-for (let i = 0; i < data.data[0].length; i++) {
-	$("tbody.fields-table").append(tpl);
-}
-let trs = $("tbody.fields-table").find("tr");
-for (let i = 0; i < data.data[0].length; i++) {
-	$(trs[i]).find('.field_head').val(data.data[0][i]);
-	$(trs[i]).find('.field_name').val(data.data[1][i]);
-	$(trs[i]).find('select.field_db_type').val(data.data[2][i]).select2();
-}
-$("tbody.fields_form-table").find("tr").remove();
-let tpl_form = $("template.fields_form-tpl").html();
-for (let i = 0; i < data.data[0].length; i++) {
-	$("tbody.fields_form-table").append(tpl_form);
-}
-let trs_form = $("tbody.fields_form-table").find("tr");
-for (let i = 0; i < data.data[0].length; i++) {
-	$(trs_form[i]).find('.field_head_form').val(data.data[0][i]);
-	$(trs_form[i]).find('.field_name_form').val(data.data[1][i]);
-	$(trs_form[i]).find('select.field_db_type_form').val(data.data[2][i]).select2();
-	$(trs_form[i]).find('select.field_form_type_form').val(data.data[3][i]).select2();
-}
-NProgress.done();
-`, `"conn":$('.conn').val(),`)
+			}, template.HTML(utils.ParseText("choose_table_ajax", tmpls["choose_table_ajax"], nil)),
+			`"conn":$('.conn').val(),`)
 	formList.AddField(lgWithScore("package", "tool"), "package", db.Varchar, form.Text).FieldDefault("tables")
 	formList.AddField(lgWithScore("primarykey", "tool"), "pk", db.Varchar, form.Text).FieldDefault("id")
+
+	formList.AddField(lgWithScore("table permission", "tool"), "permission", db.Varchar, form.Switch).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithScore("yes", "tool"), Value: "y"},
+			{Text: lgWithScore("no", "tool"), Value: "n"},
+		}).FieldDefault("n")
+
+	formList.AddField(lgWithScore("extra import package", "tool"), "extra_import_package", db.Varchar, form.Select).
+		FieldOptions(types.FieldOptions{
+			{Text: "time", Value: "time"},
+			{Text: "log", Value: "log"},
+			{Text: "fmt", Value: "fmt"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/db/dialect", Value: "github.com/GoAdminGroup/go-admin/modules/db/dialect"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/db", Value: "github.com/GoAdminGroup/go-admin/modules/db"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/language", Value: "github.com/GoAdminGroup/go-admin/modules/language"},
+			{Text: "github.com/GoAdminGroup/go-admin/modules/logger", Value: "github.com/GoAdminGroup/go-admin/modules/logger"},
+		}).
+		FieldDefault("").
+		FieldOptionExt(map[string]interface{}{
+			"tags": true,
+		})
+
+	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
+		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
+
+	formList.AddField(lgWithScore("extra code", "tool"), "extra_code", db.Varchar, form.Code).
+		FieldDefault("").FieldInputWidth(11)
+
+	// Info table generate options
+	// ================================
+
+	formList.AddField(lgWithScore("table title", "tool"), "table_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("table description", "tool"), "table_description", db.Varchar, form.Text)
 
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
@@ -1464,8 +1488,6 @@ NProgress.done();
 		addSwitchForTool(panel, "query info", "hide_query_info", "n", 4, 2)
 	})
 
-	formList.AddField(lgWithScore("output", "tool"), "path", db.Varchar, form.Text).
-		FieldDefault("").FieldMust().FieldHelpMsg(template.HTML(lgWithScore("use absolute path", "tool")))
 	formList.AddTable(lgWithScore("field", "tool"), "fields", func(pa *types.FormPanel) {
 		pa.AddField(lgWithScore("title", "tool"), "field_head", db.Varchar, form.Text).FieldHideLabel().
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1493,12 +1515,41 @@ NProgress.done();
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"n"}
 			})
+		pa.AddField(lgWithScore("field hide", "tool"), "field_hide", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("n").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"n"}
+			})
+		pa.AddField(lgWithScore("info field editable", "tool"), "info_field_editable", db.Varchar, form.CheckboxSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: "", Value: "y"},
+				{Text: "", Value: "n"},
+			}).
+			FieldDefault("n").
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"n"}
+			})
+		//pa.AddField(lgWithScore("db display type", "tool"), "field_display_type", db.Varchar, form.SelectSingle).
+		//	FieldOptions(infoFieldDisplayTypeOptions()).
+		//	FieldDisplay(func(value types.FieldModel) interface{} {
+		//		return []string{""}
+		//	})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"Int"}
 			})
 	}).FieldInputWidth(11)
+
+	// Form generate options
+	// ================================
+
+	formList.AddField(lgWithScore("form title", "tool"), "form_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("form description", "tool"), "form_description", db.Varchar, form.Text)
 
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
@@ -1537,6 +1588,20 @@ NProgress.done();
 			FieldDisplay(func(value types.FieldModel) interface{} {
 				return []string{"y"}
 			})
+		pa.AddField(lgWithScore("field default", "tool"), "field_default", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field display", "tool"), "field_display", db.Varchar, form.SelectSingle).
+			FieldOptions(types.FieldOptions{
+				{Text: lgWithScore("field display normal", "tool"), Value: "0"},
+				{Text: lgWithScore("field diplay hide", "tool"), Value: "1"},
+				{Text: lgWithScore("field diplay edit hide", "tool"), Value: "2"},
+				{Text: lgWithScore("field diplay create hide", "tool"), Value: "3"},
+			}).
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"0"}
+			})
 		pa.AddField(lgWithScore("db type", "tool"), "field_db_type_form", db.Varchar, form.SelectSingle).
 			FieldOptions(databaseTypeOptions()).
 			FieldDisplay(func(value types.FieldModel) interface{} {
@@ -1549,13 +1614,13 @@ NProgress.done();
 	}).FieldInputWidth(11)
 
 	formList.SetTabGroups(types.
-		NewTabGroups("conn", "table", "package", "pk", "path").
-		AddGroup("hide_filter_area", "filter_form_layout",
+		NewTabGroups("conn", "table", "package", "pk", "permission", "extra_import_package", "path", "extra_code").
+		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
 			"hide_new_button", "hide_export_button", "hide_edit_button",
 			"hide_pagination", "hide_delete_button", "hide_detail_button",
 			"hide_filter_button", "hide_row_selector", "hide_query_info",
 			"fields").
-		AddGroup("hide_continue_edit_check_box", "hide_reset_button",
+		AddGroup("form_title", "form_description", "hide_continue_edit_check_box", "hide_reset_button",
 			"hide_continue_new_check_box", "hide_back_button",
 			"fields_form")).
 		SetTabHeaders(lgWithScore("basic info", "tool"), lgWithScore("table info", "tool"),
@@ -1569,6 +1634,16 @@ NProgress.done();
 
 	formList.SetInsertFn(func(values form2.Values) error {
 
+		table := values.Get("table")
+
+		if table == "" {
+			return errors.New("table is empty")
+		}
+
+		if values.Get("permission") == "y" {
+			tools.InsertPermissionOfTable(s.conn, table)
+		}
+
 		output := values.Get("path")
 
 		if output == "" {
@@ -1581,24 +1656,48 @@ NProgress.done();
 
 		for i := 0; i < len(values["field_head"]); i++ {
 			fields[i] = tools.Field{
-				Head:       values["field_head"][i],
-				Name:       values["field_name"][i],
-				DBType:     values["field_db_type"][i],
-				Filterable: values["field_filterable"][i] == "y",
-				Sortable:   values["field_sortable"][i] == "y",
+				Head:         values["field_head"][i],
+				Name:         values["field_name"][i],
+				DBType:       values["field_db_type"][i],
+				Filterable:   values["field_filterable"][i] == "y",
+				Sortable:     values["field_sortable"][i] == "y",
+				Hide:         values["field_hide"][i] == "y",
+				InfoEditable: values["info_field_editable"][i] == "y",
 			}
+		}
+
+		extraImport := ""
+		for _, pack := range values["extra_import_package[]"] {
+			if extraImport != "" {
+				extraImport += `
+`
+			}
+			extraImport += `	"` + pack + `"`
 		}
 
 		formFields := make(tools.Fields, len(values["field_head_form"]))
 
 		for i := 0; i < len(values["field_head_form"]); i++ {
+			extraFun := ""
+			if values["field_name_form"][i] == `created_at` {
+				extraFun += `.FieldNowWhenInsert()`
+			} else if values["field_name_form"][i] == `updated_at` {
+				extraFun += `.FieldNowWhenUpdate()`
+			} else if values["field_default"][i] != "" && !strings.Contains(values["field_default"][i], `"`) {
+				values["field_default"][i] = `"` + values["field_default"][i] + `"`
+			}
 			formFields[i] = tools.Field{
-				Head:     values["field_head_form"][i],
-				Name:     values["field_name_form"][i],
-				FormType: values["field_form_type_form"][i],
-				DBType:   values["field_db_type_form"][i],
-				CanAdd:   values["field_canadd"][i] == "y",
-				Editable: values["field_canedit"][i] == "y",
+				Head:       values["field_head_form"][i],
+				Name:       values["field_name_form"][i],
+				Default:    values["field_default"][i],
+				FormType:   values["field_form_type_form"][i],
+				DBType:     values["field_db_type_form"][i],
+				CanAdd:     values["field_canadd"][i] == "y",
+				Editable:   values["field_canedit"][i] == "y",
+				FormHide:   values["field_display"][i] == "1",
+				CreateHide: values["field_display"][i] == "2",
+				EditHide:   values["field_display"][i] == "3",
+				ExtraFun:   extraFun,
 			}
 		}
 
@@ -1606,7 +1705,7 @@ NProgress.done();
 			Connection:               connName,
 			Driver:                   s.c.Databases[connName].Driver,
 			Package:                  values.Get("package"),
-			Table:                    values.Get("table"),
+			Table:                    table,
 			HideFilterArea:           values.Get("hide_filter_area") == "y",
 			HideNewButton:            values.Get("hide_new_button") == "y",
 			HideExportButton:         values.Get("hide_export_button") == "y",
@@ -1624,20 +1723,43 @@ NProgress.done();
 			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
 			Schema:                   values.Get("schema"),
 			Output:                   output,
+			FormTitle:                values.Get("form_title"),
+			FormDescription:          values.Get("form_description"),
+			TableTitle:               values.Get("table_title"),
+			TableDescription:         values.Get("table_description"),
+			ExtraImport:              extraImport,
+			ExtraCode:                escape(values.Get("extra_code")),
 		}, fields, formFields))
 
 		if err != nil {
 			return err
 		}
 
-		return tools.GenerateTables(output, values.Get("package"), []string{values.Get("table")}, false)
+		return tools.GenerateTables(output, values.Get("package"), []string{table}, false)
 	})
 
-	formList.EnableAjax(lgWithScore("generate table model", "tool"),
-		lgWithScore("generate table model", "tool"),
-		s.c.Url("/info/generate/new"),
-		lgWithScore("generate table model success", "tool"),
-		lgWithScore("generate table model fail", "tool"))
+	formList.EnableAjaxData(types.AjaxData{
+		SuccessTitle:   lgWithScore("generate table model", "tool"),
+		ErrorTitle:     lgWithScore("generate table model", "tool"),
+		SuccessJumpURL: s.c.Url("/info/generate/new"),
+		SuccessText:    lgWithScore("generate table model success", "tool"),
+		ErrorText:      lgWithScore("generate table model fail", "tool"),
+		DisableJump:    true,
+	})
+
+	formList.SetFooterHtml(utils.ParseHTML("generator", tmpls["generator"], map[string]string{
+		"prefix": "go_admin_" + config.GetAppID() + "_generator_",
+	}))
+
+	formList.SetFormNewBtnWord(template.HTML(lgWithScore("generate", "tool")))
+	formList.SetWrapper(func(content tmpl.HTML) tmpl.HTML {
+		headli := html.LiEl().SetClass("list-group-item", "list-head").
+			SetContent(template.HTML(lgWithScore("generated tables", "tool"))).Get()
+		return html.UlEl().SetClass("save_table_list", "list-group").SetContent(
+			headli).Get() + content
+	})
+
+	formList.SetHideSideBar()
 
 	return generateTool
 }
@@ -1651,7 +1773,7 @@ func encodePassword(pwd []byte) string {
 	if err != nil {
 		return ""
 	}
-	return string(hash[:])
+	return string(hash)
 }
 
 func label() types.LabelAttribute {
@@ -1699,7 +1821,7 @@ func escape(s string) string {
 	}
 	s, err := url.QueryUnescape(s)
 	if err != nil {
-		logger.Error("config set error", err)
+		logger.Error("escape error", err)
 	}
 	return s
 }

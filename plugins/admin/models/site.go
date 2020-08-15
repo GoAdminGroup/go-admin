@@ -80,7 +80,7 @@ func (t SiteModel) Init(cfg map[string]string) SiteModel {
 
 func (t SiteModel) AllToMap() map[string]string {
 
-	var m = make(map[string]string, 0)
+	var m = make(map[string]string)
 
 	items, err := t.Table(t.TableName).Where("state", "=", SiteItemOpenState).All()
 	if db.CheckError(err, db.QUERY) {
@@ -96,7 +96,7 @@ func (t SiteModel) AllToMap() map[string]string {
 
 func (t SiteModel) AllToMapInterface() map[string]interface{} {
 
-	var m = make(map[string]interface{}, 0)
+	var m = make(map[string]interface{})
 
 	items, err := t.Table(t.TableName).Where("state", "=", SiteItemOpenState).All()
 	if db.CheckError(err, db.QUERY) {

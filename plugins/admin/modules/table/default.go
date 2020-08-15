@@ -443,8 +443,8 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 				if field.TypeName == db.Text || field.TypeName == db.Longtext {
 					f := modules.Delimiter(connection.GetDelimiter(), field.Field)
 					headField := tb.Info.Table + "." + f
-					allFields = strings.Replace(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
-					groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+					allFields = strings.ReplaceAll(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
+					groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 				}
 			}
 		}
@@ -603,20 +603,18 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			queryStatement = "select %s from %s %s where " + pk + " = ? %s "
 		}
 
-		for _, field := range tb.Form.FieldList {
+		for i := 0; i < len(tb.Form.FieldList); i++ {
 
-			if field.Field != pk && modules.InArray(columns, field.Field) &&
-				!field.Joins.Valid() {
-				fields += tableName + "." + modules.FilterField(field.Field, delimiter) + ","
+			if tb.Form.FieldList[i].Field != pk && modules.InArray(columns, tb.Form.FieldList[i].Field) &&
+				!tb.Form.FieldList[i].Joins.Valid() {
+				fields += tableName + "." + modules.FilterField(tb.Form.FieldList[i].Field, delimiter) + ","
 			}
 
-			headField := field.Field
-
-			if field.Joins.Valid() {
-				headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
-				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().GetTableName()+"."+
-					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
-				for _, join := range field.Joins {
+			if tb.Form.FieldList[i].Joins.Valid() {
+				headField := tb.Form.FieldList[i].Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + tb.Form.FieldList[i].Field
+				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName()+"."+
+					modules.FilterField(tb.Form.FieldList[i].Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
+				for _, join := range tb.Form.FieldList[i].Joins {
 					if !modules.InArray(joinTables, join.GetTableName()) {
 						joinTables = append(joinTables, join.GetTableName())
 						if join.BaseTable == "" {
@@ -636,12 +634,12 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 		if joinFields != "" {
 			fields += "," + joinFields[:len(joinFields)-1]
 			if connection.Name() == db.DriverMssql {
-				for _, field := range tb.Form.FieldList {
-					if field.TypeName == db.Text || field.TypeName == db.Longtext {
-						f := modules.Delimiter(connection.GetDelimiter(), field.Field)
+				for i := 0; i < len(tb.Form.FieldList); i++ {
+					if tb.Form.FieldList[i].TypeName == db.Text || tb.Form.FieldList[i].TypeName == db.Longtext {
+						f := modules.Delimiter(connection.GetDelimiter(), tb.Form.FieldList[i].Field)
 						headField := tb.Info.Table + "." + f
-						fields = strings.Replace(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f, -1)
-						groupFields = strings.Replace(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))", -1)
+						fields = strings.ReplaceAll(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
+						groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 					}
 				}
 			}
@@ -741,7 +739,7 @@ func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 
 	if tb.Form.UpdateFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		err = tb.Form.UpdateFn(dataList)
+		err = tb.Form.UpdateFn(tb.PreProcessValue(dataList, types.PostTypeUpdate))
 		if err != nil {
 			errMsg = "post error: " + err.Error()
 		}
@@ -808,7 +806,7 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 
 	if tb.Form.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		err = tb.Form.InsertFn(dataList)
+		err = tb.Form.InsertFn(tb.PreProcessValue(dataList, types.PostTypeCreate))
 		if err != nil {
 			errMsg = "post error: " + err.Error()
 		}
@@ -829,9 +827,8 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ types.PostType) dialect.H {
 
 	var (
-		value        = make(dialect.H)
-		exceptString = make([]string, 0)
-
+		value         = make(dialect.H)
+		exceptString  = make([]string, 0)
 		columns, auto = tb.getColumns(tb.Form.Table)
 
 		fun types.PostFieldFilterFn
@@ -847,10 +844,10 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 	}
 
 	if !dataList.IsSingleUpdatePost() {
-		for _, field := range tb.Form.FieldList {
-			if field.FormType.IsMultiSelect() {
-				if _, ok := dataList[field.Field+"[]"]; !ok {
-					dataList[field.Field+"[]"] = []string{""}
+		for i := 0; i < len(tb.Form.FieldList); i++ {
+			if tb.Form.FieldList[i].FormType.IsMultiSelect() {
+				if _, ok := dataList[tb.Form.FieldList[i].Field+"[]"]; !ok {
+					dataList[tb.Form.FieldList[i].Field+"[]"] = []string{""}
 				}
 			}
 		}
@@ -859,7 +856,7 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 	dataList = dataList.RemoveRemark()
 
 	for k, v := range dataList {
-		k = strings.Replace(k, "[]", "", -1)
+		k = strings.ReplaceAll(k, "[]", "")
 		if !modules.InArray(exceptString, k) {
 			if modules.InArray(columns, k) {
 				field := tb.Form.FieldList.FindByFieldName(k)
@@ -899,6 +896,34 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 		}
 	}
 	return value
+}
+
+func (tb *DefaultTable) PreProcessValue(dataList form.Values, typ types.PostType) form.Values {
+
+	exceptString := []string{form.PreviousKey, form.MethodKey, form.TokenKey,
+		constant.IframeKey, constant.IframeIDKey}
+	dataList = dataList.RemoveRemark()
+	var fun types.PostFieldFilterFn
+
+	for k, v := range dataList {
+		k = strings.ReplaceAll(k, "[]", "")
+		if !modules.InArray(exceptString, k) {
+			field := tb.Form.FieldList.FindByFieldName(k)
+			if field != nil {
+				fun = field.PostFilterFn
+			}
+			vv := modules.RemoveBlankFromArray(v)
+			if fun != nil {
+				dataList.Add(k, fmt.Sprintf("%s", fun(types.PostFieldModel{
+					ID:       dataList.Get(tb.PrimaryKey.Name),
+					Value:    vv,
+					Row:      dataList.ToMap(),
+					PostType: typ,
+				})))
+			}
+		}
+	}
+	return dataList
 }
 
 // DeleteData delete data.
@@ -996,9 +1021,7 @@ func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, colum
 		Delimiter:  tb.delimiter(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
-	}, params, columns, func() *db.SQL {
-		return tb.sql()
-	})
+	}, params, columns, tb.sql)
 }
 
 // db is a helper function return raw db connection.

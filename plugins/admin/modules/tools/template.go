@@ -4,6 +4,7 @@ const tableModelTmpl = `{{define "table_model"}}
 package {{.Package}}
 
 import (
+	{{.ExtraImport}}
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
@@ -32,15 +33,25 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{if not .FilterFormLayout.Default}}info.SetFilterFormLayout(form.{{.FilterFormLayout.String}}){{end}}
 
 	{{- range $key, $field := .Fields}}
-	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.FieldFilterable(){{end}}{{if $field.Sortable}}.FieldSortable(){{end -}}
+	info.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}){{if $field.Filterable}}.
+		FieldFilterable(){{end -}}{{if $field.Sortable}}.
+		FieldSortable(){{end -}}{{if $field.InfoEditable}}.
+		FieldEditAble(){{end -}}{{if $field.Hide}}.
+		FieldHide(){{end -}}
 	{{- end}}
 
-	info.SetTable("{{.TableName}}").SetTitle("{{.TableTitle}}").SetDescription("{{.TableTitle}}")
+	info.SetTable("{{.TableName}}").SetTitle("{{.TablePageTitle}}").SetDescription("{{.TableDescription}}")
 
 	formList := {{.Table}}.GetForm()
 
 	{{- range $key, $field := .FormFields}}
-	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if $field.NotAllowAdd}}.FieldNotAllowAdd(){{end -}}
+	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if ne $field.Default ""}}.
+		FieldDefault({{$field.Default}}){{end -}}{{if not $field.CanAdd}}.
+		FieldNotAllowAdd(){{end -}}{{if not $field.Editable}}.
+		FieldDisableEdit(){{end -}}{{if $field.FormHide}}.
+		FieldHide(){{end -}}{{if $field.EditHide}}.
+		FieldHideWhenUpdate(){{end -}}{{if $field.CreateHide}}.
+		FieldHideWhenCreate(){{end -}}{{$field.ExtraFun}}
 	{{- end}}
 
 	{{if .HideContinueEditCheckBox}}formList.HideContinueEditCheckBox(){{end}} 
@@ -48,7 +59,9 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{if .HideResetButton}}formList.HideResetButton(){{end}}          
 	{{if .HideBackButton}}formList.HideBackButton(){{end}}           
 
-	formList.SetTable("{{.TableName}}").SetTitle("{{.TableTitle}}").SetDescription("{{.TableTitle}}")
+	formList.SetTable("{{.TableName}}").SetTitle("{{.FormTitle}}").SetDescription("{{.FormDescription}}")
+
+	{{.ExtraCode}}
 
 	return {{.Table}}
 }

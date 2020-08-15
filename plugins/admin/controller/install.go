@@ -42,7 +42,7 @@ func (h *Handler) CheckDatabase(ctx *context.Context) {
 	}
 
 	defer func() {
-		SqlDB.Close()
+		_ = SqlDB.Close()
 	}()
 
 	if err != nil {

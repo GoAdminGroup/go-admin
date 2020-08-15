@@ -33,10 +33,10 @@ var DefaultFuncMap = template.FuncMap{
 		return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
 	},
 	"render": func(s, old, repl template.HTML) template.HTML {
-		return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+		return template.HTML(strings.ReplaceAll(string(s), string(old), string(repl)))
 	},
 	"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
-		return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
+		return template.JS(strings.ReplaceAll(string(s), string(old), string(repl)))
 	},
 	"divide": func(a, b int) int {
 		return a / b

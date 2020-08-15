@@ -280,6 +280,10 @@ type Component interface {
 	IsAPage() bool
 
 	GetName() string
+
+	GetJS() template.JS
+	GetCSS() template.CSS
+	GetCallbacks() types.Callbacks
 }
 
 var compMap = map[string]Component{
@@ -432,11 +436,11 @@ func GetExecuteOptions(options []ExecuteOptions) ExecuteOptions {
 	return options[0]
 }
 
-func Execute(param ExecuteParam) *bytes.Buffer {
+func Execute(param *ExecuteParam) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
-		types.NewPage(types.NewPageParam{
+		types.NewPage(&types.NewPageParam{
 			User:       param.User,
 			Menu:       param.Menu,
 			Assets:     GetComponentAssetImportHTML(),
@@ -496,10 +500,10 @@ var DefaultFuncMap = template.FuncMap{
 		return (len(s) > 7 && s[:7] == "http://") || (len(s) > 8 && s[:8] == "https://")
 	},
 	"render": func(s, old, repl template.HTML) template.HTML {
-		return template.HTML(strings.Replace(string(s), string(old), string(repl), -1))
+		return template.HTML(strings.ReplaceAll(string(s), string(old), string(repl)))
 	},
 	"renderJS": func(s template.JS, old, repl template.HTML) template.JS {
-		return template.JS(strings.Replace(string(s), string(old), string(repl), -1))
+		return template.JS(strings.ReplaceAll(string(s), string(old), string(repl)))
 	},
 	"divide": func(a, b int) int {
 		return a / b
@@ -536,7 +540,45 @@ var DefaultFuncMap = template.FuncMap{
 	},
 }
 
-type BaseComponent struct{}
+type BaseComponent struct {
+	Name      string
+	HTMLData  string
+	CSS       template.CSS
+	JS        template.JS
+	Callbacks types.Callbacks
+}
 
-func (b BaseComponent) GetAssetList() []string               { return make([]string, 0) }
-func (b BaseComponent) GetAsset(name string) ([]byte, error) { return nil, nil }
+func (b *BaseComponent) IsAPage() bool                        { return false }
+func (b *BaseComponent) GetName() string                      { return b.Name }
+func (b *BaseComponent) GetAssetList() []string               { return make([]string, 0) }
+func (b *BaseComponent) GetAsset(name string) ([]byte, error) { return nil, nil }
+func (b *BaseComponent) GetJS() template.JS                   { return b.JS }
+func (b *BaseComponent) GetCSS() template.CSS                 { return b.CSS }
+func (b *BaseComponent) GetCallbacks() types.Callbacks        { return b.Callbacks }
+func (b *BaseComponent) BindActionTo(action types.Action, id string) {
+	action.SetBtnId(id)
+	b.JS += action.Js()
+	b.HTMLData += string(action.ExtContent())
+	b.Callbacks = append(b.Callbacks, action.GetCallbacks())
+}
+func (b *BaseComponent) GetContentWithData(obj interface{}) template.HTML {
+	buffer := new(bytes.Buffer)
+	tmpl, defineName := b.GetTemplate()
+	err := tmpl.ExecuteTemplate(buffer, defineName, obj)
+	if err != nil {
+		logger.Error(b.Name+" GetContent error:", err)
+	}
+	return template.HTML(buffer.String())
+}
+
+func (b *BaseComponent) GetTemplate() (*template.Template, string) {
+	tmpl, err := template.New(b.Name).
+		Funcs(DefaultFuncMap).
+		Parse(b.HTMLData)
+
+	if err != nil {
+		logger.Error(b.Name+" GetTemplate Error: ", err)
+	}
+
+	return tmpl, b.Name
+}

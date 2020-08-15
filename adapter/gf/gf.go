@@ -16,6 +16,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -91,8 +92,7 @@ func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 		params = append(params, reg2.FindAllString(newPath, -1)...)
 
 		for _, param := range params {
-			p := strings.Replace(param, ":", "", -1)
-			p = strings.Replace(p, "/", "", -1)
+			p := utils.ReplaceAll(param, ":", "", "/", "")
 
 			if c.Request.URL.RawQuery == "" {
 				c.Request.URL.RawQuery += p + "=" + c.GetRequestString(p)

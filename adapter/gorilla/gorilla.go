@@ -97,9 +97,9 @@ func (g *Gorilla) AddHandler(method, path string, handlers context.Handlers) {
 
 		for key, param := range params {
 			if r.URL.RawQuery == "" {
-				r.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + param
+				r.URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + param
 			} else {
-				r.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + param
+				r.URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + param
 			}
 		}
 

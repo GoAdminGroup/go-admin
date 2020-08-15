@@ -3,6 +3,7 @@ package action
 import (
 	"encoding/json"
 	"html/template"
+	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/constant"
@@ -20,6 +21,7 @@ type AjaxAction struct {
 	SuccessJS   template.JS
 	ErrorJS     template.JS
 	ParameterJS template.JS
+	Event       Event
 	Handlers    []context.Handler
 }
 
@@ -52,6 +54,7 @@ func Ajax(id string, handler types.Handler) *AjaxAction {
 									swal('error', '', 'error');
 								}`,
 		Handlers: context.Handlers{handler.Wrap()},
+		Event:    EventClick,
 	}
 }
 
@@ -73,8 +76,13 @@ func (ajax *AjaxAction) WithAlert(data ...AlertData) *AjaxAction {
 	return ajax
 }
 
-func (ajax *AjaxAction) SetData(data map[string]interface{}) *AjaxAction {
+func (ajax *AjaxAction) AddData(data map[string]interface{}) *AjaxAction {
 	ajax.Data = ajax.Data.Add(data)
+	return ajax
+}
+
+func (ajax *AjaxAction) SetData(data map[string]interface{}) *AjaxAction {
+	ajax.Data = data
 	return ajax
 }
 
@@ -85,6 +93,39 @@ func (ajax *AjaxAction) SetUrl(url string) *AjaxAction {
 
 func (ajax *AjaxAction) SetSuccessJS(successJS template.JS) *AjaxAction {
 	ajax.SuccessJS = successJS
+	return ajax
+}
+
+func (ajax *AjaxAction) ChangeHTMLWhenSuccess(identify string, text ...string) *AjaxAction {
+	data := template.JS("data.data")
+	if len(text) > 0 {
+		if len(text[0]) > 5 && text[0][:5] == "data." {
+			data = template.JS(text[0])
+		} else {
+			data = `"` + template.JS(text[0]) + `"`
+		}
+	}
+	selector := template.JS(identify)
+	if !strings.Contains(identify, "$") {
+		selector = `$("` + template.JS(identify) + `")`
+	}
+	ajax.SuccessJS = `
+	if (data.code === 0) {
+		if (` + selector + `.is("input")) {
+			` + selector + `.val(` + data + `);
+		} else if (` + selector + `.is("select")) {
+			` + selector + `.val(` + data + `);
+		} else {
+			` + selector + `.html(` + data + `);
+		}
+	} else {
+		swal(data.msg, '', 'error');
+	}`
+	return ajax
+}
+
+func (ajax *AjaxAction) SetEvent(event Event) *AjaxAction {
+	ajax.Event = event
 	return ajax
 }
 
@@ -134,7 +175,7 @@ func (ajax *AjaxAction) Js() template.JS {
 					});`
 	}
 
-	return template.JS(`$('.`+ajax.BtnId+`').on('click', function (event) {
+	return template.JS(`$('`+ajax.BtnId+`').on('`+string(ajax.Event)+`', function (event) {
 						let data = `+ajax.Data.JSON()+`;
 						`) + ajax.ParameterJS + template.JS(`
 						let id = $(this).attr("data-id");

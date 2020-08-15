@@ -159,7 +159,7 @@ func (d DatabaseList) Connections() []string {
 }
 
 func GetDatabaseListFromJSON(m string) DatabaseList {
-	var d = make(DatabaseList, 0)
+	var d = make(DatabaseList)
 	if m == "" {
 		panic("wrong config")
 	}
@@ -243,6 +243,9 @@ type Config struct {
 	// element of Databases is the default connection. See the
 	// file connection.go.
 	Databases DatabaseList `json:"database,omitempty" yaml:"database,omitempty" ini:"database,omitempty"`
+
+	// The application unique ID. Once generated, don't modify.
+	AppID string `json:"app_id,omitempty" yaml:"app_id,omitempty" ini:"app_id,omitempty"`
 
 	// The cookie domain used in the auth modules. see
 	// the session.go.
@@ -377,6 +380,10 @@ type Config struct {
 	BootstrapFilePath string `json:"bootstrap_file_path,omitempty" yaml:"bootstrap_file_path,omitempty" ini:"bootstrap_file_path,omitempty"`
 
 	GoModFilePath string `json:"go_mod_file_path,omitempty" yaml:"go_mod_file_path,omitempty" ini:"go_mod_file_path,omitempty"`
+
+	AllowDelOperationLog bool `json:"allow_del_operation_log,omitempty" yaml:"allow_del_operation_log,omitempty" ini:"allow_del_operation_log,omitempty"`
+
+	OperationLogOff bool `json:"operation_log_off,omitempty" yaml:"operation_log_off,omitempty" ini:"operation_log_off,omitempty"`
 
 	prefix string
 }
@@ -588,6 +595,8 @@ func (c *Config) Copy() *Config {
 		Custom500HTML:                 c.Custom500HTML,
 		BootstrapFilePath:             c.BootstrapFilePath,
 		GoModFilePath:                 c.GoModFilePath,
+		AllowDelOperationLog:          c.AllowDelOperationLog,
+		OperationLogOff:               c.OperationLogOff,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -597,7 +606,7 @@ func (c *Config) Copy() *Config {
 }
 
 func (c *Config) ToMap() map[string]string {
-	var m = make(map[string]string, 0)
+	var m = make(map[string]string)
 	m["language"] = c.Language
 	m["databases"] = c.Databases.JSON()
 	m["domain"] = c.Domain
@@ -655,6 +664,7 @@ func (c *Config) ToMap() map[string]string {
 	m["bootstrap_file_path"] = c.BootstrapFilePath
 	m["go_mod_file_path"] = c.GoModFilePath
 	m["footer_info"] = string(c.FooterInfo)
+	m["app_id"] = c.AppID
 	m["login_title"] = c.LoginTitle
 	m["login_logo"] = string(c.LoginLogo)
 	m["auth_user_table"] = c.AuthUserTable
@@ -669,6 +679,8 @@ func (c *Config) ToMap() map[string]string {
 	m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
 
 	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
+	m["allow_del_operation_log"] = strconv.FormatBool(c.AllowDelOperationLog)
+	m["operation_log_off"] = strconv.FormatBool(c.OperationLogOff)
 
 	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
 	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
@@ -681,6 +693,9 @@ func (c *Config) ToMap() map[string]string {
 func (c *Config) Update(m map[string]string) error {
 	updateLock.Lock()
 	defer updateLock.Unlock()
+	if m["app_id"] != "" {
+		c.AppID = m["app_id"]
+	}
 	c.Language = m["language"]
 	c.Domain = m["domain"]
 	c.Theme = m["theme"]
@@ -729,7 +744,7 @@ func (c *Config) Update(m map[string]string) error {
 		c.Logger.Encoder.Caller = m["logger_encoder_caller"]
 	}
 
-	initLogger(*c)
+	initLogger(c)
 
 	if c.Theme == "adminlte" {
 		c.ColorScheme = m["color_scheme"]
@@ -750,6 +765,8 @@ func (c *Config) Update(m map[string]string) error {
 	c.AssetUrl = m["asset_url"]
 	c.LoginLogo = template.HTML(m["login_logo"])
 	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
+	c.AllowDelOperationLog = utils.ParseBool(m["allow_del_operation_log"])
+	c.OperationLogOff = utils.ParseBool(m["operation_log_off"])
 
 	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
 	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
@@ -763,7 +780,7 @@ func (c *Config) Update(m map[string]string) error {
 	c.Animation.Delay = utils.ParseFloat32(m["animation_delay"])
 
 	if m["extra"] != "" {
-		var extra = make(map[string]interface{}, 0)
+		var extra = make(map[string]interface{})
 		_ = json.Unmarshal([]byte(m["extra"]), &extra)
 		c.Extra = extra
 	}
@@ -860,7 +877,7 @@ var (
 	lock  sync.Mutex
 )
 
-func SetDefault(cfg Config) Config {
+func SetDefault(cfg *Config) *Config {
 	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
 	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
 	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
@@ -878,11 +895,12 @@ func SetDefault(cfg Config) Config {
 		// default two hours
 		cfg.SessionLifeTime = 7200
 	}
+	cfg.AppID = utils.Uuid(12)
 	return cfg
 }
 
 // Set sets the config.
-func Set(cfg Config) *Config {
+func Set(cfg *Config) *Config {
 
 	lock.Lock()
 	defer lock.Unlock()
@@ -916,12 +934,12 @@ Running in "debug" mode. Switch to "release" mode in production.`)
 		})
 	}
 
-	globalCfg = &cfg
+	globalCfg = cfg
 
 	return globalCfg
 }
 
-func initLogger(cfg Config) {
+func initLogger(cfg *Config) {
 	logger.InitWithConfig(logger.Config{
 		InfoLogOff:         cfg.InfoLogOff,
 		ErrorLogOff:        cfg.ErrorLogOff,
@@ -1020,12 +1038,24 @@ func GetLanguage() string {
 	return globalCfg.Language
 }
 
+func GetAppID() string {
+	return globalCfg.AppID
+}
+
 func GetUrlPrefix() string {
 	return globalCfg.UrlPrefix
 }
 
 func GetOpenAdminApi() bool {
 	return globalCfg.OpenAdminApi
+}
+
+func GetAllowDelOperationLog() bool {
+	return globalCfg.AllowDelOperationLog
+}
+
+func GetOperationLogOff() bool {
+	return globalCfg.OperationLogOff
 }
 
 func GetCustom500HTML() template.HTML {

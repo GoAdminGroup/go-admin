@@ -2,9 +2,9 @@ package action
 
 import (
 	"html/template"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 )
 
 type JumpAction struct {
@@ -16,8 +16,7 @@ type JumpAction struct {
 }
 
 func Jump(url string, ext ...template.HTML) *JumpAction {
-	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
-	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
+	url = utils.ReplaceAll(url, "{%id}", "{{.Id}}", "{%ids}", "{{.Ids}}")
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, Ext: ext[0]}
 	}
@@ -25,8 +24,7 @@ func Jump(url string, ext ...template.HTML) *JumpAction {
 }
 
 func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
-	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
-	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
+	url = utils.ReplaceAll(url, "{%id}", "{{.Id}}", "{%ids}", "{{.Ids}}")
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, NewTabTitle: title, Ext: ext[0]}
 	}
@@ -34,8 +32,7 @@ func JumpInNewTab(url, title string, ext ...template.HTML) *JumpAction {
 }
 
 func JumpWithTarget(url, target string, ext ...template.HTML) *JumpAction {
-	url = strings.Replace(url, "{%id}", "{{.Id}}", -1)
-	url = strings.Replace(url, "{%ids}", "{{.Ids}}", -1)
+	url = utils.ReplaceAll(url, "{%id}", "{{.Id}}", "{%ids}", "{{.Ids}}")
 	if len(ext) > 0 {
 		return &JumpAction{Url: url, Target: target, Ext: ext[0]}
 	}

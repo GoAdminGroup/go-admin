@@ -193,7 +193,7 @@ func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, p
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -214,7 +214,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(template.ExecuteParam{
+	return template.Execute(&template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -382,14 +382,18 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 `)
 	}
 
-	btn1 := aButton().SetType("submit").
+	btn1 := aButton().
+		SetType("submit").
+		AddClass("submit").
 		SetContent(btnWord).
 		SetThemePrimary().
 		SetOrientationRight().
 		GetContent()
 	btn2 := template.HTML("")
 	if !isHideReset {
-		btn2 = aButton().SetType("reset").
+		btn2 = aButton().
+			SetType("reset").
+			AddClass("reset").
 			SetContent(language.GetFromHtml("Reset")).
 			SetThemeWarning().
 			SetOrientationLeft().
@@ -403,6 +407,7 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 func filterFormFooter(infoUrl string) template2.HTML {
 	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
 	btn1 := aButton().SetType("submit").
+		AddClass("submit").
 		SetContent(icon.Icon(icon.Search, 2) + language.GetFromHtml("search")).
 		SetThemePrimary().
 		SetSmallSize().
@@ -410,6 +415,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 		SetLoadingText(icon.Icon(icon.Spinner, 1) + language.GetFromHtml("search")).
 		GetContent()
 	btn2 := aButton().SetType("reset").
+		AddClass("reset").
 		SetContent(icon.Icon(icon.Undo, 2) + language.GetFromHtml("reset")).
 		SetThemeDefault().
 		SetOrientationLeft().
@@ -428,10 +434,8 @@ func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, heade
 	}
 	if iframe {
 		header = ""
-	} else {
-		if header == template2.HTML("") {
-			header = form.GetDefaultBoxHeader(isHideBack)
-		}
+	} else if header == template2.HTML("") {
+		header = form.GetDefaultBoxHeader(isHideBack)
 	}
 	return aBox().
 		SetHeader(header).

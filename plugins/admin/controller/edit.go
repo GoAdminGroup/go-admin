@@ -129,6 +129,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		Content:     alert + content,
 		Description: template2.HTML(formInfo.Description),
 		Title:       modules.AorBHTML(isNotIframe, template2.HTML(formInfo.Title), ""),
+		MiniSidebar: f.HideSideBar,
 	}, template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0]), NoCompress: f.NoCompress})
 
 	if isEdit {
@@ -154,11 +155,11 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		}
 	}
 
-	for _, field := range param.Panel.GetForm().FieldList {
-		if field.FormType == form.File &&
-			len(param.MultiForm.File[field.Field]) == 0 &&
-			param.MultiForm.Value[field.Field+"__delete_flag"][0] != "1" {
-			delete(param.MultiForm.Value, field.Field)
+	for i := 0; i < len(param.Panel.GetForm().FieldList); i++ {
+		if param.Panel.GetForm().FieldList[i].FormType == form.File &&
+			len(param.MultiForm.File[param.Panel.GetForm().FieldList[i].Field]) == 0 &&
+			param.MultiForm.Value[param.Panel.GetForm().FieldList[i].Field+"__delete_flag"][0] != "1" {
+			delete(param.MultiForm.Value, param.Panel.GetForm().FieldList[i].Field)
 		}
 	}
 
@@ -166,7 +167,9 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if err != nil {
 		logger.Error("update data error: ", err)
 		if ctx.WantJSON() {
-			response.Error(ctx, err.Error())
+			response.Error(ctx, err.Error(), map[string]interface{}{
+				"token": h.authSrv().AddToken(),
+			})
 		} else {
 			h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
 		}
@@ -180,7 +183,8 @@ func (h *Handler) EditForm(ctx *context.Context) {
 
 	if ctx.WantJSON() && !param.IsIframe {
 		response.OkWithData(ctx, map[string]interface{}{
-			"url": param.PreviousPath,
+			"url":   param.PreviousPath,
+			"token": h.authSrv().AddToken(),
 		})
 		return
 	}

@@ -218,6 +218,4 @@ func insertPermissionInfoDB(conn db.Connection, name, slug, httpMethod, httpPath
 	if db.CheckError(err, db.INSERT) {
 		panic(err)
 	}
-
-	return
 }

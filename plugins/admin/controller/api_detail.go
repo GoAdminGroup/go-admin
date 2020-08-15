@@ -104,12 +104,6 @@ $('.delete-btn').on('click', function (event) {
 </script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)
 	}
 
-	title := panel.GetDetail().Title
-
-	if title == "" {
-		title = panel.GetInfo().Title + language.Get("Detail")
-	}
-
 	desc := panel.GetDetail().Description
 
 	if desc == "" {

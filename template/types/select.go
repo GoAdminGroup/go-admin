@@ -22,7 +22,7 @@ func btnUUID() string {
 func GetDefaultSelection(placeholder string, options FieldOptions, action Action, widths ...int) *DefaultSelection {
 
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 
 	var width = 100
 	if len(widths) > 0 {

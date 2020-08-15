@@ -116,7 +116,7 @@ func (sql *SQL) Table(table string) *SQL {
 func (sql *SQL) Select(fields ...string) *SQL {
 	sql.Fields = fields
 	sql.Functions = make([]string, len(fields))
-	reg, _ := regexp.Compile("(.*?)\\((.*?)\\)")
+	reg, _ := regexp.Compile(`(.*?)\\((.*?)\\)`)
 	for k, field := range fields {
 		res := reg.FindAllStringSubmatch(field, -1)
 		if len(res) > 0 && len(res[0]) > 2 {
@@ -482,10 +482,8 @@ func (sql *SQL) ShowTables() ([]string, error) {
 		key = "tablename"
 	} else if sql.diver.Name() == DriverMssql {
 		key = "TABLE_NAME"
-	} else {
-		if _, ok := models[0][key].(string); !ok {
-			key = "Tables_in_" + strings.ToLower(sql.TableName)
-		}
+	} else if _, ok := models[0][key].(string); !ok {
+		key = "Tables_in_" + strings.ToLower(sql.TableName)
 	}
 
 	for i := 0; i < len(models); i++ {

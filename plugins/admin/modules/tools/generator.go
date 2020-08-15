@@ -2,12 +2,16 @@ package tools
 
 import (
 	"bytes"
+	"fmt"
 	"go/format"
 	"io/ioutil"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"text/template"
+
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
@@ -41,9 +45,17 @@ type Param struct {
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
 
-	Fields Fields
+	TablePageTitle   string `json:"table_title"`
+	TableDescription string `json:"table_description"`
+	FormTitle        string `json:"form_title"`
+	FormDescription  string `json:"form_description"`
 
-	FormFields Fields
+	ExtraImport string `json:"extra_import"`
+	ExtraCode   string `json:"extra_code"`
+
+	Fields Fields `json:"fields"`
+
+	FormFields Fields `json:"form_fields"`
 
 	Output string `json:"output"`
 }
@@ -67,11 +79,19 @@ type Config struct {
 	HidePagination   bool          `json:"hide_pagination"`
 	HideQueryInfo    bool          `json:"hide_query_info"`
 	FilterFormLayout form.Layout   `json:"filter_form_layout"`
+	ExtraImport      string        `json:"extra_import"`
+
+	TableTitle       string `json:"table_title"`
+	TableDescription string `json:"table_description"`
+	FormTitle        string `json:"form_title"`
+	FormDescription  string `json:"form_description"`
 
 	HideContinueEditCheckBox bool `json:"hide_continue_edit_check_box"`
 	HideContinueNewCheckBox  bool `json:"hide_continue_new_check_box"`
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
+
+	ExtraCode string `json:"extra_code"`
 }
 
 func fixedTable(table string) string {
@@ -93,13 +113,14 @@ func NewParam(cfg Config) Param {
 	}
 
 	fields := getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver)
+	tt := strings.Title(ta)
 
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
 		Package:                  cfg.Package,
 		Table:                    fixedTable(ta),
-		TableTitle:               strings.Title(ta),
+		TableTitle:               tt,
 		TableName:                dbTable,
 		HideFilterArea:           cfg.HideFilterArea,
 		HideNewButton:            cfg.HideNewButton,
@@ -120,6 +141,12 @@ func NewParam(cfg Config) Param {
 		Fields:                   fields,
 		FormFields:               fields,
 		Output:                   cfg.Output,
+		ExtraImport:              cfg.ExtraImport,
+		ExtraCode:                cfg.ExtraCode,
+		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
+		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
+		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
+		FormDescription:          utils.SetDefault(cfg.FormDescription, "", tt),
 	}
 }
 
@@ -134,12 +161,14 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		cfg.Output = cfg.Output[:len(cfg.Output)-1]
 	}
 
+	tt := strings.Title(ta)
+
 	return Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
 		Package:                  cfg.Package,
 		Table:                    ta,
-		TableTitle:               strings.Title(ta),
+		TableTitle:               tt,
 		TableName:                dbTable,
 		RowTable:                 cfg.Table,
 		Fields:                   fields[0],
@@ -160,21 +189,33 @@ func NewParamWithFields(cfg Config, fields ...Fields) Param {
 		HideResetButton:          cfg.HideResetButton,
 		HideBackButton:           cfg.HideBackButton,
 		Output:                   cfg.Output,
+		ExtraImport:              cfg.ExtraImport,
+		ExtraCode:                cfg.ExtraCode,
+		TablePageTitle:           utils.SetDefault(cfg.TableTitle, "", tt),
+		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
+		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
+		FormDescription:          utils.SetDefault(cfg.FormDescription, "", tt),
 	}
 }
 
 type Fields []Field
 
 type Field struct {
-	Head        string `json:"head"`
-	Name        string `json:"name"`
-	DBType      string `json:"db_type"`
-	FormType    string `json:"form_type"`
-	NotAllowAdd bool   `json:"not_allow_add"`
-	Filterable  bool   `json:"filterable"`
-	Sortable    bool   `json:"sortable"`
-	Editable    bool   `json:"editable"`
-	CanAdd      bool   `json:"can_add"`
+	Head         string `json:"head"`
+	Name         string `json:"name"`
+	DBType       string `json:"db_type"`
+	FormType     string `json:"form_type"`
+	Filterable   bool   `json:"filterable"`
+	Sortable     bool   `json:"sortable"`
+	InfoEditable bool   `json:"info_editable"`
+	Editable     bool   `json:"editable"`
+	Hide         bool   `json:"hide"`
+	FormHide     bool   `json:"form_hide"`
+	EditHide     bool   `json:"edit_hide"`
+	CreateHide   bool   `json:"create_hide"`
+	Default      string `json:"default"`
+	CanAdd       bool   `json:"can_add"`
+	ExtraFun     string `json:"extra_fun"`
 }
 
 func Generate(param Param) error {
@@ -194,6 +235,11 @@ func Generate(param Param) error {
 	return ioutil.WriteFile(filepath.FromSlash(param.Output)+"/"+param.RowTable+".go", c, 0644)
 }
 
+const (
+	commentStrEnd = "example end"
+	tablesEnd     = "generators end"
+)
+
 func GenerateTables(outputPath, packageName string, tables []string, new bool) error {
 
 	if len(outputPath) > 0 && outputPath[len(outputPath)-1] == '/' {
@@ -208,35 +254,51 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 
 	tableStr := ""
 	commentStr := ""
-	const (
-		commentStrEnd = "example end"
-		tablesEnd     = "generators end"
-	)
+	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
+	if err != nil {
+		return err
+	}
+	tablesContent := string(tablesContentByte)
 
 	for i := 0; i < len(tables); i++ {
-		tableStr += `
-	"` + tables[i] + `": Get` + strings.Title(camelcase(tables[i])) + `Table,`
-		commentStr += `// "` + tables[i] + `" => http://localhost:9033/admin/info/` + tables[i] + `
-`
+		if !strings.Contains(tablesContent, `"`+tables[i]+`"`) {
+			tableStr += fmt.Sprintf(`
+	"%s": Get%sTable, `, tables[i], strings.Title(camelcase(tables[i])))
+			commentStr += fmt.Sprintf(`
+	// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
+		}
 	}
-	commentStr += `//
-// ` + commentStrEnd + `
-`
+
+	commentStr += `
+//
+// ` + commentStrEnd
 	tableStr += `
 
 	// ` + tablesEnd
 
-	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
-	tablesContent := string(tablesContentByte)
-
 	content := ""
 
-	if err == nil && tablesContent != "" && strings.Index(tablesContent, "/") != -1 {
-		tablesContent = strings.Replace(tablesContent, commentStrEnd+`
-//`, commentStr[3:]+"//", -1)
-		content = strings.Replace(tablesContent, "// "+tablesEnd, tableStr, -1)
+	if tablesContent != "" && strings.Contains(tablesContent, "/") {
+		replacer := strings.NewReplacer(`// `+commentStrEnd, commentStr, `// `+tablesEnd, tableStr)
+		tablesContent = replacer.Replace(tablesContent)
+		keep := `// example:
+//`
+		keep2 := `,
+
+	// ` + tablesEnd
+		replacer2 := strings.NewReplacer(keep, keep, keep2, keep2, `//
+//
+`, "//", `//
+
+//`, "//", `//
+// "`, `// "`, `,
+
+`, ",", `,
+`, ",")
+		content = replacer2.Replace(tablesContent)
 	} else {
-		content = `package ` + packageName + `
+		content = fmt.Sprintf(`// This file is generated by GoAdmin CLI adm.
+package %s
 
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
@@ -246,11 +308,10 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 // http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
 //
 // example:
-//
-` + commentStr + `//
-var Generators = map[string]table.Generator{` + tableStr + `
+//%s
+var Generators = map[string]table.Generator{%s
 }
-`
+`, packageName, commentStr, tableStr)
 	}
 
 	c, err := format.Source([]byte(content))
@@ -259,6 +320,48 @@ var Generators = map[string]table.Generator{` + tableStr + `
 		return err
 	}
 	return ioutil.WriteFile(outputPath+"/tables.go", c, 0644)
+}
+
+func InsertPermissionOfTable(conn db.Connection, table string) {
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("query", "generator"), table+"_query", "GET", "/info/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("show edit form page", "generator"), table+"_show_edit", "GET",
+		"/info/"+table+"/edit")
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("show create form page", "generator"), table+"_show_create", "GET",
+		"/info/"+table+"/new")
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("edit", "generator"), table+"_edit", "POST",
+		"/edit/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("create", "generator"), table+"_create", "POST",
+		"/new/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("delete", "generator"), table+"_delete", "POST",
+		"/delete/"+table)
+	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("export", "generator"), table+"_export", "POST",
+		"/export/"+table)
+}
+
+func InsertPermissionInfoDB(conn db.Connection, name, slug, httpMethod, httpPath string) {
+	checkExist, err := db.WithDriver(conn).Table("goadmin_permissions").
+		Where("slug", "=", slug).
+		First()
+
+	if db.CheckError(err, db.QUERY) {
+		panic(err)
+	}
+
+	if checkExist != nil {
+		return
+	}
+
+	_, err = db.WithDriver(conn).Table("goadmin_permissions").
+		Insert(dialect.H{
+			"name":        name,
+			"slug":        slug,
+			"http_method": httpMethod,
+			"http_path":   httpPath,
+		})
+
+	if db.CheckError(err, db.INSERT) {
+		panic(err)
+	}
 }
 
 func camelcase(s string) string {

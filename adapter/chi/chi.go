@@ -104,9 +104,9 @@ func (ch *Chi) AddHandler(method, path string, handlers context.Handlers) {
 
 		for i := 0; i < len(params.Values); i++ {
 			if r.URL.RawQuery == "" {
-				r.URL.RawQuery += strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
+				r.URL.RawQuery += strings.ReplaceAll(params.Keys[i], ":", "") + "=" + params.Values[i]
 			} else {
-				r.URL.RawQuery += "&" + strings.Replace(params.Keys[i], ":", "", -1) + "=" + params.Values[i]
+				r.URL.RawQuery += "&" + strings.ReplaceAll(params.Keys[i], ":", "") + "=" + params.Values[i]
 			}
 		}
 

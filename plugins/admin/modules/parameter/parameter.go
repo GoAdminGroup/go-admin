@@ -102,10 +102,10 @@ func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
 				}
 			} else {
 				if strings.Contains(key, FilterParamOperatorSuffix) &&
-					values.Get(strings.Replace(key, FilterParamOperatorSuffix, "", -1)) == "" {
+					values.Get(strings.ReplaceAll(key, FilterParamOperatorSuffix, "")) == "" {
 					continue
 				}
-				fields[strings.Replace(key, "[]", "", -1)] = value
+				fields[strings.ReplaceAll(key, "[]", "")] = value
 			}
 		}
 	}
@@ -270,7 +270,7 @@ func (param Parameters) URLNoAnimation(page string) string {
 }
 
 func (param Parameters) GetRouteParamStrWithoutPageSize(page string) string {
-	p := url.Values{}
+	p := make(url.Values)
 	p.Add(Sort, param.SortField)
 	p.Add(Page, page)
 	p.Add(SortType, param.SortType)
@@ -284,7 +284,7 @@ func (param Parameters) GetRouteParamStrWithoutPageSize(page string) string {
 }
 
 func (param Parameters) GetFixedParamStrFromCache() url.Values {
-	p := url.Values{}
+	p := make(url.Values)
 	if param.cacheFixedStr != nil {
 		p = param.cacheFixedStr
 	} else {
@@ -295,7 +295,7 @@ func (param Parameters) GetFixedParamStrFromCache() url.Values {
 }
 
 func (param Parameters) GetLastPageRouteParamStr(cache ...bool) string {
-	p := url.Values{}
+	p := make(url.Values)
 	if len(cache) > 0 && cache[0] {
 		p = param.GetFixedParamStrFromCache()
 	} else {
@@ -306,7 +306,7 @@ func (param Parameters) GetLastPageRouteParamStr(cache ...bool) string {
 }
 
 func (param Parameters) GetNextPageRouteParamStr(cache ...bool) string {
-	p := url.Values{}
+	p := make(url.Values)
 	if len(cache) > 0 && cache[0] {
 		p = param.GetFixedParamStrFromCache()
 	} else {
@@ -317,7 +317,7 @@ func (param Parameters) GetNextPageRouteParamStr(cache ...bool) string {
 }
 
 func (param Parameters) GetFixedParamStr() url.Values {
-	p := url.Values{}
+	p := make(url.Values)
 	p.Add(Sort, param.SortField)
 	p.Add(PageSize, param.PageSize)
 	p.Add(SortType, param.SortType)
@@ -331,7 +331,7 @@ func (param Parameters) GetFixedParamStr() url.Values {
 }
 
 func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
-	p := url.Values{}
+	p := make(url.Values)
 	p.Add(Sort, param.SortField)
 	p.Add(PageSize, param.PageSize)
 	if len(param.Columns) > 0 {
@@ -342,7 +342,7 @@ func (param Parameters) GetFixedParamStrWithoutColumnsAndPage() string {
 }
 
 func (param Parameters) GetFixedParamStrWithoutSort() string {
-	p := url.Values{}
+	p := make(url.Values)
 	p.Add(PageSize, param.PageSize)
 	for key, value := range param.Fields {
 		p[key] = value
@@ -376,10 +376,10 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 
 		var op string
 		if strings.Contains(key, FilterRangeParamEndSuffix) {
-			key = strings.Replace(key, FilterRangeParamEndSuffix, "", -1)
+			key = strings.ReplaceAll(key, FilterRangeParamEndSuffix, "")
 			op = "<="
 		} else if strings.Contains(key, FilterRangeParamStartSuffix) {
-			key = strings.Replace(key, FilterRangeParamStartSuffix, "", -1)
+			key = strings.ReplaceAll(key, FilterRangeParamStartSuffix, "")
 			op = ">="
 		} else if len(value) > 1 {
 			op = "in"

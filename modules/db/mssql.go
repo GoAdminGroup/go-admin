@@ -116,7 +116,7 @@ func (db *Mssql) handleSqlBeforeExec(query string) string {
 func (db *Mssql) parseSql(sql string) string {
 	//下面的正则表达式匹配出SELECT和INSERT的关键字后分别做不同的处理，如有LIMIT则将LIMIT的关键字也匹配出
 	patten := `^\s*(?i)(SELECT)|(LIMIT\s*(\d+)\s*,\s*(\d+))`
-	if isMatchString(patten, sql) == false {
+	if !isMatchString(patten, sql) {
 		//fmt.Println("not matched..")
 		return sql
 	}
@@ -135,12 +135,12 @@ func (db *Mssql) parseSql(sql string) string {
 	switch keyword {
 	case "SELECT":
 		//不含LIMIT关键字则不处理
-		if len(res) < 2 || (strings.HasPrefix(res[index][0], "LIMIT") == false && strings.HasPrefix(res[index][0], "limit") == false) {
+		if len(res) < 2 || (!strings.HasPrefix(res[index][0], "LIMIT") && !strings.HasPrefix(res[index][0], "limit")) {
 			break
 		}
 
 		//不含LIMIT则不处理
-		if isMatchString("((?i)SELECT)(.+)((?i)LIMIT)", sql) == false {
+		if !isMatchString("((?i)SELECT)(.+)((?i)LIMIT)", sql) {
 			break
 		}
 
@@ -152,20 +152,20 @@ func (db *Mssql) parseSql(sql string) string {
 			//取order by 前面的字符串
 			queryExpr, _ := matchString("((?i)SELECT)(.+)((?i)ORDER BY)", sql)
 
-			if len(queryExpr) != 4 || strings.EqualFold(queryExpr[1], "SELECT") == false || strings.EqualFold(queryExpr[3], "ORDER BY") == false {
+			if len(queryExpr) != 4 || !strings.EqualFold(queryExpr[1], "SELECT") || !strings.EqualFold(queryExpr[3], "ORDER BY") {
 				break
 			}
 			selectStr = queryExpr[2]
 
 			//取order by表达式的值
 			orderbyExpr, _ := matchString("((?i)ORDER BY)(.+)((?i)LIMIT)", sql)
-			if len(orderbyExpr) != 4 || strings.EqualFold(orderbyExpr[1], "ORDER BY") == false || strings.EqualFold(orderbyExpr[3], "LIMIT") == false {
+			if len(orderbyExpr) != 4 || !strings.EqualFold(orderbyExpr[1], "ORDER BY") || !strings.EqualFold(orderbyExpr[3], "LIMIT") {
 				break
 			}
 			orderbyStr = orderbyExpr[2]
 		} else {
 			queryExpr, _ := matchString("((?i)SELECT)(.+)((?i)LIMIT)", sql)
-			if len(queryExpr) != 4 || strings.EqualFold(queryExpr[1], "SELECT") == false || strings.EqualFold(queryExpr[3], "LIMIT") == false {
+			if len(queryExpr) != 4 || !strings.EqualFold(queryExpr[1], "SELECT") || !strings.EqualFold(queryExpr[3], "LIMIT") {
 				break
 			}
 			selectStr = queryExpr[2]
@@ -174,7 +174,7 @@ func (db *Mssql) parseSql(sql string) string {
 		//取limit后面的取值范围
 		first, limit := 0, 0
 		for i := 1; i < len(res[index]); i++ {
-			if len(strings.TrimSpace(res[index][i])) == 0 {
+			if strings.TrimSpace(res[index][i]) == "" {
 				continue
 			}
 

@@ -81,8 +81,6 @@ func (h *Handler) Auth(ctx *context.Context) {
 	response.OkWithData(ctx, map[string]interface{}{
 		"url": h.config.GetIndexURL(),
 	})
-	return
-
 }
 
 // Logout delete the cookie.

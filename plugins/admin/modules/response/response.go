@@ -55,7 +55,7 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, bt
 	pageTitle, description, content := template.GetPageContentFromPageType(title, desc, msg, pt)
 
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
-	buf := template.Execute(template.ExecuteParam{
+	buf := template.Execute(&template.ExecuteParam{
 		User:     user,
 		TmplName: tmplName,
 		Tmpl:     tmpl,
@@ -73,11 +73,15 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, bt
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func Error(ctx *context.Context, msg string) {
-	ctx.JSON(http.StatusInternalServerError, map[string]interface{}{
+func Error(ctx *context.Context, msg string, datas ...map[string]interface{}) {
+	res := map[string]interface{}{
 		"code": http.StatusInternalServerError,
 		"msg":  language.Get(msg),
-	})
+	}
+	if len(datas) > 0 {
+		res["data"] = datas[0]
+	}
+	ctx.JSON(http.StatusInternalServerError, res)
 }
 
 func Denied(ctx *context.Context, msg string) {

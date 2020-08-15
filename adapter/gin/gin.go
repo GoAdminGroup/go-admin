@@ -82,9 +82,9 @@ func (gins *Gin) AddHandler(method, path string, handlers context.Handlers) {
 
 		for _, param := range c.Params {
 			if c.Request.URL.RawQuery == "" {
-				c.Request.URL.RawQuery += strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
+				c.Request.URL.RawQuery += strings.ReplaceAll(param.Key, ":", "") + "=" + param.Value
 			} else {
-				c.Request.URL.RawQuery += "&" + strings.Replace(param.Key, ":", "", -1) + "=" + param.Value
+				c.Request.URL.RawQuery += "&" + strings.ReplaceAll(param.Key, ":", "") + "=" + param.Value
 			}
 		}
 
@@ -129,7 +129,6 @@ func (gins *Gin) Redirect() {
 
 // SetContentType implements the method Adapter.SetContentType.
 func (gins *Gin) SetContentType() {
-	return
 }
 
 // Write implements the method Adapter.Write.

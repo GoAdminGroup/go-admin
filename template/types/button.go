@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"net/url"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 )
@@ -42,15 +43,20 @@ type DefaultButton struct {
 	TextColor template.HTML
 	Icon      string
 	Direction template.HTML
+	Group     bool
 }
 
 func GetDefaultButton(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
-	return defaultButton(title, "right", icon, action, colors...)
+	return defaultButton(title, "right", icon, action, false, colors...)
 }
 
-func defaultButton(title, direction template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
+func GetDefaultButtonGroup(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
+	return defaultButton(title, "right", icon, action, true, colors...)
+}
+
+func defaultButton(title, direction template.HTML, icon string, action Action, group bool, colors ...template.HTML) *DefaultButton {
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 
 	var color, textColor template.HTML
 	if len(colors) > 0 {
@@ -68,6 +74,7 @@ func defaultButton(title, direction template.HTML, icon string, action Action, c
 			Url:    node.Path,
 			Method: node.Method,
 		},
+		Group:     group,
 		Color:     color,
 		TextColor: textColor,
 		Icon:      icon,
@@ -76,7 +83,7 @@ func defaultButton(title, direction template.HTML, icon string, action Action, c
 }
 
 func GetColumnButton(title template.HTML, icon string, action Action, colors ...template.HTML) *DefaultButton {
-	return defaultButton(title, "", icon, action, colors...)
+	return defaultButton(title, "", icon, action, true, colors...)
 }
 
 func (b *DefaultButton) Content() (template.HTML, template.JS) {
@@ -97,12 +104,18 @@ func (b *DefaultButton) Content() (template.HTML, template.JS) {
 		style = template.HTML(`style="`) + addColor + template.HTML(`"`)
 	}
 
-	h := `<div class="btn-group pull-` + b.Direction + `" style="margin-right: 10px">
-                <a ` + style + ` class="` + template.HTML(b.Id) + ` btn btn-sm btn-default ` + b.Action.BtnClass() + `" ` + b.Action.BtnAttribute() + `>
+	h := template.HTML("")
+	if b.Group {
+		h += `<div class="btn-group pull-` + b.Direction + `" style="margin-right: 10px">`
+	}
+
+	h += `<a ` + style + ` class="` + template.HTML(b.Id) + ` btn btn-sm btn-default ` + b.Action.BtnClass() + `" ` + b.Action.BtnAttribute() + `>
                     <i class="fa ` + template.HTML(b.Icon) + `"></i>&nbsp;&nbsp;` + b.Title + `
-                </a>
-        </div>` + b.Action.ExtContent()
-	return h, b.Action.Js()
+                </a>`
+	if b.Group {
+		h += `</div>`
+	}
+	return h + b.Action.ExtContent(), b.Action.Js()
 }
 
 type ActionButton struct {
@@ -118,7 +131,7 @@ func GetActionButton(title template.HTML, action Action, ids ...string) *ActionB
 		id = "action-info-btn-" + utils.Uuid(10)
 	}
 
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 
 	return &ActionButton{
@@ -184,10 +197,8 @@ func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 			if len(items) > 0 {
 				btns = append(btns, btn)
 			}
-		} else {
-			if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
-				btns = append(btns, btn)
-			}
+		} else if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
+			btns = append(btns, btn)
 		}
 	}
 	return btns
@@ -225,6 +236,14 @@ func (b Buttons) CheckExist(name string) bool {
 	return false
 }
 
+func (b Buttons) Callbacks() []context.Node {
+	cbs := make([]context.Node, 0)
+	for _, btn := range b {
+		cbs = append(cbs, btn.GetAction().GetCallbacks())
+	}
+	return cbs
+}
+
 const (
 	NavBtnSiteName = "go_admin_site_navbtn"
 	NavBtnInfoName = "go_admin_info_navbtn"
@@ -256,7 +275,7 @@ type NavButton struct {
 func GetNavButton(title template.HTML, icon string, action Action, names ...string) *NavButton {
 
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 	name := ""
 
@@ -381,7 +400,7 @@ const (
 
 func GetDropDownItemButton(title template.HTML, action Action, names ...string) *NavDropDownItemButton {
 	id := btnUUID()
-	action.SetBtnId(id)
+	action.SetBtnId("." + id)
 	node := action.GetCallbacks()
 	name := ""
 

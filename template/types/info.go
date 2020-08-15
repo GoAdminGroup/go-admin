@@ -103,8 +103,8 @@ type Callbacks []context.Node
 func (c Callbacks) AddCallback(node context.Node) Callbacks {
 	if node.Path != "" && node.Method != "" && len(node.Handlers) > 0 {
 		for _, item := range c {
-			if strings.ToUpper(item.Path) == strings.ToUpper(node.Path) &&
-				strings.ToUpper(item.Method) == strings.ToUpper(node.Method) {
+			if strings.EqualFold(item.Path, node.Path) &&
+				strings.EqualFold(item.Method, node.Method) {
 				return c
 			}
 		}
@@ -125,7 +125,10 @@ func (r FieldModelValue) Value() string {
 }
 
 func (r FieldModelValue) First() string {
-	return r[0]
+	if len(r) > 0 {
+		return r[0]
+	}
+	return ""
 }
 
 // FieldDisplay is filter function of data.
@@ -659,26 +662,21 @@ func (wh WhereRaw) check() int {
 	for i := 0; i < len(wh.Raw); i++ {
 		if wh.Raw[i] == ' ' {
 			continue
-		} else {
-			if wh.Raw[i] == 'a' {
-				if len(wh.Raw) < i+3 {
-					break
-				} else {
-					if wh.Raw[i+1] == 'n' && wh.Raw[i+2] == 'd' {
-						index = i + 3
-					}
-				}
-			} else if wh.Raw[i] == 'o' {
-				if len(wh.Raw) < i+2 {
-					break
-				} else {
-					if wh.Raw[i+1] == 'r' {
-						index = i + 2
-					}
-				}
-			} else {
+		}
+		if wh.Raw[i] == 'a' {
+			if len(wh.Raw) < i+3 {
 				break
+			} else if wh.Raw[i+1] == 'n' && wh.Raw[i+2] == 'd' {
+				index = i + 3
 			}
+		} else if wh.Raw[i] == 'o' {
+			if len(wh.Raw) < i+2 {
+				break
+			} else if wh.Raw[i+1] == 'r' {
+				index = i + 2
+			}
+		} else {
+			break
 		}
 	}
 	return index
@@ -837,7 +835,7 @@ func (i *InfoPanel) AddButtonRaw(btn Button, action Action) *InfoPanel {
 }
 
 func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, color ...template.HTML) *InfoPanel {
-	i.addButton(GetDefaultButton(title, icon, action, color...)).
+	i.addButton(GetDefaultButtonGroup(title, icon, action, color...)).
 		addFooterHTML(action.FooterContent()).
 		addCallback(action.GetCallbacks())
 	return i
@@ -973,7 +971,7 @@ func (i *InfoPanel) AddColumn(head string, fun FieldFilterFn) *InfoPanel {
 func (i *InfoPanel) AddColumnButtons(head string, buttons ...Button) *InfoPanel {
 	var content, js template.HTML
 	for _, btn := range buttons {
-		btn.GetAction().SetBtnId(btn.ID())
+		btn.GetAction().SetBtnId("." + btn.ID())
 		btnContent, btnJs := btn.Content()
 		content += btnContent
 		js += template.HTML(btnJs)

@@ -65,7 +65,7 @@ func (r Router) Method() string {
 func (r Router) GetURL(value ...string) string {
 	u := r.Patten
 	for i := 0; i < len(value); i += 2 {
-		u = strings.Replace(u, ":__"+value[i], value[i+1], -1)
+		u = strings.ReplaceAll(u, ":__"+value[i], value[i+1])
 	}
 	return u
 }

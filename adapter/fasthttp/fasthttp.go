@@ -93,9 +93,9 @@ func (fast *Fasthttp) AddHandler(method, path string, handlers context.Handlers)
 
 		for key, value := range params {
 			if httpreq.URL.RawQuery == "" {
-				httpreq.URL.RawQuery += strings.Replace(key, ":", "", -1) + "=" + value
+				httpreq.URL.RawQuery += strings.ReplaceAll(key, ":", "") + "=" + value
 			} else {
-				httpreq.URL.RawQuery += "&" + strings.Replace(key, ":", "", -1) + "=" + value
+				httpreq.URL.RawQuery += "&" + strings.ReplaceAll(key, ":", "") + "=" + value
 			}
 		}
 

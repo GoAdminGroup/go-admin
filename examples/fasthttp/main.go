@@ -89,7 +89,7 @@ func main() {
 		_ = fasthttp.ListenAndServe(":8897", router.Handler)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")

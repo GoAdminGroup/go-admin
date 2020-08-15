@@ -3,7 +3,6 @@ package action
 import (
 	"encoding/json"
 	"html/template"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -26,11 +25,10 @@ func (a AjaxData) Add(m map[string]interface{}) AjaxData {
 
 func (a AjaxData) JSON() string {
 	b, _ := json.Marshal(a)
-	s := strings.Replace(string(b), `"{%id}"`, "{{.Id}}", -1)
-	s = strings.Replace(s, `"{%ids}"`, "{{.Ids}}", -1)
-	s = strings.Replace(s, `"{{.Ids}}"`, "{{.Ids}}", -1)
-	s = strings.Replace(s, `"{{.Id}}"`, "{{.Id}}", -1)
-	return s
+	return utils.ReplaceAll(string(b), `"{%id}"`, "{{.Id}}",
+		`"{%ids}"`, "{{.Ids}}",
+		`"{{.Ids}}"`, "{{.Ids}}",
+		`"{{.Id}}"`, "{{.Id}}")
 }
 
 type BaseAction struct {
@@ -39,7 +37,13 @@ type BaseAction struct {
 	JS      template.JS
 }
 
-func (base *BaseAction) SetBtnId(btnId string)        { base.BtnId = btnId }
+func (base *BaseAction) SetBtnId(btnId string) {
+	if btnId[0] != '.' && btnId[0] != '#' {
+		base.BtnId = "." + btnId
+	} else {
+		base.BtnId = btnId
+	}
+}
 func (base *BaseAction) Js() template.JS              { return base.JS }
 func (base *BaseAction) BtnClass() template.HTML      { return "" }
 func (base *BaseAction) BtnAttribute() template.HTML  { return "" }

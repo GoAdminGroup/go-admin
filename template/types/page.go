@@ -100,7 +100,7 @@ type NewPageParam struct {
 	NavButtonsJS   template.HTML
 }
 
-func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
+func (param *NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 	navBtnFooter := template.HTML("")
 	navBtn := template.HTML("")
 	btnJS := template.JS("")
@@ -127,7 +127,7 @@ func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 		navBtnFooter + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`))
 }
 
-func NewPage(param NewPageParam) *Page {
+func NewPage(param *NewPageParam) *Page {
 
 	if param.NavButtonsHTML == template.HTML("") {
 		param.NavButtonsHTML, param.NavButtonsJS = param.NavButtonsAndJS()
@@ -247,6 +247,21 @@ type Panel struct {
 	RefreshInterval []int
 
 	Callbacks Callbacks
+}
+
+type Component interface {
+	GetContent() template.HTML
+	GetJS() template.JS
+	GetCSS() template.CSS
+	GetCallbacks() Callbacks
+}
+
+func (p Panel) AddComponent(comp Component) Panel {
+	p.JS += comp.GetJS()
+	p.CSS += comp.GetCSS()
+	p.Content += comp.GetContent()
+	p.Callbacks = append(p.Callbacks, comp.GetCallbacks()...)
+	return p
 }
 
 func (p Panel) AddJS(js template.JS) Panel {

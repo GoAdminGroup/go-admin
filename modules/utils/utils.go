@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	textTmpl "text/template"
 	"time"
 
 	"github.com/NebulousLabs/fastrand"
@@ -88,14 +89,14 @@ func InArray(arr []string, str string) bool {
 func WrapURL(u string) string {
 	uarr := strings.Split(u, "?")
 	if len(uarr) < 2 {
-		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+		return url.QueryEscape(strings.ReplaceAll(u, "/", "_"))
 	}
 	v, err := url.ParseQuery(uarr[1])
 	if err != nil {
-		return url.QueryEscape(strings.Replace(u, "/", "_", -1))
+		return url.QueryEscape(strings.ReplaceAll(u, "/", "_"))
 	}
-	return url.QueryEscape(strings.Replace(uarr[0], "/", "_", -1)) + "?" +
-		strings.Replace(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}", -1)
+	return url.QueryEscape(strings.ReplaceAll(uarr[0], "/", "_")) + "?" +
+		strings.ReplaceAll(v.Encode(), "%7B%7B.Id%7D%7D", "{{.Id}}")
 }
 
 func JSON(a interface{}) string {
@@ -109,6 +110,11 @@ func JSON(a interface{}) string {
 func ParseBool(s string) bool {
 	b1, _ := strconv.ParseBool(s)
 	return b1
+}
+
+func ReplaceAll(s string, oldnew ...string) string {
+	repl := strings.NewReplacer(oldnew...)
+	return repl.Replace(s)
 }
 
 func PackageName(v interface{}) string {
@@ -169,6 +175,38 @@ func ParseTime(stringTime string) time.Time {
 	return theTime
 }
 
+func ParseHTML(name, tmpl string, param interface{}) template.HTML {
+	t := template.New(name)
+	t, err := t.Parse(tmpl)
+	if err != nil {
+		fmt.Println("utils parseHTML error", err)
+		return ""
+	}
+	buf := new(bytes.Buffer)
+	err = t.Execute(buf, param)
+	if err != nil {
+		fmt.Println("utils parseHTML error", err)
+		return ""
+	}
+	return template.HTML(buf.String())
+}
+
+func ParseText(name, tmpl string, param interface{}) string {
+	t := textTmpl.New(name)
+	t, err := t.Parse(tmpl)
+	if err != nil {
+		fmt.Println("utils parseHTML error", err)
+		return ""
+	}
+	buf := new(bytes.Buffer)
+	err = t.Execute(buf, param)
+	if err != nil {
+		fmt.Println("utils parseHTML error", err)
+		return ""
+	}
+	return buf.String()
+}
+
 func CompareVersion(src, toCompare string) bool {
 	if toCompare == "" {
 		return false
@@ -186,7 +224,7 @@ func CompareVersion(src, toCompare string) bool {
 		op = srcs[0]
 	}
 
-	toCompare = strings.Replace(toCompare, "v", "", -1)
+	toCompare = strings.ReplaceAll(toCompare, "v", "")
 
 	if op == "=" {
 		return srcs[1] == toCompare
@@ -196,7 +234,7 @@ func CompareVersion(src, toCompare string) bool {
 		return true
 	}
 
-	toCompareArr := strings.Split(strings.Replace(toCompare, "v", "", -1), ".")
+	toCompareArr := strings.Split(strings.ReplaceAll(toCompare, "v", ""), ".")
 	for i := 0; i < len(srcArr); i++ {
 		v, err := strconv.Atoi(srcArr[i])
 		if err != nil {
@@ -238,16 +276,6 @@ const (
 	PByte = TByte * 1024
 	EByte = PByte * 1024
 )
-
-var bytesSizeTable = map[string]uint64{
-	"b":  Byte,
-	"kb": KByte,
-	"mb": MByte,
-	"gb": GByte,
-	"tb": TByte,
-	"pb": PByte,
-	"eb": EByte,
-}
 
 func logn(n, b float64) float64 {
 	return math.Log(n) / math.Log(b)
@@ -390,6 +418,10 @@ func DownloadTo(url, output string) error {
 	}()
 
 	file, err := os.Create(output)
+
+	if err != nil {
+		return err
+	}
 
 	_, err = io.Copy(file, res.Body)
 

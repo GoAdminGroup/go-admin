@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -145,10 +146,14 @@ type FormField struct {
 	CustomJs      template.JS   `json:"custom_js"`
 	CustomCss     template.CSS  `json:"custom_css"`
 
-	Editable    bool `json:"editable"`
-	NotAllowAdd bool `json:"not_allow_add"`
-	Must        bool `json:"must"`
-	Hide        bool `json:"hide"`
+	Editable         bool `json:"editable"`
+	NotAllowEdit     bool `json:"not_allow_edit"`
+	NotAllowAdd      bool `json:"not_allow_add"`
+	DisplayButNotAdd bool `json:"display_but_not_add"`
+	Must             bool `json:"must"`
+	Hide             bool `json:"hide"`
+	CreateHide       bool `json:"create_hide"`
+	EditHide         bool `json:"edit_hide"`
 
 	Width int `json:"width"`
 
@@ -366,6 +371,8 @@ type FormPanel struct {
 	Responder Responder `json:"responder"`
 
 	Wrapper ContentWrapper `json:"wrapper"`
+
+	HideSideBar bool `json:"hide_side_bar"`
 
 	processChains DisplayProcessFnChains
 
@@ -750,13 +757,39 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 	return f
 }
 
+// FieldNotAllowEdit means when update record the field can not be edited but will still be displayed and submitted.
 func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
 
+// FieldDisableEdit means when update record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableEdit() *FormPanel {
+	f.FieldList[f.curFieldListIndex].NotAllowEdit = true
+	return f
+}
+
+// FieldNotAllowAdd means when create record the field can not be edited, displayed and submitted.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
+	return f
+}
+
+// FieldDisplayButNotAdd means when create record the field can not be edited but will still be displayed and submitted.
+func (f *FormPanel) FieldDisplayButNotAdd() *FormPanel {
+	f.FieldList[f.curFieldListIndex].DisplayButNotAdd = true
+	return f
+}
+
+// FieldHideWhenCreate means when create record the field can not be edited and displayed, but will be submitted.
+func (f *FormPanel) FieldHideWhenCreate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].CreateHide = true
+	return f
+}
+
+// FieldHideWhenUpdate means when update record the field can not be edited and displayed, but will be submitted.
+func (f *FormPanel) FieldHideWhenUpdate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].EditHide = true
 	return f
 }
 
@@ -801,6 +834,33 @@ func (f *FormPanel) FieldDefaultOptionDelimiter(delimiter string) *FormPanel {
 
 func (f *FormPanel) FieldPostFilterFn(post PostFieldFilterFn) *FormPanel {
 	f.FieldList[f.curFieldListIndex].PostFilterFn = post
+	return f
+}
+
+func (f *FormPanel) FieldNow() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		return time.Now().Format("2006-01-02 15:04:05")
+	}
+	return f
+}
+
+func (f *FormPanel) FieldNowWhenUpdate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		if value.IsUpdate() {
+			return time.Now().Format("2006-01-02 15:04:05")
+		}
+		return value.Value.Value()
+	}
+	return f
+}
+
+func (f *FormPanel) FieldNowWhenInsert() *FormPanel {
+	f.FieldList[f.curFieldListIndex].PostFilterFn = func(value PostFieldModel) interface{} {
+		if value.IsCreate() {
+			return time.Now().Format("2006-01-02 15:04:05")
+		}
+		return value.Value.Value()
+	}
 	return f
 }
 
@@ -952,31 +1012,15 @@ func searchJS(ext template.JS, url string, handler Handler, delay ...int) (templ
 		}
 }
 
-func parseHTML(name string, param interface{}) template.HTML {
-	t := template.New(name)
-	t, err := t.Parse(tmpls[name])
-	if err != nil {
-		logger.Error(err)
-		return ""
-	}
-	buf := new(bytes.Buffer)
-	err = t.Execute(buf, param)
-	if err != nil {
-		logger.Error(err)
-		return ""
-	}
-	return template.HTML(buf.String())
-}
-
 func chooseCustomJS(field string, js template.HTML) template.HTML {
-	return parseHTML("choose_custom", struct {
+	return utils.ParseHTML("choose_custom", tmpls["choose_custom"], struct {
 		Field template.JS
 		JS    template.JS
 	}{Field: template.JS(field), JS: template.JS(js)})
 }
 
 func chooseMapJS(field string, m map[string]LinkField) template.HTML {
-	return parseHTML("choose_map", struct {
+	return utils.ParseHTML("choose_map", tmpls["choose_map"], struct {
 		Field template.JS
 		Data  map[string]LinkField
 	}{
@@ -986,7 +1030,7 @@ func chooseMapJS(field string, m map[string]LinkField) template.HTML {
 }
 
 func chooseJS(field, chooseField, val string, value template.HTML) template.HTML {
-	return parseHTML("choose", struct {
+	return utils.ParseHTML("choose", tmpls["choose"], struct {
 		Field       template.JS
 		ChooseField template.JS
 		Val         template.JS
@@ -1012,7 +1056,7 @@ func chooseAjax(field, chooseField, url string, handler Handler, js ...template.
 		passValue = template.JS(js[1])
 	}
 
-	return parseHTML("choose_ajax", struct {
+	return utils.ParseHTML("choose_ajax", tmpls["choose_ajax"], struct {
 			Field       template.JS
 			ChooseField template.JS
 			PassValue   template.JS
@@ -1037,7 +1081,7 @@ func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	return parseHTML("choose_hide", struct {
+	return utils.ParseHTML("choose_hide", tmpls["choose_hide"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string
@@ -1053,7 +1097,7 @@ func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
 		return ""
 	}
 
-	return parseHTML("choose_show", struct {
+	return utils.ParseHTML("choose_show", tmpls["choose_show"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string
@@ -1069,7 +1113,7 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 		return ""
 	}
 
-	return parseHTML("choose_disable", struct {
+	return utils.ParseHTML("choose_disable", tmpls["choose_disable"], struct {
 		Field        template.JS
 		Value        template.JS
 		ChooseFields []string
@@ -1190,6 +1234,11 @@ func (f *FormPanel) SetWrapper(wrapper ContentWrapper) *FormPanel {
 	return f
 }
 
+func (f *FormPanel) SetHideSideBar() *FormPanel {
+	f.HideSideBar = true
+	return f
+}
+
 func (f *FormPanel) SetFormNewTitle(title template.HTML) *FormPanel {
 	f.FormNewTitle = title
 	return f
@@ -1221,6 +1270,8 @@ type AjaxData struct {
 	ErrorTitle     string
 	ErrorText      string
 	SuccessJumpURL string
+	DisableJump    bool
+	SuccessJS      string
 }
 
 func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
@@ -1231,6 +1282,15 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		jump := modules.AorB(data.SuccessJumpURL != "", `"`+data.SuccessJumpURL+`"`, "data.data.url")
 		text := modules.AorB(data.SuccessText != "", `text:"`+data.SuccessText+`",`, "")
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
+		jumpURL := ""
+		if !data.DisableJump {
+			jumpURL = `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
+		} else {
+			jumpURL = `
+		if (data.data && data.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.data.token)
+		}`
+		}
 		f.AjaxSuccessJS = template.JS(`
 	if (typeof (data) === "string") {
 	    data = JSON.parse(data);
@@ -1245,9 +1305,13 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			confirmButtonText: '` + language.Get("got it") + `',
         }, function() {
 			$(".modal-backdrop.fade.in").remove();
-			$.pjax({url: ` + jump + `, container: '#pjax-container'});
+			` + jumpURL + `
+			` + data.SuccessJS + `
         });
 	} else {
+		if (data.data && data.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.data.token);
+		}
 		swal({
 			type: "error",
 			title: ` + errorMsg + `,
@@ -1265,6 +1329,9 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		f.AjaxErrorJS = template.JS(`
 	if (data.responseText !== "") {
+		if (data.responseJSON.data && data.responseJSON.data.token !== "") {
+			$("input[name='__go_admin_t_']").val(data.responseJSON.data.token)
+		}
 		swal({
 			type: "error",
 			title: ` + errorMsg + `,
@@ -1272,7 +1339,7 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 			showCancelButton: false,
 			confirmButtonColor: "#3c8dbc",
 			confirmButtonText: '` + language.Get("got it") + `',
-        })								
+        })
 	} else {
 		swal({
 			type: "error",
@@ -1345,7 +1412,10 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 			list := make(FormFields, 0)
 			for _, fieldName := range group {
 				field := f.FieldList.FindByFieldName(fieldName)
-				if field != nil && field.isNotBelongToATable() {
+				if field != nil && field.isNotBelongToATable() && !field.NotAllowEdit {
+					if !field.Hide {
+						field.Hide = field.EditHide
+					}
 					if field.FormType.IsTable() {
 						for z := 0; z < len(field.TableFields); z++ {
 							rowValue := field.TableFields[z].GetRawValue(columns, res[field.TableFields[z].Field])
@@ -1370,7 +1440,7 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 		}
 
 		if len(groupFormList) > 0 && !hasPK {
-			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(FormField{
+			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(&FormField{
 				Head:       pk,
 				FieldClass: pk,
 				Field:      pk,
@@ -1394,7 +1464,10 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 		for _, fieldName := range group {
 			field := f.FieldList.FindByFieldName(fieldName)
 			if field != nil && field.isNotBelongToATable() && field.allowAdd() {
-				field.Editable = true
+				field.Editable = !field.DisplayButNotAdd
+				if !field.Hide {
+					field.Hide = field.CreateHide
+				}
 				if field.FormType.IsTable() {
 					for z := 0; z < len(field.TableFields); z++ {
 						if len(sql) > 0 {
@@ -1425,22 +1498,27 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 		list  = make(FormFields, 0)
 		hasPK = false
 	)
-	for _, field := range f.FieldList {
-		rowValue := field.GetRawValue(columns, res[field.Field])
-		if field.FatherField != "" {
-			f.FieldList.FindTableField(field.Field, field.FatherField).UpdateValue(id, rowValue, res, sql())
-		} else if field.FormType.IsTable() {
-			list = append(list, field)
-		} else {
-			list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
-		}
+	for i := 0; i < len(f.FieldList); i++ {
+		if !f.FieldList[i].NotAllowEdit {
+			if !f.FieldList[i].Hide {
+				f.FieldList[i].Hide = f.FieldList[i].EditHide
+			}
+			rowValue := f.FieldList[i].GetRawValue(columns, res[f.FieldList[i].Field])
+			if f.FieldList[i].FatherField != "" {
+				f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateValue(id, rowValue, res, sql())
+			} else if f.FieldList[i].FormType.IsTable() {
+				list = append(list, f.FieldList[i])
+			} else {
+				list = append(list, *(f.FieldList[i].UpdateValue(id, rowValue, res, sql())))
+			}
 
-		if field.Field == pk {
-			hasPK = true
+			if f.FieldList[i].Field == pk {
+				hasPK = true
+			}
 		}
 	}
 	if !hasPK {
-		list = list.Add(FormField{
+		list = list.Add(&FormField{
 			Head:       pk,
 			FieldClass: pk,
 			Field:      pk,
@@ -1454,22 +1532,25 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 
 func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
 	var list = make(FormFields, 0)
-	for _, v := range f.FieldList {
-		if v.allowAdd() {
-			v.Editable = true
-			if v.FatherField != "" {
+	for i := 0; i < len(f.FieldList); i++ {
+		if f.FieldList[i].allowAdd() {
+			f.FieldList[i].Editable = !f.FieldList[i].DisplayButNotAdd
+			if !f.FieldList[i].Hide {
+				f.FieldList[i].Hide = f.FieldList[i].CreateHide
+			}
+			if f.FieldList[i].FatherField != "" {
 				if len(sql) > 0 {
-					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(sql[0]())
+					f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateDefaultValue(sql[0]())
 				} else {
-					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(nil)
+					f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateDefaultValue(nil)
 				}
-			} else if v.FormType.IsTable() {
-				list = append(list, v)
+			} else if f.FieldList[i].FormType.IsTable() {
+				list = append(list, f.FieldList[i])
 			} else {
 				if len(sql) > 0 {
-					list = append(list, *(v.UpdateDefaultValue(sql[0]())))
+					list = append(list, *(f.FieldList[i].UpdateDefaultValue(sql[0]())))
 				} else {
-					list = append(list, *(v.UpdateDefaultValue(nil)))
+					list = append(list, *(f.FieldList[i].UpdateDefaultValue(nil)))
 				}
 			}
 		}
@@ -1552,8 +1633,8 @@ func (f FormFields) FillCustomContent() FormFields {
 	return f
 }
 
-func (f FormFields) Add(field FormField) FormFields {
-	return append(f, field)
+func (f FormFields) Add(field *FormField) FormFields {
+	return append(f, *field)
 }
 
 func (f FormFields) RemoveNotShow() FormFields {

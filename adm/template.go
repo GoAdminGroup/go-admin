@@ -9,6 +9,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 )
 
 func getThemeTemplate(moduleName, themeName string) {
@@ -46,6 +48,8 @@ func downloadTo(url, output string) {
 	}()
 
 	file, err := os.Create(output)
+
+	checkError(err)
 
 	_, err = io.Copy(file, res.Body)
 
@@ -121,9 +125,8 @@ func replaceContents(fileDir, moduleName, themeName string) {
 			checkError(err)
 			content := string(buf)
 
-			newContent := strings.Replace(content, "github.com/GoAdminGroup/themes/adminlte", moduleName, -1)
-			newContent = strings.Replace(newContent, "adminlte", themeName, -1)
-			newContent = strings.Replace(newContent, "Adminlte", strings.Title(themeName), -1)
+			newContent := utils.ReplaceAll(content, "github.com/GoAdminGroup/themes/adminlte", moduleName,
+				"adminlte", themeName, "Adminlte", strings.Title(themeName))
 
 			checkError(ioutil.WriteFile(path, []byte(newContent), 0))
 		}

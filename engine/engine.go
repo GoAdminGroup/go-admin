@@ -124,11 +124,11 @@ func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
 
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(cfg).initDatabase()
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // setConfig set the config of engine.
-func (eng *Engine) setConfig(cfg config.Config) *Engine {
+func (eng *Engine) setConfig(cfg *config.Config) *Engine {
 	eng.config = config.Set(cfg)
 	sysCheck, themeCheck := template.CheckRequirements()
 	if !sysCheck {
@@ -144,17 +144,20 @@ func (eng *Engine) setConfig(cfg config.Config) *Engine {
 
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
-	return eng.setConfig(config.ReadFromJson(path)).initDatabase()
+	cfg := config.ReadFromJson(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // AddConfigFromYAML set the global config from yaml file.
 func (eng *Engine) AddConfigFromYAML(path string) *Engine {
-	return eng.setConfig(config.ReadFromYaml(path)).initDatabase()
+	cfg := config.ReadFromYaml(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // AddConfigFromINI set the global config from ini file.
 func (eng *Engine) AddConfigFromINI(path string) *Engine {
-	return eng.setConfig(config.ReadFromINI(path)).initDatabase()
+	cfg := config.ReadFromINI(path)
+	return eng.setConfig(&cfg).initDatabase()
 }
 
 // InitDatabase initialize all database connection.
@@ -300,7 +303,7 @@ func (eng *Engine) deferHandler(conn db.Connection) context.Handler {
 
 			if err := recover(); err != nil {
 				logger.Error(err)
-				logger.Error(string(debug.Stack()[:]))
+				logger.Error(string(debug.Stack()))
 
 				var (
 					errMsg string
@@ -506,7 +509,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User:         user,
 			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:        panel.GetContent(eng.config.IsProductionEnvironment()),
@@ -542,11 +545,9 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
 			return
-		} else {
-			if err := t.Execute(cbuf, data); err != nil {
-				eng.errorPanelHTML(ctx, cbuf, err)
-				return
-			}
+		} else if err := t.Execute(cbuf, data); err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		}
 
 		var (
@@ -556,7 +557,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
@@ -605,11 +606,9 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 		if err != nil {
 			eng.errorPanelHTML(ctx, cbuf, err)
 			return
-		} else {
-			if err := t.Execute(cbuf, data); err != nil {
-				eng.errorPanelHTML(ctx, cbuf, err)
-				return
-			}
+		} else if err := t.Execute(cbuf, data); err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
 		}
 
 		var (
@@ -619,7 +618,7 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
@@ -645,7 +644,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 	user := auth.Auth(ctx)
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
-	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 		User:         user,
 		Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:        template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),

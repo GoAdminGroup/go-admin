@@ -11,7 +11,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gin"                    // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}" // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}" // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                       // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -55,7 +55,7 @@ func startServer() {
 
 	_ = r.Run(":{{.Port}}")
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -72,7 +72,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego"                   // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -115,7 +115,7 @@ func startServer() {
 	beego.BConfig.Listen.HTTPPort = {{.Port}}
 	go app.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -133,7 +133,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -179,7 +179,7 @@ func startServer() {
 		_ = bu.Serve()
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -199,7 +199,7 @@ import (
 	"strings"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/chi"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -244,7 +244,7 @@ func startServer() {
 		_ = http.ListenAndServe(":{{.Port}}", r)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -282,7 +282,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/echo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -323,7 +323,7 @@ func startServer() {
 
 	go e.Logger.Fatal(e.Start(":{{.Port}}"))
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -340,7 +340,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/fasthttp"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -384,7 +384,7 @@ func startServer() {
 		_ = fasthttp.ListenAndServe(":{{.Port}}", router.Handler)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -401,7 +401,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -443,7 +443,7 @@ func startServer() {
 	s.SetPort({{.Port}})
 	go s.Run()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -461,7 +461,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -504,7 +504,7 @@ func startServer() {
 		_ = http.ListenAndServe(":{{.Port}}", app)
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
@@ -521,7 +521,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/iris"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.Driver}}"  // sql driver
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
 	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
 
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -568,7 +568,7 @@ func startServer() {
 		_ = app.Run(iris.Addr(":{{.Port}}"))
 	}()
 
-	quit := make(chan os.Signal)
+	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
