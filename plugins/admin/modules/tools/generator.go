@@ -282,8 +282,12 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 		if !strings.Contains(tablesContent, `"`+tables[i]+`"`) {
 			tableStr += fmt.Sprintf(`
 	"%s": Get%sTable, `, tables[i], strings.Title(camelcase(tables[i])))
-			commentStr += fmt.Sprintf(`
-	// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
+
+			if commentStr != "" {
+				commentStr += `
+`
+			}
+			commentStr += fmt.Sprintf(`// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
 		}
 	}
 
@@ -304,14 +308,16 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 		keep2 := `,
 
 	// ` + tablesEnd
-		replacer2 := strings.NewReplacer(keep, keep, keep2, keep2, `//
+		replacer2 := strings.NewReplacer(keep, keep, keep2, keep2,
+			`//
 //
 `, "//", `//
 
 //`, "//", `//
-// "`, `// "`, `,
+// "`, `// "`,
 
-`, ",", `,
+			`,
+
 `, ",")
 		content = replacer2.Replace(tablesContent)
 	} else {
