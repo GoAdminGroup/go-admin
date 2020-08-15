@@ -89,7 +89,7 @@
                 $(".pk").val(data.pk);
                 $(".path").val(data.path);
                 $("select.conn").val(data.conn).select2();
-                conn_req($("select.table"), false, "select");
+                conn_req_refresh($("select.table"), false, "select");
                 setTimeout(function () {
                     $("select.table").val(data.table).select2();
                 }, 2000);
@@ -290,6 +290,57 @@
             data.hide_back_button = $('input[name="hide_back_button"]').val();
 
             return JSON.stringify(data)
+        }
+
+        function conn_req_refresh(selectObj, box, event) {
+            $.ajax({
+                url: "\/admin\/operation\/_tool_choose_conn",
+                type: 'post',
+                dataType: 'text',
+                data: {
+                    'value': $("select.conn").val(),
+
+                    'event': event
+                },
+                success: function (data) {
+                    if (typeof (data) === "string") {
+                        data = JSON.parse(data);
+                    }
+                    if (data.code === 0) {
+
+
+                        if (selectObj.length > 0) {
+                            if (typeof (data.data) === "object") {
+                                if (box) {
+                                    conn_updateBoxSelections(selectObj, data.data)
+                                } else {
+                                    if (typeof (selectObj.attr("multiple")) !== "undefined") {
+                                        selectObj.html("");
+                                    }
+                                    selectObj.select2({
+                                        data: data.data
+                                    });
+                                }
+                            } else {
+                                if (box) {
+                                    selectObj.val(data.data).select2()
+                                } else {
+
+                                }
+                            }
+                        } else {
+                            $('.table').val(data.data);
+                        }
+
+
+                    } else {
+                        swal(data.msg, '', 'error');
+                    }
+                },
+                error: function () {
+                    alert('error')
+                }
+            });
         }
     </script>
     <style>
