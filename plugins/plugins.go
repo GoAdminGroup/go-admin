@@ -378,6 +378,15 @@ func (pp Plugins) Exist(p Plugin) bool {
 }
 
 func FindByName(name string) (Plugin, bool) {
+	for _, v := range pluginList {
+		if v.Name() == name {
+			return v, true
+		}
+	}
+	return nil, false
+}
+
+func FindByNameAll(name string) (Plugin, bool) {
 	for _, v := range allPluginList {
 		if v.Name() == name {
 			return v, true

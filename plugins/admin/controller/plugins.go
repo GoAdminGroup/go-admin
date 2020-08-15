@@ -167,7 +167,7 @@ func (h *Handler) PluginDetail(ctx *context.Context) {
 
 	name := ctx.Query("name")
 
-	plug, exist := plugins.FindByName(name)
+	plug, exist := plugins.FindByNameAll(name)
 	if !exist {
 		ctx.JSON(http.StatusOK, gin.H{
 			"code": 400,
@@ -338,7 +338,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		return
 	}
 
-	plug, exist := plugins.FindByName(name)
+	plug, exist := plugins.FindByNameAll(name)
 
 	if !exist {
 		ctx.JSON(http.StatusOK, map[string]interface{}{
