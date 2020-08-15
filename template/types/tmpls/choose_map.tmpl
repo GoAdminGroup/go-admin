@@ -5,7 +5,7 @@
 
             {{if $object.Hide}}
 
-            if (e.params.data.text === "{{$val}}") {
+            if (e.params.data.text === "{{$val}}" || e.params.data.id === "{{$val}}") {
                 $("label[for='{{$object.Field}}']").parent().hide()
             } else {
                 $("label[for='{{$object.Field}}']").parent().show()
@@ -13,7 +13,7 @@
 
             {{else if $object.Disable}}
 
-            if (e.params.data.text === "{{$val}}") {
+            if (e.params.data.text === "{{$val}}" || e.params.data.id === "{{$val}}") {
                 $("label[for='{{$object.Field}}']").prop('disabled', true);
             } else {
                 $("label[for='{{$object.Field}}']").prop('disabled', false);
@@ -21,7 +21,7 @@
 
             {{else}}
 
-            if (e.params.data.text === "{{$val}}") {
+            if (e.params.data.text === "{{$val}}" || e.params.data.id === "{{$val}}") {
                 if ($("select.{{$object.Field}}").length > 0) {
                     $("select.{{$object.Field}}").val("{{$object.Value}}").select2()
                 } else {

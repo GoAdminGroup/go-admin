@@ -1454,8 +1454,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	// Info table generate options
 	// ================================
 
-	formList.AddField(lgWithScore("table title", "tool"), "table_title", db.Varchar, form.Text)
-	formList.AddField(lgWithScore("table description", "tool"), "table_description", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("title", "tool"), "table_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("description", "tool"), "table_description", db.Varchar, form.Text)
 
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "filter area", "hide_filter_area", "n", 2)
@@ -1548,8 +1548,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	// Form generate options
 	// ================================
 
-	formList.AddField(lgWithScore("form title", "tool"), "form_title", db.Varchar, form.Text)
-	formList.AddField(lgWithScore("form description", "tool"), "form_description", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("title", "tool"), "form_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("description", "tool"), "form_description", db.Varchar, form.Text)
 
 	formList.AddRow(func(panel *types.FormPanel) {
 		addSwitchForTool(panel, "continue edit checkbox", "hide_continue_edit_check_box", "n", 2)
@@ -1613,6 +1613,37 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 		})
 	}).FieldInputWidth(11)
 
+	// Detail page generate options
+	// ================================
+
+	formList.AddField(lgWithScore("title", "tool"), "detail_title", db.Varchar, form.Text)
+	formList.AddField(lgWithScore("description", "tool"), "detail_description", db.Varchar, form.Text)
+
+	formList.AddField(lgWithScore("detail display", "tool"), "detail_display", db.Varchar, form.SelectSingle).
+		FieldOptions(types.FieldOptions{
+			{Text: lgWithScore("follow list page", "tool"), Value: "0"},
+			{Text: lgWithScore("inherit from list page", "tool"), Value: "1"},
+			{Text: lgWithScore("independent from list page", "tool"), Value: "2"},
+		}).
+		FieldDefault("0").
+		FieldOnChooseHide("0", "detail_title", "detail_description", "fields_detail")
+
+	formList.AddTable(lgWithScore("field", "tool"), "fields_detail", func(pa *types.FormPanel) {
+		pa.AddField(lgWithScore("title", "tool"), "detail_field_head", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("field name", "tool"), "detail_field_name", db.Varchar, form.Text).FieldHideLabel().
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{""}
+			})
+		pa.AddField(lgWithScore("db type", "tool"), "detail_field_db_type", db.Varchar, form.SelectSingle).
+			FieldOptions(databaseTypeOptions()).
+			FieldDisplay(func(value types.FieldModel) interface{} {
+				return []string{"Int"}
+			})
+	}).FieldInputWidth(11)
+
 	formList.SetTabGroups(types.
 		NewTabGroups("conn", "table", "package", "pk", "permission", "extra_import_package", "path", "extra_code").
 		AddGroup("table_title", "table_description", "hide_filter_area", "filter_form_layout",
@@ -1622,9 +1653,10 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			"fields").
 		AddGroup("form_title", "form_description", "hide_continue_edit_check_box", "hide_reset_button",
 			"hide_continue_new_check_box", "hide_back_button",
-			"fields_form")).
+			"fields_form").
+		AddGroup("detail_display", "detail_title", "detail_description", "fields_detail")).
 		SetTabHeaders(lgWithScore("basic info", "tool"), lgWithScore("table info", "tool"),
-			lgWithScore("form info", "tool"))
+			lgWithScore("form info", "tool"), lgWithScore("detail info", "tool"))
 
 	formList.SetTable("tool").
 		SetTitle(lgWithScore("tool", "tool")).
@@ -1701,6 +1733,18 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			}
 		}
 
+		detailFields := make(tools.Fields, len(values["detail_field_head"]))
+
+		for i := 0; i < len(values["detail_field_head"]); i++ {
+			detailFields[i] = tools.Field{
+				Head:   values["detail_field_head"][i],
+				Name:   values["detail_field_name"][i],
+				DBType: values["detail_field_db_type"][i],
+			}
+		}
+
+		detailDisplay, _ := strconv.ParseUint(values.Get("detail_display"), 10, 64)
+
 		err := tools.Generate(tools.NewParamWithFields(tools.Config{
 			Connection:               connName,
 			Driver:                   s.c.Databases[connName].Driver,
@@ -1723,13 +1767,16 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			FilterFormLayout:         form.GetLayoutFromString(values.Get("filter_form_layout")),
 			Schema:                   values.Get("schema"),
 			Output:                   output,
+			DetailDisplay:            uint8(detailDisplay),
 			FormTitle:                values.Get("form_title"),
 			FormDescription:          values.Get("form_description"),
+			DetailTitle:              values.Get("detail_title"),
+			DetailDescription:        values.Get("detail_description"),
 			TableTitle:               values.Get("table_title"),
 			TableDescription:         values.Get("table_description"),
 			ExtraImport:              extraImport,
 			ExtraCode:                escape(values.Get("extra_code")),
-		}, fields, formFields))
+		}, fields, formFields, detailFields))
 
 		if err != nil {
 			return err

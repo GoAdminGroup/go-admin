@@ -320,10 +320,7 @@ var en = LangSet{
 	"tool.back button":            "Back Button",
 	"tool.generate":               "Generate",
 	"tool.generated tables":       "Generated Tables",
-	"tool.table title":            "Table Title",
-	"tool.table description":      "Table Description",
-	"tool.form title":             "Form Title",
-	"tool.form description":       "Form Description",
+	"tool.description":            "Description",
 	"tool.label":                  "Label",
 	"tool.image":                  "Image",
 	"tool.bool":                   "Bool",
@@ -350,6 +347,12 @@ var en = LangSet{
 
 	"tool.generate table model success": "generate success",
 	"tool.generate table model fail":    "generate fail",
+
+	"tool.detail display":             "Display",
+	"tool.detail info":                "Detail Info",
+	"tool.follow list page":           "Follow List Page",
+	"tool.inherit from list page":     "Inherit From List Page",
+	"tool.independent from list page": "Independent From List Page",
 
 	"generator.query":                 "Query",
 	"generator.show edit form page":   "Show Edit Form Page",

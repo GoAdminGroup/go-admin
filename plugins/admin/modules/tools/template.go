@@ -61,6 +61,21 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 
 	formList.SetTable("{{.TableName}}").SetTitle("{{.FormTitle}}").SetDescription("{{.FormDescription}}")
 
+
+	{{if eq .DetailDisplay 1}}
+		detail := {{.Table}}.GetDetailFromInfo()
+	{{else if eq .DetailDisplay 2}}
+		detail := {{.Table}}.GetDetail()
+	{{end}}
+
+	{{- range $key, $field := .DetailFields}}
+	detail.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}})
+	{{- end}}
+
+	{{if ne .DetailDisplay 0}}
+	detail.SetTable("{{.TableName}}").SetTitle("{{.TablePageTitle}}").SetDescription("{{.TableDescription}}")
+	{{end}}
+
 	{{.ExtraCode}}
 
 	return {{.Table}}
