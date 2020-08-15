@@ -1125,6 +1125,9 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 }
 
 func decorateChooseValue(val string) template.JS {
+	if val == "" {
+		return `""`
+	}
 	if val[0] != '"' {
 		if strings.Contains(val, "$(this)") {
 			return template.JS(val)

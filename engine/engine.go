@@ -421,7 +421,7 @@ func (eng *Engine) initNavJumpButtonParams() []navJumpButtonParam {
 			Title:      "site setting",
 			TitleScore: "config",
 		}, {
-			Exist:      !eng.config.HideToolEntrance,
+			Exist:      !eng.config.HideToolEntrance && eng.config.IsNotProductionEnvironment(),
 			Icon:       icon.Wrench,
 			BtnName:    types.NavBtnToolName,
 			URL:        "/info/generate/new",

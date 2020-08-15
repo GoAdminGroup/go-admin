@@ -703,7 +703,6 @@ func (c *Config) Update(m map[string]string) error {
 	c.Logo = template.HTML(m["logo"])
 	c.MiniLogo = template.HTML(m["mini_logo"])
 	c.Debug = utils.ParseBool(m["debug"])
-	c.Env = m["env"]
 	c.SiteOff = utils.ParseBool(m["site_off"])
 
 	c.AccessLogOff = utils.ParseBool(m["access_log_off"])

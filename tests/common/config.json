@@ -17,6 +17,7 @@
     "path": "./uploads",
     "prefix": "uploads"
   },
+  "env": "local",
   "language": "en",
   "index": "/",
   "debug": true,

@@ -30,6 +30,7 @@ func main() {
 	e := engine.Default()
 
 	cfg := config.Config{
+		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
 				Host:       "127.0.0.1",
