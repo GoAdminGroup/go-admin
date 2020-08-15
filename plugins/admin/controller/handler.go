@@ -3,10 +3,7 @@ package controller
 import (
 	template2 "html/template"
 	"regexp"
-	"runtime/debug"
 	"strings"
-
-	"github.com/GoAdminGroup/go-admin/template"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -17,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 

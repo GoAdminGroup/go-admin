@@ -1038,8 +1038,8 @@ func chooseJS(field, chooseField, val string, value template.HTML) template.HTML
 	}{
 		Field:       template.JS(field),
 		ChooseField: template.JS(chooseField),
-		Value:       template.JS(value),
-		Val:         template.JS(val),
+		Value:       decorateChooseValue(string(value)),
+		Val:         decorateChooseValue(string(val)),
 	})
 }
 
@@ -1087,7 +1087,7 @@ func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
 }
@@ -1103,7 +1103,7 @@ func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
 }
@@ -1119,9 +1119,25 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
+}
+
+func decorateChooseValue(val string) template.JS {
+	if val[0] != '"' {
+		if strings.Contains(val, "$(this)") {
+			return template.JS(val)
+		}
+		if val == "{{.Value}}" {
+			return template.JS("$(this).val()")
+		}
+		if len(val) > 3 && val[:3] == "js:" {
+			return template.JS(val[3:])
+		}
+		return template.JS(`"` + val + `"`)
+	}
+	return template.JS(val)
 }
 
 // FormPanel attribute setting functions

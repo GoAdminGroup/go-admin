@@ -1,6 +1,6 @@
 package table
 
-var tmpls = map[string]string{"choose_table_ajax":`{{define "choose_table_ajax"}}
+var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"}}
         NProgress.start();
         let info_table = $("tbody.fields-table");
         info_table.find("tr").remove();
@@ -55,7 +55,7 @@ var tmpls = map[string]string{"choose_table_ajax":`{{define "choose_table_ajax"}
         detail_table.find("tr").remove();
 
         NProgress.done();
-{{end}}`,"generator":`{{define "generator"}}
+{{end}}`, "generator": `{{define "generator"}}
     <script>
         $(function () {
             let pack = localStorage.getItem("{{index . "prefix"}}package");
@@ -372,4 +372,4 @@ var tmpls = map[string]string{"choose_table_ajax":`{{define "choose_table_ajax"}
             cursor: pointer;
         }
     </style>
-{{end}}`,}
+{{end}}`}
