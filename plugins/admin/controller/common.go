@@ -234,7 +234,10 @@ func isInfoUrl(s string) bool {
 	sub := reg.FindStringSubmatch(s)
 	return len(sub) > 2 && !strings.Contains(sub[2], "/")
 }
-
+func isDetailUrl(s string, p string) bool {
+	reg, _ := regexp.Compile("(.*?)info/" + p + "/detail")
+	return reg.MatchString(s)
+}
 func isNewUrl(s string, p string) bool {
 	reg, _ := regexp.Compile("(.*?)info/" + p + "/new")
 	return reg.MatchString(s)
