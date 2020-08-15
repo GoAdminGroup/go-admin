@@ -67,6 +67,7 @@ func (eng *Engine) Use(router interface{}) error {
 		logger.Panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
 	}
 
+	eng.Services.Add(auth.InitCSRFTokenSrv(eng.DefaultConnection()))
 	eng.initSiteSetting()
 	eng.initJumpNavButtons()
 	eng.initPlugins()

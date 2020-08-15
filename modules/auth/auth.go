@@ -7,6 +7,9 @@ package auth
 import (
 	"sync"
 
+	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
+	"github.com/GoAdminGroup/go-admin/modules/logger"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -78,18 +81,28 @@ func DelCookie(ctx *context.Context, conn db.Connection) error {
 type TokenService struct {
 	tokens CSRFToken
 	lock   sync.Mutex
+	conn   db.Connection
 }
 
 func (s *TokenService) Name() string {
 	return TokenServiceKey
 }
 
-func init() {
-	service.Register(TokenServiceKey, func() (service.Service, error) {
-		return &TokenService{
-			tokens: make(CSRFToken, 0),
-		}, nil
-	})
+func InitCSRFTokenSrv(conn db.Connection) (string, service.Service) {
+	list, err := db.WithDriver(conn).Table("goadmin_session").
+		Where("values", "=", "__csrf_token__").
+		All()
+	if db.CheckError(err, db.QUERY) {
+		logger.Error("csrf token query from database error: ", err)
+	}
+	tokens := make(CSRFToken, len(list))
+	for i := 0; i < len(list); i++ {
+		tokens[i] = list[i]["sid"].(string)
+	}
+	return TokenServiceKey, &TokenService{
+		tokens: tokens,
+		conn:   conn,
+	}
 }
 
 const (
@@ -110,6 +123,13 @@ func (s *TokenService) AddToken() string {
 	defer s.lock.Unlock()
 	tokenStr := modules.Uuid()
 	s.tokens = append(s.tokens, tokenStr)
+	_, err := db.WithDriver(s.conn).Table("goadmin_session").Insert(dialect.H{
+		"sid":    tokenStr,
+		"values": "__csrf_token__",
+	})
+	if db.CheckError(err, db.INSERT) {
+		logger.Error("csrf token insert into database error: ", err)
+	}
 	return tokenStr
 }
 
@@ -119,6 +139,13 @@ func (s *TokenService) CheckToken(toCheckToken string) bool {
 	for i := 0; i < len(s.tokens); i++ {
 		if (s.tokens)[i] == toCheckToken {
 			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
+			err := db.WithDriver(s.conn).Table("goadmin_session").
+				Where("sid", "=", toCheckToken).
+				Where("values", "=", "__csrf_token__").
+				Delete()
+			if db.CheckError(err, db.DELETE) {
+				logger.Error("csrf token delete from database error: ", err)
+			}
 			return true
 		}
 	}
