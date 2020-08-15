@@ -127,7 +127,7 @@ func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 		navBtnFooter + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`))
 }
 
-func NewPage(param NewPageParam) *Page {
+func NewPage(param *NewPageParam) *Page {
 
 	if param.NavButtonsHTML == template.HTML("") {
 		param.NavButtonsHTML, param.NavButtonsJS = param.NavButtonsAndJS()

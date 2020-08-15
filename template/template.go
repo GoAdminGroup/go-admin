@@ -440,7 +440,7 @@ func Execute(param *ExecuteParam) *bytes.Buffer {
 
 	buf := new(bytes.Buffer)
 	err := param.Tmpl.ExecuteTemplate(buf, param.TmplName,
-		types.NewPage(types.NewPageParam{
+		types.NewPage(&types.NewPageParam{
 			User:       param.User,
 			Menu:       param.Menu,
 			Assets:     GetComponentAssetImportHTML(),

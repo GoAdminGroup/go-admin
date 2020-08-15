@@ -33,7 +33,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	buf := new(bytes.Buffer)
 
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 		User:         user,
 		Menu:         menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Panel:        panel.GetContent(config.IsProductionEnvironment()),

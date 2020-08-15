@@ -509,7 +509,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User:         user,
 			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:        panel.GetContent(eng.config.IsProductionEnvironment()),
@@ -557,7 +557,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
@@ -618,7 +618,7 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 			buf  = new(bytes.Buffer)
 		)
 
-		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
 			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
@@ -644,7 +644,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 	user := auth.Auth(ctx)
 	tmpl, tmplName := template.Default().GetTemplate(ctx.IsPjax())
 
-	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(types.NewPageParam{
+	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 		User:         user,
 		Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:        template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
