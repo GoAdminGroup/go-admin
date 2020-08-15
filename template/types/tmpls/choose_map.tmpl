@@ -1,6 +1,6 @@
 {{define "choose_map"}}
     <script>
-        $("input.{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             {{range $val, $object := .Data}}
 
             {{if $object.Hide}}

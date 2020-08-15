@@ -2,7 +2,7 @@ package types
 
 var tmpls = map[string]string{"choose": `{{define "choose"}}
     <script>
-        $("input.{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === "{{.Val}}") {
                 if ($("select.{{.ChooseField}}").length > 0) {
                     $("select.{{.ChooseField}}").val("{{.Value}}").select2()
@@ -118,13 +118,13 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
     </script>
 {{end}}`, "choose_custom": `{{define "choose_custom"}}
     <script>
-        $("input.{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             {{.JS}}
         })
     </script>
 {{end}}`, "choose_disable": `{{define "choose_disable"}}
     <script>
-        $(".{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === "{{.Value}}") {
                 {{range $key, $fields := .ChooseFields}}
 
@@ -142,7 +142,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
     </script>
 {{end}}`, "choose_hide": `{{define "choose_hide"}}
     <script>
-        $(".{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === "{{.Value}}" || e.params.data.id === "{{.Value}}") {
                 {{range $key, $fields := .ChooseFields}}
 
@@ -176,7 +176,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
     </script>
 {{end}}`, "choose_map": `{{define "choose_map"}}
     <script>
-        $("input.{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             {{range $val, $object := .Data}}
 
             {{if $object.Hide}}
@@ -212,7 +212,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
     </script>
 {{end}}`, "choose_show": `{{define "choose_show"}}
     <script>
-        $(".{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === "{{.Value}}" || e.params.data.id === "{{.Value}}") {
                 {{range $key, $fields := .ChooseFields}}
 

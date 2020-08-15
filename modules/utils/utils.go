@@ -443,7 +443,7 @@ func UnzipDir(src, dest string) error {
 		}
 	}()
 
-	err = os.MkdirAll(dest, 0755)
+	err = os.MkdirAll(dest, 0750)
 
 	if err != nil {
 		return err

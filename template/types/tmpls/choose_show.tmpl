@@ -1,6 +1,6 @@
 {{define "choose_show"}}
     <script>
-        $(".{{.Field}}").on("select2:select", function (e) {
+        $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === "{{.Value}}" || e.params.data.id === "{{.Value}}") {
                 {{range $key, $fields := .ChooseFields}}
 

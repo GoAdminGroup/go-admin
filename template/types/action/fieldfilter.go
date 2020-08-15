@@ -28,7 +28,7 @@ func (jump *FieldFilterAction) ExtContent() template.HTML {
 	}
 
 	return template.HTML(`<script>
-$("` + jump.BtnId + `").on("select2:select",function(e){
+$("select` + jump.BtnId + `").on("select2:select",function(e){
 
 	let setURL = function(field, value) {
 		let vars = window.location.search.substring(1).split("&");

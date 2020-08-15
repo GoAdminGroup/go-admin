@@ -31,7 +31,7 @@ func (jump *JumpSelectBoxAction) ExtContent() template.HTML {
 	}
 
 	return template.HTML(`<script>
-$("` + jump.BtnId + `").on("select2:select",function(e){
+$("select` + jump.BtnId + `").on("select2:select",function(e){
 	` + cm + `
 })
 </script>`)
