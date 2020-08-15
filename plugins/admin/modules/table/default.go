@@ -603,18 +603,18 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			queryStatement = "select %s from %s %s where " + pk + " = ? %s "
 		}
 
-		for _, field := range tb.Form.FieldList {
+		for i := 0; i < len(tb.Form.FieldList); i++ {
 
-			if field.Field != pk && modules.InArray(columns, field.Field) &&
-				!field.Joins.Valid() {
-				fields += tableName + "." + modules.FilterField(field.Field, delimiter) + ","
+			if tb.Form.FieldList[i].Field != pk && modules.InArray(columns, tb.Form.FieldList[i].Field) &&
+				!tb.Form.FieldList[i].Joins.Valid() {
+				fields += tableName + "." + modules.FilterField(tb.Form.FieldList[i].Field, delimiter) + ","
 			}
 
-			if field.Joins.Valid() {
-				headField := field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
-				joinFields += db.GetAggregationExpression(connection.Name(), field.Joins.Last().GetTableName()+"."+
-					modules.FilterField(field.Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
-				for _, join := range field.Joins {
+			if tb.Form.FieldList[i].Joins.Valid() {
+				headField := tb.Form.FieldList[i].Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + tb.Form.FieldList[i].Field
+				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName()+"."+
+					modules.FilterField(tb.Form.FieldList[i].Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
+				for _, join := range tb.Form.FieldList[i].Joins {
 					if !modules.InArray(joinTables, join.GetTableName()) {
 						joinTables = append(joinTables, join.GetTableName())
 						if join.BaseTable == "" {
@@ -634,9 +634,9 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 		if joinFields != "" {
 			fields += "," + joinFields[:len(joinFields)-1]
 			if connection.Name() == db.DriverMssql {
-				for _, field := range tb.Form.FieldList {
-					if field.TypeName == db.Text || field.TypeName == db.Longtext {
-						f := modules.Delimiter(connection.GetDelimiter(), field.Field)
+				for i := 0; i < len(tb.Form.FieldList); i++ {
+					if tb.Form.FieldList[i].TypeName == db.Text || tb.Form.FieldList[i].TypeName == db.Longtext {
+						f := modules.Delimiter(connection.GetDelimiter(), tb.Form.FieldList[i].Field)
 						headField := tb.Info.Table + "." + f
 						fields = strings.ReplaceAll(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
 						groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
@@ -844,10 +844,10 @@ func (tb *DefaultTable) getInjectValueFromFormValue(dataList form.Values, typ ty
 	}
 
 	if !dataList.IsSingleUpdatePost() {
-		for _, field := range tb.Form.FieldList {
-			if field.FormType.IsMultiSelect() {
-				if _, ok := dataList[field.Field+"[]"]; !ok {
-					dataList[field.Field+"[]"] = []string{""}
+		for i := 0; i < len(tb.Form.FieldList); i++ {
+			if tb.Form.FieldList[i].FormType.IsMultiSelect() {
+				if _, ok := dataList[tb.Form.FieldList[i].Field+"[]"]; !ok {
+					dataList[tb.Form.FieldList[i].Field+"[]"] = []string{""}
 				}
 			}
 		}

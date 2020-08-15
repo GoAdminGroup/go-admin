@@ -100,7 +100,7 @@ type NewPageParam struct {
 	NavButtonsJS   template.HTML
 }
 
-func (param NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
+func (param *NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 	navBtnFooter := template.HTML("")
 	navBtn := template.HTML("")
 	btnJS := template.JS("")

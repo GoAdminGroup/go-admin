@@ -24,11 +24,11 @@ func (h *Handler) ApiUpdate(ctx *context.Context) {
 		}
 	}
 
-	for _, field := range param.Panel.GetForm().FieldList {
-		if field.FormType == form.File &&
-			len(param.MultiForm.File[field.Field]) == 0 &&
-			param.MultiForm.Value[field.Field+"__delete_flag"][0] != "1" {
-			delete(param.MultiForm.Value, field.Field)
+	for i := 0; i < len(param.Panel.GetForm().FieldList); i++ {
+		if param.Panel.GetForm().FieldList[i].FormType == form.File &&
+			len(param.MultiForm.File[param.Panel.GetForm().FieldList[i].Field]) == 0 &&
+			param.MultiForm.Value[param.Panel.GetForm().FieldList[i].Field+"__delete_flag"][0] != "1" {
+			delete(param.MultiForm.Value, param.Panel.GetForm().FieldList[i].Field)
 		}
 	}
 

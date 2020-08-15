@@ -1440,7 +1440,7 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 		}
 
 		if len(groupFormList) > 0 && !hasPK {
-			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(FormField{
+			groupFormList[len(groupFormList)-1] = groupFormList[len(groupFormList)-1].Add(&FormField{
 				Head:       pk,
 				FieldClass: pk,
 				Field:      pk,
@@ -1498,27 +1498,27 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 		list  = make(FormFields, 0)
 		hasPK = false
 	)
-	for _, field := range f.FieldList {
-		if !field.NotAllowEdit {
-			if !field.Hide {
-				field.Hide = field.EditHide
+	for i := 0; i < len(f.FieldList); i++ {
+		if !f.FieldList[i].NotAllowEdit {
+			if !f.FieldList[i].Hide {
+				f.FieldList[i].Hide = f.FieldList[i].EditHide
 			}
-			rowValue := field.GetRawValue(columns, res[field.Field])
-			if field.FatherField != "" {
-				f.FieldList.FindTableField(field.Field, field.FatherField).UpdateValue(id, rowValue, res, sql())
-			} else if field.FormType.IsTable() {
-				list = append(list, field)
+			rowValue := f.FieldList[i].GetRawValue(columns, res[f.FieldList[i].Field])
+			if f.FieldList[i].FatherField != "" {
+				f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateValue(id, rowValue, res, sql())
+			} else if f.FieldList[i].FormType.IsTable() {
+				list = append(list, f.FieldList[i])
 			} else {
-				list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
+				list = append(list, *(f.FieldList[i].UpdateValue(id, rowValue, res, sql())))
 			}
 
-			if field.Field == pk {
+			if f.FieldList[i].Field == pk {
 				hasPK = true
 			}
 		}
 	}
 	if !hasPK {
-		list = list.Add(FormField{
+		list = list.Add(&FormField{
 			Head:       pk,
 			FieldClass: pk,
 			Field:      pk,
@@ -1532,25 +1532,25 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 
 func (f *FormPanel) FieldsWithDefaultValue(sql ...func() *db.SQL) FormFields {
 	var list = make(FormFields, 0)
-	for _, v := range f.FieldList {
-		if v.allowAdd() {
-			v.Editable = !v.DisplayButNotAdd
-			if !v.Hide {
-				v.Hide = v.CreateHide
+	for i := 0; i < len(f.FieldList); i++ {
+		if f.FieldList[i].allowAdd() {
+			f.FieldList[i].Editable = !f.FieldList[i].DisplayButNotAdd
+			if !f.FieldList[i].Hide {
+				f.FieldList[i].Hide = f.FieldList[i].CreateHide
 			}
-			if v.FatherField != "" {
+			if f.FieldList[i].FatherField != "" {
 				if len(sql) > 0 {
-					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(sql[0]())
+					f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateDefaultValue(sql[0]())
 				} else {
-					f.FieldList.FindTableField(v.Field, v.FatherField).UpdateDefaultValue(nil)
+					f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateDefaultValue(nil)
 				}
-			} else if v.FormType.IsTable() {
-				list = append(list, v)
+			} else if f.FieldList[i].FormType.IsTable() {
+				list = append(list, f.FieldList[i])
 			} else {
 				if len(sql) > 0 {
-					list = append(list, *(v.UpdateDefaultValue(sql[0]())))
+					list = append(list, *(f.FieldList[i].UpdateDefaultValue(sql[0]())))
 				} else {
-					list = append(list, *(v.UpdateDefaultValue(nil)))
+					list = append(list, *(f.FieldList[i].UpdateDefaultValue(nil)))
 				}
 			}
 		}
@@ -1633,8 +1633,8 @@ func (f FormFields) FillCustomContent() FormFields {
 	return f
 }
 
-func (f FormFields) Add(field FormField) FormFields {
-	return append(f, field)
+func (f FormFields) Add(field *FormField) FormFields {
+	return append(f, *field)
 }
 
 func (f FormFields) RemoveNotShow() FormFields {
