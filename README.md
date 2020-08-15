@@ -62,6 +62,13 @@ We need your help: [https://github.com/GoAdminGroup/docs/issues/1](https://githu
 
 Following three steps to run it.
 
+Note: now you can quickly start by doing like this.
+
+```shell
+$ go install github.com/GoAdminGroup/go-admin/adm
+$ adm init
+```
+
 ### Step 1: import sql
 
 - [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)

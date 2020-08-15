@@ -52,6 +52,13 @@ GoAdmin+vue 例子： [https://github.com/GoAdminGroup/goadmin-vue-example](http
 
 ## 使用
 
+提示：现在你也可以这样做。
+
+```shell
+$ go install github.com/GoAdminGroup/go-admin/adm
+$ adm init -l cn
+```
+
 通过以下三步运行：
 
 ### 第一步：导入 sql
