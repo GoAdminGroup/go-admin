@@ -770,8 +770,8 @@ func (f *FormPanel) FieldDisplayButCanNotEditWhenUpdate() *FormPanel {
 	return f
 }
 
-// FieldDisableEdit means when update record the field can not be edited, displayed and submitted.
-func (f *FormPanel) FieldDisableEdit() *FormPanel {
+// FieldDisableWhenUpdate means when update record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableWhenUpdate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowEdit = true
 	return f
 }
@@ -783,8 +783,8 @@ func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	return f
 }
 
-// FieldDisableEditWhenCreate means when create record the field can not be edited, displayed and submitted.
-func (f *FormPanel) FieldDisableEditWhenCreate() *FormPanel {
+// FieldDisableWhenCreate means when create record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableWhenCreate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f
 }

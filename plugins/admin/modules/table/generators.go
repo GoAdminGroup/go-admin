@@ -129,7 +129,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 
 	formList := managerTable.GetForm().AddXssJsFilter()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).
 		FieldHelpMsg(template.HTML(lg("use for login"))).FieldMust()
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).
@@ -431,7 +431,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 
 	formList := managerTable.GetForm().AddXssJsFilter()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("Name"), "username", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("use for login"))).FieldMust()
 	formList.AddField(lg("Nickname"), "name", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("use to display"))).FieldMust()
 	formList.AddField(lg("Avatar"), "avatar", db.Varchar, form.File)
@@ -580,7 +580,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 
 	formList := permissionTable.GetForm().AddXssJsFilter()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("permission"), "name", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("method"), "http_method", db.Varchar, form.Select).
@@ -606,8 +606,8 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 			return strings.TrimSpace(model.Value.Value())
 		}).
 		FieldHelpMsg(template.HTML(lg("a path a line, without global prefix")))
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
 
 	formList.SetTable("goadmin_permissions").
 		SetTitle(lg("Permission Manage")).
@@ -697,7 +697,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 
 	formList := roleTable.GetForm().AddXssJsFilter()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("role"), "name", db.Varchar, form.Text).FieldMust()
 	formList.AddField(lg("slug"), "slug", db.Varchar, form.Text).FieldHelpMsg(template.HTML(lg("should be unique"))).FieldMust()
 	formList.AddField(lg("permission"), "permission_id", db.Varchar, form.SelectBox).
@@ -719,8 +719,8 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 		}).FieldHelpMsg(template.HTML(lg("no corresponding options?")) +
 		link("/admin/info/permission/new", "Create here."))
 
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
 
 	formList.SetTable("goadmin_roles").
 		SetTitle(lg("Roles Manage")).
@@ -854,14 +854,14 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 
 	formList := opTable.GetForm().AddXssJsFilter()
 
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("userID"), "user_id", db.Int, form.Text)
 	formList.AddField(lg("path"), "path", db.Varchar, form.Text)
 	formList.AddField(lg("method"), "method", db.Varchar, form.Text)
 	formList.AddField(lg("ip"), "ip", db.Varchar, form.Text)
 	formList.AddField(lg("content"), "input", db.Varchar, form.Text)
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
 
 	formList.SetTable("goadmin_operation_log").
 		SetTitle(lg("operation log")).
@@ -965,7 +965,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 	}
 
 	formList := menuTable.GetForm().AddXssJsFilter()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableEditWhenCreate()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField(lg("parent"), "parent_id", db.Int, form.SelectSingle).
 		FieldOptions(parentIDOptions).
 		FieldDisplay(func(model types.FieldModel) interface{} {
@@ -1004,8 +1004,8 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 			return roles
 		})
 
-	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
-	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableEditWhenCreate()
+	formList.AddField(lg("updatedAt"), "updated_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
+	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
 
 	formList.SetTable("goadmin_menu").
 		SetTitle(lg("Menus Manage")).
