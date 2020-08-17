@@ -265,18 +265,26 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 	}
 
 	outputPath = filepath.FromSlash(outputPath)
+	fileExist := utils.FileExist(outputPath + "/tables.go")
 
-	if !new && !utils.FileExist(outputPath+"/tables.go") {
+	if !new && !fileExist {
 		return nil
 	}
 
-	tableStr := ""
-	commentStr := ""
-	tablesContentByte, err := ioutil.ReadFile(outputPath + "/tables.go")
-	if err != nil {
-		return err
+	var (
+		tableStr          = ""
+		commentStr        = ""
+		tablesContentByte []byte
+		tablesContent     string
+		err               error
+	)
+	if fileExist {
+		tablesContentByte, err = ioutil.ReadFile(outputPath + "/tables.go")
+		if err != nil {
+			return err
+		}
+		tablesContent = string(tablesContentByte)
 	}
-	tablesContent := string(tablesContentByte)
 
 	for i := 0; i < len(tables); i++ {
 		if !strings.Contains(tablesContent, `"`+tables[i]+`"`) {
@@ -332,8 +340,10 @@ import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 // http://{{config.Domain}}:{{Port}}/{{config.Prefix}}/info/{{key}}
 //
 // example:
-//%s
-var Generators = map[string]table.Generator{%s
+//
+%s
+var Generators = map[string]table.Generator{
+%s
 }
 `, packageName, commentStr, tableStr)
 	}
