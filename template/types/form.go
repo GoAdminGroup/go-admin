@@ -1438,12 +1438,14 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
 		hasPK         = false
+		existField    = make([]string, 0)
 	)
 
 	if len(f.TabGroups) > 0 {
 		for index, group := range f.TabGroups {
 			list := make(FormFields, 0)
-			for _, fieldName := range group {
+			for index, fieldName := range group {
+				label := "_ga_group_" + strconv.Itoa(index)
 				field := f.FieldList.FindByFieldName(fieldName)
 				if field != nil && field.isNotBelongToATable() && !field.NotAllowEdit {
 					if !field.Hide {
@@ -1457,13 +1459,21 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 							}
 							field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res, sql()))
 						}
+						if utils.InArray(existField, field.Field) {
+							field.Field = field.Field + label
+						}
 						list = append(list, *field)
+						existField = append(existField, field.Field)
 					} else {
 						if field.Field == pk {
 							hasPK = true
 						}
 						rowValue := field.GetRawValue(columns, res[field.Field])
+						if utils.InArray(existField, field.Field) {
+							field.Field = field.Field + label
+						}
 						list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
+						existField = append(existField, field.Field)
 					}
 				}
 			}
@@ -1490,12 +1500,14 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 	var (
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
+		existField    = make([]string, 0)
 	)
 
 	for index, group := range f.TabGroups {
 		list := make(FormFields, 0)
-		for _, fieldName := range group {
+		for index, fieldName := range group {
 			field := f.FieldList.FindByFieldName(fieldName)
+			label := "_ga_group_" + strconv.Itoa(index)
 			if field != nil && field.isNotBelongToATable() && field.allowAdd() {
 				field.Editable = !field.DisplayButNotAdd
 				if !field.Hide {
@@ -1509,13 +1521,21 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 							field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(nil))
 						}
 					}
+					if utils.InArray(existField, field.Field) {
+						field.Field = field.Field + label
+					}
 					list = append(list, *field)
+					existField = append(existField, field.Field)
 				} else {
+					if utils.InArray(existField, field.Field) {
+						field.Field = field.Field + label
+					}
 					if len(sql) > 0 {
 						list = append(list, *(field.UpdateDefaultValue(sql[0]())))
 					} else {
 						list = append(list, *(field.UpdateDefaultValue(nil)))
 					}
+					existField = append(existField, field.Field)
 				}
 			}
 		}

@@ -67,14 +67,14 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0])})
 
 		if isEdit {
-			showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
-			ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
+			ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("show_edit", prefix)+
+				param.DeletePK().GetRouteParamStr())
 		}
 		return
 	}
 
-	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey,
-		parameter.PrimaryKey).GetRouteParamStr()
+	showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
+	infoUrl := h.routePathWithPrefix("info", prefix) + param.DeleteField(constant.EditPKKey).GetRouteParamStr()
 	editUrl := h.routePathWithPrefix("edit", prefix)
 
 	referer := ctx.Referer()
@@ -133,7 +133,6 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	}, template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0]), NoCompress: f.NoCompress})
 
 	if isEdit {
-		showEditUrl := h.routePathWithPrefix("show_edit", prefix) + param.DeletePK().GetRouteParamStr()
 		ctx.AddHeader(constant.PjaxUrlHeader, showEditUrl)
 	}
 }

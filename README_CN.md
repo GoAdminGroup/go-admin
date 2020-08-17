@@ -177,6 +177,8 @@ GO111MODULE=on go run main.go
 
 <strong>[点击这里加微信群](http://quick.go-admin.cn/resource/wechat_qrcode.jpg)</strong>
 
+<strong>注：在社区中如有问题提问，请务必清晰描述，包括但不限于问题详叙/问题代码/复现方法/已经尝试过的方法，时间生命可贵，请珍惜自己和别人的时间！</strong>
+
 ## 十分感谢
 
 inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
@@ -186,5 +188,7 @@ inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 留下您的github/gitee用户名，我们将会展示在[捐赠名单](DONATION.md)中。
 
 > 恰饭所需，作者精力时间有限，目前GoAdmin项目捐赠达666元，联系[作者](http://quick.go-admin.cn/resource/wechat_qrcode.jpg)可进vip用户群，vip群中您的问题将得到优先解答，同时也会根据您的需求进行分析和优先安排，vip群也会提供其他关于golang的福利。🙏
+>
+> 同时您也可以联系我，雇佣我的时间帮助您干活。
 
 <img src="http://quick.go-admin.cn/official/assets/imgs/shoukuan.jpg" width="650" />
