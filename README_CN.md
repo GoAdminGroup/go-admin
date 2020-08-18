@@ -55,9 +55,19 @@ GoAdmin+vue 例子： [https://github.com/GoAdminGroup/goadmin-vue-example](http
 提示：现在你也可以这样做。
 
 ```shell
+$ mkdir new_project && cd new_project
 $ go install github.com/GoAdminGroup/go-admin/adm
 $ adm init -l cn
 ```
+
+或者：（使用v1.2.16的adm）
+
+```shell
+$ mkdir new_project && cd new_project
+$ go install github.com/GoAdminGroup/go-admin/adm
+$ adm init web -l cn
+```
+
 
 通过以下三步运行：
 

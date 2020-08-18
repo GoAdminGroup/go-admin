@@ -65,8 +65,17 @@ Following three steps to run it.
 Note: now you can quickly start by doing like this.
 
 ```shell
+$ mkdir new_project && cd new_project
 $ go install github.com/GoAdminGroup/go-admin/adm
 $ adm init
+```
+
+Or (use adm whose version higher or equal than v1.2.16)
+
+```shell
+$ mkdir new_project && cd new_project
+$ go install github.com/GoAdminGroup/go-admin/adm
+$ adm init web
 ```
 
 ### Step 1: import sql
