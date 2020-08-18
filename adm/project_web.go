@@ -173,29 +173,53 @@ func buildProjectWeb(port string) {
 					Schema:     r.PostFormValue("db_schema"),
 					Database:   r.PostFormValue("db_name"),
 				}
-
-				cfg = config.SetDefault(&config.Config{
-					Debug: true,
-					Env:   config.EnvLocal,
-					Theme: p.Theme,
-					Store: config.Store{
-						Path:   "./uploads",
-						Prefix: "uploads",
-					},
-					Language:          p.Language,
-					UrlPrefix:         p.Prefix,
-					IndexUrl:          "/",
-					AccessLogPath:     rootPath + "/logs/access.log",
-					ErrorLogPath:      rootPath + "/logs/error.log",
-					InfoLogPath:       rootPath + "/logs/info.log",
-					BootstrapFilePath: rootPath + "/bootstrap.go",
-					GoModFilePath:     rootPath + "/go.mod",
-					Logo:              template.HTML(r.PostFormValue("sidebar_logo")),
-					LoginLogo:         template.HTML(r.PostFormValue("login_page_logo")),
-					MiniLogo:          template.HTML(r.PostFormValue("sidebar_min_logo")),
-					Title:             r.PostFormValue("web_title"),
-				})
+				dbList config.DatabaseList
 			)
+
+			if info.DriverName != db.DriverSqlite {
+				dbList = map[string]config.Database{
+					"default": {
+						Host:       info.Host,
+						Port:       info.Port,
+						User:       info.User,
+						Pwd:        info.Password,
+						Name:       info.Database,
+						MaxIdleCon: 5,
+						MaxOpenCon: 10,
+						Driver:     info.DriverName,
+					},
+				}
+			} else {
+				dbList = map[string]config.Database{
+					"default": {
+						Driver: info.DriverName,
+						File:   info.File,
+					},
+				}
+			}
+
+			cfg := config.SetDefault(&config.Config{
+				Debug: true,
+				Env:   config.EnvLocal,
+				Theme: p.Theme,
+				Store: config.Store{
+					Path:   "./uploads",
+					Prefix: "uploads",
+				},
+				Language:          p.Language,
+				UrlPrefix:         p.Prefix,
+				IndexUrl:          "/",
+				AccessLogPath:     rootPath + "/logs/access.log",
+				ErrorLogPath:      rootPath + "/logs/error.log",
+				InfoLogPath:       rootPath + "/logs/info.log",
+				BootstrapFilePath: rootPath + "/bootstrap.go",
+				GoModFilePath:     rootPath + "/go.mod",
+				Logo:              template.HTML(r.PostFormValue("sidebar_logo")),
+				LoginLogo:         template.HTML(r.PostFormValue("login_page_logo")),
+				MiniLogo:          template.HTML(r.PostFormValue("sidebar_min_logo")),
+				Title:             r.PostFormValue("web_title"),
+				Databases:         dbList,
+			})
 
 			installProjectTmpl(p, cfg, "", info)
 
