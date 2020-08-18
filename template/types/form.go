@@ -777,7 +777,7 @@ func (f *FormPanel) FieldDisableWhenUpdate() *FormPanel {
 }
 
 // FieldNotAllowAdd means when create record the field can not be edited, displayed and submitted.
-// Deprecated: Use FieldDisableEditWhenCreate instead.
+// Deprecated: Use FieldDisableWhenCreate instead.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f

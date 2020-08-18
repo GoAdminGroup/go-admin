@@ -72,5 +72,5 @@ func (compo *PopupAttribute) SetSize(value string) types.PopupAttribute {
 }
 
 func (compo *PopupAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "popup")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "popup")
 }

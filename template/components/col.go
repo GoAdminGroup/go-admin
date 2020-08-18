@@ -32,5 +32,5 @@ func (compo *ColAttribute) SetSize(value types.S) types.ColAttribute {
 }
 
 func (compo *ColAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "col")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "col")
 }

@@ -30,5 +30,5 @@ func (compo *LabelAttribute) SetContent(value template.HTML) types.LabelAttribut
 }
 
 func (compo *LabelAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "label")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "label")
 }

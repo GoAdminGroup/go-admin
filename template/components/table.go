@@ -72,7 +72,7 @@ func (compo *TableAttribute) GetContent() template.HTML {
 	if compo.MinWidth == "" {
 		compo.MinWidth = "1000px"
 	}
-	return ComposeHtml(compo.TemplateList, *compo, "table")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "table")
 }
 
 type DataTableAttribute struct {
@@ -99,7 +99,7 @@ type DataTableAttribute struct {
 }
 
 func (compo *DataTableAttribute) GetDataTableHeader() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "table/box-header")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "table/box-header")
 }
 
 func (compo *DataTableAttribute) SetThead(value types.Thead) types.DataTableAttribute {
@@ -219,5 +219,5 @@ func (compo *DataTableAttribute) GetContent() template.HTML {
 	if !compo.NoAction && compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
 		compo.NoAction = true
 	}
-	return ComposeHtml(compo.TemplateList, *compo, "table")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "table")
 }

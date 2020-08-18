@@ -23,5 +23,5 @@ func (compo *RowAttribute) AddContent(value template.HTML) types.RowAttribute {
 }
 
 func (compo *RowAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "row")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "row")
 }

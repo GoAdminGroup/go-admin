@@ -39,5 +39,5 @@ func (compo *ImgAttribute) SetSrc(value template.HTML) types.ImgAttribute {
 }
 
 func (compo *ImgAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "image")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "image")
 }

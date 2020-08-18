@@ -125,5 +125,5 @@ func (compo *ButtonAttribute) GetContent() template.HTML {
 		compo.ID = utils.Uuid(15) + "_btn"
 	}
 
-	return ComposeHtml(compo.TemplateList, *compo, "button")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "button")
 }

@@ -39,5 +39,5 @@ func (compo *AlertAttribute) Warning(msg string) template.HTML {
 }
 
 func (compo *AlertAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "alert")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "alert")
 }

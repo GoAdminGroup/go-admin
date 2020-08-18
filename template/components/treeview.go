@@ -38,5 +38,5 @@ func (compo *TreeViewAttribute) GetContent() template.HTML {
 	}
 	b, _ := json.Marshal(compo.Tree)
 	compo.TreeJSON = template.JS(b)
-	return ComposeHtml(compo.TemplateList, *compo, "treeview")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "treeview")
 }
