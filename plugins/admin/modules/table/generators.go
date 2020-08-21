@@ -1784,12 +1784,11 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	})
 
 	formList.EnableAjaxData(types.AjaxData{
-		SuccessTitle:   lgWithScore("generate table model", "tool"),
-		ErrorTitle:     lgWithScore("generate table model", "tool"),
-		SuccessJumpURL: s.c.Url("/info/generate/new"),
-		SuccessText:    lgWithScore("generate table model success", "tool"),
-		ErrorText:      lgWithScore("generate table model fail", "tool"),
-		DisableJump:    true,
+		SuccessTitle: lgWithScore("generate table model", "tool"),
+		ErrorTitle:   lgWithScore("generate table model", "tool"),
+		SuccessText:  lgWithScore("generate table model success", "tool"),
+		ErrorText:    lgWithScore("generate table model fail", "tool"),
+		DisableJump:  true,
 	})
 
 	formList.SetFooterHtml(utils.ParseHTML("generator", tmpls["generator"], map[string]string{

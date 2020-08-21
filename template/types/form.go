@@ -1305,6 +1305,7 @@ type AjaxData struct {
 	SuccessJumpURL string
 	DisableJump    bool
 	SuccessJS      string
+	JumpInNewTab   string
 }
 
 func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
@@ -1317,7 +1318,10 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		jumpURL := ""
 		if !data.DisableJump {
-			jumpURL = `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
+			if data.JumpInNewTab != "" {
+				jumpURL = `listenerForAddNavTab(` + jump + `, "` + data.JumpInNewTab + `");`
+			}
+			jumpURL += `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
 		} else {
 			jumpURL = `
 		if (data.data && data.data.token !== "") {
