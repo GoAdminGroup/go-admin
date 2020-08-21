@@ -986,7 +986,7 @@ func (tb *DefaultTable) DeleteData(id string) error {
 	return err
 }
 
-func (tb *DefaultTable) GetNewForm() FormInfo {
+func (tb *DefaultTable) GetNewFormInfo() FormInfo {
 
 	if len(tb.Form.TabGroups) == 0 {
 		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql)}

@@ -33,12 +33,12 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 	var (
 		user        = auth.Auth(ctx)
 		panel       = h.table(prefix, ctx)
-		formInfo    = panel.GetNewForm()
+		formInfo    = panel.GetNewFormInfo()
 		infoUrl     = h.routePathWithPrefix("info", prefix) + paramStr
 		newUrl      = h.routePathWithPrefix("new", prefix)
 		showNewUrl  = h.routePathWithPrefix("show_new", prefix) + paramStr
 		referer     = ctx.Referer()
-		f           = panel.GetForm()
+		f           = panel.GetActualNewForm()
 		isNotIframe = ctx.Query(constant.IframeKey) != "true"
 	)
 
@@ -126,8 +126,10 @@ func (h *Handler) NewForm(ctx *context.Context) {
 		return
 	}
 
-	if param.Panel.GetForm().Responder != nil {
-		param.Panel.GetForm().Responder(ctx)
+	f := param.Panel.GetActualNewForm()
+
+	if f.Responder != nil {
+		f.Responder(ctx)
 		return
 	}
 

@@ -47,6 +47,8 @@ type Table interface {
 	GetDetail() *types.InfoPanel
 	GetDetailFromInfo() *types.InfoPanel
 	GetForm() *types.FormPanel
+	GetNewForm() *types.FormPanel
+	GetActualNewForm() *types.FormPanel
 
 	GetCanAdd() bool
 	GetEditable() bool
@@ -62,7 +64,7 @@ type Table interface {
 	InsertData(dataList form.Values) error
 	DeleteData(pk string) error
 
-	GetNewForm() FormInfo
+	GetNewFormInfo() FormInfo
 
 	GetOnlyInfo() bool
 	GetOnlyDetail() bool
@@ -75,6 +77,7 @@ type Table interface {
 type BaseTable struct {
 	Info           *types.InfoPanel
 	Form           *types.FormPanel
+	NewForm        *types.FormPanel
 	Detail         *types.InfoPanel
 	CanAdd         bool
 	Editable       bool
@@ -104,6 +107,18 @@ func (base *BaseTable) GetDetailFromInfo() *types.InfoPanel {
 
 func (base *BaseTable) GetForm() *types.FormPanel {
 	return base.Form.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
+}
+
+func (base *BaseTable) GetNewForm() *types.FormPanel {
+	return base.Form.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
+}
+
+func (base *BaseTable) GetActualNewForm() *types.FormPanel {
+	f := base.GetNewForm()
+	if len(f.FieldList) == 0 {
+		return base.GetForm()
+	}
+	return f
 }
 
 func (base *BaseTable) GetCanAdd() bool {
