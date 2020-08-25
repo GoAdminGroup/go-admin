@@ -245,7 +245,7 @@ func buildProjectWeb(port string) {
 	<-startChan
 	err = open("http://localhost:" + port + "/")
 	if err != nil {
-		fmt.Println("open browser error", err)
+		fmt.Println("failed to open browser", err)
 	}
 
 	quit := make(chan os.Signal, 1)

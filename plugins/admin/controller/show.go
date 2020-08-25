@@ -300,7 +300,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Title:           modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
 		AutoRefresh:     autoRefresh,
 		RefreshInterval: interval,
-	}, "", template.ExecuteOptions{Animation: params.Animation})
+	}, "", template.ExecuteOptions{Animation: params.Animation, NoCompress: info.NoCompress})
 }
 
 // Assets return front-end assets according the request path.
