@@ -298,6 +298,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Content:         content,
 		Description:     template2.HTML(panelInfo.Description),
 		Title:           modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
+		MiniSidebar:     info.HideSideBar,
 		AutoRefresh:     autoRefresh,
 		RefreshInterval: interval,
 	}, "", template.ExecuteOptions{Animation: params.Animation, NoCompress: info.NoCompress})

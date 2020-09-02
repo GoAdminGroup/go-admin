@@ -600,7 +600,8 @@ type InfoPanel struct {
 	PageError     errors.PageError
 	PageErrorHTML template.HTML
 
-	NoCompress bool
+	NoCompress  bool
+	HideSideBar bool
 
 	AutoRefresh uint
 }
@@ -1472,6 +1473,11 @@ func (i *InfoPanel) SetError(err errors.PageError, content ...template.HTML) *In
 
 func (i *InfoPanel) SetNoCompress() *InfoPanel {
 	i.NoCompress = true
+	return i
+}
+
+func (i *InfoPanel) SetHideSideBar() *InfoPanel {
+	i.HideSideBar = true
 	return i
 }
 
