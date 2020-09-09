@@ -35,6 +35,12 @@ func DefaultConfig() Config {
 	}
 }
 
+func (config Config) SetPrimaryKey(name string, typ db.DatabaseType) Config {
+	config.PrimaryKey.Name = name
+	config.PrimaryKey.Type = typ
+	return config
+}
+
 func (config Config) SetPrimaryKeyType(typ string) Config {
 	config.PrimaryKey.Type = db.GetDTAndCheck(typ)
 	return config

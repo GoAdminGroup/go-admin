@@ -287,15 +287,16 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 	}
 
 	for i := 0; i < len(tables); i++ {
-		if !strings.Contains(tablesContent, `"`+tables[i]+`"`) {
+		lowerTable := strings.ToLower(tables[i])
+		if !strings.Contains(tablesContent, `"`+lowerTable+`"`) {
 			tableStr += fmt.Sprintf(`
-	"%s": Get%sTable, `, tables[i], strings.Title(camelcase(tables[i])))
+	"%s": Get%sTable, `, lowerTable, strings.Title(camelcase(tables[i])))
 
 			if commentStr != "" {
 				commentStr += `
 `
 			}
-			commentStr += fmt.Sprintf(`// "%s" => http://localhost:9033/admin/info/%s`, tables[i], tables[i])
+			commentStr += fmt.Sprintf(`// "%s" => http://localhost:9033/admin/info/%s`, lowerTable, lowerTable)
 		}
 	}
 
@@ -357,6 +358,7 @@ var Generators = map[string]table.Generator{
 }
 
 func InsertPermissionOfTable(conn db.Connection, table string) {
+	table = strings.ToLower(table)
 	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("query", "generator"), table+"_query", "GET", "/info/"+table)
 	InsertPermissionInfoDB(conn, table+" "+language.GetWithScope("show edit form page", "generator"), table+"_show_edit", "GET",
 		"/info/"+table+"/edit")
