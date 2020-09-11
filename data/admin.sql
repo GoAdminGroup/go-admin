@@ -35,7 +35,7 @@ CREATE TABLE `goadmin_menu` (
   `uri` varchar(3000) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `header` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `plugin_name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
-  `uuid` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `uuid` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

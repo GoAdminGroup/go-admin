@@ -9,7 +9,7 @@ CREATE TABLE [goadmin_menu] (
  [icon] varchar(50)   NOT NULL,
  [uri] varchar(3000)   NOT NULL DEFAULT '',
  [header] varchar(150)   DEFAULT NULL,
- [uuid] varchar(150)   DEFAULT NULL,
+ [uuid] varchar(150)   NOT NULL DEFAULT '',
  [plugin_name] varchar(150)   NOT NULL DEFAULT '',
  [created_at] datetime NULL DEFAULT GETDATE(),
  [updated_at] datetime NULL DEFAULT GETDATE(),
