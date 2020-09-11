@@ -31,6 +31,7 @@ install:
   - chromedriver --version
 
 before_script:
+  - google-chrome-stable --version
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
