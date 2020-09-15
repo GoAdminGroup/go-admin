@@ -15,6 +15,7 @@ var en = LangSet{
 	"updatedat":        "updatedAt",
 	"path":             "path",
 	"new":              "New",
+	"filter":           "Filter",
 	"action":           "Action",
 	"toggle dropdown":  "Toggle Dropdown",
 	"delete":           "Delete",

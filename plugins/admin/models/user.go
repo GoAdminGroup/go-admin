@@ -122,14 +122,14 @@ func (t UserModel) CheckPermissionByUrlMethod(path, method string, formParams ur
 		return true
 	}
 
+	if path == "" {
+		return false
+	}
+
 	logoutCheck, _ := regexp.Compile(config.Url("/logout") + "(.*?)")
 
 	if logoutCheck.MatchString(path) {
 		return true
-	}
-
-	if path == "" {
-		return false
 	}
 
 	if path != "/" && path[len(path)-1] == '/' {
