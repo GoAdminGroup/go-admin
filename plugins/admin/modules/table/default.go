@@ -48,6 +48,7 @@ func NewDefaultTable(cfgs ...Config) Table {
 		BaseTable: &BaseTable{
 			Info:           types.NewInfoPanel(cfg.PrimaryKey.Name),
 			Form:           types.NewFormPanel(),
+			NewForm:        types.NewFormPanel(),
 			Detail:         types.NewInfoPanel(cfg.PrimaryKey.Name),
 			CanAdd:         cfg.CanAdd,
 			Editable:       cfg.Editable,
@@ -70,6 +71,9 @@ func (tb *DefaultTable) Copy() Table {
 	return &DefaultTable{
 		BaseTable: &BaseTable{
 			Form: types.NewFormPanel().SetTable(tb.Form.Table).
+				SetDescription(tb.Form.Description).
+				SetTitle(tb.Form.Title),
+			NewForm: types.NewFormPanel().SetTable(tb.Form.Table).
 				SetDescription(tb.Form.Description).
 				SetTitle(tb.Form.Title),
 			Info: types.NewInfoPanel(tb.PrimaryKey.Name).SetTable(tb.Info.Table).
@@ -988,11 +992,13 @@ func (tb *DefaultTable) DeleteData(id string) error {
 
 func (tb *DefaultTable) GetNewFormInfo() FormInfo {
 
-	if len(tb.Form.TabGroups) == 0 {
-		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql)}
+	f := tb.GetActualNewForm()
+
+	if len(f.TabGroups) == 0 {
+		return FormInfo{FieldList: f.FieldsWithDefaultValue(tb.sql)}
 	}
 
-	newForm, headers := tb.Form.GroupField(tb.sql)
+	newForm, headers := f.GroupField(tb.sql)
 
 	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}
 }

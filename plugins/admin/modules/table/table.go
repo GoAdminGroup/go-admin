@@ -110,15 +110,14 @@ func (base *BaseTable) GetForm() *types.FormPanel {
 }
 
 func (base *BaseTable) GetNewForm() *types.FormPanel {
-	return base.Form.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
+	return base.NewForm.SetPrimaryKey(base.PrimaryKey.Name, base.PrimaryKey.Type)
 }
 
 func (base *BaseTable) GetActualNewForm() *types.FormPanel {
-	f := base.GetNewForm()
-	if len(f.FieldList) == 0 {
-		return base.GetForm()
+	if len(base.NewForm.FieldList) == 0 {
+		return base.Form
 	}
-	return f
+	return base.NewForm
 }
 
 func (base *BaseTable) GetCanAdd() bool {
