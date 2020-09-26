@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/GoAdminGroup/go-admin/modules/config"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
@@ -156,6 +158,10 @@ type Field struct {
 	EditOptions FieldOptions
 
 	FilterFormFields []FilterFormField
+
+	IsEditParam   bool
+	IsDeleteParam bool
+	IsDetailParam bool
 
 	FieldDisplay
 }
@@ -1181,6 +1187,21 @@ func (i *InfoPanel) FieldEditAble(editType ...table.Type) *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) FieldAsEditParam() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].IsEditParam = true
+	return i
+}
+
+func (i *InfoPanel) FieldIsDeleteParam() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].IsDeleteParam = true
+	return i
+}
+
+func (i *InfoPanel) FieldIsDetailParam() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].IsDetailParam = true
+	return i
+}
+
 func (i *InfoPanel) FieldFixed() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Fixed = true
 	return i
@@ -1289,8 +1310,12 @@ func (i *InfoPanel) FieldFilterOnChoose(val, field string, value template.HTML) 
 	return i
 }
 
+func (i *InfoPanel) OperationURL(id string) string {
+	return config.Url("/operation/" + utils.WrapURL(id))
+}
+
 func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) *InfoPanel {
-	js, callback := chooseAjax(i.FieldList[i.curFieldListIndex].Field, field, url, handler)
+	js, callback := chooseAjax(i.FieldList[i.curFieldListIndex].Field, field, i.OperationURL(url), handler)
 	i.FooterHtml += js
 	i.Callbacks = append(i.Callbacks, callback)
 	return i
