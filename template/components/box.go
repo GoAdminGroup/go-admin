@@ -111,5 +111,5 @@ func (compo *BoxAttribute) GetContent() template.HTML {
 		compo.Style = template.HTMLAttr(fmt.Sprintf(`style="%s"`, string(compo.Style)+compo.Padding))
 	}
 
-	return ComposeHtml(compo.TemplateList, *compo, "box")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "box")
 }

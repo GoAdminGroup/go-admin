@@ -157,6 +157,18 @@ func main() {
 			setDefaultLangSet(*lang)
 			buildProject(*config)
 		}
+
+		cmd.Command("web", "generate a template project", func(cmd *cli.Cmd) {
+			var (
+				lang = cmd.StringOpt("l language", "en", "language")
+				port = cmd.StringOpt("p port", "6633", "port")
+			)
+
+			cmd.Action = func() {
+				setDefaultLangSet(*lang)
+				buildProjectWeb(*port)
+			}
+		})
 	})
 
 	app.Command("add", "generate user/permission/roles", func(cmd *cli.Cmd) {

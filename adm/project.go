@@ -163,6 +163,82 @@ func buildProject(cfgFile string) {
 		}
 	}
 
+	installProjectTmpl(p, cfg, cfgFile, info)
+
+	fmt.Println()
+	fmt.Println()
+	fmt.Println(ansi.Color(getWord("Generate project template success~~🍺🍺"), "green"))
+	fmt.Println()
+	fmt.Println(getWord("1 Import and initialize database:"))
+	fmt.Println()
+	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+		fmt.Println("- sqlite: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.db", "blue"))
+		fmt.Println("- mssql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.mssql", "blue"))
+		fmt.Println("- postgresql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.pgsql", "blue"))
+		fmt.Println("- mysql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.sql", "blue"))
+	} else {
+		fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/raw/master/data/admin.db", "blue"))
+		fmt.Println("- mssql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql", "blue"))
+		fmt.Println("- postgresql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql", "blue"))
+		fmt.Println("- mysql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql", "blue"))
+	}
+	fmt.Println()
+	fmt.Println(getWord("2 Execute the following command to run:"))
+	fmt.Println()
+	if runtime.GOOS == "windows" {
+		fmt.Println("> GO111MODULE=on go mod init " + p.Module)
+		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+			fmt.Println("> GORPOXY=https://goproxy.io GO111MODULE=on go mod tidy")
+		} else {
+			fmt.Println("> GO111MODULE=on go mod tidy")
+		}
+		fmt.Println("> GO111MODULE=on go run .")
+	} else {
+		fmt.Println("> make init module=" + p.Module)
+		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
+			fmt.Println("> GORPOXY=https://goproxy.io make install")
+		} else {
+			fmt.Println("> make install")
+		}
+		fmt.Println("> make serve")
+	}
+	fmt.Println()
+	fmt.Println(getWord("3 Visit and login:"))
+	fmt.Println()
+	if p.Port != "80" {
+		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/login", "blue"))
+	} else {
+		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1/"+p.Prefix+"/login", "blue"))
+	}
+	fmt.Println(getWord("account: admin  password: admin"))
+	fmt.Println()
+	fmt.Println("-  " + getWord("Generate CRUD models: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/info/generate/new", "blue"))
+	fmt.Println()
+	fmt.Println(getWord("4 See more in README.md"))
+	fmt.Println()
+	if defaultLang == "cn" {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
+			"blue"))
+	} else {
+		fmt.Println(getWord("see the docs: ") + ansi.Color("https://book.go-admin.com",
+			"blue"))
+	}
+	fmt.Println(getWord("visit forum: ") + ansi.Color("http://discuss.go-admin.com",
+		"blue"))
+	fmt.Println()
+	fmt.Println()
+}
+
+func GetCurrentDirectory() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
+	return strings.ReplaceAll(dir, "\\", "/")
+}
+
+func installProjectTmpl(p Project, cfg *config.Config, cfgFile string, info *dbInfo) {
+
 	t, err := template.New("project").Funcs(map[string]interface{}{
 		"title": strings.Title,
 	}).Parse(projectTemplate[p.Framework])
@@ -278,74 +354,4 @@ var Generators = map[string]table.Generator{
 	checkError(err)
 	checkError(ioutil.WriteFile("./config.json", configByte, 0644))
 
-	fmt.Println()
-	fmt.Println()
-	fmt.Println(ansi.Color(getWord("Generate project template success~~🍺🍺"), "green"))
-	fmt.Println()
-	fmt.Println(getWord("1 Import and initialize database:"))
-	fmt.Println()
-	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-		fmt.Println("- sqlite: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.db", "blue"))
-		fmt.Println("- mssql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.mssql", "blue"))
-		fmt.Println("- postgresql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.pgsql", "blue"))
-		fmt.Println("- mysql: " + ansi.Color("https://gitee.com/go-admin/go-admin/raw/master/data/admin.sql", "blue"))
-	} else {
-		fmt.Println("- sqlite: " + ansi.Color("https://github.com/GoAdminGroup/go-admin/raw/master/data/admin.db", "blue"))
-		fmt.Println("- mssql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql", "blue"))
-		fmt.Println("- postgresql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql", "blue"))
-		fmt.Println("- mysql: " + ansi.Color("https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql", "blue"))
-	}
-	fmt.Println()
-	fmt.Println(getWord("2 Execute the following command to run:"))
-	fmt.Println()
-	if runtime.GOOS == "windows" {
-		fmt.Println("> GO111MODULE=on go mod init " + p.Module)
-		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-			fmt.Println("> GORPOXY=https://goproxy.io GO111MODULE=on go mod tidy")
-		} else {
-			fmt.Println("> GO111MODULE=on go mod tidy")
-		}
-		fmt.Println("> GO111MODULE=on go run .")
-	} else {
-		fmt.Println("> make init module=" + p.Module)
-		if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-			fmt.Println("> GORPOXY=https://goproxy.io make install")
-		} else {
-			fmt.Println("> make install")
-		}
-		fmt.Println("> make serve")
-	}
-	fmt.Println()
-	fmt.Println(getWord("3 Visit and login:"))
-	fmt.Println()
-	if p.Port != "80" {
-		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/login", "blue"))
-	} else {
-		fmt.Println("-  " + getWord("Login: ") + ansi.Color("http://127.0.0.1/"+p.Prefix+"/login", "blue"))
-	}
-	fmt.Println(getWord("account: admin  password: admin"))
-	fmt.Println()
-	fmt.Println("-  " + getWord("Generate CRUD models: ") + ansi.Color("http://127.0.0.1:"+p.Port+"/"+p.Prefix+"/info/generate/new", "blue"))
-	fmt.Println()
-	fmt.Println(getWord("4 See more in README.md"))
-	fmt.Println()
-	if defaultLang == "cn" {
-		fmt.Println(getWord("see the docs: ") + ansi.Color("http://doc.go-admin.cn",
-			"blue"))
-	} else {
-		fmt.Println(getWord("see the docs: ") + ansi.Color("https://book.go-admin.com",
-			"blue"))
-	}
-	fmt.Println(getWord("visit forum: ") + ansi.Color("http://discuss.go-admin.com",
-		"blue"))
-	fmt.Println()
-	fmt.Println()
-}
-
-func GetCurrentDirectory() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		panic(err)
-	}
-	return strings.ReplaceAll(dir, "\\", "/")
 }

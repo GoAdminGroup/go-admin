@@ -3,10 +3,7 @@ package controller
 import (
 	template2 "html/template"
 	"regexp"
-	"runtime/debug"
 	"strings"
-
-	"github.com/GoAdminGroup/go-admin/template"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -17,6 +14,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -31,7 +29,6 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 
 	if err := recover(); err != nil {
 		logger.Error(err)
-		logger.Error(string(debug.Stack()))
 
 		var (
 			errMsg string
@@ -73,11 +70,12 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		formInfo table.FormInfo
 		prefix   = ctx.Query(constant.PrefixKey)
 		panel    = h.table(prefix, ctx)
-		f        = panel.GetForm()
 		btnWord  template2.HTML
+		f        *types.FormPanel
 	)
 
 	if kind == "edit" {
+		f = panel.GetForm()
 		id := ctx.Query("id")
 		if id == "" {
 			id = ctx.Request.MultipartForm.Value[panel.GetPrimaryKey().Name][0]
@@ -86,12 +84,13 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			panel.GetInfo().DefaultPageSize,
 			panel.GetInfo().SortField,
 			panel.GetInfo().GetSort()).WithPKs(id))
-		btnWord = panel.GetForm().FormEditBtnWord
+		btnWord = f.FormEditBtnWord
 	} else {
-		formInfo = panel.GetNewForm()
+		f = panel.GetActualNewForm()
+		formInfo = panel.GetNewFormInfo()
 		formInfo.Title = f.Title
 		formInfo.Description = f.Description
-		btnWord = panel.GetForm().FormNewBtnWord
+		btnWord = f.FormNewBtnWord
 	}
 
 	queryParam := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize,

@@ -93,6 +93,6 @@ func (file *FileUploadAction) BtnAttribute() template.HTML {
 }
 
 func (file *FileUploadAction) FooterContent() template.HTML {
-	return template.HTML(`<input id="` + file.BtnId + `_input" type="file" multiple="multiple" style="display:none" />`)
+	return template.HTML(`<input class="` + file.BtnId[1:] + `_input" type="file" multiple="multiple" style="display:none" />`)
 
 }

@@ -32,7 +32,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 
 	c := config.GetService(services.Get("config"))
 	st := table.NewSystemTable(admin.Conn, c)
-	admin.tableList.Combine(table.GeneratorList{
+	genList := table.GeneratorList{
 		"manager":        st.GetManagerTable,
 		"permission":     st.GetPermissionTable,
 		"roles":          st.GetRolesTable,
@@ -40,8 +40,11 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"menu":           st.GetMenuTable,
 		"normal_manager": st.GetNormalManagerTable,
 		"site":           st.GetSiteTable,
-		"generate":       st.GetGenerateForm,
-	})
+	}
+	if c.IsNotProductionEnvironment() {
+		genList.Add("generate", st.GetGenerateForm)
+	}
+	admin.tableList.Combine(genList)
 	admin.guardian = guard.New(admin.Services, admin.Conn, admin.tableList, admin.UI.NavButtons)
 	handlerCfg := controller.Config{
 		Config:     c,

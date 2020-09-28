@@ -56,7 +56,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 		alert template2.HTML
 
 		panel    = h.table("menu", ctx)
-		formInfo = panel.GetNewForm()
+		formInfo = panel.GetNewFormInfo()
 		user     = auth.Auth(ctx)
 		plugName = getPlugNameFromReferer(ctx)
 	)
@@ -267,7 +267,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 		box      = aBox().SetHeader(header).SetBody(tree).GetContent()
 		col1     = aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 		panel    = h.table("menu", ctx)
-		formInfo = panel.GetNewForm()
+		formInfo = panel.GetNewFormInfo()
 	)
 
 	newForm := menuFormContent(aForm().

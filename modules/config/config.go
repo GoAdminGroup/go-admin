@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -385,6 +386,8 @@ type Config struct {
 
 	OperationLogOff bool `json:"operation_log_off,omitempty" yaml:"operation_log_off,omitempty" ini:"operation_log_off,omitempty"`
 
+	AssetRootPath string `json:"asset_root_path,omitempty" yaml:"asset_root_path,omitempty" ini:"asset_root_path,omitempty"`
+
 	prefix string
 }
 
@@ -597,6 +600,7 @@ func (c *Config) Copy() *Config {
 		GoModFilePath:                 c.GoModFilePath,
 		AllowDelOperationLog:          c.AllowDelOperationLog,
 		OperationLogOff:               c.OperationLogOff,
+		AssetRootPath:                 c.AssetRootPath,
 		UpdateProcessFn:               c.UpdateProcessFn,
 		OpenAdminApi:                  c.OpenAdminApi,
 		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
@@ -687,6 +691,8 @@ func (c *Config) ToMap() map[string]string {
 	m["hide_tool_entrance"] = strconv.FormatBool(c.HideToolEntrance)
 	m["hide_plugin_entrance"] = strconv.FormatBool(c.HidePluginEntrance)
 
+	m["asset_root_path"] = c.AssetRootPath
+
 	return m
 }
 
@@ -703,7 +709,6 @@ func (c *Config) Update(m map[string]string) error {
 	c.Logo = template.HTML(m["logo"])
 	c.MiniLogo = template.HTML(m["mini_logo"])
 	c.Debug = utils.ParseBool(m["debug"])
-	c.Env = m["env"]
 	c.SiteOff = utils.ParseBool(m["site_off"])
 
 	c.AccessLogOff = utils.ParseBool(m["access_log_off"])
@@ -889,6 +894,8 @@ func SetDefault(cfg *Config) *Config {
 	if cfg.Theme == "adminlte" {
 		cfg.ColorScheme = utils.SetDefault(cfg.ColorScheme, "", "skin-black")
 	}
+	cfg.AssetRootPath = utils.SetDefault(cfg.AssetRootPath, "", "./public/")
+	cfg.AssetRootPath = filepath.ToSlash(cfg.AssetRootPath)
 	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
 	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
 	if cfg.SessionLifeTime == 0 {
@@ -1080,6 +1087,10 @@ func GetStore() Store {
 
 func GetTitle() string {
 	return globalCfg.Title
+}
+
+func GetAssetRootPath() string {
+	return globalCfg.AssetRootPath
 }
 
 func GetLogo() template.HTML {

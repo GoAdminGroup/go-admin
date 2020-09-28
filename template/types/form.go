@@ -758,25 +758,39 @@ func (f *FormPanel) FieldDefault(def string) *FormPanel {
 }
 
 // FieldNotAllowEdit means when update record the field can not be edited but will still be displayed and submitted.
+// Deprecated: Use FieldDisplayButCanNotEditWhenUpdate instead.
 func (f *FormPanel) FieldNotAllowEdit() *FormPanel {
 	f.FieldList[f.curFieldListIndex].Editable = false
 	return f
 }
 
-// FieldDisableEdit means when update record the field can not be edited, displayed and submitted.
-func (f *FormPanel) FieldDisableEdit() *FormPanel {
+// FieldDisplayButCanNotEditWhenUpdate means when update record the field can not be edited but will still be displayed and submitted.
+func (f *FormPanel) FieldDisplayButCanNotEditWhenUpdate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].Editable = false
+	return f
+}
+
+// FieldDisableWhenUpdate means when update record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableWhenUpdate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowEdit = true
 	return f
 }
 
 // FieldNotAllowAdd means when create record the field can not be edited, displayed and submitted.
+// Deprecated: Use FieldDisableWhenCreate instead.
 func (f *FormPanel) FieldNotAllowAdd() *FormPanel {
 	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
 	return f
 }
 
-// FieldDisplayButNotAdd means when create record the field can not be edited but will still be displayed and submitted.
-func (f *FormPanel) FieldDisplayButNotAdd() *FormPanel {
+// FieldDisableWhenCreate means when create record the field can not be edited, displayed and submitted.
+func (f *FormPanel) FieldDisableWhenCreate() *FormPanel {
+	f.FieldList[f.curFieldListIndex].NotAllowAdd = true
+	return f
+}
+
+// FieldDisplayButCanNotEditWhenCreate means when create record the field can not be edited but will still be displayed and submitted.
+func (f *FormPanel) FieldDisplayButCanNotEditWhenCreate() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayButNotAdd = true
 	return f
 }
@@ -1038,8 +1052,8 @@ func chooseJS(field, chooseField, val string, value template.HTML) template.HTML
 	}{
 		Field:       template.JS(field),
 		ChooseField: template.JS(chooseField),
-		Value:       template.JS(value),
-		Val:         template.JS(val),
+		Value:       decorateChooseValue(string(value)),
+		Val:         decorateChooseValue(string(val)),
 	})
 }
 
@@ -1087,7 +1101,7 @@ func chooseHideJS(field, value string, chooseFields ...string) template.HTML {
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
 }
@@ -1103,7 +1117,7 @@ func chooseShowJS(field, value string, chooseFields ...string) template.HTML {
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
 }
@@ -1119,9 +1133,28 @@ func chooseDisableJS(field, value string, chooseFields ...string) template.HTML 
 		ChooseFields []string
 	}{
 		Field:        template.JS(field),
-		Value:        template.JS(value),
+		Value:        decorateChooseValue(value),
 		ChooseFields: chooseFields,
 	})
+}
+
+func decorateChooseValue(val string) template.JS {
+	if val == "" {
+		return `""`
+	}
+	if val[0] != '"' {
+		if strings.Contains(val, "$(this)") {
+			return template.JS(val)
+		}
+		if val == "{{.Value}}" {
+			return template.JS("$(this).val()")
+		}
+		if len(val) > 3 && val[:3] == "js:" {
+			return template.JS(val[3:])
+		}
+		return template.JS(`"` + val + `"`)
+	}
+	return template.JS(val)
 }
 
 // FormPanel attribute setting functions
@@ -1272,6 +1305,7 @@ type AjaxData struct {
 	SuccessJumpURL string
 	DisableJump    bool
 	SuccessJS      string
+	JumpInNewTab   string
 }
 
 func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
@@ -1284,7 +1318,10 @@ func (f *FormPanel) EnableAjaxData(data AjaxData) *FormPanel {
 		wrongText := modules.AorB(data.ErrorText != "", `text:"`+data.ErrorText+`",`, "text:data.msg,")
 		jumpURL := ""
 		if !data.DisableJump {
-			jumpURL = `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
+			if data.JumpInNewTab != "" {
+				jumpURL = `listenerForAddNavTab(` + jump + `, "` + data.JumpInNewTab + `");`
+			}
+			jumpURL += `$.pjax({url: ` + jump + `, container: '#pjax-container'});`
 		} else {
 			jumpURL = `
 		if (data.data && data.data.token !== "") {
@@ -1405,12 +1442,14 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
 		hasPK         = false
+		existField    = make([]string, 0)
 	)
 
 	if len(f.TabGroups) > 0 {
 		for index, group := range f.TabGroups {
 			list := make(FormFields, 0)
-			for _, fieldName := range group {
+			for index, fieldName := range group {
+				label := "_ga_group_" + strconv.Itoa(index)
 				field := f.FieldList.FindByFieldName(fieldName)
 				if field != nil && field.isNotBelongToATable() && !field.NotAllowEdit {
 					if !field.Hide {
@@ -1424,13 +1463,21 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 							}
 							field.TableFields[z] = *(field.TableFields[z].UpdateValue(id, rowValue, res, sql()))
 						}
+						if utils.InArray(existField, field.Field) {
+							field.Field = field.Field + label
+						}
 						list = append(list, *field)
+						existField = append(existField, field.Field)
 					} else {
 						if field.Field == pk {
 							hasPK = true
 						}
 						rowValue := field.GetRawValue(columns, res[field.Field])
+						if utils.InArray(existField, field.Field) {
+							field.Field = field.Field + label
+						}
 						list = append(list, *(field.UpdateValue(id, rowValue, res, sql())))
+						existField = append(existField, field.Field)
 					}
 				}
 			}
@@ -1457,12 +1504,14 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 	var (
 		groupFormList = make([]FormFields, 0)
 		groupHeaders  = make([]string, 0)
+		existField    = make([]string, 0)
 	)
 
 	for index, group := range f.TabGroups {
 		list := make(FormFields, 0)
-		for _, fieldName := range group {
+		for index, fieldName := range group {
 			field := f.FieldList.FindByFieldName(fieldName)
+			label := "_ga_group_" + strconv.Itoa(index)
 			if field != nil && field.isNotBelongToATable() && field.allowAdd() {
 				field.Editable = !field.DisplayButNotAdd
 				if !field.Hide {
@@ -1476,13 +1525,21 @@ func (f *FormPanel) GroupField(sql ...func() *db.SQL) ([]FormFields, []string) {
 							field.TableFields[z] = *(field.TableFields[z].UpdateDefaultValue(nil))
 						}
 					}
+					if utils.InArray(existField, field.Field) {
+						field.Field = field.Field + label
+					}
 					list = append(list, *field)
+					existField = append(existField, field.Field)
 				} else {
+					if utils.InArray(existField, field.Field) {
+						field.Field = field.Field + label
+					}
 					if len(sql) > 0 {
 						list = append(list, *(field.UpdateDefaultValue(sql[0]())))
 					} else {
 						list = append(list, *(field.UpdateDefaultValue(nil)))
 					}
+					existField = append(existField, field.Field)
 				}
 			}
 		}

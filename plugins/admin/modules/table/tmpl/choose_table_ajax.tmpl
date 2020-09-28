@@ -48,5 +48,9 @@
         $(".hide_reset_button.ga_checkbox").bootstrapSwitch('state', true);
         $(".hide_continue_new_check_box.ga_checkbox").bootstrapSwitch('state', true);
         $(".hide_back_button.ga_checkbox").bootstrapSwitch('state', true);
+
+        let detail_table = $("tbody.fields_detail-table");
+        detail_table.find("tr").remove();
+
         NProgress.done();
 {{end}}

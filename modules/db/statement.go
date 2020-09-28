@@ -116,7 +116,7 @@ func (sql *SQL) Table(table string) *SQL {
 func (sql *SQL) Select(fields ...string) *SQL {
 	sql.Fields = fields
 	sql.Functions = make([]string, len(fields))
-	reg, _ := regexp.Compile(`(.*?)\\((.*?)\\)`)
+	reg, _ := regexp.Compile(`(.*?)\((.*?)\)`)
 	for k, field := range fields {
 		res := reg.FindAllStringSubmatch(field, -1)
 		if len(res) > 0 && len(res[0]) > 2 {

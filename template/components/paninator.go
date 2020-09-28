@@ -90,5 +90,5 @@ func (compo *PaginatorAttribute) SetUrl(value string) types.PaginatorAttribute {
 }
 
 func (compo *PaginatorAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "paginator")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "paginator")
 }

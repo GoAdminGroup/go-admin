@@ -115,7 +115,7 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.SetTable("users").SetTitle("Users").SetDescription("Users")
 
 	formList := userTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField("Ip", "ip", db.Varchar, form.Text)
 	formList.AddField("Name", "name", db.Varchar, form.Text)
 	formList.AddField("Gender", "gender", db.Tinyint, form.Radio).
@@ -191,8 +191,8 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 			return ""
 		})
 
-	formList.AddField("UpdatedAt", "updated_at", db.Timestamp, form.Default).FieldNotAllowAdd()
-	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Datetime).FieldNotAllowAdd()
+	formList.AddField("UpdatedAt", "updated_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
+	formList.AddField("CreatedAt", "created_at", db.Timestamp, form.Datetime).FieldDisableWhenCreate()
 
 	userTable.GetForm().SetTabGroups(types.
 		NewTabGroups("id", "ip", "name", "gender", "country", "city").

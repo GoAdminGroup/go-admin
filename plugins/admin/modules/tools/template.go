@@ -47,8 +47,8 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{- range $key, $field := .FormFields}}
 	formList.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}}, form.{{$field.FormType}}){{if ne $field.Default ""}}.
 		FieldDefault({{$field.Default}}){{end -}}{{if not $field.CanAdd}}.
-		FieldNotAllowAdd(){{end -}}{{if not $field.Editable}}.
-		FieldDisableEdit(){{end -}}{{if $field.FormHide}}.
+		FieldDisableWhenCreate(){{end -}}{{if not $field.Editable}}.
+		FieldDisableWhenUpdate(){{end -}}{{if $field.FormHide}}.
 		FieldHide(){{end -}}{{if $field.EditHide}}.
 		FieldHideWhenUpdate(){{end -}}{{if $field.CreateHide}}.
 		FieldHideWhenCreate(){{end -}}{{$field.ExtraFun}}
@@ -60,6 +60,21 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	{{if .HideBackButton}}formList.HideBackButton(){{end}}           
 
 	formList.SetTable("{{.TableName}}").SetTitle("{{.FormTitle}}").SetDescription("{{.FormDescription}}")
+
+
+	{{if eq .DetailDisplay 1}}
+		detail := {{.Table}}.GetDetailFromInfo()
+	{{else if eq .DetailDisplay 2}}
+		detail := {{.Table}}.GetDetail()
+	{{end}}
+
+	{{- range $key, $field := .DetailFields}}
+	detail.AddField("{{$field.Head}}", "{{$field.Name}}", db.{{$field.DBType}})
+	{{- end}}
+
+	{{if ne .DetailDisplay 0}}
+	detail.SetTable("{{.TableName}}").SetTitle("{{.TablePageTitle}}").SetDescription("{{.TableDescription}}")
+	{{end}}
 
 	{{.ExtraCode}}
 

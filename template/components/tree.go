@@ -43,9 +43,9 @@ func (compo *TreeAttribute) SetOrderUrl(value string) types.TreeAttribute {
 }
 
 func (compo *TreeAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "tree")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "tree")
 }
 
 func (compo *TreeAttribute) GetTreeHeader() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "tree-header")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "tree-header")
 }

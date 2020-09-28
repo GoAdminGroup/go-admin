@@ -18,5 +18,5 @@ func (compo *TabsAttribute) SetData(value []map[string]template.HTML) types.Tabs
 }
 
 func (compo *TabsAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "tabs")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "tabs")
 }

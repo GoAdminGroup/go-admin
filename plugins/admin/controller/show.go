@@ -176,13 +176,15 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		var content template2.HTML
 		content, actionJs = allActionBtns.Content()
 
-		actionBtns = html.Div(
+		actionBtns = html.Div(html.Div(
 			html.A(icon.Icon(icon.EllipsisV),
 				html.M{"color": "#676565"},
-				html.M{"class": "dropdown-toggle", "href": "#", "data-toggle": "dropdown"},
-			)+html.Ul(content,
+				html.M{"href": "#"},
+			), html.M{"cursor": "pointer", "width": "100%"}, html.M{"class": "dropdown-toggle", "data-toggle": "dropdown"})+
+			html.Ul(content,
 				html.M{"min-width": "20px !important", "left": "-32px", "overflow": "hidden"},
 				html.M{"class": "dropdown-menu", "role": "menu", "aria-labelledby": "dLabel"}),
+
 			html.M{"text-align": "center"}, html.M{"class": "dropdown"})
 	}
 
@@ -296,9 +298,10 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		Content:         content,
 		Description:     template2.HTML(panelInfo.Description),
 		Title:           modules.AorBHTML(isNotIframe, template2.HTML(panelInfo.Title), ""),
+		MiniSidebar:     info.HideSideBar,
 		AutoRefresh:     autoRefresh,
 		RefreshInterval: interval,
-	}, "", template.ExecuteOptions{Animation: params.Animation})
+	}, "", template.ExecuteOptions{Animation: params.Animation, NoCompress: info.NoCompress})
 }
 
 // Assets return front-end assets according the request path.

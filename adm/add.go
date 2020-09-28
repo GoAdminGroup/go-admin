@@ -179,6 +179,7 @@ func addPermission(cfgFile string) {
 }
 
 func insertPermissionOfTable(conn db.Connection, table string) {
+	table = strings.ToLower(table)
 	insertPermissionInfoDB(conn, table+" "+getWord("Query"), table+"_query", "GET", "/info/"+table)
 	insertPermissionInfoDB(conn, table+" "+getWord("Show Edit Form Page"), table+"_show_edit", "GET",
 		"/info/"+table+"/edit")

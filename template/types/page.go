@@ -22,6 +22,7 @@ import (
 // template should implement it.
 type Attribute struct {
 	TemplateList map[string]string
+	Separation   bool
 }
 
 // Page used in the template as a top variable.

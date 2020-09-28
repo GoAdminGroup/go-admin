@@ -48,6 +48,7 @@ func NewDefaultTable(cfgs ...Config) Table {
 		BaseTable: &BaseTable{
 			Info:           types.NewInfoPanel(cfg.PrimaryKey.Name),
 			Form:           types.NewFormPanel(),
+			NewForm:        types.NewFormPanel(),
 			Detail:         types.NewInfoPanel(cfg.PrimaryKey.Name),
 			CanAdd:         cfg.CanAdd,
 			Editable:       cfg.Editable,
@@ -70,6 +71,9 @@ func (tb *DefaultTable) Copy() Table {
 	return &DefaultTable{
 		BaseTable: &BaseTable{
 			Form: types.NewFormPanel().SetTable(tb.Form.Table).
+				SetDescription(tb.Form.Description).
+				SetTitle(tb.Form.Title),
+			NewForm: types.NewFormPanel().SetTable(tb.Form.Table).
 				SetDescription(tb.Form.Description).
 				SetTitle(tb.Form.Title),
 			Info: types.NewInfoPanel(tb.PrimaryKey.Name).SetTable(tb.Info.Table).
@@ -244,8 +248,15 @@ func (tb *DefaultTable) GetDataWithIds(params parameter.Parameters) (PanelInfo, 
 
 func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params parameter.Parameters, columns Columns) map[string]types.InfoItem {
 
-	var tempModelData = make(map[string]types.InfoItem)
+	var tempModelData = map[string]types.InfoItem{
+		"__goadmin_edit_params":   {},
+		"__goadmin_delete_params": {},
+		"__goadmin_detail_params": {},
+	}
 	headField := ""
+	editParams := ""
+	deleteParams := ""
+	detailParams := ""
 
 	primaryKeyValue := db.GetValueFromDatabaseType(tb.PrimaryKey.Type, res[tb.PrimaryKey.Name], len(columns) == 0)
 
@@ -287,17 +298,40 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 				Row:   res,
 			})
 		}
-		if valueStr, ok := value.(string); ok {
+		var valueStr string
+		var ok bool
+		if valueStr, ok = value.(string); ok {
 			tempModelData[headField] = types.InfoItem{
 				Content: template.HTML(valueStr),
 				Value:   combineValue,
 			}
 		} else {
+			valueStr = string(value.(template.HTML))
 			tempModelData[headField] = types.InfoItem{
 				Content: value.(template.HTML),
 				Value:   combineValue,
 			}
 		}
+
+		if field.IsEditParam {
+			editParams += "__goadmin_edit_" + field.Field + "=" + valueStr + "&"
+		}
+		if field.IsDeleteParam {
+			deleteParams += "__goadmin_delete_" + field.Field + "=" + valueStr + "&"
+		}
+		if field.IsDetailParam {
+			detailParams += "__goadmin_detail_" + field.Field + "=" + valueStr + "&"
+		}
+	}
+
+	if editParams != "" {
+		tempModelData["__goadmin_edit_params"] = types.InfoItem{Content: template.HTML("&" + editParams[:len(editParams)-1])}
+	}
+	if deleteParams != "" {
+		tempModelData["__goadmin_detele_params"] = types.InfoItem{Content: template.HTML("&" + deleteParams[:len(editParams)-1])}
+	}
+	if detailParams != "" {
+		tempModelData["__goadmin_detail_params"] = types.InfoItem{Content: template.HTML("&" + detailParams[:len(editParams)-1])}
 	}
 
 	primaryKeyField := tb.Info.FieldList.GetFieldByFieldName(tb.PrimaryKey.Name)
@@ -317,6 +351,7 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 			Value:   primaryKeyValue.String(),
 		}
 	}
+
 	return tempModelData
 }
 
@@ -770,9 +805,10 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 		id     = int64(0)
 		err    error
 		errMsg = ""
+		f      = tb.GetActualNewForm()
 	)
 
-	if tb.Form.PostHook != nil {
+	if f.PostHook != nil {
 		defer func() {
 			dataList.Add(form.PostTypeKey, "1")
 			dataList.Add(tb.GetPrimaryKey().Name, strconv.Itoa(int(id)))
@@ -785,7 +821,7 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 					}
 				}()
 
-				err := tb.Form.PostHook(dataList)
+				err := f.PostHook(dataList)
 				if err != nil {
 					logger.Error(err)
 				}
@@ -793,27 +829,27 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 		}()
 	}
 
-	if tb.Form.Validator != nil {
-		if err := tb.Form.Validator(dataList); err != nil {
+	if f.Validator != nil {
+		if err := f.Validator(dataList); err != nil {
 			errMsg = "post error: " + err.Error()
 			return err
 		}
 	}
 
-	if tb.Form.PreProcessFn != nil {
-		dataList = tb.Form.PreProcessFn(dataList)
+	if f.PreProcessFn != nil {
+		dataList = f.PreProcessFn(dataList)
 	}
 
-	if tb.Form.InsertFn != nil {
+	if f.InsertFn != nil {
 		dataList.Delete(form.PostTypeKey)
-		err = tb.Form.InsertFn(tb.PreProcessValue(dataList, types.PostTypeCreate))
+		err = f.InsertFn(tb.PreProcessValue(dataList, types.PostTypeCreate))
 		if err != nil {
 			errMsg = "post error: " + err.Error()
 		}
 		return err
 	}
 
-	id, err = tb.sql().Table(tb.Form.Table).Insert(tb.getInjectValueFromFormValue(dataList, types.PostTypeCreate))
+	id, err = tb.sql().Table(f.Table).Insert(tb.getInjectValueFromFormValue(dataList, types.PostTypeCreate))
 
 	// NOTE: some errors should be ignored.
 	if db.CheckError(err, db.INSERT) {
@@ -986,13 +1022,15 @@ func (tb *DefaultTable) DeleteData(id string) error {
 	return err
 }
 
-func (tb *DefaultTable) GetNewForm() FormInfo {
+func (tb *DefaultTable) GetNewFormInfo() FormInfo {
 
-	if len(tb.Form.TabGroups) == 0 {
-		return FormInfo{FieldList: tb.Form.FieldsWithDefaultValue(tb.sql)}
+	f := tb.GetActualNewForm()
+
+	if len(f.TabGroups) == 0 {
+		return FormInfo{FieldList: f.FieldsWithDefaultValue(tb.sql)}
 	}
 
-	newForm, headers := tb.Form.GroupField(tb.sql)
+	newForm, headers := f.GroupField(tb.sql)
 
 	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}
 }

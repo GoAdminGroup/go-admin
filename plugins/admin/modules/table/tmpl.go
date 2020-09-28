@@ -50,6 +50,10 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
         $(".hide_reset_button.ga_checkbox").bootstrapSwitch('state', true);
         $(".hide_continue_new_check_box.ga_checkbox").bootstrapSwitch('state', true);
         $(".hide_back_button.ga_checkbox").bootstrapSwitch('state', true);
+
+        let detail_table = $("tbody.fields_detail-table");
+        detail_table.find("tr").remove();
+
         NProgress.done();
 {{end}}`, "generator": `{{define "generator"}}
     <script>
@@ -72,7 +76,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 addTableToList(JSON.parse(save_table_list_str));
             }
         });
-        
+
         function getLis() {
             return $("li.list-group-item.list-group-item-action")
         }
@@ -95,7 +99,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 if (href === "#tab-form-0") {
                     $(".list-group.save_table_list").show();
                 }
-                if (href === "#tab-form-1" || href === "#tab-form-2") {
+                if (href === "#tab-form-1" || href === "#tab-form-2" || href === "#tab-form-3") {
                     $(".list-group.save_table_list").hide();
                 }
             }
@@ -142,7 +146,7 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 $(".pk").val(data.pk);
                 $(".path").val(data.path);
                 $("select.conn").val(data.conn).select2();
-                conn_req($("select.table"), false, "select");
+                conn_req_refresh($("select.table"), false, "select");
                 setTimeout(function () {
                     $("select.table").val(data.table).select2();
                 }, 2000);
@@ -152,6 +156,14 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 $(".table_description").val(data.table_description);
                 $(".form_title").val(data.form_title);
                 $(".form_description").val(data.form_description);
+                $(".detail_title").val(data.detail_title);
+                $(".detail_description").val(data.detail_description);
+                $("select.detail_display").val(data.detail_display).select2();
+                if (data.detail_display !== "0") {
+                    $("label[for='detail_title']").parent().show();
+                    $("label[for='detail_description']").parent().show();
+                    $("label[for='fields_detail']").parent().show();
+                }
 
                 if (extra_codeeditor && data.extra_code && data.extra_code !== "") {
                     extra_codeeditor.setValue(decodeURIComponent(data.extra_code));
@@ -194,7 +206,21 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                     $(trs_form[i]).find('select.field_form_type_form').val(data.forms[i][7]).select2();
                 }
 
-                toggleItemSwitch($(".permission.ga_checkbox"), data.permission);
+                let detail_table = $("tbody.fields_detail-table");
+                detail_table.find("tr").remove();
+                let tpl_detail = $("template.fields_detail-tpl").html();
+                for (let i = 0; i < data.details.length; i++) {
+                    detail_table.append(tpl_detail);
+                }
+
+                let trs_detail = detail_table.find("tr");
+                for (let i = 0; i < trs_detail.length; i++) {
+                    $(trs_detail[i]).find('.field_head').val(data.details[i][0]);
+                    $(trs_detail[i]).find('.field_name').val(data.details[i][1]);
+                    $(trs_detail[i]).find('select.field_db_type').val(data.details[i][2]).select2();
+                }
+
+                toggleItemSwitchOpposite($(".permission.ga_checkbox"), data.permission);
                 toggleItemSwitch($(".hide_filter_area.ga_checkbox"), data.hide_filter_area);
                 toggleItemSwitch($(".hide_new_button.ga_checkbox"), data.hide_new_button);
                 toggleItemSwitch($(".hide_export_button.ga_checkbox"), data.hide_export_button);
@@ -219,6 +245,14 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
                 $(obj).bootstrapSwitch('state', true);
             } else {
                 $(obj).bootstrapSwitch('state', false);
+            }
+        }
+
+        function toggleItemSwitchOpposite(obj, val) {
+            if (val === "n") {
+                $(obj).bootstrapSwitch('state', false);
+            } else {
+                $(obj).bootstrapSwitch('state', true);
             }
         }
 
@@ -250,6 +284,9 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.form_title = $(".form_title").val();
             data.form_description = $(".form_description").val();
             data.extra_import_package = $(".extra_import_package").val();
+            data.detail_title = $(".detail_title").val();
+            data.detail_description = $(".detail_description").val();
+            data.detail_display = $("select.detail_display").val();
 
             let infos = [];
             let trs = $("tbody.fields-table").find("tr");
@@ -280,6 +317,16 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             }
             data.forms = forms;
 
+            let details = [];
+            let detail_trs = $("tbody.fields_detail-table").find("tr");
+            for (let i = 0; i < detail_trs.length; i++) {
+                details[i] = [];
+                details[i].push($(detail_trs[i]).find('.field_head').val());
+                details[i].push($(detail_trs[i]).find('.field_name').val());
+                details[i].push($(detail_trs[i]).find('select.field_db_type').val());
+            }
+            data.details = details;
+
             data.permission = $("input[name='permission']").val();
 
             data.hide_filter_area = $("input[name='hide_filter_area']").val();
@@ -300,6 +347,57 @@ var tmpls = map[string]string{"choose_table_ajax": `{{define "choose_table_ajax"
             data.hide_back_button = $('input[name="hide_back_button"]').val();
 
             return JSON.stringify(data)
+        }
+
+        function conn_req_refresh(selectObj, box, event) {
+            $.ajax({
+                url: "\/admin\/operation\/_tool_choose_conn",
+                type: 'post',
+                dataType: 'text',
+                data: {
+                    'value': $("select.conn").val(),
+
+                    'event': event
+                },
+                success: function (data) {
+                    if (typeof (data) === "string") {
+                        data = JSON.parse(data);
+                    }
+                    if (data.code === 0) {
+
+
+                        if (selectObj.length > 0) {
+                            if (typeof (data.data) === "object") {
+                                if (box) {
+                                    conn_updateBoxSelections(selectObj, data.data)
+                                } else {
+                                    if (typeof (selectObj.attr("multiple")) !== "undefined") {
+                                        selectObj.html("");
+                                    }
+                                    selectObj.select2({
+                                        data: data.data
+                                    });
+                                }
+                            } else {
+                                if (box) {
+                                    selectObj.val(data.data).select2()
+                                } else {
+
+                                }
+                            }
+                        } else {
+                            $('.table').val(data.data);
+                        }
+
+
+                    } else {
+                        swal(data.msg, '', 'error');
+                    }
+                },
+                error: function () {
+                    alert('error')
+                }
+            });
         }
     </script>
     <style>

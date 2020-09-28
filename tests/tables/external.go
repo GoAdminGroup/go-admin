@@ -39,7 +39,7 @@ func GetExternalTable(ctx *context.Context) (externalTable table.Table) {
 		})
 
 	formList := externalTable.GetForm()
-	formList.AddField("ID", "id", db.Int, form.Default).FieldNotAllowEdit().FieldNotAllowAdd()
+	formList.AddField("ID", "id", db.Int, form.Default).FieldDisplayButCanNotEditWhenUpdate().FieldDisableWhenCreate()
 	formList.AddField("Title", "title", db.Varchar, form.Text)
 
 	formList.SetTable("external").SetTitle("Externals").SetDescription("Externals")

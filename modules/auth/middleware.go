@@ -152,12 +152,12 @@ func (invoker *Invoker) Middleware() context.Handler {
 // at the same time.
 func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, bool) {
 	var (
-		id   float64
-		ok   bool
-		user = models.User()
-	)
+		id float64
+		ok bool
 
-	ses, err := InitSession(ctx, conn)
+		user     = models.User()
+		ses, err = InitSession(ctx, conn)
+	)
 
 	if err != nil {
 		logger.Error("retrieve auth user failed", err)

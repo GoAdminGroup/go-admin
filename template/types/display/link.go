@@ -20,7 +20,9 @@ func (l *Link) Get(args ...interface{}) types.FieldFilterFn {
 		prefix = args[0].(string)
 	}
 	if len(args) > 1 {
-		openInNewTabs = args[1].(bool)
+		if openInNewTabsArr, ok := args[1].([]bool); ok {
+			openInNewTabs = openInNewTabsArr[0]
+		}
 	}
 	return func(value types.FieldModel) interface{} {
 		if openInNewTabs {

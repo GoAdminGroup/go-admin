@@ -52,5 +52,5 @@ func (compo *LinkAttribute) SetContent(value template.HTML) types.LinkAttribute 
 }
 
 func (compo *LinkAttribute) GetContent() template.HTML {
-	return ComposeHtml(compo.TemplateList, *compo, "link")
+	return ComposeHtml(compo.TemplateList, compo.Separation, *compo, "link")
 }
