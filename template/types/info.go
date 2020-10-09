@@ -174,11 +174,15 @@ type FilterFormField struct {
 	Options     FieldOptions
 	OptionTable OptionTable
 	Width       int
+	HeadWidth   int
+	InputWidth  int
+	Style       template.HTMLAttr
 	Operator    FilterOperator
 	OptionExt   template.JS
 	Head        string
 	Placeholder string
 	HelpMsg     template.HTML
+	NoIcon      bool
 	ProcessFn   func(string) string
 }
 
@@ -233,9 +237,13 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Head:        filter.Head,
 			TypeName:    f.TypeName,
 			HelpMsg:     filter.HelpMsg,
+			NoIcon:      filter.NoIcon,
 			FormType:    filter.Type,
 			Editable:    true,
 			Width:       filter.Width,
+			HeadWidth:   filter.HeadWidth,
+			InputWidth:  filter.InputWidth,
+			Style:       filter.Style,
 			Placeholder: filter.Placeholder,
 			Value:       template.HTML(value),
 			Value2:      value2,
@@ -1227,16 +1235,20 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 }
 
 type FilterType struct {
-	FormType    form.Type
-	Operator    FilterOperator
-	Head        string
-	Placeholder string
-	NoHead      bool
-	Width       int
-	HelpMsg     template.HTML
 	Options     FieldOptions
 	Process     func(string) string
 	OptionExt   map[string]interface{}
+	FormType    form.Type
+	HelpMsg     template.HTML
+	Style       template.HTMLAttr
+	Operator    FilterOperator
+	Head        string
+	Placeholder string
+	Width       int
+	HeadWidth   int
+	InputWidth  int
+	NoHead      bool
+	NoIcon      bool
 }
 
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
@@ -1262,7 +1274,11 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 		ff.Head = modules.AorB(!filter.NoHead && filter.Head == "",
 			i.FieldList[i.curFieldListIndex].Head, filter.Head)
 		ff.Width = filter.Width
+		ff.HeadWidth = filter.HeadWidth
+		ff.InputWidth = filter.InputWidth
 		ff.HelpMsg = filter.HelpMsg
+		ff.NoIcon = filter.NoIcon
+		ff.Style = filter.Style
 		ff.ProcessFn = filter.Process
 		ff.Placeholder = modules.AorB(filter.Placeholder == "", language.Get("input")+" "+ff.Head, filter.Placeholder)
 		ff.Options = filter.Options

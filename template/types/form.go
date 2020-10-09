@@ -169,6 +169,9 @@ type FormField struct {
 
 	TableFields FormFields
 
+	Style  template.HTMLAttr `json:"style"`
+	NoIcon bool              `json:"no_icon"`
+
 	OptionExt       template.JS     `json:"option_ext"`
 	OptionExt2      template.JS     `json:"option_ext_2"`
 	OptionInitFn    OptionInitFn    `json:"-"`
