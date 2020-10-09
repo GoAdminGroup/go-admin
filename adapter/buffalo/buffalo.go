@@ -181,6 +181,11 @@ func (bu *Buffalo) GetCookie() (string, error) {
 	return bu.ctx.Cookies().Get(bu.CookieKey())
 }
 
+// Lang implements the method Adapter.Lang.
+func (bu *Buffalo) Lang() string {
+	return bu.ctx.Request().URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (bu *Buffalo) Path() string {
 	return bu.ctx.Request().URL.Path

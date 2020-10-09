@@ -8,6 +8,7 @@ import (
 	"html/template"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 
@@ -165,7 +166,7 @@ func NewMenu(conn db.Connection, data NewMenuData) (int64, error) {
 }
 
 // GetGlobalMenu return Menu of given user model.
-func GetGlobalMenu(user models.UserModel, conn db.Connection, pluginNames ...string) *Menu {
+func GetGlobalMenu(user models.UserModel, conn db.Connection, lang string, pluginNames ...string) *Menu {
 
 	var (
 		menus      []map[string]interface{}
@@ -202,19 +203,14 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection, pluginNames ...str
 	var title string
 	for i := 0; i < len(menus); i++ {
 
-		if menus[i]["type"].(int64) == 1 {
-			title = language.Get(menus[i]["title"].(string))
-		} else {
-			title = menus[i]["title"].(string)
-		}
-
+		title = language.GetWithLang(menus[i]["title"].(string), lang)
 		menuOption = append(menuOption, map[string]string{
 			"id":    strconv.FormatInt(menus[i]["id"].(int64), 10),
 			"title": title,
 		})
 	}
 
-	menuList := constructMenuTree(menus, 0)
+	menuList := constructMenuTree(menus, 0, lang)
 	maxOrder := int64(0)
 	if len(menus) > 0 {
 		maxOrder = menus[len(menus)-1]["parent_id"].(int64)
@@ -228,7 +224,7 @@ func GetGlobalMenu(user models.UserModel, conn db.Connection, pluginNames ...str
 	}
 }
 
-func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
+func constructMenuTree(menus []map[string]interface{}, parentID int64, lang string) []Item {
 
 	branch := make([]Item, 0)
 
@@ -243,14 +239,24 @@ func constructMenuTree(menus []map[string]interface{}, parentID int64) []Item {
 
 			header, _ := menus[j]["header"].(string)
 
+			uri := menus[j]["uri"].(string)
+
+			if lang != "" {
+				if strings.Index(uri, "?") != -1 {
+					uri += "&__ga_lang=" + lang
+				} else {
+					uri += "?__ga_lang=" + lang
+				}
+			}
+
 			child := Item{
 				Name:         title,
 				ID:           strconv.FormatInt(menus[j]["id"].(int64), 10),
-				Url:          menus[j]["uri"].(string),
+				Url:          uri,
 				Icon:         menus[j]["icon"].(string),
 				Header:       header,
 				Active:       "",
-				ChildrenList: constructMenuTree(menus, menus[j]["id"].(int64)),
+				ChildrenList: constructMenuTree(menus, menus[j]["id"].(int64), lang),
 			}
 
 			branch = append(branch, child)

@@ -58,6 +58,7 @@ type WebFrameWork interface {
 	GetConnection() db.Connection
 	SetContext(ctx interface{}) WebFrameWork
 	GetCookie() (string, error)
+	Lang() string
 	Path() string
 	Method() string
 	FormParam() url.Values
@@ -167,7 +168,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 	buf := new(bytes.Buffer)
 	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 		User:         user,
-		Menu:         menu.GetGlobalMenu(user, wf.GetConnection()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
+		Menu:         menu.GetGlobalMenu(user, wf.GetConnection(), newBase.Lang()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
 		Panel:        panel.GetContent(config.IsProductionEnvironment()),
 		Assets:       template.GetComponentAssetImportHTML(),
 		Buttons:      navButtons.CheckPermission(user),

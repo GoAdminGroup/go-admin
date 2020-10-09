@@ -137,6 +137,11 @@ func (bee *Beego) GetCookie() (string, error) {
 	return bee.ctx.GetCookie(bee.CookieKey()), nil
 }
 
+// Lang implements the method Adapter.Lang.
+func (bee *Beego) Lang() string {
+	return bee.ctx.Request.URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (bee *Beego) Path() string {
 	return bee.ctx.Request.URL.Path
