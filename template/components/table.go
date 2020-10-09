@@ -82,7 +82,7 @@ type DataTableAttribute struct {
 	UpdateUrl         string
 	HideThead         bool
 	DetailUrl         string
-	SortUrl           string
+	SortUrl           template.URL
 	DeleteUrl         string
 	PrimaryKey        string
 	IsTab             bool
@@ -178,7 +178,7 @@ func (compo *DataTableAttribute) SetDetailUrl(value string) types.DataTableAttri
 }
 
 func (compo *DataTableAttribute) SetSortUrl(value string) types.DataTableAttribute {
-	compo.SortUrl = value
+	compo.SortUrl = template.URL(value)
 	return compo
 }
 
