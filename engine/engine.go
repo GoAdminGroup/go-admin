@@ -357,6 +357,12 @@ func (eng *Engine) AddNavButtons(title template2.HTML, icon string, action types
 	return eng
 }
 
+// AddNavButtonsRaw add the nav buttons.
+func (eng *Engine) AddNavButtonsRaw(btns ...types.Button) *Engine {
+	*eng.NavButtons = append(*eng.NavButtons, btns...)
+	return eng
+}
+
 type navJumpButtonParam struct {
 	Exist      bool
 	Icon       string
@@ -512,7 +518,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User:         user,
-			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:        panel.GetContent(eng.config.IsProductionEnvironment()),
 			Assets:       template.GetComponentAssetImportHTML(),
 			Buttons:      eng.NavButtons.CheckPermission(user),
@@ -560,7 +566,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
-			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
@@ -621,7 +627,7 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 
 		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 			User: user,
-			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 			Panel: types.Panel{
 				Content: template.HTML(cbuf.String()),
 			},
@@ -647,7 +653,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 
 	hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
 		User:         user,
-		Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
+		Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
 		Panel:        template.WarningPanel(err.Error()).GetContent(eng.config.IsProductionEnvironment()),
 		Assets:       template.GetComponentAssetImportHTML(),
 		Buttons:      (*eng.NavButtons).CheckPermission(user),

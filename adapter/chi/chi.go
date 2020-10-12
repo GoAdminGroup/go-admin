@@ -197,6 +197,11 @@ func (ch *Chi) GetCookie() (string, error) {
 	return cookie.Value, err
 }
 
+// Lang implements the method Adapter.Lang.
+func (ch *Chi) Lang() string {
+	return ch.ctx.Request.URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (ch *Chi) Path() string {
 	return ch.ctx.Request.URL.Path

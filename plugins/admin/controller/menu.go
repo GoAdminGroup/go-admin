@@ -214,7 +214,7 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 	// TODO: use transaction
 	menuModel, createErr := models.Menu().SetConn(h.conn).
 		New(param.Title, param.Icon, param.Uri, param.Header, param.PluginName, param.ParentId,
-			(menu.GetGlobalMenu(user, h.conn, param.PluginName)).MaxOrder+1)
+			(menu.GetGlobalMenu(user, h.conn, ctx.Lang(), param.PluginName)).MaxOrder+1)
 
 	if db.CheckError(createErr, db.INSERT) {
 		h.showNewMenu(ctx, createErr)
@@ -229,7 +229,7 @@ func (h *Handler) NewMenu(ctx *context.Context) {
 		}
 	}
 
-	menu.GetGlobalMenu(user, h.conn, param.PluginName).AddMaxOrder()
+	menu.GetGlobalMenu(user, h.conn, ctx.Lang(), param.PluginName).AddMaxOrder()
 
 	h.getMenuInfoPanel(ctx, param.PluginName, "")
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
@@ -255,7 +255,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 	}
 
 	tree := aTree().
-		SetTree((menu.GetGlobalMenu(user, h.conn, plugName)).List).
+		SetTree((menu.GetGlobalMenu(user, h.conn, ctx.Lang(), plugName)).List).
 		SetEditUrl(h.routePath("menu_edit_show")).
 		SetUrlPrefix(h.config.Prefix()).
 		SetDeleteUrl(h.routePath("menu_delete")).

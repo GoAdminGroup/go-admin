@@ -203,6 +203,11 @@ func (fast *Fasthttp) GetCookie() (string, error) {
 	return string(fast.ctx.Request.Header.Cookie(fast.CookieKey())), nil
 }
 
+// Lang implements the method Adapter.Lang.
+func (fast *Fasthttp) Lang() string {
+	return string(fast.ctx.Request.URI().QueryArgs().Peek("__ga_lang"))
+}
+
 // Path implements the method Adapter.Path.
 func (fast *Fasthttp) Path() string {
 	return string(fast.ctx.Path())

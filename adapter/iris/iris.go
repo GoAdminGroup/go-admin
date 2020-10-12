@@ -145,6 +145,11 @@ func (is *Iris) GetCookie() (string, error) {
 	return is.ctx.GetCookie(is.CookieKey()), nil
 }
 
+// Lang implements the method Adapter.Lang.
+func (is *Iris) Lang() string {
+	return is.ctx.Request().URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (is *Iris) Path() string {
 	return is.ctx.Path()
