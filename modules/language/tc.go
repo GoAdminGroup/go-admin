@@ -89,6 +89,13 @@ var tc = LangSet{
 	"continue editing":  "繼續編輯",
 	"continue creating": "繼續新增",
 
+	"goadmin is now running. \nrunning in \"debug\" mode. switch to \"release\" mode in production.\n\n": "GoAdmin 啟動成功。\n目前處於 \"debug\" 模式。請在生產環境中切換為 \"release\" 模式。\n\n",
+
+	"wrong goadmin version, theme %s required goadmin version are %s":    "錯誤的 GoAdmin 版本，當前主題 %s 需要 GoAdmin 版本為 %s",
+	"wrong theme version, goadmin %s required version of theme %s is %s": "錯誤的主題版本, GoAdmin %s 需要主題 %s 的版本為 %s",
+
+	"adapter is nil, import the default adapter or use addadapter method add the adapter": "適配器為空，請先 import 對應的適配器或使用 AddAdapter 方法引入",
+
 	"username and password can not be empty":        "用戶名密碼不能為空",
 	"operation not allow":                           "不允許的操作",
 	"password does not match":                       "密碼不壹致",
@@ -119,6 +126,7 @@ var tc = LangSet{
 	"initialize navigation buttons":   "初始化導航欄按鈕",
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化數據庫連接",
+	"initialize success":              "初始化成功🍺🍺",
 
 	"plugins":          "插件",
 	"plugin store":     "插件商店",

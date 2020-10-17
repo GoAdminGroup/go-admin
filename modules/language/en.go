@@ -37,6 +37,13 @@ var en = LangSet{
 	"search":           "Search",
 	"remove":           "Remove",
 
+	"goadmin is now running. \nrunning in \"debug\" mode. switch to \"release\" mode in production.\n\n": "GoAdmin is now running. \nRunning in \"debug\" mode. Switch to \"release\" mode in production.\n\n",
+
+	"wrong goadmin version, theme %s required goadmin version are %s":    "wrong GoAdmin version, theme %s required GoAdmin version are %s",
+	"wrong theme version, goadmin %s required version of theme %s is %s": "wrong Theme version, GoAdmin %s required version of theme %s is %s",
+
+	"adapter is nil, import the default adapter or use addadapter method add the adapter": "adapter is nil, import the default adapter or use AddAdapter method add the adapter",
+
 	"are you sure to delete":               "Are you sure to delete",
 	"yes":                                  "yes",
 	"got it":                               "got it",
@@ -91,6 +98,7 @@ var en = LangSet{
 	"initialize navigation buttons":   "Initialize navigation buttons",
 	"initialize plugins":              "Initialize plugins",
 	"initialize database connections": "Initialize database connections",
+	"initialize success":              "Initialize success🍺🍺",
 
 	"not found":      "Not found",
 	"internal error": "Internal error",
