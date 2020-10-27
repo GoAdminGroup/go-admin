@@ -31,6 +31,16 @@
     Inspired by <a href="https://github.com/z-song/laravel-admin" target="_blank">laravel-admin</a>
 </p>
 
+## How to use this fork
+Add this to your `go.mod`
+```
+replace github.com/GoAdminGroup/go-admin v1.2.17 => github.com/phanletrunghieu/go-admin v1.2.17+0.0.1
+```
+
+## Changes in this fork
+
+- Correct error title when call an ajax [PR-344](https://github.com/GoAdminGroup/go-admin/pull/344)
+
 ## Preface
 
 GoAdmin is a toolkit to help you build a data visualization admin panel for your golang app.
