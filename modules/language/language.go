@@ -48,7 +48,20 @@ func GetWithScope(value string, scopes ...string) string {
 		return value
 	}
 
-	if locale, ok := Lang[config.GetLanguage()][JoinScopes(scopes)+strings.ToLower(value)]; ok {
+	return GetWithScopeAndLanguageSet(value, config.GetLanguage(), scopes...)
+}
+
+// GetWithLang return the value of given language set.
+func GetWithLang(value, lang string) string {
+	if lang == "" {
+		lang = config.GetLanguage()
+	}
+	return GetWithScopeAndLanguageSet(value, lang)
+}
+
+// GetWithScopeAndLanguageSet return the value of given scopes and language set.
+func GetWithScopeAndLanguageSet(value, lang string, scopes ...string) string {
+	if locale, ok := Lang[lang][JoinScopes(scopes)+strings.ToLower(value)]; ok {
 		return locale
 	}
 
@@ -123,6 +136,13 @@ func (lang LangMap) GetWithScope(value string, scopes ...string) string {
 // Add add a language package to the Lang.
 func Add(key string, lang map[string]string) {
 	Lang[key] = lang
+}
+
+// AppendTo add more language translations to the given language set.
+func AppendTo(lang string, set map[string]string) {
+	for key, value := range set {
+		Lang[lang][key] = value
+	}
 }
 
 func JoinScopes(scopes []string) string {

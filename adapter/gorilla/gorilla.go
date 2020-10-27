@@ -174,6 +174,11 @@ func (g *Gorilla) GetCookie() (string, error) {
 	return cookie.Value, err
 }
 
+// Lang implements the method Adapter.Lang.
+func (g *Gorilla) Lang() string {
+	return g.ctx.Request.URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (g *Gorilla) Path() string {
 	return g.ctx.Request.RequestURI

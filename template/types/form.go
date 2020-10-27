@@ -169,6 +169,9 @@ type FormField struct {
 
 	TableFields FormFields
 
+	Style  template.HTMLAttr `json:"style"`
+	NoIcon bool              `json:"no_icon"`
+
 	OptionExt       template.JS     `json:"option_ext"`
 	OptionExt2      template.JS     `json:"option_ext_2"`
 	OptionInitFn    OptionInitFn    `json:"-"`
@@ -462,6 +465,15 @@ func (f *FormPanel) HideResetButton() *FormPanel {
 func (f *FormPanel) HideBackButton() *FormPanel {
 	f.IsHideBackButton = true
 	return f
+}
+
+func (f *FormPanel) AddFieldTr(ctx *context.Context, head, field string, filedType db.DatabaseType, formType form2.Type) *FormPanel {
+	return f.AddFieldWithTranslation(ctx, head, field, filedType, formType)
+}
+
+func (f *FormPanel) AddFieldWithTranslation(ctx *context.Context, head, field string, filedType db.DatabaseType,
+	formType form2.Type) *FormPanel {
+	return f.AddField(language.GetWithLang(head, ctx.Lang()), field, filedType, formType)
 }
 
 func (f *FormPanel) AddField(head, field string, filedType db.DatabaseType, formType form2.Type) *FormPanel {

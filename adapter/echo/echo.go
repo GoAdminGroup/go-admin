@@ -146,6 +146,11 @@ func (e *Echo) GetCookie() (string, error) {
 	return cookie.Value, err
 }
 
+// Lang implements the method Adapter.Lang.
+func (e *Echo) Lang() string {
+	return e.ctx.Request().URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (e *Echo) Path() string {
 	return e.ctx.Request().URL.Path

@@ -154,6 +154,11 @@ func (gf *Gf) GetCookie() (string, error) {
 	return gf.ctx.Cookie.Get(gf.CookieKey()), nil
 }
 
+// Lang implements the method Adapter.Lang.
+func (gf *Gf) Lang() string {
+	return gf.ctx.Request.URL.Query().Get("__ga_lang")
+}
+
 // Path implements the method Adapter.Path.
 func (gf *Gf) Path() string {
 	return gf.ctx.URL.Path

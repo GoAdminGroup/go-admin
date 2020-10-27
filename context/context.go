@@ -335,6 +335,11 @@ func (ctx *Context) Query(key string) string {
 	return ctx.Request.URL.Query().Get(key)
 }
 
+// QueryAll get the query parameters of url.
+func (ctx *Context) QueryAll(key string) []string {
+	return ctx.Request.URL.Query()[key]
+}
+
 // QueryDefault get the query parameter of url. If it is empty, return the default.
 func (ctx *Context) QueryDefault(key, def string) string {
 	value := ctx.Query(key)
@@ -342,6 +347,11 @@ func (ctx *Context) QueryDefault(key, def string) string {
 		return def
 	}
 	return value
+}
+
+// Lang get the query parameter of url with given key __ga_lang.
+func (ctx *Context) Lang() string {
+	return ctx.Query("__ga_lang")
 }
 
 // Headers get the value of request headers key.

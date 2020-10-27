@@ -342,6 +342,7 @@ func GetDropDownButton(title template.HTML, icon string, items []*NavDropDownIte
 			Title:    title,
 			Name:     name,
 			TypeName: ButtonTypeNavDropDown,
+			Action:   new(NilAction),
 		},
 		Items: items,
 		Icon:  icon,

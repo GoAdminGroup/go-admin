@@ -174,11 +174,15 @@ type FilterFormField struct {
 	Options     FieldOptions
 	OptionTable OptionTable
 	Width       int
+	HeadWidth   int
+	InputWidth  int
+	Style       template.HTMLAttr
 	Operator    FilterOperator
 	OptionExt   template.JS
 	Head        string
 	Placeholder string
 	HelpMsg     template.HTML
+	NoIcon      bool
 	ProcessFn   func(string) string
 }
 
@@ -233,9 +237,13 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			Head:        filter.Head,
 			TypeName:    f.TypeName,
 			HelpMsg:     filter.HelpMsg,
+			NoIcon:      filter.NoIcon,
 			FormType:    filter.Type,
 			Editable:    true,
 			Width:       filter.Width,
+			HeadWidth:   filter.HeadWidth,
+			InputWidth:  filter.InputWidth,
+			Style:       filter.Style,
 			Placeholder: filter.Placeholder,
 			Value:       template.HTML(value),
 			Value2:      value2,
@@ -755,6 +763,17 @@ type Action interface {
 	GetCallbacks() context.Node
 }
 
+type NilAction struct{}
+
+func (def *NilAction) SetBtnId(btnId string)        {}
+func (def *NilAction) SetBtnData(data interface{})  {}
+func (def *NilAction) Js() template.JS              { return "" }
+func (def *NilAction) BtnAttribute() template.HTML  { return "" }
+func (def *NilAction) BtnClass() template.HTML      { return "" }
+func (def *NilAction) ExtContent() template.HTML    { return "" }
+func (def *NilAction) FooterContent() template.HTML { return "" }
+func (def *NilAction) GetCallbacks() context.Node   { return context.Node{} }
+
 type Actions []Action
 
 type DefaultAction struct {
@@ -1012,6 +1031,14 @@ func (i *InfoPanel) AddColumnButtons(head string, buttons ...Button) *InfoPanel 
 	return i
 }
 
+func (i *InfoPanel) AddFieldTr(ctx *context.Context, head, field string, typeName db.DatabaseType) *InfoPanel {
+	return i.AddFieldWithTranslation(ctx, head, field, typeName)
+}
+
+func (i *InfoPanel) AddFieldWithTranslation(ctx *context.Context, head, field string, typeName db.DatabaseType) *InfoPanel {
+	return i.AddField(language.GetWithLang(head, ctx.Lang()), field, typeName)
+}
+
 func (i *InfoPanel) AddField(head, field string, typeName db.DatabaseType) *InfoPanel {
 	i.FieldList = append(i.FieldList, Field{
 		Head:     head,
@@ -1192,12 +1219,12 @@ func (i *InfoPanel) FieldAsEditParam() *InfoPanel {
 	return i
 }
 
-func (i *InfoPanel) FieldIsDeleteParam() *InfoPanel {
+func (i *InfoPanel) FieldAsDeleteParam() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].IsDeleteParam = true
 	return i
 }
 
-func (i *InfoPanel) FieldIsDetailParam() *InfoPanel {
+func (i *InfoPanel) FieldAsDetailParam() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].IsDetailParam = true
 	return i
 }
@@ -1208,16 +1235,20 @@ func (i *InfoPanel) FieldFixed() *InfoPanel {
 }
 
 type FilterType struct {
-	FormType    form.Type
-	Operator    FilterOperator
-	Head        string
-	Placeholder string
-	NoHead      bool
-	Width       int
-	HelpMsg     template.HTML
 	Options     FieldOptions
 	Process     func(string) string
 	OptionExt   map[string]interface{}
+	FormType    form.Type
+	HelpMsg     template.HTML
+	Style       template.HTMLAttr
+	Operator    FilterOperator
+	Head        string
+	Placeholder string
+	Width       int
+	HeadWidth   int
+	InputWidth  int
+	NoHead      bool
+	NoIcon      bool
 }
 
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
@@ -1243,7 +1274,11 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 		ff.Head = modules.AorB(!filter.NoHead && filter.Head == "",
 			i.FieldList[i.curFieldListIndex].Head, filter.Head)
 		ff.Width = filter.Width
+		ff.HeadWidth = filter.HeadWidth
+		ff.InputWidth = filter.InputWidth
 		ff.HelpMsg = filter.HelpMsg
+		ff.NoIcon = filter.NoIcon
+		ff.Style = filter.Style
 		ff.ProcessFn = filter.Process
 		ff.Placeholder = modules.AorB(filter.Placeholder == "", language.Get("input")+" "+ff.Head, filter.Placeholder)
 		ff.Options = filter.Options

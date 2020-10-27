@@ -65,7 +65,7 @@ func Alert(ctx *context.Context, desc, title, msg string, conn db.Connection, bt
 			Title:       pageTitle,
 		},
 		Config:    *config.Get(),
-		Menu:      menu.GetGlobalMenu(user, conn).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Menu:      menu.GetGlobalMenu(user, conn, ctx.Lang()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: true,
 		Buttons:   *btns,
 		IsPjax:    ctx.IsPjax(),

@@ -328,10 +328,10 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 		tempModelData["__goadmin_edit_params"] = types.InfoItem{Content: template.HTML("&" + editParams[:len(editParams)-1])}
 	}
 	if deleteParams != "" {
-		tempModelData["__goadmin_detele_params"] = types.InfoItem{Content: template.HTML("&" + deleteParams[:len(editParams)-1])}
+		tempModelData["__goadmin_delete_params"] = types.InfoItem{Content: template.HTML("&" + deleteParams[:len(deleteParams)-1])}
 	}
 	if detailParams != "" {
-		tempModelData["__goadmin_detail_params"] = types.InfoItem{Content: template.HTML("&" + detailParams[:len(editParams)-1])}
+		tempModelData["__goadmin_detail_params"] = types.InfoItem{Content: template.HTML("&" + detailParams[:len(detailParams)-1])}
 	}
 
 	primaryKeyField := tb.Info.FieldList.GetFieldByFieldName(tb.PrimaryKey.Name)

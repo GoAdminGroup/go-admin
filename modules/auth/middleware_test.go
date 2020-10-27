@@ -11,7 +11,7 @@ import (
 
 func TestCheckPermissions(t *testing.T) {
 
-	config.Set(&config.Config{
+	config.Initialize(&config.Config{
 		UrlPrefix: "admin",
 	})
 
