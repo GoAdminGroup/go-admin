@@ -153,7 +153,7 @@ func (param Parameters) WithPKs(id ...string) Parameters {
 func (param Parameters) PKs() []string {
 	pk := param.GetFieldValue(PrimaryKey)
 	if pk == "" {
-		return []string{}
+		return make([]string, 1)
 	}
 	return strings.Split(param.GetFieldValue(PrimaryKey), ",")
 }
