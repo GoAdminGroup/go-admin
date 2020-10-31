@@ -89,7 +89,7 @@ func main() {
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
-  app.Listen(":8897")
+  _=app.Listen(":8897")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)

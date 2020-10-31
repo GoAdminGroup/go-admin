@@ -172,7 +172,7 @@ func (gof *Gofiber) SetContext(contextInterface interface{}) adapter.WebFrameWor
 
 // Redirect implements the method Adapter.Redirect.
 func (gof *Gofiber) Redirect() {
-	gof.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
+	_=gof.ctx.Redirect(config.Url(config.GetLoginUrl()), http.StatusFound)
 }
 
 // SetContentType implements the method Adapter.SetContentType.
