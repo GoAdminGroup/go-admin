@@ -5,8 +5,6 @@
 package gofiber
 
 import (
-//	"fmt"
-//	"bytes"
 	"errors"
 	"io"
 	"net/http"
@@ -48,7 +46,7 @@ func (gof *Gofiber) Use(app interface{}, plugs []plugins.Plugin) error {
 func (fagof *Gofiber) Run() error                 { panic("not implement") }
 func (gof *Gofiber) DisableLog()                { panic("not implement") }
 func (gof *Gofiber) Static(prefix, path string) { panic("not implement") }
-//--------------
+
 // Content implements the method Adapter.Content.
 func (gof *Gofiber) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	gof.GetContent(ctx, getPanelFn, gof, btns, fn)
