@@ -6,14 +6,16 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gofiber"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
+	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
 	"github.com/gofiber/fiber/v2"
 
@@ -81,7 +83,7 @@ func main() {
 		//
 		AddGenerator("user", datamodel.GetUserTable).
 		AddPlugins(examplePlugin).
-		Use(App); err != nil {
+		Use(app); err != nil {
 		panic(err)
 	}
 
