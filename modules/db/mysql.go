@@ -88,6 +88,30 @@ func (db *Mysql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
+// QueryWithTx is query method within the transaction.
+func (db *Mysql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	return CommonQueryWithTx(tx, query, args...)
+}
+
+// ExecWithTx is exec method within the transaction.
+func (db *Mysql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+	return CommonExecWithTx(tx, query, args...)
+}
+
+func (db *Mysql) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Mysql) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
+}
+
 // BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.
 func (db *Mysql) BeginTxWithReadUncommitted() *sql.Tx {
 	return CommonBeginTxWithLevel(db.DbList["default"], sql.LevelReadUncommitted)
@@ -136,14 +160,4 @@ func (db *Mysql) BeginTxAndConnection(conn string) *sql.Tx {
 // BeginTxWithLevelAndConnection starts a transaction with given transaction isolation level and connection.
 func (db *Mysql) BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx {
 	return CommonBeginTxWithLevel(db.DbList[conn], level)
-}
-
-// QueryWithTx is query method within the transaction.
-func (db *Mysql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
-	return CommonQueryWithTx(tx, query, args...)
-}
-
-// ExecWithTx is exec method within the transaction.
-func (db *Mysql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
-	return CommonExecWithTx(tx, query, args...)
 }

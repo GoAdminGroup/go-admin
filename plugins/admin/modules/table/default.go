@@ -425,16 +425,18 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 
 	var (
 		connection     = tb.db()
-		placeholder    = modules.Delimiter(connection.GetDelimiter(), "%s")
+		delimiter      = connection.GetDelimiter()
+		placeholder    = modules.Delimiter(delimiter, "%s")
 		queryStatement string
 		countStatement string
 		ids            = params.PKs()
-		pk             = tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
+		table          = modules.Delimiter(delimiter, tb.Info.Table)
+		pk             = table + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
 	)
 
-	if connection.Name() == db.DriverPostgresql {
-		placeholder = "%s"
-	}
+	//if connection.Name() == db.DriverPostgresql {
+	//	placeholder = "%s"
+	//}
 
 	beginTime := time.Now()
 
@@ -456,7 +458,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
 		} else {
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
-			queryStatement = "select %s from " + placeholder + "%s %s %s order by %s." + placeholder + " %s LIMIT ? OFFSET ?"
+			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
 			// %s means: table, join table, wheres
 			countStatement = "select count(*) from " + placeholder + " %s %s"
 		}
@@ -477,7 +479,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			for _, field := range tb.Info.FieldList {
 				if field.TypeName == db.Text || field.TypeName == db.Longtext {
 					f := modules.Delimiter(connection.GetDelimiter(), field.Field)
-					headField := tb.Info.Table + "." + f
+					headField := table + "." + f
 					allFields = strings.ReplaceAll(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
 					groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 				}
@@ -533,6 +535,8 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		}
 	}
 
+	fmt.Println("params.SortField", params.SortField)
+
 	queryCmd := ""
 	if connection.Name() == db.DriverMssql && len(ids) == 0 {
 		queryCmd = fmt.Sprintf(queryStatement, tb.Info.Table, params.SortField, params.SortType,
@@ -571,7 +575,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		logger.LogSQL(countCmd, nil)
 
 		if tb.connectionDriver == "postgresql" {
-			size = int(total[0]["count"].(int64))
+			size = int(total[0]["count(*)"].(int64))
 		} else if tb.connectionDriver == db.DriverMssql {
 			size = int(total[0]["size"].(int64))
 		} else {
@@ -629,14 +633,10 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			args           = []interface{}{id}
 			connection     = tb.db()
 			delimiter      = connection.GetDelimiter()
-			tableName      = tb.GetForm().Table
+			tableName      = modules.Delimiter(delimiter, tb.GetForm().Table)
 			pk             = tableName + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
-			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " = ? %s "
-		)
-
-		if connection.Name() == db.DriverPostgresql {
 			queryStatement = "select %s from %s %s where " + pk + " = ? %s "
-		}
+		)
 
 		for i := 0; i < len(tb.Form.FieldList); i++ {
 
@@ -647,17 +647,17 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 
 			if tb.Form.FieldList[i].Joins.Valid() {
 				headField := tb.Form.FieldList[i].Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + tb.Form.FieldList[i].Field
-				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName()+"."+
+				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName(delimiter)+"."+
 					modules.FilterField(tb.Form.FieldList[i].Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
 				for _, join := range tb.Form.FieldList[i].Joins {
-					if !modules.InArray(joinTables, join.GetTableName()) {
-						joinTables = append(joinTables, join.GetTableName())
+					if !modules.InArray(joinTables, join.GetTableName(delimiter)) {
+						joinTables = append(joinTables, join.GetTableName(delimiter))
 						if join.BaseTable == "" {
 							join.BaseTable = tableName
 						}
 						joins += " left join " + modules.FilterField(join.Table, delimiter) + " " + join.TableAlias + " on " +
-							join.GetTableName() + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
-							join.BaseTable + "." + modules.FilterField(join.Field, delimiter)
+							join.GetTableName(delimiter) + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
+							modules.Delimiter(delimiter, join.BaseTable) + "." + modules.FilterField(join.Field, delimiter)
 					}
 				}
 			}

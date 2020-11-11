@@ -147,9 +147,17 @@ func (sql *SQLComponent) getJoins(delimiter string) string {
 	}
 	joins := ""
 	for _, join := range sql.Leftjoins {
-		joins += " left join " + wrap(delimiter, join.Table) + " on " + join.FieldA + " " + join.Operation + " " + join.FieldB + " "
+		joins += " left join " + wrap(delimiter, join.Table) + " on " + sql.processLeftJoinField(join.FieldA, delimiter) + " " + join.Operation + " " + sql.processLeftJoinField(join.FieldB, delimiter) + " "
 	}
 	return joins
+}
+
+func (sql *SQLComponent) processLeftJoinField(field, delimiter string) string {
+	arr := strings.Split(field, ".")
+	if len(arr) > 0 {
+		return delimiter + arr[0] + delimiter + "." + delimiter + arr[1] + delimiter
+	}
+	return field
 }
 
 func (sql *SQLComponent) getFields(delimiter string) string {
@@ -169,7 +177,7 @@ func (sql *SQLComponent) getFields(delimiter string) string {
 		for _, field := range sql.Fields {
 			arr := strings.Split(field, ".")
 			if len(arr) > 1 {
-				fields += arr[0] + "." + wrap(delimiter, arr[1]) + ","
+				fields += wrap(delimiter, arr[0]) + "." + wrap(delimiter, arr[1]) + ","
 			} else {
 				fields += wrap(delimiter, field) + ","
 			}
@@ -253,7 +261,7 @@ func (sql *SQLComponent) prepareUpdate(delimiter string) {
 		sql.Args = append(args, sql.Args...)
 	}
 
-	sql.Statement = "update " + sql.TableName + " set " + fields + sql.getWheres(delimiter)
+	sql.Statement = "update " + delimiter + sql.TableName + delimiter + " set " + fields + sql.getWheres(delimiter)
 }
 
 func (sql *SQLComponent) prepareInsert(delimiter string) {
@@ -268,5 +276,5 @@ func (sql *SQLComponent) prepareInsert(delimiter string) {
 	fields = fields[:len(fields)-1] + ")"
 	quesMark = quesMark[:len(quesMark)-1] + ")"
 
-	sql.Statement = "insert into " + sql.TableName + fields + " values " + quesMark
+	sql.Statement = "insert into " + delimiter + sql.TableName + delimiter + fields + " values " + quesMark
 }

@@ -12,7 +12,7 @@ func (c commonDialect) Insert(comp *SQLComponent) string {
 }
 
 func (c commonDialect) Delete(comp *SQLComponent) string {
-	comp.Statement = "delete from " + comp.TableName + comp.getWheres(c.delimiter)
+	comp.Statement = "delete from " + c.WrapTableName(comp) + comp.getWheres(c.delimiter)
 	return comp.Statement
 }
 
@@ -27,7 +27,7 @@ func (c commonDialect) Count(comp *SQLComponent) string {
 }
 
 func (c commonDialect) Select(comp *SQLComponent) string {
-	comp.Statement = "select " + comp.getFields(c.delimiter) + " from " + comp.TableName + comp.getJoins(c.delimiter) +
+	comp.Statement = "select " + comp.getFields(c.delimiter) + " from " + c.WrapTableName(comp) + comp.getJoins(c.delimiter) +
 		comp.getWheres(c.delimiter) + comp.getGroupBy() + comp.getOrderBy() + comp.getLimit() + comp.getOffset()
 	return comp.Statement
 }
@@ -38,6 +38,10 @@ func (c commonDialect) ShowColumns(table string) string {
 
 func (c commonDialect) GetName() string {
 	return "common"
+}
+
+func (c commonDialect) WrapTableName(comp *SQLComponent) string {
+	return c.delimiter + comp.TableName + c.delimiter
 }
 
 func (c commonDialect) ShowTables() string {

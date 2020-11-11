@@ -56,6 +56,20 @@ func (db *Postgresql) Exec(query string, args ...interface{}) (sql.Result, error
 	return CommonExec(db.DbList["default"], filterQuery(query), args...)
 }
 
+func (db *Postgresql) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Postgresql) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
+}
+
 func filterQuery(query string) string {
 	queCount := strings.Count(query, "?")
 	for i := 1; i < queCount+1; i++ {
@@ -72,7 +86,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
-			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
+			sqlDB, err := sql.Open("postgres", cfg.GetDSN()+" database_to_upper=false")
 			if err != nil {
 				panic(err)
 			}
