@@ -86,7 +86,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
-			sqlDB, err := sql.Open("postgres", cfg.GetDSN()+" database_to_upper=false")
+			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
 				panic(err)
 			}
