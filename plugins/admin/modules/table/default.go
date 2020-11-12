@@ -26,10 +26,11 @@ import (
 
 type DefaultTable struct {
 	*BaseTable
-	connectionDriver string
-	connection       string
-	sourceURL        string
-	getDataFun       GetDataFun
+	connectionDriver     string
+	connectionDriverMode string
+	connection           string
+	sourceURL            string
+	getDataFun           GetDataFun
 }
 
 type GetDataFun func(params parameter.Parameters) ([]map[string]interface{}, int)
@@ -60,10 +61,11 @@ func NewDefaultTable(cfgs ...Config) Table {
 			OnlyDetail:     cfg.OnlyDetail,
 			OnlyInfo:       cfg.OnlyInfo,
 		},
-		connectionDriver: cfg.Driver,
-		connection:       cfg.Connection,
-		sourceURL:        cfg.SourceURL,
-		getDataFun:       cfg.GetDataFun,
+		connectionDriver:     cfg.Driver,
+		connectionDriverMode: cfg.DriverMode,
+		connection:           cfg.Connection,
+		sourceURL:            cfg.SourceURL,
+		getDataFun:           cfg.GetDataFun,
 	}
 }
 
@@ -90,10 +92,11 @@ func (tb *DefaultTable) Copy() Table {
 			Exportable: tb.Exportable,
 			PrimaryKey: tb.PrimaryKey,
 		},
-		connectionDriver: tb.connectionDriver,
-		connection:       tb.connection,
-		sourceURL:        tb.sourceURL,
-		getDataFun:       tb.getDataFun,
+		connectionDriver:     tb.connectionDriver,
+		connectionDriverMode: tb.connectionDriverMode,
+		connection:           tb.connection,
+		sourceURL:            tb.sourceURL,
+		getDataFun:           tb.getDataFun,
 	}
 }
 
@@ -575,7 +578,11 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		logger.LogSQL(countCmd, nil)
 
 		if tb.connectionDriver == "postgresql" {
-			size = int(total[0]["count(*)"].(int64))
+			if tb.connectionDriverMode == "h2" {
+				size = int(total[0]["count(*)"].(int64))
+			} else {
+				size = int(total[0]["count"].(int64))
+			}
 		} else if tb.connectionDriver == db.DriverMssql {
 			size = int(total[0]["size"].(int64))
 		} else {
