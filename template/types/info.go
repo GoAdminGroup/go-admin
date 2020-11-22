@@ -601,7 +601,8 @@ type InfoPanel struct {
 
 	processChains DisplayProcessFnChains
 
-	ActionButtons Buttons
+	ActionButtons    Buttons
+	ActionButtonFold bool
 
 	DisplayGeneratorRecords map[string]struct{}
 
@@ -873,8 +874,8 @@ func (i *InfoPanel) AddButton(title template.HTML, icon string, action Action, c
 	return i
 }
 
-func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...string) *InfoPanel {
-	i.addActionButton(GetActionButton(title, action, ids...)).
+func (i *InfoPanel) AddActionIconButton(icon string, action Action, ids ...string) *InfoPanel {
+	i.addActionButton(GetActionIconButton(icon, action, ids...)).
 		addFooterHTML(action.FooterContent()).
 		addCallback(action.GetCallbacks())
 
@@ -882,9 +883,24 @@ func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...s
 }
 
 func (i *InfoPanel) AddActionButtonFront(title template.HTML, action Action, ids ...string) *InfoPanel {
+	i.SetActionButtonFold()
 	i.ActionButtons = append([]Button{GetActionButton(title, action, ids...)}, i.ActionButtons...)
 	i.addFooterHTML(action.FooterContent()).
 		addCallback(action.GetCallbacks())
+	return i
+}
+
+func (i *InfoPanel) AddActionButton(title template.HTML, action Action, ids ...string) *InfoPanel {
+	i.SetActionButtonFold()
+	i.addActionButton(GetActionButton(title, action, ids...)).
+		addFooterHTML(action.FooterContent()).
+		addCallback(action.GetCallbacks())
+
+	return i
+}
+
+func (i *InfoPanel) SetActionButtonFold() *InfoPanel {
+	i.ActionButtonFold = true
 	return i
 }
 

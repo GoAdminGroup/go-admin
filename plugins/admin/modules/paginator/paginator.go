@@ -1,10 +1,12 @@
 package paginator
 
 import (
+	"fmt"
 	"html/template"
 	"math"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	template2 "github.com/GoAdminGroup/go-admin/template"
@@ -41,7 +43,7 @@ func Get(cfg Config) types.PaginatorAttribute {
 	}
 	paginator.Url = cfg.Param.URLPath + cfg.Param.GetRouteParamStrWithoutPageSize("1") + "&" + form.NoAnimationKey + "=true"
 	paginator.CurPageEndIndex = strconv.Itoa((cfg.Param.PageInt) * cfg.Param.PageSizeInt)
-	paginator.CurPageStartIndex = strconv.Itoa((cfg.Param.PageInt - 1) * cfg.Param.PageSizeInt)
+	paginator.CurPageStartIndex = strconv.Itoa((cfg.Param.PageInt-1)*cfg.Param.PageSizeInt + 1)
 	paginator.Total = strconv.Itoa(cfg.Size)
 
 	if len(cfg.PageSizeList) == 0 {
@@ -199,6 +201,14 @@ func Get(cfg Config) types.PaginatorAttribute {
 		}
 		paginator.Pages = pagesArr
 	}
+
+	endNum := paginator.CurPageEndIndex
+	if cfg.Size < cfg.Param.PageSizeInt {
+		endNum = paginator.Total
+	}
+
+	paginator.SetEntriesInfo(template.HTML(fmt.Sprintf(language.Get("showing <b>%s</b> to <b>%s</b> of <b>%s</b> entries"),
+		paginator.CurPageStartIndex, endNum, paginator.Total)))
 
 	return paginator.SetPageSizeList(cfg.PageSizeList)
 }

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"html/template"
 	"strconv"
+	textTmpl "text/template"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -214,7 +215,7 @@ func ParseTableDataTmpl(content interface{}) string {
 }
 
 func ParseTableDataTmplWithID(id template.HTML, content string, value ...map[string]InfoItem) string {
-	t := template.New("row_data_tmpl")
+	t := textTmpl.New("row_data_tmpl")
 	t, _ = t.Parse(content)
 	buf := new(bytes.Buffer)
 	v := make(map[string]InfoItem)

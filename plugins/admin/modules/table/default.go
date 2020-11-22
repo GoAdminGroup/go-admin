@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/modules/config"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
@@ -579,6 +581,8 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 
 		if tb.connectionDriver == "postgresql" {
 			if tb.connectionDriverMode == "h2" {
+				size = int(total[0]["count(*)"].(int64))
+			} else if config.GetDatabases().GetDefault().DriverMode == "h2" {
 				size = int(total[0]["count(*)"].(int64))
 			} else {
 				size = int(total[0]["count"].(int64))

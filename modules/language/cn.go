@@ -140,6 +140,8 @@ var cn = LangSet{
 	"uninstalled":      "未安装",
 	"plugin setting":   "插件设置",
 
+	"showing <b>%s</b> to <b>%s</b> of <b>%s</b> entries": "显示第 <b>%s</b> 到第 <b>%s</b> 条记录，总共 <b>%s</b> 条记录",
+
 	"second":  "秒",
 	"seconds": "秒",
 	"minute":  "分",

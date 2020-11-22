@@ -298,7 +298,12 @@ func Init(c db.Connection) {
 		checkError(ioutil.WriteFile("./README.md", []byte(fmt.Sprintf(readme, p.Port+"/"+p.Prefix)), 0644))
 	}
 
-	checkError(ioutil.WriteFile("./Makefile", makefile, 0644))
+	makefileContent := makefile
+	if p.Driver == db.DriverSqlite {
+		makefileContent = bytes.Replace(makefileContent, []byte("CGO_ENABLED=0"), []byte("CGO_ENABLED=1"), -1)
+	}
+
+	checkError(ioutil.WriteFile("./Makefile", makefileContent, 0644))
 
 	checkError(ioutil.WriteFile("./html/hello.tmpl", []byte(`<div class="hello">
     <h1>{{index . "msg"}}</h1>

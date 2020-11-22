@@ -127,6 +127,7 @@ type DataTableAttribute interface {
 	SetStyle(style string) DataTableAttribute
 	SetAction(action template.HTML) DataTableAttribute
 	SetIsTab(value bool) DataTableAttribute
+	SetActionFold(fold bool) DataTableAttribute
 	SetHideThead() DataTableAttribute
 	SetLayout(value string) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
@@ -164,7 +165,6 @@ type PaginatorAttribute interface {
 	SetCurPageStartIndex(value string) PaginatorAttribute
 	SetCurPageEndIndex(value string) PaginatorAttribute
 	SetTotal(value string) PaginatorAttribute
-	SetHideEntriesInfo() PaginatorAttribute
 	SetPreviousClass(value string) PaginatorAttribute
 	SetPreviousUrl(value string) PaginatorAttribute
 	SetPages(value []map[string]string) PaginatorAttribute
@@ -174,6 +174,7 @@ type PaginatorAttribute interface {
 	SetOption(value map[string]template.HTML) PaginatorAttribute
 	SetUrl(value string) PaginatorAttribute
 	SetExtraInfo(value template.HTML) PaginatorAttribute
+	SetEntriesInfo(value template.HTML) PaginatorAttribute
 	GetContent() template.HTML
 }
 

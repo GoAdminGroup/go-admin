@@ -39,7 +39,9 @@ func (admin *Admin) InitPlugin(services service.List) {
 		"op":             st.GetOpTable,
 		"menu":           st.GetMenuTable,
 		"normal_manager": st.GetNormalManagerTable,
-		"site":           st.GetSiteTable,
+	}
+	if c.IsAllowConfigModification() {
+		genList.Add("site", st.GetSiteTable)
 	}
 	if c.IsNotProductionEnvironment() {
 		genList.Add("generate", st.GetGenerateForm)
