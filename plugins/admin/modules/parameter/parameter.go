@@ -67,7 +67,7 @@ var operators = map[string]string{
 var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
 
 func BaseParam() Parameters {
-	return Parameters{Page: "1", PageSize: "10", Fields: make(map[string][]string)}
+	return Parameters{Page: "1", PageSize: "10", PageInt: 1, PageSizeInt: 10, Fields: make(map[string][]string)}
 }
 
 func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
@@ -252,6 +252,13 @@ func (param Parameters) Join() string {
 
 func (param Parameters) SetPage(page string) Parameters {
 	param.Page = page
+	param.PageInt, _ = strconv.Atoi(page)
+	return param
+}
+
+func (param Parameters) SetPageSize(pageSize string) Parameters {
+	param.PageSize = pageSize
+	param.PageSizeInt, _ = strconv.Atoi(pageSize)
 	return param
 }
 
