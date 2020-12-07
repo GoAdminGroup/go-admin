@@ -88,10 +88,16 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 
 			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
+				if sqlDB != nil {
+					_ = sqlDB.Close()
+				}
 				panic(err)
-			}
+			} else {
+				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
-			db.DbList[conn] = sqlDB
+				db.DbList[conn] = sqlDB
+			}
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)
