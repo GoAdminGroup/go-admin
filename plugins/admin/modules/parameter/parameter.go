@@ -164,7 +164,11 @@ func (param Parameters) DeletePK() Parameters {
 }
 
 func (param Parameters) PK() string {
-	return param.PKs()[0]
+	pk:=param.PKs()
+  	if len(pk) > 0 {
+	   return param.PKs[0]
+ 	}
+return ""
 }
 
 func (param Parameters) IsAll() bool {
