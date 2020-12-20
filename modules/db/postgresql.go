@@ -91,6 +91,9 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 				panic(err)
 			}
 
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
 			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
