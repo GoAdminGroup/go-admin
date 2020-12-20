@@ -55,7 +55,7 @@ func GetDialectByDriver(driver string) Dialect {
 		}
 	case "postgresql":
 		return postgresql{
-			commonDialect: commonDialect{delimiter: `"`, delimiter2: "`"},
+			commonDialect: commonDialect{delimiter: `"`, delimiter2: `"`},
 		}
 	case "sqlite":
 		return sqlite{
