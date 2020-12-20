@@ -25,6 +25,7 @@ type TableAttribute struct {
 	Layout     string
 	IsTab      bool
 	ExportUrl  string
+	ActionFold bool
 	types.Attribute
 }
 

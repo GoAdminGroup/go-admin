@@ -253,12 +253,12 @@ func (db *Mssql) InitDB(cfgs map[string]config.Database) Connection {
 			if err != nil {
 				_ = sqlDB.Close()
 				panic(err.Error())
-			} else {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
-
-				db.DbList[conn] = sqlDB
 			}
+
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
+			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)

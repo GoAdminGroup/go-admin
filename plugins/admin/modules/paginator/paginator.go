@@ -24,6 +24,8 @@ func Get(cfg Config) types.PaginatorAttribute {
 
 	paginator := template2.Default().Paginator().(*components.PaginatorAttribute)
 
+	fmt.Println("cfg.Size", cfg.Size, "cfg.Param.PageSizeInt", cfg.Param.PageSizeInt)
+
 	totalPage := int(math.Ceil(float64(cfg.Size) / float64(cfg.Param.PageSizeInt)))
 
 	if cfg.Param.PageInt == 1 {
@@ -59,148 +61,68 @@ func Get(cfg Config) types.PaginatorAttribute {
 
 	paginator.Pages = []map[string]string{}
 
+	var pagesArr []map[string]string
+
 	if totalPage < 10 {
-		var pagesArr []map[string]string
 		for i := 1; i < totalPage+1; i++ {
 			if i == cfg.Param.PageInt {
-				pagesArr = append(pagesArr, map[string]string{
-					"page":    cfg.Param.Page,
-					"active":  "active",
-					"isSplit": "0",
-					"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
-				})
+				pagesArr = addPageLink(pagesArr, cfg.Param, cfg.Param.PageInt, "active")
 			} else {
-				page := strconv.Itoa(i)
-				pagesArr = append(pagesArr, map[string]string{
-					"page":    page,
-					"active":  "",
-					"isSplit": "0",
-					"url":     cfg.Param.URLNoAnimation(page),
-				})
+				pagesArr = addPageLink(pagesArr, cfg.Param, i, "")
 			}
 		}
-		paginator.Pages = pagesArr
 	} else {
-		var pagesArr []map[string]string
 		if cfg.Param.PageInt < 6 {
 			for i := 1; i < totalPage+1; i++ {
 
 				if i == cfg.Param.PageInt {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    cfg.Param.Page,
-						"active":  "active",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, cfg.Param.PageInt, "active")
 				} else {
-					page := strconv.Itoa(i)
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    page,
-						"active":  "",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "")
 				}
 
 				if i == 6 {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    "",
-						"active":  "",
-						"isSplit": "1",
-						"url":     cfg.Param.URLNoAnimation("6"),
-					})
-					i = totalPage - 1
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "split")
+					i = totalPage - 2
 				}
 			}
 		} else if cfg.Param.PageInt < totalPage-4 {
 			for i := 1; i < totalPage+1; i++ {
 
 				if i == cfg.Param.PageInt {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    cfg.Param.Page,
-						"active":  "active",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, cfg.Param.PageInt, "active")
 				} else {
-					page := strconv.Itoa(i)
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    page,
-						"active":  "",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "")
 				}
 
 				if i == 2 {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    "",
-						"active":  "",
-						"isSplit": "1",
-						"url":     cfg.Param.URLNoAnimation("2"),
-					})
-					if cfg.Param.PageInt < 7 {
-						i = 5
-					} else {
-						i = cfg.Param.PageInt - 2
-					}
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "split")
+					i = cfg.Param.PageInt - 3
 				}
 
-				if cfg.Param.PageInt < 7 {
-					if i == cfg.Param.PageInt+5 {
-						pagesArr = append(pagesArr, map[string]string{
-							"page":    "",
-							"active":  "",
-							"isSplit": "1",
-							"url":     cfg.Param.URLNoAnimation(strconv.Itoa(i)),
-						})
-						i = totalPage - 1
-					}
-				} else {
-					if i == cfg.Param.PageInt+3 {
-						pagesArr = append(pagesArr, map[string]string{
-							"page":    "",
-							"active":  "",
-							"isSplit": "1",
-							"url":     cfg.Param.URLNoAnimation(strconv.Itoa(i)),
-						})
-						i = totalPage - 1
-					}
+				if i == cfg.Param.PageInt+2 {
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "split")
+					i = totalPage - 1
 				}
 			}
 		} else {
 			for i := 1; i < totalPage+1; i++ {
 
 				if i == cfg.Param.PageInt {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    cfg.Param.Page,
-						"active":  "active",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(cfg.Param.Page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, cfg.Param.PageInt, "active")
 				} else {
-					page := strconv.Itoa(i)
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    page,
-						"active":  "",
-						"isSplit": "0",
-						"url":     cfg.Param.URLNoAnimation(page),
-					})
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "")
 				}
 
 				if i == 2 {
-					pagesArr = append(pagesArr, map[string]string{
-						"page":    "",
-						"active":  "",
-						"isSplit": "1",
-						"url":     cfg.Param.URLNoAnimation("2"),
-					})
-					i = totalPage - 4
+					pagesArr = addPageLink(pagesArr, cfg.Param, i, "split")
+					i = totalPage - 6
 				}
 			}
 		}
-		paginator.Pages = pagesArr
 	}
+
+	paginator.Pages = pagesArr
 
 	endNum := paginator.CurPageEndIndex
 	if cfg.Size < cfg.Param.PageSizeInt {
@@ -211,4 +133,23 @@ func Get(cfg Config) types.PaginatorAttribute {
 		paginator.CurPageStartIndex, endNum, paginator.Total)))
 
 	return paginator.SetPageSizeList(cfg.PageSizeList)
+}
+
+func addPageLink(arr []map[string]string, params parameter.Parameters, page int, active string) []map[string]string {
+
+	pageStr := strconv.Itoa(page)
+	isSplit := "0"
+
+	if active == "split" {
+		isSplit = "1"
+		active = ""
+		pageStr = ""
+	}
+
+	return append(arr, map[string]string{
+		"page":    pageStr,
+		"active":  active,
+		"isSplit": isSplit,
+		"url":     params.URLNoAnimation(pageStr),
+	})
 }

@@ -77,9 +77,12 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) Connection {
 
 			if err != nil {
 				panic(err)
-			} else {
-				db.DbList[conn] = sqlDB
 			}
+
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
+			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)
