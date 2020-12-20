@@ -540,8 +540,6 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		}
 	}
 
-	fmt.Println("params.SortField", params.SortField)
-
 	queryCmd := ""
 	if connection.Name() == db.DriverMssql && len(ids) == 0 {
 		queryCmd = fmt.Sprintf(queryStatement, tb.Info.Table, params.SortField, params.SortType,
