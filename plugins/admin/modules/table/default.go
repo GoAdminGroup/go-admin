@@ -668,7 +668,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 						}
 						joins += " left join " + modules.FilterField(join.Table, delimiter, delimiter2) + " " + join.TableAlias + " on " +
 							join.GetTableName(delimiter, delimiter2) + "." + modules.FilterField(join.JoinField, delimiter, delimiter2) + " = " +
-							modules.Delimiter(delimiter, delimiter2, join.BaseTable) + "." + modules.FilterField(join.Field, delimiter, delimiter2)
+							join.BaseTable + "." + modules.FilterField(join.Field, delimiter, delimiter2)
 					}
 				}
 			}
