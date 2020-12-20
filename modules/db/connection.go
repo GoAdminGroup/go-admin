@@ -62,8 +62,9 @@ type Connection interface {
 
 	Close() []error
 
-	// GetDelimiter get the default testDelimiter.
 	GetDelimiter() string
+	GetDelimiter2() string
+	GetDelimiters() []string
 
 	GetDB(key string) *sql.DB
 

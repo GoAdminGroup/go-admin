@@ -7,7 +7,6 @@ package db
 import (
 	dbsql "database/sql"
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -602,10 +601,7 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 }
 
 func (sql *SQL) wrap(field string) string {
-	if sql.diver.Name() == "mssql" {
-		return fmt.Sprintf(`[%s]`, field)
-	}
-	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter()
+	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter2()
 }
 
 func (sql *SQL) clean() {

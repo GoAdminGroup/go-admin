@@ -39,6 +39,16 @@ func (db *Mysql) GetDelimiter() string {
 	return "`"
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Mysql) GetDelimiter2() string {
+	return "`"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Mysql) GetDelimiters() []string {
+	return []string{"`", "`"}
+}
+
 // InitDB implements the method Connection.InitDB.
 func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 	db.Configs = cfgs

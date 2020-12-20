@@ -34,6 +34,16 @@ func (db *Sqlite) GetDelimiter() string {
 	return "`"
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Sqlite) GetDelimiter2() string {
+	return "`"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Sqlite) GetDelimiters() []string {
+	return []string{"`", "`"}
+}
+
 // QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)

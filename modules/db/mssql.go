@@ -33,6 +33,16 @@ func (db *Mssql) GetDelimiter() string {
 	return "["
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Mssql) GetDelimiter2() string {
+	return "]"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Mssql) GetDelimiters() []string {
+	return []string{"[", "]"}
+}
+
 // Name implements the method Connection.Name.
 func (db *Mssql) Name() string {
 	return "mssql"
