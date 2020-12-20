@@ -173,6 +173,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		} else {
 			actionBtns, actionJs = allActionBtns.Content()
 		}
+	} else {
+		info.ActionButtonFold = false
 	}
 
 	btns, btnsJs := info.Buttons.CheckPermissionWhenURLAndMethodNotEmpty(user).Content()
