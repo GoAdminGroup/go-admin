@@ -7,7 +7,6 @@ import (
 	template2 "html/template"
 	"mime"
 	"net/http"
-	"net/url"
 	"path"
 	"strconv"
 	"strings"
@@ -123,70 +122,62 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		updateUrl := urls[0], urls[1], urls[2], urls[3], urls[4], urls[5], urls[6]
 
 	var (
+		actionJs  template2.JS
 		body      template2.HTML
 		dataTable types.DataTableAttribute
 
-		user       = auth.Auth(ctx)
-		info       = panel.GetInfo()
-		actionBtns = info.Action
-		actionJs   template2.JS
-		allBtns    = make(types.Buttons, 0)
+		user          = auth.Auth(ctx)
+		info          = panel.GetInfo()
+		actionBtns    = info.Action
+		allActionBtns = info.ActionButtons.CheckPermissionWhenURLAndMethodNotEmpty(user)
 	)
 
-	for _, b := range info.Buttons {
-		if b.URL() == "" || b.METHOD() == "" || user.CheckPermissionByUrlMethod(b.URL(), b.METHOD(), url.Values{}) {
-			allBtns = append(allBtns, b)
-		}
-	}
-
-	btns, btnsJs := allBtns.Content()
-	allActionBtns := make(types.Buttons, 0)
-
-	for _, b := range info.ActionButtons {
-		if b.URL() == "" || b.METHOD() == "" || user.CheckPermissionByUrlMethod(b.URL(), b.METHOD(), url.Values{}) {
-			allActionBtns = append(allActionBtns, b)
-		}
-	}
-
 	if actionBtns == template.HTML("") && len(allActionBtns) > 0 {
-
-		ext := template2.HTML("")
-		if deleteUrl != "" {
-			ext = html.LiEl().SetClass("divider").Get()
-			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
-				types.NewDefaultAction(`data-id='{{.Id}}' style="cursor: pointer;"`,
-					ext, "", ""), "grid-row-delete")}, allActionBtns...)
-		}
-		ext = template2.HTML("")
-		if detailUrl != "" {
-			if editUrl == "" && deleteUrl == "" {
+		if info.ActionButtonFold {
+			ext := template2.HTML("")
+			if deleteUrl != "" {
 				ext = html.LiEl().SetClass("divider").Get()
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
+					types.NewDefaultAction(`data-id='{{.Id}}' data-param='{{(index .Value "__goadmin_delete_params").Content}}' style="cursor: pointer;"`,
+						ext, "", ""), "grid-row-delete")}, allActionBtns...)
 			}
-			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("detail"),
-				action.Jump(detailUrl+"&"+constant.DetailPKKey+"={{.Id}}", ext))}, allActionBtns...)
-		}
-		if editUrl != "" {
-			if detailUrl == "" && deleteUrl == "" {
-				ext = html.LiEl().SetClass("divider").Get()
+			ext = template2.HTML("")
+			if detailUrl != "" {
+				if editUrl == "" && deleteUrl == "" {
+					ext = html.LiEl().SetClass("divider").Get()
+				}
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("detail"),
+					action.Jump(detailUrl+"&"+constant.DetailPKKey+`={{.Id}}{{(index .Value "__goadmin_detail_params").Content}}`, ext))}, allActionBtns...)
 			}
-			allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("edit"),
-				action.Jump(editUrl+"&"+constant.EditPKKey+"={{.Id}}", ext))}, allActionBtns...)
+			if editUrl != "" {
+				if detailUrl == "" && deleteUrl == "" {
+					ext = html.LiEl().SetClass("divider").Get()
+				}
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("edit"),
+					action.Jump(editUrl+"&"+constant.EditPKKey+`={{.Id}}{{(index .Value "__goadmin_edit_params").Content}}`, ext))}, allActionBtns...)
+			}
+
+			var content template2.HTML
+			content, actionJs = allActionBtns.Content()
+
+			actionBtns = html.Div(html.Div(
+				html.A(icon.Icon(icon.EllipsisV),
+					html.M{"color": "#676565"},
+					html.M{"href": "#"},
+				), html.M{"cursor": "pointer", "width": "100%"}, html.M{"class": "dropdown-toggle", "data-toggle": "dropdown"})+
+				html.Ul(content,
+					html.M{"min-width": "20px !important", "left": "-32px", "overflow": "hidden"},
+					html.M{"class": "dropdown-menu", "role": "menu", "aria-labelledby": "dLabel"}),
+
+				html.M{"text-align": "center"}, html.M{"class": "dropdown"})
+		} else {
+			actionBtns, actionJs = allActionBtns.Content()
 		}
-
-		var content template2.HTML
-		content, actionJs = allActionBtns.Content()
-
-		actionBtns = html.Div(html.Div(
-			html.A(icon.Icon(icon.EllipsisV),
-				html.M{"color": "#676565"},
-				html.M{"href": "#"},
-			), html.M{"cursor": "pointer", "width": "100%"}, html.M{"class": "dropdown-toggle", "data-toggle": "dropdown"})+
-			html.Ul(content,
-				html.M{"min-width": "20px !important", "left": "-32px", "overflow": "hidden"},
-				html.M{"class": "dropdown-menu", "role": "menu", "aria-labelledby": "dLabel"}),
-
-			html.M{"text-align": "center"}, html.M{"class": "dropdown"})
+	} else {
+		info.ActionButtonFold = false
 	}
+
+	btns, btnsJs := info.Buttons.CheckPermissionWhenURLAndMethodNotEmpty(user).Content()
 
 	if info.TabGroups.Valid() {
 
@@ -211,6 +202,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					SetActionJs(btnsJs + actionJs).
 					SetHasFilter(len(panelInfo.FilterFormData) > 0).
 					SetAction(actionBtns).
+					SetActionFold(info.ActionButtonFold).
 					SetIsTab(key != 0).
 					SetPrimaryKey(panel.GetPrimaryKey().Name).
 					SetThead(theadArr[key]).
@@ -239,6 +231,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetThead(panelInfo.Thead).
 			SetExportUrl(exportUrl).
+			SetActionFold(info.ActionButtonFold).
 			SetHideRowSelector(info.IsHideRowSelector).
 			SetHideFilterArea(info.IsHideFilterArea).
 			SetNewUrl(newUrl).
@@ -254,7 +247,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	paginator := panelInfo.Paginator
 
 	if !isNotIframe {
-		paginator = paginator.SetHideEntriesInfo()
+		paginator = paginator.SetEntriesInfo("")
 	}
 
 	boxModel := aBox().

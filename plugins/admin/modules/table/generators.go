@@ -623,11 +623,22 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 			}
 			return nil
 		}).SetPostHook(func(values form2.Values) error {
+
+		if values.IsInsertPost() {
+			return nil
+		}
+
 		_, err := s.connection().Table("goadmin_permissions").
-			Where("id", "=", values.Get("id")).Update(dialect.H{
-			"updated_at": time.Now().Format("2006-01-02 15:04:05"),
-		})
-		return err
+			Where("id", "=", values.Get("id")).
+			Update(dialect.H{
+				"updated_at": time.Now().Format("2006-01-02 15:04:05"),
+			})
+
+		if db.CheckError(err, db.UPDATE) {
+			return err
+		}
+
+		return nil
 	})
 
 	return

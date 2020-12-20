@@ -67,7 +67,7 @@ var operators = map[string]string{
 var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
 
 func BaseParam() Parameters {
-	return Parameters{Page: "1", PageSize: "10", Fields: make(map[string][]string)}
+	return Parameters{Page: "1", PageSize: "10", PageInt: 1, PageSizeInt: 10, Fields: make(map[string][]string)}
 }
 
 func GetParam(u *url.URL, defaultPageSize int, p ...string) Parameters {
@@ -164,11 +164,11 @@ func (param Parameters) DeletePK() Parameters {
 }
 
 func (param Parameters) PK() string {
-	pk:=param.PKs()
-  	if len(pk) > 0 {
-	   return param.PKs[0]
- 	}
-return ""
+	pks := param.PKs()
+	if len(pks) > 0 {
+		return pks[0]
+	}
+	return ""
 }
 
 func (param Parameters) IsAll() bool {
@@ -256,6 +256,13 @@ func (param Parameters) Join() string {
 
 func (param Parameters) SetPage(page string) Parameters {
 	param.Page = page
+	param.PageInt, _ = strconv.Atoi(page)
+	return param
+}
+
+func (param Parameters) SetPageSize(pageSize string) Parameters {
+	param.PageSize = pageSize
+	param.PageSizeInt, _ = strconv.Atoi(pageSize)
 	return param
 }
 
@@ -358,7 +365,7 @@ func (param Parameters) GetFixedParamStrWithoutSort() string {
 	return "&" + p.Encode()
 }
 
-func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []interface{}, columns, existKeys []string,
+func (param Parameters) Statement(wheres, table, delimiter, delimiter2 string, whereArgs []interface{}, columns, existKeys []string,
 	filterProcess func(string, string, string) string) (string, []interface{}, []string) {
 	var multiKey = make(map[string]uint8)
 	for key, value := range param.Fields {
@@ -401,9 +408,9 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 				for range value {
 					qmark += "?,"
 				}
-				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter, delimiter2) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 			} else {
-				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? and "
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter, delimiter2) + " " + op + " ? and "
 			}
 			if op == "like" && !strings.Contains(val, "%") {
 				whereArgs = append(whereArgs, "%"+val+"%")
@@ -419,9 +426,9 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 					for range value {
 						qmark += "?,"
 					}
-					wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+					wheres += table + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 				} else {
-					wheres += table + "." + modules.FilterField(key, delimiter) + " " + op + " ? and "
+					wheres += table + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " ? and "
 				}
 				if op == "like" && !strings.Contains(value[0], "%") {
 					whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
@@ -455,9 +462,9 @@ func (param Parameters) Statement(wheres, table, delimiter string, whereArgs []i
 		for _, column := range columns {
 			keys := strings.Split(column, FilterParamJoinInfix)
 			if len(keys) > 1 {
-				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter) + " " + op + " ? or "
+				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter, delimiter2) + " " + op + " ? or "
 			} else {
-				wheres += modules.FilterField(column, delimiter) + " " + op + " ? or "
+				wheres += modules.FilterField(column, delimiter, delimiter2) + " " + op + " ? or "
 			}
 			whereArgs = append(whereArgs, value)
 		}

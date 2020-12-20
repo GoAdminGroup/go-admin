@@ -25,6 +25,7 @@ type TableAttribute struct {
 	Layout     string
 	IsTab      bool
 	ExportUrl  string
+	ActionFold bool
 	types.Attribute
 }
 
@@ -95,6 +96,7 @@ type DataTableAttribute struct {
 	NoAction          bool
 	HasFilter         bool
 	Action            template.HTML
+	ActionFold        bool
 	types.Attribute
 }
 
@@ -134,6 +136,11 @@ func (compo *DataTableAttribute) SetHideFilterArea(value bool) types.DataTableAt
 
 func (compo *DataTableAttribute) SetActionJs(aj template.JS) types.DataTableAttribute {
 	compo.ActionJs = aj
+	return compo
+}
+
+func (compo *DataTableAttribute) SetActionFold(fold bool) types.DataTableAttribute {
+	compo.ActionFold = fold
 	return compo
 }
 

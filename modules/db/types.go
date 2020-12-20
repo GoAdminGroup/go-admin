@@ -265,17 +265,10 @@ func GetValueFromJSONOfDatabaseType(typ DatabaseType, value interface{}) Value {
 	case Contains(typ, IntTypeList):
 		if v, ok := value.(float64); ok {
 			return Value(fmt.Sprintf("%d", int64(v)))
-		} else if v, ok := value.(int64); ok {
-			return Value(fmt.Sprintf("%d", v))
-		} else if v, ok := value.(int); ok {
-			return Value(fmt.Sprintf("%d", v))
 		}
-		return "0"
+		return Value(fmt.Sprintf("%d", value))
 	case Contains(typ, FloatTypeList):
-		if v, ok := value.(float64); ok {
-			return Value(fmt.Sprintf("%f", v))
-		}
-		return "0"
+		return Value(fmt.Sprintf("%f", value))
 	case Contains(typ, UintTypeList):
 		if v, ok := value.([]uint8); ok {
 			return Value(string(v))

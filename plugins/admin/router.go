@@ -63,17 +63,19 @@ func (admin *Admin) initRouter() *Admin {
 
 	authRoute.POST("/server/login", admin.guardian.ServerLogin, admin.handler.ServerLogin).Name("server_login")
 
-	// add delete modify query
-	authPrefixRoute.GET("/info/:__prefix/detail", admin.handler.ShowDetail).Name("detail")
-	authPrefixRoute.GET("/info/:__prefix/edit", admin.guardian.ShowForm, admin.handler.ShowForm).Name("show_edit")
-	authPrefixRoute.GET("/info/:__prefix/new", admin.guardian.ShowNewForm, admin.handler.ShowNewForm).Name("show_new")
-	authPrefixRoute.POST("/edit/:__prefix", admin.guardian.EditForm, admin.handler.EditForm).Name("edit")
-	authPrefixRoute.POST("/new/:__prefix", admin.guardian.NewForm, admin.handler.NewForm).Name("new")
-	authPrefixRoute.POST("/delete/:__prefix", admin.guardian.Delete, admin.handler.Delete).Name("delete")
-	authPrefixRoute.POST("/export/:__prefix", admin.guardian.Export, admin.handler.Export).Name("export")
-	authPrefixRoute.GET("/info/:__prefix", admin.handler.ShowInfo).Name("info")
+	formats := config.GetURLFormats()
 
-	authPrefixRoute.POST("/update/:__prefix", admin.guardian.Update, admin.handler.Update).Name("update")
+	// add delete modify query
+	authPrefixRoute.GET(formats.Detail, admin.handler.ShowDetail).Name("detail")
+	authPrefixRoute.GET(formats.ShowEdit, admin.guardian.ShowForm, admin.handler.ShowForm).Name("show_edit")
+	authPrefixRoute.GET(formats.ShowCreate, admin.guardian.ShowNewForm, admin.handler.ShowNewForm).Name("show_new")
+	authPrefixRoute.POST(formats.Edit, admin.guardian.EditForm, admin.handler.EditForm).Name("edit")
+	authPrefixRoute.POST(formats.Create, admin.guardian.NewForm, admin.handler.NewForm).Name("new")
+	authPrefixRoute.POST(formats.Delete, admin.guardian.Delete, admin.handler.Delete).Name("delete")
+	authPrefixRoute.POST(formats.Export, admin.guardian.Export, admin.handler.Export).Name("export")
+	authPrefixRoute.GET(formats.Info, admin.handler.ShowInfo).Name("info")
+
+	authPrefixRoute.POST(formats.Update, admin.guardian.Update, admin.handler.Update).Name("update")
 
 	authRoute.GET("/application/info", admin.handler.SystemInfo)
 

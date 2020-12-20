@@ -34,6 +34,16 @@ func (db *Sqlite) GetDelimiter() string {
 	return "`"
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Sqlite) GetDelimiter2() string {
+	return "`"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Sqlite) GetDelimiters() []string {
+	return []string{"`", "`"}
+}
+
 // QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Sqlite) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], query, args...)
@@ -54,6 +64,20 @@ func (db *Sqlite) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
+func (db *Sqlite) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Sqlite) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
+}
+
 // InitDB implements the method Connection.InitDB.
 func (db *Sqlite) InitDB(cfgList map[string]config.Database) Connection {
 	db.Configs = cfgList
@@ -63,9 +87,12 @@ func (db *Sqlite) InitDB(cfgList map[string]config.Database) Connection {
 
 			if err != nil {
 				panic(err)
-			} else {
-				db.DbList[conn] = sqlDB
 			}
+
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
+			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)

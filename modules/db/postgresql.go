@@ -36,6 +36,16 @@ func (db *Postgresql) GetDelimiter() string {
 	return `"`
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Postgresql) GetDelimiter2() string {
+	return `"`
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Postgresql) GetDelimiters() []string {
+	return []string{`"`, `"`}
+}
+
 // QueryWithConnection implements the method Connection.QueryWithConnection.
 func (db *Postgresql) QueryWithConnection(con string, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQuery(db.DbList[con], filterQuery(query), args...)
@@ -56,6 +66,20 @@ func (db *Postgresql) Exec(query string, args ...interface{}) (sql.Result, error
 	return CommonExec(db.DbList["default"], filterQuery(query), args...)
 }
 
+func (db *Postgresql) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Postgresql) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
+}
+
 func filterQuery(query string) string {
 	queCount := strings.Count(query, "?")
 	for i := 1; i < queCount+1; i++ {
@@ -74,8 +98,14 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 
 			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
+				if sqlDB != nil {
+					_ = sqlDB.Close()
+				}
 				panic(err)
 			}
+
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 
 			db.DbList[conn] = sqlDB
 

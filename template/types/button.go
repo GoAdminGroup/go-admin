@@ -151,6 +151,40 @@ func (b *ActionButton) Content() (template.HTML, template.JS) {
 	return h, b.Action.Js()
 }
 
+type ActionIconButton struct {
+	Icon template.HTML
+	*BaseButton
+}
+
+func GetActionIconButton(icon string, action Action, ids ...string) *ActionIconButton {
+
+	id := ""
+	if len(ids) > 0 {
+		id = ids[0]
+	} else {
+		id = "action-info-btn-" + utils.Uuid(10)
+	}
+
+	action.SetBtnId("." + id)
+	node := action.GetCallbacks()
+
+	return &ActionIconButton{
+		Icon: template.HTML(icon),
+		BaseButton: &BaseButton{
+			Id:     id,
+			Action: action,
+			Url:    node.Path,
+			Method: node.Method,
+		},
+	}
+}
+
+func (b *ActionIconButton) Content() (template.HTML, template.JS) {
+	h := template.HTML(`<a data-id="{{.Id}}" class="`+template.HTML(b.Id)+` `+
+		b.Action.BtnClass()+`" `+b.Action.BtnAttribute()+`><i class="fa `+b.Icon+`" style="font-size: 16px;"></i></a>`) + b.Action.ExtContent()
+	return h, b.Action.Js()
+}
+
 type Buttons []Button
 
 func (b Buttons) Add(btn Button) Buttons {
@@ -199,6 +233,16 @@ func (b Buttons) CheckPermission(user models.UserModel) Buttons {
 			}
 		} else if user.CheckPermissionByUrlMethod(btn.URL(), btn.METHOD(), url.Values{}) {
 			btns = append(btns, btn)
+		}
+	}
+	return btns
+}
+
+func (b Buttons) CheckPermissionWhenURLAndMethodNotEmpty(user models.UserModel) Buttons {
+	btns := make(Buttons, 0)
+	for _, b := range b {
+		if b.URL() == "" || b.METHOD() == "" || user.CheckPermissionByUrlMethod(b.URL(), b.METHOD(), url.Values{}) {
+			btns = append(btns, b)
 		}
 	}
 	return btns

@@ -42,6 +42,7 @@ type Database struct {
 	MaxIdleCon int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
 	MaxOpenCon int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
 	Driver     string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
+	DriverMode string            `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
 	File       string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
 	Dsn        string            `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
 	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
@@ -353,6 +354,9 @@ type Config struct {
 	// Hide config center entrance flag
 	HideConfigCenterEntrance bool `json:"hide_config_center_entrance,omitempty" yaml:"hide_config_center_entrance,omitempty" ini:"hide_config_center_entrance,omitempty"`
 
+	// Prohibit config modification
+	ProhibitConfigModification bool `json:"prohibit_config_modification,omitempty" yaml:"prohibit_config_modification,omitempty" ini:"prohibit_config_modification,omitempty"`
+
 	// Hide app info entrance flag
 	HideAppInfoEntrance bool `json:"hide_app_info_entrance,omitempty" yaml:"hide_app_info_entrance,omitempty" ini:"hide_app_info_entrance,omitempty"`
 
@@ -389,6 +393,8 @@ type Config struct {
 
 	AssetRootPath string `json:"asset_root_path,omitempty" yaml:"asset_root_path,omitempty" ini:"asset_root_path,omitempty"`
 
+	URLFormat URLFormat `json:"url_format,omitempty" yaml:"url_format,omitempty" ini:"url_format,omitempty"`
+
 	prefix string       `json:"-" yaml:"-" ini:"-"`
 	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
 }
@@ -418,6 +424,31 @@ type RotateCfg struct {
 	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups,omitempty" ini:"max_backups,omitempty"`
 	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age,omitempty" ini:"max_age,omitempty"`
 	Compress   bool `json:"compress,omitempty" yaml:"compress,omitempty" ini:"compress,omitempty"`
+}
+
+type URLFormat struct {
+	Info       string `json:"info,omitempty" yaml:"info,omitempty" ini:"info,omitempty"`
+	Detail     string `json:"detail,omitempty" yaml:"detail,omitempty" ini:"detail,omitempty"`
+	Create     string `json:"create,omitempty" yaml:"create,omitempty" ini:"create,omitempty"`
+	Delete     string `json:"delete,omitempty" yaml:"delete,omitempty" ini:"delete,omitempty"`
+	Export     string `json:"export,omitempty" yaml:"export,omitempty" ini:"export,omitempty"`
+	Edit       string `json:"edit,omitempty" yaml:"edit,omitempty" ini:"edit,omitempty"`
+	ShowEdit   string `json:"show_edit,omitempty" yaml:"show_edit,omitempty" ini:"show_edit,omitempty"`
+	ShowCreate string `json:"show_create,omitempty" yaml:"show_create,omitempty" ini:"show_create,omitempty"`
+	Update     string `json:"update,omitempty" yaml:"update,omitempty" ini:"update,omitempty"`
+}
+
+func (f URLFormat) SetDefault() URLFormat {
+	f.Detail = utils.SetDefault(f.Info, "", "/info/:__prefix/detail")
+	f.ShowEdit = utils.SetDefault(f.ShowEdit, "", "/info/:__prefix/edit")
+	f.ShowCreate = utils.SetDefault(f.ShowCreate, "", "/info/:__prefix/new")
+	f.Edit = utils.SetDefault(f.Edit, "", "/edit/:__prefix")
+	f.Create = utils.SetDefault(f.Create, "", "/new/:__prefix")
+	f.Delete = utils.SetDefault(f.Delete, "", "/delete/:__prefix")
+	f.Export = utils.SetDefault(f.Export, "", "/export/:__prefix")
+	f.Info = utils.SetDefault(f.Info, "", "/info/:__prefix")
+	f.Update = utils.SetDefault(f.Update, "", "/update/:__prefix")
+	return f
 }
 
 type ExtraInfo map[string]interface{}
@@ -502,6 +533,10 @@ func (c *Config) IsProductionEnvironment() bool {
 // IsNotProductionEnvironment check the environment if it is not production.
 func (c *Config) IsNotProductionEnvironment() bool {
 	return c.Env != EnvProd
+}
+
+func (c *Config) IsAllowConfigModification() bool {
+	return c.ProhibitConfigModification != true
 }
 
 // URLRemovePrefix remove prefix from the given url.
@@ -873,6 +908,7 @@ func SetDefault(cfg *Config) *Config {
 	} else {
 		cfg.prefix = cfg.UrlPrefix
 	}
+	cfg.URLFormat = cfg.URLFormat.SetDefault()
 	return cfg
 }
 
@@ -957,6 +993,10 @@ func Url(suffix string) string {
 	return _global.Url(suffix)
 }
 
+func GetURLFormats() URLFormat {
+	return _global.URLFormat
+}
+
 // Prefix return the prefix.
 func Prefix() string {
 	return _global.prefix
@@ -982,7 +1022,8 @@ func GetDatabases() DatabaseList {
 	var list = make(DatabaseList, len(_global.Databases))
 	for key := range _global.Databases {
 		list[key] = Database{
-			Driver: _global.Databases[key].Driver,
+			Driver:     _global.Databases[key].Driver,
+			DriverMode: _global.Databases[key].DriverMode,
 		}
 	}
 	return list
