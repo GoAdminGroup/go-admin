@@ -33,6 +33,16 @@ func (db *Mssql) GetDelimiter() string {
 	return "["
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Mssql) GetDelimiter2() string {
+	return "]"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Mssql) GetDelimiters() []string {
+	return []string{"[", "]"}
+}
+
 // Name implements the method Connection.Name.
 func (db *Mssql) Name() string {
 	return "mssql"
@@ -224,6 +234,20 @@ func (db *Mssql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
 }
 
+func (db *Mssql) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Mssql) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
+}
+
 // InitDB implements the method Connection.InitDB.
 func (db *Mssql) InitDB(cfgs map[string]config.Database) Connection {
 	db.Configs = cfgs
@@ -239,12 +263,12 @@ func (db *Mssql) InitDB(cfgs map[string]config.Database) Connection {
 			if err != nil {
 				_ = sqlDB.Close()
 				panic(err.Error())
-			} else {
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
-
-				db.DbList[conn] = sqlDB
 			}
+
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
+			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)

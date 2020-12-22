@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -41,6 +42,7 @@ type Database struct {
 	MaxIdleCon int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
 	MaxOpenCon int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
 	Driver     string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
+	DriverMode string            `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
 	File       string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
 	Dsn        string            `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
 	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
@@ -352,6 +354,9 @@ type Config struct {
 	// Hide config center entrance flag
 	HideConfigCenterEntrance bool `json:"hide_config_center_entrance,omitempty" yaml:"hide_config_center_entrance,omitempty" ini:"hide_config_center_entrance,omitempty"`
 
+	// Prohibit config modification
+	ProhibitConfigModification bool `json:"prohibit_config_modification,omitempty" yaml:"prohibit_config_modification,omitempty" ini:"prohibit_config_modification,omitempty"`
+
 	// Hide app info entrance flag
 	HideAppInfoEntrance bool `json:"hide_app_info_entrance,omitempty" yaml:"hide_app_info_entrance,omitempty" ini:"hide_app_info_entrance,omitempty"`
 
@@ -367,7 +372,7 @@ type Config struct {
 	Custom500HTML template.HTML `json:"custom_500_html,omitempty" yaml:"custom_500_html,omitempty" ini:"custom_500_html,omitempty"`
 
 	// Update Process Function
-	UpdateProcessFn UpdateConfigProcessFn `json:"-" yaml:"-" ,omitemptyini:"-,omitempty"`
+	UpdateProcessFn UpdateConfigProcessFn `json:"-" yaml:"-" ini:"-"`
 
 	// Favicon string `json:"favicon,omitempty" yaml:"favicon,omitempty" ini:"favicon,omitempty"`
 
@@ -388,7 +393,10 @@ type Config struct {
 
 	AssetRootPath string `json:"asset_root_path,omitempty" yaml:"asset_root_path,omitempty" ini:"asset_root_path,omitempty"`
 
-	prefix string
+	URLFormat URLFormat `json:"url_format,omitempty" yaml:"url_format,omitempty" ini:"url_format,omitempty"`
+
+	prefix string       `json:"-" yaml:"-" ini:"-"`
+	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
 }
 
 type Logger struct {
@@ -416,6 +424,31 @@ type RotateCfg struct {
 	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups,omitempty" ini:"max_backups,omitempty"`
 	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age,omitempty" ini:"max_age,omitempty"`
 	Compress   bool `json:"compress,omitempty" yaml:"compress,omitempty" ini:"compress,omitempty"`
+}
+
+type URLFormat struct {
+	Info       string `json:"info,omitempty" yaml:"info,omitempty" ini:"info,omitempty"`
+	Detail     string `json:"detail,omitempty" yaml:"detail,omitempty" ini:"detail,omitempty"`
+	Create     string `json:"create,omitempty" yaml:"create,omitempty" ini:"create,omitempty"`
+	Delete     string `json:"delete,omitempty" yaml:"delete,omitempty" ini:"delete,omitempty"`
+	Export     string `json:"export,omitempty" yaml:"export,omitempty" ini:"export,omitempty"`
+	Edit       string `json:"edit,omitempty" yaml:"edit,omitempty" ini:"edit,omitempty"`
+	ShowEdit   string `json:"show_edit,omitempty" yaml:"show_edit,omitempty" ini:"show_edit,omitempty"`
+	ShowCreate string `json:"show_create,omitempty" yaml:"show_create,omitempty" ini:"show_create,omitempty"`
+	Update     string `json:"update,omitempty" yaml:"update,omitempty" ini:"update,omitempty"`
+}
+
+func (f URLFormat) SetDefault() URLFormat {
+	f.Detail = utils.SetDefault(f.Info, "", "/info/:__prefix/detail")
+	f.ShowEdit = utils.SetDefault(f.ShowEdit, "", "/info/:__prefix/edit")
+	f.ShowCreate = utils.SetDefault(f.ShowCreate, "", "/info/:__prefix/new")
+	f.Edit = utils.SetDefault(f.Edit, "", "/edit/:__prefix")
+	f.Create = utils.SetDefault(f.Create, "", "/new/:__prefix")
+	f.Delete = utils.SetDefault(f.Delete, "", "/delete/:__prefix")
+	f.Export = utils.SetDefault(f.Export, "", "/export/:__prefix")
+	f.Info = utils.SetDefault(f.Info, "", "/info/:__prefix")
+	f.Update = utils.SetDefault(f.Update, "", "/update/:__prefix")
+	return f
 }
 
 type ExtraInfo map[string]interface{}
@@ -502,6 +535,10 @@ func (c *Config) IsNotProductionEnvironment() bool {
 	return c.Env != EnvProd
 }
 
+func (c *Config) IsAllowConfigModification() bool {
+	return c.ProhibitConfigModification != true
+}
+
 // URLRemovePrefix remove prefix from the given url.
 func (c *Config) URLRemovePrefix(url string) string {
 	if url == c.prefix {
@@ -554,242 +591,208 @@ func (c *Config) PrefixFixSlash() string {
 }
 
 func (c *Config) Copy() *Config {
-	return &Config{
-		Databases:                     c.Databases.Copy(),
-		Domain:                        c.Domain,
-		Language:                      c.Language,
-		UrlPrefix:                     c.UrlPrefix,
-		Theme:                         c.Theme,
-		Store:                         c.Store,
-		Title:                         c.Title,
-		Logo:                          c.Logo,
-		MiniLogo:                      c.MiniLogo,
-		IndexUrl:                      c.IndexUrl,
-		LoginUrl:                      c.LoginUrl,
-		Debug:                         c.Debug,
-		Env:                           c.Env,
-		InfoLogPath:                   c.InfoLogPath,
-		ErrorLogPath:                  c.ErrorLogPath,
-		AccessLogPath:                 c.AccessLogPath,
-		SqlLog:                        c.SqlLog,
-		AccessLogOff:                  c.AccessLogOff,
-		InfoLogOff:                    c.InfoLogOff,
-		ErrorLogOff:                   c.ErrorLogOff,
-		ColorScheme:                   c.ColorScheme,
-		SessionLifeTime:               c.SessionLifeTime,
-		AssetUrl:                      c.AssetUrl,
-		FileUploadEngine:              c.FileUploadEngine,
-		CustomHeadHtml:                c.CustomHeadHtml,
-		CustomFootHtml:                c.CustomFootHtml,
-		FooterInfo:                    c.FooterInfo,
-		LoginTitle:                    c.LoginTitle,
-		LoginLogo:                     c.LoginLogo,
-		AuthUserTable:                 c.AuthUserTable,
-		Extra:                         c.Extra,
-		Animation:                     c.Animation,
-		NoLimitLoginIP:                c.NoLimitLoginIP,
-		Logger:                        c.Logger,
-		SiteOff:                       c.SiteOff,
-		HideConfigCenterEntrance:      c.HideConfigCenterEntrance,
-		HideAppInfoEntrance:           c.HideAppInfoEntrance,
-		HideToolEntrance:              c.HideToolEntrance,
-		HidePluginEntrance:            c.HidePluginEntrance,
-		Custom404HTML:                 c.Custom404HTML,
-		Custom500HTML:                 c.Custom500HTML,
-		BootstrapFilePath:             c.BootstrapFilePath,
-		GoModFilePath:                 c.GoModFilePath,
-		AllowDelOperationLog:          c.AllowDelOperationLog,
-		OperationLogOff:               c.OperationLogOff,
-		AssetRootPath:                 c.AssetRootPath,
-		UpdateProcessFn:               c.UpdateProcessFn,
-		OpenAdminApi:                  c.OpenAdminApi,
-		HideVisitorUserCenterEntrance: c.HideVisitorUserCenterEntrance,
-		ExcludeThemeComponents:        c.ExcludeThemeComponents,
-		prefix:                        c.prefix,
+
+	c.lock.RLock()
+	defer c.lock.RUnlock()
+
+	var (
+		newCfg   = new(Config)
+		srcType  = reflect.TypeOf(c).Elem()
+		srcVal   = reflect.ValueOf(c).Elem()
+		distType = reflect.TypeOf(newCfg).Elem()
+		distVal  = reflect.ValueOf(newCfg).Elem()
+	)
+
+	for i := 0; i < distType.NumField(); i++ {
+		v := distVal.Field(i)
+		if distType.Field(i).Type.String() == "config.DatabaseList" {
+			newCfg.Databases = c.Databases.Copy()
+		} else if v.CanInterface() {
+			for j := 0; j < srcType.NumField(); j++ {
+				if distType.Field(i).Name == srcType.Field(j).Name {
+					v.Set(reflect.ValueOf(srcVal.Field(i).Interface()))
+					break
+				}
+			}
+		}
 	}
+
+	newCfg.prefix = c.prefix
+
+	return newCfg
 }
 
 func (c *Config) ToMap() map[string]string {
-	var m = make(map[string]string)
-	m["language"] = c.Language
-	m["databases"] = c.Databases.JSON()
-	m["domain"] = c.Domain
-	m["url_prefix"] = c.UrlPrefix
-	m["theme"] = c.Theme
-	m["store"] = c.Store.JSON()
-	m["title"] = c.Title
-	m["logo"] = string(c.Logo)
-	m["mini_logo"] = string(c.MiniLogo)
-	m["index_url"] = c.IndexUrl
-	m["site_off"] = strconv.FormatBool(c.SiteOff)
-	m["login_url"] = c.LoginUrl
-	m["debug"] = strconv.FormatBool(c.Debug)
-	m["env"] = c.Env
+	c.lock.RLock()
+	defer c.lock.RUnlock()
 
-	// Logger config
-	// ========================
+	var (
+		m     = make(map[string]string)
+		rType = reflect.TypeOf(c).Elem()
+		rVal  = reflect.ValueOf(c).Elem()
+	)
 
-	m["info_log_path"] = c.InfoLogPath
-	m["error_log_path"] = c.ErrorLogPath
-	m["access_log_path"] = c.AccessLogPath
-	m["sql_log"] = strconv.FormatBool(c.SqlLog)
-	m["access_log_off"] = strconv.FormatBool(c.AccessLogOff)
-	m["info_log_off"] = strconv.FormatBool(c.InfoLogOff)
-	m["error_log_off"] = strconv.FormatBool(c.ErrorLogOff)
-	m["access_assets_log_off"] = strconv.FormatBool(c.AccessAssetsLogOff)
+	for i := 0; i < rType.NumField(); i++ {
+		v := rVal.Field(i)
+		if !v.CanInterface() {
+			continue
+		}
+		t := rType.Field(i)
+		keyName := t.Tag.Get("json")
+		if keyName == "-" {
+			continue
+		}
+		keyName = keyName[:len(keyName)-10]
+		switch t.Type.Kind() {
+		case reflect.Bool:
+			m[keyName] = strconv.FormatBool(v.Bool())
+		case reflect.String:
+			if keyName == "prefix" {
+				keyName = "url_prefix"
+			} else if keyName == "index" {
+				keyName = "index_url"
+			} else if keyName == "info_log" || keyName == "error_log" || keyName == "access_log" {
+				keyName += "_path"
+			}
+			m[keyName] = v.String()
+		case reflect.Int:
+			m[keyName] = fmt.Sprintf("%d", v.Int())
+		case reflect.Struct:
+			switch t.Type.String() {
+			case "config.PageAnimation":
+				m["animation_type"] = c.Animation.Type
+				m["animation_duration"] = fmt.Sprintf("%.2f", c.Animation.Duration)
+				m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
+			case "config.Logger":
+				m["logger_rotate_max_size"] = strconv.Itoa(c.Logger.Rotate.MaxSize)
+				m["logger_rotate_max_backups"] = strconv.Itoa(c.Logger.Rotate.MaxBackups)
+				m["logger_rotate_max_age"] = strconv.Itoa(c.Logger.Rotate.MaxAge)
+				m["logger_rotate_compress"] = strconv.FormatBool(c.Logger.Rotate.Compress)
 
-	m["logger_rotate_max_size"] = strconv.Itoa(c.Logger.Rotate.MaxSize)
-	m["logger_rotate_max_backups"] = strconv.Itoa(c.Logger.Rotate.MaxBackups)
-	m["logger_rotate_max_age"] = strconv.Itoa(c.Logger.Rotate.MaxAge)
-	m["logger_rotate_compress"] = strconv.FormatBool(c.Logger.Rotate.Compress)
-
-	m["logger_encoder_time_key"] = c.Logger.Encoder.TimeKey
-	m["logger_encoder_level_key"] = c.Logger.Encoder.LevelKey
-	m["logger_encoder_name_key"] = c.Logger.Encoder.NameKey
-	m["logger_encoder_caller_key"] = c.Logger.Encoder.CallerKey
-	m["logger_encoder_message_key"] = c.Logger.Encoder.MessageKey
-	m["logger_encoder_stacktrace_key"] = c.Logger.Encoder.StacktraceKey
-	m["logger_encoder_level"] = c.Logger.Encoder.Level
-	m["logger_encoder_time"] = c.Logger.Encoder.Time
-	m["logger_encoder_duration"] = c.Logger.Encoder.Duration
-	m["logger_encoder_caller"] = c.Logger.Encoder.Caller
-	m["logger_encoder_encoding"] = c.Logger.Encoder.Encoding
-	m["logger_level"] = strconv.Itoa(int(c.Logger.Level))
-
-	m["color_scheme"] = c.ColorScheme
-	m["session_life_time"] = strconv.Itoa(c.SessionLifeTime)
-	m["asset_url"] = c.AssetUrl
-	m["file_upload_engine"] = c.FileUploadEngine.JSON()
-	m["custom_head_html"] = string(c.CustomHeadHtml)
-	m["custom_foot_html"] = string(c.CustomFootHtml)
-	m["custom_404_html"] = string(c.Custom404HTML)
-	m["custom_403_html"] = string(c.Custom403HTML)
-	m["custom_500_html"] = string(c.Custom500HTML)
-	m["bootstrap_file_path"] = c.BootstrapFilePath
-	m["go_mod_file_path"] = c.GoModFilePath
-	m["footer_info"] = string(c.FooterInfo)
-	m["app_id"] = c.AppID
-	m["login_title"] = c.LoginTitle
-	m["login_logo"] = string(c.LoginLogo)
-	m["auth_user_table"] = c.AuthUserTable
-	if len(c.Extra) == 0 {
-		m["extra"] = ""
-	} else {
-		m["extra"] = utils.JSON(c.Extra)
+				m["logger_encoder_time_key"] = c.Logger.Encoder.TimeKey
+				m["logger_encoder_level_key"] = c.Logger.Encoder.LevelKey
+				m["logger_encoder_name_key"] = c.Logger.Encoder.NameKey
+				m["logger_encoder_caller_key"] = c.Logger.Encoder.CallerKey
+				m["logger_encoder_message_key"] = c.Logger.Encoder.MessageKey
+				m["logger_encoder_stacktrace_key"] = c.Logger.Encoder.StacktraceKey
+				m["logger_encoder_level"] = c.Logger.Encoder.Level
+				m["logger_encoder_time"] = c.Logger.Encoder.Time
+				m["logger_encoder_duration"] = c.Logger.Encoder.Duration
+				m["logger_encoder_caller"] = c.Logger.Encoder.Caller
+				m["logger_encoder_encoding"] = c.Logger.Encoder.Encoding
+				m["logger_level"] = strconv.Itoa(int(c.Logger.Level))
+			case "config.DatabaseList":
+				m["databases"] = utils.JSON(v.Interface())
+			}
+		case reflect.Map:
+			if t.Type.String() == "config.ExtraInfo" {
+				if len(c.Extra) == 0 {
+					m["extra"] = ""
+				} else {
+					m["extra"] = utils.JSON(c.Extra)
+				}
+			}
+		default:
+			m[keyName] = utils.JSON(v.Interface())
+		}
 	}
-
-	m["animation_type"] = c.Animation.Type
-	m["animation_duration"] = fmt.Sprintf("%.2f", c.Animation.Duration)
-	m["animation_delay"] = fmt.Sprintf("%.2f", c.Animation.Delay)
-
-	m["no_limit_login_ip"] = strconv.FormatBool(c.NoLimitLoginIP)
-	m["allow_del_operation_log"] = strconv.FormatBool(c.AllowDelOperationLog)
-	m["operation_log_off"] = strconv.FormatBool(c.OperationLogOff)
-
-	m["hide_config_center_entrance"] = strconv.FormatBool(c.HideConfigCenterEntrance)
-	m["hide_app_info_entrance"] = strconv.FormatBool(c.HideAppInfoEntrance)
-	m["hide_tool_entrance"] = strconv.FormatBool(c.HideToolEntrance)
-	m["hide_plugin_entrance"] = strconv.FormatBool(c.HidePluginEntrance)
-
-	m["asset_root_path"] = c.AssetRootPath
-
 	return m
 }
 
 func (c *Config) Update(m map[string]string) error {
-	updateLock.Lock()
-	defer updateLock.Unlock()
-	if m["app_id"] != "" {
-		c.AppID = m["app_id"]
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	rType := reflect.TypeOf(c).Elem()
+	rVal := reflect.ValueOf(c).Elem()
+	for i := 0; i < rType.NumField(); i++ {
+		v := rVal.Field(i)
+		if !v.CanInterface() {
+			continue
+		}
+		t := rType.Field(i)
+		keyName := t.Tag.Get("json")
+		if keyName == "-" {
+			continue
+		}
+		keyName = keyName[:len(keyName)-10]
+		switch t.Type.Kind() {
+		case reflect.Bool:
+			if mv, ok := m[keyName]; ok {
+				v.Set(reflect.ValueOf(utils.ParseBool(mv)))
+			}
+		case reflect.String:
+			if t.Type.String() == "template.HTML" {
+				if mv, ok := m[keyName]; ok {
+					v.Set(reflect.ValueOf(template.HTML(mv)))
+				}
+				continue
+			}
+			if keyName == "prefix" {
+				keyName = "url_prefix"
+			} else if keyName == "index" {
+				keyName = "index_url"
+			} else if keyName == "info_log" || keyName == "error_log" || keyName == "access_log" {
+				keyName += "_path"
+			}
+			if mv, ok := m[keyName]; ok {
+				if keyName == "info_log" || keyName == "error_log" || keyName == "access_log" {
+					v.Set(reflect.ValueOf(utils.SetDefault(mv, v.String(), v.String())))
+				} else if keyName == "app_id" {
+					v.Set(reflect.ValueOf(utils.SetDefault(mv, "", v.String())))
+				} else if keyName == "color_scheme" {
+					if m["theme"] == "adminlte" {
+						v.Set(reflect.ValueOf(mv))
+					}
+				} else {
+					v.Set(reflect.ValueOf(mv))
+				}
+			}
+		case reflect.Int:
+			ses, _ := strconv.Atoi(m[keyName])
+			if ses != 0 {
+				v.Set(reflect.ValueOf(ses))
+			}
+		case reflect.Struct:
+			switch t.Type.String() {
+			case "config.PageAnimation":
+				c.Animation.Type = m["animation_type"]
+				c.Animation.Duration = utils.ParseFloat32(m["animation_duration"])
+				c.Animation.Delay = utils.ParseFloat32(m["animation_delay"])
+			case "config.Logger":
+				c.Logger.Rotate.MaxSize, _ = strconv.Atoi(m["logger_rotate_max_size"])
+				c.Logger.Rotate.MaxBackups, _ = strconv.Atoi(m["logger_rotate_max_backups"])
+				c.Logger.Rotate.MaxAge, _ = strconv.Atoi(m["logger_rotate_max_age"])
+				c.Logger.Rotate.Compress = utils.ParseBool(m["logger_rotate_compress"])
+
+				c.Logger.Encoder.Encoding = m["logger_encoder_encoding"]
+				loggerLevel, _ := strconv.Atoi(m["logger_level"])
+				c.Logger.Level = int8(loggerLevel)
+
+				if c.Logger.Encoder.Encoding == "json" {
+					c.Logger.Encoder.TimeKey = m["logger_encoder_time_key"]
+					c.Logger.Encoder.LevelKey = m["logger_encoder_level_key"]
+					c.Logger.Encoder.NameKey = m["logger_encoder_name_key"]
+					c.Logger.Encoder.CallerKey = m["logger_encoder_caller_key"]
+					c.Logger.Encoder.MessageKey = m["logger_encoder_message_key"]
+					c.Logger.Encoder.StacktraceKey = m["logger_encoder_stacktrace_key"]
+					c.Logger.Encoder.Level = m["logger_encoder_level"]
+					c.Logger.Encoder.Time = m["logger_encoder_time"]
+					c.Logger.Encoder.Duration = m["logger_encoder_duration"]
+					c.Logger.Encoder.Caller = m["logger_encoder_caller"]
+				}
+
+				initLogger(c)
+			case "config.FileUploadEngine":
+				c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
+			}
+		case reflect.Map:
+			if t.Type.String() == "config.ExtraInfo" && m["extra"] != "" {
+				var extra = make(map[string]interface{})
+				_ = json.Unmarshal([]byte(m["extra"]), &extra)
+				c.Extra = extra
+			}
+		}
 	}
-	c.Language = m["language"]
-	c.Domain = m["domain"]
-	c.Theme = m["theme"]
-	c.Title = m["title"]
-	c.Logo = template.HTML(m["logo"])
-	c.MiniLogo = template.HTML(m["mini_logo"])
-	c.Debug = utils.ParseBool(m["debug"])
-	c.SiteOff = utils.ParseBool(m["site_off"])
-
-	c.AccessLogOff = utils.ParseBool(m["access_log_off"])
-	c.InfoLogOff = utils.ParseBool(m["info_log_off"])
-	c.ErrorLogOff = utils.ParseBool(m["error_log_off"])
-	c.AccessAssetsLogOff = utils.ParseBool(m["access_assets_log_off"])
-
-	if c.InfoLogPath != m["info_log_path"] {
-		c.InfoLogPath = m["info_log_path"]
-	}
-	if c.ErrorLogPath != m["error_log_path"] {
-		c.ErrorLogPath = m["error_log_path"]
-	}
-	if c.AccessLogPath != m["access_log_path"] {
-		c.AccessLogPath = m["access_log_path"]
-	}
-	c.SqlLog = utils.ParseBool(m["sql_log"])
-
-	c.Logger.Rotate.MaxSize, _ = strconv.Atoi(m["logger_rotate_max_size"])
-	c.Logger.Rotate.MaxBackups, _ = strconv.Atoi(m["logger_rotate_max_backups"])
-	c.Logger.Rotate.MaxAge, _ = strconv.Atoi(m["logger_rotate_max_age"])
-	c.Logger.Rotate.Compress = utils.ParseBool(m["logger_rotate_compress"])
-
-	c.Logger.Encoder.Encoding = m["logger_encoder_encoding"]
-	loggerLevel, _ := strconv.Atoi(m["logger_level"])
-	c.Logger.Level = int8(loggerLevel)
-
-	if c.Logger.Encoder.Encoding == "json" {
-		c.Logger.Encoder.TimeKey = m["logger_encoder_time_key"]
-		c.Logger.Encoder.LevelKey = m["logger_encoder_level_key"]
-		c.Logger.Encoder.NameKey = m["logger_encoder_name_key"]
-		c.Logger.Encoder.CallerKey = m["logger_encoder_caller_key"]
-		c.Logger.Encoder.MessageKey = m["logger_encoder_message_key"]
-		c.Logger.Encoder.StacktraceKey = m["logger_encoder_stacktrace_key"]
-		c.Logger.Encoder.Level = m["logger_encoder_level"]
-		c.Logger.Encoder.Time = m["logger_encoder_time"]
-		c.Logger.Encoder.Duration = m["logger_encoder_duration"]
-		c.Logger.Encoder.Caller = m["logger_encoder_caller"]
-	}
-
-	initLogger(c)
-
-	if c.Theme == "adminlte" {
-		c.ColorScheme = m["color_scheme"]
-	}
-	ses, _ := strconv.Atoi(m["session_life_time"])
-	if ses != 0 {
-		c.SessionLifeTime = ses
-	}
-	c.CustomHeadHtml = template.HTML(m["custom_head_html"])
-	c.CustomFootHtml = template.HTML(m["custom_foot_html"])
-	c.Custom404HTML = template.HTML(m["custom_404_html"])
-	c.Custom403HTML = template.HTML(m["custom_403_html"])
-	c.Custom500HTML = template.HTML(m["custom_500_html"])
-	c.BootstrapFilePath = m["bootstrap_file_path"]
-	c.GoModFilePath = m["go_mod_file_path"]
-	c.FooterInfo = template.HTML(m["footer_info"])
-	c.LoginTitle = m["login_title"]
-	c.AssetUrl = m["asset_url"]
-	c.LoginLogo = template.HTML(m["login_logo"])
-	c.NoLimitLoginIP = utils.ParseBool(m["no_limit_login_ip"])
-	c.AllowDelOperationLog = utils.ParseBool(m["allow_del_operation_log"])
-	c.OperationLogOff = utils.ParseBool(m["operation_log_off"])
-
-	c.HideConfigCenterEntrance = utils.ParseBool(m["hide_config_center_entrance"])
-	c.HideAppInfoEntrance = utils.ParseBool(m["hide_app_info_entrance"])
-	c.HideToolEntrance = utils.ParseBool(m["hide_tool_entrance"])
-	c.HidePluginEntrance = utils.ParseBool(m["hide_plugin_entrance"])
-
-	c.FileUploadEngine = GetFileUploadEngineFromJSON(m["file_upload_engine"])
-
-	c.Animation.Type = m["animation_type"]
-	c.Animation.Duration = utils.ParseFloat32(m["animation_duration"])
-	c.Animation.Delay = utils.ParseFloat32(m["animation_delay"])
-
-	if m["extra"] != "" {
-		var extra = make(map[string]interface{})
-		_ = json.Unmarshal([]byte(m["extra"]), &extra)
-		c.Extra = extra
-	}
-
 	return nil
 }
 
@@ -804,9 +807,9 @@ func (c *Config) EraseSens() *Config {
 }
 
 var (
-	globalCfg  = new(Config)
-	declare    sync.Once
-	updateLock sync.Mutex
+	_global        = new(Config)
+	count          uint32
+	initializeLock sync.Mutex
 )
 
 // ReadFromJson read the Config from a JSON file.
@@ -877,11 +880,6 @@ func ReadFromINI(path string) Config {
 	return cfg
 }
 
-var (
-	count uint32
-	lock  sync.Mutex
-)
-
 func SetDefault(cfg *Config) *Config {
 	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
 	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
@@ -903,22 +901,6 @@ func SetDefault(cfg *Config) *Config {
 		cfg.SessionLifeTime = 7200
 	}
 	cfg.AppID = utils.Uuid(12)
-	return cfg
-}
-
-// Set sets the config.
-func Set(cfg *Config) *Config {
-
-	lock.Lock()
-	defer lock.Unlock()
-
-	if atomic.LoadUint32(&count) != 0 {
-		panic("can not set config twice")
-	}
-	atomic.StoreUint32(&count, 1)
-
-	cfg = SetDefault(cfg)
-
 	if cfg.UrlPrefix == "" {
 		cfg.prefix = "/"
 	} else if cfg.UrlPrefix[0] != '/' {
@@ -926,24 +908,26 @@ func Set(cfg *Config) *Config {
 	} else {
 		cfg.prefix = cfg.UrlPrefix
 	}
+	cfg.URLFormat = cfg.URLFormat.SetDefault()
+	return cfg
+}
 
-	initLogger(cfg)
+// Initialize initialize the config.
+func Initialize(cfg *Config) *Config {
 
-	if cfg.SqlLog {
-		logger.OpenSQLLog()
+	initializeLock.Lock()
+	defer initializeLock.Unlock()
+
+	if atomic.LoadUint32(&count) != 0 {
+		panic("can not initialize config twice")
 	}
+	atomic.StoreUint32(&count, 1)
 
-	if cfg.Debug {
-		declare.Do(func() {
-			fmt.Println(`GoAdmin is now running.
-Running in "debug" mode. Switch to "release" mode in production.`)
-			fmt.Println()
-		})
-	}
+	initLogger(SetDefault(cfg))
 
-	globalCfg = cfg
+	_global = cfg
 
-	return globalCfg
+	return _global
 }
 
 func initLogger(cfg *Config) {
@@ -982,229 +966,323 @@ func initLogger(cfg *Config) {
 
 // AssertPrefix return the prefix of assert.
 func AssertPrefix() string {
-	return globalCfg.AssertPrefix()
+	return _global.AssertPrefix()
 }
 
 // GetIndexURL get the index url with prefix.
 func GetIndexURL() string {
-	return globalCfg.GetIndexURL()
+	return _global.GetIndexURL()
 }
 
 // IsProductionEnvironment check the environment if it is production.
 func IsProductionEnvironment() bool {
-	return globalCfg.IsProductionEnvironment()
+	return _global.IsProductionEnvironment()
 }
 
 // IsNotProductionEnvironment check the environment if it is not production.
 func IsNotProductionEnvironment() bool {
-	return globalCfg.IsNotProductionEnvironment()
+	return _global.IsNotProductionEnvironment()
 }
 
 // URLRemovePrefix remove prefix from the given url.
 func URLRemovePrefix(url string) string {
-	return globalCfg.URLRemovePrefix(url)
+	return _global.URLRemovePrefix(url)
 }
 
 func Url(suffix string) string {
-	return globalCfg.Url(suffix)
+	return _global.Url(suffix)
+}
+
+func GetURLFormats() URLFormat {
+	return _global.URLFormat
 }
 
 // Prefix return the prefix.
 func Prefix() string {
-	return globalCfg.prefix
+	return _global.prefix
 }
 
 // PrefixFixSlash return the prefix fix the slash error.
 func PrefixFixSlash() string {
-	return globalCfg.PrefixFixSlash()
+	return _global.PrefixFixSlash()
 }
 
 // Get gets the config.
 func Get() *Config {
-	return globalCfg.Copy().EraseSens()
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+
+	return _global.Copy().EraseSens()
 }
 
 // Getter methods
 // ============================
 
 func GetDatabases() DatabaseList {
-	var list = make(DatabaseList, len(globalCfg.Databases))
-	for key := range globalCfg.Databases {
+	var list = make(DatabaseList, len(_global.Databases))
+	for key := range _global.Databases {
 		list[key] = Database{
-			Driver: globalCfg.Databases[key].Driver,
+			Driver:     _global.Databases[key].Driver,
+			DriverMode: _global.Databases[key].DriverMode,
 		}
 	}
 	return list
 }
 
 func GetDomain() string {
-	return globalCfg.Domain
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Domain
 }
 
 func GetLanguage() string {
-	return globalCfg.Language
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Language
 }
 
 func GetAppID() string {
-	return globalCfg.AppID
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AppID
 }
 
 func GetUrlPrefix() string {
-	return globalCfg.UrlPrefix
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.UrlPrefix
 }
 
 func GetOpenAdminApi() bool {
-	return globalCfg.OpenAdminApi
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.OpenAdminApi
 }
 
 func GetAllowDelOperationLog() bool {
-	return globalCfg.AllowDelOperationLog
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AllowDelOperationLog
 }
 
 func GetOperationLogOff() bool {
-	return globalCfg.OperationLogOff
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.OperationLogOff
 }
 
 func GetCustom500HTML() template.HTML {
-	return globalCfg.Custom500HTML
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Custom500HTML
 }
 
 func GetCustom404HTML() template.HTML {
-	return globalCfg.Custom404HTML
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Custom404HTML
 }
 
 func GetCustom403HTML() template.HTML {
-	return globalCfg.Custom403HTML
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Custom403HTML
 }
 
 func GetTheme() string {
-	return globalCfg.Theme
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Theme
 }
 
 func GetStore() Store {
-	return globalCfg.Store
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Store
 }
 
 func GetTitle() string {
-	return globalCfg.Title
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Title
 }
 
 func GetAssetRootPath() string {
-	return globalCfg.AssetRootPath
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AssetRootPath
 }
 
 func GetLogo() template.HTML {
-	return globalCfg.Logo
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Logo
 }
 
 func GetSiteOff() bool {
-	return globalCfg.SiteOff
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.SiteOff
 }
 
 func GetMiniLogo() template.HTML {
-	return globalCfg.MiniLogo
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.MiniLogo
 }
 
 func GetIndexUrl() string {
-	return globalCfg.IndexUrl
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.IndexUrl
 }
 
 func GetLoginUrl() string {
-	return globalCfg.LoginUrl
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.LoginUrl
 }
 
 func GetDebug() bool {
-	return globalCfg.Debug
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Debug
 }
 
 func GetEnv() string {
-	return globalCfg.Env
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Env
 }
 
 func GetInfoLogPath() string {
-	return globalCfg.InfoLogPath
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.InfoLogPath
 }
 
 func GetErrorLogPath() string {
-	return globalCfg.ErrorLogPath
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.ErrorLogPath
 }
 
 func GetAccessLogPath() string {
-	return globalCfg.AccessLogPath
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AccessLogPath
 }
 
 func GetSqlLog() bool {
-	return globalCfg.SqlLog
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.SqlLog
 }
 
 func GetAccessLogOff() bool {
-	return globalCfg.AccessLogOff
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AccessLogOff
 }
 func GetInfoLogOff() bool {
-	return globalCfg.InfoLogOff
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.InfoLogOff
 }
 func GetErrorLogOff() bool {
-	return globalCfg.ErrorLogOff
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.ErrorLogOff
 }
 
 func GetColorScheme() string {
-	return globalCfg.ColorScheme
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.ColorScheme
 }
 
 func GetSessionLifeTime() int {
-	return globalCfg.SessionLifeTime
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.SessionLifeTime
 }
 
 func GetAssetUrl() string {
-	return globalCfg.AssetUrl
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AssetUrl
 }
 
 func GetFileUploadEngine() FileUploadEngine {
-	return globalCfg.FileUploadEngine
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.FileUploadEngine
 }
 
 func GetCustomHeadHtml() template.HTML {
-	return globalCfg.CustomHeadHtml
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.CustomHeadHtml
 }
 
 func GetCustomFootHtml() template.HTML {
-	return globalCfg.CustomFootHtml
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.CustomFootHtml
 }
 
 func GetFooterInfo() template.HTML {
-	return globalCfg.FooterInfo
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.FooterInfo
 }
 
 func GetLoginTitle() string {
-	return globalCfg.LoginTitle
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.LoginTitle
 }
 
 func GetLoginLogo() template.HTML {
-	return globalCfg.LoginLogo
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.LoginLogo
 }
 
 func GetAuthUserTable() string {
-	return globalCfg.AuthUserTable
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.AuthUserTable
 }
 
 func GetExtra() map[string]interface{} {
-	return globalCfg.Extra
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Extra
 }
 
 func GetAnimation() PageAnimation {
-	return globalCfg.Animation
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.Animation
 }
 
 func GetNoLimitLoginIP() bool {
-	return globalCfg.NoLimitLoginIP
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.NoLimitLoginIP
 }
 
 func GetHideVisitorUserCenterEntrance() bool {
-	return globalCfg.HideVisitorUserCenterEntrance
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.HideVisitorUserCenterEntrance
 }
 
 func GetExcludeThemeComponents() []string {
-	return globalCfg.ExcludeThemeComponents
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.ExcludeThemeComponents
 }
 
 type Service struct {

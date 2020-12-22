@@ -7,7 +7,6 @@ package db
 import (
 	dbsql "database/sql"
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -422,16 +421,7 @@ func (sql *SQL) First() (map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SQLComponent)
 
-	var (
-		res []map[string]interface{}
-		err error
-	)
-
-	if sql.tx != nil {
-		res, err = sql.diver.QueryWithTx(sql.tx, sql.Statement, sql.Args...)
-	} else {
-		res, err = sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
-	}
+	res, err := sql.diver.QueryWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 	if err != nil {
 		return nil, err
@@ -449,10 +439,7 @@ func (sql *SQL) All() ([]map[string]interface{}, error) {
 
 	sql.dialect.Select(&sql.SQLComponent)
 
-	if sql.tx != nil {
-		return sql.diver.QueryWithTx(sql.tx, sql.Statement, sql.Args...)
-	}
-	return sql.diver.QueryWithConnection(sql.conn, sql.Statement, sql.Args...)
+	return sql.diver.QueryWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 }
 
 // ShowColumns show columns info.
@@ -506,16 +493,7 @@ func (sql *SQL) Update(values dialect.H) (int64, error) {
 
 	sql.dialect.Update(&sql.SQLComponent)
 
-	var (
-		res dbsql.Result
-		err error
-	)
-
-	if sql.tx != nil {
-		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
-	} else {
-		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
-	}
+	res, err := sql.diver.ExecWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 	if err != nil {
 		return 0, err
@@ -534,16 +512,7 @@ func (sql *SQL) Delete() error {
 
 	sql.dialect.Delete(&sql.SQLComponent)
 
-	var (
-		res dbsql.Result
-		err error
-	)
-
-	if sql.tx != nil {
-		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
-	} else {
-		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
-	}
+	res, err := sql.diver.ExecWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 	if err != nil {
 		return err
@@ -562,16 +531,7 @@ func (sql *SQL) Exec() (int64, error) {
 
 	sql.dialect.Update(&sql.SQLComponent)
 
-	var (
-		res dbsql.Result
-		err error
-	)
-
-	if sql.tx != nil {
-		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
-	} else {
-		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
-	}
+	res, err := sql.diver.ExecWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 	if err != nil {
 		return 0, err
@@ -584,6 +544,8 @@ func (sql *SQL) Exec() (int64, error) {
 	return res.LastInsertId()
 }
 
+const postgresInsertCheckTableName = "goadmin_menu|goadmin_permissions|goadmin_roles|goadmin_users"
+
 // Insert exec the insert method of given key/value pairs.
 func (sql *SQL) Insert(values dialect.H) (int64, error) {
 	defer RecycleSQL(sql)
@@ -592,40 +554,40 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 
 	sql.dialect.Insert(&sql.SQLComponent)
 
-	var (
-		res    dbsql.Result
-		err    error
-		resMap []map[string]interface{}
-	)
+	if sql.diver.Name() == DriverPostgresql && (strings.Index(postgresInsertCheckTableName, sql.TableName) != -1) {
 
-	if sql.diver.Name() == DriverPostgresql {
-		if sql.TableName == "goadmin_menu" ||
-			sql.TableName == "goadmin_permissions" ||
-			sql.TableName == "goadmin_roles" ||
-			sql.TableName == "goadmin_users" {
+		resMap, err := sql.diver.QueryWith(sql.tx, sql.conn, sql.Statement+" RETURNING id", sql.Args...)
 
-			if sql.tx != nil {
-				resMap, err = sql.diver.QueryWithTx(sql.tx, sql.Statement+" RETURNING id", sql.Args...)
-			} else {
-				resMap, err = sql.diver.QueryWithConnection(sql.conn, sql.Statement+" RETURNING id", sql.Args...)
-			}
+		if err != nil {
+
+			// Fixed java h2 database postgresql mode
+			_, err := sql.diver.QueryWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 			if err != nil {
 				return 0, err
 			}
 
-			if len(resMap) == 0 {
-				return 0, errors.New("no affect row")
+			res, err := sql.diver.QueryWithConnection(sql.conn, `SELECT max("id") as "id" FROM "`+sql.TableName+`"`)
+
+			if err != nil {
+				return 0, err
 			}
-			return resMap[0]["id"].(int64), nil
+
+			if len(res) != 0 {
+				return res[0]["id"].(int64), nil
+			}
+
+			return 0, err
 		}
+
+		if len(resMap) == 0 {
+			return 0, errors.New("no affect row")
+		}
+
+		return resMap[0]["id"].(int64), nil
 	}
 
-	if sql.tx != nil {
-		res, err = sql.diver.ExecWithTx(sql.tx, sql.Statement, sql.Args...)
-	} else {
-		res, err = sql.diver.ExecWithConnection(sql.conn, sql.Statement, sql.Args...)
-	}
+	res, err := sql.diver.ExecWith(sql.tx, sql.conn, sql.Statement, sql.Args...)
 
 	if err != nil {
 		return 0, err
@@ -639,10 +601,7 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 }
 
 func (sql *SQL) wrap(field string) string {
-	if sql.diver.Name() == "mssql" {
-		return fmt.Sprintf(`[%s]`, field)
-	}
-	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter()
+	return sql.diver.GetDelimiter() + field + sql.diver.GetDelimiter2()
 }
 
 func (sql *SQL) clean() {

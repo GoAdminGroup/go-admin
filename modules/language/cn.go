@@ -55,6 +55,13 @@ var cn = LangSet{
 	"fail":              "失败",
 	"current page":      "当前页",
 
+	"goadmin is now running. \nrunning in \"debug\" mode. switch to \"release\" mode in production.\n\n": "GoAdmin 启动成功。\n目前处于 \"debug\" 模式。请在生产环境中切换为 \"release\" 模式。\n\n",
+
+	"wrong goadmin version, theme %s required goadmin version are %s":    "错误的 GoAdmin 版本，当前主题 %s 需要 GoAdmin 版本为 %s",
+	"wrong theme version, goadmin %s required version of theme %s is %s": "错误的主题版本, GoAdmin %s 需要主题 %s 的版本为 %s",
+
+	"adapter is nil, import the default adapter or use addadapter method add the adapter": "适配器为空，请先 import 对应的适配器或使用 AddAdapter 方法引入",
+
 	"are you sure to delete": "你确定要删除吗？",
 	"yes":                    "确定",
 	"confirm":                "确认",
@@ -125,12 +132,15 @@ var cn = LangSet{
 	"initialize navigation buttons":   "初始化导航栏按钮",
 	"initialize plugins":              "初始化插件",
 	"initialize database connections": "初始化数据库连接",
+	"initialize success":              "初始化成功🍺🍺",
 
 	"plugins":          "插件",
 	"plugin store":     "插件商店",
 	"get more plugins": "获取更多插件",
 	"uninstalled":      "未安装",
 	"plugin setting":   "插件设置",
+
+	"showing <b>%s</b> to <b>%s</b> of <b>%s</b> entries": "显示第 <b>%s</b> 到第 <b>%s</b> 条记录，总共 <b>%s</b> 条记录",
 
 	"second":  "秒",
 	"seconds": "秒",

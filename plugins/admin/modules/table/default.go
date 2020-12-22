@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/modules/config"
+
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
 	errs "github.com/GoAdminGroup/go-admin/modules/errors"
@@ -26,10 +28,11 @@ import (
 
 type DefaultTable struct {
 	*BaseTable
-	connectionDriver string
-	connection       string
-	sourceURL        string
-	getDataFun       GetDataFun
+	connectionDriver     string
+	connectionDriverMode string
+	connection           string
+	sourceURL            string
+	getDataFun           GetDataFun
 }
 
 type GetDataFun func(params parameter.Parameters) ([]map[string]interface{}, int)
@@ -60,10 +63,11 @@ func NewDefaultTable(cfgs ...Config) Table {
 			OnlyDetail:     cfg.OnlyDetail,
 			OnlyInfo:       cfg.OnlyInfo,
 		},
-		connectionDriver: cfg.Driver,
-		connection:       cfg.Connection,
-		sourceURL:        cfg.SourceURL,
-		getDataFun:       cfg.GetDataFun,
+		connectionDriver:     cfg.Driver,
+		connectionDriverMode: cfg.DriverMode,
+		connection:           cfg.Connection,
+		sourceURL:            cfg.SourceURL,
+		getDataFun:           cfg.GetDataFun,
 	}
 }
 
@@ -90,10 +94,11 @@ func (tb *DefaultTable) Copy() Table {
 			Exportable: tb.Exportable,
 			PrimaryKey: tb.PrimaryKey,
 		},
-		connectionDriver: tb.connectionDriver,
-		connection:       tb.connection,
-		sourceURL:        tb.sourceURL,
-		getDataFun:       tb.getDataFun,
+		connectionDriver:     tb.connectionDriver,
+		connectionDriverMode: tb.connectionDriverMode,
+		connection:           tb.connection,
+		sourceURL:            tb.sourceURL,
+		getDataFun:           tb.getDataFun,
 	}
 }
 
@@ -358,7 +363,7 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
-		queryStatement = "select %s from %s %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), "%s") + " %s"
+		queryStatement = "select %s from %s %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), "%s") + " %s"
 	)
 
 	columns, _ := tb.getColumns(tb.Info.Table)
@@ -370,11 +375,11 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns)
 
-	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter())
+	fields += tb.Info.Table + "." + modules.FilterField(tb.PrimaryKey.Name, connection.GetDelimiter(), connection.GetDelimiter2())
 
 	groupBy := ""
 	if joins != "" {
-		groupBy = " GROUP BY " + tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
+		groupBy = " GROUP BY " + tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), tb.PrimaryKey.Name)
 	}
 
 	var (
@@ -383,9 +388,9 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 		existKeys = make([]string, 0)
 	)
 
-	wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
+	wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), connection.GetDelimiter2(), whereArgs, columns, existKeys,
 		tb.Info.FieldList.GetFieldFilterProcessValue)
-	wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+	wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), connection.GetDelimiter2(), whereArgs, existKeys, columns)
 	wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
 	if wheres != "" {
@@ -425,16 +430,19 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 
 	var (
 		connection     = tb.db()
-		placeholder    = modules.Delimiter(connection.GetDelimiter(), "%s")
+		delimiter      = connection.GetDelimiter()
+		delimiter2     = connection.GetDelimiter2()
+		placeholder    = modules.Delimiter(delimiter, delimiter2, "%s")
 		queryStatement string
 		countStatement string
 		ids            = params.PKs()
-		pk             = tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), tb.PrimaryKey.Name)
+		table          = modules.Delimiter(delimiter, delimiter2, tb.Info.Table)
+		pk             = table + "." + modules.Delimiter(delimiter, delimiter2, tb.PrimaryKey.Name)
 	)
 
-	if connection.Name() == db.DriverPostgresql {
-		placeholder = "%s"
-	}
+	//if connection.Name() == db.DriverPostgresql {
+	//	placeholder = "%s"
+	//}
 
 	beginTime := time.Now()
 
@@ -456,7 +464,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
 		} else {
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
-			queryStatement = "select %s from " + placeholder + "%s %s %s order by %s." + placeholder + " %s LIMIT ? OFFSET ?"
+			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
 			// %s means: table, join table, wheres
 			countStatement = "select count(*) from " + placeholder + " %s %s"
 		}
@@ -476,8 +484,8 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		if connection.Name() == db.DriverMssql {
 			for _, field := range tb.Info.FieldList {
 				if field.TypeName == db.Text || field.TypeName == db.Longtext {
-					f := modules.Delimiter(connection.GetDelimiter(), field.Field)
-					headField := tb.Info.Table + "." + f
+					f := modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), field.Field)
+					headField := table + "." + f
 					allFields = strings.ReplaceAll(allFields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
 					groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
 				}
@@ -507,10 +515,10 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 	} else {
 
 		// parameter
-		wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), whereArgs, columns, existKeys,
+		wheres, whereArgs, existKeys = params.Statement(wheres, tb.Info.Table, connection.GetDelimiter(), connection.GetDelimiter2(), whereArgs, columns, existKeys,
 			tb.Info.FieldList.GetFieldFilterProcessValue)
 		// pre query
-		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), whereArgs, existKeys, columns)
+		wheres, whereArgs = tb.Info.Wheres.Statement(wheres, connection.GetDelimiter(), connection.GetDelimiter2(), whereArgs, existKeys, columns)
 		wheres, whereArgs = tb.Info.WhereRaws.Statement(wheres, whereArgs)
 
 		if wheres != "" {
@@ -571,7 +579,13 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		logger.LogSQL(countCmd, nil)
 
 		if tb.connectionDriver == "postgresql" {
-			size = int(total[0]["count"].(int64))
+			if tb.connectionDriverMode == "h2" {
+				size = int(total[0]["count(*)"].(int64))
+			} else if config.GetDatabases().GetDefault().DriverMode == "h2" {
+				size = int(total[0]["count(*)"].(int64))
+			} else {
+				size = int(total[0]["count"].(int64))
+			}
 		} else if tb.connectionDriver == db.DriverMssql {
 			size = int(total[0]["size"].(int64))
 		} else {
@@ -629,35 +643,32 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			args           = []interface{}{id}
 			connection     = tb.db()
 			delimiter      = connection.GetDelimiter()
-			tableName      = tb.GetForm().Table
-			pk             = tableName + "." + modules.Delimiter(delimiter, tb.PrimaryKey.Name)
-			queryStatement = "select %s from " + modules.Delimiter(delimiter, "%s") + " %s where " + pk + " = ? %s "
-		)
-
-		if connection.Name() == db.DriverPostgresql {
+			delimiter2     = connection.GetDelimiter2()
+			tableName      = modules.Delimiter(delimiter, delimiter2, tb.GetForm().Table)
+			pk             = tableName + "." + modules.Delimiter(delimiter, delimiter2, tb.PrimaryKey.Name)
 			queryStatement = "select %s from %s %s where " + pk + " = ? %s "
-		}
+		)
 
 		for i := 0; i < len(tb.Form.FieldList); i++ {
 
 			if tb.Form.FieldList[i].Field != pk && modules.InArray(columns, tb.Form.FieldList[i].Field) &&
 				!tb.Form.FieldList[i].Joins.Valid() {
-				fields += tableName + "." + modules.FilterField(tb.Form.FieldList[i].Field, delimiter) + ","
+				fields += tableName + "." + modules.FilterField(tb.Form.FieldList[i].Field, delimiter, delimiter2) + ","
 			}
 
 			if tb.Form.FieldList[i].Joins.Valid() {
 				headField := tb.Form.FieldList[i].Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + tb.Form.FieldList[i].Field
-				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName()+"."+
-					modules.FilterField(tb.Form.FieldList[i].Field, delimiter), headField, types.JoinFieldValueDelimiter) + ","
+				joinFields += db.GetAggregationExpression(connection.Name(), tb.Form.FieldList[i].Joins.Last().GetTableName(delimiter, delimiter2)+"."+
+					modules.FilterField(tb.Form.FieldList[i].Field, delimiter, delimiter2), headField, types.JoinFieldValueDelimiter) + ","
 				for _, join := range tb.Form.FieldList[i].Joins {
-					if !modules.InArray(joinTables, join.GetTableName()) {
-						joinTables = append(joinTables, join.GetTableName())
+					if !modules.InArray(joinTables, join.GetTableName(delimiter, delimiter2)) {
+						joinTables = append(joinTables, join.GetTableName(delimiter, delimiter2))
 						if join.BaseTable == "" {
 							join.BaseTable = tableName
 						}
-						joins += " left join " + modules.FilterField(join.Table, delimiter) + " " + join.TableAlias + " on " +
-							join.GetTableName() + "." + modules.FilterField(join.JoinField, delimiter) + " = " +
-							join.BaseTable + "." + modules.FilterField(join.Field, delimiter)
+						joins += " left join " + modules.FilterField(join.Table, delimiter, delimiter2) + " " + join.TableAlias + " on " +
+							join.GetTableName(delimiter, delimiter2) + "." + modules.FilterField(join.JoinField, delimiter, delimiter2) + " = " +
+							join.BaseTable + "." + modules.FilterField(join.Field, delimiter, delimiter2)
 					}
 				}
 			}
@@ -671,7 +682,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 			if connection.Name() == db.DriverMssql {
 				for i := 0; i < len(tb.Form.FieldList); i++ {
 					if tb.Form.FieldList[i].TypeName == db.Text || tb.Form.FieldList[i].TypeName == db.Longtext {
-						f := modules.Delimiter(connection.GetDelimiter(), tb.Form.FieldList[i].Field)
+						f := modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), tb.Form.FieldList[i].Field)
 						headField := tb.Info.Table + "." + f
 						fields = strings.ReplaceAll(fields, headField, "CAST("+headField+" AS NVARCHAR(MAX)) as "+f)
 						groupFields = strings.ReplaceAll(groupFields, headField, "CAST("+headField+" AS NVARCHAR(MAX))")
@@ -1057,6 +1068,7 @@ func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, colum
 	return tb.Info.FieldList.GetTheadAndFilterForm(types.TableInfo{
 		Table:      tb.Info.Table,
 		Delimiter:  tb.delimiter(),
+		Delimiter2: tb.delimiter2(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns, tb.sql)
@@ -1073,6 +1085,13 @@ func (tb *DefaultTable) db() db.Connection {
 func (tb *DefaultTable) delimiter() string {
 	if tb.getDataFromDB() {
 		return tb.db().GetDelimiter()
+	}
+	return ""
+}
+
+func (tb *DefaultTable) delimiter2() string {
+	if tb.getDataFromDB() {
+		return tb.db().GetDelimiter2()
 	}
 	return ""
 }

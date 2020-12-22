@@ -6,6 +6,7 @@ import (
 
 type Config struct {
 	Driver         string
+	DriverMode     string
 	Connection     string
 	CanAdd         bool
 	Editable       bool
@@ -38,6 +39,11 @@ func DefaultConfig() Config {
 func (config Config) SetPrimaryKey(name string, typ db.DatabaseType) Config {
 	config.PrimaryKey.Name = name
 	config.PrimaryKey.Type = typ
+	return config
+}
+
+func (config Config) SetDriverMode(mode string) Config {
+	config.DriverMode = mode
 	return config
 }
 

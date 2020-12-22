@@ -39,6 +39,16 @@ func (db *Mysql) GetDelimiter() string {
 	return "`"
 }
 
+// GetDelimiter2 implements the method Connection.GetDelimiter2.
+func (db *Mysql) GetDelimiter2() string {
+	return "`"
+}
+
+// GetDelimiters implements the method Connection.GetDelimiters.
+func (db *Mysql) GetDelimiters() []string {
+	return []string{"`", "`"}
+}
+
 // InitDB implements the method Connection.InitDB.
 func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 	db.Configs = cfgs
@@ -52,13 +62,13 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 					_ = sqlDB.Close()
 				}
 				panic(err)
-			} else {
-				// Largest set up the database connection reduce time wait
-				sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-				sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
-
-				db.DbList[conn] = sqlDB
 			}
+
+			// Largest set up the database connection reduce time wait
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+
+			db.DbList[conn] = sqlDB
 
 			if err := sqlDB.Ping(); err != nil {
 				panic(err)
@@ -86,6 +96,30 @@ func (db *Mysql) Query(query string, args ...interface{}) ([]map[string]interfac
 // Exec implements the method Connection.Exec.
 func (db *Mysql) Exec(query string, args ...interface{}) (sql.Result, error) {
 	return CommonExec(db.DbList["default"], query, args...)
+}
+
+// QueryWithTx is query method within the transaction.
+func (db *Mysql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	return CommonQueryWithTx(tx, query, args...)
+}
+
+// ExecWithTx is exec method within the transaction.
+func (db *Mysql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+	return CommonExecWithTx(tx, query, args...)
+}
+
+func (db *Mysql) QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error) {
+	if tx != nil {
+		return db.QueryWithTx(tx, query, args...)
+	}
+	return db.QueryWithConnection(conn, query, args...)
+}
+
+func (db *Mysql) ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error) {
+	if tx != nil {
+		return db.ExecWithTx(tx, query, args...)
+	}
+	return db.ExecWithConnection(conn, query, args...)
 }
 
 // BeginTxWithReadUncommitted starts a transaction with level LevelReadUncommitted.
@@ -136,14 +170,4 @@ func (db *Mysql) BeginTxAndConnection(conn string) *sql.Tx {
 // BeginTxWithLevelAndConnection starts a transaction with given transaction isolation level and connection.
 func (db *Mysql) BeginTxWithLevelAndConnection(conn string, level sql.IsolationLevel) *sql.Tx {
 	return CommonBeginTxWithLevel(db.DbList[conn], level)
-}
-
-// QueryWithTx is query method within the transaction.
-func (db *Mysql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
-	return CommonQueryWithTx(tx, query, args...)
-}
-
-// ExecWithTx is exec method within the transaction.
-func (db *Mysql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
-	return CommonExecWithTx(tx, query, args...)
 }

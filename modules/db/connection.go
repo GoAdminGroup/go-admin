@@ -34,13 +34,13 @@ type Connection interface {
 
 	// QueryWithConnection is the query method with given connection of sql.
 	QueryWithConnection(conn, query string, args ...interface{}) ([]map[string]interface{}, error)
+	QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error)
+	QueryWith(tx *sql.Tx, conn, query string, args ...interface{}) ([]map[string]interface{}, error)
 
 	// ExecWithConnection is the exec method with given connection of sql.
 	ExecWithConnection(conn, query string, args ...interface{}) (sql.Result, error)
-
-	QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error)
-
 	ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error)
+	ExecWith(tx *sql.Tx, conn, query string, args ...interface{}) (sql.Result, error)
 
 	BeginTxWithReadUncommitted() *sql.Tx
 	BeginTxWithReadCommitted() *sql.Tx
@@ -62,8 +62,9 @@ type Connection interface {
 
 	Close() []error
 
-	// GetDelimiter get the default testDelimiter.
 	GetDelimiter() string
+	GetDelimiter2() string
+	GetDelimiters() []string
 
 	GetDB(key string) *sql.DB
 

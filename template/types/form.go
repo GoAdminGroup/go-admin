@@ -169,6 +169,9 @@ type FormField struct {
 
 	TableFields FormFields
 
+	Style  template.HTMLAttr `json:"style"`
+	NoIcon bool              `json:"no_icon"`
+
 	OptionExt       template.JS     `json:"option_ext"`
 	OptionExt2      template.JS     `json:"option_ext_2"`
 	OptionInitFn    OptionInitFn    `json:"-"`
@@ -1407,7 +1410,7 @@ func (f *FormPanel) EnableAjax(msgs ...string) *FormPanel {
 		data.SuccessTitle = msgs[0]
 	}
 	if len(msgs) > 1 && msgs[1] != "" {
-		data.ErrorTitle = msgs[0]
+		data.ErrorTitle = msgs[1]
 	}
 	if len(msgs) > 2 && msgs[2] != "" {
 		data.SuccessJumpURL = msgs[2]

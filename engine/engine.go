@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"runtime/debug"
 	"strings"
+	"sync"
 
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/template/icon"
@@ -44,11 +45,12 @@ import (
 // plugin is that the adapter use the plugin which contains routers and
 // controller methods to inject into the framework entity and make it work.
 type Engine struct {
-	PluginList plugins.Plugins
-	Adapter    adapter.WebFrameWork
-	Services   service.List
-	NavButtons *types.Buttons
-	config     *config.Config
+	PluginList   plugins.Plugins
+	Adapter      adapter.WebFrameWork
+	Services     service.List
+	NavButtons   *types.Buttons
+	config       *config.Config
+	announceLock sync.Once
 }
 
 // Default return the default engine instance.
@@ -64,13 +66,15 @@ func Default() *Engine {
 // Use enable the adapter.
 func (eng *Engine) Use(router interface{}) error {
 	if eng.Adapter == nil {
-		logger.Panic("adapter is nil, import the default adapter or use AddAdapter method add the adapter")
+		emptyAdapterPanic()
 	}
 
 	eng.Services.Add(auth.InitCSRFTokenSrv(eng.DefaultConnection()))
 	eng.initSiteSetting()
 	eng.initJumpNavButtons()
 	eng.initPlugins()
+
+	printInitMsg(language.Get("initialize success"))
 
 	return eng.Adapter.Use(router, eng.PluginList)
 }
@@ -123,21 +127,30 @@ func (eng *Engine) AddAuthService(processor auth.Processor) *Engine {
 // Config APIs
 // ============================
 
+func (eng *Engine) announce() *Engine {
+	if eng.config.Debug {
+		eng.announceLock.Do(func() {
+			fmt.Printf(language.Get("goadmin is now running. \nrunning in \"debug\" mode. switch to \"release\" mode in production.\n\n"))
+		})
+	}
+	return eng
+}
+
 // AddConfig set the global config.
 func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(&cfg).initDatabase()
+	return eng.setConfig(&cfg).announce().initDatabase()
 }
 
 // setConfig set the config of engine.
 func (eng *Engine) setConfig(cfg *config.Config) *Engine {
-	eng.config = config.Set(cfg)
+	eng.config = config.Initialize(cfg)
 	sysCheck, themeCheck := template.CheckRequirements()
 	if !sysCheck {
-		logger.Panicf("wrong GoAdmin version, theme %s required GoAdmin version are %s",
+		logger.Panicf(language.Get("wrong goadmin version, theme %s required goadmin version are %s"),
 			eng.config.Theme, strings.Join(template.Default().GetRequirements(), ","))
 	}
 	if !themeCheck {
-		logger.Panicf("wrong Theme version, GoAdmin %s required version of theme %s is %s",
+		logger.Panicf(language.Get("wrong theme version, goadmin %s required version of theme %s is %s"),
 			system.Version(), eng.config.Theme, strings.Join(system.RequireThemeVersion()[eng.config.Theme], ","))
 	}
 	return eng
@@ -146,19 +159,19 @@ func (eng *Engine) setConfig(cfg *config.Config) *Engine {
 // AddConfigFromJSON set the global config from json file.
 func (eng *Engine) AddConfigFromJSON(path string) *Engine {
 	cfg := config.ReadFromJson(path)
-	return eng.setConfig(&cfg).initDatabase()
+	return eng.setConfig(&cfg).announce().initDatabase()
 }
 
 // AddConfigFromYAML set the global config from yaml file.
 func (eng *Engine) AddConfigFromYAML(path string) *Engine {
 	cfg := config.ReadFromYaml(path)
-	return eng.setConfig(&cfg).initDatabase()
+	return eng.setConfig(&cfg).announce().initDatabase()
 }
 
 // AddConfigFromINI set the global config from ini file.
 func (eng *Engine) AddConfigFromINI(path string) *Engine {
 	cfg := config.ReadFromINI(path)
-	return eng.setConfig(&cfg).initDatabase()
+	return eng.setConfig(&cfg).announce().initDatabase()
 }
 
 // InitDatabase initialize all database connection.
@@ -168,7 +181,7 @@ func (eng *Engine) initDatabase() *Engine {
 		eng.Services.Add(driver, db.GetConnectionByDriver(driver).InitDB(databaseCfg))
 	}
 	if defaultAdapter == nil {
-		logger.Panic("adapter is nil")
+		emptyAdapterPanic()
 	}
 	defaultConnection := db.GetConnection(eng.Services)
 	defaultAdapter.SetConnection(defaultConnection)
@@ -191,10 +204,14 @@ var engine *Engine
 // navButtons is the default buttons in the navigation bar.
 var navButtons = new(types.Buttons)
 
+func emptyAdapterPanic() {
+	logger.Panic(language.Get("adapter is nil, import the default adapter or use addadapter method add the adapter"))
+}
+
 // Register set default adapter of engine.
 func Register(ada adapter.WebFrameWork) {
 	if ada == nil {
-		logger.Panic("adapter is nil")
+		emptyAdapterPanic()
 	}
 	defaultAdapter = ada
 }
@@ -404,7 +421,7 @@ func (eng *Engine) initPlugins() {
 
 	for i := range eng.PluginList {
 		if eng.PluginList[i].Name() != "admin" {
-			printInitMsg(eng.PluginList[i].Name())
+			printInitMsg("--> " + eng.PluginList[i].Name())
 			eng.PluginList[i].InitPlugin(eng.Services)
 			if !eng.PluginList[i].GetInfo().SkipInstallation {
 				eng.AddGenerator("plugin_"+eng.PluginList[i].Name(), eng.PluginList[i].GetSettingPage())
@@ -475,7 +492,7 @@ func (eng *Engine) initSiteSetting() {
 // If adapter is nil, it will panic.
 func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 	if eng.Adapter == nil {
-		logger.Panic("adapter is nil")
+		emptyAdapterPanic()
 	}
 	eng.Adapter.Content(ctx, panel, eng.AdminPlugin().GetAddOperationFn(), *eng.NavButtons...)
 }
@@ -484,7 +501,7 @@ func (eng *Engine) Content(ctx interface{}, panel types.GetPanelFn) {
 // If defaultAdapter is nil, it will panic.
 func Content(ctx interface{}, panel types.GetPanelFn) {
 	if defaultAdapter == nil {
-		logger.Panic("adapter is nil")
+		emptyAdapterPanic()
 	}
 	defaultAdapter.Content(ctx, panel, engine.AdminPlugin().GetAddOperationFn(), *navButtons...)
 }

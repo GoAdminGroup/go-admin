@@ -7,7 +7,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/db"
-	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -232,11 +231,6 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	formList.SetTabHeaders("input", "select")
 
 	formList.SetTable("users").SetTitle("Users").SetDescription("Users")
-
-	formList.SetPostHook(func(values form2.Values) error {
-		fmt.Println("userTable.GetForm().PostHook", values)
-		return nil
-	})
 
 	return
 }

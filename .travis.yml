@@ -23,7 +23,7 @@ before_install:
   - createdb -U postgres go-admin-test
 
 install:
-  - wget -N https://chromedriver.storage.googleapis.com/85.0.4183.87/chromedriver_linux64.zip -P ~/
+  - wget -N https://chromedriver.storage.googleapis.com/87.0.4280.88/chromedriver_linux64.zip -P ~/
   - unzip ~/chromedriver_linux64.zip -d ~/
   - rm ~/chromedriver_linux64.zip
   - sudo chmod +x /home/travis/chromedriver

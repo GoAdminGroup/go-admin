@@ -126,7 +126,7 @@ VALUES
 
 	conn = testConnDSN(DriverMysql, fmt.Sprintf("root:root@tcp(127.0.0.1:3306)/%s?charset=utf8mb4", typeTestdbName))
 
-	config.Set(&config.Config{
+	config.Initialize(&config.Config{
 		SqlLog: true,
 	})
 
@@ -185,7 +185,7 @@ func testPG(t *testing.T, port string) {
 
 	conn = testConnDSN(DriverPostgresql, fmt.Sprintf(connStatement, typeTestdbName))
 
-	config.Set(&config.Config{
+	config.Initialize(&config.Config{
 		SqlLog: true,
 	})
 

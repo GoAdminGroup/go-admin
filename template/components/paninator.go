@@ -19,8 +19,8 @@ type PaginatorAttribute struct {
 	PageSizeList      []string
 	Option            map[string]template.HTML
 	Url               string
-	HideEntriesInfo   bool
 	ExtraInfo         template.HTML
+	EntriesInfo       template.HTML
 	types.Attribute
 }
 
@@ -44,8 +44,8 @@ func (compo *PaginatorAttribute) SetExtraInfo(value template.HTML) types.Paginat
 	return compo
 }
 
-func (compo *PaginatorAttribute) SetHideEntriesInfo() types.PaginatorAttribute {
-	compo.HideEntriesInfo = true
+func (compo *PaginatorAttribute) SetEntriesInfo(value template.HTML) types.PaginatorAttribute {
+	compo.EntriesInfo = value
 	return compo
 }
 
