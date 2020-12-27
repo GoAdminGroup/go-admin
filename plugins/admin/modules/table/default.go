@@ -371,6 +371,7 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 	thead, fields, joins := tb.Info.FieldList.GetThead(types.TableInfo{
 		Table:      tb.Info.Table,
 		Delimiter:  tb.db().GetDelimiter(),
+		Delimiter2: tb.db().GetDelimiter2(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns)
