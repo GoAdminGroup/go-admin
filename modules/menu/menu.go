@@ -242,7 +242,7 @@ func constructMenuTree(menus []map[string]interface{}, parentID int64, lang stri
 			uri := menus[j]["uri"].(string)
 
 			if lang != "" {
-				if strings.Index(uri, "?") != -1 {
+				if strings.Contains(uri, "?") {
 					uri += "&__ga_lang=" + lang
 				} else {
 					uri += "?__ga_lang=" + lang
