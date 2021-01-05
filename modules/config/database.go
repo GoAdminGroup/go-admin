@@ -93,7 +93,7 @@ func DatabaseSqliteOption(filepath string, param map[string]string) DatabaseOpti
 		if param != nil {
 			param = db.Params
 		}
-		paramArr := make([]string, len(param))
+		paramArr := make([]string, 0)
 		for k, v := range param {
 			paramArr = append(paramArr, k+"="+v)
 		}
