@@ -8,6 +8,17 @@ import (
 	"strings"
 )
 
+const (
+	// DriverMysql is a const value of mysql driver.
+	DriverMysql = "mysql"
+	// DriverSqlite is a const value of sqlite driver.
+	DriverSqlite = "sqlite"
+	// DriverPostgresql is a const value of postgresql driver.
+	DriverPostgresql = "postgresql"
+	// DriverMssql is a const value of mssql driver.
+	DriverMssql = "mssql"
+)
+
 // defining database Functional Options that modify Database instance
 type DatabaseOption func(*Database)
 

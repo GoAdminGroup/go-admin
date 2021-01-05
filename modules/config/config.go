@@ -16,81 +16,26 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 )
 
+type Env string
+
+func (env Env) Valid() bool {
+	return env == EnvLocal || env == EnvTest || env == EnvProd
+}
+
 const (
 	// EnvTest is a const value of test environment.
-	EnvTest = "test"
+	EnvTest Env = "test"
 	// EnvLocal is a const value of local environment.
-	EnvLocal = "local"
+	EnvLocal Env = "local"
 	// EnvProd is a const value of production environment.
-	EnvProd = "prod"
-
-	// DriverMysql is a const value of mysql driver.
-	DriverMysql = "mysql"
-	// DriverSqlite is a const value of sqlite driver.
-	DriverSqlite = "sqlite"
-	// DriverPostgresql is a const value of postgresql driver.
-	DriverPostgresql = "postgresql"
-	// DriverMssql is a const value of mssql driver.
-	DriverMssql = "mssql"
+	EnvProd Env = "prod"
 )
-
-// Store is the file store config. Path is the local store path.
-// and prefix is the url prefix used to visit it.
-type Store struct {
-	Path   string `json:"path,omitempty" yaml:"path,omitempty" ini:"path,omitempty"`
-	Prefix string `json:"prefix,omitempty" yaml:"prefix,omitempty" ini:"prefix,omitempty"`
-}
-
-func (s Store) URL(suffix string) string {
-	if len(suffix) > 4 && suffix[:4] == "http" {
-		return suffix
-	}
-	if s.Prefix == "" {
-		if suffix[0] == '/' {
-			return suffix
-		}
-		return "/" + suffix
-	}
-	if s.Prefix[0] == '/' {
-		if suffix[0] == '/' {
-			return s.Prefix + suffix
-		}
-		return s.Prefix + "/" + suffix
-	}
-	if suffix[0] == '/' {
-		if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
-			return s.Prefix + suffix
-		}
-		return "/" + s.Prefix + suffix
-	}
-	if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
-		return s.Prefix + "/" + suffix
-	}
-	return "/" + s.Prefix + "/" + suffix
-}
-
-func (s Store) JSON() string {
-	if s.Path == "" && s.Prefix == "" {
-		return ""
-	}
-	return utils.JSON(s)
-}
-
-func GetStoreFromJSON(m string) Store {
-	var s Store
-	if m == "" {
-		return s
-	}
-	_ = json.Unmarshal([]byte(m), &s)
-	return s
-}
 
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
@@ -139,7 +84,7 @@ type Config struct {
 	Debug bool `json:"debug,omitempty" yaml:"debug,omitempty" ini:"debug,omitempty"`
 
 	// Env is the environment,which maybe local,test,prod.
-	Env string `json:"env,omitempty" yaml:"env,omitempty" ini:"env,omitempty"`
+	Env Env `json:"env,omitempty" yaml:"env,omitempty" ini:"env,omitempty"`
 
 	// Info log path.
 	InfoLogPath string `json:"info_log,omitempty" yaml:"info_log,omitempty" ini:"info_log,omitempty"`
@@ -252,33 +197,6 @@ type Config struct {
 	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
 }
 
-type Logger struct {
-	Encoder EncoderCfg `json:"encoder,omitempty" yaml:"encoder,omitempty" ini:"encoder,omitempty"`
-	Rotate  RotateCfg  `json:"rotate,omitempty" yaml:"rotate,omitempty" ini:"rotate,omitempty"`
-	Level   int8       `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
-}
-
-type EncoderCfg struct {
-	TimeKey       string `json:"time_key,omitempty" yaml:"time_key,omitempty" ini:"time_key,omitempty"`
-	LevelKey      string `json:"level_key,omitempty" yaml:"level_key,omitempty" ini:"level_key,omitempty"`
-	NameKey       string `json:"name_key,omitempty" yaml:"name_key,omitempty" ini:"name_key,omitempty"`
-	CallerKey     string `json:"caller_key,omitempty" yaml:"caller_key,omitempty" ini:"caller_key,omitempty"`
-	MessageKey    string `json:"message_key,omitempty" yaml:"message_key,omitempty" ini:"message_key,omitempty"`
-	StacktraceKey string `json:"stacktrace_key,omitempty" yaml:"stacktrace_key,omitempty" ini:"stacktrace_key,omitempty"`
-	Level         string `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
-	Time          string `json:"time,omitempty" yaml:"time,omitempty" ini:"time,omitempty"`
-	Duration      string `json:"duration,omitempty" yaml:"duration,omitempty" ini:"duration,omitempty"`
-	Caller        string `json:"caller,omitempty" yaml:"caller,omitempty" ini:"caller,omitempty"`
-	Encoding      string `json:"encoding,omitempty" yaml:"encoding,omitempty" ini:"encoding,omitempty"`
-}
-
-type RotateCfg struct {
-	MaxSize    int  `json:"max_size,omitempty" yaml:"max_size,omitempty" ini:"max_size,omitempty"`
-	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups,omitempty" ini:"max_backups,omitempty"`
-	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age,omitempty" ini:"max_age,omitempty"`
-	Compress   bool `json:"compress,omitempty" yaml:"compress,omitempty" ini:"compress,omitempty"`
-}
-
 type URLFormat struct {
 	Info       string `json:"info,omitempty" yaml:"info,omitempty" ini:"info,omitempty"`
 	Detail     string `json:"detail,omitempty" yaml:"detail,omitempty" ini:"detail,omitempty"`
@@ -320,31 +238,6 @@ func (p PageAnimation) JSON() string {
 		return ""
 	}
 	return utils.JSON(p)
-}
-
-// FileUploadEngine is a file upload engine.
-type FileUploadEngine struct {
-	Name   string                 `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty" yaml:"config,omitempty" ini:"config,omitempty"`
-}
-
-func (f FileUploadEngine) JSON() string {
-	if f.Name == "" {
-		return ""
-	}
-	if len(f.Config) == 0 {
-		f.Config = nil
-	}
-	return utils.JSON(f)
-}
-
-func GetFileUploadEngineFromJSON(m string) FileUploadEngine {
-	var f FileUploadEngine
-	if m == "" {
-		return f
-	}
-	_ = json.Unmarshal([]byte(m), &f)
-	return f
 }
 
 // GetIndexURL get the index url with prefix.
@@ -748,7 +641,9 @@ func SetDefault(cfg *Config) *Config {
 	cfg.AssetRootPath = utils.SetDefault(cfg.AssetRootPath, "", "./public/")
 	cfg.AssetRootPath = filepath.ToSlash(cfg.AssetRootPath)
 	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
-	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
+	if !cfg.Env.Valid() {
+		cfg.Env = EnvProd
+	}
 	if cfg.SessionLifeTime == 0 {
 		// default two hours
 		cfg.SessionLifeTime = 7200
@@ -781,40 +676,6 @@ func Initialize(cfg *Config) *Config {
 	_global = cfg
 
 	return _global
-}
-
-func initLogger(cfg *Config) {
-	logger.InitWithConfig(logger.Config{
-		InfoLogOff:         cfg.InfoLogOff,
-		ErrorLogOff:        cfg.ErrorLogOff,
-		AccessLogOff:       cfg.AccessLogOff,
-		SqlLogOpen:         cfg.SqlLog,
-		InfoLogPath:        cfg.InfoLogPath,
-		ErrorLogPath:       cfg.ErrorLogPath,
-		AccessLogPath:      cfg.AccessLogPath,
-		AccessAssetsLogOff: cfg.AccessAssetsLogOff,
-		Rotate: logger.RotateCfg{
-			MaxSize:    cfg.Logger.Rotate.MaxSize,
-			MaxBackups: cfg.Logger.Rotate.MaxBackups,
-			MaxAge:     cfg.Logger.Rotate.MaxAge,
-			Compress:   cfg.Logger.Rotate.Compress,
-		},
-		Encode: logger.EncoderCfg{
-			TimeKey:       cfg.Logger.Encoder.TimeKey,
-			LevelKey:      cfg.Logger.Encoder.LevelKey,
-			NameKey:       cfg.Logger.Encoder.NameKey,
-			CallerKey:     cfg.Logger.Encoder.CallerKey,
-			MessageKey:    cfg.Logger.Encoder.MessageKey,
-			StacktraceKey: cfg.Logger.Encoder.StacktraceKey,
-			Level:         cfg.Logger.Encoder.Level,
-			Time:          cfg.Logger.Encoder.Time,
-			Duration:      cfg.Logger.Encoder.Duration,
-			Caller:        cfg.Logger.Encoder.Caller,
-			Encoding:      cfg.Logger.Encoder.Encoding,
-		},
-		Debug: cfg.Debug,
-		Level: cfg.Logger.Level,
-	})
 }
 
 // AssertPrefix return the prefix of assert.
@@ -1005,7 +866,7 @@ func GetDebug() bool {
 func GetEnv() string {
 	_global.lock.RLock()
 	defer _global.lock.RUnlock()
-	return _global.Env
+	return string(_global.Env)
 }
 
 func GetInfoLogPath() string {
