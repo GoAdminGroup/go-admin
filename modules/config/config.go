@@ -22,19 +22,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Env string
-
-func (env Env) Valid() bool {
-	return env == EnvLocal || env == EnvTest || env == EnvProd
-}
-
 const (
 	// EnvTest is a const value of test environment.
-	EnvTest Env = "test"
+	EnvTest = "test"
 	// EnvLocal is a const value of local environment.
-	EnvLocal Env = "local"
+	EnvLocal = "local"
 	// EnvProd is a const value of production environment.
-	EnvProd Env = "prod"
+	EnvProd = "prod"
 )
 
 // Config type is the global config of goAdmin. It will be
@@ -84,7 +78,7 @@ type Config struct {
 	Debug bool `json:"debug,omitempty" yaml:"debug,omitempty" ini:"debug,omitempty"`
 
 	// Env is the environment,which maybe local,test,prod.
-	Env Env `json:"env,omitempty" yaml:"env,omitempty" ini:"env,omitempty"`
+	Env string `json:"env,omitempty" yaml:"env,omitempty" ini:"env,omitempty"`
 
 	// Info log path.
 	InfoLogPath string `json:"info_log,omitempty" yaml:"info_log,omitempty" ini:"info_log,omitempty"`
@@ -641,9 +635,7 @@ func SetDefault(cfg *Config) *Config {
 	cfg.AssetRootPath = utils.SetDefault(cfg.AssetRootPath, "", "./public/")
 	cfg.AssetRootPath = filepath.ToSlash(cfg.AssetRootPath)
 	cfg.FileUploadEngine.Name = utils.SetDefault(cfg.FileUploadEngine.Name, "", "local")
-	if !cfg.Env.Valid() {
-		cfg.Env = EnvProd
-	}
+	cfg.Env = utils.SetDefault(cfg.Env, "", EnvProd)
 	if cfg.SessionLifeTime == 0 {
 		// default two hours
 		cfg.SessionLifeTime = 7200
