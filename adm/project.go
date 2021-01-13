@@ -300,7 +300,7 @@ func Init(c db.Connection) {
 
 	makefileContent := makefile
 	if p.Driver == db.DriverSqlite {
-		makefileContent = bytes.Replace(makefileContent, []byte("CGO_ENABLED=0"), []byte("CGO_ENABLED=1"), -1)
+		makefileContent = bytes.ReplaceAll(makefileContent, []byte("CGO_ENABLED=0"), []byte("CGO_ENABLED=1"))
 	}
 
 	checkError(ioutil.WriteFile("./Makefile", makefileContent, 0644))

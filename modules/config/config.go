@@ -536,7 +536,7 @@ func (c *Config) IsNotProductionEnvironment() bool {
 }
 
 func (c *Config) IsAllowConfigModification() bool {
-	return c.ProhibitConfigModification != true
+	return !c.ProhibitConfigModification
 }
 
 // URLRemovePrefix remove prefix from the given url.
