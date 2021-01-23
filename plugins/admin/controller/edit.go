@@ -158,10 +158,12 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	for i := 0; i < len(formPanel.FieldList); i++ {
 		if formPanel.FieldList[i].FormType == form.File &&
 			len(param.MultiForm.File[formPanel.FieldList[i].Field]) == 0 &&
+			len(param.MultiForm.Value[formPanel.FieldList[i].Field+"__delete_flag"]) > 0 &&
 			param.MultiForm.Value[formPanel.FieldList[i].Field+"__delete_flag"][0] != "1" {
 			param.MultiForm.Value[formPanel.FieldList[i].Field] = []string{""}
 		}
 		if formPanel.FieldList[i].FormType == form.File &&
+			len(param.MultiForm.Value[formPanel.FieldList[i].Field+"__change_flag"]) > 0 &&
 			param.MultiForm.Value[formPanel.FieldList[i].Field+"__change_flag"][0] != "1" {
 			delete(param.MultiForm.Value, formPanel.FieldList[i].Field)
 		}
