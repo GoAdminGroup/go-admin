@@ -439,7 +439,7 @@ type URLFormat struct {
 }
 
 func (f URLFormat) SetDefault() URLFormat {
-	f.Detail = utils.SetDefault(f.Info, "", "/info/:__prefix/detail")
+	f.Detail = utils.SetDefault(f.Detail, "", "/info/:__prefix/detail")
 	f.ShowEdit = utils.SetDefault(f.ShowEdit, "", "/info/:__prefix/edit")
 	f.ShowCreate = utils.SetDefault(f.ShowCreate, "", "/info/:__prefix/new")
 	f.Edit = utils.SetDefault(f.Edit, "", "/edit/:__prefix")
