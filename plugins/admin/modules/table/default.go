@@ -441,10 +441,6 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		pk             = table + "." + modules.Delimiter(delimiter, delimiter2, tb.PrimaryKey.Name)
 	)
 
-	//if connection.Name() == db.DriverPostgresql {
-	//	placeholder = "%s"
-	//}
-
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
@@ -462,12 +458,12 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s." + placeholder + " %s) as ROWNUMBER_, %s from " +
 				placeholder + "%s %s %s ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
+			countStatement = "select count(*) as [size] from " + placeholder + " %s"
 		} else {
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
 			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) from " + placeholder + " %s %s"
+			countStatement = "select count(*) from " + placeholder + "%s"
 		}
 	}
 
@@ -569,7 +565,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 	var size int
 
 	if len(ids) == 0 {
-		countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres)
+		countCmd := fmt.Sprintf(countStatement, tb.Info.Table, wheres)
 
 		total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
 

@@ -200,7 +200,14 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 
 		_, txErr := s.connection().WithTransaction(func(tx *sql.Tx) (e error, i map[string]interface{}) {
 
-			_, updateUserErr := user.WithTx(tx).Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+			avatar := values.Get("avatar")
+
+			if values.Get("avatar__delete_flag") == "1" {
+				avatar = ""
+			}
+
+			_, updateUserErr := user.WithTx(tx).Update(values.Get("username"),
+				password, values.Get("name"), avatar, values.Get("avatar__change_flag") == "1")
 
 			if db.CheckError(updateUserErr, db.UPDATE) {
 				return updateUserErr, nil
@@ -468,7 +475,14 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 			password = encodePassword([]byte(values.Get("password")))
 		}
 
-		_, updateUserErr := user.Update(values.Get("username"), password, values.Get("name"), values.Get("avatar"))
+		avatar := values.Get("avatar")
+
+		if values.Get("avatar__delete_flag") == "1" {
+			avatar = ""
+		}
+
+		_, updateUserErr := user.Update(values.Get("username"),
+			password, values.Get("name"), avatar, values.Get("avatar__change_flag") == "1")
 
 		if db.CheckError(updateUserErr, db.UPDATE) {
 			return updateUserErr
