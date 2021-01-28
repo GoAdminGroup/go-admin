@@ -41,6 +41,15 @@ func (t RoleModel) WithTx(tx *sql.Tx) RoleModel {
 	return t
 }
 
+func (t RoleModel) FindDefault() RoleModel {
+	return t.FindBySlug("dashboard")
+}
+
+func (t RoleModel) FindBySlug(slug string) RoleModel {
+	item, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
+	return t.MapToModel(item)
+}
+
 // Find return a default role model of given id.
 func (t RoleModel) Find(id interface{}) RoleModel {
 	item, _ := t.Table(t.TableName).Find(id)
@@ -125,4 +134,8 @@ func (t RoleModel) MapToModel(m map[string]interface{}) RoleModel {
 	t.CreatedAt, _ = m["created_at"].(string)
 	t.UpdatedAt, _ = m["updated_at"].(string)
 	return t
+}
+
+func (t RoleModel) IsEmpty() bool {
+	return t.Id == 0
 }

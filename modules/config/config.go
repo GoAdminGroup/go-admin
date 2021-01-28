@@ -247,6 +247,8 @@ type Config struct {
 	// file connection.go.
 	Databases DatabaseList `json:"database,omitempty" yaml:"database,omitempty" ini:"database,omitempty"`
 
+	Ldap Ldap `json:"ldap,omitempty" yaml:"ldap,omitempty" ini:"ldap,omitempty"`
+
 	// The application unique ID. Once generated, don't modify.
 	AppID string `json:"app_id,omitempty" yaml:"app_id,omitempty" ini:"app_id,omitempty"`
 

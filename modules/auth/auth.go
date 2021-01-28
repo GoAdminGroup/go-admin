@@ -5,6 +5,8 @@
 package auth
 
 import (
+	"net/http"
+	"strings"
 	"sync"
 
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -18,28 +20,53 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Method string
+
+const (
+	GeneralMethod = "0"
+	LdapMethod    = "1"
+)
+
+type Authenticator interface {
+	Authenticate(req *http.Request) (models.UserModel, error)
+}
+
+type generalAuth struct {
+	conn db.Connection
+}
+
+func (auth *generalAuth) Authenticate(req *http.Request) (user models.UserModel, err error) {
+	password := req.FormValue("password")
+	username := req.FormValue("username")
+
+	if strings.TrimSpace(username) == "" {
+		err = ErrUserInvalidName
+		return
+	}
+	if strings.TrimSpace(password) == "" {
+		err = ErrUserInvalidPassword
+		return
+	}
+	account := models.NewGeneralAccount().WithConn(auth.conn).FindByUsername(username)
+	if account.IsEmpty() {
+		err = ErrGeneralAccountNotFound
+		return
+	}
+	if !comparePassword(password, account.Password) {
+		err = ErrGeneralAccountIncorrectPassword
+		return
+	}
+	user = models.User().SetConn(auth.conn).Find(account.UserId)
+	return
+}
+
+func NewGeneralAuth(conn db.Connection) Authenticator {
+	return &generalAuth{conn: conn}
+}
+
 // Auth get the user model from Context.
 func Auth(ctx *context.Context) models.UserModel {
 	return ctx.User().(models.UserModel)
-}
-
-// Check check the password and username and return the user model.
-func Check(password string, username string, conn db.Connection) (user models.UserModel, ok bool) {
-
-	user = models.User().SetConn(conn).FindByUserName(username)
-
-	if user.IsEmpty() {
-		ok = false
-	} else {
-		if comparePassword(password, user.Password) {
-			ok = true
-			user = user.WithRoles().WithPermissions().WithMenus()
-			user.UpdatePwd(EncodePassword([]byte(password)))
-		} else {
-			ok = false
-		}
-	}
-	return
 }
 
 func comparePassword(comPwd, pwdHash string) bool {
@@ -54,28 +81,6 @@ func EncodePassword(pwd []byte) string {
 		return ""
 	}
 	return string(hash)
-}
-
-// SetCookie set the cookie.
-func SetCookie(ctx *context.Context, user models.UserModel, conn db.Connection) error {
-	ses, err := InitSession(ctx, conn)
-
-	if err != nil {
-		return err
-	}
-
-	return ses.Add("user_id", user.Id)
-}
-
-// DelCookie delete the cookie from Context.
-func DelCookie(ctx *context.Context, conn db.Connection) error {
-	ses, err := InitSession(ctx, conn)
-
-	if err != nil {
-		return err
-	}
-
-	return ses.Clear()
 }
 
 type TokenService struct {
