@@ -92,6 +92,9 @@ var cn = LangSet{
 	"login":      "登录",
 	"login fail": "登录失败",
 
+	"user ldap":    "LDAP用户",
+	"user general": "普通用户",
+
 	"admin":     "管理",
 	"user":      "用户",
 	"users":     "用户",
