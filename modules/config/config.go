@@ -683,6 +683,8 @@ func (c *Config) ToMap() map[string]string {
 				m["logger_level"] = strconv.Itoa(int(c.Logger.Level))
 			case "config.DatabaseList":
 				m["databases"] = utils.JSON(v.Interface())
+			case "config.FileUploadEngine":
+				m["file_upload_engine"] = c.FileUploadEngine.JSON()
 			}
 		case reflect.Map:
 			if t.Type.String() == "config.ExtraInfo" {
