@@ -446,6 +446,8 @@ func getFieldsFromConn(conn db.Connection, table, driver string) Fields {
 			Head:     strings.Title(model[fieldField].(string)),
 			Name:     model[fieldField].(string),
 			DBType:   typeName,
+			CanAdd:   true,
+			Editable: true,
 			FormType: form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string)),
 		}
 		if model[fieldField].(string) == "id" {

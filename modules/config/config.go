@@ -439,7 +439,7 @@ type URLFormat struct {
 }
 
 func (f URLFormat) SetDefault() URLFormat {
-	f.Detail = utils.SetDefault(f.Info, "", "/info/:__prefix/detail")
+	f.Detail = utils.SetDefault(f.Detail, "", "/info/:__prefix/detail")
 	f.ShowEdit = utils.SetDefault(f.ShowEdit, "", "/info/:__prefix/edit")
 	f.ShowCreate = utils.SetDefault(f.ShowCreate, "", "/info/:__prefix/new")
 	f.Edit = utils.SetDefault(f.Edit, "", "/edit/:__prefix")
@@ -536,7 +536,7 @@ func (c *Config) IsNotProductionEnvironment() bool {
 }
 
 func (c *Config) IsAllowConfigModification() bool {
-	return c.ProhibitConfigModification != true
+	return !c.ProhibitConfigModification
 }
 
 // URLRemovePrefix remove prefix from the given url.
@@ -683,6 +683,8 @@ func (c *Config) ToMap() map[string]string {
 				m["logger_level"] = strconv.Itoa(int(c.Logger.Level))
 			case "config.DatabaseList":
 				m["databases"] = utils.JSON(v.Interface())
+			case "config.FileUploadEngine":
+				m["file_upload_engine"] = c.FileUploadEngine.JSON()
 			}
 		case reflect.Map:
 			if t.Type.String() == "config.ExtraInfo" {

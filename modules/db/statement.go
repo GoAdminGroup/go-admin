@@ -554,7 +554,7 @@ func (sql *SQL) Insert(values dialect.H) (int64, error) {
 
 	sql.dialect.Insert(&sql.SQLComponent)
 
-	if sql.diver.Name() == DriverPostgresql && (strings.Index(postgresInsertCheckTableName, sql.TableName) != -1) {
+	if sql.diver.Name() == DriverPostgresql && (strings.Contains(postgresInsertCheckTableName, sql.TableName)) {
 
 		resMap, err := sql.diver.QueryWith(sql.tx, sql.conn, sql.Statement+" RETURNING id", sql.Args...)
 

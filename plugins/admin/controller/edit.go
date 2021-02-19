@@ -153,11 +153,19 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		}
 	}
 
-	for i := 0; i < len(param.Panel.GetForm().FieldList); i++ {
-		if param.Panel.GetForm().FieldList[i].FormType == form.File &&
-			len(param.MultiForm.File[param.Panel.GetForm().FieldList[i].Field]) == 0 &&
-			param.MultiForm.Value[param.Panel.GetForm().FieldList[i].Field+"__delete_flag"][0] != "1" {
-			delete(param.MultiForm.Value, param.Panel.GetForm().FieldList[i].Field)
+	formPanel := param.Panel.GetForm()
+
+	for i := 0; i < len(formPanel.FieldList); i++ {
+		if formPanel.FieldList[i].FormType == form.File &&
+			len(param.MultiForm.File[formPanel.FieldList[i].Field]) == 0 &&
+			len(param.MultiForm.Value[formPanel.FieldList[i].Field+"__delete_flag"]) > 0 &&
+			param.MultiForm.Value[formPanel.FieldList[i].Field+"__delete_flag"][0] != "1" {
+			param.MultiForm.Value[formPanel.FieldList[i].Field] = []string{""}
+		}
+		if formPanel.FieldList[i].FormType == form.File &&
+			len(param.MultiForm.Value[formPanel.FieldList[i].Field+"__change_flag"]) > 0 &&
+			param.MultiForm.Value[formPanel.FieldList[i].Field+"__change_flag"][0] != "1" {
+			delete(param.MultiForm.Value, formPanel.FieldList[i].Field)
 		}
 	}
 
@@ -174,8 +182,8 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	if param.Panel.GetForm().Responder != nil {
-		param.Panel.GetForm().Responder(ctx)
+	if formPanel.Responder != nil {
+		formPanel.Responder(ctx)
 		return
 	}
 

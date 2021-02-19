@@ -226,7 +226,6 @@ func buildProjectWeb(port string) {
 			w.Header().Add("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"code": 0, "msg": "` + local(lang)("web.install success") + `", "data": {"readme": ""}}`))
-			return
 		})
 
 		l, err := net.Listen("tcp", ":"+port)
