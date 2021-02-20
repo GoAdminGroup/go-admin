@@ -66,7 +66,7 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfig(config.Config{
+	if err := eng.AddConfig(&config.Config{
 		Databases: dbs,
 		UrlPrefix: "admin",
 		Store: config.Store{

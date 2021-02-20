@@ -139,7 +139,7 @@ func main() {
 	// 增加 chartjs 组件
 	template.AddComp(chartjs.NewChart())
     
-    	_ = eng.AddConfig(cfg).
+    	_ = eng.AddConfig(&cfg).
     		AddGenerators(datamodel.Generators).
     	        // 增加 generator, 第一个参数是对应的访问路由前缀
         	        // 例子:

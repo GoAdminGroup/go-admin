@@ -18,14 +18,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 
 	"github.com/gofiber/fiber/v2"
-
 )
 
 func main() {
 
-
 	app := fiber.New(fiber.Config{
-	    ServerHeader:  "Fiber",
+		ServerHeader: "Fiber",
 	})
 
 	eng := engine.Default()
@@ -73,7 +71,7 @@ func main() {
 	//
 	// eng.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := eng.AddConfig(cfg).
+	if err := eng.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 		AddDisplayFilterXssJsFilter().
 		// add generator, first parameter is the url prefix of table when visit.
@@ -89,7 +87,7 @@ func main() {
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
-  _=app.Listen(":8897")
+	_ = app.Listen(":8897")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)

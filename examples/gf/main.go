@@ -71,7 +71,7 @@ func main() {
 	//
 	// eng.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := eng.AddConfig(cfg).
+	if err := eng.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 		AddDisplayFilterXssJsFilter().
 		// add generator, first parameter is the url prefix of table when visit.

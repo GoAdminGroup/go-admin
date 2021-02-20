@@ -25,13 +25,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/valyala/fasthttp"
 	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 )
 
 func newHandler() fasthttp.RequestHandler {
 	app := fiber.New(fiber.Config{
-			ServerHeader:  "Fiber",
+		ServerHeader: "Fiber",
 	})
 
 	eng := engine.Default()
@@ -49,20 +49,19 @@ func newHandler() fasthttp.RequestHandler {
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-
 	return app.Handler()
 }
 
 func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.RequestHandler {
 	app := fiber.New(fiber.Config{
-			ServerHeader:  "Fiber",
+		ServerHeader: "Fiber",
 	})
 
 	eng := engine.Default()
 
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfig(config.Config{
+	if err := eng.AddConfig(&config.Config{
 		Databases: dbs,
 		UrlPrefix: "admin",
 		Store: config.Store{
