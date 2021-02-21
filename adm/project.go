@@ -323,6 +323,8 @@ package tables
 
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
+// Generators is a map of table models.
+//
 // The key of Generators is the prefix of table info url.
 // The corresponding value is the Form and Table data.
 //
