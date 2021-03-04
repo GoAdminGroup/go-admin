@@ -1,8 +1,8 @@
 GOCMD = go
 GOBUILD = $(GOCMD) build
 BINARY_NAME = adm
-LAST_VERSION = v1.2.17
-VERSION = v1.2.18
+LAST_VERSION = v1.2.20
+VERSION = v1.2.21
 CLI = adm
 
 TEST_CONFIG_PATH=./../../common/config.json
@@ -10,6 +10,12 @@ TEST_CONFIG_PQ_PATH=./../../common/config_pg.json
 TEST_CONFIG_SQLITE_PATH=./../../common/config_sqlite.json
 TEST_CONFIG_MS_PATH=./../../common/config_ms.json
 TEST_FRAMEWORK_DIR=./tests/frameworks
+
+## database configs
+MYSQL_HOST = 127.0.0.1
+MYSQL_PORT = 3306
+MYSQL_USER = root
+MYSQL_PWD = root
 
 all: test
 
@@ -73,8 +79,8 @@ import-sqlite:
 	cp ./tests/data/admin.db ./tests/common/admin.db
 
 import-mysql:
-	mysql -uroot -proot -e "create database if not exists \`go-admin-test\`"
-	mysql -uroot -proot go-admin-test < ./tests/data/admin.sql
+	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} -e "create database if not exists \`go-admin-test\`"
+	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} go-admin-test < ./tests/data/admin.sql
 
 import-postgresql:
 	dropdb -U postgres go-admin-test

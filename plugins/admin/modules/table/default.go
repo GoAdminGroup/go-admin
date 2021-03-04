@@ -26,6 +26,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
+// DefaultTable is an implementation of table.Table
 type DefaultTable struct {
 	*BaseTable
 	connectionDriver     string
@@ -33,6 +34,8 @@ type DefaultTable struct {
 	connection           string
 	sourceURL            string
 	getDataFun           GetDataFun
+
+	dbObj db.Connection
 }
 
 type GetDataFun func(params parameter.Parameters) ([]map[string]interface{}, int)
@@ -71,6 +74,7 @@ func NewDefaultTable(cfgs ...Config) Table {
 	}
 }
 
+// Copy copy a new table.Table from origin DefaultTable
 func (tb *DefaultTable) Copy() Table {
 	return &DefaultTable{
 		BaseTable: &BaseTable{
@@ -116,9 +120,18 @@ func (tb *DefaultTable) GetData(params parameter.Parameters) (PanelInfo, error) 
 			fn(&params)
 		}
 	}
+
 	if tb.Info.QueryFilterFn != nil {
-		ids, stop := tb.Info.QueryFilterFn(params, tb.db())
-		if stop {
+		var ids []string
+		var stopQuery bool
+
+		if tb.getDataFun == nil && tb.Info.GetDataFn == nil {
+			ids, stopQuery = tb.Info.QueryFilterFn(params, tb.db())
+		} else {
+			ids, stopQuery = tb.Info.QueryFilterFn(params, nil)
+		}
+
+		if stopQuery {
 			return tb.GetDataWithIds(params.WithPKs(ids...))
 		}
 	}
@@ -370,8 +383,8 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 
 	thead, fields, joins := tb.Info.FieldList.GetThead(types.TableInfo{
 		Table:      tb.Info.Table,
-		Delimiter:  tb.db().GetDelimiter(),
-		Delimiter2: tb.db().GetDelimiter2(),
+		Delimiter:  connection.GetDelimiter(),
+		Delimiter2: connection.GetDelimiter2(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
 	}, params, columns)
@@ -441,10 +454,6 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 		pk             = table + "." + modules.Delimiter(delimiter, delimiter2, tb.PrimaryKey.Name)
 	)
 
-	//if connection.Name() == db.DriverPostgresql {
-	//	placeholder = "%s"
-	//}
-
 	beginTime := time.Now()
 
 	if len(ids) > 0 {
@@ -462,12 +471,12 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s." + placeholder + " %s) as ROWNUMBER_, %s from " +
 				placeholder + "%s %s %s ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) as [size] from " + placeholder + " %s %s"
+			countStatement = "select count(*) as [size] from (select count(*) as [size] from " + placeholder + " %s %s %s) src"
 		} else {
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
 			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) from " + placeholder + " %s %s"
+			countStatement = "select count(*) from (select " + pk + " from " + placeholder + " %s %s %s) src"
 		}
 	}
 
@@ -569,7 +578,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 	var size int
 
 	if len(ids) == 0 {
-		countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres)
+		countCmd := fmt.Sprintf(countStatement, tb.Info.Table, joins, wheres, groupBy)
 
 		total, err := connection.QueryWithConnection(tb.connection, countCmd, whereArgs...)
 
@@ -723,7 +732,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 	)
 
 	if len(tb.Form.TabGroups) > 0 {
-		groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
+		groupFormList, groupHeaders = tb.Form.GroupFieldWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sqlObjOrNil)
 		return FormInfo{
 			FieldList:         tb.Form.FieldList,
 			GroupFieldList:    groupFormList,
@@ -733,7 +742,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 		}, nil
 	}
 
-	var fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sql)
+	var fieldList = tb.Form.FieldsWithValue(tb.PrimaryKey.Name, id, columns, res, tb.sqlObjOrNil)
 
 	return FormInfo{
 		FieldList:         fieldList,
@@ -1039,10 +1048,10 @@ func (tb *DefaultTable) GetNewFormInfo() FormInfo {
 	f := tb.GetActualNewForm()
 
 	if len(f.TabGroups) == 0 {
-		return FormInfo{FieldList: f.FieldsWithDefaultValue(tb.sql)}
+		return FormInfo{FieldList: f.FieldsWithDefaultValue(tb.sqlObjOrNil)}
 	}
 
-	newForm, headers := f.GroupField(tb.sql)
+	newForm, headers := f.GroupField(tb.sqlObjOrNil)
 
 	return FormInfo{GroupFieldList: newForm, GroupFieldHeaders: headers}
 }
@@ -1072,15 +1081,15 @@ func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, colum
 		Delimiter2: tb.delimiter2(),
 		Driver:     tb.connectionDriver,
 		PrimaryKey: tb.PrimaryKey.Name,
-	}, params, columns, tb.sql)
+	}, params, columns, tb.sqlObjOrNil)
 }
 
 // db is a helper function return raw db connection.
 func (tb *DefaultTable) db() db.Connection {
-	if tb.connectionDriver != "" && tb.getDataFromDB() {
-		return db.GetConnectionFromService(services.Get(tb.connectionDriver))
+	if tb.dbObj == nil {
+		tb.dbObj = db.GetConnectionFromService(services.Get(tb.connectionDriver))
 	}
-	return nil
+	return tb.dbObj
 }
 
 func (tb *DefaultTable) delimiter() string {
@@ -1103,8 +1112,13 @@ func (tb *DefaultTable) getDataFromDB() bool {
 
 // sql is a helper function return db sql.
 func (tb *DefaultTable) sql() *db.SQL {
+	return db.WithDriverAndConnection(tb.connection, tb.db())
+}
+
+// sqlObjOrNil is a helper function return db sql obj or nil.
+func (tb *DefaultTable) sqlObjOrNil() *db.SQL {
 	if tb.connectionDriver != "" && tb.getDataFromDB() {
-		return db.WithDriverAndConnection(tb.connection, db.GetConnectionFromService(services.Get(tb.connectionDriver)))
+		return db.WithDriverAndConnection(tb.connection, tb.db())
 	}
 	return nil
 }
