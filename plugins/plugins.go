@@ -346,7 +346,7 @@ func ExecuteWithMenu(ctx *context.Context,
 		Tmpl:      tmpl,
 		Panel:     panel,
 		Config:    *config.Get(),
-		Menu:      menu.GetGlobalMenu(user, conn, name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Menu:      menu.GetGlobalMenu(user, conn, ctx.Lang(), name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: options.Animation,
 		Buttons: navButtons.Copy().
 			RemoveInfoNavButton().

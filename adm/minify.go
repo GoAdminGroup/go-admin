@@ -13,9 +13,9 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/tdewolff/minify"
-	"github.com/tdewolff/minify/css"
-	"github.com/tdewolff/minify/js"
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/css"
+	"github.com/tdewolff/minify/v2/js"
 )
 
 func cssMinifier(inputDir, outputFile string, hash bool) {

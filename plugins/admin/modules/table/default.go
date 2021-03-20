@@ -476,7 +476,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
 			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) from (select count(*) from " + placeholder + " %s %s %s) src"
+			countStatement = "select count(*) from (select " + pk + " from " + placeholder + " %s %s %s) src"
 		}
 	}
 

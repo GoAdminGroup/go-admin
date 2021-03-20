@@ -185,7 +185,7 @@ GO111MODULE=on go run main.go
 
 这里是[开发计划](https://github.com/GoAdminGroup/go-admin/projects)
 
-<strong>[点击这里加微信群](http://quick.go-admin.cn/resource/wechat_qrcode.jpg)</strong>
+<strong>[点击这里申请加微信群（记得备注加群）](http://quick.go-admin.cn/resource/wechat_qrcode_02.jpg)</strong>
 
 <strong>注：在社区中如有问题提问，请务必清晰描述，包括但不限于问题详叙/问题代码/复现方法/已经尝试过的方法，时间生命可贵，请珍惜自己和别人的时间！</strong>
 
