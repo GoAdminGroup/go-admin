@@ -81,7 +81,7 @@ func main() {
 	//
 	// e.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := e.AddConfig(cfg).
+	if err := e.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 		// add generator, first parameter is the url prefix of table when visit.
 		// example:

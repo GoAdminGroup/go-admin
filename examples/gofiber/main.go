@@ -2,11 +2,10 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"
+	_ "github.com/GoAdminGroup/go-admin/adapter/gofiber"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
@@ -17,11 +16,16 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/gorilla/mux"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	app := mux.NewRouter()
+
+	app := fiber.New(fiber.Config{
+		ServerHeader: "Fiber",
+	})
+
 	eng := engine.Default()
 
 	cfg := config.Config{
@@ -38,21 +42,21 @@ func main() {
 				Driver:     config.DriverMysql,
 			},
 		},
+		UrlPrefix: "admin",
+		IndexUrl:  "/",
 		Store: config.Store{
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		UrlPrefix: "admin",
-		IndexUrl:  "/",
-		Debug:     true,
-		Language:  language.EN,
+		Debug:    true,
+		Language: language.CN,
 	}
+
+	template.AddComp(chartjs.NewChart())
 
 	// customize a plugin
 
 	examplePlugin := example.NewExample()
-
-	template.AddComp(chartjs.NewChart())
 
 	// load from golang.Plugin
 	//
@@ -81,13 +85,9 @@ func main() {
 		panic(err)
 	}
 
-	app.PathPrefix("/uploads/").Handler(http.StripPrefix("/uploads/", http.FileServer(http.Dir("./uploads"))))
-
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
-	go func() {
-		_ = http.ListenAndServe(":9033", app)
-	}()
+	_ = app.Listen(":8897")
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)

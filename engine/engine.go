@@ -137,8 +137,8 @@ func (eng *Engine) announce() *Engine {
 }
 
 // AddConfig set the global config.
-func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(&cfg).announce().initDatabase()
+func (eng *Engine) AddConfig(cfg *config.Config) *Engine {
+	return eng.setConfig(cfg).announce().initDatabase()
 }
 
 // setConfig set the config of engine.
