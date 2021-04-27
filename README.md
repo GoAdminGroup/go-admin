@@ -146,7 +146,7 @@ func main() {
 	// add component chartjs
 	template.AddComp(chartjs.NewChart())
 
-	_ = eng.AddConfig(cfg).
+	_ = eng.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 	        // add generator, first parameter is the url prefix of table when visit.
     	        // example:

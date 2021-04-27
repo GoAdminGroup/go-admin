@@ -215,7 +215,7 @@ func startServer(quit chan struct{}) {
 		cfg.AccessLogOff = false
 	}
 
-	if err := eng.AddConfig(cfg).
+	if err := eng.AddConfig(&cfg).
 		AddPlugins(adminPlugin).
 		Use(r); err != nil {
 		panic(err)
