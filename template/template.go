@@ -390,7 +390,7 @@ type ExecuteParam struct {
 	IsPjax     bool
 	Panel      types.Panel
 	Logo       template.HTML
-	Config     c.Config
+	Config     *c.Config
 	Menu       *menu.Menu
 	Animation  bool
 	Buttons    types.Buttons

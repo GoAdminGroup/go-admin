@@ -1378,17 +1378,17 @@ func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) 
 }
 
 func (i *InfoPanel) FieldFilterOnChooseHide(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOnChooseShow(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 

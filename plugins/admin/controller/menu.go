@@ -79,7 +79,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 			}).
 			SetOperationFooter(formFooter("new", false, false, false,
 				panel.GetForm().FormNewBtnWord)),
-			false, ctx.Query(constant.IframeKey) == "true", false, ""),
+			false, ctx.IsIframe(), false, ""),
 		Description: template2.HTML(panel.GetForm().Description),
 		Title:       template2.HTML(panel.GetForm().Title),
 	}, plugName)
@@ -137,7 +137,7 @@ func (h *Handler) showEditMenu(ctx *context.Context, plugName string, formInfo t
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu") + params,
-			}), false, ctx.Query(constant.IframeKey) == "true", false, ""),
+			}), false, ctx.IsIframe(), false, ""),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),
 	}, plugName)

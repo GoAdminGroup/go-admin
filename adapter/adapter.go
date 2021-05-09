@@ -12,6 +12,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/modules/db"
 	"github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/logger"
@@ -62,6 +63,7 @@ type WebFrameWork interface {
 	Path() string
 	Method() string
 	FormParam() url.Values
+	Query() url.Values
 	IsPjax() bool
 	Redirect()
 	SetContentType()
@@ -174,6 +176,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		Buttons:      navButtons.CheckPermission(user),
 		TmplHeadHTML: template.Default().GetHeadHTML(),
 		TmplFootJS:   template.Default().GetFootJS(),
+		Iframe:       newBase.Query().Get(constant.IframeKey) == "true",
 	}))
 
 	if hasError != nil {

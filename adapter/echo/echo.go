@@ -171,3 +171,8 @@ func (e *Echo) FormParam() url.Values {
 func (e *Echo) IsPjax() bool {
 	return e.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (e *Echo) Query() url.Values {
+	return e.ctx.Request().URL.Query()
+}
