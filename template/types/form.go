@@ -1008,6 +1008,19 @@ func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPan
 	return f
 }
 
+func (f *FormPanel) addFooterHTML(footer template.HTML) *FormPanel {
+	f.FooterHtml += template.HTML(ParseTableDataTmpl(footer))
+	return f
+}
+
+func (f *FormPanel) AddCSS(css template.CSS) *FormPanel {
+	return f.addFooterHTML(template.HTML("<style>" + css + "</style>"))
+}
+
+func (f *FormPanel) AddJS(js template.JS) *FormPanel {
+	return f.addFooterHTML(template.HTML("<script>" + js + "</script>"))
+}
+
 func searchJS(ext template.JS, url string, handler Handler, delay ...int) (template.JS, context.Node) {
 	delayStr := "500"
 	if len(delay) > 0 {

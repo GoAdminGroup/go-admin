@@ -1637,9 +1637,29 @@ func (i *InfoPanel) HideDetailButton() *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) HideCheckBoxColumn() *InfoPanel {
+	return i.HideColumn(1)
+}
+
+func (i *InfoPanel) HideColumn(n int) *InfoPanel {
+	i.AddCSS(template.CSS(fmt.Sprintf(`
+	.box-body table.table tbody tr td:nth-child(%v), .box-body table.table tbody tr th:nth-child(%v) {
+		display: none;
+	}`, n, n)))
+	return i
+}
+
 func (i *InfoPanel) addFooterHTML(footer template.HTML) *InfoPanel {
 	i.FooterHtml += template.HTML(ParseTableDataTmpl(footer))
 	return i
+}
+
+func (i *InfoPanel) AddCSS(css template.CSS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<style>" + css + "</style>"))
+}
+
+func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<script>" + js + "</script>"))
 }
 
 func (i *InfoPanel) addCallback(node context.Node) *InfoPanel {
