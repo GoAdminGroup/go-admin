@@ -5,7 +5,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
         $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === {{.Val}} || e.params.data.id === {{.Val}}) {
                 if ($("select.{{.ChooseField}}").length > 0) {
-                    $("select.{{.ChooseField}}").val("{{.Value}}").select2()
+                    $("select.{{.ChooseField}}").val("{{.Value}}[0]").select2()
                 } else {
                     $(".{{.ChooseField}}").val({{.Value}})
                 }
@@ -125,7 +125,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
 {{end}}`, "choose_disable": `{{define "choose_disable"}}
     <script>
         $("select.{{.Field}}").on("select2:select", function (e) {
-            if (e.params.data.text === {{.Value}} || e.params.data.id === {{.Value}}) {
+            if ({{.Value}}.indexOf(e.params.data.text) !== -1 || {{.Value}}.indexOf(e.params.data.id) !== -1) {
                 {{range $key, $fields := .ChooseFields}}
 
                 $(".{{$fields}}").prop('disabled', true);
@@ -143,7 +143,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
 {{end}}`, "choose_hide": `{{define "choose_hide"}}
     <script>
         $("select.{{.Field}}").on("select2:select", function (e) {
-            if (e.params.data.text === {{.Value}} || e.params.data.id === {{.Value}}) {
+            if ({{.Value}}.indexOf(e.params.data.text) !== -1 || {{.Value}}.indexOf(e.params.data.id) !== -1) {
                 {{range $key, $fields := .ChooseFields}}
 
                 $("label[for='{{$fields}}']").parent().hide();
@@ -165,7 +165,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
                 {{.Field}}text = {{.Field}}data[0].text;
                 {{.Field}}id = {{.Field}}data[0].id;
             }
-            if ({{.Field}}text === {{.Value}} || {{.Field}}id === {{.Value}}) {
+            if ({{.Value}}.indexOf({{$.Field}}text) !== -1 || {{.Value}}.indexOf({{$.Field}}id) !== -1) {
                 {{range $key, $fields := .ChooseFields}}
 
                 $("label[for='{{$fields}}']").parent().hide();
@@ -213,7 +213,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
 {{end}}`, "choose_show": `{{define "choose_show"}}
     <script>
         $("select.{{.Field}}").on("select2:select", function (e) {
-            if (e.params.data.text === {{.Value}} || e.params.data.id === {{.Value}}) {
+            if ({{.Value}}.indexOf(e.params.data.text) !== -1 || {{.Value}}.indexOf(e.params.data.id) !== -1) {
                 {{range $key, $fields := .ChooseFields}}
 
                 $("label[for='{{$fields}}']").parent().show();
@@ -235,7 +235,7 @@ var tmpls = map[string]string{"choose": `{{define "choose"}}
                 {{.Field}}text = {{.Field}}data[0].text;
                 {{.Field}}id = {{.Field}}data[0].id;
             }
-            if ({{.Field}}text === {{.Value}} || {{.Field}}id === {{.Value}}) {
+            if ({{.Value}}.indexOf({{$.Field}}text) !== -1 || {{.Value}}.indexOf({{$.Field}}id) !== -1) {
                 {{range $key, $fields := .ChooseFields}}
 
                 $("label[for='{{$fields}}']").parent().show();

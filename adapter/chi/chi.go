@@ -222,3 +222,8 @@ func (ch *Chi) FormParam() url.Values {
 func (ch *Chi) IsPjax() bool {
 	return ch.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (ch *Chi) Query() url.Values {
+	return ch.ctx.Request.URL.Query()
+}

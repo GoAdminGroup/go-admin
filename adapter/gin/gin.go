@@ -166,3 +166,8 @@ func (gins *Gin) FormParam() url.Values {
 func (gins *Gin) IsPjax() bool {
 	return gins.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (gins *Gin) Query() url.Values {
+	return gins.ctx.Request.URL.Query()
+}

@@ -231,3 +231,15 @@ func (fast *Fasthttp) FormParam() url.Values {
 func (fast *Fasthttp) IsPjax() bool {
 	return string(fast.ctx.Request.Header.Peek(constant.PjaxHeader)) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (fast *Fasthttp) Query() url.Values {
+	queryStr := fast.ctx.URI().QueryString()
+	queryObj, err := url.Parse(string(queryStr))
+
+	if err != nil {
+		return url.Values{}
+	}
+
+	return queryObj.Query()
+}
