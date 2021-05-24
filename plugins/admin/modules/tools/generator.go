@@ -258,7 +258,7 @@ const (
 	tablesEnd     = "generators end"
 )
 
-func GenerateTables(outputPath, packageName string, tables []string, new bool) error {
+func GenerateTables(outputPath, packageName string, tables []string, isNew bool) error {
 
 	if len(outputPath) > 0 && outputPath[len(outputPath)-1] == '/' {
 		outputPath = outputPath[:len(outputPath)-1]
@@ -267,7 +267,7 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 	outputPath = filepath.FromSlash(outputPath)
 	fileExist := utils.FileExist(outputPath + "/tables.go")
 
-	if !new && !fileExist {
+	if !isNew && !fileExist {
 		return nil
 	}
 

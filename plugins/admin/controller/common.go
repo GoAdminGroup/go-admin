@@ -69,8 +69,8 @@ func (h *Handler) UpdateCfg(cfg Config) {
 	h.generators = cfg.Generators
 }
 
-func (h *Handler) SetCaptcha(cap map[string]string) {
-	h.captchaConfig = cap
+func (h *Handler) SetCaptcha(captcha map[string]string) {
+	h.captchaConfig = captcha
 }
 
 func (h *Handler) SetRoutes(r context.RouterMap) {
