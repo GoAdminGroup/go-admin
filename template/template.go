@@ -341,7 +341,7 @@ func GetAsset(path string) ([]byte, error) {
 	for _, comp := range compMap {
 		res, err := comp.GetAsset(path)
 		if err == nil {
-			return res, err
+			return res, nil
 		}
 	}
 	return nil, errors.New(path + " not found")
