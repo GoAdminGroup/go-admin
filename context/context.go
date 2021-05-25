@@ -421,7 +421,7 @@ func (ctx *Context) IsPjax() bool {
 
 // IsIframe check request is iframe or not.
 func (ctx *Context) IsIframe() bool {
-	return ctx.Headers(constant.IframeKey) == "true"
+	return ctx.Query(constant.IframeKey) == "true" || ctx.Headers(constant.IframeKey) == "true"
 }
 
 // SetHeader set the key, value pair to the header.
