@@ -169,3 +169,8 @@ func (is *Iris) FormParam() url.Values {
 func (is *Iris) IsPjax() bool {
 	return is.ctx.GetHeader(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (is *Iris) Query() url.Values {
+	return is.ctx.Request().URL.Query()
+}

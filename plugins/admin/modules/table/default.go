@@ -802,6 +802,10 @@ func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 		return err
 	}
 
+	if len(dataList) == 0 {
+		return nil
+	}
+
 	_, err = tb.sql().Table(tb.Form.Table).
 		Where(tb.PrimaryKey.Name, "=", dataList.Get(tb.PrimaryKey.Name)).
 		Update(tb.getInjectValueFromFormValue(dataList, types.PostTypeUpdate))
@@ -868,6 +872,10 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 			errMsg = "post error: " + err.Error()
 		}
 		return err
+	}
+
+	if len(dataList) == 0 {
+		return nil
 	}
 
 	id, err = tb.sql().Table(f.Table).Insert(tb.getInjectValueFromFormValue(dataList, types.PostTypeCreate))

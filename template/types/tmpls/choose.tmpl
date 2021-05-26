@@ -3,7 +3,7 @@
         $("select.{{.Field}}").on("select2:select", function (e) {
             if (e.params.data.text === {{.Val}} || e.params.data.id === {{.Val}}) {
                 if ($("select.{{.ChooseField}}").length > 0) {
-                    $("select.{{.ChooseField}}").val("{{.Value}}").select2()
+                    $("select.{{.ChooseField}}").val("{{.Value}}[0]").select2()
                 } else {
                     $(".{{.ChooseField}}").val({{.Value}})
                 }

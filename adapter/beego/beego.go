@@ -162,3 +162,8 @@ func (bee *Beego) FormParam() url.Values {
 func (bee *Beego) IsPjax() bool {
 	return bee.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (bee *Beego) Query() url.Values {
+	return bee.ctx.Request.URL.Query()
+}
