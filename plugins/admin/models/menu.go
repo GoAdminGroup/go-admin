@@ -41,14 +41,14 @@ func (t MenuModel) SetConn(con db.Connection) MenuModel {
 
 // Find return a default menu model of given id.
 func (t MenuModel) Find(id interface{}) MenuModel {
-	item, _ := t.Table(t.TableName).Find(id)
+	item, _ := t.Table(t.TableName).WithTx(t.Tx).Find(id)
 	return t.MapToModel(item)
 }
 
 // New create a new menu model.
 func (t MenuModel) New(title, icon, uri, header, pluginName string, parentId, order int64) (MenuModel, error) {
 
-	id, err := t.Table(t.TableName).Insert(dialect.H{
+	id, err := t.Table(t.TableName).WithTx(t.Tx).Insert(dialect.H{
 		"title":       title,
 		"parent_id":   parentId,
 		"icon":        icon,
@@ -70,24 +70,24 @@ func (t MenuModel) New(title, icon, uri, header, pluginName string, parentId, or
 
 // Delete delete the menu model.
 func (t MenuModel) Delete() {
-	_ = t.Table(t.TableName).Where("id", "=", t.Id).Delete()
-	_ = t.Table("goadmin_role_menu").Where("menu_id", "=", t.Id).Delete()
-	items, _ := t.Table(t.TableName).Where("parent_id", "=", t.Id).All()
+	_ = t.Table(t.TableName).WithTx(t.Tx).Where("id", "=", t.Id).Delete()
+	_ = t.Table("goadmin_role_menu").WithTx(t.Tx).Where("menu_id", "=", t.Id).Delete()
+	items, _ := t.Table(t.TableName).WithTx(t.Tx).Where("parent_id", "=", t.Id).All()
 
 	if len(items) > 0 {
 		ids := make([]interface{}, len(items))
 		for i := 0; i < len(ids); i++ {
 			ids[i] = items[i]["id"]
 		}
-		_ = t.Table("goadmin_role_menu").WhereIn("menu_id", ids).Delete()
+		_ = t.Table("goadmin_role_menu").WithTx(t.Tx).WhereIn("menu_id", ids).Delete()
 	}
 
-	_ = t.Table(t.TableName).Where("parent_id", "=", t.Id).Delete()
+	_ = t.Table(t.TableName).WithTx(t.Tx).Where("parent_id", "=", t.Id).Delete()
 }
 
 // Update update the menu model.
 func (t MenuModel) Update(title, icon, uri, header, pluginName string, parentId int64) (int64, error) {
-	return t.Table(t.TableName).
+	return t.Table(t.TableName).WithTx(t.Tx).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
 			"title":       title,
@@ -116,7 +116,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 	count := 1
 	for _, v := range items {
 		if len(v.Children) > 0 {
-			_, _ = t.Table(t.TableName).
+			_, _ = t.Table(t.TableName).WithTx(t.Tx).
 				Where("id", "=", v.ID).
 				Update(dialect.H{
 					"order":     count,
@@ -126,7 +126,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 			for _, v2 := range v.Children {
 				if len(v2.Children) > 0 {
 
-					_, _ = t.Table(t.TableName).
+					_, _ = t.Table(t.TableName).WithTx(t.Tx).
 						Where("id", "=", v2.ID).
 						Update(dialect.H{
 							"order":     count,
@@ -134,7 +134,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 						})
 
 					for _, v3 := range v2.Children {
-						_, _ = t.Table(t.TableName).
+						_, _ = t.Table(t.TableName).WithTx(t.Tx).
 							Where("id", "=", v3.ID).
 							Update(dialect.H{
 								"order":     count,
@@ -143,7 +143,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 						count++
 					}
 				} else {
-					_, _ = t.Table(t.TableName).
+					_, _ = t.Table(t.TableName).WithTx(t.Tx).
 						Where("id", "=", v2.ID).
 						Update(dialect.H{
 							"order":     count,
@@ -153,7 +153,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 				}
 			}
 		} else {
-			_, _ = t.Table(t.TableName).
+			_, _ = t.Table(t.TableName).WithTx(t.Tx).
 				Where("id", "=", v.ID).
 				Update(dialect.H{
 					"order":     count,
@@ -166,7 +166,7 @@ func (t MenuModel) ResetOrder(data []byte) {
 
 // CheckRole check the role if has permission to get the menu.
 func (t MenuModel) CheckRole(roleId string) bool {
-	checkRole, _ := t.Table("goadmin_role_menu").
+	checkRole, _ := t.Table("goadmin_role_menu").WithTx(t.Tx).
 		Where("role_id", "=", roleId).
 		Where("menu_id", "=", t.Id).
 		First()
@@ -177,7 +177,7 @@ func (t MenuModel) CheckRole(roleId string) bool {
 func (t MenuModel) AddRole(roleId string) (int64, error) {
 	if roleId != "" {
 		if !t.CheckRole(roleId) {
-			return t.Table("goadmin_role_menu").
+			return t.Table("goadmin_role_menu").WithTx(t.Tx).
 				Insert(dialect.H{
 					"role_id": roleId,
 					"menu_id": t.Id,
@@ -189,7 +189,7 @@ func (t MenuModel) AddRole(roleId string) (int64, error) {
 
 // DeleteRoles delete roles with menu.
 func (t MenuModel) DeleteRoles() error {
-	return t.Table("goadmin_role_menu").
+	return t.Table("goadmin_role_menu").WithTx(t.Tx).
 		Where("menu_id", "=", t.Id).
 		Delete()
 }
