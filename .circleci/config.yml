@@ -44,12 +44,13 @@ jobs:
       #  Wait for Postgres to be ready before proceeding
       - run:
           name: Waiting for Postgres to be ready
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m            
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true          
       - run:
           name: Build mssql environment
           command: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
       - run:
           name: Run tests
           command: make test
-      - store_test_results:
-          path: /tmp/test-reports
