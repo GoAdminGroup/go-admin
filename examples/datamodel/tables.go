@@ -2,7 +2,7 @@ package datamodel
 
 import "github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 
-// generators is a map of table models.
+// Generators is a map of table models.
 //
 // The key of generators is the prefix of table info url.
 // The corresponding value is the Form and TableName data.

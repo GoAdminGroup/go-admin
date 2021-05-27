@@ -282,12 +282,13 @@ func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
 		Panel:      panel,
-		Config:     *config.Get(),
+		Config:     config.Get(),
 		Menu:       menu.GetGlobalMenu(user, conn, ctx.Lang()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation:  options.Animation,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: options.NoCompress,
 		IsPjax:     ctx.IsPjax(),
+		Iframe:     ctx.IsIframe(),
 	})
 }
 
@@ -304,13 +305,14 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
 		Panel:      panel,
-		Config:     *config.Get(),
+		Config:     config.Get(),
 		Menu:       menu,
 		Animation:  options.Animation,
 		Buttons:    navButtons.CheckPermission(user),
 		NoCompress: options.NoCompress,
 		Logo:       template2.HTML(logo),
 		IsPjax:     ctx.IsPjax(),
+		Iframe:     ctx.IsIframe(),
 	})
 }
 
@@ -345,8 +347,8 @@ func ExecuteWithMenu(ctx *context.Context,
 		TmplName:  tmplName,
 		Tmpl:      tmpl,
 		Panel:     panel,
-		Config:    *config.Get(),
-		Menu:      menu.GetGlobalMenu(user, conn, name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
+		Config:    config.Get(),
+		Menu:      menu.GetGlobalMenu(user, conn, ctx.Lang(), name).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Animation: options.Animation,
 		Buttons: navButtons.Copy().
 			RemoveInfoNavButton().
@@ -356,6 +358,7 @@ func ExecuteWithMenu(ctx *context.Context,
 		NoCompress: options.NoCompress,
 		Logo:       template2.HTML(logo),
 		IsPjax:     ctx.IsPjax(),
+		Iframe:     ctx.IsIframe(),
 	})
 }
 

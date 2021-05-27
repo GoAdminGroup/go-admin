@@ -1,13 +1,8 @@
-package iris
+package gofiber
 
 import (
-	// add iris adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/iris"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
-
+	// add fasthttp adapter
+	ada "github.com/GoAdminGroup/go-admin/adapter/gofiber"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -19,51 +14,51 @@ import (
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-
-	"net/http"
 	"os"
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/template"
+	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
-	"github.com/kataras/iris/v12"
+	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/gofiber/fiber/v2"
+	"github.com/valyala/fasthttp"
 )
 
-func newHandler() http.Handler {
-	app := iris.New()
+func newHandler() fasthttp.RequestHandler {
+	app := fiber.New(fiber.Config{
+		ServerHeader: "Fiber",
+	})
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(tables.Generators)
+	adminPlugin := admin.NewAdmin(tables.Generators).AddDisplayFilterXssJsFilter()
 	adminPlugin.AddGenerator("user", tables.GetUserTable)
-	examplePlugin := example.NewExample()
+
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
+		AddPlugins(adminPlugin).
+		Use(app); err != nil {
 		panic(err)
 	}
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	if err := app.Build(); err != nil {
-		panic(err)
-	}
-
-	return app.Router
+	return app.Handler()
 }
 
-func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
-	app := iris.New()
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.RequestHandler {
+	app := fiber.New(fiber.Config{
+		ServerHeader: "Fiber",
+	})
 
 	eng := engine.Default()
 
-	adminPlugin := admin.NewAdmin(gens)
-
-	examplePlugin := example.NewExample()
 	template.AddComp(chartjs.NewChart())
 
 	if err := eng.AddConfig(&config.Config{
@@ -78,15 +73,13 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
+		AddAdapter(new(ada.Gofiber)).
+		AddGenerators(gens).
+		Use(app); err != nil {
 		panic(err)
 	}
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	if err := app.Build(); err != nil {
-		panic(err)
-	}
-
-	return app.Router
+	return app.Handler()
 }

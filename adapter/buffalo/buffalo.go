@@ -206,3 +206,8 @@ func (bu *Buffalo) FormParam() neturl.Values {
 func (bu *Buffalo) IsPjax() bool {
 	return bu.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (bu *Buffalo) Query() neturl.Values {
+	return bu.ctx.Request().URL.Query()
+}

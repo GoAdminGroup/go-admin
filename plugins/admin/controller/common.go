@@ -69,8 +69,8 @@ func (h *Handler) UpdateCfg(cfg Config) {
 	h.generators = cfg.Generators
 }
 
-func (h *Handler) SetCaptcha(cap map[string]string) {
-	h.captchaConfig = cap
+func (h *Handler) SetCaptcha(captcha map[string]string) {
+	h.captchaConfig = captcha
 }
 
 func (h *Handler) SetRoutes(r context.RouterMap) {
@@ -198,11 +198,11 @@ func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, p
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
 		Panel:      panel,
-		Config:     *h.config,
+		Config:     h.config,
 		Menu:       menu.GetGlobalMenu(user, h.conn, ctx.Lang(), plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation:  option.Animation,
 		Buttons:    btns,
-		Iframe:     ctx.Query(constant.IframeKey) == "true",
+		Iframe:     ctx.IsIframe(),
 		IsPjax:     isPjax(ctx),
 		NoCompress: option.NoCompress,
 	})
@@ -219,11 +219,11 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
 		Panel:      panel,
-		Config:     *h.config,
+		Config:     h.config,
 		Menu:       menu.GetGlobalMenu(user, h.conn, ctx.Lang(), plugName).SetActiveClass(h.config.URLRemovePrefix(ctx.Path())),
 		Animation:  option.Animation,
 		Buttons:    (*h.navButtons).CheckPermission(user),
-		Iframe:     ctx.Query(constant.IframeKey) == "true",
+		Iframe:     ctx.IsIframe(),
 		IsPjax:     isPjax(ctx),
 		NoCompress: option.NoCompress,
 	})

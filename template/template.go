@@ -341,7 +341,7 @@ func GetAsset(path string) ([]byte, error) {
 	for _, comp := range compMap {
 		res, err := comp.GetAsset(path)
 		if err == nil {
-			return res, err
+			return res, nil
 		}
 	}
 	return nil, errors.New(path + " not found")
@@ -390,7 +390,7 @@ type ExecuteParam struct {
 	IsPjax     bool
 	Panel      types.Panel
 	Logo       template.HTML
-	Config     c.Config
+	Config     *c.Config
 	Menu       *menu.Menu
 	Animation  bool
 	Buttons    types.Buttons

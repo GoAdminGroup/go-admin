@@ -377,13 +377,16 @@ func (t UserModel) New(username, password, name, avatar string) (UserModel, erro
 }
 
 // Update update the user model.
-func (t UserModel) Update(username, password, name, avatar string) (int64, error) {
+func (t UserModel) Update(username, password, name, avatar string, isUpdateAvatar bool) (int64, error) {
 
 	fieldValues := dialect.H{
 		"username":   username,
 		"name":       name,
-		"avatar":     avatar,
 		"updated_at": time.Now().Format("2006-01-02 15:04:05"),
+	}
+
+	if avatar == "" || isUpdateAvatar {
+		fieldValues["avatar"] = avatar
 	}
 
 	if password != "" {

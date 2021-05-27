@@ -199,3 +199,8 @@ func (g *Gorilla) FormParam() url.Values {
 func (g *Gorilla) IsPjax() bool {
 	return g.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
 }
+
+// Query implements the method Adapter.Query.
+func (g *Gorilla) Query() url.Values {
+	return g.ctx.Request.URL.Query()
+}

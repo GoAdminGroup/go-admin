@@ -295,18 +295,17 @@ func (param Parameters) GetRouteParamStrWithoutPageSize(page string) string {
 }
 
 func (param Parameters) GetFixedParamStrFromCache() url.Values {
-	p := make(url.Values)
 	if param.cacheFixedStr != nil {
-		p = param.cacheFixedStr
-	} else {
-		p = param.GetFixedParamStr()
-		param.cacheFixedStr = p
+		return param.cacheFixedStr
 	}
+
+	p := param.GetFixedParamStr()
+	param.cacheFixedStr = p
 	return p
 }
 
 func (param Parameters) GetLastPageRouteParamStr(cache ...bool) string {
-	p := make(url.Values)
+	var p url.Values
 	if len(cache) > 0 && cache[0] {
 		p = param.GetFixedParamStrFromCache()
 	} else {
@@ -317,7 +316,7 @@ func (param Parameters) GetLastPageRouteParamStr(cache ...bool) string {
 }
 
 func (param Parameters) GetNextPageRouteParamStr(cache ...bool) string {
-	p := make(url.Values)
+	var p url.Values
 	if len(cache) > 0 && cache[0] {
 		p = param.GetFixedParamStrFromCache()
 	} else {
