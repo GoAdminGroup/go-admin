@@ -53,7 +53,7 @@ jobs:
       - run:
           name: Build mssql environment
           command: |
-            ls -l /go/src/github.com/GoAdminGroup/go-admin
+            sudo chmod -R 777 /go/src/github.com/GoAdminGroup/go-admin/tests/data
             docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /go/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
       - run:
           name: Run tests
