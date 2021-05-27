@@ -1,0 +1,56 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.1.3
+jobs:
+  build:
+    working_directory: /go/src/github.com/GoAdminGroup/go-admin
+    docker:
+      - image: circleci/golang:1.15.8
+      - image: circleci/mysql:5.7
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: go-admin-test
+      - image: circleci/postgres:9.6-alpine        
+        environment: # environment variables for primary container
+          POSTGRES_USER: postgres
+          POSTGRES_DB: go-admin-test
+      - image: 'cimg/node:13.12-browser'          
+    steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+          command: |
+            google-chrome --version
+            chromedriver --version
+            google-chrome --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+          name: Check chrome tools and start
+      - checkout
+      - restore_cache:
+          keys:
+            - go-mod-v4-{{ checksum "go.sum" }}
+      - run:
+          name: Install Dependencies
+          command: |
+            go mod download
+            go get -u github.com/rakyll/gotest
+            go get -u -v github.com/gogf/gf@v1.12.1
+            sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+            sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+            go get github.com/GoAdminGroup/themes@master
+      - save_cache:
+          key: go-mod-v4-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+      #  Wait for Postgres to be ready before proceeding
+      - run:
+          name: Waiting for Postgres to be ready
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m            
+      - run:
+          name: Build mssql environment
+          command: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /home/travis/gopath/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+      - run:
+          name: Run tests
+          command: make test
+      - store_test_results:
+          path: /tmp/test-reports
