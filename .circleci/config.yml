@@ -45,7 +45,7 @@ jobs:
           name: Setup database
           command: |
             sudo apt-get install default-mysql-client
-            mysql -h 127.0.0.1 -u root -proot --execute="create database `go-admin-test`"
+            mysql -e 'create database `go-admin-test`;'
             dockerize -wait tcp://localhost:5432 -timeout 1m
             sudo apt install -y postgresql-client
             createdb -U postgres go-admin-test
