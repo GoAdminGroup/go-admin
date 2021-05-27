@@ -15,7 +15,6 @@ jobs:
         environment: # environment variables for primary container
           POSTGRES_USER: postgres
           POSTGRES_DB: go-admin-test
-      - image: 'cimg/node:13.12-browser'          
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
