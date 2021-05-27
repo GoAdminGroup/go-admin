@@ -41,10 +41,14 @@ jobs:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
             - "/go/pkg/mod"
-      #  Wait for Postgres to be ready before proceeding
       - run:
-          name: Waiting for Postgres to be ready
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          name: Setup database
+          command: |
+            sudo apt-get install default-mysql-client
+            mysql -h 127.0.0.1 -u root -proot --execute="create database `go-admin-test`"
+            dockerize -wait tcp://localhost:5432 -timeout 1m
+            sudo apt install -y postgresql-client
+            createdb -U postgres go-admin-test
       - setup_remote_docker:
           version: 19.03.13          
       - run:
