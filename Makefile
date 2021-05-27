@@ -83,9 +83,9 @@ import-mysql:
 	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} go-admin-test < ./tests/data/admin.sql
 
 import-postgresql:
-	dropdb -U postgres go-admin-test
-	createdb -U postgres go-admin-test
-	psql -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
+	dropdb -h 127.0.0.1 -p 5432 -U postgres go-admin-test
+	createdb -h 127.0.0.1 -p 5432 -U postgres go-admin-test
+	psql -h 127.0.0.1 -p 5432 -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
 
 import-mssql:
 	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/home/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
