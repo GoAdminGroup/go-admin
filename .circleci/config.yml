@@ -49,10 +49,10 @@ jobs:
             dockerize -wait tcp://localhost:5432 -timeout 1m
             sudo apt install -y postgresql-client
       - setup_remote_docker:
-          version: 19.03.13          
+          version: 19.03.13
       - run:
           name: Build mssql environment
-          command: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v $GOPATH/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
+          command: docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /go/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
       - run:
           name: Run tests
           command: make test
