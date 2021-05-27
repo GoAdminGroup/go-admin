@@ -45,9 +45,9 @@ jobs:
           name: Setup database
           command: |
             dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
+            sudo apt-get install default-mysql-client            
             dockerize -wait tcp://localhost:5432 -timeout 1m
             sudo apt install -y postgresql-client
-            createdb -U postgres go-admin-test
       - setup_remote_docker:
           version: 19.03.13          
       - run:
