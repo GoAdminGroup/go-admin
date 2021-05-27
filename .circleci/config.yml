@@ -40,23 +40,13 @@ jobs:
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
-            - "/go/pkg/mod"
-      - run:
-      # Our primary container isn't MYSQL so run a sleep command until it's ready.
-          name: Waiting for MySQL to be ready
-          command: |
-            for i in `seq 1 10`;
-            do
-              nc -z 127.0.0.1 3306 && echo Success && exit 0
-              echo -n .
-              sleep 1
-            done
-            echo Failed waiting for MySQL && exit 1            
+            - "/go/pkg/mod"          
       - run:
           name: Setup database
           command: |
+            dockerize -wait tcp://127.0.0.1:3306 -timeout 1m
             sudo apt-get install default-mysql-client
-            mysql -e 'create database `go-admin-test`;'
+            mysql -h 127.0.0.1 -u root -proot --execute="create database `go-admin-test`;"
             dockerize -wait tcp://localhost:5432 -timeout 1m
             sudo apt install -y postgresql-client
             createdb -U postgres go-admin-test
