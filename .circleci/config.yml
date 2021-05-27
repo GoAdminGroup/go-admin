@@ -12,9 +12,13 @@ jobs:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: go-admin-test
       - image: circleci/postgres:9.6-alpine        
-        environment: # environment variables for primary container
+        environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: go-admin-test
+      - image: mcr.microsoft.com/mssql/server:2017-latest
+        environment:
+          ACCEPT_EULA: Y
+          SA_PASSWORD: Aa123456
     steps:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
@@ -48,13 +52,7 @@ jobs:
             sudo apt-get install default-mysql-client            
             dockerize -wait tcp://localhost:5432 -timeout 1m
             sudo apt install -y postgresql-client
-      - setup_remote_docker:
-          version: 19.03.13
-      - run:
-          name: Build mssql environment
-          command: |
-            docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Aa123456" -v /go/src/github.com/GoAdminGroup/go-admin/tests/data:/home/data -p 1433:1433 --name mssql -d mcr.microsoft.com/mssql/server:2017-latest
-            docker cp /go/src/github.com/GoAdminGroup/go-admin/tests/data/admin_ms.bak mssql:/home/data/
+            dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Run tests
           command: make test
