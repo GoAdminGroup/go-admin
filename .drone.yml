@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: goadmin
+name: goadmin_test
 
 platform:
   os: linux
