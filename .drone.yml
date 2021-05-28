@@ -1,6 +1,6 @@
 ---
 kind: pipeline
-name: compliance
+name: goadmin
 
 platform:
   os: linux
