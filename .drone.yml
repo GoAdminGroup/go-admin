@@ -1,20 +1,9 @@
 ---
 kind: pipeline
-name: goadmin_test
-
-platform:
-  os: linux
-  arch: arm64
-
-trigger:
-  event:
-    - push
-    - tag
-    - pull_request
+name: default
 
 steps:
-  - name: test
-    pull: always
+  - name: backend
     image: golang:1.14
     environment:
       GO111MODULE: on
