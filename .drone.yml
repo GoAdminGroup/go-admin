@@ -2,6 +2,25 @@
 kind: pipeline
 name: default
 
+services:
+  - name: mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: go-admin-test
+
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: go-admin-test
+
+  - name: mssql
+    image: mcr.microsoft.com/mssql/server:latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: Aa123456
+
 steps:
   - name: backend
     image: golang:1.14
