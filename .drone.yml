@@ -10,3 +10,4 @@ steps:
       GOPROXY: off
     commands:
       - go version
+      - echo "hello world"
