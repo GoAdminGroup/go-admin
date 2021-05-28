@@ -30,5 +30,5 @@ steps:
     commands:
       - go version
       - echo "hello world"
-      - apt-get update && apt-get install -y mysql-client
+      - apt-get install default-mysql-client
       - mysql -h mysql -u root -proot -e 'create database \`go-admin-test\`;'
