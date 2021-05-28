@@ -30,3 +30,5 @@ steps:
     commands:
       - go version
       - echo "hello world"
+      - mysql -e 'create database `go-admin-test`;'
+      - createdb -U postgres go-admin-test
