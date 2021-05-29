@@ -2,6 +2,9 @@
 kind: pipeline
 name: default
 
+clone:
+  disable: true
+
 services:
   - name: mysql
     image: mysql:5.7
@@ -22,6 +25,13 @@ services:
       SA_PASSWORD: Aa123456
 
 steps:
+  - name: clone
+    image: alpine/git
+    commands:
+      - echo "199.232.69.194 github.global-ssl.fastly.net" >> /etc/hosts
+      - echo "140.82.113.4 github.com" >> /etc/hosts
+      - git clone https://github.com/GoAdminGroup/go-admin.git .
+      - git checkout $DRONE_COMMIT  
   - name: backend
     image: goadmin-test:v1
     environment:
