@@ -1,16 +1,30 @@
 kind: pipeline
 name: default
 
+# clone:
+#   disable: true
+
 steps:
+# - name: clone
+#   image: alpine/git
+#   commands:
+#   - git clone https://github.com/GoAdminGroup/go-admin.git .
+#   - git checkout $DRONE_COMMIT
+
 - name: goadmin_test
   image: chg80333/goadmin-test:v1
   commands:
-  - sleep 500
-  - mysql -u root -h database --execute="SELECT VERSION();"
+  - sleep 250
+  - mysql -u root -proot -h db_mysql --execute="SELECT VERSION();"
+  - ls -l
+  - go get -u github.com/rakyll/gotest
+  - go get -u -v github.com/gogf/gf@v1.12.1
+  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
 
 services:
-- name: database
+- name: db_mysql
   image: mysql:5.7
   environment:
-    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-    MYSQL_DATABASE: test
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: go-admin-test
