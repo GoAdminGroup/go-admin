@@ -6,8 +6,8 @@ name: default
   # disable: true
 
 services:
-  - name: db_mysql
-    image: mysql:5.7
+  - name: database
+    image: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: go-admin-test
@@ -41,5 +41,5 @@ steps:
     commands:
       - go version
       - echo "hello world"
-      - sleep 20
-      - mysql -h db_mysql -u root -proot -e 'SELECT VERSION();'
+      - sleep 100
+      - mysql -h database -u root -proot -e 'SELECT VERSION();'
