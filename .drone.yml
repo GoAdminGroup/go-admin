@@ -6,19 +6,20 @@ name: default
   # disable: true
 
 services:
-  - name: mysql
+  - name: db_mysql
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: go-admin-test
 
-  - name: pgsql
+  - name: db_pgsql
     image: postgres:10
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: go-admin-test
+      POSTGRES_PASSWORD: root
 
-  - name: mssql
+  - name: db_mssql
     image: mcr.microsoft.com/mssql/server:latest
     environment:
       ACCEPT_EULA: Y
@@ -40,4 +41,5 @@ steps:
     commands:
       - go version
       - echo "hello world"
-      - mysql -h mysql -u root -proot -e 'create database \`go-admin-test\`;'
+      - sleep 15
+      - mysql -h db_mysql -u root -proot -e 'create database \`go-admin-test\`;'
