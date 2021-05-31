@@ -3,7 +3,7 @@ name: default
 
 steps:
 - name: test
-  image: chg80333/goadmin-test
+  image: chg80333/goadmin-test:v1
   commands:
   - sleep 500
   - mysql -u root -h database --execute="SELECT VERSION();"
