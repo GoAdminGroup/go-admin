@@ -33,7 +33,7 @@ steps:
   #     - git clone https://github.com/GoAdminGroup/go-admin.git .
   #     - git checkout $DRONE_COMMIT  
   - name: backend
-    image: goadmin-test:v1
+    image: chg80333/goadmin-test:v1
     environment:
       GO111MODULE: on
       GOPROXY: off
