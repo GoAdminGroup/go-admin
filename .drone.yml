@@ -1,47 +1,16 @@
----
 kind: pipeline
 name: default
 
-# clone:
-  # disable: true
+steps:
+- name: test
+  image: mysql
+  commands:
+  - sleep 15
+  - mysql -u root -h database --execute="SELECT VERSION();"
 
 services:
-  - name: database
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: go-admin-test
-      MYSQL_PASSWORD: root
-
-  # - name: db_pgsql
-  #   image: postgres:10
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_DB: go-admin-test
-  #     POSTGRES_PASSWORD: root
-
-  # - name: db_mssql
-  #   image: mcr.microsoft.com/mssql/server:latest
-  #   environment:
-  #     ACCEPT_EULA: Y
-  #     SA_PASSWORD: Aa123456
-
-steps:
-  # - name: clone
-  #   image: alpine/git
-  #   commands:
-  #     - echo "199.232.69.194 github.global-ssl.fastly.net" >> /etc/hosts
-  #     - echo "140.82.113.4 github.com" >> /etc/hosts
-  #     - git clone https://github.com/GoAdminGroup/go-admin.git .
-  #     - git checkout $DRONE_COMMIT  
-  # chg80333/goadmin-test:v1
-  - name: backend
-    image: mysql:5.7
-    environment:
-      GO111MODULE: on
-      GOPROXY: off
-    commands:
-      # - go version
-      # - echo "hello world"
-      - sleep 50
-      - mysql -h database -u root -proot -e 'SELECT VERSION();'
+- name: database
+  image: mysql
+  environment:
+    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    MYSQL_DATABASE: test
