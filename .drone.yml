@@ -2,7 +2,7 @@ kind: pipeline
 name: default
 
 steps:
-- name: test
+- name: goadmin_test
   image: chg80333/goadmin-test:v1
   commands:
   - sleep 500
