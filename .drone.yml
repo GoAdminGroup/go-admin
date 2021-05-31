@@ -3,14 +3,14 @@ name: default
 
 steps:
 - name: test
-  image: mysql
+  image: mysql:5.7
   commands:
   - sleep 15
   - mysql -u root -h database --execute="SELECT VERSION();"
 
 services:
 - name: database
-  image: mysql
+  image: mysql:5.7
   environment:
     MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     MYSQL_DATABASE: test
