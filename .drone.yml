@@ -6,10 +6,10 @@ steps:
   image: mysql:5.7
   commands:
   - sleep 15
-  - mysql -u root -h database --execute="SELECT VERSION();"
+  - mysql -u root -h db --execute="SELECT VERSION();"
 
 services:
-- name: database
+- name: db
   image: mysql:5.7
   environment:
     MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
