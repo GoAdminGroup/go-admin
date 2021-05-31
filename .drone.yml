@@ -3,13 +3,13 @@ name: default
 
 steps:
 - name: test
-  image: mysql:5.7
+  image: chg80333/goadmin-test
   commands:
-  - sleep 200
-  - mysql -u root -h db --execute="SELECT VERSION();"
+  - sleep 500
+  - mysql -u root -h database --execute="SELECT VERSION();"
 
 services:
-- name: db
+- name: database
   image: mysql:5.7
   environment:
     MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
