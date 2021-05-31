@@ -12,18 +12,18 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: go-admin-test
 
-  - name: db_pgsql
-    image: postgres:10
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_DB: go-admin-test
-      POSTGRES_PASSWORD: root
+  # - name: db_pgsql
+  #   image: postgres:10
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_DB: go-admin-test
+  #     POSTGRES_PASSWORD: root
 
-  - name: db_mssql
-    image: mcr.microsoft.com/mssql/server:latest
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: Aa123456
+  # - name: db_mssql
+  #   image: mcr.microsoft.com/mssql/server:latest
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     SA_PASSWORD: Aa123456
 
 steps:
   # - name: clone
@@ -41,5 +41,5 @@ steps:
     commands:
       - go version
       - echo "hello world"
-      - sleep 15
-      - mysql -h db_mysql -u root -proot -e 'create database \`go-admin-test\`;'
+      - sleep 20
+      - mysql -h db_mysql -u root -proot -e 'SELECT VERSION();'
