@@ -5,7 +5,7 @@ steps:
 - name: test
   image: mysql:5.7
   commands:
-  - sleep 15
+  - sleep 200
   - mysql -u root -h db --execute="SELECT VERSION();"
 
 services:
