@@ -12,7 +12,7 @@ TEST_CONFIG_MS_PATH=./../../common/config_ms.json
 TEST_FRAMEWORK_DIR=./tests/frameworks
 
 ## database configs
-MYSQL_HOST = 127.0.0.1
+MYSQL_HOST = db_mysql
 MYSQL_PORT = 3306
 MYSQL_USER = root
 MYSQL_PWD = root

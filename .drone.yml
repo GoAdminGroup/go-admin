@@ -24,7 +24,7 @@ steps:
   - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
-  - mysql -u root -proot -h db_mysql --execute="SELECT VERSION();"
+  - make mysql-test
 
 services:
 - name: db_mysql
