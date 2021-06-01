@@ -1,8 +1,8 @@
 kind: pipeline
 name: default
 
-# clone:
-#   disable: true
+clone:
+  disable: true
 
 steps:
 # - name: clone
@@ -12,8 +12,10 @@ steps:
 #   - git checkout $DRONE_COMMIT
 
 - name: goadmin_test
-  image: chg80333/goadmin-test:v1
+  image: chg80333/goadmin-test:v2
   commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout $DRONE_COMMIT
   - sleep 250
   - mysql -u root -proot -h db_mysql --execute="SELECT VERSION();"
   - ls -l
