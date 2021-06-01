@@ -18,9 +18,9 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - go get -u -v github.com/rakyll/gotest
-  - go get -u -v github.com/gogf/gf@v1.12.1
-  - chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
-  - echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+  - go get -u -v github.com/gogf/gf@v1.16.1
+  - chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
+  - echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
   - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
