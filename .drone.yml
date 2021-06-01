@@ -12,7 +12,7 @@ steps:
 #   - git checkout $DRONE_COMMIT
 
 - name: goadmin_test
-  image: chg80333/goadmin-test:v2
+  image: chg80333/goadmin-test:v3
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
