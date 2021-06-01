@@ -10,7 +10,7 @@ services:
   image: mysql:5.7
   environment:
     MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test  
+    MYSQL_DATABASE: go-admin-test
 
 steps:  
 - name: api_test
@@ -34,10 +34,11 @@ clone:
 
 services:
 - name: db_pgsql
-  image: mysql:5.7
+  image: postgres:10
   environment:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test  
+    POSTGRES_USER: postgres
+    POSTGRES_DB: go-admin-test
+    POSTGRES_PASSWORD: root 
 
 steps:  
 - name: api_test
