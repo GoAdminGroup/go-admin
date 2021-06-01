@@ -22,6 +22,7 @@ steps:
   - chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
   - echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
   - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - ls -l /go/pkg/mod/github.com/\!go\!admin\!group/
   - sleep 80
