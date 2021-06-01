@@ -58,6 +58,5 @@ func (hh *httpHandler) SetSrv(s *ghttp.Server) *httpHandler {
 }
 
 func (hh *httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// NOTE: ╮(╯▽╰)╭
-	hh.srv.DefaultHttpHandle(w, r)
+	hh.srv.ServeHTTP(w, r)
 }

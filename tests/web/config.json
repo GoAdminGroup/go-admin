@@ -1,7 +1,7 @@
 {
   "database": {
     "default": {
-      "host": "127.0.0.1",
+      "host": "db_mysql",
       "port": "3306",
       "user": "root",
       "pwd": "root",
