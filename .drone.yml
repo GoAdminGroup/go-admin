@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: mssql_test
+name: api_test_mssql
 
 clone:
   disable: true
@@ -22,7 +22,7 @@ services:
 
 steps:
 - name: api_test
-  image: chg80333/goadmin-test:v6
+  image: chg80333/goadmin-test:v7
   volumes:
   - name: data
     path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
@@ -31,8 +31,7 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull -q
-  - git checkout -- go.mod go.sum
+  - git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make ms-test
@@ -40,7 +39,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: postgresql_test
+name: api_test_postg
 
 clone:
   disable: true
@@ -55,14 +54,13 @@ services:
 
 steps:  
 - name: api_test
-  image: chg80333/goadmin-test:v6
+  image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull -q
-  - git checkout -- go.mod go.sum
+  - git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make pg-test
@@ -70,21 +68,20 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: sqlite_test
+name: api_test_sqlit
 
 clone:
   disable: true
 
 steps:  
 - name: api_test
-  image: chg80333/goadmin-test:v6
+  image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull -q
-  - git checkout -- go.mod go.sum
+  - git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make sqlite-test
@@ -92,7 +89,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: mysql_test
+name: api_test_mysql
 
 clone:
   disable: true
@@ -106,14 +103,35 @@ services:
 
 steps:  
 - name: api_test
-  image: chg80333/goadmin-test:v6
+  image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull -q
-  - git checkout -- go.mod go.sum
+  - git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make mysql-test
+
+---
+kind: pipeline
+type: docker
+name: ui_test
+
+clone:
+  disable: true
+
+steps:  
+- name: api_test
+  image: chg80333/goadmin-test:v7
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - sleep 8
+  - make web-test
