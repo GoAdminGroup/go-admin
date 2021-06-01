@@ -5,16 +5,22 @@ name: mssql_test
 clone:
   disable: true
 
-services:
+steps:
 - name: db_mssql
   image: mcr.microsoft.com/mssql/server:2017-latest
+  volumes:
+  - name: data
+    path: /home/data
   environment:
     ACCEPT_EULA: Y
     SA_PASSWORD: Aa123456
+  detach: true
 
-steps:  
 - name: api_test
   image: chg80333/goadmin-test:v4
+  volumes:
+  - name: data
+    path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -24,6 +30,11 @@ steps:
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make ms-test
+
+volumes:
+- name: data
+  host:
+    path: /data/drone/data
 
 ---
 kind: pipeline
