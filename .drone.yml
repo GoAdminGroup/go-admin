@@ -1,36 +1,54 @@
+---
 kind: pipeline
-name: default
+name: mysql_test
 
 clone:
   disable: true
-
-steps:
-# - name: clone
-#   image: alpine/git
-#   commands:
-#   - git clone https://github.com/GoAdminGroup/go-admin.git .
-#   - git checkout $DRONE_COMMIT
-
-- name: goadmin_test
-  image: chg80333/goadmin-test:v3
-  environment:
-    GO111MODULE: on
-    GOPROXY: https://goproxy.cn
-  commands:
-  - go get -u -v github.com/rakyll/gotest
-  - go get -u -v github.com/gogf/gf@v1.16.1
-  - chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
-  - echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.16.1/net/ghttp/ghttp_server_handler.go
-  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
-  - git checkout -- go.mod go.sum
-  - git checkout $DRONE_COMMIT
-  - ls -l /go/pkg/mod/github.com/\!go\!admin\!group/
-  - sleep 80
-  - make mysql-test
 
 services:
 - name: db_mysql
   image: mysql:5.7
   environment:
     MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test
+    MYSQL_DATABASE: go-admin-test  
+
+steps:  
+- name: goadmin_test
+  image: chg80333/goadmin-test:v3
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout -- go.mod go.sum
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make mysql-test
+
+---
+kind: pipeline
+name: postgresql_test
+
+clone:
+  disable: true
+
+services:
+- name: db_mysql
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: go-admin-test  
+
+steps:  
+- name: goadmin_test
+  image: chg80333/goadmin-test:v3
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout -- go.mod go.sum
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make pg-test
+  
