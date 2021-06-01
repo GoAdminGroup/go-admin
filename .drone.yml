@@ -19,8 +19,8 @@ steps:
   commands:
   - go get -u -v github.com/rakyll/gotest
   - go get -u -v github.com/gogf/gf@v1.12.1
-  - sudo chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
-  - sudo echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+  - chmod -R 777 $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
+  - echo -e "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $GOPATH/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
   - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
   - git checkout $DRONE_COMMIT
   - sleep 80
