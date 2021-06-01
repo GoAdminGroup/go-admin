@@ -1,16 +1,16 @@
 ---
 kind: pipeline
-name: mysql_test
+name: mssql_test
 
 clone:
   disable: true
 
 services:
-- name: db_mysql
-  image: mysql:5.7
+- name: db_mssql
+  image: mcr.microsoft.com/mssql/server:2017-latest
   environment:
-    MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test
+    ACCEPT_EULA: Y
+    SA_PASSWORD: Aa123456
 
 steps:  
 - name: api_test
@@ -23,7 +23,7 @@ steps:
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
-  - make mysql-test
+  - make ms-test
 
 ---
 kind: pipeline
@@ -75,17 +75,17 @@ steps:
 
 ---
 kind: pipeline
-name: mssql_test
+name: mysql_test
 
 clone:
   disable: true
 
 services:
-- name: db_mssql
-  image: mcr.microsoft.com/mssql/server:2017-latest
+- name: db_mysql
+  image: mysql:5.7
   environment:
-    ACCEPT_EULA: Y
-    SA_PASSWORD: Aa123456
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: go-admin-test
 
 steps:  
 - name: api_test
@@ -98,4 +98,4 @@ steps:
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
-  - make ms-test
+  - make mysql-test

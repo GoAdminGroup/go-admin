@@ -95,7 +95,7 @@ import-postgresql:
 	PGPASSWORD=${POSTGRESSQL_PWD} psql -h ${POSTGRESSQL_HOST} -p ${POSTGRESSQL_PORT} -d ${TEST_DB} -U ${POSTGRESSQL_USER} -f ./tests/data/admin_pg.sql
 
 import-mssql:
-	sqlcmd -S db_mssql -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/go/src/github.com/GoAdminGroup/go-admin/tests/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
+	/opt/mssql-tools/bin/sqlcmd -S db_mssql -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/go/src/github.com/GoAdminGroup/go-admin/tests/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
 
 backup-mssql:
 	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/home/data/admin_ms.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
