@@ -1,7 +1,7 @@
 {
   "database": {
     "default": {
-      "host": "127.0.0.1",
+      "host": "db_pgsql",
       "port": "5432",
       "user": "postgres",
       "pwd": "root",

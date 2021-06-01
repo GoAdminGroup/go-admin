@@ -17,6 +17,12 @@ MYSQL_PORT = 3306
 MYSQL_USER = root
 MYSQL_PWD = root
 
+POSTGRESSQL_HOST = db_pgsql
+POSTGRESSQL_PORT = 5432
+POSTGRESSQL_USER = postgres
+
+TEST_DB = go-admin-test
+
 all: test
 
 ## tests
@@ -79,24 +85,19 @@ import-sqlite:
 	cp ./tests/data/admin.db ./tests/common/admin.db
 
 import-mysql:
-	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} -e "create database if not exists \`go-admin-test\`"
-	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} go-admin-test < ./tests/data/admin.sql
+	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} -e "create database if not exists \`${TEST_DB}\`"
+	mysql -h$(MYSQL_HOST) -P${MYSQL_PORT} -u${MYSQL_USER} -p${MYSQL_PWD} ${TEST_DB} < ./tests/data/admin.sql
 
 import-postgresql:
-	dropdb -h 127.0.0.1 -p 5432 -U postgres go-admin-test
-	createdb -h 127.0.0.1 -p 5432 -U postgres go-admin-test
-	psql -h 127.0.0.1 -p 5432 -d go-admin-test -U postgres -f ./tests/data/admin_pg.sql
+	dropdb -h ${POSTGRESSQL_HOST} -p ${POSTGRESSQL_PORT} -U ${POSTGRESSQL_USER} ${TEST_DB}
+	createdb -h ${POSTGRESSQL_HOST} -p ${POSTGRESSQL_PORT} -U ${POSTGRESSQL_USER} ${TEST_DB}
+	psql -h ${POSTGRESSQL_HOST} -p ${POSTGRESSQL_PORT} -d ${TEST_DB} -U ${POSTGRESSQL_USER} -f ./tests/data/admin_pg.sql
 
 import-mssql:
-	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/home/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
+	sqlcmd -S db_mssql -U SA -P Aa123456 -Q "RESTORE DATABASE [goadmin] FROM DISK = N'/go/src/github.com/GoAdminGroup/go-admin/tests/data/admin_ms.bak' WITH FILE = 1, NOUNLOAD, REPLACE, RECOVERY, STATS = 5"
 
 backup-mssql:
 	docker exec mssql /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P Aa123456 -Q "BACKUP DATABASE [goadmin] TO DISK = N'/home/data/admin_ms.bak' WITH NOFORMAT, NOINIT, NAME = 'goadmin-full', SKIP, NOREWIND, NOUNLOAD, STATS = 10"
-
-fix-gf:
-	go get -u -v github.com/gogf/gf@v1.12.1
-	sudo chmod -R 777 $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
-	sudo echo "\nfunc (s *Server) DefaultHttpHandle(w http.ResponseWriter, r *http.Request) { \n s.handleRequest(w, r) \n}\n" >> $(GOPATH)/pkg/mod/github.com/gogf/gf@v1.12.1/net/ghttp/ghttp_server_handler.go
 
 cp-mod:
 	cp go.mod go.mod.old
@@ -154,4 +155,4 @@ cli:
 	cp ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/zip/
 	cp ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/zip/
 
-.PHONY: all fmt golint govet cp-mod restore-mod test black-box-test mysql-test sqlite-test import-sqlite import-mysql import-postgresql pg-test fix-gf lint cilint cli
+.PHONY: all fmt golint govet cp-mod restore-mod test black-box-test mysql-test sqlite-test import-sqlite import-mysql import-postgresql pg-test lint cilint cli

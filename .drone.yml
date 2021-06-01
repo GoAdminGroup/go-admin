@@ -13,7 +13,7 @@ services:
     MYSQL_DATABASE: go-admin-test  
 
 steps:  
-- name: goadmin_test
+- name: api_test
   image: chg80333/goadmin-test:v3
   environment:
     GO111MODULE: on
@@ -33,14 +33,14 @@ clone:
   disable: true
 
 services:
-- name: db_mysql
+- name: db_pgsql
   image: mysql:5.7
   environment:
     MYSQL_ROOT_PASSWORD: root
     MYSQL_DATABASE: go-admin-test  
 
 steps:  
-- name: goadmin_test
+- name: api_test
   image: chg80333/goadmin-test:v3
   environment:
     GO111MODULE: on
@@ -51,4 +51,50 @@ steps:
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make pg-test
-  
+
+---
+kind: pipeline
+name: sqlite_test
+
+clone:
+  disable: true
+
+steps:  
+- name: api_test
+  image: chg80333/goadmin-test:v3
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout -- go.mod go.sum
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make sqlite-test
+
+---
+kind: pipeline
+name: mssql_test
+
+clone:
+  disable: true
+
+services:
+- name: db_mssql
+  image: mcr.microsoft.com/mssql/server:2017-latest
+  environment:
+    ACCEPT_EULA: Y
+    SA_PASSWORD: Aa123456
+
+steps:  
+- name: api_test
+  image: chg80333/goadmin-test:v3
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin && git pull
+  - git checkout -- go.mod go.sum
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make ms-test
