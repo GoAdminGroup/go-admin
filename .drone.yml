@@ -1,5 +1,6 @@
 ---
 kind: pipeline
+type: docker
 name: mssql_test
 
 clone:
@@ -7,8 +8,7 @@ clone:
 
 volumes:
 - name: data
-  host:
-    path: /data/drone/data  
+  temp: {}
 
 services:
 - name: db_mssql
@@ -18,8 +18,7 @@ services:
     path: /home/data
   environment:
     ACCEPT_EULA: Y
-    SA_PASSWORD: Aa123456    
-
+    SA_PASSWORD: Aa123456
 
 steps:
 - name: api_test
@@ -39,6 +38,7 @@ steps:
 
 ---
 kind: pipeline
+type: docker
 name: postgresql_test
 
 clone:
@@ -67,6 +67,7 @@ steps:
 
 ---
 kind: pipeline
+type: docker
 name: sqlite_test
 
 clone:
@@ -87,6 +88,7 @@ steps:
 
 ---
 kind: pipeline
+type: docker
 name: mysql_test
 
 clone:
