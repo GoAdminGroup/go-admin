@@ -1,0 +1,164 @@
+---
+kind: pipeline
+type: docker
+name: api_mysql
+
+trigger:
+  event:
+  - pull_request
+
+clone:
+  disable: true
+
+services:
+- name: db_mysql
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: go-admin-test
+
+steps:  
+- name: api
+  image: chg80333/goadmin-test:v7
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make mysql-test
+
+---
+kind: pipeline
+type: docker
+name: api_mssql
+
+trigger:
+  event:
+  - pull_request
+
+clone:
+  disable: true
+
+volumes:
+- name: data
+  temp: {}
+
+services:
+- name: db_mssql
+  image: mcr.microsoft.com/mssql/server:2017-latest
+  volumes:
+  - name: data
+    path: /home/data
+  environment:
+    ACCEPT_EULA: Y
+    SA_PASSWORD: Aa123456
+
+steps:
+- name: api
+  image: chg80333/goadmin-test:v7
+  volumes:
+  - name: data
+    path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make ms-test
+
+---
+kind: pipeline
+type: docker
+name: api_postgres
+
+trigger:
+  event:
+  - pull_request
+
+clone:
+  disable: true
+
+services:
+- name: db_pgsql
+  image: postgres:10
+  environment:
+    POSTGRES_USER: postgres
+    POSTGRES_DB: go-admin-test
+    POSTGRES_PASSWORD: root 
+
+steps:  
+- name: api
+  image: chg80333/goadmin-test:v7
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make pg-test
+
+---
+kind: pipeline
+type: docker
+name: api_sqlite
+
+trigger:
+  event:
+  - pull_request
+
+clone:
+  disable: true
+
+steps:  
+- name: api
+  image: chg80333/goadmin-test:v7
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - sleep 80
+  - make sqlite-test
+
+---
+kind: pipeline
+type: docker
+name: frontend
+
+trigger:
+  event:
+  - pull_request
+
+clone:
+  disable: true
+
+services:
+- name: db_mysql
+  image: mysql:5.7
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: go-admin-test  
+
+steps:
+- name: chrome
+  image: chg80333/goadmin-test:v7
+  environment:
+    GO111MODULE: on
+    GOPROXY: https://goproxy.cn
+  commands:
+  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - git pull
+  - git checkout $DRONE_COMMIT
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - sleep 8
+  - make web-test
