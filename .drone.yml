@@ -3,6 +3,10 @@ kind: pipeline
 type: docker
 name: api_mysql
 
+trigger:
+  event:
+  - pull_request
+
 clone:
   disable: true
 
@@ -30,6 +34,10 @@ steps:
 kind: pipeline
 type: docker
 name: api_mssql
+
+trigger:
+  event:
+  - pull_request
 
 clone:
   disable: true
@@ -69,6 +77,10 @@ kind: pipeline
 type: docker
 name: api_postgres
 
+trigger:
+  event:
+  - pull_request
+
 clone:
   disable: true
 
@@ -98,6 +110,10 @@ kind: pipeline
 type: docker
 name: api_sqlite
 
+trigger:
+  event:
+  - pull_request
+
 clone:
   disable: true
 
@@ -118,6 +134,10 @@ steps:
 kind: pipeline
 type: docker
 name: frontend
+
+trigger:
+  event:
+  - pull_request
 
 clone:
   disable: true
