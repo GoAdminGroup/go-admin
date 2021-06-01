@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: api_test_mssql
+name: api_mssql
 
 clone:
   disable: true
@@ -21,7 +21,7 @@ services:
     SA_PASSWORD: Aa123456
 
 steps:
-- name: api_test
+- name: api
   image: chg80333/goadmin-test:v7
   volumes:
   - name: data
@@ -39,7 +39,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: api_test_postg
+name: api_postgres
 
 clone:
   disable: true
@@ -53,7 +53,7 @@ services:
     POSTGRES_PASSWORD: root 
 
 steps:  
-- name: api_test
+- name: api
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
@@ -68,13 +68,13 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: api_test_sqlit
+name: api_sqlite
 
 clone:
   disable: true
 
 steps:  
-- name: api_test
+- name: api
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
@@ -89,7 +89,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: api_test_mysql
+name: api_mysql
 
 clone:
   disable: true
@@ -102,7 +102,7 @@ services:
     MYSQL_DATABASE: go-admin-test
 
 steps:  
-- name: api_test
+- name: api
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
@@ -117,13 +117,13 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: ui_test
+name: frontend_test
 
 clone:
   disable: true
 
-steps:  
-- name: api_test
+steps:
+- name: chrome
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
