@@ -31,7 +31,7 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull; while (($? == 1)); do sleep 2;git pull; done
+  - git pull -q
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
@@ -61,7 +61,7 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull; while (($? == 1)); do sleep 2;git pull; done
+  - git pull -q
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
@@ -83,7 +83,7 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull; while (($? == 1)); do sleep 2;git pull; done
+  - git pull -q
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
@@ -112,7 +112,7 @@ steps:
     GOPROXY: https://goproxy.cn
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull; while (($? == 1)); do sleep 2;git pull; done
+  - git pull -q
   - git checkout -- go.mod go.sum
   - git checkout $DRONE_COMMIT
   - sleep 80
