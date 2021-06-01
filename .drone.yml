@@ -20,6 +20,7 @@ services:
     ACCEPT_EULA: Y
     SA_PASSWORD: Aa123456    
 
+
 steps:
 - name: api_test
   image: chg80333/goadmin-test:v4
