@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: frontend_test
+name: api_mysql
 
 clone:
   disable: true
@@ -11,10 +11,10 @@ services:
   image: mysql:5.7
   environment:
     MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test  
+    MYSQL_DATABASE: go-admin-test
 
-steps:
-- name: chrome
+steps:  
+- name: api
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
@@ -23,9 +23,8 @@ steps:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git checkout $DRONE_COMMIT
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
-  - sleep 8
-  - make web-test
+  - sleep 80
+  - make mysql-test
 
 ---
 kind: pipeline
@@ -118,7 +117,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: api_mysql
+name: frontend
 
 clone:
   disable: true
@@ -128,10 +127,10 @@ services:
   image: mysql:5.7
   environment:
     MYSQL_ROOT_PASSWORD: root
-    MYSQL_DATABASE: go-admin-test
+    MYSQL_DATABASE: go-admin-test  
 
-steps:  
-- name: api
+steps:
+- name: chrome
   image: chg80333/goadmin-test:v7
   environment:
     GO111MODULE: on
@@ -140,5 +139,6 @@ steps:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git checkout $DRONE_COMMIT
-  - sleep 80
-  - make mysql-test
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  - sleep 8
+  - make web-test
