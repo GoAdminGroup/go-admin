@@ -5,8 +5,14 @@ name: mssql_test
 clone:
   disable: true
 
+volumes:
+- name: data
+  host:
+    path: /data/drone/data  
+
 steps:
 - name: db_mssql
+  detach: true
   image: mcr.microsoft.com/mssql/server:2017-latest
   volumes:
   - name: data
@@ -14,7 +20,6 @@ steps:
   environment:
     ACCEPT_EULA: Y
     SA_PASSWORD: Aa123456
-  detach: true
 
 - name: api_test
   image: chg80333/goadmin-test:v4
@@ -30,11 +35,6 @@ steps:
   - git checkout $DRONE_COMMIT
   - sleep 80
   - make ms-test
-
-volumes:
-- name: data
-  host:
-    path: /data/drone/data
 
 ---
 kind: pipeline
