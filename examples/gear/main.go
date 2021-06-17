@@ -6,7 +6,7 @@ import (
 	"os/signal"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gear"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	_ "github.com/GoAdminGroup/themes/sword"
 	"github.com/teambition/gear"
 
@@ -32,13 +32,13 @@ func main() {
 		Databases: config.DatabaseList{
 			"default": {
 				Host:       "127.0.0.1",
-				Port:       "5432",
-				User:       "postgres",
-				Pwd:        "admin",
-				Name:       "admin",
+				Port:       "3306",
+				User:       "root",
+				Pwd:        "root",
+				Name:       "godmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
-				Driver:     config.DriverPostgresql,
+				Driver:     config.DriverMysql,
 
 				//Driver: config.DriverSqlite,
 				//File:   "../datamodel/admin.db",
@@ -107,5 +107,5 @@ func main() {
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
-	e.PostgresqlConnection().Close()
+	e.MysqlConnection().Close()
 }
