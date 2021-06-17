@@ -31,10 +31,10 @@ func main() {
 		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "10.40.126.223",
+				Host:       "127.0.0.1",
 				Port:       "5432",
 				User:       "postgres",
-				Pwd:        "23216340pgsqlDL",
+				Pwd:        "admin",
 				Name:       "admin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
@@ -100,7 +100,7 @@ func main() {
 	e.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
-		app.Start(":20000")
+		app.Start(":8099")
 	}()
 
 	quit := make(chan os.Signal, 1)
