@@ -9,7 +9,7 @@ package gear
 
 import (
 	"bytes"
-	"fmt"
+	"errors"
 	"net/http"
 	"net/url"
 	"strings"
@@ -69,7 +69,16 @@ func (gears *Gear) Static(prefix, path string) { panic("not implement") }
 
 // SetApp implements the method Adapter.SetApp.
 func (gears *Gear) SetApp(app interface{}) error {
-	gears.app = gear.New()
+	gears.app = app.(*gear.App)
+	gears.router = gear.NewRouter()
+	var (
+		eng *gear.App
+		ok  bool
+	)
+	if eng, ok = app.(*gear.App); !ok {
+		return errors.New("beego adapter SetApp: wrong parameter")
+	}
+	gears.app = eng
 	return nil
 }
 
@@ -80,25 +89,40 @@ func (gears *Gear) AddHandler(method, path string, handlers context.Handlers) {
 		gears.router = gear.NewRouter()
 	}
 
-	fmt.Println("来了 ", method, path)
-
 	gears.router.Handle(strings.ToUpper(method), path, func(c *gear.Context) error {
+
+		// gears.ctx = c
 		ctx := context.NewContext(c.Req)
 
-		ctx.SetHandlers(handlers).Next()
-		for key, head := range ctx.Response.Header {
-			c.Req.Header.Set(key, head[0])
+		if res, err := c.Any(2); err == nil {
+			for paramKey, paramValue := range res.(map[string]string) {
+				if c.Req.URL.RawQuery == "" {
+					c.Req.URL.RawQuery += strings.ReplaceAll(paramKey, ":", "") + "=" + paramValue
+				} else {
+					c.Req.URL.RawQuery += "&" + strings.ReplaceAll(paramKey, ":", "") + "=" + paramValue
+				}
+			}
 		}
+
+		ctx.SetHandlers(handlers).Next()
+
+		for key, head := range ctx.Response.Header {
+			c.Res.Header().Add(key, head[0])
+		}
+
+		// fmt.Println("检查头", c.Res.Header(), "\n", ctx.Response.Header)
+
 		if ctx.Response.Body != nil {
 			buf := new(bytes.Buffer)
 			_, _ = buf.ReadFrom(ctx.Response.Body)
-			c.HTML(ctx.Response.StatusCode, buf.String())
-		} else {
-			c.Status(ctx.Response.StatusCode)
+
+			return c.End(ctx.Response.StatusCode, buf.Bytes())
 		}
 
 		return nil
 	})
+
+	gears.app.UseHandler(gears.router)
 }
 
 // Name implements the method Adapter.Name.
@@ -123,17 +147,15 @@ func (gears *Gear) SetContext(contextInterface interface{}) adapter.WebFrameWork
 // Redirect implements the method Adapter.Redirect.
 func (gears *Gear) Redirect() {
 	gears.ctx.Redirect(config.Url(config.GetLoginUrl()))
-	gears.ctx.Cancel()
 }
 
 // SetContentType implements the method Adapter.SetContentType.
 func (gears *Gear) SetContentType() {
+	gears.ctx.Res.Header().Set("Content-Type", gears.HTMLContentType())
 }
 
 // Write implements the method Adapter.Write.
 func (gears *Gear) Write(body []byte) {
-	gears.ctx.Status(http.StatusOK)
-	gears.ctx.Type(gears.HTMLContentType())
 	gears.ctx.End(http.StatusOK, body)
 }
 

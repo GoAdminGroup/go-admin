@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -19,11 +18,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/teambition/gear/middleware/static"
 )
 
 func main() {
 
-	r := gear.New()
+	app := gear.New()
 
 	e := engine.Default()
 
@@ -44,11 +44,11 @@ func main() {
 				//File:   "../datamodel/admin.db",
 			},
 		},
-		UrlPrefix: "admin",
 		Store: config.Store{
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
+		UrlPrefix:          "admin",
 		Language:           language.CN,
 		IndexUrl:           "/",
 		Debug:              true,
@@ -79,6 +79,8 @@ func main() {
 	//
 	// e.AddConfigFromJSON("../datamodel/config.json")
 
+	app.Use(static.New(static.Options{Root: "./uploads", Prefix: "uploads"}))
+
 	if err := e.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 		// add generator, first parameter is the url prefix of table when visit.
@@ -89,23 +91,21 @@ func main() {
 		AddGenerator("user", datamodel.GetUserTable).
 		AddDisplayFilterXssJsFilter().
 		AddPlugins(examplePlugin).
-		Use(r); err != nil {
+		Use(app); err != nil {
 		panic(err)
 	}
-
-	// r.Use(static.New(static.Options{Root: "/uploads", Prefix: "uploads"}))
 
 	// customize your pages
 
 	e.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
-		fmt.Println(r.Start(":20000"))
+		app.Start(":20000")
 	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 	log.Print("closing database connection")
-	e.MysqlConnection().Close()
+	e.PostgresqlConnection().Close()
 }
