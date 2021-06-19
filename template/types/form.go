@@ -716,10 +716,10 @@ func (f *FormPanel) FieldEnableFileUpload(data ...interface{}) *FormPanel {
 	field := f.FieldList[f.curFieldListIndex].Field
 
 	f.FieldList[f.curFieldListIndex].OptionExt = template.JS(fmt.Sprintf(`
-	%seditor.customConfig.uploadImgServer = '%s';
-	%seditor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;
-	%seditor.customConfig.uploadImgMaxLength = 5;
-	%seditor.customConfig.uploadFileName = 'file';
+	%seditor.config.uploadImgServer = '%s';
+	%seditor.config.uploadImgMaxSize = 3 * 1024 * 1024;
+	%seditor.config.uploadImgMaxLength = 5;
+	%seditor.config.uploadFileName = 'file';
 `, field, url, field, field, field))
 
 	var fileUploadHandler context.Handler
