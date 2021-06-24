@@ -22,6 +22,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
@@ -183,9 +184,13 @@ type FormField struct {
 }
 
 func (f *FormField) GetRawValue(columns []string, v interface{}) string {
-	isJSON := len(columns) == 0
-	return modules.AorB(isJSON || modules.InArray(columns, f.Field),
-		db.GetValueFromDatabaseType(f.TypeName, v, isJSON).String(), "")
+	if v == nil {
+		return ""
+	}
+	if f.TypeName == "" {
+		return fmt.Sprintf("%s", v)
+	}
+	return db.GetValueFromDatabaseType(f.TypeName, v, len(columns) == 0).String()
 }
 
 func (f *FormField) UpdateValue(id, val string, res map[string]interface{}, sql *db.SQL) *FormField {
@@ -1520,7 +1525,11 @@ func (f *FormPanel) GroupFieldWithValue(pk, id string, columns []string, res map
 						if field.Field == pk {
 							hasPK = true
 						}
-						rowValue := field.GetRawValue(columns, res[field.Field])
+						headField := field.Field
+						if field.Joins.Valid() {
+							headField = field.Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + field.Field
+						}
+						rowValue := field.GetRawValue(columns, res[headField])
 						if utils.InArray(existField, field.Field) {
 							field.Field = field.Field + label
 						}
@@ -1604,22 +1613,30 @@ func (f *FormPanel) FieldsWithValue(pk, id string, columns []string, res map[str
 		hasPK = false
 	)
 	for i := 0; i < len(f.FieldList); i++ {
-		if !f.FieldList[i].NotAllowEdit {
-			if !f.FieldList[i].Hide {
-				f.FieldList[i].Hide = f.FieldList[i].EditHide
-			}
-			rowValue := f.FieldList[i].GetRawValue(columns, res[f.FieldList[i].Field])
-			if f.FieldList[i].FatherField != "" {
-				f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateValue(id, rowValue, res, sql())
-			} else if f.FieldList[i].FormType.IsTable() {
-				list = append(list, f.FieldList[i])
-			} else {
-				list = append(list, *(f.FieldList[i].UpdateValue(id, rowValue, res, sql())))
-			}
+		if f.FieldList[i].NotAllowEdit {
+			continue
+		}
 
-			if f.FieldList[i].Field == pk {
-				hasPK = true
-			}
+		if !f.FieldList[i].Hide {
+			f.FieldList[i].Hide = f.FieldList[i].EditHide
+		}
+
+		var headField = f.FieldList[i].Field
+		if f.FieldList[i].Joins.Valid() {
+			headField = f.FieldList[i].Joins.Last().GetTableName() + parameter.FilterParamJoinInfix + f.FieldList[i].Field
+		}
+
+		rowValue := f.FieldList[i].GetRawValue(columns, res[headField])
+		if f.FieldList[i].FatherField != "" {
+			f.FieldList.FindTableField(f.FieldList[i].Field, f.FieldList[i].FatherField).UpdateValue(id, rowValue, res, sql())
+		} else if f.FieldList[i].FormType.IsTable() {
+			list = append(list, f.FieldList[i])
+		} else {
+			list = append(list, *(f.FieldList[i].UpdateValue(id, rowValue, res, sql())))
+		}
+
+		if f.FieldList[i].Field == pk {
+			hasPK = true
 		}
 	}
 	if !hasPK {
