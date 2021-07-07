@@ -96,7 +96,7 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
-			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
+			sqlDB, err := sql.Open(cfg.Driver, cfg.GetDSN())
 			if err != nil {
 				if sqlDB != nil {
 					_ = sqlDB.Close()
