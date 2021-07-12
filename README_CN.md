@@ -174,7 +174,7 @@ GO111MODULE=on go run main.go
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 
-<strong>QQ群</strong>：[874825430](https://jq.qq.com/?_wv=1027&k=CnLiDoT9)，记得备注加群来意
+<strong>QQ群</strong>：[641768714](https://jq.qq.com/?_wv=1027&k=qn8oXyGC)，记得备注加群来意
 
 这里是[开发计划](https://github.com/GoAdminGroup/go-admin/projects)
 
