@@ -16,159 +16,11 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"gopkg.in/ini.v1"
 	"gopkg.in/yaml.v2"
 )
-
-// Database is a type of database connection config.
-//
-// Because a little difference of different database driver.
-// The Config has multiple options but may not be used.
-// Such as the sqlite driver only use the File option which
-// can be ignored when the driver is mysql.
-//
-// If the Dsn is configured, when driver is mysql/postgresql/
-// mssql, the other configurations will be ignored, except for
-// MaxIdleCon and MaxOpenCon.
-type Database struct {
-	Host       string            `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
-	Port       string            `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
-	User       string            `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
-	Pwd        string            `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
-	Name       string            `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
-	MaxIdleCon int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
-	MaxOpenCon int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
-	Driver     string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
-	DriverMode string            `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
-	File       string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
-	Dsn        string            `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
-	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
-}
-
-func (d Database) GetDSN() string {
-	if d.Dsn != "" {
-		return d.Dsn
-	}
-
-	if d.Driver == DriverMysql {
-		return d.User + ":" + d.Pwd + "@tcp(" + d.Host + ":" + d.Port + ")/" +
-			d.Name + d.ParamStr()
-	}
-	if d.Driver == DriverPostgresql {
-		return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s"+d.ParamStr(),
-			d.Host, d.Port, d.User, d.Pwd, d.Name)
-	}
-	if d.Driver == DriverMssql {
-		return fmt.Sprintf("user id=%s;password=%s;server=%s;port=%s;database=%s;"+d.ParamStr(),
-			d.User, d.Pwd, d.Host, d.Port, d.Name)
-	}
-	if d.Driver == DriverSqlite {
-		return d.File + d.ParamStr()
-	}
-	return ""
-}
-
-func (d Database) ParamStr() string {
-	p := ""
-	if d.Params == nil {
-		d.Params = make(map[string]string)
-	}
-	if d.Driver == DriverMysql || d.Driver == DriverSqlite {
-		if d.Driver == DriverMysql {
-			if _, ok := d.Params["charset"]; !ok {
-				d.Params["charset"] = "utf8mb4"
-			}
-		}
-		if len(d.Params) > 0 {
-			p = "?"
-			for k, v := range d.Params {
-				p += k + "=" + v + "&"
-			}
-			p = p[:len(p)-1]
-		}
-	}
-	if d.Driver == DriverMssql {
-		if _, ok := d.Params["encrypt"]; !ok {
-			d.Params["encrypt"] = "disable"
-		}
-		for k, v := range d.Params {
-			p += k + "=" + v + ";"
-		}
-		p = p[:len(p)-1]
-	}
-	if d.Driver == DriverPostgresql {
-		if _, ok := d.Params["sslmode"]; !ok {
-			d.Params["sslmode"] = "disable"
-		}
-		p = " "
-		for k, v := range d.Params {
-			p += k + "=" + v + " "
-		}
-		p = p[:len(p)-1]
-	}
-	return p
-}
-
-// DatabaseList is a map of Database.
-type DatabaseList map[string]Database
-
-// GetDefault get the default Database.
-func (d DatabaseList) GetDefault() Database {
-	return d["default"]
-}
-
-// Add add a Database to the DatabaseList.
-func (d DatabaseList) Add(key string, db Database) {
-	d[key] = db
-}
-
-// GroupByDriver group the Databases with the drivers.
-func (d DatabaseList) GroupByDriver() map[string]DatabaseList {
-	drivers := make(map[string]DatabaseList)
-	for key, item := range d {
-		if driverList, ok := drivers[item.Driver]; ok {
-			driverList.Add(key, item)
-		} else {
-			drivers[item.Driver] = make(DatabaseList)
-			drivers[item.Driver].Add(key, item)
-		}
-	}
-	return drivers
-}
-
-func (d DatabaseList) JSON() string {
-	return utils.JSON(d)
-}
-
-func (d DatabaseList) Copy() DatabaseList {
-	var c = make(DatabaseList)
-	for k, v := range d {
-		c[k] = v
-	}
-	return c
-}
-
-func (d DatabaseList) Connections() []string {
-	conns := make([]string, len(d))
-	count := 0
-	for key := range d {
-		conns[count] = key
-		count++
-	}
-	return conns
-}
-
-func GetDatabaseListFromJSON(m string) DatabaseList {
-	var d = make(DatabaseList)
-	if m == "" {
-		panic("wrong config")
-	}
-	_ = json.Unmarshal([]byte(m), &d)
-	return d
-}
 
 const (
 	// EnvTest is a const value of test environment.
@@ -177,67 +29,7 @@ const (
 	EnvLocal = "local"
 	// EnvProd is a const value of production environment.
 	EnvProd = "prod"
-
-	// DriverMysql is a const value of mysql driver.
-	DriverMysql = "mysql"
-	// DriverSqlite is a const value of sqlite driver.
-	DriverSqlite = "sqlite"
-	// DriverPostgresql is a const value of postgresql driver.
-	DriverPostgresql = "postgresql"
-	// DriverMssql is a const value of mssql driver.
-	DriverMssql = "mssql"
 )
-
-// Store is the file store config. Path is the local store path.
-// and prefix is the url prefix used to visit it.
-type Store struct {
-	Path   string `json:"path,omitempty" yaml:"path,omitempty" ini:"path,omitempty"`
-	Prefix string `json:"prefix,omitempty" yaml:"prefix,omitempty" ini:"prefix,omitempty"`
-}
-
-func (s Store) URL(suffix string) string {
-	if len(suffix) > 4 && suffix[:4] == "http" {
-		return suffix
-	}
-	if s.Prefix == "" {
-		if suffix[0] == '/' {
-			return suffix
-		}
-		return "/" + suffix
-	}
-	if s.Prefix[0] == '/' {
-		if suffix[0] == '/' {
-			return s.Prefix + suffix
-		}
-		return s.Prefix + "/" + suffix
-	}
-	if suffix[0] == '/' {
-		if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
-			return s.Prefix + suffix
-		}
-		return "/" + s.Prefix + suffix
-	}
-	if len(s.Prefix) > 4 && s.Prefix[:4] == "http" {
-		return s.Prefix + "/" + suffix
-	}
-	return "/" + s.Prefix + "/" + suffix
-}
-
-func (s Store) JSON() string {
-	if s.Path == "" && s.Prefix == "" {
-		return ""
-	}
-	return utils.JSON(s)
-}
-
-func GetStoreFromJSON(m string) Store {
-	var s Store
-	if m == "" {
-		return s
-	}
-	_ = json.Unmarshal([]byte(m), &s)
-	return s
-}
 
 // Config type is the global config of goAdmin. It will be
 // initialized in the engine.
@@ -399,33 +191,6 @@ type Config struct {
 	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
 }
 
-type Logger struct {
-	Encoder EncoderCfg `json:"encoder,omitempty" yaml:"encoder,omitempty" ini:"encoder,omitempty"`
-	Rotate  RotateCfg  `json:"rotate,omitempty" yaml:"rotate,omitempty" ini:"rotate,omitempty"`
-	Level   int8       `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
-}
-
-type EncoderCfg struct {
-	TimeKey       string `json:"time_key,omitempty" yaml:"time_key,omitempty" ini:"time_key,omitempty"`
-	LevelKey      string `json:"level_key,omitempty" yaml:"level_key,omitempty" ini:"level_key,omitempty"`
-	NameKey       string `json:"name_key,omitempty" yaml:"name_key,omitempty" ini:"name_key,omitempty"`
-	CallerKey     string `json:"caller_key,omitempty" yaml:"caller_key,omitempty" ini:"caller_key,omitempty"`
-	MessageKey    string `json:"message_key,omitempty" yaml:"message_key,omitempty" ini:"message_key,omitempty"`
-	StacktraceKey string `json:"stacktrace_key,omitempty" yaml:"stacktrace_key,omitempty" ini:"stacktrace_key,omitempty"`
-	Level         string `json:"level,omitempty" yaml:"level,omitempty" ini:"level,omitempty"`
-	Time          string `json:"time,omitempty" yaml:"time,omitempty" ini:"time,omitempty"`
-	Duration      string `json:"duration,omitempty" yaml:"duration,omitempty" ini:"duration,omitempty"`
-	Caller        string `json:"caller,omitempty" yaml:"caller,omitempty" ini:"caller,omitempty"`
-	Encoding      string `json:"encoding,omitempty" yaml:"encoding,omitempty" ini:"encoding,omitempty"`
-}
-
-type RotateCfg struct {
-	MaxSize    int  `json:"max_size,omitempty" yaml:"max_size,omitempty" ini:"max_size,omitempty"`
-	MaxBackups int  `json:"max_backups,omitempty" yaml:"max_backups,omitempty" ini:"max_backups,omitempty"`
-	MaxAge     int  `json:"max_age,omitempty" yaml:"max_age,omitempty" ini:"max_age,omitempty"`
-	Compress   bool `json:"compress,omitempty" yaml:"compress,omitempty" ini:"compress,omitempty"`
-}
-
 type URLFormat struct {
 	Info       string `json:"info,omitempty" yaml:"info,omitempty" ini:"info,omitempty"`
 	Detail     string `json:"detail,omitempty" yaml:"detail,omitempty" ini:"detail,omitempty"`
@@ -467,31 +232,6 @@ func (p PageAnimation) JSON() string {
 		return ""
 	}
 	return utils.JSON(p)
-}
-
-// FileUploadEngine is a file upload engine.
-type FileUploadEngine struct {
-	Name   string                 `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
-	Config map[string]interface{} `json:"config,omitempty" yaml:"config,omitempty" ini:"config,omitempty"`
-}
-
-func (f FileUploadEngine) JSON() string {
-	if f.Name == "" {
-		return ""
-	}
-	if len(f.Config) == 0 {
-		f.Config = nil
-	}
-	return utils.JSON(f)
-}
-
-func GetFileUploadEngineFromJSON(m string) FileUploadEngine {
-	var f FileUploadEngine
-	if m == "" {
-		return f
-	}
-	_ = json.Unmarshal([]byte(m), &f)
-	return f
 }
 
 // GetIndexURL get the index url with prefix.
@@ -932,40 +672,6 @@ func Initialize(cfg *Config) *Config {
 	return _global
 }
 
-func initLogger(cfg *Config) {
-	logger.InitWithConfig(logger.Config{
-		InfoLogOff:         cfg.InfoLogOff,
-		ErrorLogOff:        cfg.ErrorLogOff,
-		AccessLogOff:       cfg.AccessLogOff,
-		SqlLogOpen:         cfg.SqlLog,
-		InfoLogPath:        cfg.InfoLogPath,
-		ErrorLogPath:       cfg.ErrorLogPath,
-		AccessLogPath:      cfg.AccessLogPath,
-		AccessAssetsLogOff: cfg.AccessAssetsLogOff,
-		Rotate: logger.RotateCfg{
-			MaxSize:    cfg.Logger.Rotate.MaxSize,
-			MaxBackups: cfg.Logger.Rotate.MaxBackups,
-			MaxAge:     cfg.Logger.Rotate.MaxAge,
-			Compress:   cfg.Logger.Rotate.Compress,
-		},
-		Encode: logger.EncoderCfg{
-			TimeKey:       cfg.Logger.Encoder.TimeKey,
-			LevelKey:      cfg.Logger.Encoder.LevelKey,
-			NameKey:       cfg.Logger.Encoder.NameKey,
-			CallerKey:     cfg.Logger.Encoder.CallerKey,
-			MessageKey:    cfg.Logger.Encoder.MessageKey,
-			StacktraceKey: cfg.Logger.Encoder.StacktraceKey,
-			Level:         cfg.Logger.Encoder.Level,
-			Time:          cfg.Logger.Encoder.Time,
-			Duration:      cfg.Logger.Encoder.Duration,
-			Caller:        cfg.Logger.Encoder.Caller,
-			Encoding:      cfg.Logger.Encoder.Encoding,
-		},
-		Debug: cfg.Debug,
-		Level: cfg.Logger.Level,
-	})
-}
-
 // AssertPrefix return the prefix of assert.
 func AssertPrefix() string {
 	return _global.AssertPrefix()
@@ -1154,7 +860,7 @@ func GetDebug() bool {
 func GetEnv() string {
 	_global.lock.RLock()
 	defer _global.lock.RUnlock()
-	return _global.Env
+	return string(_global.Env)
 }
 
 func GetInfoLogPath() string {
