@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -95,6 +96,8 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Configs = cfgList
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
+
+			fmt.Println("检查 pg 配置", cfg.GetDSN())
 
 			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
