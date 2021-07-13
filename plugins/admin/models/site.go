@@ -46,7 +46,7 @@ func (t SiteModel) WithTx(tx *sql.Tx) SiteModel {
 }
 
 func (t SiteModel) Init(cfg map[string]string) SiteModel {
-	items, err := t.Table(t.TableName).All()
+	items, err := t.Table(t.TableName).WithTx(t.Tx).All()
 	if db.CheckError(err, db.QUERY) {
 		panic(err)
 	}
@@ -54,7 +54,7 @@ func (t SiteModel) Init(cfg map[string]string) SiteModel {
 	for key, value := range cfg {
 		row := itemsCol.Where("key", "=", key)
 		if row.Length() == 0 {
-			_, err := t.Table(t.TableName).Insert(dialect.H{
+			_, err := t.Table(t.TableName).WithTx(t.Tx).Insert(dialect.H{
 				"key":   key,
 				"value": value,
 				"state": SiteItemOpenState,
@@ -82,7 +82,7 @@ func (t SiteModel) AllToMap() map[string]string {
 
 	var m = make(map[string]string)
 
-	items, err := t.Table(t.TableName).Where("state", "=", SiteItemOpenState).All()
+	items, err := t.Table(t.TableName).WithTx(t.Tx).Where("state", "=", SiteItemOpenState).All()
 	if db.CheckError(err, db.QUERY) {
 		return m
 	}
@@ -98,7 +98,7 @@ func (t SiteModel) AllToMapInterface() map[string]interface{} {
 
 	var m = make(map[string]interface{})
 
-	items, err := t.Table(t.TableName).Where("state", "=", SiteItemOpenState).All()
+	items, err := t.Table(t.TableName).WithTx(t.Tx).Where("state", "=", SiteItemOpenState).All()
 	if db.CheckError(err, db.QUERY) {
 		return m
 	}
@@ -121,7 +121,7 @@ var allowEmptyKeys = []string{
 func (t SiteModel) Update(v form.Values) error {
 	for key, vv := range v {
 		if len(vv) > 0 && (vv[0] != "" || utils.InArray(allowEmptyKeys, key)) {
-			_, err := t.Table(t.TableName).Where("key", "=", key).Update(dialect.H{
+			_, err := t.Table(t.TableName).WithTx(t.Tx).Where("key", "=", key).Update(dialect.H{
 				"value": vv[0],
 			})
 			if db.CheckError(err, db.UPDATE) {

@@ -43,17 +43,17 @@ func (t RoleModel) WithTx(tx *sql.Tx) RoleModel {
 
 // Find return a default role model of given id.
 func (t RoleModel) Find(id interface{}) RoleModel {
-	item, _ := t.Table(t.TableName).Find(id)
+	item, _ := t.Table(t.TableName).WithTx(t.Tx).Find(id)
 	return t.MapToModel(item)
 }
 
 // IsSlugExist check the row exist with given slug and id.
 func (t RoleModel) IsSlugExist(slug string, id string) bool {
 	if id == "" {
-		check, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
+		check, _ := t.Table(t.TableName).WithTx(t.Tx).Where("slug", "=", slug).First()
 		return check != nil
 	}
-	check, _ := t.Table(t.TableName).
+	check, _ := t.Table(t.TableName).WithTx(t.Tx).
 		Where("slug", "=", slug).
 		Where("id", "!=", id).
 		First()
@@ -63,7 +63,7 @@ func (t RoleModel) IsSlugExist(slug string, id string) bool {
 // New create a role model.
 func (t RoleModel) New(name, slug string) (RoleModel, error) {
 
-	id, err := t.WithTx(t.Tx).Table(t.TableName).Insert(dialect.H{
+	id, err := t.WithTx(t.Tx).Table(t.TableName).WithTx(t.Tx).Insert(dialect.H{
 		"name": name,
 		"slug": slug,
 	})
@@ -78,7 +78,7 @@ func (t RoleModel) New(name, slug string) (RoleModel, error) {
 // Update update the role model.
 func (t RoleModel) Update(name, slug string) (int64, error) {
 
-	return t.WithTx(t.Tx).Table(t.TableName).
+	return t.WithTx(t.Tx).Table(t.TableName).WithTx(t.Tx).
 		Where("id", "=", t.Id).
 		Update(dialect.H{
 			"name":       name,
@@ -89,7 +89,7 @@ func (t RoleModel) Update(name, slug string) (int64, error) {
 
 // CheckPermission check the permission of role.
 func (t RoleModel) CheckPermission(permissionId string) bool {
-	checkPermission, _ := t.Table("goadmin_role_permissions").
+	checkPermission, _ := t.Table("goadmin_role_permissions").WithTx(t.Tx).
 		Where("permission_id", "=", permissionId).
 		Where("role_id", "=", t.Id).
 		First()
@@ -98,7 +98,7 @@ func (t RoleModel) CheckPermission(permissionId string) bool {
 
 // DeletePermissions delete all the permissions of role.
 func (t RoleModel) DeletePermissions() error {
-	return t.WithTx(t.Tx).Table("goadmin_role_permissions").
+	return t.WithTx(t.Tx).Table("goadmin_role_permissions").WithTx(t.Tx).
 		Where("role_id", "=", t.Id).
 		Delete()
 }
@@ -107,7 +107,7 @@ func (t RoleModel) DeletePermissions() error {
 func (t RoleModel) AddPermission(permissionId string) (int64, error) {
 	if permissionId != "" {
 		if !t.CheckPermission(permissionId) {
-			return t.WithTx(t.Tx).Table("goadmin_role_permissions").
+			return t.WithTx(t.Tx).Table("goadmin_role_permissions").WithTx(t.Tx).
 				Insert(dialect.H{
 					"permission_id": permissionId,
 					"role_id":       t.Id,

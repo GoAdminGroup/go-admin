@@ -44,10 +44,10 @@ func (t PermissionModel) IsEmpty() bool {
 // IsSlugExist check the row exist with given slug and id.
 func (t PermissionModel) IsSlugExist(slug string, id string) bool {
 	if id == "" {
-		check, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
+		check, _ := t.Table(t.TableName).WithTx(t.Tx).Where("slug", "=", slug).First()
 		return check != nil
 	}
-	check, _ := t.Table(t.TableName).
+	check, _ := t.Table(t.TableName).WithTx(t.Tx).
 		Where("slug", "=", slug).
 		Where("id", "!=", id).
 		First()
@@ -56,19 +56,19 @@ func (t PermissionModel) IsSlugExist(slug string, id string) bool {
 
 // Find return the permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
-	item, _ := t.Table(t.TableName).Find(id)
+	item, _ := t.Table(t.TableName).WithTx(t.Tx).Find(id)
 	return t.MapToModel(item)
 }
 
 // FindBySlug return the permission model of given slug.
 func (t PermissionModel) FindBySlug(slug string) PermissionModel {
-	item, _ := t.Table(t.TableName).Where("slug", "=", slug).First()
+	item, _ := t.Table(t.TableName).WithTx(t.Tx).Where("slug", "=", slug).First()
 	return t.MapToModel(item)
 }
 
 // FindBySlug return the permission model of given slug.
 func (t PermissionModel) FindByName(name string) PermissionModel {
-	item, _ := t.Table(t.TableName).Where("name", "=", name).First()
+	item, _ := t.Table(t.TableName).WithTx(t.Tx).Where("name", "=", name).First()
 	return t.MapToModel(item)
 }
 
