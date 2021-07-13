@@ -2,6 +2,7 @@ package controller
 
 import (
 	"bytes"
+	"errors"
 	template2 "html/template"
 	"net/http"
 	"net/url"
@@ -19,38 +20,52 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
+var (
+	ErrWrongCaptcha = errors.New("wrong captcha")
+)
+
 // Auth check the input password and username for authentication.
 func (h *Handler) Auth(ctx *context.Context) {
 
 	var (
-		user     models.UserModel
-		ok       bool
-		errMsg   = "fail"
-		s, exist = h.services.GetOrNot(auth.ServiceKey)
+		user              models.UserModel
+		ok                bool
+		errMsg            = "fail"
+		customAuth, exist = h.services.GetOrNot(auth.ServiceKey)
+		err               error
 	)
 
-	if capDriver, ok := h.captchaConfig["driver"]; ok {
-		capt, ok := captcha.Get(capDriver)
-
-		if ok {
-			if !capt.Validate(ctx.FormValue("token")) {
-				response.BadRequest(ctx, "wrong captcha")
-				return
-			}
+	if capDriver, has := h.captchaConfig["driver"]; has {
+		if capt, has := captcha.Get(capDriver); has && !capt.Validate(ctx.FormValue("token")) {
+			response.BadRequest(ctx, ErrWrongCaptcha.Error())
+			return
 		}
 	}
 
 	if !exist {
-		password := ctx.FormValue("password")
-		username := ctx.FormValue("username")
-
-		if password == "" || username == "" {
-			response.BadRequest(ctx, "wrong password or username")
+		method := ctx.FormValue("method")
+		var authenticator auth.Authenticator
+		switch method {
+		case auth.GeneralMethod:
+			authenticator = auth.NewGeneralAuth(h.conn)
+		case auth.LdapMethod:
+			ldapCfg := h.config.Ldap
+			if !ldapCfg.Enable {
+				response.BadRequest(ctx, "ldap login disable")
+				return
+			}
+			authenticator = auth.NewLdapAuth(h.conn, auth.NewLdapConfig(ldapCfg.ServerUrls, ldapCfg.BindDN, ldapCfg.BindPwd, ldapCfg.BaseDN))
+		default:
+			authenticator = auth.NewGeneralAuth(h.conn)
+		}
+		if user, err = authenticator.Authenticate(ctx.Request); err != nil {
+			response.BadRequest(ctx, err.Error())
 			return
 		}
-		user, ok = auth.Check(password, username, h.conn)
+		user = user.SetConn(h.conn).WithRoles().WithPermissions().WithMenus()
+		ok = true
 	} else {
-		user, ok, errMsg = auth.GetService(s).P(ctx)
+		user, ok, errMsg = auth.GetService(customAuth).P(ctx)
 	}
 
 	if !ok {
@@ -58,9 +73,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 		return
 	}
 
-	err := auth.SetCookie(ctx, user, h.conn)
-
-	if err != nil {
+	if err := auth.NewCookieManger(h.conn).SetCookie(ctx, user); err != nil {
 		response.Error(ctx, err.Error())
 		return
 	}
@@ -85,7 +98,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 
 // Logout delete the cookie.
 func (h *Handler) Logout(ctx *context.Context) {
-	err := auth.DelCookie(ctx, db.GetConnection(h.services))
+	err := auth.NewCookieManger(db.GetConnection(h.services)).DelCookie(ctx)
 	if err != nil {
 		logger.Error("logout error", err)
 	}

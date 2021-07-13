@@ -1,4 +1,10 @@
 ---
+ldap:
+  enable: false
+  server_urls: []
+  bind_dn:
+  bind_pwd:
+  base_dn:
 database:
   default:
     host: 127.0.0.1

@@ -45,6 +45,10 @@ const loginTmpl = `{{define "login_theme1"}}
                         <input type="password" class="form-control" id="password" placeholder="{{lang "password"}}"
                                autocomplete="off">
                     </div>
+					<div>
+                        <input type="radio" name="method" value="0" />{{lang "user ldap"}}
+						<input type="radio" name="method" value="1" />{{lang "user general"}}
+                    </div>
                     <div class="form-group">
                         <button class="btn btn-primary" onclick="submitData()">{{lang "login"}}</button>
                     </div>
@@ -75,7 +79,8 @@ const loginTmpl = `{{define "login_theme1"}}
                 async: 'true',
                 data: {
                     'username': $("#username").val(),
-                    'password': $("#password").val()
+                    'password': $("#password").val(),
+                    'method'  : $('input[name=method]:checked').val()
                 },
                 success: function (data) {
                     location.href = data.data.url
