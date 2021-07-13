@@ -147,7 +147,7 @@ func (f FieldDisplay) ToDisplayStringArrayArray(value FieldModel) [][]string {
 func (f FieldDisplay) AddLimit(limit int) DisplayProcessFnChains {
 	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
 		if limit > len(value.Value) {
-			return value
+			return value.Value
 		} else if limit < 0 {
 			return ""
 		} else {
