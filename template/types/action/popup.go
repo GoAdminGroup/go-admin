@@ -140,6 +140,7 @@ type PopUpData struct {
 }
 
 type GetForm func(panel *types.FormPanel) *types.FormPanel
+type GetCtxForm func(ctx *context.Context, panel *types.FormPanel) *types.FormPanel
 
 var operationHandlerSetter context.NodeProcessor
 
@@ -169,6 +170,61 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
 			SetContent(btn1 + btn2).GetContent()
 		panel := fn(types.NewFormPanel())
+
+		operationHandlerSetter(panel.Callbacks...)
+
+		fields, tabFields, tabHeaders := panel.GetNewFormFields()
+
+		return true, "ok", template2.Default().Box().
+			SetHeader("").
+			SetBody(template2.Default().Form().
+				SetContent(fields).
+				SetTabHeaders(tabHeaders).
+				SetTabContents(tabFields).
+				SetAjax(panel.AjaxSuccessJS, panel.AjaxErrorJS).
+				SetPrefix(config.PrefixFixSlash()).
+				SetUrl(url).
+				SetOperationFooter(col1 + col2).GetContent()).
+			GetContent()
+	}
+	return &PopUpAction{
+		Url:        URL(data.Id),
+		Title:      data.Title,
+		Method:     "post",
+		BtnTitle:   "",
+		HideFooter: true,
+		Height:     data.Height,
+		Width:      data.Width,
+		Draggable:  true,
+		Data:       NewAjaxData(),
+		Id:         modalID,
+		Handlers:   context.Handlers{handler.Wrap()},
+		Event:      EventClick,
+	}
+}
+
+func PopUpWithCtxForm(data PopUpData, fn GetCtxForm, url string) *PopUpAction {
+	if data.Id == "" {
+		panic("wrong popup action parameter, empty id")
+	}
+	modalID := "info-popup-model-" + utils.Uuid(10)
+
+	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
+		col1 := template2.Default().Col().GetContent()
+		btn1 := template2.Default().Button().SetType("submit").
+			SetContent(language.GetFromHtml("Save")).
+			SetThemePrimary().
+			SetOrientationRight().
+			SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + language.GetFromHtml("Save")).
+			GetContent()
+		btn2 := template2.Default().Button().SetType("reset").
+			SetContent(language.GetFromHtml("Reset")).
+			SetThemeWarning().
+			SetOrientationLeft().
+			GetContent()
+		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
+			SetContent(btn1 + btn2).GetContent()
+		panel := fn(ctx, types.NewFormPanel())
 
 		operationHandlerSetter(panel.Callbacks...)
 
