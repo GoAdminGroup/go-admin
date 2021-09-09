@@ -397,6 +397,8 @@ type Config struct {
 
 	prefix string       `json:"-" yaml:"-" ini:"-"`
 	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
+
+	OIDC ConfigOIDC `json:"oidc,omitempty" yaml:"oidc,omitempty" ini:"oidc,omitempty"`
 }
 
 type Logger struct {
@@ -1285,6 +1287,23 @@ func GetExcludeThemeComponents() []string {
 	_global.lock.RLock()
 	defer _global.lock.RUnlock()
 	return _global.ExcludeThemeComponents
+}
+
+type ConfigOIDC struct {
+	ClientID  string `json:"client_id,omitempty", yaml:"client_id,omitempty", ini:"client_id,omitempty"`
+	IssuerURL string `json:"issuer_url,omitempty", yaml:"issuer_url,omitempty", ini:"issuer_url,omitempty"`
+}
+
+func GetOIDCClientID() string {
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.OIDC.ClientID
+}
+
+func GetOIDCIssuerURL() string {
+	_global.lock.RLock()
+	defer _global.lock.RUnlock()
+	return _global.OIDC.IssuerURL
 }
 
 type Service struct {
