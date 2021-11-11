@@ -29,12 +29,12 @@ var (
 		Time:          "ISO8601",
 		Duration:      "seconds",
 		Caller:        "short",
-		Encoding:      "console",
+		Encoding:      "json",
 	}
 	defaultRotateCfg = RotateCfg{
-		MaxSize:    10,
-		MaxBackups: 5,
-		MaxAge:     30,
+		MaxSize:    0,
+		MaxBackups: 0,
+		MaxAge:     0,
 		Compress:   false,
 	}
 
@@ -75,10 +75,6 @@ type Logger struct {
 
 	sqlLogOpen bool
 
-	infoLogPath   string
-	errorLogPath  string
-	accessLogPath string
-
 	rotate  RotateCfg
 	encoder EncoderCfg
 
@@ -108,9 +104,9 @@ type RotateCfg struct {
 
 func (l *Logger) Init() {
 	zapLogger := zap.New(zapcore.NewTee(
-		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.infoLogPath), infoLevelEnabler),
-		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), l.getLogWriter(l.errorLogPath), errorLevelEnabler),
-		zapcore.NewCore(l.getEncoder(""), l.getLogWriter(l.accessLogPath), accessLevelEnabler),
+		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stdout), infoLevelEnabler),
+		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stderr), errorLevelEnabler),
+		zapcore.NewCore(l.getEncoder(""), zapcore.AddSync(os.Stdout), accessLevelEnabler),
 	), zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(errorLevelEnabler))
 	l.sugaredLogger = zapLogger.Sugar()
 	l.logger = zapLogger
@@ -147,7 +143,7 @@ func (l *Logger) getEncoder(levelKey string) zapcore.Encoder {
 		EncodeName:     *nameEncoder,
 	}
 
-	return filterZapEncoder(l.encoder.Encoding, encoderConfig)
+	return zapcore.NewJSONEncoder(encoderConfig)
 }
 
 func (l *Logger) getLogWriter(path string) zapcore.WriteSyncer {
@@ -195,10 +191,6 @@ type Config struct {
 
 	SqlLogOpen bool
 
-	InfoLogPath   string
-	ErrorLogPath  string
-	AccessLogPath string
-
 	AccessAssetsLogOff bool
 
 	Rotate RotateCfg
@@ -210,11 +202,8 @@ type Config struct {
 }
 
 func InitWithConfig(cfg Config) {
-	logger.infoLogPath = cfg.InfoLogPath
 	logger.infoLogOff = cfg.InfoLogOff
-	logger.errorLogPath = cfg.ErrorLogPath
 	logger.errorLogOff = cfg.ErrorLogOff
-	logger.accessLogPath = cfg.AccessLogPath
 	logger.accessLogOff = cfg.AccessLogOff
 	logger.sqlLogOpen = cfg.SqlLogOpen
 	logger.accessAssetsLogOff = cfg.AccessAssetsLogOff
@@ -344,19 +333,6 @@ func LogSQL(statement string, args []interface{}) {
 			logger.sugaredLogger.With("statement", statement, "args", args).Info("[GoAdmin]")
 		}
 	}
-}
-
-func filterZapEncoder(encoding string, encoderConfig zapcore.EncoderConfig) zapcore.Encoder {
-	var encoder zapcore.Encoder
-	switch encoding {
-	default:
-		encoder = zapcore.NewConsoleEncoder(encoderConfig)
-	case "json":
-		encoder = zapcore.NewJSONEncoder(encoderConfig)
-	case "console":
-		encoder = zapcore.NewConsoleEncoder(encoderConfig)
-	}
-	return encoder
 }
 
 func filterZapAtomicLevelByViper(level int8) zapcore.Level {

@@ -938,9 +938,6 @@ func initLogger(cfg *Config) {
 		ErrorLogOff:        cfg.ErrorLogOff,
 		AccessLogOff:       cfg.AccessLogOff,
 		SqlLogOpen:         cfg.SqlLog,
-		InfoLogPath:        cfg.InfoLogPath,
-		ErrorLogPath:       cfg.ErrorLogPath,
-		AccessLogPath:      cfg.AccessLogPath,
 		AccessAssetsLogOff: cfg.AccessAssetsLogOff,
 		Rotate: logger.RotateCfg{
 			MaxSize:    cfg.Logger.Rotate.MaxSize,
