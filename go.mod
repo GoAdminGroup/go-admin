@@ -8,7 +8,7 @@ require (
 	github.com/GoAdminGroup/go-admin v1.2.23 // indirect
 	github.com/GoAdminGroup/html v0.0.1
 	github.com/GoAdminGroup/themes v0.0.43
-	github.com/NebulousLabs/fasctrand v0.0.0-20181203155948-6fb6489aac4e
+	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/astaxie/beego v1.12.3
 	github.com/buaazp/fasthttprouter v0.1.1
