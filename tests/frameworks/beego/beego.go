@@ -1,34 +1,34 @@
 package beego
 
 import (
-	// add beego adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/themes/adminlte"
+	// add beego adapter
+	_ "github.com/digroad/go-admin/adapter/beego"
+	"github.com/digroad/go-admin/modules/config"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/plugins/admin/modules/table"
 
 	// add mysql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/digroad/go-admin/modules/db/drivers/postgres"
 	// add sqlite driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	_ "github.com/digroad/go-admin/modules/db/drivers/sqlite"
 	// add mssql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
 	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"net/http"
 	"os"
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/astaxie/beego"
+	"github.com/digroad/go-admin/engine"
+	"github.com/digroad/go-admin/plugins/admin"
+	"github.com/digroad/go-admin/plugins/example"
+	"github.com/digroad/go-admin/template"
+	"github.com/digroad/go-admin/template/chartjs"
+	"github.com/digroad/go-admin/tests/tables"
 )
 
 func newHandler() http.Handler {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
+	"github.com/digroad/go-admin/modules/config"
+	"github.com/digroad/go-admin/plugins/admin/modules/constant"
+	"github.com/digroad/go-admin/plugins/admin/modules/form"
 	"github.com/gavv/httpexpect"
 )
 

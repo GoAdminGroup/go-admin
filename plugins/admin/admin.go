@@ -1,18 +1,18 @@
 package admin
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/template/types/action"
-	_ "github.com/GoAdminGroup/go-admin/template/types/display"
+	"github.com/digroad/go-admin/context"
+	"github.com/digroad/go-admin/modules/config"
+	"github.com/digroad/go-admin/modules/service"
+	"github.com/digroad/go-admin/modules/system"
+	"github.com/digroad/go-admin/modules/utils"
+	"github.com/digroad/go-admin/plugins"
+	"github.com/digroad/go-admin/plugins/admin/controller"
+	"github.com/digroad/go-admin/plugins/admin/modules/guard"
+	"github.com/digroad/go-admin/plugins/admin/modules/table"
+	"github.com/digroad/go-admin/template/types"
+	"github.com/digroad/go-admin/template/types/action"
+	_ "github.com/digroad/go-admin/template/types/display"
 )
 
 // Admin is a GoAdmin plugin.

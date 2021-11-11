@@ -3,14 +3,14 @@ package controller
 import (
 	"net/url"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/file"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/digroad/go-admin/context"
+	"github.com/digroad/go-admin/modules/auth"
+	"github.com/digroad/go-admin/modules/file"
+	"github.com/digroad/go-admin/plugins/admin/modules"
+	"github.com/digroad/go-admin/plugins/admin/modules/constant"
+	"github.com/digroad/go-admin/plugins/admin/modules/guard"
+	"github.com/digroad/go-admin/plugins/admin/modules/response"
+	"github.com/digroad/go-admin/template/types/form"
 )
 
 func (h *Handler) ApiUpdate(ctx *context.Context) {

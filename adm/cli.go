@@ -5,9 +5,9 @@
 package main
 
 import (
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mysql"
+	_ "github.com/digroad/go-admin/modules/db/drivers/postgres"
+	_ "github.com/digroad/go-admin/modules/db/drivers/sqlite"
 
 	"fmt"
 	"os"

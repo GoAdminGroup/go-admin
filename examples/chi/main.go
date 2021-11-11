@@ -8,17 +8,16 @@ import (
 	"path/filepath"
 	"strings"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/chi"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
+	_ "github.com/digroad/go-admin/adapter/chi"
+	"github.com/digroad/go-admin/engine"
+	"github.com/digroad/go-admin/examples/datamodel"
+	"github.com/digroad/go-admin/modules/config"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mysql"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/plugins/example"
+	"github.com/digroad/go-admin/template"
+	"github.com/digroad/go-admin/template/chartjs"
 	"github.com/go-chi/chi"
 )
 

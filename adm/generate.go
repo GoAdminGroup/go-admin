@@ -11,9 +11,9 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/AlecAivazis/survey/v2/core"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/tools"
+	"github.com/digroad/go-admin/modules/db"
+	"github.com/digroad/go-admin/plugins/admin/modules"
+	"github.com/digroad/go-admin/plugins/admin/modules/tools"
 	"github.com/mgutz/ansi"
 	"github.com/schollz/progressbar"
 	"gopkg.in/ini.v1"

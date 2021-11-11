@@ -6,17 +6,17 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/captcha"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/digroad/go-admin/context"
+	"github.com/digroad/go-admin/modules/auth"
+	"github.com/digroad/go-admin/modules/config"
+	"github.com/digroad/go-admin/modules/db"
+	"github.com/digroad/go-admin/modules/logger"
+	"github.com/digroad/go-admin/modules/system"
+	"github.com/digroad/go-admin/plugins/admin/models"
+	"github.com/digroad/go-admin/plugins/admin/modules/captcha"
+	"github.com/digroad/go-admin/plugins/admin/modules/response"
+	"github.com/digroad/go-admin/template"
+	"github.com/digroad/go-admin/template/types"
 )
 
 // Auth check the input password and username for authentication.

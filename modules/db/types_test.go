@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/digroad/go-admin/modules/config"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mysql"
 	"github.com/magiconair/properties/assert"
 )
 

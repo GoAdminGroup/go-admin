@@ -6,18 +6,17 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	_ "github.com/GoAdminGroup/themes/sword"
-
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
+	_ "github.com/GoAdminGroup/themes/sword"
+	_ "github.com/digroad/go-admin/adapter/gin"
+	"github.com/digroad/go-admin/engine"
+	"github.com/digroad/go-admin/examples/datamodel"
+	"github.com/digroad/go-admin/modules/config"
+	_ "github.com/digroad/go-admin/modules/db/drivers/mysql"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/plugins/example"
+	"github.com/digroad/go-admin/template"
+	"github.com/digroad/go-admin/template/chartjs"
 	"github.com/gin-gonic/gin"
 )
 

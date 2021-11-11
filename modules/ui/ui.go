@@ -1,12 +1,12 @@
 package ui
 
 import (
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/template/icon"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/template/types/action"
+	"github.com/digroad/go-admin/modules/config"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/modules/service"
+	"github.com/digroad/go-admin/template/icon"
+	"github.com/digroad/go-admin/template/types"
+	"github.com/digroad/go-admin/template/types/action"
 )
 
 type Service struct {

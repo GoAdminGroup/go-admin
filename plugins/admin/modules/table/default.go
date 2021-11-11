@@ -11,19 +11,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/digroad/go-admin/modules/config"
 
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
-	errs "github.com/GoAdminGroup/go-admin/modules/errors"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/paginator"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/digroad/go-admin/modules/db"
+	"github.com/digroad/go-admin/modules/db/dialect"
+	errs "github.com/digroad/go-admin/modules/errors"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/modules/logger"
+	"github.com/digroad/go-admin/plugins/admin/modules"
+	"github.com/digroad/go-admin/plugins/admin/modules/constant"
+	"github.com/digroad/go-admin/plugins/admin/modules/form"
+	"github.com/digroad/go-admin/plugins/admin/modules/paginator"
+	"github.com/digroad/go-admin/plugins/admin/modules/parameter"
+	"github.com/digroad/go-admin/template/types"
 )
 
 // DefaultTable is an implementation of table.Table

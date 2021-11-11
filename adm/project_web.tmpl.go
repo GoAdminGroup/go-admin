@@ -408,7 +408,7 @@ var projectWebTmpl = `
                             <ul>
                                 <li>
                                     <span style="font-size:15px;font-weight:normal;">Github：&nbsp;<a
-                                                href="https://github.com/GoAdminGroup/go-admin" target="_blank">https://github.com/GoAdminGroup/go-admin</a></span>
+                                                href="https://github.com/digroad/go-admin" target="_blank">https://github.com/digroad/go-admin</a></span>
                                 </li>
                                 <li>
                                     <span style="font-size:15px;font-weight:normal;">官网：<a
@@ -493,7 +493,7 @@ var projectWebTmpl = `
                             <ul>
                                 <li>
                                     <span style="font-size:15px;font-weight:normal;">Github：&nbsp;<a
-                                                href="https://github.com/GoAdminGroup/go-admin" target="_blank">https://github.com/GoAdminGroup/go-admin</a></span>
+                                                href="https://github.com/digroad/go-admin" target="_blank">https://github.com/digroad/go-admin</a></span>
                                 </li>
                                 <li>
                                     <span style="font-size:15px;font-weight:normal;">Official Website: <a

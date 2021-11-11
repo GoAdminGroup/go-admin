@@ -3,16 +3,16 @@ package controller
 import (
 	"fmt"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/auth"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
-	form2 "github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"github.com/digroad/go-admin/context"
+	"github.com/digroad/go-admin/modules/auth"
+	"github.com/digroad/go-admin/modules/language"
+	"github.com/digroad/go-admin/plugins/admin/modules"
+	"github.com/digroad/go-admin/plugins/admin/modules/constant"
+	form2 "github.com/digroad/go-admin/plugins/admin/modules/form"
+	"github.com/digroad/go-admin/plugins/admin/modules/parameter"
+	"github.com/digroad/go-admin/template"
+	"github.com/digroad/go-admin/template/types"
+	"github.com/digroad/go-admin/template/types/form"
 )
 
 func (h *Handler) ShowDetail(ctx *context.Context) {
