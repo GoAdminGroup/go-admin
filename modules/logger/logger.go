@@ -11,6 +11,7 @@ import (
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
+	"github.com/TheZeroSlave/zapsentry"
 	"github.com/mgutz/ansi"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
@@ -79,6 +80,8 @@ type Logger struct {
 	encoder EncoderCfg
 
 	Level zapcore.Level
+
+	sentryDSN string
 }
 
 type EncoderCfg struct {
@@ -108,9 +111,40 @@ func (l *Logger) Init() {
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stderr), errorLevelEnabler),
 		zapcore.NewCore(l.getEncoder(""), zapcore.AddSync(os.Stdout), accessLevelEnabler),
 	), zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(errorLevelEnabler))
+
+	if l.sentryDSN != "" {
+		zapLogger = addSentry(zapLogger, l.sentryDSN)
+	}
+
 	l.sugaredLogger = zapLogger.Sugar()
 	l.logger = zapLogger
 }
+
+func SetSentryDSN(sentryDSN string) {
+	logger.sentryDSN = sentryDSN
+}
+
+func addSentry(logger *zap.Logger, DSN string) *zap.Logger {
+	cfg := zapsentry.Configuration{
+		Level: zapcore.ErrorLevel,
+		EnableBreadcrumbs: true,
+		BreadcrumbLevel: zapcore.ErrorLevel,
+		Tags: map[string]string{
+			"component": "go-admin",
+		},
+	}
+
+	core, err := zapsentry.NewCore(cfg, zapsentry.NewSentryClientFromDSN(DSN))
+	if err != nil {
+		logger.Error("Error creating Zap Core")
+		return logger
+	}
+
+	logger = logger.With(zapsentry.NewScope())
+
+	return zapsentry.AttachCoreToLogger(core, logger)
+}
+
 
 func (l *Logger) getEncoder(levelKey string) zapcore.Encoder {
 

@@ -1302,3 +1302,7 @@ func GetService(s interface{}) *Config {
 	}
 	panic("wrong service")
 }
+
+func SetSentryDSN(sentryDSN string) {
+	logger.SetSentryDSN(sentryDSN)
+}
