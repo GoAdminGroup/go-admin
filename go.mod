@@ -36,6 +36,7 @@ require (
 	github.com/smartystreets/goconvey v1.7.2 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tdewolff/minify/v2 v2.9.22
+	github.com/tommy351/zap-stackdriver v0.1.4
 	github.com/valyala/fasthttp v1.31.0
 	go.uber.org/zap v1.17.0
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5

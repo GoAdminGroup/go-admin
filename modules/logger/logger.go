@@ -16,6 +16,7 @@ import (
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	stackdriver "github.com/tommy351/zap-stackdriver"
 )
 
 var (
@@ -82,6 +83,8 @@ type Logger struct {
 	Level zapcore.Level
 
 	sentryDSN string
+
+	version string
 }
 
 type EncoderCfg struct {
@@ -110,7 +113,17 @@ func (l *Logger) Init() {
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stdout), infoLevelEnabler),
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stderr), errorLevelEnabler),
 		zapcore.NewCore(l.getEncoder(""), zapcore.AddSync(os.Stdout), accessLevelEnabler),
-	), zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(errorLevelEnabler))
+	),
+	zap.AddCaller(),
+	zap.AddCallerSkip(1),
+	zap.AddStacktrace(errorLevelEnabler),
+	zap.Fields(
+		stackdriver.LogServiceContext(&stackdriver.ServiceContext{
+			Service: "octopus-admin",
+			Version: l.version,
+		}),
+	),
+	)
 
 	if l.sentryDSN != "" {
 		zapLogger = addSentry(zapLogger, l.sentryDSN)
@@ -122,6 +135,10 @@ func (l *Logger) Init() {
 
 func SetSentryDSN(sentryDSN string) {
 	logger.sentryDSN = sentryDSN
+}
+
+func SetVersion(version string) {
+	logger.version = version
 }
 
 func addSentry(logger *zap.Logger, DSN string) *zap.Logger {
