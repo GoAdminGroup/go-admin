@@ -12,7 +12,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/TheZeroSlave/zapsentry"
-	"github.com/mgutz/ansi"
 	"github.com/natefinch/lumberjack"
 	stackdriver "github.com/tommy351/zap-stackdriver"
 	"go.uber.org/zap"
@@ -27,7 +26,7 @@ var (
 		CallerKey:     "caller",
 		MessageKey:    "msg",
 		StacktraceKey: "stacktrace",
-		Level:         "capitalColor",
+		Level:         "capital",
 		Time:          "ISO8601",
 		Duration:      "seconds",
 		Caller:        "short",
@@ -369,14 +368,14 @@ func Access(ctx *context.Context) {
 		if logger.accessAssetsLogOff {
 			if filepath.Ext(ctx.Path()) == "" {
 				logger.sugaredLogger.Warnf(temp,
-					ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-					ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
+					" "+strconv.Itoa(ctx.Response.StatusCode)+" ",
+					" "+string(ctx.Method())+"   ",
 					ctx.Path())
 			}
 		} else {
 			logger.sugaredLogger.Warnf(temp,
-				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-				ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
+				" "+strconv.Itoa(ctx.Response.StatusCode)+" ",
+				" "+string(ctx.Method())+"   ",
 				ctx.Path())
 		}
 	}
