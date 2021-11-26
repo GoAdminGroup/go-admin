@@ -8,8 +8,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/GoAdminGroup/go-admin/template/types/action"
-
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
@@ -24,6 +22,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/GoAdminGroup/go-admin/template/types/action"
 )
 
 type Handler struct {
@@ -213,6 +212,10 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 
 	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
+
+	if queryPlug := ctx.Query("__plugin_name"); queryPlug != "" {
+		plugName = queryPlug
+	}
 
 	return template.Execute(&template.ExecuteParam{
 		User:       user,
