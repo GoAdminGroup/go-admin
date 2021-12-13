@@ -115,15 +115,15 @@ func (l *Logger) Init() {
 		zapcore.NewCore(l.getEncoder(l.encoder.LevelKey), zapcore.AddSync(os.Stderr), errorLevelEnabler),
 		zapcore.NewCore(l.getEncoder(""), zapcore.AddSync(os.Stdout), accessLevelEnabler),
 	),
-	zap.AddCaller(),
-	zap.AddCallerSkip(1),
-	zap.AddStacktrace(errorLevelEnabler),
-	zap.Fields(
-		stackdriver.LogServiceContext(&stackdriver.ServiceContext{
-			Service: l.serviceName,
-			Version: l.version,
-		}),
-	),
+		zap.AddCaller(),
+		zap.AddCallerSkip(1),
+		zap.AddStacktrace(errorLevelEnabler),
+		zap.Fields(
+			stackdriver.LogServiceContext(&stackdriver.ServiceContext{
+				Service: l.serviceName,
+				Version: l.version,
+			}),
+		),
 	)
 
 	if l.sentryDSN != "" {
@@ -140,9 +140,9 @@ func SetSentryDSN(sentryDSN string) {
 
 func addSentry(logger *zap.Logger, DSN string) *zap.Logger {
 	cfg := zapsentry.Configuration{
-		Level: zapcore.ErrorLevel,
+		Level:             zapcore.ErrorLevel,
 		EnableBreadcrumbs: true,
-		BreadcrumbLevel: zapcore.ErrorLevel,
+		BreadcrumbLevel:   zapcore.ErrorLevel,
 		Tags: map[string]string{
 			"component": "go-admin",
 		},
@@ -159,12 +159,8 @@ func addSentry(logger *zap.Logger, DSN string) *zap.Logger {
 	return zapsentry.AttachCoreToLogger(core, logger)
 }
 
-func SetServiceName(serviceName string ) {
-	logger.serviceName = serviceName
-}
-
-func SetVersion(version string) {
-	logger.version = version
+func SetLogger(newLogger *zap.Logger) {
+	logger.logger = newLogger
 }
 
 func (l *Logger) getEncoder(levelKey string) zapcore.Encoder {
