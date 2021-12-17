@@ -57,8 +57,18 @@ func Cleaner(config config.DatabaseList) {
 	}
 	var insertData = map[string][]dialect.H{
 		"goadmin_users": {
-			{"username": "admin", "name": "admin", "password": "$2a$10$TEDU/aUxLkr2wCxGxI62/.yOtzrzfv426DLLdyha9H2GpWRggB0di", "remember_token": "tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh"},
-			{"username": "operator", "name": "operator", "password": "$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.", "remember_token": "tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh"},
+			{
+				"username":       "admin",
+				"name":           "admin",
+				"password":       "$2a$10$TEDU/aUxLkr2wCxGxI62/.yOtzrzfv426DLLdyha9H2GpWRggB0di",
+				"remember_token": "tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh",
+			},
+			{
+				"username":       "operator",
+				"name":           "operator",
+				"password":       "$2a$10$rVqkOzHjN2MdlEprRflb1eGP0oZXuSrbJLOmJagFsCd81YZm0bsh.",
+				"remember_token": "tlNcBVK9AvfYH7WEnwB1RKvocJu8FfRy4um3DJtwdHuJy0dwFsLOgAc0xUfh",
+			},
 		},
 		"goadmin_roles": {
 			{"name": "Administrator", "slug": "administrator"},
@@ -69,14 +79,14 @@ func Cleaner(config config.DatabaseList) {
 			{"name": "Dashboard", "slug": "dashboard", "http_method": "GET,PUT,POST,DELETE", "http_path": "/"},
 		},
 		"goadmin_menu": {
-			{"parent_id": 0, "type": 1, "order": 2, "title": "Admin", "icon": "fa-tasks", "uri": ""},
-			{"parent_id": 1, "type": 1, "order": 2, "title": "Users", "icon": "fa-users", "uri": "/info/manager"},
-			{"parent_id": 0, "type": 1, "order": 3, "title": "test2 menu", "icon": "fa-angellist", "uri": "/example/test"},
-			{"parent_id": 1, "type": 1, "order": 4, "title": "Permission", "icon": "fa-ban", "uri": "/info/permission"},
-			{"parent_id": 1, "type": 1, "order": 5, "title": "Menu", "icon": "fa-bars", "uri": "/menu"},
-			{"parent_id": 1, "type": 1, "order": 6, "title": "Operation log", "icon": "fa-history", "uri": "/info/op"},
-			{"parent_id": 0, "type": 1, "order": 1, "title": "Dashboard", "icon": "fa-bar-chart", "uri": "/"},
-			{"parent_id": 0, "type": 1, "order": 7, "title": "User", "icon": "fa-users", "uri": "/info/user"},
+			{"parent_id": 0, "type": 1, "order": 2, "title": "Admin", "icon": "fa-tasks", "uri": "", "plugin_name": ""},
+			{"parent_id": 1, "type": 1, "order": 2, "title": "Users", "icon": "fa-users", "uri": "/info/manager", "plugin_name": ""},
+			{"parent_id": 0, "type": 1, "order": 3, "title": "test2 menu", "icon": "fa-angellist", "uri": "/example/test", "plugin_name": ""},
+			{"parent_id": 1, "type": 1, "order": 4, "title": "Permission", "icon": "fa-ban", "uri": "/info/permission", "plugin_name": ""},
+			{"parent_id": 1, "type": 1, "order": 5, "title": "Menu", "icon": "fa-bars", "uri": "/menu", "plugin_name": ""},
+			{"parent_id": 1, "type": 1, "order": 6, "title": "Operation log", "icon": "fa-history", "uri": "/info/op", "plugin_name": ""},
+			{"parent_id": 0, "type": 1, "order": 1, "title": "Dashboard", "icon": "fa-bar-chart", "uri": "/", "plugin_name": ""},
+			{"parent_id": 0, "type": 1, "order": 7, "title": "User", "icon": "fa-users", "uri": "/info/user", "plugin_name": ""},
 		},
 		"goadmin_role_users": {
 			{"user_id": 1, "role_id": 1},
@@ -138,6 +148,9 @@ func BlackBoxTestSuitOfBuiltInTables(t *testing.T, fn HandlerGenFn, config confi
 
 func checkErr(_ interface{}, err error) {
 	if err != nil {
+		if err.Error() == "LastInsertId is not supported by this driver" {
+			return
+		}
 		panic(err)
 	}
 }
