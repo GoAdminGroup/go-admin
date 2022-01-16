@@ -415,4 +415,6 @@ var jp = LangSet{
 	"admin.basic admin": "Basic Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "A built-in plugins of GoAdmin which help you to build a crud manager platform quickly.",
 	"admin.official": "Official",
+
+	"条/页": "個/頁",
 }

@@ -47,6 +47,14 @@ func (t RoleModel) Find(id interface{}) RoleModel {
 	return t.MapToModel(item)
 }
 
+// Find return a default role model of given slug.
+func (t RoleModel) FindWithSlug(slug string) RoleModel {
+	item, _ := t.Table(t.TableName).
+		Where("slug", "=", slug).
+		First()
+	return t.MapToModel(item)
+}
+
 // IsSlugExist check the row exist with given slug and id.
 func (t RoleModel) IsSlugExist(slug string, id string) bool {
 	if id == "" {

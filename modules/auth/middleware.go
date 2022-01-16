@@ -5,9 +5,11 @@
 package auth
 
 import (
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	gocontext "context"
 
@@ -211,13 +213,22 @@ func (invoker *Invoker) Filter(ctx *context.Context, conn db.Connection) (models
 	// goadmin_usersテーブルのnameとIDトークンのsubjectが一致することを期待している
 	user.Conn = conn
 	user = user.FindByUserName(idtoken.Subject)
-	user = user.WithRoles().WithPermissions().WithMenus()
 
 	if user.Id == 0 {
 		// Authorizationヘッダに正常なIDトークンが指定されたが、対応するユーザーが存在しない
+		// 自動的に goadmin_users と users にアカウントを作成する
+		if user, err = createUser(user, idtoken); err != nil {
+			logger.Info("unknown user and creatin failed: ", idtoken.Subject)
+			return user, false, false
+		}
+	}
+
+	if user.Id == 0 {
 		logger.Info("unknown user: ", idtoken.Subject)
 		return user, false, false
 	}
+
+	user = user.WithRoles().WithPermissions().WithMenus()
 
 	// すべて正常なのでセッションを作成してクッキーに保存する
 	if err := SetCookie(ctx, user, conn); err != nil {
@@ -226,6 +237,70 @@ func (invoker *Invoker) Filter(ctx *context.Context, conn db.Connection) (models
 	}
 
 	return user, true, CheckPermissions(user, ctx.Request.URL.String(), ctx.Method(), ctx.PostForm())
+}
+
+// ベリファイ済のIDTokenに基づいてgoadmin userを作成する
+func createUser(user models.UserModel, idtoken *oidc.IDToken) (models.UserModel, error) {
+	var claims struct {
+		Email             string `json:"email"`
+		PrefferedUsername string `json:"preferred_username"`
+	}
+
+	if err := idtoken.Claims(&claims); err != nil {
+		return user, err
+	}
+
+	// どのクレームを取得できるかわからないので、以下の優先順位であるものを使う
+	nickname := ""
+	if len(claims.Email) > 0 {
+		nickname = claims.Email
+	} else if len(claims.PrefferedUsername) > 0 {
+		nickname = claims.PrefferedUsername
+	} else {
+		nickname = idtoken.Subject
+	}
+
+	// goadmin_usersにアカウントを作成する。パスワードは使わないのでランダムな文字列を設定する
+	// avatarは面倒なので設定しない
+	u, err := user.New(idtoken.Subject, generatePassword(40), nickname, "")
+	if err != nil {
+		return u, err
+	}
+
+	// ToDo: 管理職であれば、ChargecodeOwner, ProjectOwner, GroupOwnerロールを設定する。暫定的に全員につける
+	// ToDo: SlugからRoleIDを検索するとエラーになってしまうため、いったんIDを直書きしている。あとで調査
+	if err := bindRole(u, []string{"6", "3", "4", "5"}); err != nil {
+		// LastInsertId is not supported ?
+		// 先頭の "6" （user role）を設定した後、次の"3"を設定するところでエラーになる
+		logger.Error("bind role failed", err)
+		return u, err
+	}
+
+	return u, err
+}
+
+func bindRole(u models.UserModel, roles []string) error {
+	for _, role := range roles {
+		if _, err := u.AddRole(role); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+var letterRunes = []rune("!@#$%&*0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+func generatePassword(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
 }
 
 const defaultUserIDSesKey = "user_id"

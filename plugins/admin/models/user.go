@@ -441,6 +441,17 @@ func (t UserModel) AddRole(roleId string) (int64, error) {
 	return 0, nil
 }
 
+func (t UserModel) AddRoleWithName(roleName string) error {
+	userrole := Role().FindWithSlug(roleName)
+	if userrole.Id != 0 {
+		if _, err := t.AddRole(strconv.FormatInt(userrole.Id, 10)); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // CheckRole check the role of the user.
 func (t UserModel) CheckRole(slug string) bool {
 	for _, role := range t.Roles {
