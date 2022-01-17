@@ -26,7 +26,8 @@ steps:
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
-  - git checkout $DRONE_COMMIT
+  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+  - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
   - make mysql-test
 
@@ -68,7 +69,8 @@ steps:
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
-  - git checkout $DRONE_COMMIT
+  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+  - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
   - make ms-test
 
@@ -101,7 +103,8 @@ steps:
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
-  - git checkout $DRONE_COMMIT
+  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+  - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
   - make pg-test
 
@@ -126,7 +129,8 @@ steps:
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
-  - git checkout $DRONE_COMMIT
+  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+  - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
   - make sqlite-test
 
@@ -158,7 +162,8 @@ steps:
   commands:
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
-  - git checkout $DRONE_COMMIT
+  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+  - git checkout pr$DRONE_PULL_REQUEST
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - sleep 8
   - make web-test
