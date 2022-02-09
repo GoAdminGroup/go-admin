@@ -19,7 +19,7 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v7
+  image: chg80333/goadmin-test:v8
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -59,7 +59,7 @@ services:
 
 steps:
 - name: api
-  image: chg80333/goadmin-test:v7
+  image: chg80333/goadmin-test:v8
   volumes:
   - name: data
     path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
@@ -96,7 +96,7 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v7
+  image: chg80333/goadmin-test:v8
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -122,7 +122,7 @@ clone:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v7
+  image: chg80333/goadmin-test:v8
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -155,7 +155,7 @@ services:
 
 steps:
 - name: chrome
-  image: chg80333/goadmin-test:v7
+  image: chg80333/goadmin-test:v8
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
