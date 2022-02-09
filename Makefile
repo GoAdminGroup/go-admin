@@ -38,46 +38,46 @@ mysql-test: $(TEST_FRAMEWORK_DIR)/*
 	go get github.com/ugorji/go/codec@none
 	for file in $^ ; do \
 	make import-mysql ; \
-	gotest -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
+	gotest -mod=mod -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
 	done
 
 sqlite-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-sqlite ; \
-	gotest -v ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
+	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
 	done
 
 pg-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-postgresql ; \
-	gotest -v ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
+	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
 	done
 
 ms-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-mssql ; \
-	gotest -v ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
+	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
 	done
 
 ## tests: user acceptance tests
 
 web-test: import-mysql
-	gotest -v ./tests/web/...
+	gotest -mod=mod ./tests/web/...
 	rm -rf ./tests/web/User*
 
 web-test-debug: import-mysql
-	gotest -v ./tests/web/... -args true
+	gotest -mod=mod ./tests/web/... -args true
 
 ## tests: unit tests
 
 unit-test:
-	gotest -v ./adm/...
-	gotest -v ./context/...
-	gotest -v ./modules/...
-	gotest -v ./plugins/admin/controller/...
-	gotest -v ./plugins/admin/modules/parameter/...
-	gotest -v ./plugins/admin/modules/table/...
-	gotest -v ./plugins/admin/modules/...
+	gotest -mod=mod ./adm/...
+	gotest -mod=mod ./context/...
+	gotest -mod=mod ./modules/...
+	gotest -mod=mod ./plugins/admin/controller/...
+	gotest -mod=mod ./plugins/admin/modules/parameter/...
+	gotest -mod=mod ./plugins/admin/modules/table/...
+	gotest -mod=mod ./plugins/admin/modules/...
 
 ## tests: helpers
 
