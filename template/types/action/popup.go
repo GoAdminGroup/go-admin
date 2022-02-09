@@ -185,6 +185,7 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 				SetPrefix(config.PrefixFixSlash()).
 				SetUrl(url).
 				SetOperationFooter(col1 + col2).GetContent()).
+				SetStyle(template.HTMLAttr(`overflow-x: hidden;overflow-y: hidden;`)).
 			GetContent()
 	}
 	return &PopUpAction{
