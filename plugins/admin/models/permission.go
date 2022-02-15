@@ -54,6 +54,10 @@ func (t PermissionModel) IsSlugExist(slug string, id string) bool {
 	return check != nil
 }
 
+func (t PermissionModel) FindDefault() PermissionModel {
+	return t.FindBySlug("dashboard")
+}
+
 // Find return the permission model of given id.
 func (t PermissionModel) Find(id interface{}) PermissionModel {
 	item, _ := t.Table(t.TableName).Find(id)
