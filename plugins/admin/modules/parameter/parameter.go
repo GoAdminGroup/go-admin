@@ -175,16 +175,24 @@ func (param Parameters) IsAll() bool {
 	return param.GetFieldValue(IsAll) == True
 }
 
-func (param Parameters) WithURLPath(path string) Parameters {
+func (param *Parameters) WithURLPath(path string) Parameters {
 	param.URLPath = path
-	return param
+	return *param
+}
+
+func (param *Parameters) isAllTrue() {
+	param.Fields[IsAll] = []string{True}
+}
+
+func (param *Parameters) isAllFalse() {
+	param.Fields[IsAll] = []string{False}
 }
 
 func (param Parameters) WithIsAll(isAll bool) Parameters {
 	if isAll {
-		param.Fields[IsAll] = []string{True}
+		param.isAllTrue()
 	} else {
-		param.Fields[IsAll] = []string{False}
+		param.isAllFalse()
 	}
 	return param
 }
@@ -254,16 +262,16 @@ func (param Parameters) Join() string {
 	return p.Encode()
 }
 
-func (param Parameters) SetPage(page string) Parameters {
+func (param *Parameters) SetPage(page string) Parameters {
 	param.Page = page
 	param.PageInt, _ = strconv.Atoi(page)
-	return param
+	return *param
 }
 
-func (param Parameters) SetPageSize(pageSize string) Parameters {
+func (param *Parameters) SetPageSize(pageSize string) Parameters {
 	param.PageSize = pageSize
 	param.PageSizeInt, _ = strconv.Atoi(pageSize)
-	return param
+	return *param
 }
 
 func (param Parameters) GetRouteParamStr() string {
