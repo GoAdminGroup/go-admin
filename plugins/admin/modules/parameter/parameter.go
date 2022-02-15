@@ -425,9 +425,9 @@ func (param Parameters) Statement(wheres, table, delimiter, delimiter2 string, w
 					for range value {
 						qmark += "?,"
 					}
-					wheres += table + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
+					wheres += modules.Delimiter(delimiter, delimiter2, table) + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " (" + qmark[:len(qmark)-1] + ") and "
 				} else {
-					wheres += table + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " ? and "
+					wheres += modules.Delimiter(delimiter, delimiter2, table) + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " ? and "
 				}
 				if op == "like" && !strings.Contains(value[0], "%") {
 					whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
