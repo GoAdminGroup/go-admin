@@ -37,7 +37,7 @@ func main() {
 				Port:       "3306",
 				User:       "root",
 				Pwd:        "root",
-				Name:       "goadmin",
+				Name:       "godmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
 				Driver:     config.DriverMysql,

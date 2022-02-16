@@ -164,7 +164,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param, nil)
+	buf := h._showTable(ctx, param.Prefix, param.Param, nil)
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, h.routePathWithPrefix("info", param.Prefix)+param.Param.GetRouteParamStr())

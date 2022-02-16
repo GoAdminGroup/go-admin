@@ -28,10 +28,10 @@ import (
 // ShowForm show form page.
 func (h *Handler) ShowForm(ctx *context.Context) {
 	param := guard.GetShowFormParam(ctx)
-	h.showForm(ctx, "", param.Prefix, param.Param, false)
+	h._showForm(ctx, "", param.Prefix, param.Param, false)
 }
 
-func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix string, param parameter.Parameters, isEdit bool, animation ...bool) {
+func (h *Handler) _showForm(ctx *context.Context, alert template2.HTML, prefix string, param parameter.Parameters, isEdit bool, animation ...bool) {
 
 	panel := h.table(prefix, ctx)
 
@@ -147,7 +147,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
-				h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+				h._showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
 			}
 			return
 		}
@@ -177,7 +177,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 				"token": h.authSrv().AddToken(),
 			})
 		} else {
-			h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+			h._showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
 		}
 		return
 	}
@@ -203,7 +203,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		}
 
 		if isEditUrl(param.PreviousPath, param.Prefix) {
-			h.showForm(ctx, param.Alert, param.Prefix, param.Param, true, false)
+			h._showForm(ctx, param.Alert, param.Prefix, param.Param, true, false)
 			return
 		}
 
@@ -223,7 +223,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		return
 	}
 
-	buf := h.showTable(ctx, param.Prefix, param.Param.DeletePK().DeleteEditPk(), nil)
+	buf := h._showTable(ctx, param.Prefix, param.Param.DeletePK().DeleteEditPk(), nil)
 
 	ctx.HTML(http.StatusOK, buf.String())
 	ctx.AddHeader(constant.PjaxUrlHeader, param.PreviousPath)

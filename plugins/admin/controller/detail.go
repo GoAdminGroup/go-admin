@@ -126,16 +126,13 @@ $('.delete-btn').on('click', function (event) {
 		title = detail.Title
 
 		if title == "" {
-			title = info.Title + language.Get("Detail")
-		}
-		if desc == "" {
-			desc = panel.GetInfo().Description + language.GetUser("Detail", user.Id)
+			title = info.Title + language.GetUser("Detail", user.Id)
 		}
 
 		desc = detail.Description
 
 		if desc == "" {
-			desc = info.Description + language.Get("Detail")
+			desc = info.Description + language.GetUser("Detail", user.Id)
 		}
 	}
 

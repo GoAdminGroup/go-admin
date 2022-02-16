@@ -57,11 +57,11 @@ func (h *Handler) ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	buf := h.showTable(ctx, prefix, params, panel)
+	buf := h._showTable(ctx, prefix, params, panel)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) showTableData(ctx *context.Context, prefix string, params parameter.Parameters,
+func (h *Handler) _showTableData(ctx *context.Context, prefix string, params parameter.Parameters,
 	panel table.Table, urlNamePrefix string) (table.Table, table.PanelInfo, []string, error) {
 	if panel == nil {
 		panel = h.table(prefix, ctx)
@@ -97,9 +97,9 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 	return panel, panelInfo, []string{editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl, updateUrl}, nil
 }
 
-func (h *Handler) showTable(ctx *context.Context, prefix string, params parameter.Parameters, panel table.Table) *bytes.Buffer {
+func (h *Handler) _showTable(ctx *context.Context, prefix string, params parameter.Parameters, panel table.Table) *bytes.Buffer {
 
-	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
+	panel, panelInfo, urls, err := h._showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
 		return h.Execute(ctx, auth.Auth(ctx),
 			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), "",

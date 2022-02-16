@@ -393,7 +393,7 @@ type Config struct {
 
 	AssetRootPath string `json:"asset_root_path,omitempty" yaml:"asset_root_path,omitempty" ini:"asset_root_path,omitempty"`
 
-	URLFormat URLFormat `json:"url_format,omitempty" yaml:"url_format,omitempty" ini:"url_format,omitempty"`
+	URLFormat *URLFormat `json:"url_format,omitempty" yaml:"url_format,omitempty" ini:"url_format,omitempty"`
 
 	prefix string       `json:"-" yaml:"-" ini:"-"`
 	lock   sync.RWMutex `json:"-" yaml:"-" ini:"-"`
@@ -438,7 +438,7 @@ type URLFormat struct {
 	Update     string `json:"update,omitempty" yaml:"update,omitempty" ini:"update,omitempty"`
 }
 
-func (f URLFormat) SetDefault() URLFormat {
+func (f *URLFormat) SetDefault() {
 	f.Detail = utils.SetDefault(f.Detail, "", "/info/:__prefix/detail")
 	f.ShowEdit = utils.SetDefault(f.ShowEdit, "", "/info/:__prefix/edit")
 	f.ShowCreate = utils.SetDefault(f.ShowCreate, "", "/info/:__prefix/new")
@@ -448,7 +448,6 @@ func (f URLFormat) SetDefault() URLFormat {
 	f.Export = utils.SetDefault(f.Export, "", "/export/:__prefix")
 	f.Info = utils.SetDefault(f.Info, "", "/info/:__prefix")
 	f.Update = utils.SetDefault(f.Update, "", "/update/:__prefix")
-	return f
 }
 
 type ExtraInfo map[string]interface{}
@@ -951,7 +950,8 @@ func SetDefault(cfg *Config) *Config {
 	} else {
 		cfg.prefix = cfg.UrlPrefix
 	}
-	cfg.URLFormat = cfg.URLFormat.SetDefault()
+	cfg.URLFormat = new(URLFormat)
+	cfg.URLFormat.SetDefault()
 	return cfg
 }
 
@@ -1012,8 +1012,8 @@ func AssertPrefix() string {
 	return _global.AssertPrefix()
 }
 
-// GetIndexURL get the index url with prefix.
-func GetIndexURL() string {
+// GetFullIndexURL get the index url with prefix.
+func GetFullIndexURL() string {
 	return _global.GetIndexURL()
 }
 
@@ -1036,7 +1036,7 @@ func Url(suffix string) string {
 	return _global.Url(suffix)
 }
 
-func GetURLFormats() URLFormat {
+func GetURLFormats() *URLFormat {
 	return _global.URLFormat
 }
 
@@ -1332,7 +1332,7 @@ type Service struct {
 	C *Config
 }
 
-func (s *Service) Name() string {
+func (*Service) Name() string {
 	return "config"
 }
 

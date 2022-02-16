@@ -43,7 +43,7 @@ func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
 	return &SystemTable{conn: conn, c: c}
 }
 
-func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
+func (s *SystemTable) GetManagerTable(_ *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -352,7 +352,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 	return
 }
 
-func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable Table) {
+func (s *SystemTable) GetNormalManagerTable(_ *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -452,16 +452,16 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 		})
 	m := []types.FieldOption{}
 	m = append(m, types.FieldOption{
-		Text: 	language.CN,
+		Text:  language.CN,
 		Value: "zh",
 	}, types.FieldOption{
-		Text: 	language.EN,
+		Text:  language.EN,
 		Value: "en",
 	}, types.FieldOption{
-		Text: 	language.JP,
+		Text:  language.JP,
 		Value: "jp",
 	}, types.FieldOption{
-		Text: 	language.TC,
+		Text:  language.TC,
 		Value: "tc",
 	})
 	formList.AddField(lg("language"), "language", db.Varchar, form.SelectSingle).FieldOptions(m).FieldNotAllowAdd()
@@ -535,7 +535,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 	return
 }
 
-func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable Table) {
+func (s *SystemTable) GetPermissionTable(_ *context.Context) (permissionTable Table) {
 	permissionTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := permissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -673,7 +673,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 	return
 }
 
-func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
+func (s *SystemTable) GetRolesTable(_ *context.Context) (roleTable Table) {
 	roleTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := roleTable.GetInfo().AddXssJsFilter().HideFilterArea()
@@ -830,7 +830,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 	return
 }
 
-func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
+func (s *SystemTable) GetOpTable(_ *context.Context) (opTable Table) {
 	opTable = NewDefaultTable(Config{
 		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     false,
@@ -1054,7 +1054,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 	return
 }
 
-func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
+func (s *SystemTable) GetSiteTable(_ *context.Context) (siteTable Table) {
 	siteTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
 		SetOnlyUpdateForm().
 		SetGetDataFun(func(params parameter.Parameters) (i []map[string]interface{}, i2 int) {
@@ -1398,7 +1398,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 	formList.AddField(lgWithScore("connection", "tool"), "conn", db.Varchar, form.SelectSingle).
 		FieldOptions(ops).
 		FieldOnChooseAjax("table", "/tool/choose/conn",
-			func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			func(_ *context.Context) (success bool, msg string, data interface{}) {
 				connName := ctx.FormValue("value")
 				if connName == "" {
 					return false, "wrong parameter", nil
@@ -1417,7 +1417,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			})
 	formList.AddField(lgWithScore("table", "tool"), "table", db.Varchar, form.SelectSingle).
 		FieldOnChooseAjax("xxxx", "/tool/choose/table",
-			func(ctx *context.Context) (success bool, msg string, data interface{}) {
+			func(_ *context.Context) (success bool, msg string, data interface{}) {
 
 				var (
 					tableName       = ctx.FormValue("value")
