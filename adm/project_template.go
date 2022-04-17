@@ -49,7 +49,7 @@ func startServer() {
 		panic(err)
 	}
 
-	r.Static("/uploads", "./uploads")
+	r.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	eng.HTML("GET", "/{{.Prefix}}", pages.GetDashBoard)
 	eng.HTMLFile("GET", "/{{.Prefix}}/hello", "./html/hello.tmpl", map[string]interface{}{

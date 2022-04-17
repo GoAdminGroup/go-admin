@@ -46,7 +46,7 @@ func internalHandler() http.Handler {
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	r.Static("/uploads", "./uploads")
+	r.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	return r
 }
@@ -80,7 +80,7 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	r.Static("/uploads", "./uploads")
+	r.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	return r
 }

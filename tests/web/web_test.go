@@ -223,7 +223,7 @@ func startServer(quit chan struct{}) {
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	r.Static("/uploads", "./uploads")
+	r.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	go func() {
 		_ = r.Run(port)
