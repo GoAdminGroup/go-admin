@@ -125,6 +125,7 @@ func main() {
 				Name:         "goadmin",
 				MaxIdleCon: 50,
 				MaxOpenCon: 150,
+				ConMaxLifetime: time.Hour,
 				Driver:       "mysql",
 			},
         	},

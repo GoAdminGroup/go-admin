@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -28,14 +29,15 @@ func main() {
 		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
-				Port:       "3306",
-				User:       "root",
-				Pwd:        "root",
-				Name:       "godmin",
-				MaxIdleCon: 50,
-				MaxOpenCon: 150,
-				Driver:     config.DriverMysql,
+				Host:           "127.0.0.1",
+				Port:           "3306",
+				User:           "root",
+				Pwd:            "root",
+				Name:           "godmin",
+				MaxIdleCon:     50,
+				MaxOpenCon:     150,
+				ConMaxLifetime: time.Hour,
+				Driver:         config.DriverMysql,
 
 				//Driver: config.DriverSqlite,
 				//File:   "../datamodel/admin.db",

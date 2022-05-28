@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -222,6 +223,7 @@ func testConn(driver string, cfg config.Database) Connection {
 	cfg.Driver = driver
 	cfg.MaxIdleCon = 10
 	cfg.MaxOpenCon = 80
+	cfg.ConMaxLifetime = time.Hour
 	return GetConnectionByDriver(driver).InitDB(map[string]config.Database{
 		"default": cfg,
 	})

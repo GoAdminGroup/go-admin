@@ -267,6 +267,7 @@ func (db *Mssql) InitDB(cfgs map[string]config.Database) Connection {
 
 			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
 			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+			sqlDB.SetConnMaxLifetime(cfg.ConMaxLifetime)
 
 			db.DbList[conn] = sqlDB
 
