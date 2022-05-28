@@ -19,6 +19,7 @@ func TestBlackBoxTestSuitOfBuiltInTables(t *testing.T) {
 			MaxIdleCon:     50,
 			MaxOpenCon:     150,
 			ConMaxLifetime: time.Hour,
+			ConMaxIdleTime: 0,
 			Driver:         config.DriverMysql,
 		},
 	})

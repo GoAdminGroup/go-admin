@@ -188,6 +188,7 @@ func buildProjectWeb(port string) {
 						MaxIdleCon:     5,
 						MaxOpenCon:     10,
 						ConMaxLifetime: time.Hour,
+						ConMaxIdleTime: 0,
 						Driver:         info.DriverName,
 					},
 				}

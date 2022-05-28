@@ -43,6 +43,7 @@ type Database struct {
 	MaxIdleCon     int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
 	MaxOpenCon     int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
 	ConMaxLifetime time.Duration     `json:"con_max_life_time,omitempty" yaml:"con_max_life_time,omitempty" ini:"con_max_life_time,omitempty"`
+	ConMaxIdleTime time.Duration     `json:"con_max_idle_time,omitempty" yaml:"con_max_idle_time,omitempty" ini:"con_max_idle_time,omitempty"`
 	Driver         string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
 	DriverMode     string            `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
 	File           string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`

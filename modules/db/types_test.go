@@ -224,6 +224,7 @@ func testConn(driver string, cfg config.Database) Connection {
 	cfg.MaxIdleCon = 10
 	cfg.MaxOpenCon = 80
 	cfg.ConMaxLifetime = time.Hour
+	cfg.ConMaxIdleTime = 0
 	return GetConnectionByDriver(driver).InitDB(map[string]config.Database{
 		"default": cfg,
 	})

@@ -119,6 +119,7 @@ func askForDBConfig(info *dbInfo) config.DatabaseList {
 				MaxIdleCon:     5,
 				MaxOpenCon:     10,
 				ConMaxLifetime: time.Hour,
+				ConMaxIdleTime: 0,
 				Driver:         info.DriverName,
 				File:           "",
 			},

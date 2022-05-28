@@ -68,6 +68,7 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
 			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
 			sqlDB.SetConnMaxLifetime(cfg.ConMaxLifetime)
+			sqlDB.SetConnMaxIdleTime(cfg.ConMaxIdleTime)
 
 			db.DbList[conn] = sqlDB
 
