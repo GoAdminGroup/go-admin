@@ -19,15 +19,15 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
 	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/v2/server/web"
+	"github.com/beego/beego/v2/server/web/context"
 )
 
 // Beego structure value is a Beego GoAdmin adapter.
 type Beego struct {
 	adapter.BaseAdapter
 	ctx *context.Context
-	app *beego.App
+	app *web.HttpServer
 }
 
 func init() {
@@ -55,7 +55,7 @@ func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn gctx.
 
 type HandlerFunc func(ctx *context.Context) (types.Panel, error)
 
-func Content(handler HandlerFunc) beego.FilterFunc {
+func Content(handler HandlerFunc) web.FilterFunc {
 	return func(ctx *context.Context) {
 		engine.Content(ctx, func(ctx interface{}) (types.Panel, error) {
 			return handler(ctx.(*context.Context))
@@ -66,10 +66,10 @@ func Content(handler HandlerFunc) beego.FilterFunc {
 // SetApp implements the method Adapter.SetApp.
 func (bee *Beego) SetApp(app interface{}) error {
 	var (
-		eng *beego.App
+		eng *web.HttpServer
 		ok  bool
 	)
-	if eng, ok = app.(*beego.App); !ok {
+	if eng, ok = app.(*web.HttpServer); !ok {
 		return errors.New("beego adapter SetApp: wrong parameter")
 	}
 	bee.app = eng
