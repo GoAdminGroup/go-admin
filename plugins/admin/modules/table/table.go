@@ -72,6 +72,9 @@ type Table interface {
 	GetOnlyUpdateForm() bool
 
 	Copy() Table
+	
+	GetSql() *db.SQL
+
 }
 
 type BaseTable struct {
