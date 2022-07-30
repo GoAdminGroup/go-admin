@@ -29,4 +29,3 @@ require (
 	xorm.io/xorm v1.0.2
 )
 
-replace github.com/GoAdminGroup/go-admin => github.com/zoulux/go-admin
