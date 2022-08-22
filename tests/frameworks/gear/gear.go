@@ -2,9 +2,8 @@ package gear
 
 import (
 	// add gin adapter
-
+	ada "github.com/GoAdminGroup/go-admin/adapter/gear"
 	"github.com/teambition/gear"
-	"github.com/teambition/gear/middleware/static"
 
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -23,7 +22,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
@@ -47,8 +45,6 @@ func newHandler() http.Handler {
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	app.Use(static.New(static.Options{Root: "./uploads", Prefix: "uploads"}))
-
 	return app
 }
 
@@ -71,15 +67,13 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddAdapter(admin.NewAdmin(gens)).
+		AddAdapter(new(ada.Gear)).
 		AddGenerators(gens).
 		Use(app); err != nil {
 		panic(err)
 	}
 
 	eng.HTML("GET", "/admin", tables.GetContent)
-
-	app.Use(static.New(static.Options{Root: "./uploads", Prefix: "uploads"}))
 
 	return app
 }

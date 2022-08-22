@@ -12,12 +12,14 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
@@ -91,16 +93,24 @@ func (gears *Gear) AddHandler(method, path string, handlers context.Handlers) {
 
 	gears.router.Handle(strings.ToUpper(method), path, func(c *gear.Context) error {
 
-		// gears.ctx = c
 		ctx := context.NewContext(c.Req)
 
-		if res, err := c.Any(2); err == nil {
-			for paramKey, paramValue := range res.(map[string]string) {
-				if c.Req.URL.RawQuery == "" {
-					c.Req.URL.RawQuery += strings.ReplaceAll(paramKey, ":", "") + "=" + paramValue
-				} else {
-					c.Req.URL.RawQuery += "&" + strings.ReplaceAll(paramKey, ":", "") + "=" + paramValue
-				}
+		newPath := path
+
+		reg1 := regexp.MustCompile(":(.*?)/")
+		reg2 := regexp.MustCompile(":(.*?)$")
+
+		params := reg1.FindAllString(newPath, -1)
+		newPath = reg1.ReplaceAllString(newPath, "")
+		params = append(params, reg2.FindAllString(newPath, -1)...)
+
+		for _, param := range params {
+			p := utils.ReplaceAll(param, ":", "", "/", "")
+
+			if c.Req.URL.RawQuery == "" {
+				c.Req.URL.RawQuery += p + "=" + c.Param(p)
+			} else {
+				c.Req.URL.RawQuery += "&" + p + "=" + c.Param(p)
 			}
 		}
 
@@ -110,8 +120,6 @@ func (gears *Gear) AddHandler(method, path string, handlers context.Handlers) {
 			c.Res.Header().Add(key, head[0])
 		}
 
-		// fmt.Println("检查头", c.Res.Header(), "\n", ctx.Response.Header)
-
 		if ctx.Response.Body != nil {
 			buf := new(bytes.Buffer)
 			_, _ = buf.ReadFrom(ctx.Response.Body)
@@ -119,6 +127,7 @@ func (gears *Gear) AddHandler(method, path string, handlers context.Handlers) {
 			return c.End(ctx.Response.StatusCode, buf.Bytes())
 		}
 
+		c.Status(ctx.Response.StatusCode)
 		return nil
 	})
 

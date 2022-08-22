@@ -18,7 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/teambition/gear/middleware/static"
 )
 
 func main() {
@@ -78,8 +77,6 @@ func main() {
 	// load config from json file
 	//
 	// e.AddConfigFromJSON("../datamodel/config.json")
-
-	app.Use(static.New(static.Options{Root: "./uploads", Prefix: "uploads"}))
 
 	if err := e.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
