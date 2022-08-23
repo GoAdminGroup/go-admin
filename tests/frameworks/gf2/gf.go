@@ -2,9 +2,10 @@ package gf
 
 import (
 	// add gf adapter
+	"reflect"
 
-	"bou.ke/monkey"
 	_ "github.com/GoAdminGroup/go-admin/adapter/gf2"
+	"github.com/agiledragon/gomonkey"
 
 	// add mysql driver
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -54,9 +55,10 @@ func newHandler() http.Handler {
 
 	s.SetPort(8103)
 
-	monkey.Patch(new(ghttp.Session).Close, func() error {
-		return nil
-	})
+	gomonkey.ApplyMethod(reflect.TypeOf(new(ghttp.Request).Session), "Close",
+		func(*ghttp.Session) error {
+			return nil
+		})
 
 	return s
 }
