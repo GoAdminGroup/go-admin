@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  mysql:
+    image: mysql:5.6
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/data
+    networks:
+      - goadmin
+    environment:
+      - MYSQL_ROOT_PASSWORD=goadmin
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/data
+    networks:
+      - goadmin
+    environment:
+      - POSTGRES_PASSWORD=goadmin
+  goadmin:
+    image: josingcjx/goadmin:1.1
+    tty: true
+    container_name: goadmin
+    volumes:
+      - .:/home/goadmin
+    networks:
+      - goadmin
+    command:
+      - /bin/bash
+  portainer:
+    image: portainer/portainer:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+    networks:
+      - goadmin
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer:/data
+networks:
+  goadmin: {}
+volumes:
+  portainer: {}
+  postgres: {}
+  mysql: {}
