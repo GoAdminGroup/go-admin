@@ -32,7 +32,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	bu := buffalo.New(buffalo.Options{
 		Env:  "test",
 		Addr: "127.0.0.1:9033",

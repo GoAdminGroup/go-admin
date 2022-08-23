@@ -1,8 +1,11 @@
-package fasthttp
+package beego
 
 import (
-	// add fasthttp adapter
-	ada "github.com/GoAdminGroup/go-admin/adapter/fasthttp"
+	"net/http"
+	"os"
+
+	// add beego adapter
+	_ "github.com/GoAdminGroup/go-admin/adapter/beego2"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -11,53 +14,51 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
-	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
-
-	"os"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
+	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
 	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/buaazp/fasthttprouter"
-	"github.com/valyala/fasthttp"
+	"github.com/beego/beego/v2/server/web"
 )
 
-func internalHandler() fasthttp.RequestHandler {
-	router := fasthttprouter.New()
+func internalHandler() http.Handler {
+
+	app := web.NewHttpSever()
 
 	eng := engine.Default()
-
-	adminPlugin := admin.NewAdmin(tables.Generators).AddDisplayFilterXssJsFilter()
+	adminPlugin := admin.NewAdmin(tables.Generators)
 	adminPlugin.AddGenerator("user", tables.GetUserTable)
 
-	template.AddComp(chartjs.NewChart())
+	examplePlugin := example.NewExample()
 
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
-		AddPlugins(adminPlugin).
-		Use(router); err != nil {
+		AddPlugins(adminPlugin, examplePlugin).Use(app); err != nil {
 		panic(err)
 	}
 
+	template.AddComp(chartjs.NewChart())
+
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	return func(ctx *fasthttp.RequestCtx) {
-		router.Handler(ctx)
-	}
+	app.Cfg.Listen.HTTPAddr = "127.0.0.1"
+	app.Cfg.Listen.HTTPPort = 9087
+
+	return app.Handlers
 }
 
-func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.RequestHandler {
-	router := fasthttprouter.New()
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+
+	app := web.NewHttpSever()
 
 	eng := engine.Default()
-
-	template.AddComp(chartjs.NewChart())
+	adminPlugin := admin.NewAdmin(gens)
 
 	if err := eng.AddConfig(&config.Config{
 		Databases: dbs,
@@ -71,15 +72,16 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.Requ
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddAdapter(new(ada.Fasthttp)).
-		AddGenerators(gens).
-		Use(router); err != nil {
+		AddPlugins(adminPlugin).Use(app); err != nil {
 		panic(err)
 	}
 
+	template.AddComp(chartjs.NewChart())
+
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	return func(ctx *fasthttp.RequestCtx) {
-		router.Handler(ctx)
-	}
+	app.Cfg.Listen.HTTPAddr = "127.0.0.1"
+	app.Cfg.Listen.HTTPPort = 9087
+
+	return app.Handlers
 }

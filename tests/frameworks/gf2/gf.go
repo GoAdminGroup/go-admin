@@ -1,10 +1,17 @@
-package fasthttp
+package gf
 
 import (
-	// add fasthttp adapter
-	ada "github.com/GoAdminGroup/go-admin/adapter/fasthttp"
+	// add gf adapter
+	"reflect"
+
+	_ "github.com/GoAdminGroup/go-admin/adapter/gf2"
+	"github.com/agiledragon/gomonkey"
+
 	// add mysql driver
+	"github.com/GoAdminGroup/go-admin/modules/config"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	"github.com/GoAdminGroup/go-admin/modules/language"
+
 	// add postgresql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
 	// add sqlite driver
@@ -12,52 +19,56 @@ import (
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/GoAdminGroup/themes/adminlte"
 
+	"net/http"
 	"os"
 
 	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
-	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/buaazp/fasthttprouter"
-	"github.com/valyala/fasthttp"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-func internalHandler() fasthttp.RequestHandler {
-	router := fasthttprouter.New()
+func internalHandler() http.Handler {
+	s := g.Server()
 
 	eng := engine.Default()
 
 	adminPlugin := admin.NewAdmin(tables.Generators).AddDisplayFilterXssJsFilter()
-	adminPlugin.AddGenerator("user", tables.GetUserTable)
 
 	template.AddComp(chartjs.NewChart())
 
+	adminPlugin.AddGenerator("user", tables.GetUserTable)
+
 	if err := eng.AddConfigFromJSON(os.Args[len(os.Args)-1]).
 		AddPlugins(adminPlugin).
-		Use(router); err != nil {
+		Use(s); err != nil {
 		panic(err)
 	}
 
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	return func(ctx *fasthttp.RequestCtx) {
-		router.Handler(ctx)
-	}
+	s.SetPort(8103)
+
+	gomonkey.ApplyMethod(reflect.TypeOf(new(ghttp.Request).Session), "Close",
+		func(*ghttp.Session) error {
+			return nil
+		})
+
+	return s
 }
 
-func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.RequestHandler {
-	router := fasthttprouter.New()
+func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler {
+
+	s := g.Server(8103)
 
 	eng := engine.Default()
-
-	template.AddComp(chartjs.NewChart())
+	adminPlugin := admin.NewAdmin(gens)
 
 	if err := eng.AddConfig(&config.Config{
 		Databases: dbs,
@@ -71,15 +82,13 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) fasthttp.Requ
 		Debug:       true,
 		ColorScheme: adminlte.ColorschemeSkinBlack,
 	}).
-		AddAdapter(new(ada.Fasthttp)).
-		AddGenerators(gens).
-		Use(router); err != nil {
+		AddPlugins(adminPlugin).Use(s); err != nil {
 		panic(err)
 	}
 
+	template.AddComp(chartjs.NewChart())
+
 	eng.HTML("GET", "/admin", tables.GetContent)
 
-	return func(ctx *fasthttp.RequestCtx) {
-		router.Handler(ctx)
-	}
+	return s
 }

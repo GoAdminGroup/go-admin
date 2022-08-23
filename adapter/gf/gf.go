@@ -45,10 +45,6 @@ func (gf *Gf) Use(app interface{}, plugs []plugins.Plugin) error {
 	return gf.GetUse(app, plugs, gf)
 }
 
-func (gf *Gf) Run() error                 { panic("not implement") }
-func (gf *Gf) DisableLog()                { panic("not implement") }
-func (gf *Gf) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (gf *Gf) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	gf.GetContent(ctx, getPanelFn, gf, btns, fn)
@@ -117,12 +113,12 @@ func (gf *Gf) AddHandler(method, path string, handlers context.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (gf *Gf) Name() string {
+func (*Gf) Name() string {
 	return "gf"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (gf *Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Gf) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *ghttp.Request
 		ok  bool

@@ -31,7 +31,7 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	r := chi.NewRouter()
 
 	eng := engine.Default()

@@ -31,7 +31,7 @@ import (
 	"github.com/astaxie/beego"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 
 	app := beego.NewApp()
 

@@ -29,7 +29,7 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	app := gear.New()
 
 	eng := engine.Default()

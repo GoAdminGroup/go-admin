@@ -45,10 +45,6 @@ func (fast *Fasthttp) Use(app interface{}, plugs []plugins.Plugin) error {
 	return fast.GetUse(app, plugs, fast)
 }
 
-func (fast *Fasthttp) Run() error                 { panic("not implement") }
-func (fast *Fasthttp) DisableLog()                { panic("not implement") }
-func (fast *Fasthttp) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (fast *Fasthttp) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	fast.GetContent(ctx, getPanelFn, fast, btns, fn)
@@ -167,12 +163,12 @@ func (r *netHTTPBody) Close() error {
 }
 
 // Name implements the method Adapter.Name.
-func (fast *Fasthttp) Name() string {
+func (*Fasthttp) Name() string {
 	return "fasthttp"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (fast *Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Fasthttp) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *fasthttp.RequestCtx
 		ok  bool

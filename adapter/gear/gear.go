@@ -65,10 +65,6 @@ func Content(handler HandlerFunc) gear.Middleware {
 	}
 }
 
-func (gears *Gear) Run() error                 { panic("not implement") }
-func (gears *Gear) DisableLog()                { panic("not implement") }
-func (gears *Gear) Static(prefix, path string) { panic("not implement") }
-
 // SetApp implements the method Adapter.SetApp.
 func (gears *Gear) SetApp(app interface{}) error {
 	gears.app = app.(*gear.App)
@@ -135,12 +131,12 @@ func (gears *Gear) AddHandler(method, path string, handlers context.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (gears *Gear) Name() string {
+func (*Gear) Name() string {
 	return "gear"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (gears *Gear) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Gear) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *gear.Context
 		ok  bool

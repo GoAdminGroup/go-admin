@@ -31,7 +31,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	e := echo.New()
 
 	eng := engine.Default()

@@ -1,4 +1,4 @@
-package gofiber
+package beego
 
 import (
 	"net/http"
@@ -8,10 +8,10 @@ import (
 	"github.com/gavv/httpexpect"
 )
 
-func TestGofiber(t *testing.T) {
+func TestBeego2(t *testing.T) {
 	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
-			Transport: httpexpect.NewFastBinder(internalHandler()),
+			Transport: httpexpect.NewBinder(internalHandler()),
 			Jar:       httpexpect.NewJar(),
 		},
 		Reporter: httpexpect.NewAssertReporter(t),

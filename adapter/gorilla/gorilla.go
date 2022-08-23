@@ -44,10 +44,6 @@ func (g *Gorilla) Use(app interface{}, plugs []plugins.Plugin) error {
 	return g.GetUse(app, plugs, g)
 }
 
-func (g *Gorilla) Run() error                 { panic("not implement") }
-func (g *Gorilla) DisableLog()                { panic("not implement") }
-func (g *Gorilla) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (g *Gorilla) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	g.GetContent(ctx, getPanelFn, g, btns, fn)
@@ -133,12 +129,12 @@ type Context struct {
 }
 
 // Name implements the method Adapter.Name.
-func (g *Gorilla) Name() string {
+func (*Gorilla) Name() string {
 	return "gorilla"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (g *Gorilla) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Gorilla) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx Context
 		ok  bool
