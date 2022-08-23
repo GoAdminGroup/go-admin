@@ -12,7 +12,7 @@ import (
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/GoAdminGroup/themes/adminlte"
 
 	"os"
 
@@ -24,7 +24,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
-	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
 )

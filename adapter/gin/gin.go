@@ -99,12 +99,12 @@ func (gins *Gin) AddHandler(method, path string, handlers context.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (gins *Gin) Name() string {
+func (*Gin) Name() string {
 	return "gin"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (gins *Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Gin) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *gin.Context
 		ok  bool
@@ -124,8 +124,7 @@ func (gins *Gin) Redirect() {
 }
 
 // SetContentType implements the method Adapter.SetContentType.
-func (gins *Gin) SetContentType() {
-}
+func (*Gin) SetContentType() {}
 
 // Write implements the method Adapter.Write.
 func (gins *Gin) Write(body []byte) {
