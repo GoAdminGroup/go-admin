@@ -65,10 +65,10 @@ func (db *Mysql) InitDB(cfgs map[string]config.Database) Connection {
 			}
 
 			// Largest set up the database connection reduce time wait
-			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
-			sqlDB.SetConnMaxLifetime(cfg.ConMaxLifetime)
-			sqlDB.SetConnMaxIdleTime(cfg.ConMaxIdleTime)
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+			sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
+			sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 
 			db.DbList[conn] = sqlDB
 

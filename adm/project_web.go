@@ -180,16 +180,16 @@ func buildProjectWeb(port string) {
 			if info.DriverName != db.DriverSqlite {
 				dbList = map[string]config.Database{
 					"default": {
-						Host:           info.Host,
-						Port:           info.Port,
-						User:           info.User,
-						Pwd:            info.Password,
-						Name:           info.Database,
-						MaxIdleCon:     5,
-						MaxOpenCon:     10,
-						ConMaxLifetime: time.Hour,
-						ConMaxIdleTime: 0,
-						Driver:         info.DriverName,
+						Host:            info.Host,
+						Port:            info.Port,
+						User:            info.User,
+						Pwd:             info.Password,
+						Name:            info.Database,
+						MaxIdleConns:    5,
+						MaxOpenConns:    10,
+						ConnMaxLifetime: time.Hour,
+						ConnMaxIdleTime: 0,
+						Driver:          info.DriverName,
 					},
 				}
 			} else {

@@ -1,6 +1,11 @@
 package main
 
 import (
+	"log"
+	"os"
+	"os/signal"
+	"time"
+
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego2"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 
@@ -13,9 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/beego/beego/v2/server/web"
-	"log"
-	"os"
-	"os/signal"
 )
 
 func main() {
@@ -27,14 +29,15 @@ func main() {
 		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
-				Port:       "3306",
-				User:       "root",
-				Pwd:        "123456",
-				Name:       "godmin",
-				MaxIdleCon: 50,
-				MaxOpenCon: 150,
-				Driver:     config.DriverMysql,
+				Host:            "127.0.0.1",
+				Port:            "3306",
+				User:            "root",
+				Pwd:             "123456",
+				Name:            "godmin",
+				MaxIdleConns:    50,
+				MaxOpenConns:    150,
+				ConnMaxLifetime: time.Hour,
+				Driver:          config.DriverMysql,
 			},
 		},
 		Store: config.Store{

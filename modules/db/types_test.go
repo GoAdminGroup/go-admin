@@ -221,10 +221,10 @@ func testConnDSN(driver, dsn string) Connection {
 
 func testConn(driver string, cfg config.Database) Connection {
 	cfg.Driver = driver
-	cfg.MaxIdleCon = 10
-	cfg.MaxOpenCon = 80
-	cfg.ConMaxLifetime = time.Hour
-	cfg.ConMaxIdleTime = 0
+	cfg.MaxIdleConns = 10
+	cfg.MaxOpenConns = 80
+	cfg.ConnMaxLifetime = time.Hour
+	cfg.ConnMaxIdleTime = 0
 	return GetConnectionByDriver(driver).InitDB(map[string]config.Database{
 		"default": cfg,
 	})
