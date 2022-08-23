@@ -44,10 +44,6 @@ func (ch *Chi) Use(app interface{}, plugs []plugins.Plugin) error {
 	return ch.GetUse(app, plugs, ch)
 }
 
-func (ch *Chi) Run() error                 { panic("not implement") }
-func (ch *Chi) DisableLog()                { panic("not implement") }
-func (ch *Chi) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (ch *Chi) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	ch.GetContent(ctx, getPanelFn, ch, btns, fn)
@@ -156,7 +152,7 @@ type Context struct {
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx Context
 		ok  bool
@@ -168,7 +164,7 @@ func (ch *Chi) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 }
 
 // Name implements the method Adapter.Name.
-func (ch *Chi) Name() string {
+func (*Chi) Name() string {
 	return "chi"
 }
 

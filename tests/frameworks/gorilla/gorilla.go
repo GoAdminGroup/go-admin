@@ -31,7 +31,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	app := mux.NewRouter()
 	eng := engine.Default()
 

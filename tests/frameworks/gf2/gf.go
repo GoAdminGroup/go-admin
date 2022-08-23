@@ -34,7 +34,7 @@ import (
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	s := g.Server()
 
 	eng := engine.Default()

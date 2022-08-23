@@ -128,6 +128,10 @@ func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf Web
 	return nil
 }
 
+func (base *BaseAdapter) Run() error         { panic("not implement") }
+func (base *BaseAdapter) DisableLog()        { panic("not implement") }
+func (base *BaseAdapter) Static(_, _ string) { panic("not implement") }
+
 // GetContent is a helper function of adapter.Content
 func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork,
 	navButtons types.Buttons, fn context.NodeProcessor) {

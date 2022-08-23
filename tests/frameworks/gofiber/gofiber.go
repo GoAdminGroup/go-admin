@@ -29,7 +29,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func newHandler() fasthttp.RequestHandler {
+func internalHandler() fasthttp.RequestHandler {
 	app := fiber.New(fiber.Config{
 		ServerHeader: "Fiber",
 	})

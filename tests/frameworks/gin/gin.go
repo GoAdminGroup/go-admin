@@ -29,7 +29,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	r := gin.Default()
 
 	gin.SetMode(gin.ReleaseMode)

@@ -1,14 +1,11 @@
 package beego
 
 import (
+	"net/http"
+	"os"
+
 	// add beego adapter
 	_ "github.com/GoAdminGroup/go-admin/adapter/beego2"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/beego/beego/v2/server/web"
-
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
@@ -17,21 +14,21 @@ import (
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
-	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
-
-	"net/http"
-	"os"
 
 	"github.com/GoAdminGroup/go-admin/engine"
+	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin"
+	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/beego/beego/v2/server/web"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 
 	app := web.NewHttpSever()
 

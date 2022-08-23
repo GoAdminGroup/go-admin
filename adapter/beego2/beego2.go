@@ -3,6 +3,10 @@ package beego2
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	gctx "github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -13,9 +17,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/beego/beego/v2/server/web"
 	"github.com/beego/beego/v2/server/web/context"
-	"net/http"
-	"net/url"
-	"strings"
 )
 
 type Beego2 struct {
@@ -28,7 +29,7 @@ func init() {
 	engine.Register(new(Beego2))
 }
 
-func (bee2 *Beego2) Name() string {
+func (*Beego2) Name() string {
 	return "beego2"
 }
 
@@ -67,10 +68,6 @@ func (bee2 *Beego2) AddHandler(method, path string, handlers gctx.Handlers) {
 	})
 }
 
-func (bee2 *Beego2) DisableLog()                { panic("implement me") }
-func (bee2 *Beego2) Static(prefix, path string) { panic("implement me") }
-func (bee2 *Beego2) Run() error                 { panic("implement me") }
-
 func (bee2 *Beego2) SetApp(app interface{}) error {
 	var (
 		eng *web.HttpServer
@@ -83,7 +80,7 @@ func (bee2 *Beego2) SetApp(app interface{}) error {
 	return nil
 }
 
-func (bee2 *Beego2) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Beego2) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *context.Context
 		ok  bool

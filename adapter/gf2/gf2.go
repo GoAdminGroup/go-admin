@@ -3,6 +3,11 @@ package gf2
 import (
 	"bytes"
 	"errors"
+	"net/http"
+	"net/url"
+	"regexp"
+	"strings"
+
 	"github.com/GoAdminGroup/go-admin/adapter"
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/engine"
@@ -13,10 +18,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/gogf/gf/v2/net/ghttp"
-	"net/http"
-	"net/url"
-	"regexp"
-	"strings"
 )
 
 type GF2 struct {
@@ -29,7 +30,7 @@ func init() {
 	engine.Register(new(GF2))
 }
 
-func (gf2 *GF2) Name() string {
+func (*GF2) Name() string {
 	return "gf2"
 }
 
@@ -83,10 +84,6 @@ func (gf2 *GF2) AddHandler(method, path string, handlers context.Handlers) {
 	})
 }
 
-func (gf2 *GF2) DisableLog()                { panic("implement me") }
-func (gf2 *GF2) Static(prefix, path string) { panic("implement me") }
-func (gf2 *GF2) Run() error                 { panic("implement me") }
-
 func (gf2 *GF2) SetApp(app interface{}) error {
 	var (
 		eng *ghttp.Server
@@ -99,7 +96,7 @@ func (gf2 *GF2) SetApp(app interface{}) error {
 	return nil
 }
 
-func (gf2 *GF2) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*GF2) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *ghttp.Request
 		ok  bool

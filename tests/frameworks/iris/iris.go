@@ -32,7 +32,7 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	app := iris.New()
 
 	eng := engine.Default()

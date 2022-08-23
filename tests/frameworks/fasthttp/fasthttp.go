@@ -29,7 +29,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func newHandler() fasthttp.RequestHandler {
+func internalHandler() fasthttp.RequestHandler {
 	router := fasthttprouter.New()
 
 	eng := engine.Default()
