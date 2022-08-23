@@ -2,15 +2,13 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
-	"strings"
 	"time"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/chi"
+	_ "github.com/GoAdminGroup/go-admin/adapter/gofasthttp"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/GoAdminGroup/themes/adminlte"
 
 	"github.com/GoAdminGroup/go-admin/engine"
 	"github.com/GoAdminGroup/go-admin/examples/datamodel"
@@ -19,12 +17,12 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/example"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/go-chi/chi"
+	"github.com/fasthttp/router"
+	"github.com/valyala/fasthttp"
 )
 
 func main() {
-	r := chi.NewRouter()
+	router := router.New()
 
 	eng := engine.Default()
 
@@ -44,14 +42,13 @@ func main() {
 			},
 		},
 		UrlPrefix: "admin",
+		IndexUrl:  "/",
 		Store: config.Store{
 			Path:   "./uploads",
 			Prefix: "uploads",
 		},
-		Language:    language.EN,
-		IndexUrl:    "/",
-		Debug:       true,
-		ColorScheme: adminlte.ColorschemeSkinBlack,
+		Debug:    true,
+		Language: language.CN,
 	}
 
 	template.AddComp(chartjs.NewChart())
@@ -83,20 +80,16 @@ func main() {
 		//
 		AddGenerator("user", datamodel.GetUserTable).
 		AddPlugins(examplePlugin).
-		Use(r); err != nil {
+		Use(router); err != nil {
 		panic(err)
 	}
 
-	workDir, _ := os.Getwd()
-	filesDir := filepath.Join(workDir, "uploads")
-	FileServer(r, "/uploads", http.Dir(filesDir))
-
-	// you can custom your pages like:
+	router.ServeFiles("/uploads/*filepath", "./uploads")
 
 	eng.HTML("GET", "/admin", datamodel.GetContent)
 
 	go func() {
-		_ = http.ListenAndServe(":3333", r)
+		_ = fasthttp.ListenAndServe(":8897", router.Handler)
 	}()
 
 	quit := make(chan os.Signal, 1)
@@ -104,24 +97,4 @@ func main() {
 	<-quit
 	log.Print("closing database connection")
 	eng.MysqlConnection().Close()
-}
-
-// FileServer conveniently sets up a http.FileServer handler to serve
-// static files from a http.FileSystem.
-func FileServer(r chi.Router, path string, root http.FileSystem) {
-	if strings.ContainsAny(path, "{}*") {
-		panic("FileServer does not permit URL parameters.")
-	}
-
-	fs := http.StripPrefix(path, http.FileServer(root))
-
-	if path != "/" && path[len(path)-1] != '/' {
-		r.Get(path, http.RedirectHandler(path+"/", http.StatusMovedPermanently).ServeHTTP)
-		path += "/"
-	}
-	path += "*"
-
-	r.Get(path, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fs.ServeHTTP(w, r)
-	}))
 }

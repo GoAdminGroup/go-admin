@@ -15,6 +15,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/GoAdminGroup/go-admin/modules/logger"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
@@ -32,20 +33,24 @@ import (
 //
 // If the Dsn is configured, when driver is mysql/postgresql/
 // mssql, the other configurations will be ignored, except for
-// MaxIdleCon and MaxOpenCon.
+// MaxIdleConns and MaxOpenConns.
 type Database struct {
-	Host       string            `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
-	Port       string            `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
-	User       string            `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
-	Pwd        string            `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
-	Name       string            `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
-	MaxIdleCon int               `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
-	MaxOpenCon int               `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
-	Driver     string            `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
-	DriverMode string            `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
-	File       string            `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
-	Dsn        string            `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
-	Params     map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
+	Host       string `json:"host,omitempty" yaml:"host,omitempty" ini:"host,omitempty"`
+	Port       string `json:"port,omitempty" yaml:"port,omitempty" ini:"port,omitempty"`
+	User       string `json:"user,omitempty" yaml:"user,omitempty" ini:"user,omitempty"`
+	Pwd        string `json:"pwd,omitempty" yaml:"pwd,omitempty" ini:"pwd,omitempty"`
+	Name       string `json:"name,omitempty" yaml:"name,omitempty" ini:"name,omitempty"`
+	Driver     string `json:"driver,omitempty" yaml:"driver,omitempty" ini:"driver,omitempty"`
+	DriverMode string `json:"driver_mode,omitempty" yaml:"driver_mode,omitempty" ini:"driver_mode,omitempty"`
+	File       string `json:"file,omitempty" yaml:"file,omitempty" ini:"file,omitempty"`
+	Dsn        string `json:"dsn,omitempty" yaml:"dsn,omitempty" ini:"dsn,omitempty"`
+
+	MaxIdleConns    int           `json:"max_idle_con,omitempty" yaml:"max_idle_con,omitempty" ini:"max_idle_con,omitempty"`
+	MaxOpenConns    int           `json:"max_open_con,omitempty" yaml:"max_open_con,omitempty" ini:"max_open_con,omitempty"`
+	ConnMaxLifetime time.Duration `json:"conn_max_life_time,omitempty" yaml:"conn_max_life_time,omitempty" ini:"conn_max_life_time,omitempty"`
+	ConnMaxIdleTime time.Duration `json:"conn_max_idle_time,omitempty" yaml:"conn_max_idle_time,omitempty" ini:"conn_max_idle_time,omitempty"`
+
+	Params map[string]string `json:"params,omitempty" yaml:"params,omitempty" ini:"params,omitempty"`
 }
 
 func (d Database) GetDSN() string {
