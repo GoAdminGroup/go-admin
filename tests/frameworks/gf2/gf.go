@@ -2,7 +2,7 @@ package gf
 
 import (
 	// add gf adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/gf"
+	_ "github.com/GoAdminGroup/go-admin/adapter/gf2"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
