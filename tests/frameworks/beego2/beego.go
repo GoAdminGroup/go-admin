@@ -2,7 +2,7 @@ package beego
 
 import (
 	// add beego adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
+	_ "github.com/GoAdminGroup/go-admin/adapter/beego2"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"

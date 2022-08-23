@@ -8,7 +8,7 @@ import (
 	"github.com/gavv/httpexpect"
 )
 
-func TestNewBeego(t *testing.T) {
+func TestBeego2(t *testing.T) {
 	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
 			Transport: httpexpect.NewBinder(newHandler()),

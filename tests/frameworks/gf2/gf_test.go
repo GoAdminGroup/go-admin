@@ -8,7 +8,7 @@ import (
 	"github.com/gavv/httpexpect"
 )
 
-func TestGf(t *testing.T) {
+func TestGf2(t *testing.T) {
 	common.ExtraTest(httpexpect.WithConfig(httpexpect.Config{
 		Client: &http.Client{
 			Transport: httpexpect.NewBinder(newHandler()),
