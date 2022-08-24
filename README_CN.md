@@ -48,16 +48,16 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 提示：现在你也可以这样做。
 
 ```shell
+$ go install github.com/GoAdminGroup/adm@latest
 $ mkdir new_project && cd new_project
-$ go install github.com/GoAdminGroup/go-admin/adm
 $ adm init -l cn
 ```
 
-或者：（使用v1.2.16的adm）
+或者：（使用v1.2.16以上的adm）
 
 ```shell
+$ go install github.com/GoAdminGroup/adm@latest
 $ mkdir new_project && cd new_project
-$ go install github.com/GoAdminGroup/go-admin/adm
 $ adm init web -l cn
 ```
 
