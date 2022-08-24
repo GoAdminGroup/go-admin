@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"strconv"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 )
 
 func InArray(arr []string, str string) bool {
@@ -47,7 +47,7 @@ func RemoveBlankFromArray(s []string) []string {
 }
 
 func Uuid() string {
-	return uuid.NewV4().String()
+	return uuid.New().String()
 }
 
 func SetDefault(source, def string) string {
