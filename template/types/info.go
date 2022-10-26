@@ -1672,7 +1672,7 @@ func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
 }
 
 func (i *InfoPanel) AddJSModule(js template.JS) *InfoPanel {
-	return i.addFooterHTML(template.HTML("<script='module'>" + js + "</script>"))
+	return i.addFooterHTML(template.HTML("<script type='module'>" + js + "</script>"))
 }
 
 func (i *InfoPanel) addCallback(node context.Node) *InfoPanel {
