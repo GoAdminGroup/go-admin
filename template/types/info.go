@@ -1671,7 +1671,7 @@ func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
 	return i.addFooterHTML(template.HTML("<script>" + js + "</script>"))
 }
 
-func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
+func (i *InfoPanel) AddJSModule(js template.JS) *InfoPanel {
 	return i.addFooterHTML(template.HTML("<script='module'>" + js + "</script>"))
 }
 
