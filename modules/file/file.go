@@ -5,6 +5,7 @@
 package file
 
 import (
+	"fmt"
 	"io"
 	"mime/multipart"
 	"os"
@@ -73,6 +74,7 @@ func Upload(c UploadFun, form *multipart.Form) error {
 			}
 
 			form.Value[k] = append(form.Value[k], pathStr)
+			form.Value[k+"_size"] = append(form.Value[k+"_size"], fmt.Sprintf("%d", fileObj.Size))
 		}
 	}
 
