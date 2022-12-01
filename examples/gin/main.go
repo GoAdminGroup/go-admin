@@ -97,7 +97,7 @@ func main() {
 		panic(err)
 	}
 
-	r.Static("/uploads", "./uploads")
+	r.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	// customize your pages
 

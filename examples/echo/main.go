@@ -83,7 +83,7 @@ func main() {
 		panic(err)
 	}
 
-	e.Static("/uploads", "./uploads")
+	e.Static(config.Get().Store.Prefix, config.Get().Store.Path)
 
 	// you can custom your pages like:
 
