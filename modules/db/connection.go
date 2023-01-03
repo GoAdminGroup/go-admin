@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/service"
@@ -23,6 +24,31 @@ const (
 	// DriverMssql is a const value of mssql driver.
 	DriverMssql = "mssql"
 )
+
+var (
+	driverConnFuncMap      = sync.Map{}
+	driverGetAggExpFuncMap = sync.Map{}
+)
+
+func init() {
+	driverConnFuncMap.Store("mysql", GetMysqlDB)
+	driverConnFuncMap.Store("mssql", GetMssqlDB)
+	driverConnFuncMap.Store("sqlite", GetSqliteDB)
+	driverConnFuncMap.Store("postgresql", GetPostgresqlDB)
+}
+
+//. LoadCustomDriver 加载自定义 Connection 实现
+func LoadCustomDriver(driver string, connFunc ConnFunc, getAggExpFunc GetAggregationExpressionFunc) error {
+	if _, ok := driverConnFuncMap.Load(driver); ok {
+		return fmt.Errorf("driver exists!")
+	}
+	driverConnFuncMap.Store(driver, connFunc)
+	driverGetAggExpFuncMap.Store(driver, getAggExpFunc)
+	return nil
+}
+
+type ConnFunc func() Connection
+type GetAggregationExpressionFunc func(driver, field, headField, delimiter string) string
 
 // Connection is a connection handler of database.
 type Connection interface {
@@ -75,18 +101,11 @@ type Connection interface {
 
 // GetConnectionByDriver return the Connection by given driver name.
 func GetConnectionByDriver(driver string) Connection {
-	switch driver {
-	case "mysql":
-		return GetMysqlDB()
-	case "mssql":
-		return GetMssqlDB()
-	case "sqlite":
-		return GetSqliteDB()
-	case "postgresql":
-		return GetPostgresqlDB()
-	default:
+	connFunc, ok := driverConnFuncMap.Load(driver)
+	if !ok {
 		panic("driver not found!")
 	}
+	return connFunc.(func() Connection)()
 }
 
 func GetConnectionFromService(srv interface{}) Connection {
@@ -114,6 +133,9 @@ func GetAggregationExpression(driver, field, headField, delimiter string) string
 	case "mssql":
 		return fmt.Sprintf("string_agg(%s, '%s') as [%s]", field, delimiter, headField)
 	default:
+		if f, ok := driverGetAggExpFuncMap.Load(driver); ok {
+			return f.(GetAggregationExpressionFunc)(driver, field, headField, delimiter)
+		}
 		panic("wrong driver")
 	}
 }
