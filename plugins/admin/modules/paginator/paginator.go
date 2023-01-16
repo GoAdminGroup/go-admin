@@ -127,6 +127,10 @@ func Get(cfg Config) types.PaginatorAttribute {
 		endNum = paginator.Total
 	}
 
+	if cfg.Param.PageInt >= (cfg.Size+cfg.Param.PageSizeInt-1)/cfg.Param.PageSizeInt {
+		endNum = paginator.Total
+	}
+
 	paginator.SetEntriesInfo(template.HTML(fmt.Sprintf(language.Get("showing <b>%s</b> to <b>%s</b> of <b>%s</b> entries"),
 		paginator.CurPageStartIndex, endNum, paginator.Total)))
 

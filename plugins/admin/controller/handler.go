@@ -113,7 +113,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 				f.IsHideResetButton, btnWord)).
 			SetHeader(f.HeaderHtml).
 			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0,
-			ctx.Query(constant.IframeKey) == "true",
+			ctx.IsIframe(),
 			f.IsHideBackButton, f.Header),
 		Description: template2.HTML(formInfo.Description),
 		Title:       template2.HTML(formInfo.Title),

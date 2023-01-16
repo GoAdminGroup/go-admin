@@ -251,6 +251,7 @@ var tc = LangSet{
 	"config.language." + EN:                  "英文",
 	"config.language." + JP:                  "日文",
 	"config.language." + strings.ToLower(TC): "繁體中文",
+	"config.language." + PTBR:                "Brazilian Portuguese",
 
 	"config.modify site config":         "修改網站配置",
 	"config.modify site config success": "修改網站配置成功",

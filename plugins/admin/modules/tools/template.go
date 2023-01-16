@@ -14,9 +14,17 @@ import (
 func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	
 	{{if eq .Connection "default"}}
-	{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriver("{{.Driver}}"))
+		{{if eq .PrimaryKey ""}}
+			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriver("{{.Driver}}"))
+		{{else}}
+			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriver("{{.Driver}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
+		{{end}}
 	{{else}}
-	{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}"))
+		{{if eq .PrimaryKey ""}}
+			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}"))
+		{{else}}
+			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
+		{{end}}
 	{{end}}
 
 	info := {{.Table}}.GetInfo(){{if .HideFilterArea}}.HideFilterArea(){{end}}

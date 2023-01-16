@@ -44,10 +44,6 @@ func (is *Iris) Use(app interface{}, plugs []plugins.Plugin) error {
 	return is.GetUse(app, plugs, is)
 }
 
-func (is *Iris) Run() error                 { panic("not implement") }
-func (is *Iris) DisableLog()                { panic("not implement") }
-func (is *Iris) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (is *Iris) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	is.GetContent(ctx, getPanelFn, is, btns, fn)
@@ -108,12 +104,12 @@ func (is *Iris) AddHandler(method, path string, handlers context.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (is *Iris) Name() string {
+func (*Iris) Name() string {
 	return "iris"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (is *Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Iris) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx iris.Context
 		ok  bool
@@ -168,4 +164,9 @@ func (is *Iris) FormParam() url.Values {
 // IsPjax implements the method Adapter.IsPjax.
 func (is *Iris) IsPjax() bool {
 	return is.ctx.GetHeader(constant.PjaxHeader) == "true"
+}
+
+// Query implements the method Adapter.Query.
+func (is *Iris) Query() url.Values {
+	return is.ctx.Request().URL.Query()
 }

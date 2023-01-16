@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -96,6 +97,8 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
 
+			fmt.Println("检查 pg 配置", cfg.GetDSN())
+
 			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
 				if sqlDB != nil {
@@ -104,8 +107,10 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 				panic(err)
 			}
 
-			sqlDB.SetMaxIdleConns(cfg.MaxIdleCon)
-			sqlDB.SetMaxOpenConns(cfg.MaxOpenCon)
+			sqlDB.SetMaxIdleConns(cfg.MaxIdleConns)
+			sqlDB.SetMaxOpenConns(cfg.MaxOpenConns)
+			sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
+			sqlDB.SetConnMaxIdleTime(cfg.ConnMaxIdleTime)
 
 			db.DbList[conn] = sqlDB
 

@@ -98,7 +98,7 @@ function DeletePost(id) {
 }
 
 $('.delete-btn').on('click', function (event) {
-	DeletePost(%s)
+	DeletePost('%s')
 });
 
 </script>`, language.Get("are you sure to delete"), language.Get("yes"), language.Get("cancel"), deleteUrl, infoUrl, id)

@@ -147,12 +147,13 @@ type Field struct {
 
 	Joins Joins
 
-	Width      int
-	Sortable   bool
-	EditAble   bool
-	Fixed      bool
-	Filterable bool
-	Hide       bool
+	Width       int
+	Sortable    bool
+	EditAble    bool
+	Fixed       bool
+	Filterable  bool
+	Hide        bool
+	HideForList bool
 
 	EditType    table.Type
 	EditOptions FieldOptions
@@ -342,6 +343,9 @@ func (f FieldList) GetTheadAndFilterForm(info TableInfo, params parameter.Parame
 		}
 
 		if field.Hide {
+			continue
+		}
+		if field.HideForList {
 			continue
 		}
 		thead = append(thead, TheadItem{
@@ -1123,7 +1127,7 @@ func (i *InfoPanel) FieldFileSize() *InfoPanel {
 }
 
 func (i *InfoPanel) FieldDate(format string) *InfoPanel {
-	i.addDisplayChains(displayFnGens["date"].Get())
+	i.addDisplayChains(displayFnGens["date"].Get(format))
 	return i
 }
 
@@ -1378,22 +1382,27 @@ func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) 
 }
 
 func (i *InfoPanel) FieldFilterOnChooseHide(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOnChooseShow(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
 func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *InfoPanel {
-	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, value, field...)
+	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
 func (i *InfoPanel) FieldHide() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Hide = true
+	return i
+}
+
+func (i *InfoPanel) FieldHideForList() *InfoPanel {
+	i.FieldList[i.curFieldListIndex].HideForList = true
 	return i
 }
 
@@ -1637,9 +1646,33 @@ func (i *InfoPanel) HideDetailButton() *InfoPanel {
 	return i
 }
 
+func (i *InfoPanel) HideCheckBoxColumn() *InfoPanel {
+	return i.HideColumn(1)
+}
+
+func (i *InfoPanel) HideColumn(n int) *InfoPanel {
+	i.AddCSS(template.CSS(fmt.Sprintf(`
+	.box-body table.table tbody tr td:nth-child(%v), .box-body table.table tbody tr th:nth-child(%v) {
+		display: none;
+	}`, n, n)))
+	return i
+}
+
 func (i *InfoPanel) addFooterHTML(footer template.HTML) *InfoPanel {
 	i.FooterHtml += template.HTML(ParseTableDataTmpl(footer))
 	return i
+}
+
+func (i *InfoPanel) AddCSS(css template.CSS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<style>" + css + "</style>"))
+}
+
+func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<script>" + js + "</script>"))
+}
+
+func (i *InfoPanel) AddJSModule(js template.JS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<script type='module'>" + js + "</script>"))
 }
 
 func (i *InfoPanel) addCallback(node context.Node) *InfoPanel {

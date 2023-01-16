@@ -233,6 +233,7 @@ var jp = LangSet{
 	"config.language." + EN:                  "English",
 	"config.language." + JP:                  "Japanese",
 	"config.language." + strings.ToLower(TC): "Traditional Chinese",
+	"config.language." + PTBR:                "Brazilian Portuguese",
 
 	"config.modify site config":         "Site Configuration Modification",
 	"config.modify site config success": "modified success",

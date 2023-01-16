@@ -44,10 +44,6 @@ func (bee *Beego) Use(app interface{}, plugs []plugins.Plugin) error {
 	return bee.GetUse(app, plugs, bee)
 }
 
-func (bee *Beego) Run() error                 { panic("not implement") }
-func (bee *Beego) DisableLog()                { panic("not implement") }
-func (bee *Beego) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (bee *Beego) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn gctx.NodeProcessor, navButtons ...types.Button) {
 	bee.GetContent(ctx, getPanelFn, bee, navButtons, fn)
@@ -101,12 +97,12 @@ func (bee *Beego) AddHandler(method, path string, handlers gctx.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (bee *Beego) Name() string {
+func (*Beego) Name() string {
 	return "beego"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (bee *Beego) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Beego) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx *context.Context
 		ok  bool
@@ -161,4 +157,9 @@ func (bee *Beego) FormParam() url.Values {
 // IsPjax implements the method Adapter.IsPjax.
 func (bee *Beego) IsPjax() bool {
 	return bee.ctx.Request.Header.Get(constant.PjaxHeader) == "true"
+}
+
+// Query implements the method Adapter.Query.
+func (bee *Beego) Query() url.Values {
+	return bee.ctx.Request.URL.Query()
 }

@@ -32,7 +32,7 @@ import (
 	"github.com/gobuffalo/buffalo"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	bu := buffalo.New(buffalo.Options{
 		Env:  "test",
 		Addr: "127.0.0.1:9033",
@@ -71,7 +71,7 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 
 	template.AddComp(chartjs.NewChart())
 
-	if err := eng.AddConfig(config.Config{
+	if err := eng.AddConfig(&config.Config{
 		Databases: dbs,
 		UrlPrefix: "admin",
 		Store: config.Store{

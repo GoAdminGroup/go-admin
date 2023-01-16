@@ -45,7 +45,7 @@ type Param struct {
 	HideResetButton          bool `json:"hide_reset_button"`
 	HideBackButton           bool `json:"hide_back_button"`
 
-	TablePageTitle    string `json:"table_title"`
+	TablePageTitle    string `json:"table_page_title"`
 	TableDescription  string `json:"table_description"`
 	FormTitle         string `json:"form_title"`
 	FormDescription   string `json:"form_description"`
@@ -58,6 +58,9 @@ type Param struct {
 	Fields       Fields `json:"fields"`
 	FormFields   Fields `json:"form_fields"`
 	DetailFields Fields `json:"detail_fields"`
+
+	PrimaryKey     string `json:"primary_key"`
+	PrimaryKeyType string `json:"primary_key_type"`
 
 	DetailDisplay uint8 `json:"detail_display"`
 
@@ -123,6 +126,8 @@ func NewParam(cfg Config) *Param {
 	fields := getFieldsFromConn(cfg.Conn, dbTable, cfg.Driver)
 	tt := strings.Title(ta)
 
+	pkey, ptype := fields.GetPrimaryKey()
+
 	return &Param{
 		Connection:               cfg.Connection,
 		Driver:                   cfg.Driver,
@@ -156,6 +161,9 @@ func NewParam(cfg Config) *Param {
 		TableDescription:         utils.SetDefault(cfg.TableDescription, "", tt),
 		FormTitle:                utils.SetDefault(cfg.FormTitle, "", tt),
 		FormDescription:          utils.SetDefault(cfg.FormDescription, "", tt),
+
+		PrimaryKey:     pkey,
+		PrimaryKeyType: ptype,
 	}
 }
 
@@ -218,6 +226,15 @@ func NewParamWithFields(cfg Config, fields ...Fields) *Param {
 
 type Fields []Field
 
+func (fs Fields) GetPrimaryKey() (string, string) {
+	for _, field := range fs {
+		if field.IsPrimaryKey {
+			return field.Name, field.DBType
+		}
+	}
+	return "", ""
+}
+
 type Field struct {
 	Head         string `json:"head"`
 	Name         string `json:"name"`
@@ -234,6 +251,7 @@ type Field struct {
 	Default      string `json:"default"`
 	CanAdd       bool   `json:"can_add"`
 	ExtraFun     string `json:"extra_fun"`
+	IsPrimaryKey bool   `json:"is_primary_key"`
 }
 
 func Generate(param *Param) error {
@@ -258,7 +276,7 @@ const (
 	tablesEnd     = "generators end"
 )
 
-func GenerateTables(outputPath, packageName string, tables []string, new bool) error {
+func GenerateTables(outputPath, packageName string, tables []string, isNew bool) error {
 
 	if len(outputPath) > 0 && outputPath[len(outputPath)-1] == '/' {
 		outputPath = outputPath[:len(outputPath)-1]
@@ -267,7 +285,7 @@ func GenerateTables(outputPath, packageName string, tables []string, new bool) e
 	outputPath = filepath.FromSlash(outputPath)
 	fileExist := utils.FileExist(outputPath + "/tables.go")
 
-	if !new && !fileExist {
+	if !isNew && !fileExist {
 		return nil
 	}
 
@@ -442,11 +460,19 @@ func getFieldsFromConn(conn db.Connection, table, driver string) Fields {
 
 	for i, model := range columnsModel {
 		typeName := getType(model[typeField].(string))
+		isPrimaryKey := false
+		if columnKey, ok := model["Key"].(string); ok {
+			isPrimaryKey = columnKey == "PRI"
+		}
+
 		fields[i] = Field{
-			Head:     strings.Title(model[fieldField].(string)),
-			Name:     model[fieldField].(string),
-			DBType:   typeName,
-			FormType: form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string)),
+			Head:         strings.Title(model[fieldField].(string)),
+			Name:         model[fieldField].(string),
+			DBType:       typeName,
+			CanAdd:       true,
+			Editable:     true,
+			IsPrimaryKey: isPrimaryKey,
+			FormType:     form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)), model[fieldField].(string)),
 		}
 		if model[fieldField].(string) == "id" {
 			fields[i].Filterable = true

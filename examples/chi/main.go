@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
+	"time"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/chi"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -31,14 +32,15 @@ func main() {
 		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
-				Port:       "3306",
-				User:       "root",
-				Pwd:        "root",
-				Name:       "godmin",
-				MaxIdleCon: 50,
-				MaxOpenCon: 150,
-				Driver:     config.DriverMysql,
+				Host:            "127.0.0.1",
+				Port:            "3306",
+				User:            "root",
+				Pwd:             "root",
+				Name:            "godmin",
+				MaxIdleConns:    50,
+				MaxOpenConns:    150,
+				ConnMaxLifetime: time.Hour,
+				Driver:          config.DriverMysql,
 			},
 		},
 		UrlPrefix: "admin",
@@ -71,7 +73,7 @@ func main() {
 	//
 	// eng.AddConfigFromJSON("../datamodel/config.json")
 
-	if err := eng.AddConfig(cfg).
+	if err := eng.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).
 		AddDisplayFilterXssJsFilter().
 		// add generator, first parameter is the url prefix of table when visit.

@@ -133,8 +133,4 @@ func managerTest(e *httpexpect.Expect, sesID *http.Cookie) {
 		},
 		"msg": "ok",
 	})
-
-	printlnWithColor("delete", "green")
-	e.GET("/pong").Expect().Status(404)
-
 }

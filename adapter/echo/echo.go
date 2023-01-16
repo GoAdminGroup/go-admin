@@ -43,10 +43,6 @@ func (e *Echo) Use(app interface{}, plugs []plugins.Plugin) error {
 	return e.GetUse(app, plugs, e)
 }
 
-func (e *Echo) Run() error                 { panic("not implement") }
-func (e *Echo) DisableLog()                { panic("not implement") }
-func (e *Echo) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (e *Echo) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	e.GetContent(ctx, getPanelFn, e, btns, fn)
@@ -105,12 +101,12 @@ func (e *Echo) AddHandler(method, path string, handlers context.Handlers) {
 }
 
 // Name implements the method Adapter.Name.
-func (e *Echo) Name() string {
+func (*Echo) Name() string {
 	return "echo"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (e *Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Echo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx echo.Context
 		ok  bool
@@ -170,4 +166,9 @@ func (e *Echo) FormParam() url.Values {
 // IsPjax implements the method Adapter.IsPjax.
 func (e *Echo) IsPjax() bool {
 	return e.ctx.Request().Header.Get(constant.PjaxHeader) == "true"
+}
+
+// Query implements the method Adapter.Query.
+func (e *Echo) Query() url.Values {
+	return e.ctx.Request().URL.Query()
 }

@@ -137,8 +137,8 @@ func (eng *Engine) announce() *Engine {
 }
 
 // AddConfig set the global config.
-func (eng *Engine) AddConfig(cfg config.Config) *Engine {
-	return eng.setConfig(&cfg).announce().initDatabase()
+func (eng *Engine) AddConfig(cfg *config.Config) *Engine {
+	return eng.setConfig(cfg).announce().initDatabase()
 }
 
 // setConfig set the config of engine.
@@ -541,6 +541,7 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 			Buttons:      eng.NavButtons.CheckPermission(user),
 			TmplHeadHTML: template.Default().GetHeadHTML(),
 			TmplFootJS:   template.Default().GetFootJS(),
+			Iframe:       ctx.IsIframe(),
 		}))
 
 		if hasError != nil {
@@ -591,6 +592,7 @@ func (eng *Engine) HTMLFile(method, url, path string, data map[string]interface{
 			Buttons:      eng.NavButtons.CheckPermission(user),
 			TmplHeadHTML: template.Default().GetHeadHTML(),
 			TmplFootJS:   template.Default().GetFootJS(),
+			Iframe:       ctx.IsIframe(),
 		}))
 
 		if hasError != nil {
@@ -652,6 +654,7 @@ func (eng *Engine) htmlFilesHandler(data map[string]interface{}, files ...string
 			Buttons:      eng.NavButtons.CheckPermission(user),
 			TmplHeadHTML: template.Default().GetHeadHTML(),
 			TmplFootJS:   template.Default().GetFootJS(),
+			Iframe:       ctx.IsIframe(),
 		}))
 
 		if hasError != nil {
@@ -676,6 +679,7 @@ func (eng *Engine) errorPanelHTML(ctx *context.Context, buf *bytes.Buffer, err e
 		Buttons:      (*eng.NavButtons).CheckPermission(user),
 		TmplHeadHTML: template.Default().GetHeadHTML(),
 		TmplFootJS:   template.Default().GetFootJS(),
+		Iframe:       ctx.IsIframe(),
 	}))
 
 	if hasError != nil {

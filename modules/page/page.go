@@ -40,6 +40,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 		Assets:       template.GetComponentAssetImportHTML(),
 		TmplHeadHTML: template.Default().GetHeadHTML(),
 		TmplFootJS:   template.Default().GetFootJS(),
+		Iframe:       ctx.IsIframe(),
 	}))
 	if err != nil {
 		logger.Error("SetPageContent", err)
