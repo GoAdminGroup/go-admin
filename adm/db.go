@@ -2,6 +2,7 @@ package main
 
 import (
 	"strings"
+	"time"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -110,15 +111,17 @@ func askForDBConfig(info *dbInfo) config.DatabaseList {
 
 		return map[string]config.Database{
 			"default": {
-				Host:       info.Host,
-				Port:       info.Port,
-				User:       info.User,
-				Pwd:        info.Password,
-				Name:       info.Database,
-				MaxIdleCon: 5,
-				MaxOpenCon: 10,
-				Driver:     info.DriverName,
-				File:       "",
+				Host:            info.Host,
+				Port:            info.Port,
+				User:            info.User,
+				Pwd:             info.Password,
+				Name:            info.Database,
+				MaxIdleConns:    5,
+				MaxOpenConns:    10,
+				ConnMaxLifetime: time.Hour,
+				ConnMaxIdleTime: 0,
+				Driver:          info.DriverName,
+				File:            "",
 			},
 		}
 	} else {

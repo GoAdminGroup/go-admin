@@ -6,7 +6,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
 
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -17,7 +16,7 @@ import (
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/GoAdminGroup/themes/adminlte"
 
 	"net/http"
 	"os"
@@ -31,7 +30,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	e := echo.New()
 
 	eng := engine.Default()

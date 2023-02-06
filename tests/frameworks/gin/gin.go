@@ -2,6 +2,7 @@ package gin
 
 import (
 	// add gin adapter
+
 	ada "github.com/GoAdminGroup/go-admin/adapter/gin"
 	// add mysql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -12,9 +13,8 @@ import (
 	// add mssql driver
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	"github.com/GoAdminGroup/themes/adminlte"
 
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -25,15 +25,13 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/go-admin/tests/tables"
-	"github.com/GoAdminGroup/themes/adminlte"
 	"github.com/gin-gonic/gin"
 )
 
-func newHandler() http.Handler {
+func internalHandler() http.Handler {
 	r := gin.Default()
 
 	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = ioutil.Discard
 
 	eng := engine.Default()
 
@@ -57,7 +55,6 @@ func NewHandler(dbs config.DatabaseList, gens table.GeneratorList) http.Handler 
 	r := gin.Default()
 
 	gin.SetMode(gin.ReleaseMode)
-	gin.DefaultWriter = ioutil.Discard
 
 	eng := engine.Default()
 

@@ -44,10 +44,6 @@ func (bu *Buffalo) Use(app interface{}, plugs []plugins.Plugin) error {
 	return bu.GetUse(app, plugs, bu)
 }
 
-func (bu *Buffalo) Run() error                 { panic("not implement") }
-func (bu *Buffalo) DisableLog()                { panic("not implement") }
-func (bu *Buffalo) Static(prefix, path string) { panic("not implement") }
-
 // Content implements the method Adapter.Content.
 func (bu *Buffalo) Content(ctx interface{}, getPanelFn types.GetPanelFn, fn context.NodeProcessor, btns ...types.Button) {
 	bu.GetContent(ctx, getPanelFn, bu, btns, fn)
@@ -144,12 +140,12 @@ func getHandleFunc(eng *buffalo.App, method string) HandleFun {
 }
 
 // Name implements the method Adapter.Name.
-func (bu *Buffalo) Name() string {
+func (*Buffalo) Name() string {
 	return "buffalo"
 }
 
 // SetContext implements the method Adapter.SetContext.
-func (bu *Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
+func (*Buffalo) SetContext(contextInterface interface{}) adapter.WebFrameWork {
 	var (
 		ctx buffalo.Context
 		ok  bool

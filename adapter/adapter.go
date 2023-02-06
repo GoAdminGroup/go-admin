@@ -88,17 +88,17 @@ func (base *BaseAdapter) GetConnection() db.Connection {
 }
 
 // HTMLContentType return the default content type header.
-func (base *BaseAdapter) HTMLContentType() string {
+func (*BaseAdapter) HTMLContentType() string {
 	return "text/html; charset=utf-8"
 }
 
 // CookieKey return the cookie key.
-func (base *BaseAdapter) CookieKey() string {
+func (*BaseAdapter) CookieKey() string {
 	return auth.DefaultCookieKey
 }
 
 // GetUser is a helper function get the auth user model from the context.
-func (base *BaseAdapter) GetUser(ctx interface{}, wf WebFrameWork) (models.UserModel, bool) {
+func (*BaseAdapter) GetUser(ctx interface{}, wf WebFrameWork) (models.UserModel, bool) {
 	cookie, err := wf.SetContext(ctx).GetCookie()
 
 	if err != nil {
@@ -110,7 +110,7 @@ func (base *BaseAdapter) GetUser(ctx interface{}, wf WebFrameWork) (models.UserM
 }
 
 // GetUse is a helper function adds the plugins to the framework.
-func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
+func (*BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf WebFrameWork) error {
 	if err := wf.SetApp(app); err != nil {
 		return err
 	}
@@ -127,6 +127,10 @@ func (base *BaseAdapter) GetUse(app interface{}, plugin []plugins.Plugin, wf Web
 
 	return nil
 }
+
+func (*BaseAdapter) Run() error         { panic("not implement") }
+func (*BaseAdapter) DisableLog()        { panic("not implement") }
+func (*BaseAdapter) Static(_, _ string) { panic("not implement") }
 
 // GetContent is a helper function of adapter.Content
 func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn, wf WebFrameWork,

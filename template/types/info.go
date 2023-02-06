@@ -1127,7 +1127,7 @@ func (i *InfoPanel) FieldFileSize() *InfoPanel {
 }
 
 func (i *InfoPanel) FieldDate(format string) *InfoPanel {
-	i.addDisplayChains(displayFnGens["date"].Get())
+	i.addDisplayChains(displayFnGens["date"].Get(format))
 	return i
 }
 
@@ -1669,6 +1669,10 @@ func (i *InfoPanel) AddCSS(css template.CSS) *InfoPanel {
 
 func (i *InfoPanel) AddJS(js template.JS) *InfoPanel {
 	return i.addFooterHTML(template.HTML("<script>" + js + "</script>"))
+}
+
+func (i *InfoPanel) AddJSModule(js template.JS) *InfoPanel {
+	return i.addFooterHTML(template.HTML("<script type='module'>" + js + "</script>"))
 }
 
 func (i *InfoPanel) addCallback(node context.Node) *InfoPanel {

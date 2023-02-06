@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
 	_ "github.com/GoAdminGroup/go-admin/adapter/gear"
 	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
@@ -18,7 +19,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/chartjs"
 	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/teambition/gear/middleware/static"
 )
 
 func main() {
@@ -31,14 +31,15 @@ func main() {
 		Env: config.EnvLocal,
 		Databases: config.DatabaseList{
 			"default": {
-				Host:       "127.0.0.1",
-				Port:       "3306",
-				User:       "root",
-				Pwd:        "root",
-				Name:       "godmin",
-				MaxIdleCon: 50,
-				MaxOpenCon: 150,
-				Driver:     config.DriverMysql,
+				Host:            "127.0.0.1",
+				Port:            "3306",
+				User:            "root",
+				Pwd:             "root",
+				Name:            "godmin",
+				MaxIdleConns:    50,
+				MaxOpenConns:    150,
+				ConnMaxLifetime: time.Hour,
+				Driver:          config.DriverMysql,
 
 				//Driver: config.DriverSqlite,
 				//File:   "../datamodel/admin.db",
@@ -78,8 +79,6 @@ func main() {
 	// load config from json file
 	//
 	// e.AddConfigFromJSON("../datamodel/config.json")
-
-	app.Use(static.New(static.Options{Root: "./uploads", Prefix: "uploads"}))
 
 	if err := e.AddConfig(&cfg).
 		AddGenerators(datamodel.Generators).

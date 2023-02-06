@@ -1,8 +1,8 @@
 GOCMD = go
 GOBUILD = $(GOCMD) build
 BINARY_NAME = adm
-LAST_VERSION = v1.2.22
-VERSION = v1.2.23
+LAST_VERSION = v1.2.23
+VERSION = v1.2.24
 CLI = adm
 
 TEST_CONFIG_PATH=./../../common/config.json
@@ -38,25 +38,25 @@ mysql-test: $(TEST_FRAMEWORK_DIR)/*
 	go get github.com/ugorji/go/codec@none
 	for file in $^ ; do \
 	make import-mysql ; \
-	gotest -mod=mod -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
+	gotest -mod=mod -gcflags=all=-l -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
 	done
 
 sqlite-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-sqlite ; \
-	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
+	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
 	done
 
 pg-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-postgresql ; \
-	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
+	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
 	done
 
 ms-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-mssql ; \
-	gotest -mod=mod ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
+	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
 	done
 
 ## tests: user acceptance tests
