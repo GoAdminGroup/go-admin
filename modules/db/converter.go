@@ -6,6 +6,7 @@ package db
 
 import (
 	"database/sql"
+	"strings"
 )
 
 // SetColVarType set the column type.
@@ -35,6 +36,8 @@ func SetColVarType(colVar *[]interface{}, i int, typeName string) {
 
 // SetResultValue set the result value.
 func SetResultValue(result *map[string]interface{}, index string, colVar interface{}, typeName string) {
+	arr := strings.Split(typeName, " ")
+	typeName = arr[len(arr)-1]
 	dt := DT(typeName)
 	switch {
 	case Contains(dt, BoolTypeList):
