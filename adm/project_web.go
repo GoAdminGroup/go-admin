@@ -138,6 +138,14 @@ func buildProjectWeb(port string) {
 					_, _ = w.Write([]byte(`{"code": 400, "msg": "` + local(lang)("web.wrong parameter") + `: ` + field + `"}`))
 					return
 				}
+			} else if r.PostFormValue("db_type") == "oceanbase" {
+				if field, ok := checkEmpty([]string{"db_port", "db_host", "db_user", "db_name"}, r); !ok {
+					w.WriteHeader(http.StatusOK)
+					w.Header().Add("Content-Type", "application/json")
+					_, _ = w.Write([]byte(`{"code": 400, "msg": "` + local(lang)("web.wrong parameter") + `: ` + field + `"}`))
+					return
+				}
+
 			} else {
 				if field, ok := checkEmpty([]string{"db_port", "db_host", "db_user", "db_passwd", "db_name"}, r); !ok {
 					w.WriteHeader(http.StatusOK)
@@ -242,6 +250,8 @@ func buildProjectWeb(port string) {
 		if err := http.Serve(l, nil); err != nil {
 			log.Fatal("ListenAndServe: ", err)
 		}
+		fmt.Println("GoAdmin web install program start.")
+
 	}(startChan)
 
 	<-startChan

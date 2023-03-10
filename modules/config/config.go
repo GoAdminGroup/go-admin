@@ -73,6 +73,10 @@ func (d Database) GetDSN() string {
 	if d.Driver == DriverSqlite {
 		return d.File + d.ParamStr()
 	}
+	if d.Driver == DriverOceanBase {
+		return d.User + ":" + d.Pwd + "@tcp(" + d.Host + ":" + d.Port + ")/" +
+			d.Name + d.ParamStr()
+	}
 	return ""
 }
 
@@ -81,8 +85,8 @@ func (d Database) ParamStr() string {
 	if d.Params == nil {
 		d.Params = make(map[string]string)
 	}
-	if d.Driver == DriverMysql || d.Driver == DriverSqlite {
-		if d.Driver == DriverMysql {
+	if d.Driver == DriverMysql || d.Driver == DriverSqlite || d.Driver == DriverOceanBase {
+		if d.Driver == DriverMysql || d.Driver == DriverOceanBase {
 			if _, ok := d.Params["charset"]; !ok {
 				d.Params["charset"] = "utf8mb4"
 			}
@@ -191,6 +195,8 @@ const (
 	DriverPostgresql = "postgresql"
 	// DriverMssql is a const value of mssql driver.
 	DriverMssql = "mssql"
+	// DriverOceanBase is a const value of mysql driver.
+	DriverOceanBase = "oceanbase"
 )
 
 // Store is the file store config. Path is the local store path.

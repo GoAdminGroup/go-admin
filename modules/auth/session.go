@@ -178,6 +178,8 @@ func (driver *DBDriver) deleteOverdueSession() {
 		raw = `strftime('%s', created_at) < strftime('%s', 'now') - ` + duration
 	} else if db.DriverMssql == driverName {
 		raw = `DATEDIFF(second, [created_at], GETDATE()) > ` + duration
+	} else if db.DriverOceanBase == driverName {
+		raw = `unix_timestamp(created_at) < unix_timestamp() - ` + duration
 	}
 
 	if raw != "" {

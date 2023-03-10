@@ -260,6 +260,11 @@ func (eng *Engine) SqliteConnection() db.Connection {
 	return db.GetConnectionFromService(eng.Services.Get(db.DriverSqlite))
 }
 
+// OceanBaseConnection return the OceanBase db connection of given driver.
+func (eng *Engine) OceanBaseConnection() db.Connection {
+	return db.GetConnectionFromService(eng.Services.Get(db.DriverOceanBase))
+}
+
 type ConnectionSetter func(db.Connection)
 
 // ResolveConnection resolve the specified driver connection.
