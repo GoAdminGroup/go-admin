@@ -191,6 +191,8 @@ var projectWebTmpl = `
                                         <div class="item" data-value="postgresql">PostgreSQL</div>
                                         <div class="item" data-value="mssql">MSSQL</div>
                                         <div class="item" data-value="sqlite">SQLite3</div>
+                                        <div class="item" data-value="oceanbase">OceanBase</div>
+
                                     </div>
                                 </div>
                             </div>
@@ -233,7 +235,29 @@ var projectWebTmpl = `
                                     <span class="help">{{local "web.the file path of sqlite3 database"}}<br>{{local "web.please use absolute path when you start as service"}}</span>
                                 </div>
                             </div>
-
+                            <div id="oceanbase_settings" class="hide">
+                                <div class="inline required field ">
+                                    <label for="db_host">{{local "web.database host"}}</label>
+                                    <input id="db_host" name="db_host" value="127.0.0.1">
+                                </div>
+                                <div class="inline required field ">
+                                    <label for="db_port">{{local "web.database port"}}</label>
+                                    <input id="db_port" name="db_port" value="2883">
+                                </div>
+                                <div class="inline required field ">
+                                    <label for="db_user">{{local "web.database user"}}</label>
+                                    <input id="db_user" name="db_user" value="root@sys">
+                                </div>
+                                <div class="inline required field ">
+                                    <label for="db_passwd">{{local "web.database password"}}</label>
+                                    <input id="db_passwd" name="db_passwd" type="password" value="">
+                                </div>
+                                <div class="inline required field ">
+                                    <label for="db_name">{{local "web.database name"}}</label>
+                                    <input id="db_name" name="db_name" value="goadmin">
+                                    <span class="help">{{local "web.where the framework sql data install to"}}</span>
+                                </div>
+                            </div>
                             <h4 class="ui dividing header">{{local "web.installation settings"}}</h4>
 
                             <div class="inline required field ">
@@ -370,6 +394,9 @@ var projectWebTmpl = `
                             <li>
                                 <a href="https://gitee.com/go-admin/go-admin/raw/master/data/admin.db" target="_blank">SQLite3</a>
                             </li>
+                            <li>
+                                <a href="https://gitee.com/go-admin/go-admin/raw/master/data/admin.sql" target="_blank">OceanBase</a>
+                            </li>
                         </ul>
                         <p>
                             2. 依次执行以下命令：
@@ -454,6 +481,10 @@ var projectWebTmpl = `
                             <li>
                                 <a href="https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db"
                                    target="_blank">SQLite3</a>
+                            </li>
+                            <li>
+                                <a href="https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql"
+                                   target="_blank">OceanBase</a>
                             </li>
                         </ul>
                         <p>
@@ -587,6 +618,11 @@ var projectWebTmpl = `
                     "addr": "127.0.0.1",
                     "port": "1433",
                     "user": "sa"
+                },
+                "oceanbase": {
+                    "addr": "127.0.0.1",
+                    "port": "2881",
+                    "user": "root@sys"
                 }
             };
 

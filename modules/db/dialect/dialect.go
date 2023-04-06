@@ -61,6 +61,10 @@ func GetDialectByDriver(driver string) Dialect {
 		return sqlite{
 			commonDialect: commonDialect{delimiter: "`", delimiter2: "`"},
 		}
+	case "oceanbase":
+		return oceanbase{
+			commonDialect: commonDialect{delimiter: "`", delimiter2: "`"},
+		}
 	default:
 		return commonDialect{delimiter: "`", delimiter2: "`"}
 	}
