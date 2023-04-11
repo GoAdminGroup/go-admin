@@ -118,18 +118,21 @@ $('.delete-btn').on('click', function (event) {
 	desc := ""
 
 	isNotIframe := ctx.Query(constant.IframeKey) != "true"
+	if title == "" {
+		title = panel.GetInfo().Title + language.GetUser("Detail", user.Id)
+	}
 
 	if isNotIframe {
 		title = detail.Title
 
 		if title == "" {
-			title = info.Title + language.Get("Detail")
+			title = info.Title + language.GetUser("Detail", user.Id)
 		}
 
 		desc = detail.Description
 
 		if desc == "" {
-			desc = info.Description + language.Get("Detail")
+			desc = info.Description + language.GetUser("Detail", user.Id)
 		}
 	}
 

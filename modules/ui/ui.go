@@ -15,7 +15,7 @@ type Service struct {
 
 const ServiceKey = "ui"
 
-func (s *Service) Name() string {
+func (*Service) Name() string {
 	return "ui"
 }
 

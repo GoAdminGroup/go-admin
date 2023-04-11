@@ -15,7 +15,7 @@ func (h *Handler) ApiList(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "api_")
+	panel, panelInfo, urls, err := h._showTableData(ctx, prefix, params, panel, "api_")
 	if err != nil {
 		response.Error(ctx, err.Error())
 		return

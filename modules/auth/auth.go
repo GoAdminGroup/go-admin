@@ -161,7 +161,7 @@ type Service struct {
 	P Processor
 }
 
-func (s *Service) Name() string {
+func (*Service) Name() string {
 	return "auth"
 }
 
