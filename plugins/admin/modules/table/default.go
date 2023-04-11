@@ -1123,6 +1123,12 @@ func (tb *DefaultTable) sql() *db.SQL {
 	return db.WithDriverAndConnection(tb.connection, tb.db())
 }
 
+// sql is a helper function return db sql.
+func (tb *DefaultTable) GetSql() *db.SQL {
+	return tb.sql()
+}
+
+
 // sqlObjOrNil is a helper function return db sql obj or nil.
 func (tb *DefaultTable) sqlObjOrNil() *db.SQL {
 	if tb.connectionDriver != "" && tb.getDataFromDB() {
