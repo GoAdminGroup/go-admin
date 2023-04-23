@@ -447,17 +447,16 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 
 // Join store join table info. For example:
 //
-// Join {
-//     BaseTable:   "users",
-//     Field:       "role_id",
-//     Table:       "roles",
-//     JoinField:   "id",
-// }
+//	Join {
+//	    BaseTable:   "users",
+//	    Field:       "role_id",
+//	    Table:       "roles",
+//	    JoinField:   "id",
+//	}
 //
 // It will generate the join table sql like:
 //
 // ... left join roles on roles.id = users.role_id ...
-//
 type Join struct {
 	Table      string
 	TableAlias string
@@ -599,6 +598,7 @@ type InfoPanel struct {
 	DeleteHook  DeleteFn
 	PreDeleteFn DeleteFn
 	DeleteFn    DeleteFn
+	SoftDelete  string
 
 	DeleteHookWithRes DeleteFnWithRes
 
@@ -986,6 +986,11 @@ func (i *InfoPanel) SetPreDeleteFn(fn DeleteFn) *InfoPanel {
 
 func (i *InfoPanel) SetDeleteFn(fn DeleteFn) *InfoPanel {
 	i.DeleteFn = fn
+	return i
+}
+
+func (i *InfoPanel) SetSoftDelete(field string) *InfoPanel {
+	i.SoftDelete = field
 	return i
 }
 

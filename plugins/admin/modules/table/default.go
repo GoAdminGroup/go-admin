@@ -411,6 +411,10 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 		wheres = " where " + wheres
 	}
 
+	if tb.Info.SoftDelete != "" {
+		wheres = wheres + "`" + tb.Info.Table + "`.`" + tb.Info.SoftDelete + "` is NULL"
+	}
+
 	if !modules.InArray(columns, params.SortField) {
 		params.SortField = tb.PrimaryKey.Name
 	}
@@ -533,6 +537,13 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 
 		if wheres != "" {
 			wheres = " where " + wheres
+			if tb.Info.SoftDelete != "" {
+				wheres = wheres + "`" + tb.Info.Table + "`.`" + tb.Info.SoftDelete + "` is NULL"
+			}
+		} else {
+			if tb.Info.SoftDelete != "" {
+				wheres = wheres + " where `" + tb.Info.Table + "`.`" + tb.Info.SoftDelete + "` is NULL"
+			}
 		}
 
 		if connection.Name() == db.DriverMssql {
@@ -1047,6 +1058,11 @@ func (tb *DefaultTable) DeleteData(id string) error {
 		return err
 	}
 
+	if tb.Info.SoftDelete != "" {
+		err = tb.softDelete(tb.Info.Table, tb.PrimaryKey.Name, tb.Info.SoftDelete, idArr)
+		return err
+	}
+
 	err = tb.delete(tb.Info.Table, tb.PrimaryKey.Name, idArr)
 	return err
 }
@@ -1078,6 +1094,18 @@ func (tb *DefaultTable) delete(table, key string, values []string) error {
 	return tb.sql().Table(table).
 		WhereIn(key, vals).
 		Delete()
+}
+
+func (tb *DefaultTable) softDelete(table, key, softDeleteField string, values []string) error {
+	var vals = make([]interface{}, len(values))
+	for i, v := range values {
+		vals[i] = v
+	}
+
+	_, err := tb.sql().Table(table).WhereIn(key, vals).Update(dialect.H{
+		softDeleteField: time.Now(),
+	})
+	return err
 }
 
 func (tb *DefaultTable) getTheadAndFilterForm(params parameter.Parameters, columns Columns) (types.Thead,
