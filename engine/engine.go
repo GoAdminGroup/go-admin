@@ -6,6 +6,7 @@ package engine
 
 import (
 	"bytes"
+	"embed"
 	"encoding/json"
 	errors2 "errors"
 	"fmt"
@@ -51,6 +52,7 @@ type Engine struct {
 	NavButtons   *types.Buttons
 	config       *config.Config
 	announceLock sync.Once
+	embed        *embed.FS
 }
 
 // Default return the default engine instance.
@@ -520,6 +522,10 @@ func (eng *Engine) Data(method, url string, handler context.Handler, noAuth ...b
 	}
 }
 
+func (eng *Engine) SetEmbed(e *embed.FS) {
+	eng.embed = e
+}
+
 // HTML inject the route and corresponding handler wrapped by the given function to the web framework.
 func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...bool) {
 
@@ -542,6 +548,58 @@ func (eng *Engine) HTML(method, url string, fn types.GetPanelInfoFn, noAuth ...b
 			User:         user,
 			Menu:         menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 			Panel:        panel.GetContent(eng.config.IsProductionEnvironment()),
+			Assets:       template.GetComponentAssetImportHTML(),
+			Buttons:      eng.NavButtons.CheckPermission(user),
+			TmplHeadHTML: template.Default().GetHeadHTML(),
+			TmplFootJS:   template.Default().GetFootJS(),
+			Iframe:       ctx.IsIframe(),
+		}))
+
+		if hasError != nil {
+			logger.Error(fmt.Sprintf("error: %s adapter content, ", eng.Adapter.Name()), hasError)
+		}
+
+		ctx.HTMLByte(http.StatusOK, buf.Bytes())
+	}
+
+	if len(noAuth) > 0 && noAuth[0] {
+		eng.Adapter.AddHandler(method, url, eng.wrap(handler))
+	} else {
+		eng.Adapter.AddHandler(method, url, eng.wrapWithAuthMiddleware(handler))
+	}
+}
+
+func (eng *Engine) EmbedHTMLFile(method, url, path string, data map[string]interface{}, noAuth ...bool) {
+
+	var handler = func(ctx *context.Context) {
+
+		cbuf := new(bytes.Buffer)
+
+		tmpstr, err := eng.embed.ReadFile(path)
+
+		t, err := template2.New(path).Parse(string(tmpstr))
+
+		if err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
+		} else if err := t.Execute(cbuf, data); err != nil {
+			eng.errorPanelHTML(ctx, cbuf, err)
+			return
+		}
+
+		var (
+			tmpl, tmplName = template.Default().GetTemplate(ctx.IsPjax())
+
+			user = auth.Auth(ctx)
+			buf  = new(bytes.Buffer)
+		)
+
+		hasError := tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
+			User: user,
+			Menu: menu.GetGlobalMenu(user, eng.Adapter.GetConnection(), ctx.Lang()).SetActiveClass(eng.config.URLRemovePrefix(ctx.Path())),
+			Panel: types.Panel{
+				Content: template.HTML(cbuf.String()),
+			},
 			Assets:       template.GetComponentAssetImportHTML(),
 			Buttons:      eng.NavButtons.CheckPermission(user),
 			TmplHeadHTML: template.Default().GetHeadHTML(),
