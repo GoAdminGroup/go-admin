@@ -27,7 +27,7 @@ func GetPostgresqlDB() *Postgresql {
 }
 
 // Name implements the method Connection.Name.
-func (db *Postgresql) Name() string {
+func (*Postgresql) Name() string {
 	return "postgresql"
 }
 
@@ -170,11 +170,11 @@ func (db *Postgresql) BeginTxWithLevelAndConnection(conn string, level sql.Isola
 }
 
 // QueryWithTx is query method within the transaction.
-func (db *Postgresql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+func (*Postgresql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQueryWithTx(tx, filterQuery(query), args...)
 }
 
 // ExecWithTx is exec method within the transaction.
-func (db *Postgresql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+func (*Postgresql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExecWithTx(tx, filterQuery(query), args...)
 }
