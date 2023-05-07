@@ -6,7 +6,6 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -28,22 +27,22 @@ func GetPostgresqlDB() *Postgresql {
 }
 
 // Name implements the method Connection.Name.
-func (db *Postgresql) Name() string {
+func (*Postgresql) Name() string {
 	return "postgresql"
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.
-func (db *Postgresql) GetDelimiter() string {
+func (*Postgresql) GetDelimiter() string {
 	return `"`
 }
 
 // GetDelimiter2 implements the method Connection.GetDelimiter2.
-func (db *Postgresql) GetDelimiter2() string {
+func (*Postgresql) GetDelimiter2() string {
 	return `"`
 }
 
 // GetDelimiters implements the method Connection.GetDelimiters.
-func (db *Postgresql) GetDelimiters() []string {
+func (*Postgresql) GetDelimiters() []string {
 	return []string{`"`, `"`}
 }
 
@@ -96,8 +95,6 @@ func (db *Postgresql) InitDB(cfgList map[string]config.Database) Connection {
 	db.Configs = cfgList
 	db.Once.Do(func() {
 		for conn, cfg := range cfgList {
-
-			fmt.Println("检查 pg 配置", cfg.GetDSN())
 
 			sqlDB, err := sql.Open("postgres", cfg.GetDSN())
 			if err != nil {
@@ -173,11 +170,11 @@ func (db *Postgresql) BeginTxWithLevelAndConnection(conn string, level sql.Isola
 }
 
 // QueryWithTx is query method within the transaction.
-func (db *Postgresql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
+func (*Postgresql) QueryWithTx(tx *sql.Tx, query string, args ...interface{}) ([]map[string]interface{}, error) {
 	return CommonQueryWithTx(tx, filterQuery(query), args...)
 }
 
 // ExecWithTx is exec method within the transaction.
-func (db *Postgresql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
+func (*Postgresql) ExecWithTx(tx *sql.Tx, query string, args ...interface{}) (sql.Result, error) {
 	return CommonExecWithTx(tx, filterQuery(query), args...)
 }
