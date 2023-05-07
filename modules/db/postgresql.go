@@ -32,17 +32,17 @@ func (*Postgresql) Name() string {
 }
 
 // GetDelimiter implements the method Connection.GetDelimiter.
-func (db *Postgresql) GetDelimiter() string {
+func (*Postgresql) GetDelimiter() string {
 	return `"`
 }
 
 // GetDelimiter2 implements the method Connection.GetDelimiter2.
-func (db *Postgresql) GetDelimiter2() string {
+func (*Postgresql) GetDelimiter2() string {
 	return `"`
 }
 
 // GetDelimiters implements the method Connection.GetDelimiters.
-func (db *Postgresql) GetDelimiters() []string {
+func (*Postgresql) GetDelimiters() []string {
 	return []string{`"`, `"`}
 }
 
