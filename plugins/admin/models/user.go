@@ -230,7 +230,7 @@ func inMethodArr(arr []string, str string) bool {
 	return false
 }
 
-// UpdateAvatar update the avatar of user.
+// ReleaseConn release the db connection of user model.
 func (t UserModel) ReleaseConn() UserModel {
 	t.Conn = nil
 	return t
