@@ -7,6 +7,7 @@ import (
 	"html"
 	"html/template"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -209,10 +210,19 @@ func (f *FormField) setOptionsFromSQL(sql *db.SQL) {
 		queryRes, err := sql.All()
 		if err == nil {
 			for _, item := range queryRes {
-				f.Options = append(f.Options, FieldOption{
-					Value: fmt.Sprintf("%v", item[f.OptionTable.ValueField]),
-					Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
-				})
+				value := item[f.OptionTable.ValueField]
+				typeStr := reflect.TypeOf(value).String()
+				if typeStr == "[]uint8" {
+					f.Options = append(f.Options, FieldOption{
+						Value: fmt.Sprintf("%v", string(value.([]uint8))),
+						Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
+					})
+				} else {
+					f.Options = append(f.Options, FieldOption{
+						Value: fmt.Sprintf("%v", value),
+						Text:  fmt.Sprintf("%v", item[f.OptionTable.TextField]),
+					})
+				}
 			}
 		}
 

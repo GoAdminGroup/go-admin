@@ -8,7 +8,7 @@ require (
 	github.com/GoAdminGroup/html v0.0.1
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
 	github.com/denisenkom/go-mssqldb v0.0.0-20200206145737-bbfc9a55622e
-	github.com/go-sql-driver/mysql v1.5.0
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/jawher/mow.cli v1.2.0 // indirect
 	github.com/jteeuwen/go-bindata v3.0.7+incompatible // indirect
