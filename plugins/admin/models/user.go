@@ -3,6 +3,7 @@ package models
 import (
 	"database/sql"
 	"net/url"
+	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -339,20 +340,31 @@ func (t UserModel) WithMenus() UserModel {
 	}
 
 	var menuIds []int64
+	var midInt int
+	var mid2Int int
+	var mInt int
 
 	for _, mid := range menuIdsModel {
-		if parentId, err := strconv.Atoi(string(mid["parent_id"].([]uint8))); err == nil && parentId != 0 {
+		if reflect.TypeOf(mid["parent_id"]).String() == "[]uint8" {
+			midInt, _ = strconv.Atoi(string(mid["parent_id"].([]uint8)))
+			mInt, _ = strconv.Atoi(string(mid["menu_id"].([]uint8)))
+		} else {
+			midInt = int(mid["parent_id"].(int64))
+			mInt = int(mid["menu_id"].(int64))
+		}
+		if midInt != 0 {
 			for _, mid2 := range menuIdsModel {
-				mid2Int, _ := strconv.Atoi(string(mid2["menu_id"].([]uint8)))
-				midInt, _ := strconv.Atoi(string(mid["parent_id"].([]uint8)))
+				if reflect.TypeOf(mid2["menu_id"]).String() == "[]uint8" {
+					mid2Int, _ = strconv.Atoi(string(mid2["menu_id"].([]uint8)))
+				} else {
+					mid2Int = int(mid2["menu_id"].(int64))
+				}
 				if mid2Int == midInt {
-					mInt, _ := strconv.Atoi(string(mid["menu_id"].([]uint8)))
 					menuIds = append(menuIds, int64(mInt))
 					break
 				}
 			}
 		} else {
-			mInt, _ := strconv.Atoi(string(mid["menu_id"].([]uint8)))
 			menuIds = append(menuIds, int64(mInt))
 		}
 	}
