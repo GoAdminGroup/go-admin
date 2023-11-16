@@ -544,7 +544,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 
 	groupBy := ""
 	if len(joinTables) > 0 {
-		if connection.Name() == db.DriverMssql {
+		if connection.Name() == db.DriverMssql || connection.Name() == db.DriverPostgresql {
 			groupBy = " GROUP BY " + groupFields
 		} else {
 			groupBy = " GROUP BY " + pk
@@ -702,7 +702,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 		}
 
 		if len(joinTables) > 0 {
-			if connection.Name() == db.DriverMssql {
+			if connection.Name() == db.DriverMssql  || connection.Name() == db.DriverPostgresql {
 				groupBy = " GROUP BY " + groupFields
 			} else {
 				groupBy = " GROUP BY " + pk
