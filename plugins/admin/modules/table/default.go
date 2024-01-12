@@ -471,7 +471,7 @@ func (tb *DefaultTable) getDataFromDatabase(params parameter.Parameters) (PanelI
 			queryStatement = "SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY %s." + placeholder + " %s) as ROWNUMBER_, %s from " +
 				placeholder + "%s %s %s ) as TMP_ WHERE TMP_.ROWNUMBER_ > ? AND TMP_.ROWNUMBER_ <= ?"
 			// %s means: table, join table, wheres
-			countStatement = "select count(*) as [size] from (select count(*) as [size] from " + placeholder + " %s %s %s) src"
+			countStatement = "select count(*) as [size] from (select 1 as [size] from " + placeholder + " %s %s %s) src"
 		} else {
 			// %s means: fields, table, join table, wheres, group by, order by field, order by type
 			queryStatement = "select %s from " + placeholder + "%s %s %s order by " + placeholder + "." + placeholder + " %s LIMIT ? OFFSET ?"
