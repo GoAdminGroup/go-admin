@@ -895,7 +895,7 @@ func ReadFromINI(path string) Config {
 
 func SetDefault(cfg *Config) *Config {
 	cfg.Title = utils.SetDefault(cfg.Title, "", "GoAdmin")
-	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "GoAdmin")
+	cfg.LoginTitle = utils.SetDefault(cfg.LoginTitle, "", "赛博口腔")
 	cfg.Logo = template.HTML(utils.SetDefault(string(cfg.Logo), "", "<b>Go</b>Admin"))
 	cfg.MiniLogo = template.HTML(utils.SetDefault(string(cfg.MiniLogo), "", "<b>G</b>A"))
 	cfg.Theme = utils.SetDefault(cfg.Theme, "", "adminlte")
