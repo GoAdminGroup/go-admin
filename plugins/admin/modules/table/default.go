@@ -376,7 +376,7 @@ func (tb *DefaultTable) getTempModelData(res map[string]interface{}, params para
 func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (PanelInfo, error) {
 	var (
 		connection     = tb.db()
-		queryStatement = "select %s from %s %s %s %s order by " + modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), "%s") + " %s"
+		queryStatement = "select %s from %s %s %s %s order by " + "%s" + " %s"
 	)
 
 	columns, _ := tb.getColumns(tb.Info.Table)
@@ -414,6 +414,8 @@ func (tb *DefaultTable) getAllDataFromDatabase(params parameter.Parameters) (Pan
 	if !modules.InArray(columns, params.SortField) {
 		params.SortField = tb.PrimaryKey.Name
 	}
+	// 修复连表字段排序问题 ambiguous column name: id 错误
+	params.SortField = tb.Info.Table + "." + modules.Delimiter(connection.GetDelimiter(), connection.GetDelimiter2(), params.SortField)
 
 	queryCmd := fmt.Sprintf(queryStatement, fields, tb.Info.Table, joins, wheres, groupBy, params.SortField, params.SortType)
 
