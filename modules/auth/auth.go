@@ -135,10 +135,9 @@ func (s *TokenService) AddToken() string {
 
 // CheckToken check the given token with tokens in the CSRFToken, if exist
 // return true.
-func (s *TokenService) CheckToken(toCheckToken string) bool {
-	for i := 0; i < len(s.tokens); i++ {
-		if (s.tokens)[i] == toCheckToken {
-			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
+func (s *TokenService) CheckToken(toCheckToken string) (ok bool) {
+	defer func() {
+		if ok {
 			err := db.WithDriver(s.conn).Table("goadmin_session").
 				Where("sid", "=", toCheckToken).
 				Where("values", "=", "__csrf_token__").
@@ -146,11 +145,30 @@ func (s *TokenService) CheckToken(toCheckToken string) bool {
 			if db.CheckError(err, db.DELETE) {
 				logger.Error("csrf token delete from database error: ", err)
 			}
-			return true
+		}
+	}()
+
+	// 优先本地查询
+	for i := 0; i < len(s.tokens); i++ {
+		if (s.tokens)[i] == toCheckToken {
+			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
+			ok = true
+			return
 		}
 	}
-	return false
+
+	// 从数据库查询，适配多实例的情况
+	item, err := db.WithDriver(s.conn).Table("goadmin_session").
+		Where("sid", "=", toCheckToken).
+		Where("values", "=", "__csrf_token__").
+		First()
+	if item != nil && err == nil {
+		ok = true
+		return
+	}
+	return
 }
+
 
 // CSRFToken is type of a csrf token list.
 type CSRFToken []string
