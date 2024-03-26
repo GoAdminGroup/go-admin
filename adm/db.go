@@ -67,7 +67,7 @@ func askForDBConfig(info *dbInfo) config.DatabaseList {
 
 	if info.DriverName == "" {
 		info.DriverName = singleSelect(getWord("choose a driver"),
-			[]string{db.DriverMysql, db.DriverPostgresql, db.DriverSqlite, db.DriverMssql}, db.DriverMysql)
+			[]string{db.DriverMysql, db.DriverPostgresql, db.DriverSqlite, db.DriverMssql, db.DriverOceanBase}, db.DriverMysql)
 	}
 
 	if info.DriverName != db.DriverSqlite {
@@ -83,6 +83,10 @@ func askForDBConfig(info *dbInfo) config.DatabaseList {
 		if info.DriverName == db.DriverMssql {
 			defaultPort = "1433"
 			defaultUser = "sa"
+		}
+		if info.DriverName == db.DriverOceanBase {
+			defaultPort = "2881"
+			defaultUser = "root@sys"
 		}
 
 		if info.Host == "" {

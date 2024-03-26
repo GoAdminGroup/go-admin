@@ -116,7 +116,7 @@ func buildProject(cfgFile string) {
 	}
 	if p.Driver == "" {
 		p.Driver = singleSelect(getWord("choose a driver"),
-			[]string{"mysql", "postgresql", "sqlite", "mssql"}, "mysql")
+			[]string{"mysql", "postgresql", "sqlite", "mssql", "oceanbase"}, "mysql")
 	}
 	p.DriverModule = p.Driver
 	if p.Driver == db.DriverPostgresql {
@@ -238,6 +238,9 @@ func GetCurrentDirectory() string {
 }
 
 func installProjectTmpl(p Project, cfg *config.Config, cfgFile string, info *dbInfo) {
+	if p.Driver == "oceanbase" {
+		p.Driver = "OceanBase"
+	}
 
 	t, err := template.New("project").Funcs(map[string]interface{}{
 		"title": strings.Title,
@@ -248,7 +251,7 @@ func installProjectTmpl(p Project, cfg *config.Config, cfgFile string, info *dbI
 	c, err := format.Source(buf.Bytes())
 	checkError(err)
 	checkError(ioutil.WriteFile("./main.go", c, 0644))
-
+	p.Driver = "oceanbase"
 	checkError(os.Mkdir("pages", os.ModePerm))
 	checkError(os.Mkdir("tables", os.ModePerm))
 	checkError(os.Mkdir("logs", os.ModePerm))
@@ -291,10 +294,26 @@ func Init(c db.Connection) {
 	}
 
 	if defaultLang == "cn" || p.Language == language.CN || p.Language == "cn" {
-		checkError(ioutil.WriteFile("./main_test.go", mainTestCN, 0644))
+		t, err := template.New("project").Funcs(map[string]interface{}{
+			"title": strings.Title,
+		}).Parse(mainTest["mainTestCN"])
+		checkError(err)
+		buf := new(bytes.Buffer)
+		checkError(t.Execute(buf, p))
+		c, err := format.Source(buf.Bytes())
+		checkError(err)
+		checkError(ioutil.WriteFile("./main_test.go", c, 0644))
 		checkError(ioutil.WriteFile("./README.md", []byte(fmt.Sprintf(readmeCN, p.Port+"/"+p.Prefix)), 0644))
 	} else {
-		checkError(ioutil.WriteFile("./main_test.go", mainTest, 0644))
+		t, err := template.New("project").Funcs(map[string]interface{}{
+			"title": strings.Title,
+		}).Parse(mainTest["mainTest"])
+		checkError(err)
+		buf := new(bytes.Buffer)
+		checkError(t.Execute(buf, p))
+		c, err := format.Source(buf.Bytes())
+		checkError(err)
+		checkError(ioutil.WriteFile("./main_test.go", c, 0644))
 		checkError(ioutil.WriteFile("./README.md", []byte(fmt.Sprintf(readme, p.Port+"/"+p.Prefix)), 0644))
 	}
 
