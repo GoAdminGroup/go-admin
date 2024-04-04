@@ -37,6 +37,7 @@ var tc = LangSet{
 	"input":             "輸入",
 	"operation":         "操作",
 	"menu name":         "菜單名",
+	"query time":        "查询时间",
 
 	"are you sure to delete": "你確定要刪除嗎",
 	"delete succeed":         "刪除成功",

@@ -51,6 +51,7 @@ var jp = LangSet{
 	"permission denied": "権限がありません",
 	"error":             "エラー",
 	"current page":      "現在のページ",
+	"query time":        "クエリ時間",
 
 	"are you sure to delete": "本当に削除しますか",
 	"yes":                    "はい",

@@ -75,7 +75,8 @@ var cn = LangSet{
 	"confirm password":       "确认密码",
 	"all method if empty":    "为空默认为所有方法",
 
-	"detail": "详情",
+	"detail":     "详情",
+	"query time": "查询时间",
 
 	"avatar":     "头像",
 	"password":   "密码",

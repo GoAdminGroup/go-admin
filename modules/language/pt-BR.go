@@ -36,6 +36,7 @@ var ptbr = LangSet{
 	"confirm password": "Confirmar a Senha",
 	"search":           "Procurar",
 	"remove":           "Remover",
+	"query time":       "tempo de consulta",
 
 	"goadmin is now running. \nrunning in \"debug\" mode. switch to \"release\" mode in production.\n\n": "GoAdmin agora está em execução. \nExecutando no modo \"debug \". Mude para o modo de \"release\" em produção. \n\n",
 
