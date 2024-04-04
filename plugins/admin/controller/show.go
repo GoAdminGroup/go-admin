@@ -305,7 +305,7 @@ func (h *Handler) Assets(ctx *context.Context) {
 	if err != nil {
 		data, err = template.GetAsset(filepath)
 		if err != nil {
-			logger.Error("asset err", err)
+			logger.ErrorCtx(ctx, "asset err", err)
 			ctx.Write(http.StatusNotFound, map[string]string{}, "")
 			return
 		}

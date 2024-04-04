@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 
 	"github.com/GoAdminGroup/go-admin/modules/db"
@@ -754,7 +755,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 }
 
 // UpdateData update data.
-func (tb *DefaultTable) UpdateData(dataList form.Values) error {
+func (tb *DefaultTable) UpdateData(ctx *context.Context, dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "0")
 
@@ -770,13 +771,13 @@ func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 			go func() {
 				defer func() {
 					if err := recover(); err != nil {
-						logger.Error(err)
+						logger.ErrorCtx(ctx, err)
 					}
 				}()
 
 				err := tb.Form.PostHook(dataList)
 				if err != nil {
-					logger.Error(err)
+					logger.ErrorCtx(ctx, err)
 				}
 			}()
 		}()
@@ -822,7 +823,7 @@ func (tb *DefaultTable) UpdateData(dataList form.Values) error {
 }
 
 // InsertData insert data.
-func (tb *DefaultTable) InsertData(dataList form.Values) error {
+func (tb *DefaultTable) InsertData(ctx *context.Context, dataList form.Values) error {
 
 	dataList.Add(form.PostTypeKey, "1")
 
@@ -842,13 +843,13 @@ func (tb *DefaultTable) InsertData(dataList form.Values) error {
 			go func() {
 				defer func() {
 					if err := recover(); err != nil {
-						logger.Error(err)
+						logger.ErrorCtx(ctx, err)
 					}
 				}()
 
 				err := f.PostHook(dataList)
 				if err != nil {
-					logger.Error(err)
+					logger.ErrorCtx(ctx, err)
 				}
 			}()
 		}()

@@ -10,6 +10,7 @@ import (
 	"strconv"
 
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/trace"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/mgutz/ansi"
 	"github.com/natefinch/lumberjack"
@@ -258,6 +259,13 @@ func Info(info ...interface{}) {
 	}
 }
 
+// InfoCtx print the info message with ctx.
+func InfoCtx(ctx *context.Context, info ...interface{}) {
+	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
+		logger.sugaredLogger.Fatal(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, info...)...)
+	}
+}
+
 // Info print the info message.
 func Infof(template string, args ...interface{}) {
 	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
@@ -269,6 +277,13 @@ func Infof(template string, args ...interface{}) {
 func Warn(info ...interface{}) {
 	if !logger.infoLogOff && logger.Level <= zapcore.WarnLevel {
 		logger.sugaredLogger.Warn(info...)
+	}
+}
+
+// WarnCtx print the warning message with ctx.
+func WarnCtx(ctx *context.Context, info ...interface{}) {
+	if !logger.infoLogOff && logger.Level <= zapcore.WarnLevel {
+		logger.sugaredLogger.Warn(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, info...)...)
 	}
 }
 
@@ -286,6 +301,13 @@ func Error(err ...interface{}) {
 	}
 }
 
+// ErrorCtx print the error message with ctx.
+func ErrorCtx(ctx *context.Context, err ...interface{}) {
+	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
+		logger.sugaredLogger.Error(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, err...)...)
+	}
+}
+
 // Errorf print the error message.
 func Errorf(template string, args ...interface{}) {
 	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
@@ -297,6 +319,13 @@ func Errorf(template string, args ...interface{}) {
 func Fatal(info ...interface{}) {
 	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
 		logger.sugaredLogger.Fatal(info...)
+	}
+}
+
+// FatalCtx print the fatal message with ctx.
+func FatalCtx(ctx *context.Context, err ...interface{}) {
+	if !logger.errorLogOff && logger.Level <= zapcore.FatalLevel {
+		logger.sugaredLogger.Fatal(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, err...)...)
 	}
 }
 

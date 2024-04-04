@@ -61,7 +61,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	formInfo, err := panel.GetDataWithId(param)
 
 	if err != nil {
-		logger.Error("receive data error: ", err)
+		logger.ErrorCtx(ctx, "receive data error: ", err)
 		h.HTML(ctx, user, template.
 			WarningPanelWithDescAndTitle(err.Error(), panel.GetForm().Description, panel.GetForm().Title),
 			template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0])})
@@ -143,7 +143,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			logger.Error("get file engine error: ", err)
+			logger.ErrorCtx(ctx, "get file engine error: ", err)
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
@@ -169,9 +169,9 @@ func (h *Handler) EditForm(ctx *context.Context) {
 		}
 	}
 
-	err := param.Panel.UpdateData(param.Value())
+	err := param.Panel.UpdateData(ctx, param.Value())
 	if err != nil {
-		logger.Error("update data error: ", err)
+		logger.ErrorCtx(ctx, "update data error: ", err)
 		if ctx.WantJSON() {
 			response.Error(ctx, err.Error(), map[string]interface{}{
 				"token": h.authSrv().AddToken(),

@@ -23,7 +23,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 	panel, err := c(ctx)
 
 	if err != nil {
-		logger.Error("SetPageContent", err)
+		logger.ErrorCtx(ctx, "SetPageContent", err)
 		panel = template.WarningPanel(err.Error())
 	}
 
@@ -43,7 +43,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 		Iframe:       ctx.IsIframe(),
 	}))
 	if err != nil {
-		logger.Error("SetPageContent", err)
+		logger.ErrorCtx(ctx, "SetPageContent", err)
 	}
 	ctx.WriteString(buf.String())
 }

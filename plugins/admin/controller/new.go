@@ -103,7 +103,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 	if len(param.MultiForm.File) > 0 {
 		err := file.GetFileEngine(h.config.FileUploadEngine.Name).Upload(param.MultiForm)
 		if err != nil {
-			logger.Error("get file engine error: ", err)
+			logger.ErrorCtx(ctx, "get file engine error: ", err)
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
@@ -113,9 +113,9 @@ func (h *Handler) NewForm(ctx *context.Context) {
 		}
 	}
 
-	err := param.Panel.InsertData(param.Value())
+	err := param.Panel.InsertData(ctx, param.Value())
 	if err != nil {
-		logger.Error("insert data error: ", err)
+		logger.ErrorCtx(ctx, "insert data error: ", err)
 		if ctx.WantJSON() {
 			response.Error(ctx, err.Error(), map[string]interface{}{
 				"token": h.authSrv().AddToken(),

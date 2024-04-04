@@ -19,7 +19,7 @@ func (h *Handler) ApiCreate(ctx *context.Context) {
 		}
 	}
 
-	err := param.Panel.InsertData(param.Value())
+	err := param.Panel.InsertData(ctx, param.Value())
 	if err != nil {
 		response.Error(ctx, err.Error())
 		return

@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"net"
 	"net/http"
@@ -84,6 +83,11 @@ func (ctx *Context) SetUserValue(key string, value interface{}) {
 	ctx.UserValue[key] = value
 }
 
+// GetUserValue get the value of key.
+func (ctx *Context) GetUserValue(key string) interface{} {
+	return ctx.UserValue[key]
+}
+
 // Path return the url path.
 func (ctx *Context) Path() string {
 	return ctx.Request.URL.Path
@@ -147,7 +151,7 @@ const (
 
 func (ctx *Context) BindJSON(data interface{}) error {
 	if ctx.Request.Body != nil {
-		b, err := ioutil.ReadAll(ctx.Request.Body)
+		b, err := io.ReadAll(ctx.Request.Body)
 		if err == nil {
 			return json.Unmarshal(b, data)
 		}
@@ -158,7 +162,7 @@ func (ctx *Context) BindJSON(data interface{}) error {
 
 func (ctx *Context) MustBindJSON(data interface{}) {
 	if ctx.Request.Body != nil {
-		b, err := ioutil.ReadAll(ctx.Request.Body)
+		b, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
 			panic(err)
 		}
@@ -176,7 +180,7 @@ func (ctx *Context) Write(code int, header map[string]string, Body string) {
 	for key, head := range header {
 		ctx.AddHeader(key, head)
 	}
-	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(Body))
+	ctx.Response.Body = io.NopCloser(strings.NewReader(Body))
 }
 
 // JSON serializes the given struct as JSON into the response body.
@@ -188,7 +192,7 @@ func (ctx *Context) JSON(code int, Body map[string]interface{}) {
 	if err != nil {
 		panic(err)
 	}
-	ctx.Response.Body = ioutil.NopCloser(bytes.NewReader(BodyStr))
+	ctx.Response.Body = io.NopCloser(bytes.NewReader(BodyStr))
 }
 
 // DataWithHeaders save the given status code, headers and body data into the response.
@@ -197,14 +201,14 @@ func (ctx *Context) DataWithHeaders(code int, header map[string]string, data []b
 	for key, head := range header {
 		ctx.AddHeader(key, head)
 	}
-	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+	ctx.Response.Body = io.NopCloser(bytes.NewBuffer(data))
 }
 
 // Data writes some data into the body stream and updates the HTTP code.
 func (ctx *Context) Data(code int, contentType string, data []byte) {
 	ctx.Response.StatusCode = code
 	ctx.SetContentType(contentType)
-	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+	ctx.Response.Body = io.NopCloser(bytes.NewBuffer(data))
 }
 
 // Redirect add redirect url to header.
@@ -225,12 +229,12 @@ func (ctx *Context) HTML(code int, body string) {
 func (ctx *Context) HTMLByte(code int, body []byte) {
 	ctx.SetContentType("text/html; charset=utf-8")
 	ctx.SetStatusCode(code)
-	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	ctx.Response.Body = io.NopCloser(bytes.NewBuffer(body))
 }
 
 // WriteString save the given body string into the response.
 func (ctx *Context) WriteString(body string) {
-	ctx.Response.Body = ioutil.NopCloser(strings.NewReader(body))
+	ctx.Response.Body = io.NopCloser(strings.NewReader(body))
 }
 
 // SetStatusCode save the given status code into the response.
@@ -462,8 +466,8 @@ func (ctx *Context) ServeContent(content io.ReadSeeker, filename string, modtime
 		ctx.SetContentType(filename)
 	}
 
-	buf, _ := ioutil.ReadAll(content)
-	ctx.Response.Body = ioutil.NopCloser(bytes.NewBuffer(buf))
+	buf, _ := io.ReadAll(content)
+	ctx.Response.Body = io.NopCloser(bytes.NewBuffer(buf))
 	return nil
 }
 
@@ -522,8 +526,8 @@ type Handlers []Handler
 // support the route parameter. The route parameter will be recognized as
 // wildcard store into the RegUrl of Path struct. For example:
 //
-//         /user/:id      => /user/(.*)
-//         /user/:id/info => /user/(.*?)/info
+//	/user/:id      => /user/(.*)
+//	/user/:id/info => /user/(.*?)/info
 //
 // The RegUrl will be used to recognize the incoming path and find
 // the handler.
@@ -636,8 +640,8 @@ type RouterGroup struct {
 // support the route parameter. The route parameter will be recognized as
 // wildcard store into the RegUrl of Path struct. For example:
 //
-//         /user/:id      => /user/(.*)
-//         /user/:id/info => /user/(.*?)/info
+//	/user/:id      => /user/(.*)
+//	/user/:id/info => /user/(.*?)/info
 //
 // The RegUrl will be used to recognize the incoming path and find
 // the handler.
@@ -728,12 +732,11 @@ func (g *RouterGroup) Group(prefix string, middleware ...Handler) *RouterGroup {
 
 // slash fix the path which has wrong format problem.
 //
-// 	 ""      => "/"
-// 	 "abc/"  => "/abc"
-// 	 "/abc/" => "/abc"
-// 	 "/abc"  => "/abc"
-// 	 "/"     => "/"
-//
+//	""      => "/"
+//	"abc/"  => "/abc"
+//	"/abc/" => "/abc"
+//	"/abc"  => "/abc"
+//	"/"     => "/"
 func slash(prefix string) string {
 	prefix = strings.TrimSpace(prefix)
 	if prefix == "" || prefix == "/" {

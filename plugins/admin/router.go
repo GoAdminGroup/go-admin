@@ -4,6 +4,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/GoAdminGroup/go-admin/modules/trace"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/response"
 	"github.com/GoAdminGroup/go-admin/template"
@@ -105,3 +106,19 @@ func (admin *Admin) globalErrorHandler(ctx *context.Context) {
 	response.OffLineHandler(ctx)
 	ctx.Next()
 }
+
+func (admin *Admin) traceIDMiddleware(ctx *context.Context) {
+	traceID := ctx.Headers(traceIDHeaderKey)
+
+	if traceID == "" {
+		traceID = trace.GenerateTraceID()
+	}
+
+	ctx.SetUserValue(trace.TraceIDKey, traceID)
+	ctx.SetHeader(traceIDHeaderKey, traceID)
+	ctx.Next()
+}
+
+const (
+	traceIDHeaderKey = "x-request-id"
+)
