@@ -87,7 +87,7 @@ func (h *Handler) Auth(ctx *context.Context) {
 func (h *Handler) Logout(ctx *context.Context) {
 	err := auth.DelCookie(ctx, db.GetConnection(h.services))
 	if err != nil {
-		logger.ErrorCtx(ctx, "logout error", err)
+		logger.ErrorCtx(ctx, "logout error %+v", err)
 	}
 	ctx.AddHeader("Location", h.config.Url(config.GetLoginUrl()))
 	ctx.SetStatusCode(302)
@@ -115,7 +115,7 @@ func (h *Handler) ShowLogin(ctx *context.Context) {
 	}); err == nil {
 		ctx.HTML(http.StatusOK, buf.String())
 	} else {
-		logger.ErrorCtx(ctx, err)
+		logger.ErrorCtx(ctx, "ShowLogin error %+v", err)
 		ctx.HTML(http.StatusOK, "parse template error (；′⌒`)")
 	}
 }

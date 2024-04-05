@@ -160,7 +160,7 @@ func Filter(ctx *context.Context, conn db.Connection) (models.UserModel, bool, b
 	)
 
 	if err != nil {
-		logger.ErrorCtx(ctx, "retrieve auth user failed", err)
+		logger.ErrorCtx(ctx, "retrieve auth user failed %+v", err)
 		return user, false, false
 	}
 

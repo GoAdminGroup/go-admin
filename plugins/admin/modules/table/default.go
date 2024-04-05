@@ -771,13 +771,13 @@ func (tb *DefaultTable) UpdateData(ctx *context.Context, dataList form.Values) e
 			go func() {
 				defer func() {
 					if err := recover(); err != nil {
-						logger.ErrorCtx(ctx, err)
+						logger.ErrorCtx(ctx, "UpdateData error %+v", err)
 					}
 				}()
 
 				err := tb.Form.PostHook(dataList)
 				if err != nil {
-					logger.ErrorCtx(ctx, err)
+					logger.ErrorCtx(ctx, "UpdateData PostHook error %+v", err)
 				}
 			}()
 		}()
@@ -843,13 +843,13 @@ func (tb *DefaultTable) InsertData(ctx *context.Context, dataList form.Values) e
 			go func() {
 				defer func() {
 					if err := recover(); err != nil {
-						logger.ErrorCtx(ctx, err)
+						logger.ErrorCtx(ctx, "InsertData error %+v", err)
 					}
 				}()
 
 				err := f.PostHook(dataList)
 				if err != nil {
-					logger.ErrorCtx(ctx, err)
+					logger.ErrorCtx(ctx, "InsertData PostHook error %+v", err)
 				}
 			}()
 		}()

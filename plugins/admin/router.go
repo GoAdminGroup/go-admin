@@ -14,7 +14,7 @@ import (
 func (admin *Admin) initRouter() *Admin {
 	app := context.NewApp()
 
-	route := app.Group(config.Prefix(), admin.globalErrorHandler)
+	route := app.Group(config.Prefix(), admin.globalErrorHandler, admin.traceIDMiddleware)
 
 	// auth
 	route.GET(config.GetLoginUrl(), admin.handler.ShowLogin)

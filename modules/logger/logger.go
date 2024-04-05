@@ -5,6 +5,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -12,7 +13,6 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/trace"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/mgutz/ansi"
 	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -260,10 +260,16 @@ func Info(info ...interface{}) {
 }
 
 // InfoCtx print the info message with ctx.
-func InfoCtx(ctx *context.Context, info ...interface{}) {
+func InfoCtx(ctx *context.Context, format string, args ...interface{}) {
 	if !logger.infoLogOff && logger.Level <= zapcore.InfoLevel {
-		logger.sugaredLogger.Fatal(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, info...)...)
+		logCtx(ctx, logger.logger.Info, format, args...)
 	}
+}
+
+type logFunc func(msg string, fields ...zapcore.Field)
+
+func logCtx(ctx *context.Context, logFunc logFunc, format string, args ...interface{}) {
+	logFunc(fmt.Sprintf(format, args...), zap.String("traceID", trace.GetTraceID(ctx)))
 }
 
 // Info print the info message.
@@ -281,9 +287,9 @@ func Warn(info ...interface{}) {
 }
 
 // WarnCtx print the warning message with ctx.
-func WarnCtx(ctx *context.Context, info ...interface{}) {
+func WarnCtx(ctx *context.Context, format string, args ...interface{}) {
 	if !logger.infoLogOff && logger.Level <= zapcore.WarnLevel {
-		logger.sugaredLogger.Warn(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, info...)...)
+		logCtx(ctx, logger.logger.Warn, format, args...)
 	}
 }
 
@@ -302,9 +308,9 @@ func Error(err ...interface{}) {
 }
 
 // ErrorCtx print the error message with ctx.
-func ErrorCtx(ctx *context.Context, err ...interface{}) {
+func ErrorCtx(ctx *context.Context, format string, args ...interface{}) {
 	if !logger.errorLogOff && logger.Level <= zapcore.ErrorLevel {
-		logger.sugaredLogger.Error(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, err...)...)
+		logCtx(ctx, logger.logger.Error, format, args...)
 	}
 }
 
@@ -323,9 +329,9 @@ func Fatal(info ...interface{}) {
 }
 
 // FatalCtx print the fatal message with ctx.
-func FatalCtx(ctx *context.Context, err ...interface{}) {
+func FatalCtx(ctx *context.Context, format string, args ...interface{}) {
 	if !logger.errorLogOff && logger.Level <= zapcore.FatalLevel {
-		logger.sugaredLogger.Fatal(append([]interface{}{zap.String("traceID", trace.GetTraceID(ctx))}, err...)...)
+		logCtx(ctx, logger.logger.Fatal, format, args...)
 	}
 }
 
@@ -341,6 +347,11 @@ func Panic(info ...interface{}) {
 	logger.sugaredLogger.Panic(info...)
 }
 
+// PanicCtx print the panic message with ctx.
+func PanicCtx(ctx *context.Context, format string, args ...interface{}) {
+	logCtx(ctx, logger.logger.Panic, format, args...)
+}
+
 // Panicf print the panic message.
 func Panicf(template string, args ...interface{}) {
 	logger.sugaredLogger.Panicf(template, args...)
@@ -349,19 +360,20 @@ func Panicf(template string, args ...interface{}) {
 // Access print the access message.
 func Access(ctx *context.Context) {
 	if !logger.accessLogOff && logger.Level <= zapcore.InfoLevel {
-		temp := "[GoAdmin] %s %s %s"
 		if logger.accessAssetsLogOff {
 			if filepath.Ext(ctx.Path()) == "" {
-				logger.sugaredLogger.Warnf(temp,
-					ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-					ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
-					ctx.Path())
+				logger.logger.Info("[GoAdmin]",
+					zap.String("traceID", trace.GetTraceID(ctx)),
+					zap.String("statuscode", strconv.Itoa(ctx.Response.StatusCode)),
+					zap.String("method", string(ctx.Method())),
+					zap.String("path", ctx.Path()))
 			}
 		} else {
-			logger.sugaredLogger.Warnf(temp,
-				ansi.Color(" "+strconv.Itoa(ctx.Response.StatusCode)+" ", "white:blue"),
-				ansi.Color(" "+string(ctx.Method())+"   ", "white:blue+h"),
-				ctx.Path())
+			logger.logger.Info("[GoAdmin]",
+				zap.String("traceID", trace.GetTraceID(ctx)),
+				zap.String("statuscode", strconv.Itoa(ctx.Response.StatusCode)),
+				zap.String("method", string(ctx.Method())),
+				zap.String("path", ctx.Path()))
 		}
 	}
 }

@@ -28,7 +28,7 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 	}
 
 	if err := recover(); err != nil {
-		logger.ErrorCtx(ctx, err)
+		logger.ErrorCtx(ctx, "GlobalDeferHandler error %+v", err)
 
 		var (
 			errMsg string

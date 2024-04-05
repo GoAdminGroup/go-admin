@@ -404,7 +404,7 @@ func (eng *Engine) addJumpNavButton(param navJumpButtonParam) *Engine {
 }
 
 func printInitMsg(msg string) {
-	logger.Info("=====> " + msg)
+	logger.Info(msg)
 }
 
 func (eng *Engine) initJumpNavButtons() {

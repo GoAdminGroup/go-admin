@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -363,7 +363,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		var err error
 		downloadURL, extraDownloadURL, err = remote_server.GetDownloadURL(plug.GetInfo().Uuid, ctx.Cookie(remote_server.TokenKey))
 		if err != nil {
-			logger.ErrorCtx(ctx, "download plugins error", err)
+			logger.ErrorCtx(ctx, "download plugins error: %+v", err)
 			ctx.JSON(http.StatusOK, map[string]interface{}{
 				"code": 500,
 				"msg":  plugWord("download fail"),
@@ -377,7 +377,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	err := utils.DownloadTo(downloadURL, tempFile)
 
 	if err != nil {
-		logger.ErrorCtx(ctx, "download plugins error", map[string]interface{}{
+		logger.ErrorCtx(ctx, "download plugins error %+v", map[string]interface{}{
 			"error":       err,
 			"downloadURL": downloadURL,
 		})
@@ -411,7 +411,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	err = utils.UnzipDir(tempFile, installPath)
 
 	if err != nil {
-		logger.ErrorCtx(ctx, "download plugins, unzip error", map[string]interface{}{
+		logger.ErrorCtx(ctx, "download plugins, unzip error %+v", map[string]interface{}{
 			"error":       err,
 			"installPath": installPath,
 		})
@@ -435,7 +435,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 			err = os.Rename(nowPath, rawPath+"@"+plug.GetInfo().Version)
 		}
 		if err != nil {
-			logger.ErrorCtx(ctx, "download plugins, rename error", map[string]interface{}{
+			logger.ErrorCtx(ctx, "download plugins, rename error %+v", map[string]interface{}{
 				"error":   err,
 				"nowPath": nowPath,
 				"rawPath": rawPath,
@@ -450,7 +450,7 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 		rawPath := installPath + "/" + name
 		err = os.Rename(rawPath, rawPath+"@"+plug.GetInfo().Version)
 		if err != nil {
-			logger.ErrorCtx(ctx, "download plugins, rename error", map[string]interface{}{
+			logger.ErrorCtx(ctx, "download plugins, rename error %+v", map[string]interface{}{
 				"error":   err,
 				"rawPath": rawPath,
 			})
@@ -463,25 +463,25 @@ func (h *Handler) PluginDownload(ctx *context.Context) {
 	}
 
 	if h.config.BootstrapFilePath != "" && utils.FileExist(h.config.BootstrapFilePath) {
-		content, err := io.ReadFile(h.config.BootstrapFilePath)
+		content, err := ioutil.ReadFile(h.config.BootstrapFilePath)
 		if err != nil {
-			logger.ErrorCtx(ctx, "read bootstrap file error: ", err)
+			logger.ErrorCtx(ctx, "read bootstrap file error: %+v", err)
 		} else {
-			err = io.WriteFile(h.config.BootstrapFilePath, []byte(string(content)+`
+			err = ioutil.WriteFile(h.config.BootstrapFilePath, []byte(string(content)+`
 import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 			if err != nil {
-				logger.ErrorCtx(ctx, "write bootstrap file error: ", err)
+				logger.ErrorCtx(ctx, "write bootstrap file error: %+v", err)
 			}
 		}
 	}
 
 	if h.config.GoModFilePath != "" && utils.FileExist(h.config.GoModFilePath) &&
 		plug.GetInfo().CanUpdate && plug.GetInfo().OldVersion != "" {
-		content, _ := io.ReadFile(h.config.BootstrapFilePath)
+		content, _ := ioutil.ReadFile(h.config.BootstrapFilePath)
 		src := plug.GetInfo().ModulePath + " " + plug.GetInfo().OldVersion
 		dist := plug.GetInfo().ModulePath + " " + plug.GetInfo().Version
 		content = bytes.ReplaceAll(content, []byte(src), []byte(dist))
-		_ = io.WriteFile(h.config.BootstrapFilePath, content, 0644)
+		_ = ioutil.WriteFile(h.config.BootstrapFilePath, content, 0644)
 	}
 
 	// TODO: 实现运行环境与编译环境隔离
@@ -490,7 +490,7 @@ import _ "`+plug.GetInfo().ModulePath+`"`), 0644)
 		err = utils.DownloadTo(extraDownloadURL, "./"+plug.Name()+"_extra_"+
 			fmt.Sprintf("%d", time.Now().Unix())+".zip")
 		if err != nil {
-			logger.ErrorCtx(ctx, "failed to download "+plug.Name()+" extra data: ", err)
+			logger.ErrorCtx(ctx, "failed to download "+plug.Name()+" extra data: %+v", err)
 		}
 	}
 

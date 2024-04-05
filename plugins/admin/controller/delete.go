@@ -21,7 +21,7 @@ func (h *Handler) Delete(ctx *context.Context) {
 	//}
 
 	if err := h.table(param.Prefix, ctx).DeleteData(param.Id); err != nil {
-		logger.ErrorCtx(ctx, err)
+		logger.ErrorCtx(ctx, "Delete error %+v", err)
 		response.Error(ctx, "delete fail")
 		return
 	}
