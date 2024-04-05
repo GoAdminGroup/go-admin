@@ -362,14 +362,14 @@ func Access(ctx *context.Context) {
 	if !logger.accessLogOff && logger.Level <= zapcore.InfoLevel {
 		if logger.accessAssetsLogOff {
 			if filepath.Ext(ctx.Path()) == "" {
-				logger.logger.Info("[GoAdmin]",
+				logger.logger.Info("[GoAdmin] access log",
 					zap.String("traceID", trace.GetTraceID(ctx)),
 					zap.String("statuscode", strconv.Itoa(ctx.Response.StatusCode)),
 					zap.String("method", string(ctx.Method())),
 					zap.String("path", ctx.Path()))
 			}
 		} else {
-			logger.logger.Info("[GoAdmin]",
+			logger.logger.Info("[GoAdmin] access log",
 				zap.String("traceID", trace.GetTraceID(ctx)),
 				zap.String("statuscode", strconv.Itoa(ctx.Response.StatusCode)),
 				zap.String("method", string(ctx.Method())),
