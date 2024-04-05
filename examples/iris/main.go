@@ -85,7 +85,6 @@ func main() {
 
 	app.HandleDir("/uploads", "./uploads", iris.DirOptions{
 		IndexName: "/index.html",
-		Gzip:      false,
 		ShowList:  false,
 	})
 

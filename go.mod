@@ -4,7 +4,6 @@ go 1.21
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
-	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/GoAdminGroup/html v0.0.1
 	github.com/GoAdminGroup/themes v0.0.45
 	github.com/NebulousLabs/fastrand v0.0.0-20181203155948-6fb6489aac4e
@@ -23,8 +22,6 @@ require (
 	github.com/gogf/gf/v2 v2.6.4
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.0
-	github.com/jawher/mow.cli v1.2.0
-	github.com/jteeuwen/go-bindata v3.0.7+incompatible
 	github.com/kataras/iris/v12 v12.2.10
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.5
@@ -32,10 +29,8 @@ require (
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/schollz/progressbar v1.0.0
 	github.com/sclevine/agouti v3.0.0+incompatible
 	github.com/stretchr/testify v1.9.0
-	github.com/tdewolff/minify/v2 v2.20.14
 	github.com/teambition/gear v1.27.3
 	github.com/valyala/fasthttp v1.52.0
 	go.uber.org/zap v1.19.1
@@ -120,7 +115,6 @@ require (
 	github.com/kataras/pio v0.0.13 // indirect
 	github.com/kataras/sitemap v0.0.6 // indirect
 	github.com/kataras/tunnel v0.0.4 // indirect
-	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
@@ -161,6 +155,7 @@ require (
 	github.com/spf13/cobra v1.6.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
+	github.com/tdewolff/minify/v2 v2.20.14 // indirect
 	github.com/tdewolff/parse/v2 v2.7.8 // indirect
 	github.com/teambition/trie-mux v1.5.2 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
