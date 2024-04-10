@@ -97,7 +97,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 		panel.GetInfo().SortField, panel.GetInfo().GetSort()).GetRouteParamStr()
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
-		Content: aAlert().Warning(errMsg) + formContent(aForm().
+		Content: aAlert(ctx).Warning(errMsg) + formContent(ctx, aForm(ctx).
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
@@ -109,7 +109,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 				form.PreviousKey: h.config.Url("/info/" + prefix + queryParam),
 			}).
 			SetUrl(h.config.Url("/"+kind+"/"+prefix)).
-			SetOperationFooter(formFooter(kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+			SetOperationFooter(formFooter(ctx, kind, f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 				f.IsHideResetButton, btnWord)).
 			SetHeader(f.HeaderHtml).
 			SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0,

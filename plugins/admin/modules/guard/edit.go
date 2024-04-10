@@ -165,6 +165,6 @@ func alertWithTitleAndDesc(ctx *context.Context, title, desc, msg string, conn d
 	response.Alert(ctx, desc, title, msg, conn, btns)
 }
 
-func getAlert(msg string) tmpl.HTML {
-	return template.Get(config.GetTheme()).Alert().Warning(msg)
+func getAlert(ctx *context.Context, msg string) tmpl.HTML {
+	return template.Get(ctx, config.GetTheme()).Alert().Warning(msg)
 }

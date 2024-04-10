@@ -7,6 +7,7 @@ package template
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"html/template"
 	"path"
 	"plugin"
@@ -14,6 +15,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	c "github.com/GoAdminGroup/go-admin/modules/config"
 	errors2 "github.com/GoAdminGroup/go-admin/modules/errors"
 	"github.com/GoAdminGroup/go-admin/modules/language"
@@ -129,7 +131,16 @@ var templateMap = make(map[string]Template)
 
 // Get the template interface by theme name. If the
 // name is not found, it panics.
-func Get(theme string) Template {
+func Get(ctx *context.Context, theme string) Template {
+	if ctx != nil {
+		queryTheme := ctx.Query("__ga_theme")
+		fmt.Println("__ga_theme", queryTheme, "templateMap", templateMap)
+		if queryTheme != "" {
+			if temp, ok := templateMap[queryTheme]; ok {
+				return temp
+			}
+		}
+	}
 	if temp, ok := templateMap[theme]; ok {
 		return temp
 	}

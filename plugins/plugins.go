@@ -275,7 +275,7 @@ func GetHandler(app *context.App) context.HandlerMap { return app.Handlers }
 
 func Execute(ctx *context.Context, conn db.Connection, navButtons types.Buttons, user models.UserModel,
 	panel types.Panel, options template.ExecuteOptions) *bytes.Buffer {
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(ctx, config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	return template.Execute(&template.ExecuteParam{
 		User:       user,
@@ -298,7 +298,7 @@ func ExecuteWithCustomMenu(ctx *context.Context,
 	panel types.Panel,
 	menu *menu.Menu, logo string, options template.ExecuteOptions) *bytes.Buffer {
 
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(ctx, config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	return template.Execute(&template.ExecuteParam{
 		User:       user,
@@ -323,7 +323,7 @@ func ExecuteWithMenu(ctx *context.Context,
 	panel types.Panel,
 	name, logo string, options template.ExecuteOptions) *bytes.Buffer {
 
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(ctx, config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	btns := options.NavDropDownButton
 	if btns == nil {

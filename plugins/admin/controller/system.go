@@ -17,10 +17,10 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	size := types.Size(6, 6, 6)
 
-	box1 := aBox().
+	box1 := aBox(ctx).
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application") + "</b>").
-		SetBody(stripedTable([]map[string]types.InfoItem{
+		SetBody(stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("app_name")},
 				"value": types.InfoItem{Content: "GoAdmin"},
@@ -29,20 +29,20 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"value": types.InfoItem{Content: template.HTML(system.Version())},
 			}, {
 				"key":   types.InfoItem{Content: lg("theme_name")},
-				"value": types.InfoItem{Content: template.HTML(aTemplate().Name())},
+				"value": types.InfoItem{Content: template.HTML(aTemplate(ctx).Name())},
 			}, {
 				"key":   types.InfoItem{Content: lg("theme_version")},
-				"value": types.InfoItem{Content: template.HTML(aTemplate().GetVersion())},
+				"value": types.InfoItem{Content: template.HTML(aTemplate(ctx).GetVersion())},
 			},
 		})).
 		GetContent()
 
 	app := system.GetAppStatus()
 
-	box2 := aBox().
+	box2 := aBox(ctx).
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application run") + "</b>").
-		SetBody(stripedTable([]map[string]types.InfoItem{
+		SetBody(stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("current_heap_usage")},
 				"value": types.InfoItem{Content: template.HTML(app.HeapAlloc)},
@@ -67,7 +67,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"key":   types.InfoItem{Content: lg("heap_objects")},
 				"value": types.InfoItem{Content: itos(app.HeapObjects)},
 			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+		}) + `<div><hr></div>` + stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("next_gc_recycle")},
 				"value": types.InfoItem{Content: template.HTML(app.NextGC)},
@@ -87,12 +87,12 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		})).
 		GetContent()
 
-	col1 := aCol().SetSize(size).SetContent(box1 + box2).GetContent()
+	col1 := aCol(ctx).SetSize(size).SetContent(box1 + box2).GetContent()
 
-	box4 := aBox().
+	box4 := aBox(ctx).
 		WithHeadBorder().
 		SetHeader("<b>" + lg("application run") + "</b>").
-		SetBody(stripedTable([]map[string]types.InfoItem{
+		SetBody(stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("golang_version")},
 				"value": types.InfoItem{Content: template.HTML(runtime.Version())},
@@ -106,7 +106,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"key":   types.InfoItem{Content: lg("current_goroutine")},
 				"value": types.InfoItem{Content: itos(app.NumGoroutine)},
 			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+		}) + `<div><hr></div>` + stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("current_memory_usage")},
 				"value": types.InfoItem{Content: template.HTML(app.MemAllocated)},
@@ -126,7 +126,7 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 				"key":   types.InfoItem{Content: lg("memory_free_times")},
 				"value": types.InfoItem{Content: itos(app.MemFrees)},
 			},
-		}) + `<div><hr></div>` + stripedTable([]map[string]types.InfoItem{
+		}) + `<div><hr></div>` + stripedTable(ctx, []map[string]types.InfoItem{
 			{
 				"key":   types.InfoItem{Content: lg("bootstrap_stack_usage")},
 				"value": types.InfoItem{Content: template.HTML(app.StackInuse)},
@@ -158,9 +158,9 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 		})).
 		GetContent()
 
-	col2 := aCol().SetSize(size).SetContent(box4).GetContent()
+	col2 := aCol(ctx).SetSize(size).SetContent(box4).GetContent()
 
-	row := aRow().SetContent(col1 + col2).GetContent()
+	row := aRow(ctx).SetContent(col1 + col2).GetContent()
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content:     row,
@@ -169,8 +169,8 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 	})
 }
 
-func stripedTable(list []map[string]types.InfoItem) template.HTML {
-	return aTable().
+func stripedTable(ctx *context.Context, list []map[string]types.InfoItem) template.HTML {
+	return aTable(ctx).
 		SetStyle("striped").
 		SetHideThead().
 		SetMinWidth("0.01%").

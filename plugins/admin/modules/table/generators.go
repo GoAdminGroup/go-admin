@@ -65,7 +65,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 		}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			labels := template.HTML("")
-			labelTpl := label().SetType("success")
+			labelTpl := label(ctx).SetType("success")
 
 			labelValues := strings.Split(model.Value, types.JoinFieldValueDelimiter)
 			for key, label := range labelValues {
@@ -309,7 +309,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 				All()
 
 			labels := template.HTML("")
-			labelTpl := label().SetType("success")
+			labelTpl := label(ctx).SetType("success")
 
 			for key, label := range labelModels {
 				if key == len(labelModels)-1 {
@@ -334,7 +334,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 				All()
 
 			permissions := template.HTML("")
-			permissionTpl := label().SetType("success")
+			permissionTpl := label(ctx).SetType("success")
 
 			for key, label := range permissionModel {
 				if key == len(permissionModel)-1 {
@@ -374,7 +374,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 		}).
 		FieldDisplay(func(model types.FieldModel) interface{} {
 			labels := template.HTML("")
-			labelTpl := label().SetType("success")
+			labelTpl := label(ctx).SetType("success")
 
 			labelValues := strings.Split(model.Value, types.JoinFieldValueDelimiter)
 			for key, label := range labelValues {
@@ -540,9 +540,9 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 			res := ""
 			for i := 0; i < len(pathArr); i++ {
 				if i == len(pathArr)-1 {
-					res += string(label().SetContent(template.HTML(pathArr[i])).GetContent())
+					res += string(label(ctx).SetContent(template.HTML(pathArr[i])).GetContent())
 				} else {
-					res += string(label().SetContent(template.HTML(pathArr[i])).GetContent()) + "<br><br>"
+					res += string(label(ctx).SetContent(template.HTML(pathArr[i])).GetContent()) + "<br><br>"
 				}
 			}
 			return res
@@ -1847,8 +1847,8 @@ func encodePassword(pwd []byte) string {
 	return string(hash)
 }
 
-func label() types.LabelAttribute {
-	return template.Get(config.GetTheme()).Label().SetType("success")
+func label(ctx *context.Context) types.LabelAttribute {
+	return template.Get(ctx, config.GetTheme()).Label().SetType("success")
 }
 
 func lg(v string) string {

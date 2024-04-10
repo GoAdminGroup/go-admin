@@ -26,7 +26,7 @@ func (admin *Admin) initRouter() *Admin {
 
 	checkRepeatedPath := make([]string, 0)
 	for _, themeName := range template.Themes() {
-		for _, path := range template.Get(themeName).GetAssetList() {
+		for _, path := range template.Get(nil, themeName).GetAssetList() {
 			if !utils.InArray(checkRepeatedPath, path) {
 				checkRepeatedPath = append(checkRepeatedPath, path)
 				route.GET("/assets"+path, admin.handler.Assets)

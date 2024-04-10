@@ -40,7 +40,7 @@ func (g *Guard) MenuEdit(ctx *context.Context) {
 	)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert = getAlert(errors.EditFailWrongToken)
+		alert = getAlert(ctx, errors.EditFailWrongToken)
 	}
 
 	if alert == "" {
@@ -68,7 +68,7 @@ func GetMenuEditParam(ctx *context.Context) *MenuEditParam {
 func checkEmpty(ctx *context.Context, key ...string) template.HTML {
 	for _, k := range key {
 		if ctx.FormValue(k) == "" {
-			return getAlert("wrong " + k)
+			return getAlert(ctx, "wrong "+k)
 		}
 	}
 	return template.HTML("")

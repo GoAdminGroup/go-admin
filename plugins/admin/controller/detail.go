@@ -142,7 +142,7 @@ $('.delete-btn').on('click', function (event) {
 	}
 
 	h.HTML(ctx, user, types.Panel{
-		Content: detailContent(aForm().
+		Content: detailContent(ctx, aForm(ctx).
 			SetTitle(template.HTML(title)).
 			SetContent(formInfo.FieldList).
 			SetHeader(detail.HeaderHtml).

@@ -99,7 +99,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		hiddenFields[constant.IframeIDKey] = ctx.Query(constant.IframeIDKey)
 	}
 
-	content := formContent(aForm().
+	content := formContent(ctx, aForm(ctx).
 		SetContent(formInfo.FieldList).
 		SetFieldsHTML(f.HTMLContent).
 		SetTabContents(formInfo.GroupFieldList).
@@ -113,7 +113,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 		SetAjax(f.AjaxSuccessJS, f.AjaxErrorJS).
 		SetLayout(f.Layout).
 		SetHiddenFields(hiddenFields).
-		SetOperationFooter(formFooter(footerKind,
+		SetOperationFooter(formFooter(ctx, footerKind,
 			f.IsHideContinueEditCheckBox,
 			f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton, f.FormEditBtnWord)).
@@ -147,7 +147,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
-				h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+				h.showForm(ctx, aAlert(ctx).Warning(err.Error()), param.Prefix, param.Param, true)
 			}
 			return
 		}
@@ -177,7 +177,7 @@ func (h *Handler) EditForm(ctx *context.Context) {
 				"token": h.authSrv().AddToken(),
 			})
 		} else {
-			h.showForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param, true)
+			h.showForm(ctx, aAlert(ctx).Warning(err.Error()), param.Prefix, param.Param, true)
 		}
 		return
 	}

@@ -62,11 +62,11 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 	)
 
 	if err != nil {
-		alert = aAlert().Warning(err.Error())
+		alert = aAlert(ctx).Warning(err.Error())
 	}
 
 	h.HTMLPlug(ctx, user, types.Panel{
-		Content: alert + formContent(aForm().
+		Content: alert + formContent(ctx, aForm(ctx).
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
@@ -77,7 +77,7 @@ func (h *Handler) showNewMenu(ctx *context.Context, err error) {
 				form2.TokenKey:    h.authSrv().AddToken(),
 				form2.PreviousKey: h.routePath("menu") + getMenuPlugNameParams(plugName),
 			}).
-			SetOperationFooter(formFooter("new", false, false, false,
+			SetOperationFooter(formFooter(ctx, "new", false, false, false,
 				panel.GetForm().FormNewBtnWord)),
 			false, ctx.IsIframe(), false, ""),
 		Description: template2.HTML(panel.GetForm().Description),
@@ -91,7 +91,7 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	plugName := getPlugNameFromReferer(ctx)
 
 	if ctx.Query("id") == "" {
-		h.getMenuInfoPanel(ctx, "", template.Get(h.config.Theme).Alert().Warning(errors.WrongID))
+		h.getMenuInfoPanel(ctx, "", template.Get(ctx, h.config.Theme).Alert().Warning(errors.WrongID))
 
 		ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 		ctx.AddHeader(constant.PjaxUrlHeader, h.routePath("menu")+getMenuPlugNameParams(plugName))
@@ -117,7 +117,7 @@ func (h *Handler) showEditMenu(ctx *context.Context, plugName string, formInfo t
 	var alert template2.HTML
 
 	if err != nil {
-		alert = aAlert().Warning(err.Error())
+		alert = aAlert(ctx).Warning(err.Error())
 	}
 
 	params := getMenuPlugNameParams(plugName)
@@ -125,14 +125,14 @@ func (h *Handler) showEditMenu(ctx *context.Context, plugName string, formInfo t
 	panel := h.table("menu", ctx)
 
 	h.HTMLPlug(ctx, auth.Auth(ctx), types.Panel{
-		Content: alert + formContent(aForm().
+		Content: alert + formContent(ctx, aForm(ctx).
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
 			SetPrefix(h.config.PrefixFixSlash()).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetUrl(h.routePath("menu_edit")).
-			SetOperationFooter(formFooter("edit", false, false, false,
+			SetOperationFooter(formFooter(ctx, "edit", false, false, false,
 				panel.GetForm().FormEditBtnWord)).
 			SetHiddenFields(map[string]string{
 				form2.TokenKey:    h.authSrv().AddToken(),
@@ -254,7 +254,7 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 		plugName = ctx.Query("__plugin_name")
 	}
 
-	tree := aTree().
+	tree := aTree(ctx).
 		SetTree((menu.GetGlobalMenu(user, h.conn, ctx.Lang(), plugName)).List).
 		SetEditUrl(h.routePath("menu_edit_show")).
 		SetUrlPrefix(h.config.Prefix()).
@@ -263,14 +263,14 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 		GetContent()
 
 	var (
-		header   = aTree().GetTreeHeader()
-		box      = aBox().SetHeader(header).SetBody(tree).GetContent()
-		col1     = aCol().SetSize(types.SizeMD(6)).SetContent(box).GetContent()
+		header   = aTree(ctx).GetTreeHeader()
+		box      = aBox(ctx).SetHeader(header).SetBody(tree).GetContent()
+		col1     = aCol(ctx).SetSize(types.SizeMD(6)).SetContent(box).GetContent()
 		panel    = h.table("menu", ctx)
 		formInfo = panel.GetNewFormInfo()
 	)
 
-	newForm := menuFormContent(aForm().
+	newForm := menuFormContent(ctx, aForm(ctx).
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetUrl(h.routePath("menu_new")).
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
@@ -278,16 +278,16 @@ func (h *Handler) getMenuInfoPanel(ctx *context.Context, plugName string, alert 
 			form2.TokenKey:    h.authSrv().AddToken(),
 			form2.PreviousKey: h.routePath("menu") + getMenuPlugNameParams(plugName),
 		}).
-		SetOperationFooter(formFooter("menu", false, false, false,
+		SetOperationFooter(formFooter(ctx, "menu", false, false, false,
 			panel.GetForm().FormNewBtnWord)).
 		SetTitle("New").
 		SetContent(formInfo.FieldList).
 		SetTabContents(formInfo.GroupFieldList).
 		SetTabHeaders(formInfo.GroupFieldHeaders))
 
-	col2 := aCol().SetSize(types.SizeMD(6)).SetContent(newForm).GetContent()
+	col2 := aCol(ctx).SetSize(types.SizeMD(6)).SetContent(newForm).GetContent()
 
-	row := aRow().SetContent(col1 + col2).GetContent()
+	row := aRow(ctx).SetContent(col1 + col2).GetContent()
 
 	h.HTMLPlug(ctx, user, types.Panel{
 		Content:     alert + row,

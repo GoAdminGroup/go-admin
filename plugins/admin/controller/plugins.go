@@ -44,21 +44,21 @@ func (h *Handler) Plugins(ctx *context.Context) {
 		}, config.Url("/plugins/store"), true))
 	}
 	for i := 0; i < len(list); i += 6 {
-		box1 := aBox().
-			SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[i]))).
+		box1 := aBox(ctx).
+			SetBody(h.pluginBox(ctx, GetPluginBoxParamFromPlug(list[i]))).
 			GetContent()
-		content := aCol().SetSize(size).SetContent(box1).GetContent()
+		content := aCol(ctx).SetSize(size).SetContent(box1).GetContent()
 		offset := len(list) - i
 		if offset > 6 {
 			offset = 6
 		}
 		for j := i + 1; j < offset; j++ {
-			box2 := aBox().
-				SetBody(h.pluginBox(GetPluginBoxParamFromPlug(list[j]))).
+			box2 := aBox(ctx).
+				SetBody(h.pluginBox(ctx, GetPluginBoxParamFromPlug(list[j]))).
 				GetContent()
-			content += aCol().SetSize(size).SetContent(box2).GetContent()
+			content += aCol(ctx).SetSize(size).SetContent(box2).GetContent()
 		}
-		rows += aRow().SetContent(content).GetContent()
+		rows += aRow(ctx).SetContent(content).GetContent()
 	}
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content:     rows,
@@ -104,24 +104,24 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 	}
 
 	for i := 0; i < len(list); i += 3 {
-		box1 := aBox().
-			SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i]))).
+		box1 := aBox(ctx).
+			SetBody(h.pluginStoreBox(ctx, GetPluginBoxParamFromPlug(list[i]))).
 			GetContent()
-		col1 := aCol().SetSize(size).SetContent(box1).GetContent()
+		col1 := aCol(ctx).SetSize(size).SetContent(box1).GetContent()
 		box2, col2, box3, col3 := template.HTML(""), template.HTML(""), template.HTML(""), template.HTML("")
 		if i+1 < len(list) {
-			box2 = aBox().
-				SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i+1]))).
+			box2 = aBox(ctx).
+				SetBody(h.pluginStoreBox(ctx, GetPluginBoxParamFromPlug(list[i+1]))).
 				GetContent()
-			col2 = aCol().SetSize(size).SetContent(box2).GetContent()
+			col2 = aCol(ctx).SetSize(size).SetContent(box2).GetContent()
 			if i+2 < len(list) {
-				box3 = aBox().
-					SetBody(h.pluginStoreBox(GetPluginBoxParamFromPlug(list[i+2]))).
+				box3 = aBox(ctx).
+					SetBody(h.pluginStoreBox(ctx, GetPluginBoxParamFromPlug(list[i+2]))).
 					GetContent()
-				col3 = aCol().SetSize(size).SetContent(box3).GetContent()
+				col3 = aCol(ctx).SetSize(size).SetContent(box3).GetContent()
 			}
 		}
-		rows += aRow().SetContent(col1 + col2 + col3).GetContent()
+		rows += aRow(ctx).SetContent(col1 + col2 + col3).GetContent()
 	}
 
 	detailPopupModal := template2.Default().Popup().SetID("detail-popup-modal").
@@ -141,7 +141,7 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 
 	loginPopupModal := template2.Default().Popup().SetID("login-popup-modal").
 		SetTitle(plugWordHTML("login to goadmin member system")).
-		SetBody(aForm().SetContent(types.FormFields{
+		SetBody(aForm(ctx).SetContent(types.FormFields{
 			{Field: "name", Head: plugWord("account"), FormType: form.Text, Editable: true},
 			{Field: "password", Head: plugWord("password"), FormType: form.Password, Editable: true,
 				HelpMsg: template.HTML(fmt.Sprintf(plugWord("no account? click %s here %s to register."),
@@ -226,13 +226,13 @@ func GetPluginBoxParamFromPlug(plug plugins.Plugin) PluginBoxParam {
 	}
 }
 
-func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
+func (h *Handler) pluginStoreBox(ctx *context.Context, param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
 		cover = template2.HTML(config.Url("/assets/dist/img/plugin_default.png"))
 	}
 	col1 := html.DivEl().SetClass("plugin-store-item-img").
-		SetContent(aImage().
+		SetContent(aImage(ctx).
 			SetSrc(cover).
 			SetHeight("110px").
 			SetWidth("110px").
@@ -295,7 +295,7 @@ func (h *Handler) pluginStoreBox(param PluginBoxParam) template.HTML {
 	return html.Div(col1+col2, html.M{"clear": "both"})
 }
 
-func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
+func (h *Handler) pluginBox(ctx *context.Context, param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
 		cover = "/admin/assets/dist/img/plugin_default.png"
@@ -308,7 +308,7 @@ func (h *Handler) pluginBox(param PluginBoxParam) template.HTML {
 		label = html.SpanEl().SetClass("plugin-item-label").SetContent(language.GetFromHtml("uninstalled")).Get()
 	}
 	col1 := html.AEl().SetContent(html.DivEl().SetClass("plugin-item-img").
-		SetContent(aImage().
+		SetContent(aImage(ctx).
 			SetSrc(cover).
 			GetContent()+
 			html.PEl().SetContent(language.GetFromHtml(template.HTML(param.Info.Title), param.Name)).

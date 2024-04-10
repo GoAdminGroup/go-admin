@@ -181,7 +181,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	if info.TabGroups.Valid() {
 
-		dataTable = aDataTable().
+		dataTable = aDataTable(ctx).
 			SetThead(panelInfo.Thead).
 			SetDeleteUrl(deleteUrl).
 			SetNewUrl(newUrl).
@@ -195,7 +195,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		for key, header := range info.TabHeaders {
 			tabsHtml[key] = map[string]template2.HTML{
 				"title": template2.HTML(header),
-				"content": aDataTable().
+				"content": aDataTable(ctx).
 					SetInfoList(infoListArr[key]).
 					SetInfoUrl(infoUrl).
 					SetButtons(btns).
@@ -218,9 +218,9 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					GetContent(),
 			}
 		}
-		body = aTab().SetData(tabsHtml).GetContent()
+		body = aTab(ctx).SetData(tabsHtml).GetContent()
 	} else {
-		dataTable = aDataTable().
+		dataTable = aDataTable(ctx).
 			SetInfoList(panelInfo.InfoList).
 			SetInfoUrl(infoUrl).
 			SetButtons(btns).
@@ -250,7 +250,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		paginator = paginator.SetEntriesInfo("")
 	}
 
-	boxModel := aBox().
+	boxModel := aBox(ctx).
 		SetBody(body).
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
@@ -260,7 +260,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	if len(panelInfo.FilterFormData) > 0 {
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").
-			SetSecondHeader(aForm().
+			SetSecondHeader(aForm(ctx).
 				SetContent(panelInfo.FilterFormData).
 				SetPrefix(h.config.PrefixFixSlash()).
 				SetInputWidth(info.FilterFormInputWidth).
@@ -271,7 +271,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				SetHiddenFields(map[string]string{
 					form.NoAnimationKey: "true",
 				}).
-				SetOperationFooter(filterFormFooter(infoUrl)).
+				SetOperationFooter(filterFormFooter(ctx, infoUrl)).
 				GetContent())
 	}
 
@@ -300,7 +300,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 // Assets return front-end assets according the request path.
 func (h *Handler) Assets(ctx *context.Context) {
 	filepath := h.config.URLRemovePrefix(ctx.Path())
-	data, err := aTemplate().GetAsset(filepath)
+	data, err := aTemplate(ctx).GetAsset(filepath)
 
 	if err != nil {
 		data, err = template.GetAsset(filepath)

@@ -190,7 +190,7 @@ func (h *Handler) HTMLPlug(ctx *context.Context, user models.UserModel, panel ty
 func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string, btns types.Buttons,
 	options ...template.ExecuteOptions) *bytes.Buffer {
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	tmpl, tmplName := aTemplate(ctx).GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
 	return template.Execute(&template.ExecuteParam{
@@ -211,7 +211,7 @@ func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, p
 func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel types.Panel, plugName string,
 	options ...template.ExecuteOptions) *bytes.Buffer {
 
-	tmpl, tmplName := aTemplate().GetTemplate(isPjax(ctx))
+	tmpl, tmplName := aTemplate(ctx).GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
 	return template.Execute(&template.ExecuteParam{
@@ -249,60 +249,60 @@ func (h *Handler) authSrv() *auth.TokenService {
 	return auth.GetTokenService(h.services.Get(auth.TokenServiceKey))
 }
 
-func aAlert() types.AlertAttribute {
-	return aTemplate().Alert()
+func aAlert(ctx *context.Context) types.AlertAttribute {
+	return aTemplate(ctx).Alert()
 }
 
-func aForm() types.FormAttribute {
-	return aTemplate().Form()
+func aForm(ctx *context.Context) types.FormAttribute {
+	return aTemplate(ctx).Form()
 }
 
-func aRow() types.RowAttribute {
-	return aTemplate().Row()
+func aRow(ctx *context.Context) types.RowAttribute {
+	return aTemplate(ctx).Row()
 }
 
-func aCol() types.ColAttribute {
-	return aTemplate().Col()
+func aCol(ctx *context.Context) types.ColAttribute {
+	return aTemplate(ctx).Col()
 }
 
-func aImage() types.ImgAttribute {
-	return aTemplate().Image()
+func aImage(ctx *context.Context) types.ImgAttribute {
+	return aTemplate(ctx).Image()
 }
 
-func aButton() types.ButtonAttribute {
-	return aTemplate().Button()
+func aButton(ctx *context.Context) types.ButtonAttribute {
+	return aTemplate(ctx).Button()
 }
 
-func aTree() types.TreeAttribute {
-	return aTemplate().Tree()
+func aTree(ctx *context.Context) types.TreeAttribute {
+	return aTemplate(ctx).Tree()
 }
 
-func aTable() types.TableAttribute {
-	return aTemplate().Table()
+func aTable(ctx *context.Context) types.TableAttribute {
+	return aTemplate(ctx).Table()
 }
 
-func aDataTable() types.DataTableAttribute {
-	return aTemplate().DataTable()
+func aDataTable(ctx *context.Context) types.DataTableAttribute {
+	return aTemplate(ctx).DataTable()
 }
 
-func aBox() types.BoxAttribute {
-	return aTemplate().Box()
+func aBox(ctx *context.Context) types.BoxAttribute {
+	return aTemplate(ctx).Box()
 }
 
-func aTab() types.TabsAttribute {
-	return aTemplate().Tabs()
+func aTab(ctx *context.Context) types.TabsAttribute {
+	return aTemplate(ctx).Tabs()
 }
 
-func aTemplate() template.Template {
-	return template.Get(c.GetTheme())
+func aTemplate(ctx *context.Context) template.Template {
+	return template.Get(ctx, c.GetTheme())
 }
 
 func isPjax(ctx *context.Context) bool {
 	return ctx.IsPjax()
 }
 
-func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord template2.HTML) template2.HTML {
-	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
+func formFooter(ctx *context.Context, page string, isHideEdit, isHideNew, isHideReset bool, btnWord template2.HTML) template2.HTML {
+	col1 := aCol(ctx).SetSize(types.SizeMD(2)).GetContent()
 
 	var (
 		checkBoxs  template2.HTML
@@ -379,7 +379,7 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 `)
 	}
 
-	btn1 := aButton().
+	btn1 := aButton(ctx).
 		SetType("submit").
 		AddClass("submit").
 		SetContent(btnWord).
@@ -388,7 +388,7 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 		GetContent()
 	btn2 := template.HTML("")
 	if !isHideReset {
-		btn2 = aButton().
+		btn2 = aButton(ctx).
 			SetType("reset").
 			AddClass("reset").
 			SetContent(language.GetFromHtml("Reset")).
@@ -396,14 +396,14 @@ func formFooter(page string, isHideEdit, isHideNew, isHideReset bool, btnWord te
 			SetOrientationLeft().
 			GetContent()
 	}
-	col2 := aCol().SetSize(types.SizeMD(8)).
+	col2 := aCol(ctx).SetSize(types.SizeMD(8)).
 		SetContent(btn1 + checkBoxs + btn2 + checkBoxJS).GetContent()
 	return col1 + col2
 }
 
-func filterFormFooter(infoUrl string) template2.HTML {
-	col1 := aCol().SetSize(types.SizeMD(2)).GetContent()
-	btn1 := aButton().SetType("submit").
+func filterFormFooter(ctx *context.Context, infoUrl string) template2.HTML {
+	col1 := aCol(ctx).SetSize(types.SizeMD(2)).GetContent()
+	btn1 := aButton(ctx).SetType("submit").
 		AddClass("submit").
 		SetContent(icon.Icon(icon.Search, 2) + language.GetFromHtml("search")).
 		SetThemePrimary().
@@ -411,7 +411,7 @@ func filterFormFooter(infoUrl string) template2.HTML {
 		SetOrientationLeft().
 		SetLoadingText(icon.Icon(icon.Spinner, 1) + language.GetFromHtml("search")).
 		GetContent()
-	btn2 := aButton().SetType("reset").
+	btn2 := aButton(ctx).SetType("reset").
 		AddClass("reset").
 		SetContent(icon.Icon(icon.Undo, 2) + language.GetFromHtml("reset")).
 		SetThemeDefault().
@@ -420,12 +420,12 @@ func filterFormFooter(infoUrl string) template2.HTML {
 		SetHref(infoUrl).
 		SetMarginLeft(12).
 		GetContent()
-	col2 := aCol().SetSize(types.SizeMD(8)).
+	col2 := aCol(ctx).SetSize(types.SizeMD(8)).
 		SetContent(btn1 + btn2).GetContent()
 	return col1 + col2
 }
 
-func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, header template2.HTML) template2.HTML {
+func formContent(ctx *context.Context, form types.FormAttribute, isTab, iframe, isHideBack bool, header template2.HTML) template2.HTML {
 	if isTab {
 		return form.GetContent()
 	}
@@ -434,7 +434,7 @@ func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, heade
 	} else if header == template2.HTML("") {
 		header = form.GetDefaultBoxHeader(isHideBack)
 	}
-	return aBox().
+	return aBox(ctx).
 		SetHeader(header).
 		WithHeadBorder().
 		SetStyle(" ").
@@ -443,8 +443,8 @@ func formContent(form types.FormAttribute, isTab, iframe, isHideBack bool, heade
 		GetContent()
 }
 
-func detailContent(form types.FormAttribute, editUrl, deleteUrl string, iframe bool) template2.HTML {
-	return aBox().
+func detailContent(ctx *context.Context, form types.FormAttribute, editUrl, deleteUrl string, iframe bool) template2.HTML {
+	return aBox(ctx).
 		SetHeader(form.GetDetailBoxHeader(editUrl, deleteUrl)).
 		WithHeadBorder().
 		SetBody(form.GetContent()).
@@ -452,8 +452,8 @@ func detailContent(form types.FormAttribute, editUrl, deleteUrl string, iframe b
 		GetContent()
 }
 
-func menuFormContent(form types.FormAttribute) template2.HTML {
-	return aBox().
+func menuFormContent(ctx *context.Context, form types.FormAttribute) template2.HTML {
+	return aBox(ctx).
 		SetHeader(form.GetBoxHeaderNoButton()).
 		SetStyle(" ").
 		WithHeadBorder().

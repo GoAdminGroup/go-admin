@@ -38,7 +38,7 @@ func (g *Guard) MenuNew(ctx *context.Context) {
 	)
 
 	if !auth.GetTokenService(g.services.Get(auth.TokenServiceKey)).CheckToken(token) {
-		alert = getAlert(errors.EditFailWrongToken)
+		alert = getAlert(ctx, errors.EditFailWrongToken)
 	}
 
 	if alert == "" {

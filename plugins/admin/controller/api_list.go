@@ -24,7 +24,7 @@ func (h *Handler) ApiList(ctx *context.Context) {
 	response.OkWithData(ctx, map[string]interface{}{
 		"panel":  panelInfo,
 		"footer": panelInfo.Paginator.GetContent() + panel.GetInfo().FooterHtml,
-		"header": aDataTable().GetDataTableHeader() + panel.GetInfo().HeaderHtml,
+		"header": aDataTable(ctx).GetDataTableHeader() + panel.GetInfo().HeaderHtml,
 		"prefix": h.config.PrefixFixSlash(),
 		"urls": map[string]string{
 			"edit":   urls[0],

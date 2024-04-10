@@ -27,7 +27,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 		panel = template.WarningPanel(err.Error())
 	}
 
-	tmpl, tmplName := template.Get(config.GetTheme()).GetTemplate(ctx.IsPjax())
+	tmpl, tmplName := template.Get(ctx, config.GetTheme()).GetTemplate(ctx.IsPjax())
 
 	ctx.AddHeader("Content-Type", "text/html; charset=utf-8")
 

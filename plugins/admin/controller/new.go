@@ -59,7 +59,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		hiddenFields[constant.IframeIDKey] = ctx.Query(constant.IframeIDKey)
 	}
 
-	content := formContent(aForm().
+	content := formContent(ctx, aForm(ctx).
 		SetPrefix(h.config.PrefixFixSlash()).
 		SetFieldsHTML(f.HTMLContent).
 		SetContent(formInfo.FieldList).
@@ -73,7 +73,7 @@ func (h *Handler) showNewForm(ctx *context.Context, alert template2.HTML, prefix
 		SetPrimaryKey(panel.GetPrimaryKey().Name).
 		SetHiddenFields(hiddenFields).
 		SetTitle(f.FormNewTitle).
-		SetOperationFooter(formFooter("new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
+		SetOperationFooter(formFooter(ctx, "new", f.IsHideContinueEditCheckBox, f.IsHideContinueNewCheckBox,
 			f.IsHideResetButton, f.FormNewBtnWord)).
 		SetHeader(f.HeaderHtml).
 		SetFooter(f.FooterHtml), len(formInfo.GroupFieldHeaders) > 0, !isNotIframe, f.IsHideBackButton, f.Header)
@@ -107,7 +107,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 			if ctx.WantJSON() {
 				response.Error(ctx, err.Error())
 			} else {
-				h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+				h.showNewForm(ctx, aAlert(ctx).Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
 			}
 			return
 		}
@@ -121,7 +121,7 @@ func (h *Handler) NewForm(ctx *context.Context) {
 				"token": h.authSrv().AddToken(),
 			})
 		} else {
-			h.showNewForm(ctx, aAlert().Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
+			h.showNewForm(ctx, aAlert(ctx).Warning(err.Error()), param.Prefix, param.Param.GetRouteParamStr(), true)
 		}
 		return
 	}
