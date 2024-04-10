@@ -57,11 +57,11 @@ func (h *Handler) ShowInfo(ctx *context.Context) {
 	params := parameter.GetParam(ctx.Request.URL, panel.GetInfo().DefaultPageSize, panel.GetInfo().SortField,
 		panel.GetInfo().GetSort())
 
-	buf := h.showTable(ctx, prefix, params, panel)
+	buf := h._showTable(ctx, prefix, params, panel)
 	ctx.HTML(http.StatusOK, buf.String())
 }
 
-func (h *Handler) showTableData(ctx *context.Context, prefix string, params parameter.Parameters,
+func (h *Handler) _showTableData(ctx *context.Context, prefix string, params parameter.Parameters,
 	panel table.Table, urlNamePrefix string) (table.Table, table.PanelInfo, []string, error) {
 	if panel == nil {
 		panel = h.table(prefix, ctx)
@@ -97,9 +97,9 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 	return panel, panelInfo, []string{editUrl, newUrl, deleteUrl, exportUrl, detailUrl, infoUrl, updateUrl}, nil
 }
 
-func (h *Handler) showTable(ctx *context.Context, prefix string, params parameter.Parameters, panel table.Table) *bytes.Buffer {
+func (h *Handler) _showTable(ctx *context.Context, prefix string, params parameter.Parameters, panel table.Table) *bytes.Buffer {
 
-	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
+	panel, panelInfo, urls, err := h._showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
 		return h.Execute(ctx, auth.Auth(ctx),
 			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), "",
@@ -137,7 +137,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			ext := template2.HTML("")
 			if deleteUrl != "" {
 				ext = html.LiEl().SetClass("divider").Get()
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("delete"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("delete", user.Id),
 					types.NewDefaultAction(`data-id='{{.Id}}' data-param='{{(index .Value "__goadmin_delete_params").Content}}' style="cursor: pointer;"`,
 						ext, "", ""), "grid-row-delete")}, allActionBtns...)
 			}
@@ -146,14 +146,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				if editUrl == "" && deleteUrl == "" {
 					ext = html.LiEl().SetClass("divider").Get()
 				}
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("detail"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("detail", user.Id),
 					action.Jump(detailUrl+"&"+constant.DetailPKKey+`={{.Id}}{{(index .Value "__goadmin_detail_params").Content}}`, ext))}, allActionBtns...)
 			}
 			if editUrl != "" {
 				if detailUrl == "" && deleteUrl == "" {
 					ext = html.LiEl().SetClass("divider").Get()
 				}
-				allActionBtns = append([]types.Button{types.GetActionButton(language.GetFromHtml("edit"),
+				allActionBtns = append([]types.Button{types.GetActionButton(language.GetUserFromHtml("edit", user.Id),
 					action.Jump(editUrl+"&"+constant.EditPKKey+`={{.Id}}{{(index .Value "__goadmin_edit_params").Content}}`, ext))}, allActionBtns...)
 			}
 

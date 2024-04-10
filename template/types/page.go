@@ -154,7 +154,7 @@ func NewPage(param *NewPageParam) *Page {
 		Logo:           logo,
 		MiniLogo:       config.GetMiniLogo(),
 		ColorScheme:    config.GetColorScheme(),
-		IndexUrl:       config.GetIndexURL(),
+		IndexUrl:       config.GetFullIndexURL(),
 		CdnUrl:         config.GetAssetUrl(),
 		CustomHeadHtml: config.GetCustomHeadHtml(),
 		CustomFootHtml: config.GetCustomFootHtml() + param.NavButtonsJS,

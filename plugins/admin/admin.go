@@ -65,7 +65,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 }
 
 func (admin *Admin) GetIndexURL() string {
-	return config.GetIndexURL()
+	return config.GetFullIndexURL()
 }
 
 func (admin *Admin) GetInfo() plugins.Info {

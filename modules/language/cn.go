@@ -443,4 +443,6 @@ var cn = LangSet{
 	"admin.basic admin": "基础Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "一个内置GoAdmin插件，帮助您快速搭建curd简易管理后台。",
 	"admin.official": "GoAdmin官方",
+
+	"language": "语言",
 }
