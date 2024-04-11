@@ -132,7 +132,7 @@ var templateMap = make(map[string]Template)
 // name is not found, it panics.
 func Get(ctx *context.Context, theme string) Template {
 	if ctx != nil {
-		queryTheme := ctx.Query("__ga_theme")
+		queryTheme := ctx.Theme()
 		if queryTheme != "" {
 			if temp, ok := templateMap[queryTheme]; ok {
 				return temp
@@ -149,7 +149,7 @@ func Get(ctx *context.Context, theme string) Template {
 // If the name is not found, it panics.
 func Default(ctx ...*context.Context) Template {
 	if len(ctx) > 0 && ctx[0] != nil {
-		queryTheme := ctx[0].Query("__ga_theme")
+		queryTheme := ctx[0].Theme()
 		if queryTheme != "" {
 			if temp, ok := templateMap[queryTheme]; ok {
 				return temp

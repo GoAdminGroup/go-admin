@@ -147,6 +147,8 @@ const (
 	GzipHeaderValue      = "gzip"
 	HeaderAcceptEncoding = "Accept-Encoding"
 	HeaderVary           = "Vary"
+
+	ThemeKey = "__ga_theme"
 )
 
 func (ctx *Context) BindJSON(data interface{}) error {
@@ -356,6 +358,19 @@ func (ctx *Context) QueryDefault(key, def string) string {
 // Lang get the query parameter of url with given key __ga_lang.
 func (ctx *Context) Lang() string {
 	return ctx.Query("__ga_lang")
+}
+
+// Theme get the request theme with given key __ga_theme.
+func (ctx *Context) Theme() string {
+	queryTheme := ctx.Query(ThemeKey)
+	if queryTheme != "" {
+		return queryTheme
+	}
+	cookieTheme := ctx.Cookie(ThemeKey)
+	if cookieTheme != "" {
+		return cookieTheme
+	}
+	return ctx.RefererQuery(ThemeKey)
 }
 
 // Headers get the value of request headers key.

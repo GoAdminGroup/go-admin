@@ -1,6 +1,8 @@
 package admin
 
 import (
+	"net/http"
+
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
 	"github.com/GoAdminGroup/go-admin/modules/config"
@@ -14,7 +16,7 @@ import (
 func (admin *Admin) initRouter() *Admin {
 	app := context.NewApp()
 
-	route := app.Group(config.Prefix(), admin.globalErrorHandler, admin.traceIDMiddleware)
+	route := app.Group(config.Prefix(), admin.globalErrorHandler, admin.traceIDMiddleware, admin.themeMiddleware)
 
 	// auth
 	route.GET(config.GetLoginUrl(), admin.handler.ShowLogin)
@@ -29,7 +31,7 @@ func (admin *Admin) initRouter() *Admin {
 		for _, path := range template.Get(nil, themeName).GetAssetList() {
 			if !utils.InArray(checkRepeatedPath, path) {
 				checkRepeatedPath = append(checkRepeatedPath, path)
-				path = "/assets"+path
+				path = "/assets" + path
 				admin.handler.AssetsTheme(path, themeName)
 				route.GET(path, admin.handler.Assets)
 			}
@@ -124,3 +126,29 @@ func (admin *Admin) traceIDMiddleware(ctx *context.Context) {
 const (
 	traceIDHeaderKey = "x-request-id"
 )
+
+func (admin *Admin) themeMiddleware(ctx *context.Context) {
+	theme := ctx.Query(context.ThemeKey)
+
+	if theme == admin.config.Theme {
+		ctx.Next()
+		return
+	}
+
+	if theme == "" {
+		theme = ctx.RefererQuery(context.ThemeKey)
+		if theme == "" {
+			ctx.Next()
+			return
+		}
+	}
+
+	cookieTheme := ctx.Cookie(context.ThemeKey)
+	if cookieTheme != theme {
+		ctx.SetCookie(&http.Cookie{
+			Name:  context.ThemeKey,
+			Value: theme,
+		})
+	}
+	ctx.Next()
+}

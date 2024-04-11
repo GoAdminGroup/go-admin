@@ -18,6 +18,7 @@ import (
 // Admin is a GoAdmin plugin.
 type Admin struct {
 	*plugins.Base
+	config    *config.Config
 	tableList table.GeneratorList
 	guardian  *guard.Guard
 	handler   *controller.Handler
@@ -54,6 +55,7 @@ func (admin *Admin) InitPlugin(services service.List) {
 		Generators: admin.tableList,
 		Connection: admin.Conn,
 	}
+	admin.config = c
 	admin.handler.UpdateCfg(handlerCfg)
 	admin.initRouter()
 	admin.handler.SetRoutes(admin.App.Routers)
