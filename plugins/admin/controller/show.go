@@ -305,7 +305,6 @@ func (h *Handler) Assets(ctx *context.Context) {
 	if theme == "" {
 		theme = h.config.Theme
 	}
-	fmt.Println("filepath", filepath, "theme", theme)
 
 	data, err := aTemplateByTheme(ctx, theme).GetAsset(filepath)
 
