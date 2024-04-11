@@ -223,3 +223,8 @@ func (ch *Chi) IsPjax() bool {
 func (ch *Chi) Query() url.Values {
 	return ch.ctx.Request.URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (ch *Chi) Request() *http.Request {
+	return ch.ctx.Request
+}

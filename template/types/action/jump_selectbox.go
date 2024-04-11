@@ -2,6 +2,8 @@ package action
 
 import (
 	"html/template"
+
+	"github.com/GoAdminGroup/go-admin/context"
 )
 
 type JumpSelectBoxAction struct {
@@ -21,7 +23,7 @@ func SelectBoxJump(options JumpOptions) *JumpSelectBoxAction {
 	return &JumpSelectBoxAction{Options: options}
 }
 
-func (jump *JumpSelectBoxAction) ExtContent() template.HTML {
+func (jump *JumpSelectBoxAction) ExtContent(ctx *context.Context) template.HTML {
 
 	cm := ``
 	for _, obejct := range jump.Options {

@@ -131,3 +131,8 @@ func (bee2 *Beego2) SetContentType() {
 func (bee2 *Beego2) Write(body []byte) {
 	_, _ = bee2.ctx.ResponseWriter.Write(body)
 }
+
+// Request implements the method Adapter.Request.
+func (bee2 *Beego2) Request() *http.Request {
+	return bee2.ctx.Request
+}

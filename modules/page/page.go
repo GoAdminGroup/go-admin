@@ -24,7 +24,7 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	if err != nil {
 		logger.ErrorCtx(ctx, "SetPageContent %+v", err)
-		panel = template.WarningPanel(err.Error())
+		panel = template.WarningPanel(ctx, err.Error())
 	}
 
 	tmpl, tmplName := template.Get(ctx, config.GetTheme()).GetTemplate(ctx.IsPjax())
@@ -33,13 +33,13 @@ func SetPageContent(ctx *context.Context, user models.UserModel, c func(ctx inte
 
 	buf := new(bytes.Buffer)
 
-	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
+	err = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(ctx, &types.NewPageParam{
 		User:         user,
 		Menu:         menu.GetGlobalMenu(user, conn, ctx.Lang()).SetActiveClass(config.URLRemovePrefix(ctx.Path())),
 		Panel:        panel.GetContent(config.IsProductionEnvironment()),
-		Assets:       template.GetComponentAssetImportHTML(),
-		TmplHeadHTML: template.Default().GetHeadHTML(),
-		TmplFootJS:   template.Default().GetFootJS(),
+		Assets:       template.GetComponentAssetImportHTML(ctx),
+		TmplHeadHTML: template.Default(ctx).GetHeadHTML(),
+		TmplFootJS:   template.Default(ctx).GetFootJS(),
 		Iframe:       ctx.IsIframe(),
 	}))
 	if err != nil {

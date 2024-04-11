@@ -36,6 +36,7 @@ type Handler struct {
 	operations    []context.Node
 	navButtons    *types.Buttons
 	operationLock sync.Mutex
+	assetsTheme   map[string]string
 }
 
 func New(cfg ...Config) *Handler {
@@ -46,12 +47,13 @@ func New(cfg ...Config) *Handler {
 		}
 	}
 	return &Handler{
-		config:     cfg[0].Config,
-		services:   cfg[0].Services,
-		conn:       cfg[0].Connection,
-		generators: cfg[0].Generators,
-		operations: make([]context.Node, 0),
-		navButtons: new(types.Buttons),
+		config:      cfg[0].Config,
+		services:    cfg[0].Services,
+		conn:        cfg[0].Connection,
+		generators:  cfg[0].Generators,
+		operations:  make([]context.Node, 0),
+		navButtons:  new(types.Buttons),
+		assetsTheme: make(map[string]string),
 	}
 }
 
@@ -67,10 +69,15 @@ func (h *Handler) UpdateCfg(cfg Config) {
 	h.services = cfg.Services
 	h.conn = cfg.Connection
 	h.generators = cfg.Generators
+	h.assetsTheme = make(map[string]string)
 }
 
 func (h *Handler) SetCaptcha(captcha map[string]string) {
 	h.captchaConfig = captcha
+}
+
+func (h *Handler) AssetsTheme(asset, theme string) {
+	h.assetsTheme[asset] = theme
 }
 
 func (h *Handler) SetRoutes(r context.RouterMap) {
@@ -193,7 +200,7 @@ func (h *Handler) ExecuteWithBtns(ctx *context.Context, user models.UserModel, p
 	tmpl, tmplName := aTemplate(ctx).GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(&template.ExecuteParam{
+	return template.Execute(ctx, &template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -214,7 +221,7 @@ func (h *Handler) Execute(ctx *context.Context, user models.UserModel, panel typ
 	tmpl, tmplName := aTemplate(ctx).GetTemplate(isPjax(ctx))
 	option := template.GetExecuteOptions(options)
 
-	return template.Execute(&template.ExecuteParam{
+	return template.Execute(ctx, &template.ExecuteParam{
 		User:       user,
 		TmplName:   tmplName,
 		Tmpl:       tmpl,
@@ -295,6 +302,10 @@ func aTab(ctx *context.Context) types.TabsAttribute {
 
 func aTemplate(ctx *context.Context) template.Template {
 	return template.Get(ctx, c.GetTheme())
+}
+
+func aTemplateByTheme(ctx *context.Context, theme string) template.Template {
+	return template.Get(ctx, theme)
 }
 
 func isPjax(ctx *context.Context) bool {

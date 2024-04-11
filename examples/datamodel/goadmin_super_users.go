@@ -9,7 +9,7 @@ import (
 
 func GetGoadminSuperUsersTable(ctx *context.Context) table.Table {
 
-	goadminSuperUsers := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
+	goadminSuperUsers := table.NewDefaultTable(ctx, table.DefaultConfigWithDriver("mysql"))
 
 	info := goadminSuperUsers.GetInfo().HideFilterArea()
 

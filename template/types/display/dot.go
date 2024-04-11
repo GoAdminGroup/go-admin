@@ -3,6 +3,7 @@ package display
 import (
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -14,7 +15,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("dot", new(Dot))
 }
 
-func (d *Dot) Get(args ...interface{}) types.FieldFilterFn {
+func (d *Dot) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		icons := args[0].(map[string]types.FieldDotColor)
 		defaultDot := types.FieldDotColor("")

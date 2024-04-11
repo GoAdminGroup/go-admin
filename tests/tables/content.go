@@ -19,7 +19,7 @@ import (
 // GetContent return the content of index page.
 func GetContent(ctx *context.Context) (types.Panel, error) {
 
-	components := tmpl.Default()
+	components := tmpl.Default(ctx)
 	colComp := components.Col()
 
 	/**************************

@@ -3,6 +3,7 @@ package display
 import (
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -14,7 +15,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("copyable", new(Copyable))
 }
 
-func (c *Copyable) Get(args ...interface{}) types.FieldFilterFn {
+func (c *Copyable) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		return template.HTML(`
 <a href="javascript:void(0);" class="grid-column-copyable text-muted" data-content="` + value.Value + `" 

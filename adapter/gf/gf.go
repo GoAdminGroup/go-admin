@@ -179,3 +179,8 @@ func (gf *Gf) IsPjax() bool {
 func (gf *Gf) Query() url.Values {
 	return gf.ctx.Request.URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (gf *Gf) Request() *http.Request {
+	return gf.ctx.Request
+}

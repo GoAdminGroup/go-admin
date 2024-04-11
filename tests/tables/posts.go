@@ -13,13 +13,13 @@ import (
 // GetPostsTable return the model of table posts.
 func GetPostsTable(ctx *context.Context) (postsTable table.Table) {
 
-	postsTable = table.NewDefaultTable(table.DefaultConfig())
+	postsTable = table.NewDefaultTable(ctx, table.DefaultConfig())
 
 	info := postsTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField("Title", "title", db.Varchar)
 	info.AddField("AuthorID", "author_id", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
-		return template.Default().
+		return template.Default(ctx).
 			Link().
 			SetURL("/admin/info/authors/detail?__goadmin_detail_pk=100").
 			SetContent("100").

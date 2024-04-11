@@ -6,12 +6,13 @@ import (
 	"html/template"
 	"strings"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
 )
 
 type DisplayFnGenerator interface {
-	Get(args ...interface{}) FieldFilterFn
+	Get(ctx *context.Context, args ...interface{}) FieldFilterFn
 	JS() template.HTML
 	HTML() template.HTML
 }

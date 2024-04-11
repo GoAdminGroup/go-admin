@@ -19,7 +19,7 @@ import (
 // GetUserTable return the model of table user.
 func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
-	userTable = table.NewDefaultTable(table.Config{
+	userTable = table.NewDefaultTable(ctx, table.Config{
 		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     true,
 		Editable:   true,
@@ -82,26 +82,26 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	// Buttons
 	// ===========================
 
-	info.AddActionButton("google", action.Jump("https://google.com"))
-	info.AddActionButton("Audit", action.Ajax("/admin/audit",
+	info.AddActionButton(ctx, "google", action.Jump("https://google.com"))
+	info.AddActionButton(ctx, "Audit", action.Ajax("/admin/audit",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			fmt.Println("PostForm", ctx.PostForm())
 			return true, "success", ""
 		}))
-	info.AddActionButton("Preview", action.PopUp("/admin/preview", "Preview",
+	info.AddActionButton(ctx, "Preview", action.PopUp("/admin/preview", "Preview",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "", "<h2>preview content</h2>"
 		}))
-	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
-	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
+	info.AddButton(ctx, "jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
+	info.AddButton(ctx, "popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "", "<h2>hello world</h2>"
 		}))
-	info.AddButton("ajax", icon.Android, action.Ajax("/admin/ajax",
+	info.AddButton(ctx, "ajax", icon.Android, action.Ajax("/admin/ajax",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "Oh li get", ""
 		}))
-	info.AddSelectBox("gender", types.FieldOptions{
+	info.AddSelectBox(ctx, "gender", types.FieldOptions{
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
 	}, action.FieldFilter("gender"))

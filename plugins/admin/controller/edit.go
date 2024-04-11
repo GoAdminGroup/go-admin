@@ -42,7 +42,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 			return
 		}
 		h.HTML(ctx, auth.Auth(ctx),
-			template.WarningPanel(panel.GetForm().PageError.Error(),
+			template.WarningPanel(ctx, panel.GetForm().PageError.Error(),
 				template.GetPageTypeFromPageError(panel.GetForm().PageError)), template.ExecuteOptions{Animation: param.Animation})
 		return
 	}
@@ -63,7 +63,7 @@ func (h *Handler) showForm(ctx *context.Context, alert template2.HTML, prefix st
 	if err != nil {
 		logger.ErrorCtx(ctx, "receive data error: %+v", err)
 		h.HTML(ctx, user, template.
-			WarningPanelWithDescAndTitle(err.Error(), panel.GetForm().Description, panel.GetForm().Title),
+			WarningPanelWithDescAndTitle(ctx, err.Error(), panel.GetForm().Description, panel.GetForm().Title),
 			template.ExecuteOptions{Animation: alert == "" || ((len(animation) > 0) && animation[0])})
 
 		if isEdit {

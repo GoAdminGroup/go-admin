@@ -155,19 +155,19 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 	modalID := "info-popup-model-" + utils.Uuid(10)
 
 	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
-		col1 := template2.Default().Col().GetContent()
-		btn1 := template2.Default().Button().SetType("submit").
+		col1 := template2.Default(ctx).Col().GetContent()
+		btn1 := template2.Default(ctx).Button().SetType("submit").
 			SetContent(language.GetFromHtml("Save")).
 			SetThemePrimary().
 			SetOrientationRight().
 			SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + language.GetFromHtml("Save")).
 			GetContent()
-		btn2 := template2.Default().Button().SetType("reset").
+		btn2 := template2.Default(ctx).Button().SetType("reset").
 			SetContent(language.GetFromHtml("Reset")).
 			SetThemeWarning().
 			SetOrientationLeft().
 			GetContent()
-		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
+		col2 := template2.Default(ctx).Col().SetSize(types.SizeMD(8)).
 			SetContent(btn1 + btn2).GetContent()
 		panel := fn(types.NewFormPanel())
 
@@ -175,9 +175,9 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 
 		fields, tabFields, tabHeaders := panel.GetNewFormFields()
 
-		return true, "ok", template2.Default().Box().
+		return true, "ok", template2.Default(ctx).Box().
 			SetHeader("").
-			SetBody(template2.Default().Form().
+			SetBody(template2.Default(ctx).Form().
 				SetContent(fields).
 				SetTabHeaders(tabHeaders).
 				SetTabContents(tabFields).
@@ -211,19 +211,19 @@ func PopUpWithCtxForm(data PopUpData, fn GetCtxForm, url string) *PopUpAction {
 	modalID := "info-popup-model-" + utils.Uuid(10)
 
 	var handler types.Handler = func(ctx *context.Context) (success bool, msg string, res interface{}) {
-		col1 := template2.Default().Col().GetContent()
-		btn1 := template2.Default().Button().SetType("submit").
+		col1 := template2.Default(ctx).Col().GetContent()
+		btn1 := template2.Default(ctx).Button().SetType("submit").
 			SetContent(language.GetFromHtml("Save")).
 			SetThemePrimary().
 			SetOrientationRight().
 			SetLoadingText(icon.Icon("fa-spinner fa-spin", 2) + language.GetFromHtml("Save")).
 			GetContent()
-		btn2 := template2.Default().Button().SetType("reset").
+		btn2 := template2.Default(ctx).Button().SetType("reset").
 			SetContent(language.GetFromHtml("Reset")).
 			SetThemeWarning().
 			SetOrientationLeft().
 			GetContent()
-		col2 := template2.Default().Col().SetSize(types.SizeMD(8)).
+		col2 := template2.Default(ctx).Col().SetSize(types.SizeMD(8)).
 			SetContent(btn1 + btn2).GetContent()
 		panel := fn(ctx, types.NewFormPanel())
 
@@ -231,9 +231,9 @@ func PopUpWithCtxForm(data PopUpData, fn GetCtxForm, url string) *PopUpAction {
 
 		fields, tabFields, tabHeaders := panel.GetNewFormFields()
 
-		return true, "ok", template2.Default().Box().
+		return true, "ok", template2.Default(ctx).Box().
 			SetHeader("").
-			SetBody(template2.Default().Form().
+			SetBody(template2.Default(ctx).Form().
 				SetContent(fields).
 				SetTabHeaders(tabHeaders).
 				SetTabContents(tabFields).
@@ -325,8 +325,8 @@ func (pop *PopUpAction) BtnAttribute() template.HTML {
 	return template.HTML(`data-toggle="modal" data-target="#` + pop.Id + ` " data-id="{{.Id}}" style="cursor: pointer;"`)
 }
 
-func (pop *PopUpAction) FooterContent() template.HTML {
-	up := template2.Default().Popup().SetID(pop.Id).
+func (pop *PopUpAction) FooterContent(ctx *context.Context) template.HTML {
+	up := template2.Default(ctx).Popup().SetID(pop.Id).
 		SetTitle(template.HTML(pop.Title)).
 		SetFooter(pop.BtnTitle).
 		SetWidth(pop.Width).

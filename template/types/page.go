@@ -102,24 +102,24 @@ type NewPageParam struct {
 	NavButtonsJS   template.HTML
 }
 
-func (param *NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
+func (param *NewPageParam) NavButtonsAndJS(ctx *context.Context) (template.HTML, template.HTML) {
 	navBtnFooter := template.HTML("")
 	navBtn := template.HTML("")
 	btnJS := template.JS("")
 
 	for _, btn := range param.Buttons {
 		if btn.IsType(ButtonTypeNavDropDown) {
-			content, js := btn.Content()
+			content, js := btn.Content(ctx)
 			navBtn += content
 			btnJS += js
 			for _, item := range btn.(*NavDropDownButton).Items {
-				navBtnFooter += item.GetAction().FooterContent()
-				_, js := item.Content()
+				navBtnFooter += item.GetAction().FooterContent(ctx)
+				_, js := item.Content(ctx)
 				btnJS += js
 			}
 		} else {
-			navBtnFooter += btn.GetAction().FooterContent()
-			content, js := btn.Content()
+			navBtnFooter += btn.GetAction().FooterContent(ctx)
+			content, js := btn.Content(ctx)
 			navBtn += content
 			btnJS += js
 		}
@@ -129,10 +129,10 @@ func (param *NewPageParam) NavButtonsAndJS() (template.HTML, template.HTML) {
 		navBtnFooter + template.HTML(ParseTableDataTmpl(`<script>`+btnJS+`</script>`))
 }
 
-func NewPage(param *NewPageParam) *Page {
+func NewPage(ctx *context.Context, param *NewPageParam) *Page {
 
 	if param.NavButtonsHTML == template.HTML("") {
-		param.NavButtonsHTML, param.NavButtonsJS = param.NavButtonsAndJS()
+		param.NavButtonsHTML, param.NavButtonsJS = param.NavButtonsAndJS(ctx)
 	}
 
 	logo := param.Logo
@@ -168,9 +168,9 @@ func NewPage(param *NewPageParam) *Page {
 	}
 }
 
-func (page *Page) AddButton(title template.HTML, icon string, action Action) *Page {
+func (page *Page) AddButton(ctx *context.Context, title template.HTML, icon string, action Action) *Page {
 	page.navButtons = append(page.navButtons, GetNavButton(title, icon, action))
-	page.CustomFootHtml += action.FooterContent()
+	page.CustomFootHtml += action.FooterContent(ctx)
 	return page
 }
 

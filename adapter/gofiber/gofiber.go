@@ -223,3 +223,8 @@ func (gof *Gofiber) Query() url.Values {
 
 	return queryObj.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (gof *Gofiber) Request() *http.Request {
+	return convertCtx(gof.ctx.Context())
+}

@@ -15,15 +15,15 @@ func Get{{.TableTitle}}Table(ctx *context.Context) table.Table {
 	
 	{{if eq .Connection "default"}}
 		{{if eq .PrimaryKey ""}}
-			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriver("{{.Driver}}"))
+			{{.Table}} := table.NewDefaultTable(ctx, table.DefaultConfigWithDriver("{{.Driver}}"))
 		{{else}}
-			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriver("{{.Driver}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
+			{{.Table}} := table.NewDefaultTable(ctx, table.DefaultConfigWithDriver("{{.Driver}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
 		{{end}}
 	{{else}}
 		{{if eq .PrimaryKey ""}}
-			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}"))
+			{{.Table}} := table.NewDefaultTable(ctx, table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}"))
 		{{else}}
-			{{.Table}} := table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
+			{{.Table}} := table.NewDefaultTable(ctx, table.DefaultConfigWithDriverAndConnection("{{.Driver}}", "{{.Connection}}").SetPrimaryKey("{{.PrimaryKey}}", db.{{.PrimaryKeyType}}))
 		{{end}}
 	{{end}}
 

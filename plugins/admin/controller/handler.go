@@ -60,7 +60,7 @@ func (h *Handler) GlobalDeferHandler(ctx *context.Context) {
 			return
 		}
 
-		h.HTML(ctx, auth.Auth(ctx), template.WarningPanelWithDescAndTitle(errMsg, errors.Msg, errors.Msg))
+		h.HTML(ctx, auth.Auth(ctx), template.WarningPanelWithDescAndTitle(ctx, errMsg, errors.Msg, errors.Msg))
 	}
 }
 

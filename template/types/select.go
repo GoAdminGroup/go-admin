@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 )
@@ -43,7 +44,7 @@ func GetDefaultSelection(placeholder string, options FieldOptions, action Action
 
 }
 
-func (b *DefaultSelection) Content() (template.HTML, template.JS) {
+func (b *DefaultSelection) Content(ctx *context.Context) (template.HTML, template.JS) {
 
 	optionsHtml := `<option value='__go_admin_all__'>` + language.Get("All") + `</option>`
 
@@ -69,7 +70,7 @@ func (b *DefaultSelection) Content() (template.HTML, template.JS) {
 	{
 		line-height: 24px;
 	}
-</style>`) + b.Action.ExtContent()
+</style>`) + b.Action.ExtContent(ctx)
 
 	return h, b.Action.Js() + template.JS(`
 	$(".`+b.Id+`").select2();

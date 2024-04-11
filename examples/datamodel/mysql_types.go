@@ -9,7 +9,7 @@ import (
 // GetAllTypesTable return the model of table types.
 func GetAllTypesTable() table.Table {
 
-	allTypesTable := table.NewDefaultTable(table.DefaultConfigWithDriver("mysql"))
+	allTypesTable := table.NewDefaultTable(nil, table.DefaultConfigWithDriver("mysql"))
 
 	info := allTypesTable.GetInfo()
 

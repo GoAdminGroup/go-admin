@@ -19,7 +19,7 @@ import (
 // GetUserTable return the model of table user.
 func GetUserTable(ctx *context.Context) (userTable table.Table) {
 
-	userTable = table.NewDefaultTable(table.Config{
+	userTable = table.NewDefaultTable(ctx, table.Config{
 		Driver:     db.DriverMysql,
 		CanAdd:     true,
 		Editable:   true,
@@ -54,14 +54,14 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 	info.AddColumn("Personality", func(value types.FieldModel) interface{} {
 		return "handsome"
 	})
-	info.AddColumnButtons("see more", types.GetColumnButton("see more", icon.Info,
+	info.AddColumnButtons(ctx, "see more", types.GetColumnButton("see more", icon.Info,
 		action.PopUp("/see/more/example", "see more", func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "ok", "<h1>Detail</h1><p>balabala</p>"
 		})))
 	info.AddField("Phone", "phone", db.Varchar).FieldFilterable()
 	info.AddField("City", "city", db.Varchar).FieldFilterable()
 	info.AddField("Avatar", "avatar", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
-		return template.Default().Image().
+		return template.Default(ctx).Image().
 			SetSrc(`//quick.go-admin.cn/demo/assets/dist/img/gopher_avatar.png`).
 			SetHeight("120").SetWidth("120").WithModal().GetContent()
 	})
@@ -69,25 +69,25 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		FieldFilterable(types.FilterType{FormType: form.DatetimeRange})
 	info.AddField("UpdatedAt", "updated_at", db.Timestamp).FieldEditAble(editType.Datetime)
 
-	info.AddActionButton("google", action.Jump("https://google.com"))
-	info.AddActionButton("Audit", action.Ajax("/admin/audit",
+	info.AddActionButton(ctx, "google", action.Jump("https://google.com"))
+	info.AddActionButton(ctx, "Audit", action.Ajax("/admin/audit",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			fmt.Println("PostForm", ctx.PostForm())
 			return true, "success", ""
 		}))
-	info.AddActionButton("Preview", action.PopUp("/admin/preview", "Preview",
+	info.AddActionButton(ctx, "Preview", action.PopUp("/admin/preview", "Preview",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "", "<h2>hello world</h2>"
 		}))
-	info.AddButton("jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
-	info.AddButton("popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
+	info.AddButton(ctx, "jump", icon.User, action.JumpInNewTab("/admin/info/authors", "authors"))
+	info.AddButton(ctx, "popup", icon.Terminal, action.PopUp("/admin/popup", "Popup Example",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "", "<h2>hello world</h2>"
 		}))
 
-	info.AddButton("iframe", icon.Tv, action.PopUpWithIframe("/admin/iframe", "Iframe Example",
+	info.AddButton(ctx, "iframe", icon.Tv, action.PopUpWithIframe("/admin/iframe", "Iframe Example",
 		action.IframeData{Src: "/admin/info/authors"}, "900px", "560px"))
-	info.AddButton("form", icon.Folder, action.PopUpWithForm(action.PopUpData{
+	info.AddButton(ctx, "form", icon.Folder, action.PopUpWithForm(action.PopUpData{
 		Id:     "/admin/popup/form",
 		Title:  "Popup Form Example",
 		Width:  "900px",
@@ -103,11 +103,11 @@ func GetUserTable(ctx *context.Context) (userTable table.Table) {
 		return panel
 	}, "/admin/popup/form"))
 
-	info.AddButton("ajax", icon.Android, action.Ajax("/admin/ajax",
+	info.AddButton(ctx, "ajax", icon.Android, action.Ajax("/admin/ajax",
 		func(ctx *context.Context) (success bool, msg string, data interface{}) {
 			return true, "success", ""
 		}))
-	info.AddSelectBox("gender", types.FieldOptions{
+	info.AddSelectBox(ctx, "gender", types.FieldOptions{
 		{Value: "0", Text: "men"},
 		{Value: "1", Text: "women"},
 	}, action.FieldFilter("gender"))

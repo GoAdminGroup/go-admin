@@ -239,3 +239,8 @@ func (fast *Fasthttp) Query() url.Values {
 
 	return queryObj.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (fast *Fasthttp) Request() *http.Request {
+	return convertCtx(fast.ctx)
+}

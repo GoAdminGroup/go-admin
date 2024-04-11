@@ -57,8 +57,8 @@ type Table interface {
 
 	GetPrimaryKey() PrimaryKey
 
-	GetData(params parameter.Parameters) (PanelInfo, error)
-	GetDataWithIds(params parameter.Parameters) (PanelInfo, error)
+	GetData(ctx *context.Context, params parameter.Parameters) (PanelInfo, error)
+	GetDataWithIds(ctx *context.Context, params parameter.Parameters) (PanelInfo, error)
 	GetDataWithId(params parameter.Parameters) (FormInfo, error)
 	UpdateData(ctx *context.Context, dataList form.Values) error
 	InsertData(ctx *context.Context, ddataList form.Values) error
@@ -133,7 +133,7 @@ func (base *BaseTable) GetOnlyDetail() bool       { return base.OnlyDetail }
 func (base *BaseTable) GetOnlyNewForm() bool      { return base.OnlyNewForm }
 func (base *BaseTable) GetOnlyUpdateForm() bool   { return base.OnlyUpdateForm }
 
-func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extraHtml ...template.HTML) types.PaginatorAttribute {
+func (base *BaseTable) GetPaginator(ctx *context.Context, size int, params parameter.Parameters, extraHtml ...template.HTML) types.PaginatorAttribute {
 
 	var eh template.HTML
 
@@ -141,7 +141,7 @@ func (base *BaseTable) GetPaginator(size int, params parameter.Parameters, extra
 		eh = extraHtml[0]
 	}
 
-	return paginator.Get(paginator.Config{
+	return paginator.Get(ctx, paginator.Config{
 		Size:         size,
 		Param:        params,
 		PageSizeList: base.Info.GetPageSizeList(),

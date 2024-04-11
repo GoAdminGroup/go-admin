@@ -200,3 +200,8 @@ func (g *Gorilla) IsPjax() bool {
 func (g *Gorilla) Query() url.Values {
 	return g.ctx.Request.URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (g *Gorilla) Request() *http.Request {
+	return g.ctx.Request
+}

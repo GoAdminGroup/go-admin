@@ -172,3 +172,8 @@ func (e *Echo) IsPjax() bool {
 func (e *Echo) Query() url.Values {
 	return e.ctx.Request().URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (e *Echo) Request() *http.Request {
+	return e.ctx.Request()
+}

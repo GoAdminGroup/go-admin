@@ -67,7 +67,7 @@ func (h *Handler) showTableData(ctx *context.Context, prefix string, params para
 		panel = h.table(prefix, ctx)
 	}
 
-	panelInfo, err := panel.GetData(params.WithIsAll(false))
+	panelInfo, err := panel.GetData(ctx, params.WithIsAll(false))
 
 	if err != nil {
 		return panel, panelInfo, nil, err
@@ -102,7 +102,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 	panel, panelInfo, urls, err := h.showTableData(ctx, prefix, params, panel, "")
 	if err != nil {
 		return h.Execute(ctx, auth.Auth(ctx),
-			template.WarningPanelWithDescAndTitle(err.Error(), errors.Msg, errors.Msg), "",
+			template.WarningPanelWithDescAndTitle(ctx, err.Error(), errors.Msg, errors.Msg), "",
 			template.ExecuteOptions{Animation: params.Animation})
 	}
 
@@ -113,7 +113,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				template.ExecuteOptions{Animation: params.Animation})
 		}
 		return h.Execute(ctx, auth.Auth(ctx),
-			template.WarningPanel(panel.GetInfo().PageError.Error(),
+			template.WarningPanel(ctx, panel.GetInfo().PageError.Error(),
 				template.GetPageTypeFromPageError(panel.GetInfo().PageError)), "",
 			template.ExecuteOptions{Animation: params.Animation})
 	}
@@ -158,7 +158,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			}
 
 			var content template2.HTML
-			content, actionJs = allActionBtns.Content()
+			content, actionJs = allActionBtns.Content(ctx)
 
 			actionBtns = html.Div(html.Div(
 				html.A(icon.Icon(icon.EllipsisV),
@@ -171,13 +171,13 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 				html.M{"text-align": "center"}, html.M{"class": "dropdown"})
 		} else {
-			actionBtns, actionJs = allActionBtns.Content()
+			actionBtns, actionJs = allActionBtns.Content(ctx)
 		}
 	} else {
 		info.ActionButtonFold = false
 	}
 
-	btns, btnsJs := info.Buttons.CheckPermissionWhenURLAndMethodNotEmpty(user).Content()
+	btns, btnsJs := info.Buttons.CheckPermissionWhenURLAndMethodNotEmpty(user).Content(ctx)
 
 	if info.TabGroups.Valid() {
 
@@ -300,7 +300,14 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 // Assets return front-end assets according the request path.
 func (h *Handler) Assets(ctx *context.Context) {
 	filepath := h.config.URLRemovePrefix(ctx.Path())
-	data, err := aTemplate(ctx).GetAsset(filepath)
+
+	theme := h.assetsTheme[filepath]
+	if theme == "" {
+		theme = h.config.Theme
+	}
+	fmt.Println("filepath", filepath, "theme", theme)
+
+	data, err := aTemplateByTheme(ctx, theme).GetAsset(filepath)
 
 	if err != nil {
 		data, err = template.GetAsset(filepath)
@@ -368,11 +375,11 @@ func (h *Handler) Export(ctx *context.Context) {
 		if len(param.Id) == 0 {
 			params = parameter.GetParam(ctx.Request.URL, tableInfo.DefaultPageSize, tableInfo.SortField,
 				tableInfo.GetSort())
-			infoData, err = panel.GetData(params.WithIsAll(param.IsAll))
+			infoData, err = panel.GetData(ctx, params.WithIsAll(param.IsAll))
 			fileName = fmt.Sprintf("%s-%d-page-%s-pageSize-%s.xlsx", tableInfo.Title, time.Now().Unix(),
 				params.Page, params.PageSize)
 		} else {
-			infoData, err = panel.GetDataWithIds(parameter.GetParam(ctx.Request.URL,
+			infoData, err = panel.GetDataWithIds(ctx, parameter.GetParam(ctx.Request.URL,
 				tableInfo.DefaultPageSize, tableInfo.SortField, tableInfo.GetSort()).WithPKs(param.Id...))
 			fileName = fmt.Sprintf("%s-%d-id-%s.xlsx", tableInfo.Title, time.Now().Unix(), strings.Join(param.Id, "_"))
 		}

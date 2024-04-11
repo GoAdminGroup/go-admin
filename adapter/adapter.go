@@ -7,6 +7,7 @@ package adapter
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -62,6 +63,7 @@ type WebFrameWork interface {
 	Lang() string
 	Path() string
 	Method() string
+	Request() *http.Request
 	FormParam() url.Values
 	Query() url.Values
 	IsPjax() bool
@@ -158,28 +160,30 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		err   error
 	)
 
+	gctx := context.NewContext(wf.Request())
+
 	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
-		panel = template.WarningPanel(errors.NoPermission, template.NoPermission403Page)
+		panel = template.WarningPanel(gctx, errors.NoPermission, template.NoPermission403Page)
 	} else {
 		panel, err = getPanelFn(ctx)
 		if err != nil {
-			panel = template.WarningPanel(err.Error())
+			panel = template.WarningPanel(gctx, err.Error())
 		}
 	}
 
 	fn(panel.Callbacks...)
 
-	tmpl, tmplName := template.Default().GetTemplate(newBase.IsPjax())
+	tmpl, tmplName := template.Default(gctx).GetTemplate(newBase.IsPjax())
 
 	buf := new(bytes.Buffer)
-	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(&types.NewPageParam{
+	hasError = tmpl.ExecuteTemplate(buf, tmplName, types.NewPage(gctx, &types.NewPageParam{
 		User:         user,
 		Menu:         menu.GetGlobalMenu(user, wf.GetConnection(), newBase.Lang()).SetActiveClass(config.URLRemovePrefix(newBase.Path())),
 		Panel:        panel.GetContent(config.IsProductionEnvironment()),
-		Assets:       template.GetComponentAssetImportHTML(),
+		Assets:       template.GetComponentAssetImportHTML(gctx),
 		Buttons:      navButtons.CheckPermission(user),
-		TmplHeadHTML: template.Default().GetHeadHTML(),
-		TmplFootJS:   template.Default().GetFootJS(),
+		TmplHeadHTML: template.Default(gctx).GetHeadHTML(),
+		TmplFootJS:   template.Default(gctx).GetFootJS(),
 		Iframe:       newBase.Query().Get(constant.IframeKey) == "true",
 	}))
 

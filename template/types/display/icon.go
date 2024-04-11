@@ -1,6 +1,7 @@
 package display
 
 import (
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
@@ -13,7 +14,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("icon", new(Icon))
 }
 
-func (i *Icon) Get(args ...interface{}) types.FieldFilterFn {
+func (i *Icon) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		icons := args[0].(map[string]string)
 		defaultIcon := ""

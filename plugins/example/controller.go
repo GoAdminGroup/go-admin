@@ -17,10 +17,10 @@ import (
 	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
 )
 
-func (e *Example) TestHandler(ctx *context.Context) {
-	page.SetPageContent(ctx, auth.Auth(ctx), func(ctx interface{}) (types.Panel, error) {
+func (e *Example) TestHandler(rawCtx *context.Context) {
+	page.SetPageContent(rawCtx, auth.Auth(rawCtx), func(ctx interface{}) (types.Panel, error) {
 
-		components := template2.Default()
+		components := template2.Default(rawCtx)
 		colComp := components.Col()
 
 		/**************************

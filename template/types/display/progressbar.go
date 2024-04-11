@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -16,7 +17,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("progressbar", new(ProgressBar))
 }
 
-func (p *ProgressBar) Get(args ...interface{}) types.FieldFilterFn {
+func (p *ProgressBar) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		param := args[0].([]types.FieldProgressBarData)
 		style := "primary"

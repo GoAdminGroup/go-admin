@@ -104,7 +104,7 @@ func (h *Handler) ShowEditMenu(ctx *context.Context) {
 	user := auth.Auth(ctx)
 
 	if err != nil {
-		h.HTMLPlug(ctx, user, template.WarningPanelWithDescAndTitle(err.Error(),
+		h.HTMLPlug(ctx, user, template.WarningPanelWithDescAndTitle(ctx, err.Error(),
 			model.GetForm().Description, model.GetForm().Title), plugName)
 		return
 	}

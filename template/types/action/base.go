@@ -48,8 +48,8 @@ func (base *BaseAction) Js() template.JS              { return base.JS }
 func (base *BaseAction) BtnClass() template.HTML      { return "" }
 func (base *BaseAction) BtnAttribute() template.HTML  { return "" }
 func (base *BaseAction) GetCallbacks() context.Node   { return context.Node{} }
-func (base *BaseAction) ExtContent() template.HTML    { return template.HTML(``) }
-func (base *BaseAction) FooterContent() template.HTML { return template.HTML(``) }
+func (base *BaseAction) ExtContent(ctx *context.Context) template.HTML    { return template.HTML(``) }
+func (base *BaseAction) FooterContent(ctx *context.Context) template.HTML { return template.HTML(``) }
 func (base *BaseAction) SetBtnData(data interface{})  { base.BtnData = data }
 
 var _ types.Action = (*AjaxAction)(nil)

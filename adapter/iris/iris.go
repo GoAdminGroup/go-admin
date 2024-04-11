@@ -170,3 +170,8 @@ func (is *Iris) IsPjax() bool {
 func (is *Iris) Query() url.Values {
 	return is.ctx.Request().URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (is *Iris) Request() *http.Request {
+	return is.ctx.Request()
+}

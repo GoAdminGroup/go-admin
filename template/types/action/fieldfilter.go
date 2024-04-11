@@ -3,6 +3,7 @@ package action
 import (
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
 	"github.com/GoAdminGroup/go-admin/template/types"
@@ -17,7 +18,7 @@ func FieldFilter(field string) *FieldFilterAction {
 	return &FieldFilterAction{Field: field}
 }
 
-func (jump *FieldFilterAction) ExtContent() template.HTML {
+func (jump *FieldFilterAction) ExtContent(ctx *context.Context) template.HTML {
 
 	options := jump.BtnData.(types.FieldOptions)
 

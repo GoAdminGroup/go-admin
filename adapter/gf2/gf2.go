@@ -146,3 +146,8 @@ func (gf2 *GF2) SetContentType() {
 func (gf2 *GF2) Write(body []byte) {
 	gf2.ctx.Response.WriteStatus(http.StatusOK, body)
 }
+
+// Request implements the method Adapter.Request.
+func (gf2 *GF2) Request() *http.Request {
+	return gf2.ctx.Request
+}

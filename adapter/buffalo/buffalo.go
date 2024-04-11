@@ -207,3 +207,8 @@ func (bu *Buffalo) IsPjax() bool {
 func (bu *Buffalo) Query() neturl.Values {
 	return bu.ctx.Request().URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (bu *Buffalo) Request() *http.Request {
+	return bu.ctx.Request()
+}

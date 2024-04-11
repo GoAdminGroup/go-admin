@@ -44,7 +44,7 @@ func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
 }
 
 func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
-	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -295,7 +295,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 			} else {
 				model.Value = config.GetStore().URL(model.Value)
 			}
-			return template.Default().Image().
+			return template.Default(ctx).Image().
 				SetSrc(template.HTML(model.Value)).
 				SetHeight("120").SetWidth("120").WithModal().GetContent()
 		})
@@ -353,7 +353,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 }
 
 func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable Table) {
-	managerTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -521,7 +521,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 }
 
 func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable Table) {
-	permissionTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+	permissionTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := permissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -659,7 +659,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 }
 
 func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
-	roleTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+	roleTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	info := roleTable.GetInfo().AddXssJsFilter().HideFilterArea()
 
@@ -816,7 +816,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 }
 
 func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
-	opTable = NewDefaultTable(Config{
+	opTable = NewDefaultTable(ctx, Config{
 		Driver:     config.GetDatabases().GetDefault().Driver,
 		CanAdd:     false,
 		Editable:   false,
@@ -843,7 +843,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 		JoinField: "id",
 		Field:     "user_id",
 	}).FieldDisplay(func(value types.FieldModel) interface{} {
-		return template.Default().
+		return template.Default(ctx).
 			Link().
 			SetURL(config.Url("/info/manager/detail?__goadmin_detail_pk=") + strconv.Itoa(int(value.Row["user_id"].(int64)))).
 			SetContent(template.HTML(value.Value)).
@@ -863,8 +863,8 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 		options[k].Value = fmt.Sprintf("%v", user["id"])
 		options[k].Text = fmt.Sprintf("%v", user["name"])
 	}
-	info.AddSelectBox(language.Get("user"), options, action.FieldFilter("user_id"))
-	info.AddSelectBox(language.Get("method"), types.FieldOptions{
+	info.AddSelectBox(ctx, language.Get("user"), options, action.FieldFilter("user_id"))
+	info.AddSelectBox(ctx, language.Get("method"), types.FieldOptions{
 		{Value: "GET", Text: "GET"},
 		{Value: "POST", Text: "POST"},
 		{Value: "OPTIONS", Text: "OPTIONS"},
@@ -896,7 +896,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 }
 
 func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
-	menuTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
+	menuTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
 	name := ctx.Query("__plugin_name")
 
@@ -1040,7 +1040,7 @@ func (s *SystemTable) GetMenuTable(ctx *context.Context) (menuTable Table) {
 }
 
 func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
-	siteTable = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+	siteTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
 		SetOnlyUpdateForm().
 		SetGetDataFun(func(params parameter.Parameters) (i []map[string]interface{}, i2 int) {
 			return []map[string]interface{}{models.Site().SetConn(s.conn).AllToMapInterface()}, 1
@@ -1360,7 +1360,7 @@ func (s *SystemTable) GetSiteTable(ctx *context.Context) (siteTable Table) {
 }
 
 func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table) {
-	generateTool = NewDefaultTable(DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
+	generateTool = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver).
 		SetOnlyNewForm())
 
 	formList := generateTool.GetForm().AddXssJsFilter().

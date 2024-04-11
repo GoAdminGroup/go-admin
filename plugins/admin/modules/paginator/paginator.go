@@ -6,6 +6,7 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/form"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
@@ -20,9 +21,9 @@ type Config struct {
 	PageSizeList []string
 }
 
-func Get(cfg Config) types.PaginatorAttribute {
+func Get(ctx *context.Context, cfg Config) types.PaginatorAttribute {
 
-	paginator := template2.Default().Paginator().(*components.PaginatorAttribute)
+	paginator := template2.Default(ctx).Paginator().(*components.PaginatorAttribute)
 
 	totalPage := int(math.Ceil(float64(cfg.Size) / float64(cfg.Param.PageSizeInt)))
 

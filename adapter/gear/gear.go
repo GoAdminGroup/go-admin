@@ -199,3 +199,8 @@ func (gears *Gear) IsPjax() bool {
 func (gears *Gear) Query() url.Values {
 	return gears.ctx.Req.URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (gears *Gear) Request() *http.Request {
+	return gears.ctx.Req
+}

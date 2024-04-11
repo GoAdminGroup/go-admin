@@ -3,6 +3,7 @@ package display
 import (
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -14,7 +15,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("qrcode", new(Qrcode))
 }
 
-func (q *Qrcode) Get(args ...interface{}) types.FieldFilterFn {
+func (q *Qrcode) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 
 		src := `https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=` + value.Value

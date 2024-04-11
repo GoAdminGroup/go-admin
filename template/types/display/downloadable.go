@@ -3,6 +3,7 @@ package display
 import (
 	"html/template"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -14,7 +15,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("downloadable", new(Downloadable))
 }
 
-func (d *Downloadable) Get(args ...interface{}) types.FieldFilterFn {
+func (d *Downloadable) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		param := args[0].([]string)
 

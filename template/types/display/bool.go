@@ -3,6 +3,7 @@ package display
 import (
 	"strings"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/html"
@@ -16,7 +17,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("bool", new(Bool))
 }
 
-func (b *Bool) Get(args ...interface{}) types.FieldFilterFn {
+func (b *Bool) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		params := args[0].([]string)
 		pass := icon.IconWithStyle(icon.Check, html.Style{

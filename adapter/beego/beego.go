@@ -163,3 +163,8 @@ func (bee *Beego) IsPjax() bool {
 func (bee *Beego) Query() url.Values {
 	return bee.ctx.Request.URL.Query()
 }
+
+// Request implements the method Adapter.Request.
+func (bee *Beego) Request() *http.Request {
+	return bee.ctx.Request
+}

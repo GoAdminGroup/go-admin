@@ -10,10 +10,10 @@ import (
 // GetAuthorsTable return the model of table author.
 func GetAuthorsTable(ctx *context.Context) (authorsTable table.Table) {
 
-	authorsTable = table.NewDefaultTable(table.DefaultConfig())
+	authorsTable = table.NewDefaultTable(ctx, table.DefaultConfig())
 
 	// connect your custom connection
-	// authorsTable = table.NewDefaultTable(table.DefaultConfigWithDriverAndConnection("mysql", "admin"))
+	// authorsTable = table.NewDefaultTable(ctx, table.DefaultConfigWithDriverAndConnection("mysql", "admin"))
 
 	info := authorsTable.GetInfo()
 	info.AddField("ID", "id", db.Int).FieldSortable()

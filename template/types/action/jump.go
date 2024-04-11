@@ -61,6 +61,6 @@ func (jump *JumpAction) BtnClass() template.HTML {
 	return ""
 }
 
-func (jump *JumpAction) ExtContent() template.HTML {
+func (jump *JumpAction) ExtContent(ctx *context.Context) template.HTML {
 	return jump.Ext
 }

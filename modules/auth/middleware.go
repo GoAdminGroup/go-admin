@@ -84,15 +84,15 @@ func DefaultInvoker(conn db.Connection) *Invoker {
 </script>`)
 			}
 		},
-		permissionDenyCallback: func(ctx *context.Context) {
-			if ctx.Headers(constant.PjaxHeader) == "" && ctx.Method() != "GET" {
-				ctx.JSON(http.StatusForbidden, map[string]interface{}{
+		permissionDenyCallback: func(rawCtx *context.Context) {
+			if rawCtx.Headers(constant.PjaxHeader) == "" && rawCtx.Method() != "GET" {
+				rawCtx.JSON(http.StatusForbidden, map[string]interface{}{
 					"code": http.StatusForbidden,
 					"msg":  language.Get(errors.PermissionDenied),
 				})
 			} else {
-				page.SetPageContent(ctx, Auth(ctx), func(ctx interface{}) (types.Panel, error) {
-					return template2.WarningPanel(errors.PermissionDenied, template2.NoPermission403Page), nil
+				page.SetPageContent(rawCtx, Auth(rawCtx), func(ctx interface{}) (types.Panel, error) {
+					return template2.WarningPanel(rawCtx, errors.PermissionDenied, template2.NoPermission403Page), nil
 				}, conn)
 			}
 		},

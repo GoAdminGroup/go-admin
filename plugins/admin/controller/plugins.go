@@ -124,7 +124,7 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 		rows += aRow(ctx).SetContent(col1 + col2 + col3).GetContent()
 	}
 
-	detailPopupModal := template2.Default().Popup().SetID("detail-popup-modal").
+	detailPopupModal := template2.Default(ctx).Popup().SetID("detail-popup-modal").
 		SetTitle(plugWordHTML("plugin detail")).
 		SetBody(pluginsPageDetailPopupBody()).
 		SetWidth("730px").
@@ -132,14 +132,14 @@ func (h *Handler) PluginStore(ctx *context.Context) {
 		SetFooter("1").
 		GetContent()
 
-	buyPopupModal := template2.Default().Popup().SetID("buy-popup-modal").
+	buyPopupModal := template2.Default(ctx).Popup().SetID("buy-popup-modal").
 		SetTitle(plugWordHTML("plugin detail")).
 		SetWidth("730px").
 		SetHeight("400px").
 		SetFooter("1").
 		GetContent()
 
-	loginPopupModal := template2.Default().Popup().SetID("login-popup-modal").
+	loginPopupModal := template2.Default(ctx).Popup().SetID("login-popup-modal").
 		SetTitle(plugWordHTML("login to goadmin member system")).
 		SetBody(aForm(ctx).SetContent(types.FormFields{
 			{Field: "name", Head: plugWord("account"), FormType: form.Text, Editable: true},

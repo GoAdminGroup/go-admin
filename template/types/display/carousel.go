@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"strconv"
 
+	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/template/types"
 )
 
@@ -15,7 +16,7 @@ func init() {
 	types.RegisterDisplayFnGenerator("carousel", new(Carousel))
 }
 
-func (c *Carousel) Get(args ...interface{}) types.FieldFilterFn {
+func (c *Carousel) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	return func(value types.FieldModel) interface{} {
 		fn := args[0].(types.FieldGetImgArrFn)
 		size := args[1].([]int)
