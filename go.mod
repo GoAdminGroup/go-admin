@@ -28,7 +28,6 @@ require (
 	github.com/magiconair/properties v1.8.6
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
-	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/sclevine/agouti v3.0.0+incompatible
 	github.com/stretchr/testify v1.9.0
 	github.com/teambition/gear v1.27.3
@@ -37,6 +36,7 @@ require (
 	golang.org/x/crypto v0.20.0
 	golang.org/x/text v0.14.0
 	gopkg.in/ini.v1 v1.67.0
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v2 v2.4.0
 	xorm.io/xorm v1.0.2
 )
@@ -185,7 +185,6 @@ require (
 	golang.org/x/term v0.17.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
-	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	xorm.io/builder v0.3.7 // indirect
 )
