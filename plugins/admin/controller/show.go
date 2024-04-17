@@ -252,12 +252,38 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	boxModel := aBox(ctx).
 		SetBody(body).
-		SetStyle(template2.HTMLAttr(`overflow-x: auto;`)).
+		SetStyle(template2.HTMLAttr(`overflow-x: auto;overflow-y: hidden;`)).
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
 		WithHeadBorder().
 		SetIframeStyle(!isNotIframe).
-		SetFooter(paginator.GetContent() + info.FooterHtml)
+		SetFooter(paginator.GetContent() + info.FooterHtml + `
+		<script>
+		$(document).ready(function() {
+			var tableWrapper = $(".table");
+			var lastTh = tableWrapper.find('tbody th:last-child');
+			var lastTd = tableWrapper.find('tbody td:last-child');
+
+			var minWidth = parseInt(tableWrapper.css('min-width'));
+
+			var resize = function() {
+				if (tableWrapper.width() <= minWidth) {
+					lastTh.addClass('last_th_td_ele');
+					lastTd.addClass('last_th_td_ele');
+				} else {
+					lastTh.removeClass('last_th_td_ele');
+					lastTd.removeClass('last_th_td_ele');
+				}
+			}
+
+			resize();
+
+			$(window).resize(function() {
+				resize();
+			});
+		});
+</script>
+		`)
 
 	if len(panelInfo.FilterFormData) > 0 {
 		boxModel = boxModel.SetSecondHeaderClass("filter-area").
