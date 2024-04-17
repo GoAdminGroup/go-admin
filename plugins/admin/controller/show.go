@@ -132,7 +132,10 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 		allActionBtns = info.ActionButtons.CheckPermissionWhenURLAndMethodNotEmpty(user)
 	)
 
-	if actionBtns == template.HTML("") && len(allActionBtns) > 0 {
+	hasExtAction := actionBtns == template.HTML("") && len(allActionBtns) > 0
+	hasAction := hasExtAction || (editUrl != "" || newUrl != "" || deleteUrl != "")
+
+	if hasExtAction {
 		if info.ActionButtonFold {
 			ext := template2.HTML("")
 			if deleteUrl != "" {
@@ -199,6 +202,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					SetInfoList(infoListArr[key]).
 					SetInfoUrl(infoUrl).
 					SetButtons(btns).
+					SetSticky(hasAction).
 					SetActionJs(btnsJs + actionJs).
 					SetHasFilter(len(panelInfo.FilterFormData) > 0).
 					SetAction(actionBtns).
@@ -224,6 +228,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 			SetInfoList(panelInfo.InfoList).
 			SetInfoUrl(infoUrl).
 			SetButtons(btns).
+			SetSticky(hasAction).
 			SetLayout(info.TableLayout).
 			SetActionJs(btnsJs + actionJs).
 			SetAction(actionBtns).

@@ -111,6 +111,7 @@ type TableAttribute interface {
 	SetName(name string) TableAttribute
 	SetMinWidth(value string) TableAttribute
 	SetHideThead() TableAttribute
+	SetSticky(sticky bool) TableAttribute
 	SetLayout(value string) TableAttribute
 	SetStyle(style string) TableAttribute
 	GetContent() template.HTML
@@ -131,6 +132,7 @@ type DataTableAttribute interface {
 	SetHideThead() DataTableAttribute
 	SetLayout(value string) DataTableAttribute
 	SetButtons(btns template.HTML) DataTableAttribute
+	SetSticky(sticky bool) DataTableAttribute
 	SetHideFilterArea(value bool) DataTableAttribute
 	SetHideRowSelector(value bool) DataTableAttribute
 	SetActionJs(aj template.JS) DataTableAttribute
