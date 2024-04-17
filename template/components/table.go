@@ -221,7 +221,7 @@ func (compo *DataTableAttribute) SetNoAction() types.DataTableAttribute {
 
 func (compo *DataTableAttribute) GetContent() template.HTML {
 	if compo.MinWidth == "" {
-		compo.MinWidth = "1000px"
+		compo.MinWidth = "1600px"
 	}
 	if !compo.NoAction && compo.EditUrl == "" && compo.DeleteUrl == "" && compo.DetailUrl == "" && compo.Action == "" {
 		compo.NoAction = true

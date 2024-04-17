@@ -252,6 +252,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	boxModel := aBox(ctx).
 		SetBody(body).
+		SetStyle(template2.HTMLAttr(`overflow-x: auto;`)).
 		SetNoPadding().
 		SetHeader(dataTable.GetDataTableHeader() + info.HeaderHtml).
 		WithHeadBorder().
