@@ -161,6 +161,8 @@ var cn = LangSet{
 	"year":    "年",
 	"years":   "年",
 
+	"site setting":           "网站设置",
+	"config.site setting":    "网站设置",
 	"config.domain":          "网站域名",
 	"config.language":        "网站语言",
 	"config.url prefix":      "URL前缀",
@@ -178,7 +180,6 @@ var cn = LangSet{
 	"config.databases":       "数据库设置",
 	"config.general":         "通用",
 	"config.log":             "日志",
-	"config.site setting":    "网站设置",
 	"config.custom":          "定制",
 	"config.debug":           "Debug模式",
 	"config.site off":        "关闭网站",
@@ -269,7 +270,8 @@ var cn = LangSet{
 	"config.modify site config success": "修改网站配置成功",
 	"config.modify site config fail":    "修改网站配置失败",
 
-	"system.system info":     "应用系统信息",
+	"site info":              "运行信息",
+	"system.site info":       "运行信息",
 	"system.application":     "应用信息",
 	"system.application run": "应用运行信息",
 	"system.system":          "系统信息",
@@ -323,7 +325,8 @@ var cn = LangSet{
 	"system.theme_name":       "主题",
 	"system.theme_version":    "主题版本",
 
-	"tool.tool":                 "工具",
+	"code generate tool":        "代码生成器",
+	"tool.code generate tool":   "代码生成器",
 	"tool.table":                "表格",
 	"tool.connection":           "连接",
 	"tool.output path is empty": "输出路径为空",

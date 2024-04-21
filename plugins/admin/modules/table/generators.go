@@ -1684,8 +1684,8 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 			lgWithScore("form info", "tool"), lgWithScore("detail info", "tool"))
 
 	formList.SetTable("tool").
-		SetTitle(lgWithScore("tool", "tool")).
-		SetDescription(lgWithScore("tool", "tool")).
+		SetTitle(lgWithScore("code generate tool", "tool")).
+		SetDescription(lgWithScore("code generate tool", "tool")).
 		SetHeader(template.HTML(`<h3 class="box-title">` +
 			lgWithScore("generate table model", "tool") + `</h3>`))
 

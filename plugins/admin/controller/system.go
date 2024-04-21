@@ -164,8 +164,8 @@ func (h *Handler) SystemInfo(ctx *context.Context) {
 
 	h.HTML(ctx, auth.Auth(ctx), types.Panel{
 		Content:     row,
-		Description: language.GetFromHtml("system info", "system"),
-		Title:       language.GetFromHtml("system info", "system"),
+		Description: language.GetFromHtml("site info", "system"),
+		Title:       language.GetFromHtml("site info", "system"),
 	})
 }
 

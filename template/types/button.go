@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/GoAdminGroup/go-admin/context"
+	"github.com/GoAdminGroup/go-admin/modules/language"
 	"github.com/GoAdminGroup/go-admin/modules/utils"
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 )
@@ -250,7 +251,7 @@ func (b Buttons) CheckPermissionWhenURLAndMethodNotEmpty(user models.UserModel) 
 
 func (b Buttons) AddNavButton(ico, name string, action Action) Buttons {
 	if !b.CheckExist(name) {
-		return append(b, GetNavButton("", ico, action, name))
+		return append(b, GetNavButton(language.GetFromHtml(template.HTML(name)), "", action, name))
 	}
 	return b
 }
@@ -289,10 +290,10 @@ func (b Buttons) Callbacks() []context.Node {
 }
 
 const (
-	NavBtnSiteName = "go_admin_site_navbtn"
-	NavBtnInfoName = "go_admin_info_navbtn"
-	NavBtnToolName = "go_admin_tool_navbtn"
-	NavBtnPlugName = "go_admin_plug_navbtn"
+	NavBtnSiteName = "site setting"
+	NavBtnInfoName = "site info"
+	NavBtnToolName = "code generate tool"
+	NavBtnPlugName = "plugins"
 )
 
 func (b Buttons) RemoveSiteNavButton() Buttons {
@@ -354,7 +355,7 @@ func (n *NavButton) Content(ctx *context.Context) (template.HTML, template.JS) {
 	}
 
 	h := template.HTML(`<li>
-    <a class="`+template.HTML(n.Id)+` `+n.Action.BtnClass()+`" `+n.Action.BtnAttribute()+`>
+    <a class="`+template.HTML(n.Id)+` `+n.Action.BtnClass()+` dropdown-item" `+n.Action.BtnAttribute()+`>
       `+ico+`
       `+title+`
     </a>

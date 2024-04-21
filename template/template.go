@@ -429,11 +429,11 @@ func updateNavJS(isPjax bool) template.JS {
 		return ""
 	}
 	return `$(function () {
-	let lis = $(".navbar-custom-menu .nav.navbar-nav li");
-	for (var i = lis.length - 8; i > -1; i--) {
+	let lis = $(".user-menu .dropdown-menu li");
+	for (i = 0; i < lis.length - 2; i++) {
 		$(lis[i]).remove();
 	}
-	$(".navbar-custom-menu .nav.navbar-nav").prepend($("#navbar-nav-custom").html());
+	$(".user-menu .dropdown-menu").prepend($("#navbar-nav-custom").html());
 });`
 }
 
