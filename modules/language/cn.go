@@ -7,15 +7,16 @@ package language
 import "strings"
 
 var cn = LangSet{
-	"managers":  "管理员管理",
-	"name":      "用户名",
-	"nickname":  "昵称",
-	"role":      "角色",
-	"createdat": "创建时间",
-	"updatedat": "更新时间",
-	"path":      "路径",
-	"submit":    "提交",
-	"filter":    "筛选",
+	"managers":        "管理员",
+	"managers manage": "管理员管理",
+	"name":            "用户名",
+	"nickname":        "昵称",
+	"role":            "角色",
+	"createdat":       "创建时间",
+	"updatedat":       "更新时间",
+	"path":            "路径",
+	"submit":          "提交",
+	"filter":          "筛选",
 
 	"new":             "新建",
 	"export":          "导出",
@@ -39,6 +40,7 @@ var cn = LangSet{
 	"remove":          "移除",
 
 	"permission manage": "权限管理",
+	"menus":             "菜单",
 	"menus manage":      "菜单管理",
 	"roles manage":      "角色管理",
 	"operation log":     "操作日志",

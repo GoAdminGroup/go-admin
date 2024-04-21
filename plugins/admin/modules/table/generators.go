@@ -87,7 +87,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 
 	info.SetTable("goadmin_users").
 		SetTitle(lg("Managers")).
-		SetDescription(lg("Managers")).
+		SetDescription(lg("Managers manage")).
 		SetDeleteFn(func(idArr []string) error {
 
 			var ids = interfaces(idArr)
@@ -551,7 +551,7 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	info.SetTable("goadmin_permissions").
-		SetTitle(lg("Permission Manage")).
+		SetTitle(lg("Permission")).
 		SetDescription(lg("Permission Manage")).
 		SetDeleteFn(func(idArr []string) error {
 
@@ -670,7 +670,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
 	info.SetTable("goadmin_roles").
-		SetTitle(lg("Roles Manage")).
+		SetTitle(lg("Roles")).
 		SetDescription(lg("Roles Manage")).
 		SetDeleteFn(func(idArr []string) error {
 
@@ -748,7 +748,7 @@ func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 	formList.AddField(lg("createdAt"), "created_at", db.Timestamp, form.Default).FieldDisableWhenCreate()
 
 	formList.SetTable("goadmin_roles").
-		SetTitle(lg("Roles Manage")).
+		SetTitle(lg("Roles")).
 		SetDescription(lg("Roles Manage"))
 
 	formList.SetUpdateFn(func(values form2.Values) error {
