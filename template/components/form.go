@@ -37,6 +37,7 @@ type FormAttribute struct {
 	OperationFooter template.HTML
 	Prefix          string
 	CdnUrl          string
+	Horizontal      bool
 	types.Attribute
 }
 
@@ -47,6 +48,11 @@ func (compo *FormAttribute) SetHeader(value template.HTML) types.FormAttribute {
 
 func (compo *FormAttribute) SetPrimaryKey(value string) types.FormAttribute {
 	compo.PrimaryKey = value
+	return compo
+}
+
+func (compo *FormAttribute) SetHorizontal(value bool) types.FormAttribute {
+	compo.Horizontal = value
 	return compo
 }
 
@@ -222,5 +228,5 @@ func (compo *FormAttribute) GetContent() template.HTML {
 		"form/checkbox_stacked", "form/password", "form/code", "form/array", "form/select", "form/singleselect",
 		"form/richtext", "form/iconpicker", "form/datetime", "form/number", "form/number_range",
 		"form/email", "form/url", "form/ip", "form/color", "form/currency", "form_components", "form/datetime_range",
-		"form_layout_default", "form_layout_two_col", "form_layout_tab", "form_components_layout", "form_layout_flow")
+		"form_layout_default", "form_layout_two_col", "form_layout_tab", "form_components_layout", "form_layout_flow", "form_layout_filter")
 }

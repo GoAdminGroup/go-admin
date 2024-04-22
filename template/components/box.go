@@ -17,6 +17,7 @@ type BoxAttribute struct {
 	HeadBorder        string
 	Attr              template.HTMLAttr
 	HeadColor         string
+	Class             string
 	SecondHeaderClass string
 	SecondHeader      template.HTML
 	SecondHeadBorder  string
@@ -28,6 +29,11 @@ type BoxAttribute struct {
 
 func (compo *BoxAttribute) SetTheme(value string) types.BoxAttribute {
 	compo.Theme = value
+	return compo
+}
+
+func (compo *BoxAttribute) SetClass(value string) types.BoxAttribute {
+	compo.Class = value
 	return compo
 }
 

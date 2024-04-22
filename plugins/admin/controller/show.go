@@ -290,10 +290,15 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 </script>
 		`)
 
+	content := boxModel.GetContent()
+
 	if len(panelInfo.FilterFormData) > 0 {
-		boxModel = boxModel.SetSecondHeaderClass("filter-area").
-			SetSecondHeader(aForm(ctx).
+		filterBoxModel := aBox(ctx).SetClass("filter-area").
+			SetAttr(`style="padding-top: 14px;margin-top: -10px;margin-bottom: 12px;padding-left: 20px;"`).
+			SetStyle(`padding: 0px;`).
+			SetBody(aForm(ctx).
 				SetContent(panelInfo.FilterFormData).
+				SetHorizontal(true).
 				SetPrefix(h.config.PrefixFixSlash()).
 				SetInputWidth(info.FilterFormInputWidth).
 				SetHeadWidth(info.FilterFormHeadWidth).
@@ -303,11 +308,9 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 				SetHiddenFields(map[string]string{
 					form.NoAnimationKey: "true",
 				}).
-				SetOperationFooter(filterFormFooter(ctx, infoUrl)).
 				GetContent())
+		content = filterBoxModel.GetContent() + content
 	}
-
-	content := boxModel.GetContent()
 
 	if info.Wrapper != nil {
 		content = info.Wrapper(content)

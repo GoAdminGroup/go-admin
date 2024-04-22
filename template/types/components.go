@@ -21,6 +21,7 @@ type FormAttribute interface {
 	SetPrefix(value string) FormAttribute
 	SetUrl(value string) FormAttribute
 	SetPrimaryKey(value string) FormAttribute
+	SetHorizontal(value bool) FormAttribute
 	SetId(id string) FormAttribute
 	SetAjax(successJS, errorJS template.JS) FormAttribute
 	SetHiddenFields(fields map[string]string) FormAttribute
@@ -48,6 +49,7 @@ type BoxAttribute interface {
 	SetAttr(attr template.HTMLAttr) BoxAttribute
 	SetStyle(value template.HTMLAttr) BoxAttribute
 	SetHeadColor(value string) BoxAttribute
+	SetClass(value string) BoxAttribute
 	SetTheme(value string) BoxAttribute
 	SetSecondHeader(value template.HTML) BoxAttribute
 	SetSecondHeadColor(value string) BoxAttribute

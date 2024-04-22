@@ -46,11 +46,12 @@ func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
 func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea().SetFilterFormLayout(form.LayoutFilter)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
-	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
+	filterType := types.FilterType{NoIcon: true, HeadWidth: 4, InputWidth: 8}
+	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("role"), "name", db.Varchar).
 		FieldJoin(types.Join{
 			Table:     "goadmin_role_users",
@@ -81,7 +82,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 			}
 
 			return labels
-		}).FieldFilterable()
+		}).FieldFilterable(filterType)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
@@ -355,7 +356,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea().SetFilterFormLayout(form.LayoutThreeCol)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()

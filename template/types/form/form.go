@@ -70,6 +70,7 @@ const (
 	LayoutSixCol
 	LayoutFlow
 	LayoutTab
+	LayoutFilter
 )
 
 func (l Layout) Col() int {
@@ -89,6 +90,10 @@ func (l Layout) Col() int {
 		return 6
 	}
 	return 0
+}
+
+func (l Layout) Filter() bool {
+	return l == LayoutFilter
 }
 
 func (l Layout) Flow() bool {
