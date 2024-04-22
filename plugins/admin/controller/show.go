@@ -294,7 +294,7 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 
 	if len(panelInfo.FilterFormData) > 0 {
 		filterBoxModel := aBox(ctx).SetClass("filter-area").
-			SetAttr(`style="padding-top: 14px;margin-top: -10px;margin-bottom: 12px;padding-left: 20px;"`).
+			SetAttr(`style="style="padding-top: 20px;margin-top: -10px;margin-bottom: 12px;padding-left: 20px;display: block;padding-bottom: 5px;"`).
 			SetStyle(`padding: 0px;`).
 			SetBody(aForm(ctx).
 				SetContent(panelInfo.FilterFormData).
