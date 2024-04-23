@@ -637,6 +637,7 @@ func (f *FormPanel) FieldOptionInitFn(fn OptionInitFn) *FormPanel {
 	return f
 }
 
+// FieldOptionExt set the option extension js of the field.
 func (f *FormPanel) FieldOptionExt(m map[string]interface{}) *FormPanel {
 
 	if m == nil {
@@ -829,6 +830,16 @@ func (f *FormPanel) FieldValue(value string) *FormPanel {
 	return f
 }
 
+// FieldOptionsFromTable set options for a filterable field to select. The options is from other table.
+// For example,
+//
+//	`FieldOptionsFromTable("roles", "name", "id")`
+//
+// will generate the sql like:
+//
+//	`select id, name from roles`.
+//
+// And the `id` will be the value of options, `name` is the text to be shown.
 func (f *FormPanel) FieldOptionsFromTable(table, textFieldName, valueFieldName string, process ...OptionTableQueryProcessFn) *FormPanel {
 	var fn OptionTableQueryProcessFn
 	if len(process) > 0 {
@@ -848,6 +859,8 @@ func (f *FormPanel) FieldOptionsTableProcessFn(fn OptionProcessFn) *FormPanel {
 	return f
 }
 
+// FieldOptions set options for a filterable field to select. It will work when you set the
+// FormType of the field to SelectSingle/Select/SelectBox.
 func (f *FormPanel) FieldOptions(options FieldOptions) *FormPanel {
 	f.FieldList[f.curFieldListIndex].Options = options
 	return f
@@ -890,36 +903,43 @@ func (f *FormPanel) FieldNowWhenInsert() *FormPanel {
 	return f
 }
 
+// FieldLimit limit the field length.
 func (f *FormPanel) FieldLimit(limit int) *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddLimit(limit)
 	return f
 }
 
+// FieldTrimSpace trim space of the field.
 func (f *FormPanel) FieldTrimSpace() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddTrimSpace()
 	return f
 }
 
+// FieldSubstr intercept string of the field.
 func (f *FormPanel) FieldSubstr(start int, end int) *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddSubstr(start, end)
 	return f
 }
 
+// FieldToTitle update the field to a string that begin words mapped to their Unicode title case.
 func (f *FormPanel) FieldToTitle() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToTitle()
 	return f
 }
 
+// FieldToUpper update the field to a string with all Unicode letters mapped to their upper case.
 func (f *FormPanel) FieldToUpper() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToUpper()
 	return f
 }
 
+// FieldToLower update the field to a string with all Unicode letters mapped to their lower case.
 func (f *FormPanel) FieldToLower() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].AddToLower()
 	return f
 }
 
+// FieldXssFilter escape field with html.Escape.
 func (f *FormPanel) FieldXssFilter() *FormPanel {
 	f.FieldList[f.curFieldListIndex].DisplayProcessChains = f.FieldList[f.curFieldListIndex].DisplayProcessChains.
 		Add(func(value FieldModel) interface{} {
@@ -943,6 +963,20 @@ func (f *FormPanel) FieldCustomCss(css template.CSS) *FormPanel {
 	return f
 }
 
+// FieldOnSearch set the url and the corresponding handler which has some backend logic and
+// return the options of the field.
+// For example:
+//
+//	FieldOnSearch("/search/city", func(ctx *context.Context) (success bool, msg string, data interface{}) {
+//		return true, "ok", selection.Data{
+//			Results: selection.Options{
+//				{Text: "GuangZhou", ID: "1"},
+//				{Text: "ShenZhen", ID: "2"},
+//				{Text: "BeiJing", ID: "3"},
+//				{Text: "ShangHai", ID: "4"},
+//			}
+//		}
+//	}, 1000)
 func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *FormPanel {
 	ext, callback := searchJS(f.FieldList[f.curFieldListIndex].OptionExt, f.OperationURL(url), handler, delay...)
 	f.FieldList[f.curFieldListIndex].OptionExt = ext
@@ -950,6 +984,7 @@ func (f *FormPanel) FieldOnSearch(url string, handler Handler, delay ...int) *Fo
 	return f
 }
 
+// FieldOnChooseCustom set the js that will be called when filter option be selected.
 func (f *FormPanel) FieldOnChooseCustom(js template.HTML) *FormPanel {
 	f.FooterHtml += chooseCustomJS(f.FieldList[f.curFieldListIndex].Field, js)
 	return f
@@ -962,11 +997,23 @@ type LinkField struct {
 	Disable bool
 }
 
+// FieldOnChooseMap set the actions that will be taken when filter option be selected.
+// For example:
+//
+//	map[string]types.LinkField{
+//	     "men": {Field: "ip", Value:"127.0.0.1"},
+//	     "women": {Field: "ip", Hide: true},
+//	     "other": {Field: "ip", Disable: true}
+//	}
+//
+// mean when choose men, the value of field ip will be set to 127.0.0.1,
+// when choose women, field ip will be hidden, and when choose other, field ip will be disabled.
 func (f *FormPanel) FieldOnChooseMap(m map[string]LinkField) *FormPanel {
 	f.FooterHtml += chooseMapJS(f.FieldList[f.curFieldListIndex].Field, m)
 	return f
 }
 
+// FieldOnChoose set the given value of the given field when choose the value of val.
 func (f *FormPanel) FieldOnChoose(val, field string, value template.HTML) *FormPanel {
 	f.FooterHtml += chooseJS(f.FieldList[f.curFieldListIndex].Field, field, val, value)
 	return f
@@ -976,6 +1023,23 @@ func (f *FormPanel) OperationURL(id string) string {
 	return config.Url("/operation/" + utils.WrapURL(id))
 }
 
+// FieldOnChooseAjax set the url and handler that will be called when field be choosed.
+// The handler will return the option of the field. It will help to link two or more form items.
+// For example:
+//
+//	FieldOnChooseAjax("city", "/search/city", func(ctx *context.Context) (success bool, msg string, data interface{}) {
+//		return true, "ok", selection.Data{
+//			Results: selection.Options{
+//				{Text: "GuangZhou", ID: "1"},
+//				{Text: "ShenZhen", ID: "2"},
+//				{Text: "BeiJing", ID: "3"},
+//				{Text: "ShangHai", ID: "4"},
+//			}
+//		}
+//	})
+//
+// When you choose the country, it trigger the action of ajax which be sent to the given handler,
+// and return the city options to the field city.
 func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler, custom ...template.HTML) *FormPanel {
 	js, callback := chooseAjax(f.FieldList[f.curFieldListIndex].Field, field, f.OperationURL(url), handler, custom...)
 	f.FooterHtml += js
@@ -983,26 +1047,31 @@ func (f *FormPanel) FieldOnChooseAjax(field, url string, handler Handler, custom
 	return f
 }
 
+// FieldOnChooseHide hide the fields when value to be chosen.
 func (f *FormPanel) FieldOnChooseHide(value string, field ...string) *FormPanel {
 	f.FooterHtml += chooseHideJS(f.FieldList[f.curFieldListIndex].Field, []string{value}, field...)
 	return f
 }
 
+// FieldOnChooseOptionsHide display the fields when value to be chosen.
 func (f *FormPanel) FieldOnChooseOptionsHide(values []string, field ...string) *FormPanel {
 	f.FooterHtml += chooseHideJS(f.FieldList[f.curFieldListIndex].Field, values, field...)
 	return f
 }
 
+// FieldFilterOnChooseShow display the fields when value to be chosen.
 func (f *FormPanel) FieldOnChooseShow(value string, field ...string) *FormPanel {
 	f.FooterHtml += chooseShowJS(f.FieldList[f.curFieldListIndex].Field, []string{value}, field...)
 	return f
 }
 
+// FieldOnChooseOptionsShow display the fields when values to be chosen.
 func (f *FormPanel) FieldOnChooseOptionsShow(values []string, field ...string) *FormPanel {
 	f.FooterHtml += chooseShowJS(f.FieldList[f.curFieldListIndex].Field, values, field...)
 	return f
 }
 
+// FieldOnChooseDisable disable the fields when value to be chosen.
 func (f *FormPanel) FieldOnChooseDisable(value string, field ...string) *FormPanel {
 	f.FooterHtml += chooseDisableJS(f.FieldList[f.curFieldListIndex].Field, []string{value}, field...)
 	return f

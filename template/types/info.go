@@ -1328,9 +1328,16 @@ func (i *InfoPanel) FieldFilterOptions(options FieldOptions) *InfoPanel {
 	return i
 }
 
-// FieldFilterOptions set options for a filterable field to select. The options is from other table.
-// For example, `FieldFilterOptionsFromTable("roles", "name", "id")` will generate the sql like:
-// `select id, name from roles`. And the `id` will be the value of options, `name` is the text to be shown.
+// FieldFilterOptionsFromTable set options for a filterable field to select. The options is from other table.
+// For example,
+//
+//	`FieldFilterOptionsFromTable("roles", "name", "id")`
+//
+// will generate the sql like:
+//
+//	`select id, name from roles`.
+//
+// And the `id` will be the value of options, `name` is the text to be shown.
 func (i *InfoPanel) FieldFilterOptionsFromTable(table, textFieldName, valueFieldName string, process ...OptionTableQueryProcessFn) *InfoPanel {
 	var fn OptionTableQueryProcessFn
 	if len(process) > 0 {
@@ -1354,19 +1361,29 @@ func (i *InfoPanel) FieldFilterOptionExt(m map[string]interface{}) *InfoPanel {
 
 // FieldFilterProcess process the field content.
 // For example:
-// 
-// FieldFilterProcess(func(val string) string {
-// 		return val + "ms"
-// })
+//
+//	FieldFilterProcess(func(val string) string {
+//			return val + "ms"
+//	})
 func (i *InfoPanel) FieldFilterProcess(process func(string) string) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].ProcessFn = process
 	return i
 }
 
-// FieldFilterOnSearch set the url and the corresponding handler which has some backend logic and 
+// FieldFilterOnSearch set the url and the corresponding handler which has some backend logic and
 // return the options of the field.
 // For example:
-// 
+//
+//	FieldFilterOnSearch("/search/city", func(ctx *context.Context) (success bool, msg string, data interface{}) {
+//		return true, "ok", selection.Data{
+//			Results: selection.Options{
+//				{Text: "GuangZhou", ID: "1"},
+//				{Text: "ShenZhen", ID: "2"},
+//				{Text: "BeiJing", ID: "3"},
+//				{Text: "ShangHai", ID: "4"},
+//			}
+//		}
+//	}, 1000)
 func (i *InfoPanel) FieldFilterOnSearch(url string, handler Handler, delay ...int) *InfoPanel {
 	ext, callback := searchJS(i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt, url, handler, delay...)
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = ext
@@ -1381,21 +1398,49 @@ func (i *InfoPanel) FieldFilterOnChooseCustom(js template.HTML) *InfoPanel {
 }
 
 // FieldFilterOnChooseMap set the actions that will be taken when filter option be selected.
-// 
+// For example:
+//
+//	map[string]types.LinkField{
+//	     "men": {Field: "ip", Value:"127.0.0.1"},
+//	     "women": {Field: "ip", Hide: true},
+//	     "other": {Field: "ip", Disable: true}
+//	}
+//
+// mean when choose men, the value of field ip will be set to 127.0.0.1,
+// when choose women, field ip will be hidden, and when choose other, field ip will be disabled.
 func (i *InfoPanel) FieldFilterOnChooseMap(m map[string]LinkField) *InfoPanel {
 	i.FooterHtml += chooseMapJS(i.FieldList[i.curFieldListIndex].Field, m)
 	return i
 }
 
+// FieldFilterOnChoose set the given value of the given field when choose the value of val.
 func (i *InfoPanel) FieldFilterOnChoose(val, field string, value template.HTML) *InfoPanel {
 	i.FooterHtml += chooseJS(i.FieldList[i.curFieldListIndex].Field, field, val, value)
 	return i
 }
 
+// OperationURL get the operation api url.
 func (i *InfoPanel) OperationURL(id string) string {
 	return config.Url("/operation/" + utils.WrapURL(id))
 }
 
+// FieldFilterOnChooseAjax set the url and handler that will be called when field be choosed.
+// The handler will return the option of the field. It will help to link two or more form items.
+// For example:
+//
+//	FieldFilterOnChooseAjax("city", "/search/city", func(ctx *context.Context) (success bool, msg string, data interface{}) {
+//		return true, "ok", selection.Data{
+//			Results: selection.Options{
+//				{Text: "GuangZhou", ID: "1"},
+//				{Text: "ShenZhen", ID: "2"},
+//				{Text: "BeiJing", ID: "3"},
+//				{Text: "ShangHai", ID: "4"},
+//			}
+//		}
+//	})
+//
+// When you choose the country, it trigger the action of ajax which be sent to the given handler,
+// and return the city options to the field city.
 func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) *InfoPanel {
 	js, callback := chooseAjax(i.FieldList[i.curFieldListIndex].Field, field, i.OperationURL(url), handler)
 	i.FooterHtml += js
@@ -1403,16 +1448,19 @@ func (i *InfoPanel) FieldFilterOnChooseAjax(field, url string, handler Handler) 
 	return i
 }
 
+// FieldFilterOnChooseHide hide the fields when value to be chosen.
 func (i *InfoPanel) FieldFilterOnChooseHide(value string, field ...string) *InfoPanel {
 	i.FooterHtml += chooseHideJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
+// FieldFilterOnChooseShow display the fields when value to be chosen.
 func (i *InfoPanel) FieldFilterOnChooseShow(value string, field ...string) *InfoPanel {
 	i.FooterHtml += chooseShowJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
 }
 
+// FieldFilterOnChooseDisable disable the fields when value to be chosen.
 func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *InfoPanel {
 	i.FooterHtml += chooseDisableJS(i.FieldList[i.curFieldListIndex].Field, []string{value}, field...)
 	return i
@@ -1431,6 +1479,7 @@ func (i *InfoPanel) FieldHideForList() *InfoPanel {
 }
 
 // FieldJoin gets the field of the concatenated table.
+//
 //	Join {
 //	    BaseTable:   "users",
 //	    Field:       "role_id",
@@ -1458,7 +1507,7 @@ func (i *InfoPanel) FieldTrimSpace() *InfoPanel {
 	return i
 }
 
-// FieldSubstr Intercept string of the field.
+// FieldSubstr intercept string of the field.
 func (i *InfoPanel) FieldSubstr(start int, end int) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddSubstr(start, end)
 	return i
