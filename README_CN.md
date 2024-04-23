@@ -45,129 +45,13 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 
 ## 使用
 
-提示：现在你也可以这样做。
-
-```shell
-$ go install github.com/GoAdminGroup/adm@latest
-$ mkdir new_project && cd new_project
-$ adm init -l cn
-```
-
-或者：（使用v1.2.16以上的adm）
-
 ```shell
 $ go install github.com/GoAdminGroup/adm@latest
 $ mkdir new_project && cd new_project
 $ adm init web -l cn
 ```
 
-
-通过以下三步运行：
-
-### 第一步：导入 sql
-
-- [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
-- [mssql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql)
-- [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
-- [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
-
-### 第二步：创建 main.go
-
-<details><summary>main.go</summary>
-<p>
-
-```go
-package main
-
-import (
-	"github.com/gin-gonic/gin"
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/template"
-    	"github.com/GoAdminGroup/go-admin/template/chartjs"
-    	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-)
-
-func main() {
-	r := gin.Default()
-
-	eng := engine.Default()
-
-	// global config
-	cfg := config.Config{
-		Databases: config.DatabaseList{
-		    "default": {
-			Host:         "127.0.0.1",
-			Port:         "3306",
-			User:         "root",
-			Pwd:          "root",
-			Name:         "goadmin",
-			MaxIdleConns: 50,
-			MaxOpenConns: 150,
-			ConnMaxLifetime: time.Hour,
-			Driver:       "mysql",
-		    },
-        	},
-		UrlPrefix: "admin",
-		// STORE 必须设置且保证有写权限，否则增加不了新的管理员用户
-		Store: config.Store{
-		    Path:   "./uploads",
-		    Prefix: "uploads",
-		},
-		Language: language.CN, 
-		// 开发模式
-                Debug: true,
-                // 日志文件位置，需为绝对路径
-                InfoLogPath: "/var/logs/info.log",
-                AccessLogPath: "/var/logs/access.log",
-                ErrorLogPath: "/var/logs/error.log",
-                ColorScheme: adminlte.ColorschemeSkinBlack,
-	}
-
-	// 增加 chartjs 组件
-	template.AddComp(chartjs.NewChart())
-    
-    	_ = eng.AddConfig(&cfg).
-    		AddGenerators(datamodel.Generators).
-    	        // 增加 generator, 第一个参数是对应的访问路由前缀
-        	        // 例子:
-        	        //
-        	        // "user" => http://localhost:9033/admin/info/user
-        	        //		
-    		AddGenerator("user", datamodel.GetUserTable).
-    		Use(r)
-    	
-    	// 自定义首页
-    	eng.HTML("GET", "/admin", datamodel.GetContent)
-
-	_ = r.Run(":9033")
-}
-```
-
-</p>
-</details>
-
-更多框架的例子: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
-
-### 第三步：运行
-
-```shell
-GO111MODULE=on go run main.go
-```
-
-访问：[http://localhost:9033/admin](http://localhost:9033/admin)
-
-账号: admin 密码: admin
-
-更多细节详见 [文档说明](http://doc.go-admin.cn/zh)
-
-[这里一个超级简单上手的例子](https://github.com/GoAdminGroup/example)
+运行后将会启动一个网页安装程序，根据程序内容填写安装运行即可。
 
 ## 贡献
 
@@ -175,13 +59,13 @@ GO111MODULE=on go run main.go
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 
-<strong>QQ群</strong>：[641768714](https://jq.qq.com/?_wv=1027&k=qn8oXyGC)，记得备注加群来意
+<strong>QQ群</strong>：[874825430](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=f1LB6fiIKDi8hwR__CjB70pqylsbQsef&authKey=PsKZe803zC1VvhhFg10zbVBTAOzGbqMSU3%2BrA8mMwK3fhasaoilz9dFj7f%2FZyku6&noverify=0&group_code=874825430)，记得备注加群来意
 
 这里是[开发计划](https://github.com/GoAdminGroup/go-admin/projects)
 
 <strong>[点击这里申请加微信群（记得备注加群）](http://quick.go-admin.cn/resource/wechat_qrcode_02.jpg)</strong>
 
-<strong>注：在社区中如有问题提问，请务必清晰描述，包括但不限于问题详叙/问题代码/复现方法/已经尝试过的方法，时间生命可贵，请珍惜自己和别人的时间！</strong>
+<strong>注：在社区中如有问题提问，请务必清晰描述，包括但不限于问题详叙/问题代码/复现方法/已经尝试过的方法。</strong>
 
 ## 十分感谢
 
@@ -190,9 +74,5 @@ inspired by [laravel-admin](https://github.com/z-song/laravel-admin)
 ## 打赏
 
 留下您的github/gitee用户名，我们将会展示在[捐赠名单](DONATION.md)中。
-
-> 恰饭所需，作者精力时间有限，目前GoAdmin项目捐赠达666元，联系[作者](http://quick.go-admin.cn/resource/wechat_qrcode.jpg)可进vip用户群，vip群中您的问题将得到优先解答，同时也会根据您的需求进行分析和优先安排，vip群也会提供其他关于golang的福利。🙏
->
-> 同时您也可以联系我，雇佣我的时间帮助您干活。
 
 <img src="http://quick.go-admin.cn/official/assets/imgs/shoukuan.jpg" width="650" />
