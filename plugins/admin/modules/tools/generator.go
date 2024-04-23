@@ -465,8 +465,12 @@ func getFieldsFromConn(conn db.Connection, table, driver string) Fields {
 			isPrimaryKey = columnKey == "PRI"
 		}
 
+        head := strings.Title(model[fieldField].(string))
+        if model["Comment"] != "" {
+            head = strings.Title(model["Comment"].(string))
+        }
 		fields[i] = Field{
-			Head:         strings.Title(model[fieldField].(string)),
+			Head:         head,
 			Name:         model[fieldField].(string),
 			DBType:       typeName,
 			CanAdd:       true,
