@@ -148,7 +148,6 @@ func (s *TokenService) CheckToken(toCheckToken string) (ok bool) {
 		}
 	}()
 
-	// 优先本地查询
 	for i := 0; i < len(s.tokens); i++ {
 		if (s.tokens)[i] == toCheckToken {
 			s.tokens = append((s.tokens)[:i], (s.tokens)[i+1:]...)
@@ -157,7 +156,6 @@ func (s *TokenService) CheckToken(toCheckToken string) (ok bool) {
 		}
 	}
 
-	// 从数据库查询，适配多实例的情况
 	item, err := db.WithDriver(s.conn).Table("goadmin_session").
 		Where("sid", "=", toCheckToken).
 		Where("values", "=", "__csrf_token__").
@@ -168,7 +166,6 @@ func (s *TokenService) CheckToken(toCheckToken string) (ok bool) {
 	}
 	return
 }
-
 
 // CSRFToken is type of a csrf token list.
 type CSRFToken []string
