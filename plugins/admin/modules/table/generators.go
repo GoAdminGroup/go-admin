@@ -182,7 +182,7 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 			return ""
 		})
 
-	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers"))
+	formList.SetTable("goadmin_users").SetTitle(lg("Managers")).SetDescription(lg("Managers manage"))
 	formList.SetUpdateFn(func(values form2.Values) error {
 
 		if values.IsEmpty("name", "username") {
@@ -400,7 +400,7 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 
 	info.SetTable("goadmin_users").
 		SetTitle(lg("Managers")).
-		SetDescription(lg("Managers")).
+		SetDescription(lg("Managers manage")).
 		SetDeleteFn(func(idArr []string) error {
 
 			var ids = interfaces(idArr)
