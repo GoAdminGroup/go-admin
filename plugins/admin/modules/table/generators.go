@@ -834,7 +834,7 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 	})
 
 	info := opTable.GetInfo().AddXssJsFilter().
-		HideFilterArea().HideDetailButton().HideEditButton().HideNewButton()
+		HideDetailButton().HideEditButton().HideNewButton().SetFilterFormLayout(form.LayoutFilter)
 
 	if !config.GetAllowDelOperationLog() {
 		info = info.HideDeleteButton()
@@ -854,9 +854,9 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 			OpenInNewTab().
 			SetTabTitle("Manager Detail").
 			GetContent()
-	}).FieldFilterable(filterType)
+	})
 	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable(filterType)
-	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("method"), "method", db.Varchar)
 	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("content"), "input", db.Text).FieldWidth(230)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
