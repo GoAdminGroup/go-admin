@@ -1278,6 +1278,7 @@ type FilterType struct {
 	NoIcon      bool
 }
 
+// FieldFilterable set a field filterable which will display in the filter box.
 func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Filterable = true
 
@@ -1319,12 +1320,17 @@ func (i *InfoPanel) FieldFilterable(filterType ...FilterType) *InfoPanel {
 	return i
 }
 
+// FieldFilterOptions set options for a filterable field to select. It will work when you set the
+// FormType of the field to SelectSingle/Select/SelectBox.
 func (i *InfoPanel) FieldFilterOptions(options FieldOptions) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].Options = options
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = `{"allowClear": "true"}`
 	return i
 }
 
+// FieldFilterOptions set options for a filterable field to select. The options is from other table.
+// For example, `FieldFilterOptionsFromTable("roles", "name", "id")` will generate the sql like:
+// `select id, name from roles`. And the `id` will be the value of options, `name` is the text to be shown.
 func (i *InfoPanel) FieldFilterOptionsFromTable(table, textFieldName, valueFieldName string, process ...OptionTableQueryProcessFn) *InfoPanel {
 	var fn OptionTableQueryProcessFn
 	if len(process) > 0 {
@@ -1339,17 +1345,28 @@ func (i *InfoPanel) FieldFilterOptionsFromTable(table, textFieldName, valueField
 	return i
 }
 
-func (i *InfoPanel) FieldFilterProcess(process func(string) string) *InfoPanel {
-	i.FieldList[i.curFieldListIndex].FilterFormFields[0].ProcessFn = process
-	return i
-}
-
+// FieldFilterOptionExt set the option extension js of the field.
 func (i *InfoPanel) FieldFilterOptionExt(m map[string]interface{}) *InfoPanel {
 	s, _ := json.Marshal(m)
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = template.JS(s)
 	return i
 }
 
+// FieldFilterProcess process the field content.
+// For example:
+// 
+// FieldFilterProcess(func(val string) string {
+// 		return val + "ms"
+// })
+func (i *InfoPanel) FieldFilterProcess(process func(string) string) *InfoPanel {
+	i.FieldList[i.curFieldListIndex].FilterFormFields[0].ProcessFn = process
+	return i
+}
+
+// FieldFilterOnSearch set the url and the corresponding handler which has some backend logic and 
+// return the options of the field.
+// For example:
+// 
 func (i *InfoPanel) FieldFilterOnSearch(url string, handler Handler, delay ...int) *InfoPanel {
 	ext, callback := searchJS(i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt, url, handler, delay...)
 	i.FieldList[i.curFieldListIndex].FilterFormFields[0].OptionExt = ext
@@ -1357,11 +1374,14 @@ func (i *InfoPanel) FieldFilterOnSearch(url string, handler Handler, delay ...in
 	return i
 }
 
+// FieldFilterOnChooseCustom set the js that will be called when filter option be selected.
 func (i *InfoPanel) FieldFilterOnChooseCustom(js template.HTML) *InfoPanel {
 	i.FooterHtml += chooseCustomJS(i.FieldList[i.curFieldListIndex].Field, js)
 	return i
 }
 
+// FieldFilterOnChooseMap set the actions that will be taken when filter option be selected.
+// 
 func (i *InfoPanel) FieldFilterOnChooseMap(m map[string]LinkField) *InfoPanel {
 	i.FooterHtml += chooseMapJS(i.FieldList[i.curFieldListIndex].Field, m)
 	return i
@@ -1398,51 +1418,71 @@ func (i *InfoPanel) FieldFilterOnChooseDisable(value string, field ...string) *I
 	return i
 }
 
+// FieldHide hide field. Include the filter area.
 func (i *InfoPanel) FieldHide() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Hide = true
 	return i
 }
 
+// FieldHide hide field for only the table.
 func (i *InfoPanel) FieldHideForList() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].HideForList = true
 	return i
 }
 
+// FieldJoin gets the field of the concatenated table.
+//	Join {
+//	    BaseTable:   "users",
+//	    Field:       "role_id",
+//	    Table:       "roles",
+//	    JoinField:   "id",
+//	}
+//
+// It will generate the join table sql like:
+//
+// select ... from users left join roles on roles.id = users.role_id
 func (i *InfoPanel) FieldJoin(join Join) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].Joins = append(i.FieldList[i.curFieldListIndex].Joins, join)
 	return i
 }
 
+// FieldLimit limit the field length.
 func (i *InfoPanel) FieldLimit(limit int) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddLimit(limit)
 	return i
 }
 
+// FieldTrimSpace trim space of the field.
 func (i *InfoPanel) FieldTrimSpace() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddTrimSpace()
 	return i
 }
 
+// FieldSubstr Intercept string of the field.
 func (i *InfoPanel) FieldSubstr(start int, end int) *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddSubstr(start, end)
 	return i
 }
 
+// FieldToTitle update the field to a string that begin words mapped to their Unicode title case.
 func (i *InfoPanel) FieldToTitle() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToTitle()
 	return i
 }
 
+// FieldToUpper update the field to a string with all Unicode letters mapped to their upper case.
 func (i *InfoPanel) FieldToUpper() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToUpper()
 	return i
 }
 
+// FieldToLower update the field to a string with all Unicode letters mapped to their lower case.
 func (i *InfoPanel) FieldToLower() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].AddToLower()
 	return i
 }
 
+// FieldXssFilter escape field with html.Escape.
 func (i *InfoPanel) FieldXssFilter() *InfoPanel {
 	i.FieldList[i.curFieldListIndex].DisplayProcessChains = i.FieldList[i.curFieldListIndex].DisplayProcessChains.
 		Add(func(value FieldModel) interface{} {
