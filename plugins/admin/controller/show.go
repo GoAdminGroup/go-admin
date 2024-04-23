@@ -29,6 +29,7 @@ import (
 	"github.com/GoAdminGroup/go-admin/template/icon"
 	"github.com/GoAdminGroup/go-admin/template/types"
 	"github.com/GoAdminGroup/go-admin/template/types/action"
+	form2 "github.com/GoAdminGroup/go-admin/template/types/form"
 	"github.com/GoAdminGroup/html"
 )
 
@@ -290,11 +291,11 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 </script>
 		`)
 
-	content := boxModel.GetContent()
+	content := template2.HTML("")
 
-	if len(panelInfo.FilterFormData) > 0 {
+	if len(panelInfo.FilterFormData) > 0 && info.FilterFormLayout == form2.LayoutFilter {
 		filterBoxModel := aBox(ctx).SetClass("filter-area").
-			SetAttr(`style="style="padding-top: 20px;margin-top: -10px;margin-bottom: 12px;padding-left: 20px;display: block;padding-bottom: 5px;"`).
+			SetAttr(`style="padding-top: 20px;margin-top: -10px;margin-bottom: 12px;padding-left: 20px;display: block;padding-bottom: 5px;"`).
 			SetStyle(`padding: 0px;`).
 			SetBody(aForm(ctx).
 				SetContent(panelInfo.FilterFormData).
@@ -309,7 +310,25 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					form.NoAnimationKey: "true",
 				}).
 				GetContent())
-		content = filterBoxModel.GetContent() + content
+		content = filterBoxModel.GetContent() + boxModel.GetContent()
+	} else {
+		if len(panelInfo.FilterFormData) > 0 {
+			boxModel = boxModel.SetSecondHeaderClass("filter-area").
+				SetSecondHeader(aForm(ctx).
+					SetContent(panelInfo.FilterFormData).
+					SetPrefix(h.config.PrefixFixSlash()).
+					SetInputWidth(info.FilterFormInputWidth).
+					SetHeadWidth(info.FilterFormHeadWidth).
+					SetMethod("get").
+					SetLayout(info.FilterFormLayout).
+					SetUrl(infoUrl). //  + params.GetFixedParamStrWithoutColumnsAndPage()
+					SetHiddenFields(map[string]string{
+						form.NoAnimationKey: "true",
+					}).
+					SetOperationFooter(filterFormFooter(ctx, infoUrl)).
+					GetContent())
+		}
+		content = boxModel.GetContent()
 	}
 
 	if info.Wrapper != nil {

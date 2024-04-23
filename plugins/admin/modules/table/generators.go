@@ -43,10 +43,13 @@ func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
 	return &SystemTable{conn: conn, c: c}
 }
 
+
+var filterType = types.FilterType{NoIcon: true, HeadWidth: 4, InputWidth: 8}
+
 func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea().SetFilterFormLayout(form.LayoutFilter)
+	info := managerTable.GetInfo().AddXssJsFilter().SetFilterFormLayout(form.LayoutFilter)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
 	filterType := types.FilterType{NoIcon: true, HeadWidth: 4, InputWidth: 8}
@@ -356,11 +359,11 @@ func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table)
 func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable Table) {
 	managerTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := managerTable.GetInfo().AddXssJsFilter().HideFilterArea().SetFilterFormLayout(form.LayoutThreeCol)
+	info := managerTable.GetInfo().AddXssJsFilter().SetFilterFormLayout(form.LayoutFilter)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable()
-	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable()
+	info.AddField(lg("Name"), "username", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("Nickname"), "name", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("role"), "name", db.Varchar).
 		FieldJoin(types.Join{
 			Table:     "goadmin_role_users",
@@ -524,11 +527,11 @@ func (s *SystemTable) GetNormalManagerTable(ctx *context.Context) (managerTable 
 func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable Table) {
 	permissionTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := permissionTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := permissionTable.GetInfo().AddXssJsFilter().SetFilterFormLayout(form.LayoutFilter)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("permission"), "name", db.Varchar).FieldFilterable()
-	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable()
+	info.AddField(lg("permission"), "name", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("method"), "http_method", db.Varchar).FieldDisplay(func(value types.FieldModel) interface{} {
 		if value.Value == "" {
 			return "All methods"
@@ -662,11 +665,11 @@ func (s *SystemTable) GetPermissionTable(ctx *context.Context) (permissionTable 
 func (s *SystemTable) GetRolesTable(ctx *context.Context) (roleTable Table) {
 	roleTable = NewDefaultTable(ctx, DefaultConfigWithDriver(config.GetDatabases().GetDefault().Driver))
 
-	info := roleTable.GetInfo().AddXssJsFilter().HideFilterArea()
+	info := roleTable.GetInfo().AddXssJsFilter().SetFilterFormLayout(form.LayoutFilter)
 
 	info.AddField("ID", "id", db.Int).FieldSortable()
-	info.AddField(lg("role"), "name", db.Varchar).FieldFilterable()
-	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable()
+	info.AddField(lg("role"), "name", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("slug"), "slug", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 	info.AddField(lg("updatedAt"), "updated_at", db.Timestamp)
 
@@ -851,10 +854,10 @@ func (s *SystemTable) GetOpTable(ctx *context.Context) (opTable Table) {
 			OpenInNewTab().
 			SetTabTitle("Manager Detail").
 			GetContent()
-	}).FieldFilterable()
-	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable()
-	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable()
-	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable()
+	}).FieldFilterable(filterType)
+	info.AddField(lg("path"), "path", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("method"), "method", db.Varchar).FieldFilterable(filterType)
+	info.AddField(lg("ip"), "ip", db.Varchar).FieldFilterable(filterType)
 	info.AddField(lg("content"), "input", db.Text).FieldWidth(230)
 	info.AddField(lg("createdAt"), "created_at", db.Timestamp)
 
