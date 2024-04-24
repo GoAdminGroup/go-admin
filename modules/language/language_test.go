@@ -1,12 +1,21 @@
 package language
 
 import (
+	"fmt"
 	"html/template"
 	"testing"
 
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestKK(t *testing.T) {
+	for key := range cn {
+		if _, ok := ptbr[key]; !ok {
+			fmt.Println(key, "===", cn[key])
+		}
+	}
+}
 
 func TestAdd(t *testing.T) {
 	Add("cn", map[string]string{})

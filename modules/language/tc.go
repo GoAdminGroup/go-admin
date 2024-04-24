@@ -435,4 +435,17 @@ var tc = LangSet{
 	"admin.basic admin": "基礎Admin",
 	"admin.a built-in plugins of goadmin which help you to build a crud manager platform quickly.": "壹個內置GoAdmin插件，幫助您快速搭建curd簡易管理後臺。",
 	"admin.official": "GoAdmin官方",
+
+	"search":           "搜索",
+	"reload succeeded": "載入成功",
+	"showing <b>%s</b> to <b>%s</b> of <b>%s</b> entries": "顯示第 <b>%s</b> 到第 <b>%s</b> 條記錄，總共 <b>%s</b> 條記錄",
+	"site info":               "運行信息",
+	"menus":                   "菜單",
+	"tool.code generate tool": "代碼生成器",
+	"del":                     "刪除",
+	"site setting":            "網站設置",
+	"code generate tool":      "代碼生成器",
+	"managers manage":         "管理員管理",
+	"system.site info":        "運行信息",
+	"view":                    "查看",
 }
