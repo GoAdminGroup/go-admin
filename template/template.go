@@ -25,6 +25,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
 	"github.com/GoAdminGroup/go-admin/template/login"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"golang.org/x/text/cases"
+	textLang "golang.org/x/text/language"
 )
 
 // Template is the interface which contains methods of ui components.
@@ -255,7 +257,7 @@ func AddFromPlugin(name string, mod string) {
 		panic(err)
 	}
 
-	tempPlugin, err := plug.Lookup(strings.Title(name))
+	tempPlugin, err := plug.Lookup(cases.Title(textLang.Und).String(name))
 	if err != nil {
 		logger.Error("AddFromPlugin err", err)
 		panic(err)

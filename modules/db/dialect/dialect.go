@@ -18,6 +18,9 @@ type Dialect interface {
 	// ShowColumns show columns of specified table
 	ShowColumns(table string) string
 
+	// ShowColumnsWithComment show columns with coment of specified table
+	ShowColumnsWithComment(schema, table string) string
+
 	// ShowTables show tables of database
 	ShowTables() string
 

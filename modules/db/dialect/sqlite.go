@@ -12,6 +12,10 @@ func (sqlite) GetName() string {
 	return "sqlite"
 }
 
+func (sqlite) ShowColumnsWithComment(schema, table string) string {
+	return "PRAGMA table_info(" + table + ");"
+}
+
 func (sqlite) ShowColumns(table string) string {
 	return "PRAGMA table_info(" + table + ");"
 }

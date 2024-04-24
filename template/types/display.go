@@ -9,6 +9,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/config"
 	"github.com/GoAdminGroup/go-admin/template/types/form"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type DisplayFnGenerator interface {
@@ -180,7 +182,7 @@ func (f FieldDisplay) AddSubstr(start int, end int) DisplayProcessFnChains {
 
 func (f FieldDisplay) AddToTitle() DisplayProcessFnChains {
 	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
-		return strings.Title(value.Value)
+		return cases.Title(language.Und).String(value.Value)
 	})
 }
 
@@ -303,7 +305,7 @@ func addSubstr(start int, end int, chains DisplayProcessFnChains) DisplayProcess
 
 func addToTitle(chains DisplayProcessFnChains) DisplayProcessFnChains {
 	chains = chains.Add(func(value FieldModel) interface{} {
-		return strings.Title(value.Value)
+		return cases.Title(language.Und).String(value.Value)
 	})
 	return chains
 }

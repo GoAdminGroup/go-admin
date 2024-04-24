@@ -3,7 +3,6 @@ package controller
 import (
 	template2 "html/template"
 	"regexp"
-	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
 	"github.com/GoAdminGroup/go-admin/modules/auth"
@@ -16,6 +15,8 @@ import (
 	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
 	"github.com/GoAdminGroup/go-admin/template"
 	"github.com/GoAdminGroup/go-admin/template/types"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // GlobalDeferHandler is a global error handler of admin plugin.
@@ -101,7 +102,7 @@ func (h *Handler) setFormWithReturnErrMessage(ctx *context.Context, errMsg strin
 			SetContent(formInfo.FieldList).
 			SetTabContents(formInfo.GroupFieldList).
 			SetTabHeaders(formInfo.GroupFieldHeaders).
-			SetTitle(template2.HTML(strings.Title(kind))).
+			SetTitle(template2.HTML(cases.Title(language.Und).String(kind))).
 			SetPrimaryKey(panel.GetPrimaryKey().Name).
 			SetPrefix(h.config.PrefixFixSlash()).
 			SetHiddenFields(map[string]string{

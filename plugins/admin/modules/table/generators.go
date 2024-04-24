@@ -32,6 +32,8 @@ import (
 	selection "github.com/GoAdminGroup/go-admin/template/types/form/select"
 	"github.com/GoAdminGroup/html"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/text/cases"
+	textLang "golang.org/x/text/language"
 )
 
 type SystemTable struct {
@@ -1440,7 +1442,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				for i, model := range columnsModel {
 					typeName := getType(model[typeField].(string))
 
-					headName[i] = strings.Title(model[fieldField].(string))
+					headName[i] = cases.Title(textLang.Und).String(model[fieldField].(string))
 					fieldName[i] = model[fieldField].(string)
 					dbTypeList[i] = typeName
 					formTypeList[i] = form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)),
@@ -1962,31 +1964,31 @@ func databaseTypeOptions() types.FieldOptions {
 	z := 0
 	for _, t := range db.IntTypeList {
 		text := string(t)
-		v := strings.Title(strings.ToLower(text))
+		v := cases.Title(textLang.Und).String(strings.ToLower(text))
 		opts[z] = types.FieldOption{Text: text, Value: v}
 		z++
 	}
 	for _, t := range db.StringTypeList {
 		text := string(t)
-		v := strings.Title(strings.ToLower(text))
+		v := cases.Title(textLang.Und).String(strings.ToLower(text))
 		opts[z] = types.FieldOption{Text: text, Value: v}
 		z++
 	}
 	for _, t := range db.FloatTypeList {
 		text := string(t)
-		v := strings.Title(strings.ToLower(text))
+		v := cases.Title(textLang.Und).String(strings.ToLower(text))
 		opts[z] = types.FieldOption{Text: text, Value: v}
 		z++
 	}
 	for _, t := range db.UintTypeList {
 		text := string(t)
-		v := strings.Title(strings.ToLower(text))
+		v := cases.Title(textLang.Und).String(strings.ToLower(text))
 		opts[z] = types.FieldOption{Text: text, Value: v}
 		z++
 	}
 	for _, t := range db.BoolTypeList {
 		text := string(t)
-		v := strings.Title(strings.ToLower(text))
+		v := cases.Title(textLang.Und).String(strings.ToLower(text))
 		opts[z] = types.FieldOption{Text: text, Value: v}
 		z++
 	}
@@ -1997,5 +1999,5 @@ func getType(typeName string) string {
 	r, _ := regexp.Compile(`\(.*?\)`)
 	typeName = r.ReplaceAllString(typeName, "")
 	r2, _ := regexp.Compile(`unsigned(.*)`)
-	return strings.TrimSpace(strings.Title(strings.ToLower(r2.ReplaceAllString(typeName, ""))))
+	return strings.TrimSpace(cases.Title(textLang.Und).String(strings.ToLower(r2.ReplaceAllString(typeName, ""))))
 }

@@ -1139,6 +1139,9 @@ func (tb *DefaultTable) getColumns(table string) (Columns, bool) {
 	columnsModel, _ := tb.sql().Table(table).ShowColumns()
 
 	columns := make(Columns, len(columnsModel))
+	defer func(){
+		fmt.Println("getColumns columns", columns)
+	}()
 	switch tb.connectionDriver {
 	case db.DriverPostgresql:
 		auto := false

@@ -449,6 +449,13 @@ func (sql *SQL) ShowColumns() ([]map[string]interface{}, error) {
 	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumns(sql.TableName))
 }
 
+// ShowColumnsWithComment show columns info.
+func (sql *SQL) ShowColumnsWithComment(database string) ([]map[string]interface{}, error) {
+	defer RecycleSQL(sql)
+
+	return sql.diver.QueryWithConnection(sql.conn, sql.dialect.ShowColumnsWithComment(database, sql.TableName))
+}
+
 // ShowTables show table info.
 func (sql *SQL) ShowTables() ([]string, error) {
 	defer RecycleSQL(sql)

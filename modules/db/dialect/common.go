@@ -49,6 +49,10 @@ func (c commonDialect) ShowTables() string {
 	return "show tables"
 }
 
+func (c commonDialect) ShowColumnsWithComment(schema, table string) string {
+	return ""
+}
+
 func (c commonDialect) GetDelimiter() string {
 	return c.delimiter
 }
