@@ -92,7 +92,7 @@ func (file *FileUploadAction) BtnAttribute() template.HTML {
 	return template.HTML(`href="javascript:;"`)
 }
 
-func (file *FileUploadAction) FooterContent() template.HTML {
+func (file *FileUploadAction) FooterContent(ctx *context.Context) template.HTML {
 	return template.HTML(`<input class="` + file.BtnId[1:] + `_input" type="file" multiple="multiple" style="display:none" />`)
 
 }
