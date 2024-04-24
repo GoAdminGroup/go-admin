@@ -1,9 +1,5 @@
 GOCMD = go
 GOBUILD = $(GOCMD) build
-BINARY_NAME = adm
-LAST_VERSION = v1.2.23
-VERSION = v1.2.24
-CLI = adm
 
 TEST_CONFIG_PATH=./../../common/config.json
 TEST_CONFIG_PQ_PATH=./../../common/config_pg.json
@@ -130,30 +126,5 @@ build-tmpl:
 	adm compile tpl --src ./template/types/tmpls/ --dist ./template/types/tmpl.go --package types --var tmpls
     ## generator tmpl build
 	adm compile tpl --src ./plugins/admin/modules/table/tmpl --dist ./plugins/admin/modules/table/tmpl.go --package table --var tmpls
-
-## cli version update
-
-cli:
-	GO111MODULE=on $(GOBUILD) -ldflags "-w" -o ./adm/build/mac/$(BINARY_NAME) ./adm/...
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o ./adm/build/linux/x86_64/$(BINARY_NAME) ./adm/...
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm $(GOBUILD) -o ./adm/build/linux/armel/$(BINARY_NAME) ./adm/...
-	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 $(GOBUILD) -o ./adm/build/windows/x86_64/$(BINARY_NAME).exe ./adm/...
-	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=386 $(GOBUILD) -o ./adm/build/windows/i386/$(BINARY_NAME).exe ./adm/...
-	rm -rf ./adm/build/linux/armel/adm_linux_armel_$(LAST_VERSION).zip
-	rm -rf ./adm/build/linux/x86_64/adm_linux_x86_64_$(LAST_VERSION).zip
-	rm -rf ./adm/build/windows/x86_64/adm_windows_x86_64_$(LAST_VERSION).zip
-	rm -rf ./adm/build/windows/i386/adm_windows_i386_$(LAST_VERSION).zip
-	rm -rf ./adm/build/mac/adm_darwin_x86_64_$(LAST_VERSION).zip
-	zip -qj ./adm/build/linux/armel/adm_linux_armel_$(VERSION).zip ./adm/build/linux/armel/adm
-	zip -qj ./adm/build/linux/x86_64/adm_linux_x86_64_$(VERSION).zip ./adm/build/linux/x86_64/adm
-	zip -qj ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/windows/x86_64/adm.exe
-	zip -qj ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/windows/i386/adm.exe
-	zip -qj ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/mac/adm
-	rm -rf ./adm/build/zip/*
-	cp ./adm/build/linux/armel/adm_linux_armel_$(VERSION).zip ./adm/build/zip/
-	cp ./adm/build/linux/x86_64/adm_linux_x86_64_$(VERSION).zip ./adm/build/zip/
-	cp ./adm/build/windows/x86_64/adm_windows_x86_64_$(VERSION).zip ./adm/build/zip/
-	cp ./adm/build/windows/i386/adm_windows_i386_$(VERSION).zip ./adm/build/zip/
-	cp ./adm/build/mac/adm_darwin_x86_64_$(VERSION).zip ./adm/build/zip/
 
 .PHONY: all fmt golint govet cp-mod restore-mod test black-box-test mysql-test sqlite-test import-sqlite import-mysql import-postgresql pg-test lint cilint cli
