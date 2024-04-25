@@ -160,7 +160,7 @@ func (base *BaseAdapter) GetContent(ctx interface{}, getPanelFn types.GetPanelFn
 		err   error
 	)
 
-	gctx := context.NewContext(wf.Request())
+	gctx := context.NewContext(newBase.Request())
 
 	if !auth.CheckPermissions(user, newBase.Path(), newBase.Method(), newBase.FormParam()) {
 		panel = template.WarningPanel(gctx, errors.NoPermission, template.NoPermission403Page)
