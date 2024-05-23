@@ -37,12 +37,6 @@ GoAdmin is a toolkit to help you build a data visualization admin panel for your
 
 Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
-Quick follow up example: 
-
-- [pure golang](https://github.com/GoAdminGroup/example), simple and less dependency
-- [golang with frontend template](https://github.com/GoAdminGroup/example_with_frontend), change template by yourself
-- [golang with vue](https://github.com/GoAdminGroup/example_with_vue), if you have vue experience
-
 ![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 
 ## Features
@@ -70,110 +64,13 @@ $ go install github.com/GoAdminGroup/adm@latest
 $ adm init web
 ```
 
-### Step 1: import sql
+## Example
 
-- [mysql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
-- [mssql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.mssql)
-- [postgresql](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.pgsql)
-- [sqlite](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.db)
-- [OceanBase](https://raw.githubusercontent.com/GoAdminGroup/go-admin/master/data/admin.sql)
+Quick follow up example: 
 
-
-### Step 2: create main.go
-
-<details><summary>main.go</summary>
-<p>
-
-```go
-package main
-
-import (
-	"github.com/gin-gonic/gin"
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/themes/adminlte"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-)
-
-func main() {
-	r := gin.Default()
-
-	eng := engine.Default()
-
-	// global config
-	cfg := config.Config{
-		Databases: config.DatabaseList{
-			"default": {
-				Host:         "127.0.0.1",
-				Port:         "3306",
-				User:         "root",
-				Pwd:          "root",
-				Name:         "goadmin",
-				MaxIdleConns: 50,
-				MaxOpenConns: 150,
-				ConnMaxLifetime: time.Hour,
-				Driver:       "mysql",
-			},
-        	},
-		UrlPrefix: "admin",
-		// STORE is important. And the directory should has permission to write.
-		Store: config.Store{
-		    Path:   "./uploads", 
-		    Prefix: "uploads",
-		},
-		Language: language.EN,
-		// debug mode
-		Debug: true,
-		// log file absolute path
-		InfoLogPath: "/var/logs/info.log",
-		AccessLogPath: "/var/logs/access.log",
-		ErrorLogPath: "/var/logs/error.log",
-		ColorScheme: adminlte.ColorschemeSkinBlack,
-	}
-
-	// add component chartjs
-	template.AddComp(chartjs.NewChart())
-
-	_ = eng.AddConfig(&cfg).
-		AddGenerators(datamodel.Generators).
-	        // add generator, first parameter is the url prefix of table when visit.
-    	        // example:
-    	        //
-    	        // "user" => http://localhost:9033/admin/info/user
-    	        //		
-		AddGenerator("user", datamodel.GetUserTable).
-		Use(r)
-	
-	// customize your pages
-	eng.HTML("GET", "/admin", datamodel.GetContent)
-
-	_ = r.Run(":9033")
-}
-```
-
-</p>
-</details>
-
-More framework examples: [https://github.com/GoAdminGroup/go-admin/tree/master/examples](https://github.com/GoAdminGroup/go-admin/tree/master/examples)
-
-### Step 3: run
-
-```shell
-GO111MODULE=on go run main.go
-```
-
-visit: [http://localhost:9033/admin](http://localhost:9033/admin)
-
-account: admin password: admin
-
-[A super simple example here](https://github.com/GoAdminGroup/example)
+- [pure golang](https://github.com/GoAdminGroup/example), simple and less dependency
+- [golang with frontend template](https://github.com/GoAdminGroup/example_with_frontend), change template by yourself
+- [golang with vue](https://github.com/GoAdminGroup/example_with_vue), if you have vue experience
 
 See the [docs](https://book.go-admin.cn) for more details.
 
