@@ -37,9 +37,11 @@ GoAdmin is a toolkit to help you build a data visualization admin panel for your
 
 Online demo: [https://demo.go-admin.com](https://demo.go-admin.com)
 
-Quick follow up example: [https://github.com/GoAdminGroup/example](https://github.com/GoAdminGroup/example)
+Quick follow up example: 
 
-GoAdmin+vue example: [https://github.com/GoAdminGroup/goadmin-vue-example](https://github.com/GoAdminGroup/goadmin-vue-example)
+- [pure golang](https://github.com/GoAdminGroup/example), simple and less dependency
+- [golang with frontend template](https://github.com/GoAdminGroup/example_with_frontend), change template by yourself
+- [golang with vue](https://github.com/GoAdminGroup/example_with_vue), if you have vue experience
 
 ![interface](http://file.go-admin.cn/introduction/interface_en_3.png)
 

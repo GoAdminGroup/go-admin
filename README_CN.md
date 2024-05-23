@@ -35,6 +35,12 @@ GoAdmin 可以帮助你的golang应用快速实现数据可视化，搭建一个
 - ✅ **认证**: 开箱即用的rbac认证系统
 - ⚙️ **框架支持**: 支持大部分框架接入，让你更容易去上手和扩展
 
+## 例子
+
+- [纯golang](https://github.com/GoAdminGroup/example), 简单很少依赖
+- [golang + 前端模版](https://github.com/GoAdminGroup/example_with_frontend), 你可以自己修改模版
+- [golang + vue](https://github.com/GoAdminGroup/example_with_vue), 如果你会vue的话，不妨试试
+
 ## 翻译
 我们需要您的帮忙： [https://github.com/GoAdminGroup/docs/issues/1](https://github.com/GoAdminGroup/docs/issues/1)
 
