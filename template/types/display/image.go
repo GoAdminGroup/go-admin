@@ -17,6 +17,9 @@ func init() {
 func (image *Image) Get(ctx *context.Context, args ...interface{}) types.FieldFilterFn {
 	param := args[2].([]string)
 	return func(value types.FieldModel) interface{} {
+		if value.Value == "" {
+			return ""
+		}
 		if len(param) > 0 {
 			return template.Default(ctx).Image().SetWidth(args[0].(string)).SetHeight(args[1].(string)).
 				SetSrc(template.HTML(param[0] + value.Value)).GetContent()
