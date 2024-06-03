@@ -61,7 +61,7 @@ var ru = LangSet{
 	"a path a line, without global prefix": "Путь одной строкой, без глобального префикса",
 	"slug or http_path or name should not be empty": "Slug, http_path или имя не должны быть пустыми",
 	"no roles":          "нет ролей",
-	"fixed the sidebar": "Фиксированный боковая панель",
+	"fixed the sidebar": "Фиксированная боковая панель",
 	"enter fullscreen":  "Перейти в полноэкранный режим",
 	"exit fullscreen":   "Выйти из полноэкранного режима",
 
