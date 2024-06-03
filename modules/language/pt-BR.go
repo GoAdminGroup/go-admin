@@ -224,6 +224,7 @@ var ptbr = LangSet{
 	"config.language." + JP:                  "Japonês",
 	"config.language." + strings.ToLower(TC): "Chinês Tradicional",
 	"config.language." + PTBR:                "Português Brasileiro",
+	"config.language." + RU:                  "Русский",
 
 	"config.modify site config":         "Modificação da configuração do site",
 	"config.modify site config success": "modificado com successo",
