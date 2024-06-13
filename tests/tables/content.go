@@ -3,17 +3,17 @@ package tables
 import (
 	"html/template"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	tmpl "github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/icon"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/themes/adminlte/components/chart_legend"
-	"github.com/GoAdminGroup/themes/adminlte/components/description"
-	"github.com/GoAdminGroup/themes/adminlte/components/infobox"
-	"github.com/GoAdminGroup/themes/adminlte/components/productlist"
-	"github.com/GoAdminGroup/themes/adminlte/components/progress_group"
-	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
+	"github.com/ChenSee/go-admin/context"
+	tmpl "github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/template/icon"
+	"github.com/ChenSee/go-admin/template/types"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/chart_legend"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/description"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/infobox"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/productlist"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/progress_group"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/smallbox"
 )
 
 // GetContent return the content of index page.

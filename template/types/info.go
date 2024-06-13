@@ -9,18 +9,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/config"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/errors"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/parameter"
-	"github.com/GoAdminGroup/go-admin/template/types/form"
-	"github.com/GoAdminGroup/go-admin/template/types/table"
+	"github.com/ChenSee/go-admin/context"
+	"github.com/ChenSee/go-admin/modules/db"
+	"github.com/ChenSee/go-admin/modules/errors"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/modules/logger"
+	"github.com/ChenSee/go-admin/modules/utils"
+	"github.com/ChenSee/go-admin/plugins/admin/modules"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/parameter"
+	"github.com/ChenSee/go-admin/template/types/form"
+	"github.com/ChenSee/go-admin/template/types/table"
 )
 
 // FieldModel is the single query result.
@@ -447,17 +447,16 @@ func (f FieldList) GetFieldByFieldName(name string) Field {
 
 // Join store join table info. For example:
 //
-// Join {
-//     BaseTable:   "users",
-//     Field:       "role_id",
-//     Table:       "roles",
-//     JoinField:   "id",
-// }
+//	Join {
+//	    BaseTable:   "users",
+//	    Field:       "role_id",
+//	    Table:       "roles",
+//	    JoinField:   "id",
+//	}
 //
 // It will generate the join table sql like:
 //
 // ... left join roles on roles.id = users.role_id ...
-//
 type Join struct {
 	Table      string
 	TableAlias string

@@ -3,8 +3,8 @@ package display
 import (
 	"strings"
 
-	"github.com/GoAdminGroup/go-admin/template/icon"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/ChenSee/go-admin/template/icon"
+	"github.com/ChenSee/go-admin/template/types"
 	"github.com/GoAdminGroup/html"
 )
 

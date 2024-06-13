@@ -3,28 +3,28 @@ package gin
 import (
 	// add gin adapter
 
-	ada "github.com/GoAdminGroup/go-admin/adapter/gin"
+	ada "github.com/ChenSee/go-admin/adapter/gin"
 	// add mysql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/postgres"
 	// add sqlite driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/sqlite"
 	// add mssql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/ChenSee/goAdminThemes/adminlte"
 
 	"net/http"
 	"os"
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/table"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/tests/tables"
 	"github.com/gin-gonic/gin"
 )
 

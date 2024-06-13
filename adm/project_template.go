@@ -15,13 +15,13 @@ import (
 	"syscall"
 	"time"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/gin"                    // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}" // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                       // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/gin"                    // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}" // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                       // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/gin-gonic/gin"
 	
 	"{{.Module}}/pages"
@@ -95,13 +95,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/beego"                   // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/beego"                   // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/astaxie/beego"
 
 	"{{.Module}}/pages"
@@ -156,13 +156,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/buffalo"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/gobuffalo/buffalo"	
 
 	"{{.Module}}/pages"
@@ -222,13 +222,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/chi"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/chi"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/go-chi/chi"
 
 	"{{.Module}}/pages"
@@ -305,13 +305,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/echo"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/echo"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/labstack/echo/v4"
 
 	"{{.Module}}/pages"
@@ -363,13 +363,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/fasthttp"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/fasthttp"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
 
@@ -424,13 +424,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/gf"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/gf"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/gogf/gf/frame/g"
 
 	"{{.Module}}/pages"
@@ -484,13 +484,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/gorilla"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/gorilla"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/gorilla/mux"
 
 	"{{.Module}}/pages"
@@ -544,13 +544,13 @@ import (
 	"os"
 	"os/signal"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/iris"                 // web framework adapter
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
-	_ "github.com/GoAdminGroup/themes/{{.Theme}}"                        // ui theme
+	_ "github.com/ChenSee/go-admin/adapter/iris"                 // web framework adapter
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/{{.DriverModule}}"  // sql driver
+	_ "github.com/ChenSee/goAdminThemes/{{.Theme}}"                        // ui theme
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 	"github.com/kataras/iris/v12"
 
 	"{{.Module}}/pages"
@@ -604,15 +604,15 @@ func startServer() {
 var swordIndexPage = []byte(`package pages
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	template2 "github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/themes/sword/components/card"
-	"github.com/GoAdminGroup/themes/sword/components/chart_legend"
-	"github.com/GoAdminGroup/themes/sword/components/description"
-	"github.com/GoAdminGroup/themes/sword/components/progress_group"
+	"github.com/ChenSee/go-admin/context"
+	"github.com/ChenSee/go-admin/modules/config"
+	template2 "github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/template/types"
+	"github.com/ChenSee/goAdminThemes/sword/components/card"
+	"github.com/ChenSee/goAdminThemes/sword/components/chart_legend"
+	"github.com/ChenSee/goAdminThemes/sword/components/description"
+	"github.com/ChenSee/goAdminThemes/sword/components/progress_group"
 	"html/template"
 )
 
@@ -877,17 +877,17 @@ like Aldus PageMaker including versions of Lorem Ipsum.
 var adminlteIndexPage = []byte(`package pages
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
-	tmpl "github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/go-admin/template/icon"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/themes/adminlte/components/chart_legend"
-	"github.com/GoAdminGroup/themes/adminlte/components/description"
-	"github.com/GoAdminGroup/themes/adminlte/components/infobox"
-	"github.com/GoAdminGroup/themes/adminlte/components/productlist"
-	"github.com/GoAdminGroup/themes/adminlte/components/progress_group"
-	"github.com/GoAdminGroup/themes/adminlte/components/smallbox"
+	"github.com/ChenSee/go-admin/context"
+	tmpl "github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/template/icon"
+	"github.com/ChenSee/go-admin/template/types"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/chart_legend"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/description"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/infobox"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/productlist"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/progress_group"
+	"github.com/ChenSee/goAdminThemes/adminlte/components/smallbox"
 	"html/template"
 )
 
@@ -1273,11 +1273,11 @@ var mainTest = []byte(`package main
 
 import (
 	"./tables"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/tests"
-	"github.com/GoAdminGroup/go-admin/tests/common"
-	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
-	"github.com/GoAdminGroup/go-admin/tests/web"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/tests"
+	"github.com/ChenSee/go-admin/tests/common"
+	"github.com/ChenSee/go-admin/tests/frameworks/gin"
+	"github.com/ChenSee/go-admin/tests/web"
 	"github.com/gavv/httpexpect"
 	"log"
 	"testing"
@@ -1321,11 +1321,11 @@ var mainTestCN = []byte(`package main
 
 import (
 	"./tables"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/tests"
-	"github.com/GoAdminGroup/go-admin/tests/common"
-	"github.com/GoAdminGroup/go-admin/tests/frameworks/gin"
-	"github.com/GoAdminGroup/go-admin/tests/web"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/tests"
+	"github.com/ChenSee/go-admin/tests/common"
+	"github.com/ChenSee/go-admin/tests/frameworks/gin"
+	"github.com/ChenSee/go-admin/tests/web"
 	"github.com/gavv/httpexpect"
 	"log"
 	"testing"
@@ -1438,7 +1438,7 @@ var readme = `# GoAdmin Instruction
 
 GoAdmin is a golang framework help gopher quickly build a data visualization platform. 
 
-- [github](https://github.com/GoAdminGroup/go-admin)
+- [github](https://github.com/ChenSee/go-admin)
 - [forum](http://discuss.go-admin.com)
 - [document](https://book.go-admin.cn)
 
@@ -1481,7 +1481,7 @@ var readmeCN = `# GoAdmin 介绍
 
 GoAdmin 是一个帮你快速搭建数据可视化管理应用平台的框架。 
 
-- [github](https://github.com/GoAdminGroup/go-admin)
+- [github](https://github.com/ChenSee/go-admin)
 - [论坛](http://discuss.go-admin.com)
 - [文档](https://book.go-admin.cn)
 

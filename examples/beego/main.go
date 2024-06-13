@@ -6,17 +6,17 @@ import (
 	"os/signal"
 	"time"
 
-	_ "github.com/GoAdminGroup/go-admin/adapter/beego"
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/ChenSee/go-admin/adapter/beego"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/mysql"
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/examples/datamodel"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
-	"github.com/GoAdminGroup/themes/adminlte"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/examples/datamodel"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/plugins/example"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
+	"github.com/ChenSee/goAdminThemes/adminlte"
 	"github.com/astaxie/beego"
 )
 

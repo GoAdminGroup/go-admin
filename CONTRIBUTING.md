@@ -9,7 +9,7 @@ If you want to contribute, but not sure what to do, here's a list of things that
 * Finding security problems
 * Themes and Plugins
 
-See [manual](https://github.com/GoAdminGroup/go-admin/projects/3) for more information.
+See [manual](https://github.com/ChenSee/go-admin/projects/3) for more information.
 
 You can view all open issues on github, which is usually a good starting point if you want to start contributing:
 
@@ -22,12 +22,12 @@ GoAdmin uses GitHub to manage reviews of pull requests:
 - If you have a trivial fix or improvement, go ahead and create a pull request.
 - If you plan to do something more involved, discuss your ideas on the relevant GitHub issue.
 
-For now, you need to add your fork as a remote on the original **\$GOPATH**/src/github.com/GoAdminGroup/go-admin clone, so:
+For now, you need to add your fork as a remote on the original **\$GOPATH**/src/github.com/ChenSee/go-admin clone, so:
 
 ```bash
 
-$ go get github.com/GoAdminGroup/go-admin
-$ cd $GOPATH/src/github.com/GoAdminGroup/go-admin # GOPATH is $HOME/go by default.
+$ go get github.com/ChenSee/go-admin
+$ cd $GOPATH/src/github.com/ChenSee/go-admin # GOPATH is $HOME/go by default.
 
 $ git remote add <FORK_NAME> <FORK_URL>
 ```
@@ -40,7 +40,7 @@ make test
 
 See the Makefile for more details.
 
-Notice: `go get` return `package github.com/GoAdminGroup/go-admin: no Go files in /go/src/github.com/GoAdminGroup/go-admin` is normal.
+Notice: `go get` return `package github.com/ChenSee/go-admin: no Go files in /go/src/github.com/ChenSee/go-admin` is normal.
 
 ### Dependency management
 
@@ -80,5 +80,5 @@ You can also donate or become a patreon, which helps out covering server costs a
 If you are a member of the official GoAdmin developer Team:
 
 * [Discussions](http://forum.go-admin.cn)
-* [Tasks](https://github.com/GoAdminGroup/go-admin/projects)
+* [Tasks](https://github.com/ChenSee/go-admin/projects)
 * [Chat](https://t.me/joinchat/NlyH6Bch2QARZkArithKvg)

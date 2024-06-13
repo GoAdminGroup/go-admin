@@ -9,7 +9,7 @@
 * 寻找安全问题
 * 主题和插件
 
-在这里：[功能规划](https://github.com/GoAdminGroup/go-admin/projects/3) 可以获得更多信息。
+在这里：[功能规划](https://github.com/ChenSee/go-admin/projects/3) 可以获得更多信息。
 
 你也可以看一下所有开放的issues，从这里去入手：
 
@@ -22,12 +22,12 @@ GoAdmin 使用 GitHub 来管理项目代码：
 - 如果你发现一些微不足道的fix或者功能增加，直接提pr即可；
 - 如果你有一些提议，那么你可以先开一个issue进行讨论；
 
-然后，你需要fork远程的master分支到你本地 **\$GOPATH**/src/github.com/GoAdminGroup/go-admin ：
+然后，你需要fork远程的master分支到你本地 **\$GOPATH**/src/github.com/ChenSee/go-admin ：
 
 ```bash
 
-$ go get github.com/GoAdminGroup/go-admin
-$ cd $GOPATH/src/github.com/GoAdminGroup/go-admin # GOPATH is $HOME/go by default.
+$ go get github.com/ChenSee/go-admin
+$ cd $GOPATH/src/github.com/ChenSee/go-admin # GOPATH is $HOME/go by default.
 
 $ git remote add <FORK_NAME> <FORK_URL>
 ```
@@ -40,7 +40,7 @@ make test
 
 看根目录下的```Makefile```获得更多信息。
 
-注意了： `go get` 返回 `package github.com/GoAdminGroup/go-admin: no Go files in /go/src/github.com/GoAdminGroup/go-admin` 是正常的。
+注意了： `go get` 返回 `package github.com/ChenSee/go-admin: no Go files in /go/src/github.com/ChenSee/go-admin` 是正常的。
 
 ### 依赖管理
 
@@ -80,5 +80,5 @@ git commit
 如果你已经是GoAdmin的官方开发组成员：
 
 * [Discussions](http://forum.go-admin.cn)
-* [Tasks](https://github.com/GoAdminGroup/go-admin/projects)
+* [Tasks](https://github.com/ChenSee/go-admin/projects)
 * [Chat](https://t.me/joinchat/NlyH6Bch2QARZkArithKvg)

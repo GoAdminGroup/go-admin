@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/constant"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/db"
+	"github.com/ChenSee/go-admin/modules/db/dialect"
+	"github.com/ChenSee/go-admin/modules/logger"
+	"github.com/ChenSee/go-admin/modules/utils"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/constant"
 )
 
 // UserModel is user model structure.

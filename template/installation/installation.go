@@ -6,8 +6,8 @@ import (
 	"html/template"
 	"strings"
 
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/modules/logger"
 )
 
 type Installation struct {

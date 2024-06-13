@@ -2,33 +2,33 @@ package buffalo
 
 import (
 	// add buffalo adapter
-	_ "github.com/GoAdminGroup/go-admin/adapter/buffalo"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/themes/adminlte"
+	_ "github.com/ChenSee/go-admin/adapter/buffalo"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/table"
+	"github.com/ChenSee/goAdminThemes/adminlte"
 
 	// add mysql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mysql"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/mysql"
 	// add postgresql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/postgres"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/postgres"
 	// add sqlite driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/sqlite"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/sqlite"
 	// add mssql driver
-	_ "github.com/GoAdminGroup/go-admin/modules/db/drivers/mssql"
+	_ "github.com/ChenSee/go-admin/modules/db/drivers/mssql"
 	// add adminlte ui theme
-	_ "github.com/GoAdminGroup/themes/adminlte"
+	_ "github.com/ChenSee/goAdminThemes/adminlte"
 
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/chartjs"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/chartjs"
 
 	"net/http"
 	"os"
 
-	"github.com/GoAdminGroup/go-admin/engine"
-	"github.com/GoAdminGroup/go-admin/plugins/admin"
-	"github.com/GoAdminGroup/go-admin/plugins/example"
-	"github.com/GoAdminGroup/go-admin/tests/tables"
+	"github.com/ChenSee/go-admin/engine"
+	"github.com/ChenSee/go-admin/plugins/admin"
+	"github.com/ChenSee/go-admin/plugins/example"
+	"github.com/ChenSee/go-admin/tests/tables"
 	"github.com/gobuffalo/buffalo"
 )
 

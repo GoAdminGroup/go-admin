@@ -24,7 +24,7 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - cd /go/src/github.com/ChenSee/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
@@ -62,12 +62,12 @@ steps:
   image: chg80333/goadmin-test:v8
   volumes:
   - name: data
-    path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
+    path: /go/src/github.com/ChenSee/go-admin/tests/data
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - cd /go/src/github.com/ChenSee/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
@@ -101,7 +101,7 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - cd /go/src/github.com/ChenSee/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
@@ -127,7 +127,7 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - cd /go/src/github.com/ChenSee/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
@@ -160,7 +160,7 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - cd /go/src/github.com/GoAdminGroup/go-admin
+  - cd /go/src/github.com/ChenSee/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST

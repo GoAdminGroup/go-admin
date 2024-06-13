@@ -1,4 +1,4 @@
-module github.com/GoAdminGroup/go-admin
+module github.com/ChenSee/go-admin
 
 go 1.13
 

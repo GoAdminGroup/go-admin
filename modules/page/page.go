@@ -7,14 +7,14 @@ package page
 import (
 	"bytes"
 
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/db"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/template"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	"github.com/ChenSee/go-admin/context"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/db"
+	"github.com/ChenSee/go-admin/modules/logger"
+	"github.com/ChenSee/go-admin/modules/menu"
+	"github.com/ChenSee/go-admin/plugins/admin/models"
+	"github.com/ChenSee/go-admin/template"
+	"github.com/ChenSee/go-admin/template/types"
 )
 
 // SetPageContent set and return the panel of page content.

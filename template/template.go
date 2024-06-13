@@ -14,16 +14,16 @@ import (
 	"strings"
 	"sync"
 
-	c "github.com/GoAdminGroup/go-admin/modules/config"
-	errors2 "github.com/GoAdminGroup/go-admin/modules/errors"
-	"github.com/GoAdminGroup/go-admin/modules/language"
-	"github.com/GoAdminGroup/go-admin/modules/logger"
-	"github.com/GoAdminGroup/go-admin/modules/menu"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/models"
-	"github.com/GoAdminGroup/go-admin/template/login"
-	"github.com/GoAdminGroup/go-admin/template/types"
+	c "github.com/ChenSee/go-admin/modules/config"
+	errors2 "github.com/ChenSee/go-admin/modules/errors"
+	"github.com/ChenSee/go-admin/modules/language"
+	"github.com/ChenSee/go-admin/modules/logger"
+	"github.com/ChenSee/go-admin/modules/menu"
+	"github.com/ChenSee/go-admin/modules/system"
+	"github.com/ChenSee/go-admin/modules/utils"
+	"github.com/ChenSee/go-admin/plugins/admin/models"
+	"github.com/ChenSee/go-admin/template/login"
+	"github.com/ChenSee/go-admin/template/types"
 )
 
 // Template is the interface which contains methods of ui components.
@@ -265,8 +265,8 @@ type Component interface {
 	// {{.UrlPrefix}}/assets/login/css/bootstrap.min.css => login/css/bootstrap.min.css
 	//
 	// See:
-	// https://github.com/GoAdminGroup/go-admin/blob/master/template/login/theme1.tmpl#L32
-	// https://github.com/GoAdminGroup/go-admin/blob/master/template/login/list.go
+	// https://github.com/ChenSee/go-admin/blob/master/template/login/theme1.tmpl#L32
+	// https://github.com/ChenSee/go-admin/blob/master/template/login/list.go
 	GetAssetList() []string
 
 	// GetAsset return the asset content according to the corresponding url suffix.

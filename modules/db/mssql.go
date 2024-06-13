@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoAdminGroup/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/config"
 )
 
 // Mssql is a Connection of mssql.
@@ -121,8 +121,8 @@ func (db *Mssql) handleSqlBeforeExec(query string) string {
 	return db.parseSql(str)
 }
 
-//将MYSQL的SQL语法转换为MSSQL的语法
-//1.由于mssql不支持limit写法所以需要对mysql中的limit用法做转换
+// 将MYSQL的SQL语法转换为MSSQL的语法
+// 1.由于mssql不支持limit写法所以需要对mysql中的limit用法做转换
 func (db *Mssql) parseSql(sql string) string {
 	//下面的正则表达式匹配出SELECT和INSERT的关键字后分别做不同的处理，如有LIMIT则将LIMIT的关键字也匹配出
 	patten := `^\s*(?i)(SELECT)|(LIMIT\s*(\d+)\s*,\s*(\d+))`

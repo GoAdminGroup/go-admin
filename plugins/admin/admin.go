@@ -1,18 +1,18 @@
 package admin
 
 import (
-	"github.com/GoAdminGroup/go-admin/context"
-	"github.com/GoAdminGroup/go-admin/modules/config"
-	"github.com/GoAdminGroup/go-admin/modules/service"
-	"github.com/GoAdminGroup/go-admin/modules/system"
-	"github.com/GoAdminGroup/go-admin/modules/utils"
-	"github.com/GoAdminGroup/go-admin/plugins"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/controller"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/guard"
-	"github.com/GoAdminGroup/go-admin/plugins/admin/modules/table"
-	"github.com/GoAdminGroup/go-admin/template/types"
-	"github.com/GoAdminGroup/go-admin/template/types/action"
-	_ "github.com/GoAdminGroup/go-admin/template/types/display"
+	"github.com/ChenSee/go-admin/context"
+	"github.com/ChenSee/go-admin/modules/config"
+	"github.com/ChenSee/go-admin/modules/service"
+	"github.com/ChenSee/go-admin/modules/system"
+	"github.com/ChenSee/go-admin/modules/utils"
+	"github.com/ChenSee/go-admin/plugins"
+	"github.com/ChenSee/go-admin/plugins/admin/controller"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/guard"
+	"github.com/ChenSee/go-admin/plugins/admin/modules/table"
+	"github.com/ChenSee/go-admin/template/types"
+	"github.com/ChenSee/go-admin/template/types/action"
+	_ "github.com/ChenSee/go-admin/template/types/display"
 )
 
 // Admin is a GoAdmin plugin.
