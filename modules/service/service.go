@@ -4,6 +4,10 @@
 
 package service
 
+import (
+	"log"
+)
+
 type Service interface {
 	Name() string
 }
@@ -12,7 +16,7 @@ type Generator func() (Service, error)
 
 func Register(k string, gen Generator) {
 	if _, ok := services[k]; ok {
-		panic("service has been registered")
+		log.Panicf("service %s has been registered", k)
 	}
 	services[k] = gen
 }
@@ -24,7 +28,7 @@ func GetServices() List {
 	)
 	for k, gen := range services {
 		if l[k], err = gen(); err != nil {
-			panic("service initialize fail")
+			log.Panicf("service %s initialize fail, error: %v", k, err)
 		}
 	}
 	return l
@@ -40,7 +44,8 @@ func (g List) Get(k string) Service {
 	if v, ok := g[k]; ok {
 		return v
 	}
-	panic("service not found")
+	log.Panicf("service %s not found", k)
+	return nil
 }
 
 func (g List) GetOrNot(k string) (Service, bool) {
@@ -50,7 +55,7 @@ func (g List) GetOrNot(k string) (Service, bool) {
 
 func (g List) Add(k string, service Service) {
 	if _, ok := g[k]; ok {
-		panic("service exist")
+		log.Panicf("service %s exist", k)
 	}
 	g[k] = service
 }

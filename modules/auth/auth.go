@@ -5,6 +5,7 @@
 package auth
 
 import (
+	"log"
 	"sync"
 
 	"github.com/GoAdminGroup/go-admin/modules/db/dialect"
@@ -114,7 +115,8 @@ func GetTokenService(s interface{}) *TokenService {
 	if srv, ok := s.(*TokenService); ok {
 		return srv
 	}
-	panic("wrong service")
+	log.Panicf("wrong service: %+v", s)
+	return nil
 }
 
 // AddToken add the token to the CSRFToken.
@@ -184,7 +186,8 @@ func GetService(s interface{}) *Service {
 	if srv, ok := s.(*Service); ok {
 		return srv
 	}
-	panic("wrong service")
+	log.Panicf("wrong service: %+v", s)
+	return nil
 }
 
 func NewService(processor Processor) *Service {

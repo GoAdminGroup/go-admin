@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -827,7 +827,7 @@ var (
 
 // ReadFromJson read the Config from a JSON file.
 func ReadFromJson(path string) Config {
-	jsonByte, err := ioutil.ReadFile(path)
+	jsonByte, err := os.ReadFile(path)
 
 	if err != nil {
 		panic(err)
@@ -846,7 +846,7 @@ func ReadFromJson(path string) Config {
 
 // ReadFromYaml read the Config from a YAML file.
 func ReadFromYaml(path string) Config {
-	jsonByte, err := ioutil.ReadFile(path)
+	jsonByte, err := os.ReadFile(path)
 
 	if err != nil {
 		panic(err)
