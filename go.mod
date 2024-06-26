@@ -33,8 +33,8 @@ require (
 	github.com/teambition/gear v1.27.3
 	github.com/valyala/fasthttp v1.52.0
 	go.uber.org/zap v1.19.1
-	golang.org/x/crypto v0.20.0
-	golang.org/x/text v0.14.0
+	golang.org/x/crypto v0.24.0
+	golang.org/x/text v0.16.0
 	gopkg.in/ini.v1 v1.67.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gopkg.in/yaml.v2 v2.4.0
@@ -168,10 +168,10 @@ require (
 	go.opentelemetry.io/otel/trace v1.14.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
-	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8 // indirect
 	golang.org/x/net v0.21.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
-	golang.org/x/term v0.17.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/term v0.21.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
 	google.golang.org/protobuf v1.32.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

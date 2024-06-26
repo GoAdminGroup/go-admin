@@ -5,6 +5,7 @@ import "html/template"
 type FilterOperator string
 
 const (
+	FilterOperatorILike          FilterOperator = "ilike"
 	FilterOperatorLike           FilterOperator = "like"
 	FilterOperatorGreater        FilterOperator = ">"
 	FilterOperatorGreaterOrEqual FilterOperator = ">="
@@ -17,6 +18,8 @@ const (
 
 func GetOperatorFromValue(value string) FilterOperator {
 	switch value {
+	case "ilike":
+		return FilterOperatorILike
 	case "like":
 		return FilterOperatorLike
 	case "gr":
@@ -40,6 +43,8 @@ func GetOperatorFromValue(value string) FilterOperator {
 
 func (o FilterOperator) Value() string {
 	switch o {
+	case FilterOperatorILike:
+		return "ilike"
 	case FilterOperatorLike:
 		return "like"
 	case FilterOperatorGreater:
