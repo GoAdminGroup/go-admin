@@ -468,8 +468,8 @@ func getFieldsFromConn(conn db.Connection, table, driver, connName string) Field
 		}
 
 		head := cases.Title(textLang.Und).String(model[fieldField].(string))
-		if model["Comment"] != "" {
-			head = cases.Title(textLang.Und).String(model["Comment"].(string))
+		if comment, ok := model["Comment"].(string); ok && comment != "" {
+			head = cases.Title(textLang.Und).String(comment)
 		}
 		fields[i] = Field{
 			Head:         head,
