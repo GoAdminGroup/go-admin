@@ -423,6 +423,10 @@ func DownloadTo(url, output string) error {
 		return err
 	}
 
+	defer func() {
+		_ = file.Close()
+	}()
+
 	_, err = io.Copy(file, res.Body)
 
 	if err != nil {
