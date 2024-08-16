@@ -6,6 +6,7 @@ name: api_mysql
 trigger:
   event:
   - pull_request
+  - push
 
 clone:
   disable: true
@@ -24,6 +25,8 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
+  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
+  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -39,6 +42,7 @@ name: api_mssql
 trigger:
   event:
   - pull_request
+  - push
 
 clone:
   disable: true
@@ -84,6 +88,7 @@ name: api_postgres
 trigger:
   event:
   - pull_request
+  - push
 
 clone:
   disable: true
@@ -103,6 +108,8 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
+  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
+  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -118,6 +125,7 @@ name: api_sqlite
 trigger:
   event:
   - pull_request
+  - push
 
 clone:
   disable: true
@@ -129,6 +137,8 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
+  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
+  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -144,6 +154,7 @@ name: frontend
 trigger:
   event:
   - pull_request
+  - push
 
 clone:
   disable: true
@@ -162,6 +173,8 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
+  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
+  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
