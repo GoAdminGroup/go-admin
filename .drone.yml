@@ -6,6 +6,7 @@ name: api_mysql
 trigger:
   event:
   - pull_request
+  - master
 
 clone:
   disable: true
