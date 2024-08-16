@@ -6,7 +6,6 @@ name: api_mysql
 trigger:
   event:
   - pull_request
-  - push
 
 clone:
   disable: true
@@ -42,7 +41,6 @@ name: api_mssql
 trigger:
   event:
   - pull_request
-  - push
 
 clone:
   disable: true
@@ -88,7 +86,6 @@ name: api_postgres
 trigger:
   event:
   - pull_request
-  - push
 
 clone:
   disable: true
@@ -125,7 +122,6 @@ name: api_sqlite
 trigger:
   event:
   - pull_request
-  - push
 
 clone:
   disable: true
@@ -154,7 +150,6 @@ name: frontend
 trigger:
   event:
   - pull_request
-  - push
 
 clone:
   disable: true
