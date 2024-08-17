@@ -31,6 +31,9 @@ steps:
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
+  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+  - g install 1.20.3
+  - g use 1.20.3
   - go version
   - make mysql-test
 
@@ -77,6 +80,9 @@ steps:
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
+  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+  - g install 1.20.3
+  - g use 1.20.3
   - go version
   - make ms-test
 
@@ -114,6 +120,9 @@ steps:
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
+  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+  - g install 1.20.3
+  - g use 1.20.3
   - go version
   - make pg-test
 
@@ -143,6 +152,9 @@ steps:
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
   - sleep 80
+  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
+  - g install 1.20.3
+  - g use 1.20.3
   - go version
   - make sqlite-test
 
