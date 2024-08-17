@@ -24,8 +24,6 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -70,8 +68,6 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -107,8 +103,6 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -136,8 +130,6 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
@@ -172,8 +164,6 @@ steps:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
