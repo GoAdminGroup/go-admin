@@ -34,46 +34,46 @@ mysql-test: $(TEST_FRAMEWORK_DIR)/*
 	go get github.com/ugorji/go/codec@none
 	for file in $^ ; do \
 	make import-mysql ; \
-	gotest -mod=mod -gcflags=all=-l -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
+	go test -mod=mod -gcflags=all=-l -v ./$${file}/... -args $(TEST_CONFIG_PATH) ; \
 	done
 
 sqlite-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-sqlite ; \
-	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
+	go test -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_SQLITE_PATH) ; \
 	done
 
 pg-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-postgresql ; \
-	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
+	go test -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_PQ_PATH) ; \
 	done
 
 ms-test: $(TEST_FRAMEWORK_DIR)/*
 	for file in $^ ; do \
 	make import-mssql ; \
-	gotest -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
+	go test -mod=mod -gcflags=all=-l ./$${file}/... -args $(TEST_CONFIG_MS_PATH) ; \
 	done
 
 ## tests: user acceptance tests
 
 web-test: import-mysql
-	gotest -mod=mod ./tests/web/...
+	go test -mod=mod ./tests/web/...
 	rm -rf ./tests/web/User*
 
 web-test-debug: import-mysql
-	gotest -mod=mod ./tests/web/... -args true
+	go test -mod=mod ./tests/web/... -args true
 
 ## tests: unit tests
 
 unit-test:
-	gotest -mod=mod ./adm/...
-	gotest -mod=mod ./context/...
-	gotest -mod=mod ./modules/...
-	gotest -mod=mod ./plugins/admin/controller/...
-	gotest -mod=mod ./plugins/admin/modules/parameter/...
-	gotest -mod=mod ./plugins/admin/modules/table/...
-	gotest -mod=mod ./plugins/admin/modules/...
+	go test -mod=mod ./adm/...
+	go test -mod=mod ./context/...
+	go test -mod=mod ./modules/...
+	go test -mod=mod ./plugins/admin/controller/...
+	go test -mod=mod ./plugins/admin/modules/parameter/...
+	go test -mod=mod ./plugins/admin/modules/table/...
+	go test -mod=mod ./plugins/admin/modules/...
 
 ## tests: helpers
 
