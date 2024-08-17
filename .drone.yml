@@ -19,7 +19,7 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -30,11 +30,8 @@ steps:
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
-  - sleep 80
-  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
-  - g install 1.20.3
-  - g use 1.20.3
   - go version
+  - sleep 80
   - make mysql-test
 
 ---
@@ -65,7 +62,7 @@ services:
 
 steps:
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   volumes:
   - name: data
     path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
@@ -79,11 +76,8 @@ steps:
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
-  - sleep 80
-  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
-  - g install 1.20.3
-  - g use 1.20.3
   - go version
+  - sleep 80
   - make ms-test
 
 ---
@@ -108,7 +102,7 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -119,11 +113,8 @@ steps:
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
-  - sleep 80
-  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
-  - g install 1.20.3
-  - g use 1.20.3
   - go version
+  - sleep 80
   - make pg-test
 
 ---
@@ -140,7 +131,7 @@ clone:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
@@ -151,11 +142,8 @@ steps:
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
-  - sleep 80
-  - curl -sSL https://raw.githubusercontent.com/voidint/g/master/install.sh | bash
-  - g install 1.20.3
-  - g use 1.20.3
   - go version
+  - sleep 80
   - make sqlite-test
 
 ---
@@ -179,7 +167,7 @@ services:
 
 steps:
 - name: chrome
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
