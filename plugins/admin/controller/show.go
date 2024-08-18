@@ -170,9 +170,8 @@ func (h *Handler) showTable(ctx *context.Context, prefix string, params paramete
 					html.M{"href": "#"},
 				), html.M{"cursor": "pointer", "width": "100%"}, html.M{"class": "dropdown-toggle", "data-toggle": "dropdown"})+
 				html.Ul(content,
-					html.M{"min-width": "20px !important", "left": "-32px", "overflow": "hidden"},
+					html.M{"min-width": "20px !important", "left": "-112px", "overflow": "hidden"},
 					html.M{"class": "dropdown-menu", "role": "menu", "aria-labelledby": "dLabel"}),
-
 				html.M{"text-align": "center"}, html.M{"class": "dropdown"})
 		} else {
 			actionBtns, actionJs = allActionBtns.Content(ctx)

@@ -17,6 +17,9 @@ import (
 type Testers func(t *testing.T, page *Page)
 type ServerStarter func(quit chan struct{})
 
+// UserAcceptanceTestSuit make sure the chromedriver version Is corresponding to the
+// chrome version. Using the following link to get the latest version of Chrome and ChromeDriver.
+// https://googlechromelabs.github.io/chrome-for-testing/
 func UserAcceptanceTestSuit(t *testing.T, testers Testers, serverStarter ServerStarter, local bool, options ...string) {
 	var quit = make(chan struct{})
 	go serverStarter(quit)

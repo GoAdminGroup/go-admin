@@ -1,7 +1,7 @@
 package web
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"testing"
@@ -131,8 +131,8 @@ const (
 	navLinkBtn                   = `//*[@id="firstnav"]/div[2]/ul/li[1]/a`
 	navCloseBtn                  = `//*[@id="firstnav"]/div[2]/ul/li[1]/i`
 	userPageBtn                  = `/html/body/div[1]/aside/section/ul/li[3]/a`
-	managerEditBtn               = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[3]/td[8]/a[1]`
-	operatorEditBtn              = `//*[@id="pjax-container"]/section[2]/div/div/div[3]/table/tbody/tr[2]/td[8]/a[1]`
+	managerEditBtn               = `//*[@id="pjax-container"]/section[2]/div/div[2]/div[2]/table/tbody/tr[3]/td[8]/a[1]`
+	operatorEditBtn              = `//*[@id="pjax-container"]/section[2]/div/div[2]/div[2]/table/tbody/tr[2]/td[8]/a[1]`
 	managerNameField             = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[2]/div/div/input`
 	managerNickNameField         = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[3]/div/div/input`
 	managerRoleSelectedOpt       = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[5]/div/span[1]/span[1]/span/ul/li[1]`
@@ -152,16 +152,16 @@ const (
 	permissionPathInput    = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[1]/div/div/div[4]/div/textarea`
 	permissionSaveBtn      = `//*[@id="pjax-container"]/section[2]/div/div/div[2]/form/div[2]/div[2]/div[1]/button`
 
-	userNavMenuBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]`
-	userSettingBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]/ul/li[2]/div[1]/a`
-	userSignOutBtn = `//*[@id="firstnav"]/div[4]/ul/li[9]/ul/li[2]/div[2]/a`
+	userNavMenuBtn = `//*[@id="firstnav"]/div[4]/ul/li[5]/a`
+	userSettingBtn = `//*[@id="firstnav"]/div[4]/ul/li[5]/ul/li[5]/a`
+	userSignOutBtn = `//*[@id="firstnav"]/div[4]/ul/li[5]/ul/li[6]/a`
 
 	loginPageUserNameInput = `//*[@id="username"]`
 	loginPagePasswordInput = `//*[@id="password"]`
 )
 
 var (
-	debugMode  = false
+	debugMode  = true
 	optionList = []string{
 		"--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
 		"--window-size=1500,900",
@@ -196,7 +196,7 @@ func startServer(quit chan struct{}) {
 
 	if !debugMode {
 		gin.SetMode(gin.ReleaseMode)
-		gin.DefaultWriter = ioutil.Discard
+		gin.DefaultWriter = io.Discard
 	}
 
 	r := gin.New()
@@ -255,7 +255,7 @@ func testLogin(page *Page) {
 
 	page.Fill(loginPageUserNameInput, "admin")
 	page.Fill(loginPagePasswordInput, "admin")
-	page.ClickS(page.FindByButton("login"))
+	page.ClickS(page.FindByButton("Login"))
 
 	wait(3)
 
@@ -371,7 +371,7 @@ func testInfoTablePageOperations(page *Page) {
 	page.Click(rowSelectCityCheckbox)
 	page.Click(rowSelectAvatarCheckbox)
 
-	page.ClickS(page.FindByButton("submit"), 2)
+	page.ClickS(page.FindByButton("Submit"), 2)
 
 	page.NoContain("guangzhou")
 
@@ -530,7 +530,7 @@ func testEditPageOperations(page *Page) {
 	page.Value(birthdayField, "2010-09-05 00:00:00")
 	page.Value(passwordField, "12345678")
 	page.Value(ipField, "127.0.0.1")
-	page.Value(amountField, "15")
+	page.Value(amountField, "15.00")
 
 	page.Click(selectTab)
 
@@ -664,7 +664,7 @@ func testManagerPageOperations(page *Page) {
 func testPermission(page *Page) {
 	page.Fill(loginPageUserNameInput, "operator")
 	page.Fill(loginPagePasswordInput, "admin")
-	page.ClickS(page.FindByButton("login"))
+	page.ClickS(page.FindByButton("Login"))
 	page.NavigateTo(url("/info/user"))
 	page.NoContain("New")
 	page.Click(detailBtn)
