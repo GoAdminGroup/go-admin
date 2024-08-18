@@ -235,7 +235,7 @@ func startServer(quit chan struct{}) {
 }
 
 func TestWeb(t *testing.T) {
-	UserAcceptanceTestSuit(t, func(t *testing.T, page *Page) {
+	UserAcceptanceTestSuit(t, func(_ *testing.T, page *Page) {
 		defer page.Destroy()
 		testLogin(page)
 		testInfoTablePageOperations(page)
@@ -544,15 +544,15 @@ func testEditPageOperations(page *Page) {
 // [ ] Pagination
 // [ ] Join table fields display in table and form
 
-func testDetailPageOperations(page *Page) {
+func testDetailPageOperations(_ *Page) {
 
 }
 
-func testRolePageOperations(page *Page) {
+func testRolePageOperations(_ *Page) {
 
 }
 
-func testPermissionPageOperations(page *Page) {
+func testPermissionPageOperations(_ *Page) {
 
 }
 
