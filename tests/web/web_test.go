@@ -530,7 +530,7 @@ func testEditPageOperations(page *Page) {
 	page.Value(birthdayField, "2010-09-05 00:00:00")
 	page.Value(passwordField, "12345678")
 	page.Value(ipField, "127.0.0.1")
-	page.Value(amountField, "15.00")
+	page.Value(amountField, "15")
 
 	page.Click(selectTab)
 
