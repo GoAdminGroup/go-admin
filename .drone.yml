@@ -19,64 +19,62 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
+  - go version
   - sleep 80
-  - make mysql-test
+  - GOPROXY=https://goproxy.cn make mysql-test
 
----
-kind: pipeline
-type: docker
-name: api_mssql
+# ---
+# kind: pipeline
+# type: docker
+# name: api_mssql
 
-trigger:
-  event:
-  - pull_request
+# trigger:
+#   event:
+#   - pull_request
 
-clone:
-  disable: true
+# clone:
+#   disable: true
 
-volumes:
-- name: data
-  temp: {}
+# volumes:
+# - name: data
+#   temp: {}
 
-services:
-- name: db_mssql
-  image: mcr.microsoft.com/mssql/server:2017-latest
-  volumes:
-  - name: data
-    path: /home/data
-  environment:
-    ACCEPT_EULA: Y
-    SA_PASSWORD: Aa123456
+# services:
+# - name: db_mssql
+#   image: mcr.microsoft.com/mssql/server:2017-latest
+#   volumes:
+#   - name: data
+#     path: /home/data
+#   environment:
+#     ACCEPT_EULA: Y
+#     SA_PASSWORD: Aa123456
 
-steps:
-- name: api
-  image: chg80333/goadmin-test:v8
-  volumes:
-  - name: data
-    path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
-  environment:
-    GO111MODULE: on
-    GOPROXY: https://goproxy.cn
-  commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-  - cd /go/src/github.com/GoAdminGroup/go-admin
-  - git pull
-  - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
-  - git checkout pr$DRONE_PULL_REQUEST
-  - sleep 80
-  - make ms-test
+# steps:
+# - name: api
+#   image: chg80333/goadmin-test:v9
+#   volumes:
+#   - name: data
+#     path: /go/src/github.com/GoAdminGroup/go-admin/tests/data
+#   environment:
+#     GO111MODULE: on
+#     GOPROXY: https://goproxy.cn
+#   commands:
+#   - cd /go/src/github.com/GoAdminGroup/go-admin
+#   - git pull
+#   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
+#   - git checkout pr$DRONE_PULL_REQUEST
+#   - go version
+#   - sleep 80
+#   - GOPROXY=https://goproxy.cn make ms-test
 
 ---
 kind: pipeline
@@ -100,19 +98,18 @@ services:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
+  - go version
   - sleep 80
-  - make pg-test
+  - GOPROXY=https://goproxy.cn make pg-test
 
 ---
 kind: pipeline
@@ -128,19 +125,18 @@ clone:
 
 steps:  
 - name: api
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
+  - go version
   - sleep 80
-  - make sqlite-test
+  - GOPROXY=https://goproxy.cn make sqlite-test
 
 ---
 kind: pipeline
@@ -163,17 +159,15 @@ services:
 
 steps:
 - name: chrome
-  image: chg80333/goadmin-test:v8
+  image: chg80333/goadmin-test:v9
   environment:
     GO111MODULE: on
     GOPROXY: https://goproxy.cn
   commands:
-  - ssh-keygen -f "/root/.ssh/known_hosts" -R "github.com"
-  - ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
   - cd /go/src/github.com/GoAdminGroup/go-admin
   - git pull
   - git fetch origin pull/$DRONE_PULL_REQUEST/head:pr$DRONE_PULL_REQUEST
   - git checkout pr$DRONE_PULL_REQUEST
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - sleep 8
-  - make web-test
+  - GOPROXY=https://goproxy.cn make web-test

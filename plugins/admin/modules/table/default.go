@@ -703,7 +703,7 @@ func (tb *DefaultTable) GetDataWithId(param parameter.Parameters) (FormInfo, err
 		}
 
 		if len(joinTables) > 0 {
-			if connection.Name() == db.DriverMssql  || connection.Name() == db.DriverPostgresql {
+			if connection.Name() == db.DriverMssql || connection.Name() == db.DriverPostgresql {
 				groupBy = " GROUP BY " + groupFields
 			} else {
 				groupBy = " GROUP BY " + pk
@@ -1139,9 +1139,6 @@ func (tb *DefaultTable) getColumns(table string) (Columns, bool) {
 	columnsModel, _ := tb.sql().Table(table).ShowColumns()
 
 	columns := make(Columns, len(columnsModel))
-	defer func(){
-		fmt.Println("getColumns columns", columns)
-	}()
 	switch tb.connectionDriver {
 	case db.DriverPostgresql:
 		auto := false

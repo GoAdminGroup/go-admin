@@ -86,4 +86,3 @@ See the [docs](https://book.go-admin.cn) for more details.
 <strong>here to join into the develop team</strong>
 
 [join telegram](https://t.me/joinchat/NlyH6Bch2QARZkArithKvg)
-
