@@ -267,6 +267,7 @@ var cn = LangSet{
 	"config.language." + JP:                  "日文",
 	"config.language." + strings.ToLower(TC): "繁体中文",
 	"config.language." + PTBR:                "Brazilian Portuguese",
+	"config.language." + RU:                  "Русский",
 
 	"config.modify site config":         "修改网站配置",
 	"config.modify site config success": "修改网站配置成功",
