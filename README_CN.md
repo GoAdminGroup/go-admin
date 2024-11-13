@@ -64,7 +64,7 @@ $ adm init web -l cn
 
 非常欢迎提pr，<strong>这里可以加入开发小组</strong>
 
-<strong>QQ群</strong>：[874825430](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=f1LB6fiIKDi8hwR__CjB70pqylsbQsef&authKey=PsKZe803zC1VvhhFg10zbVBTAOzGbqMSU3%2BrA8mMwK3fhasaoilz9dFj7f%2FZyku6&noverify=0&group_code=874825430)，记得备注加群来意
+<strong>QQ群</strong>：[694446792](https://qm.qq.com/q/bp3hsYyUzS)，记得备注加群来意
 
 这里是[开发计划](https://github.com/GoAdminGroup/go-admin/projects)
 
