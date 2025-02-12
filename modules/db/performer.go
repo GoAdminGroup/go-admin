@@ -17,7 +17,7 @@ func CommonQuery(db *sql.DB, query string, args ...interface{}) ([]map[string]in
 	rs, err := db.Query(query, args...)
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	defer func() {
