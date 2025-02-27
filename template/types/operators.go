@@ -5,6 +5,7 @@ import "html/template"
 type FilterOperator string
 
 const (
+	FilterOperatorILike          FilterOperator = "ilike"
 	FilterOperatorLike           FilterOperator = "like"
 	FilterOperatorGreater        FilterOperator = ">"
 	FilterOperatorGreaterOrEqual FilterOperator = ">="
@@ -17,6 +18,8 @@ const (
 
 func GetOperatorFromValue(value string) FilterOperator {
 	switch value {
+	case "ilike":
+		return FilterOperatorILike
 	case "like":
 		return FilterOperatorLike
 	case "gr":
@@ -40,6 +43,8 @@ func GetOperatorFromValue(value string) FilterOperator {
 
 func (o FilterOperator) Value() string {
 	switch o {
+	case FilterOperatorILike:
+		return "ilike"
 	case FilterOperatorLike:
 		return "like"
 	case FilterOperatorGreater:
@@ -66,7 +71,7 @@ func (o FilterOperator) String() string {
 }
 
 func (o FilterOperator) Label() template.HTML {
-	if o == FilterOperatorLike {
+	if o == FilterOperatorLike || o == FilterOperatorILike {
 		return ""
 	}
 	return template.HTML(o)
@@ -78,7 +83,7 @@ func (o FilterOperator) AddOrNot() bool {
 
 func (o FilterOperator) Valid() bool {
 	switch o {
-	case FilterOperatorLike, FilterOperatorGreater, FilterOperatorGreaterOrEqual,
+	case FilterOperatorILike, FilterOperatorLike, FilterOperatorGreater, FilterOperatorGreaterOrEqual,
 		FilterOperatorLess, FilterOperatorLessOrEqual, FilterOperatorFree:
 		return true
 	default:
