@@ -298,7 +298,7 @@ func (h *Handler) pluginStoreBox(ctx *context.Context, param PluginBoxParam) tem
 func (h *Handler) pluginBox(ctx *context.Context, param PluginBoxParam) template.HTML {
 	cover := template2.HTML(param.Info.MiniCover)
 	if cover == template2.HTML("") {
-		cover = "/admin/assets/dist/img/plugin_default.png"
+		cover = template.HTML(config.Url("/assets/dist/img/plugin_default.png"))
 	}
 
 	jump := param.IndexURL
