@@ -27,6 +27,7 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 		info      = panel.GetInfo()
 		formModel = newPanel.GetForm()
 		fieldList = make(types.FieldList, 0)
+		referer   = ctx.Referer()
 	)
 
 	if len(detail.FieldList) == 0 {
@@ -70,6 +71,10 @@ func (h *Handler) ShowDetail(ctx *context.Context) {
 
 	editUrl = user.GetCheckPermissionByUrlMethod(editUrl, h.route("show_edit").Method())
 	deleteUrl = user.GetCheckPermissionByUrlMethod(deleteUrl, h.route("delete").Method())
+
+	if referer != "" && !isInfoUrl(referer) && !isDetailUrl(referer, ctx.Query(constant.PrefixKey)) {
+		infoUrl = referer
+	}
 
 	deleteJs := ""
 
