@@ -73,7 +73,7 @@ func (o FilterOperator) Label() template.HTML {
 }
 
 func (o FilterOperator) AddOrNot() bool {
-	return string(o) != "" && o != FilterOperatorFree
+	return string(o) != "" && o != FilterOperatorFree && o != FilterOperatorLike
 }
 
 func (o FilterOperator) Valid() bool {
