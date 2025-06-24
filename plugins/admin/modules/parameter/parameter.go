@@ -64,6 +64,19 @@ var operators = map[string]string{
 	"free": "free",
 }
 
+// Global registry for Like operator fields
+var likeOperatorFields = make(map[string]bool)
+
+// RegisterLikeOperatorField registers a field as using the Like operator
+func RegisterLikeOperatorField(fieldName string) {
+	likeOperatorFields[fieldName] = true
+}
+
+// IsLikeOperatorField checks if a field is registered as using the Like operator
+func IsLikeOperatorField(fieldName string) bool {
+	return likeOperatorFields[fieldName]
+}
+
 var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
 
 func BaseParam() Parameters {
@@ -402,7 +415,11 @@ func (param Parameters) Statement(wheres, table, delimiter, delimiter2 string, w
 		} else if len(value) > 1 {
 			op = "in"
 		} else if !strings.Contains(key, FilterParamOperatorSuffix) {
-			op = operators[param.GetFieldOperator(key, keyIndexSuffix)]
+			if IsLikeOperatorField(key) {
+				op = "like"
+			} else {
+				op = operators[param.GetFieldOperator(key, keyIndexSuffix)]
+			}
 		} else {
 			continue
 		}

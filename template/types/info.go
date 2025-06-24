@@ -200,6 +200,11 @@ func (f Field) GetFilterFormFields(params parameter.Parameters, headField string
 			keySuffix = parameter.FilterParamCountInfix + strconv.Itoa(index)
 		}
 
+		// Register Like operator fields for global tracking
+		if filter.Operator == FilterOperatorLike {
+			parameter.RegisterLikeOperatorField(headField)
+		}
+
 		if filter.Type.IsRange() {
 			value = params.GetFilterFieldValueStart(headField)
 			value2 = params.GetFilterFieldValueEnd(headField)
