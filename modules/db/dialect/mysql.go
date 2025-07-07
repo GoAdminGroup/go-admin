@@ -19,7 +19,8 @@ func (mysql) ShowColumnsWithComment(schema, table string) string {
 		WHERE 
 			table_name = '` + table + `'
 		AND
-			table_schema = '` + schema + `'`
+			table_schema = '` + schema + `'` +
+        `ORDER BY ORDINAL_POSITION`
 }
 
 func (mysql) ShowColumns(table string) string {
