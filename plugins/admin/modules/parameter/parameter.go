@@ -54,14 +54,15 @@ const (
 )
 
 var operators = map[string]string{
-	"like": "like",
-	"gr":   ">",
-	"gq":   ">=",
-	"eq":   "=",
-	"ne":   "!=",
-	"le":   "<",
-	"lq":   "<=",
-	"free": "free",
+	"ilike": "ilike",
+	"like":  "like",
+	"gr":    ">",
+	"gq":    ">=",
+	"eq":    "=",
+	"ne":    "!=",
+	"le":    "<",
+	"lq":    "<=",
+	"free":  "free",
 }
 
 var keys = []string{Page, PageSize, Sort, Columns, Prefix, Pjax, form.NoAnimationKey}
@@ -419,7 +420,7 @@ func (param Parameters) Statement(wheres, table, delimiter, delimiter2 string, w
 			} else {
 				wheres += keys[0] + "." + modules.FilterField(keys[1], delimiter, delimiter2) + " " + op + " ? and "
 			}
-			if op == "like" && !strings.Contains(val, "%") {
+			if strings.Contains(op, "like") && !strings.Contains(val, "%") {
 				whereArgs = append(whereArgs, "%"+val+"%")
 			} else {
 				for _, v := range value {
@@ -437,7 +438,7 @@ func (param Parameters) Statement(wheres, table, delimiter, delimiter2 string, w
 				} else {
 					wheres += modules.Delimiter(delimiter, delimiter2, table) + "." + modules.FilterField(key, delimiter, delimiter2) + " " + op + " ? and "
 				}
-				if op == "like" && !strings.Contains(value[0], "%") {
+				if strings.Contains(op, "like") && !strings.Contains(value[0], "%") {
 					whereArgs = append(whereArgs, "%"+filterProcess(key, value[0], keyIndexSuffix)+"%")
 				} else {
 					for _, v := range value {
