@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"html/template"
+	"regexp"
 	"strings"
 
 	"github.com/GoAdminGroup/go-admin/context"
@@ -165,6 +166,13 @@ func (f FieldDisplay) AddTrimSpace() DisplayProcessFnChains {
 	})
 }
 
+func (f FieldDisplay) AddStripHtml() DisplayProcessFnChains {
+	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
+		re := regexp.MustCompile(`<[^>]*>`)
+		return re.ReplaceAllString(value.Value, "")
+	})
+}
+
 func (f FieldDisplay) AddSubstr(start int, end int) DisplayProcessFnChains {
 	return f.DisplayProcessChains.Add(func(value FieldModel) interface{} {
 		if start > end || start > len(value.Value) || end < 0 {
@@ -267,6 +275,10 @@ func AddXssJsFilter() DisplayProcessFnChains {
 	return addXssJsFilter(globalDisplayProcessChains)
 }
 
+func AddStripHtml() DisplayProcessFnChains {
+	return addStripHtml(globalDisplayProcessChains)
+}
+
 func addLimit(limit int, chains DisplayProcessFnChains) DisplayProcessFnChains {
 	chains = chains.Add(func(value FieldModel) interface{} {
 		if limit > len(value.Value) {
@@ -335,6 +347,14 @@ func addXssJsFilter(chains DisplayProcessFnChains) DisplayProcessFnChains {
 	chains = chains.Add(func(value FieldModel) interface{} {
 		replacer := strings.NewReplacer("<script>", "&lt;script&gt;", "</script>", "&lt;/script&gt;")
 		return replacer.Replace(value.Value)
+	})
+	return chains
+}
+
+func addStripHtml(chains DisplayProcessFnChains) DisplayProcessFnChains {
+	chains = chains.Add(func(value FieldModel) interface{} {
+		re := regexp.MustCompile(`<[^>]*>`)
+		return re.ReplaceAllString(value.Value, "")
 	})
 	return chains
 }
