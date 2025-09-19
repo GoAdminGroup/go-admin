@@ -45,7 +45,6 @@ func NewSystemTable(conn db.Connection, c *config.Config) *SystemTable {
 	return &SystemTable{conn: conn, c: c}
 }
 
-
 var filterType = types.FilterType{NoIcon: true, HeadWidth: 4, InputWidth: 8}
 
 func (s *SystemTable) GetManagerTable(ctx *context.Context) (managerTable Table) {
@@ -1415,7 +1414,7 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 					connName        = ctx.FormValue("conn")
 					driver          = s.c.Databases[connName].Driver
 					conn            = db.GetConnectionFromService(services.Get(driver))
-					columnsModel, _ = db.WithDriverAndConnection(connName, conn).Table(tableName).ShowColumns()
+					columnsModel, _ = db.WithDriverAndConnection(connName, conn).Table(tableName).ShowColumnsWithComment(conn.GetConfig(connName).Name)
 
 					fieldField = "Field"
 					typeField  = "Type"
@@ -1442,7 +1441,12 @@ func (s *SystemTable) GetGenerateForm(ctx *context.Context) (generateTool Table)
 				for i, model := range columnsModel {
 					typeName := getType(model[typeField].(string))
 
-					headName[i] = cases.Title(textLang.Und).String(model[fieldField].(string))
+					comment, _ := model["Comment"].(string)
+					if comment != "" {
+						headName[i] = comment
+					} else {
+						headName[i] = cases.Title(textLang.Und).String(model[fieldField].(string))
+					}
 					fieldName[i] = model[fieldField].(string)
 					dbTypeList[i] = typeName
 					formTypeList[i] = form.GetFormTypeFromFieldType(db.DT(strings.ToUpper(typeName)),
