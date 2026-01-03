@@ -441,7 +441,7 @@ func getType(typeName string) string {
 }
 
 func getFieldsFromConn(conn db.Connection, table, driver, connName string) Fields {
-	columnsModel, _ := db.WithDriver(conn).Table(table).ShowColumnsWithComment(conn.GetConfig(connName).Name)
+	columnsModel, _ := db.WithDriverAndConnection(connName, conn).Table(table).ShowColumnsWithComment(conn.GetConfig(connName).Name)
 
 	fields := make(Fields, len(columnsModel))
 
