@@ -108,9 +108,9 @@ func PopUpWithIframe(id, title string, data IframeData, width, height string) *P
 		if data.AddParameterFn != nil {
 			param = data.AddParameterFn(ctx)
 		}
-		return true, "ok", fmt.Sprintf(`<iframe style="width:%s;height:%s;" 
-			scrolling="auto" 
-			allowtransparency="true" 
+		return true, "ok", fmt.Sprintf(`<iframe style="width:%s;height:%s;"
+			scrolling="auto"
+			allowtransparency="true"
 			frameborder="0"
 			src="%s__goadmin_iframe=true&__go_admin_no_animation_=true&__goadmin_iframe_id=%s`+param+`"><iframe>`,
 			data.Width, data.Height, data.Src, modalID)
@@ -185,7 +185,8 @@ func PopUpWithForm(data PopUpData, fn GetForm, url string) *PopUpAction {
 				SetPrefix(config.PrefixFixSlash()).
 				SetUrl(url).
 				SetOperationFooter(col1 + col2).GetContent()).
-				SetStyle(template.HTMLAttr(`overflow-x: hidden;overflow-y: hidden;`)).
+			SetFooter(panel.FooterHtml).
+			SetStyle(template.HTMLAttr(`overflow-x: hidden;overflow-y: hidden;`)).
 			GetContent()
 	}
 	return &PopUpAction{
@@ -241,6 +242,7 @@ func PopUpWithCtxForm(data PopUpData, fn GetCtxForm, url string) *PopUpAction {
 				SetPrefix(config.PrefixFixSlash()).
 				SetUrl(url).
 				SetOperationFooter(col1 + col2).GetContent()).
+			SetFooter(panel.FooterHtml).
 			GetContent()
 	}
 	return &PopUpAction{
@@ -308,7 +310,7 @@ func (pop *PopUpAction) Js() template.JS {
                             },
 							error: function (data) {
 								if (data.responseText !== "") {
-									swal(data.responseJSON.msg, '', 'error');								
+									swal(data.responseJSON.msg, '', 'error');
 								} else {
 									swal('error', '', 'error');
 								}
