@@ -19,6 +19,7 @@ var (
 	TC   = language.TraditionalChinese.String()
 	PTBR = language.BrazilianPortuguese.String()
 	RU   = language.Russian.String()
+	UA   = language.Ukrainian.String()
 )
 
 func FixedLanguageKey(key string) string {
@@ -40,10 +41,16 @@ func FixedLanguageKey(key string) string {
 	if key == "ru" {
 		return RU
 	}
+	if key == "ru" {
+		return RU
+	}
+	if key == "ua" {
+		return UA
+	}
 	return key
 }
 
-var Langs = [...]string{EN, CN, JP, TC, RU}
+var Langs = [...]string{EN, CN, JP, TC, RU, UA}
 
 // Get return the value of default scope.
 func Get(value string) string {
@@ -118,13 +125,14 @@ var Lang = LangMap{
 	language.TraditionalChinese.String():  tc,
 	language.BrazilianPortuguese.String(): ptbr,
 	language.Russian.String():             ru,
-
-	"cn":    cn,
-	"en":    en,
-	"jp":    jp,
-	"tc":    tc,
-	"pt-br": ptbr,
-	"ru":    ru,
+	language.Ukrainian.String():           ua,
+	"cn":                                  cn,
+	"en":                                  en,
+	"jp":                                  jp,
+	"tc":                                  tc,
+	"pt-br":                               ptbr,
+	"ru":                                  ru,
+	"ua":                                  ua,
 }
 
 // Get get the value from LangMap.

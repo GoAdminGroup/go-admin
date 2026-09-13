@@ -225,6 +225,7 @@ var ru = LangSet{
 	"config.language." + strings.ToLower(TC): "Традиционный китайский",
 	"config.language." + PTBR:                "Бразильский португальский",
 	"config.language." + RU:                  "Русский",
+	"config.language." + UA:                  "Українська",
 
 	"config.modify site config":         "Изменение конфигурации сайта",
 	"config.modify site config success": "Успешно изменено",
