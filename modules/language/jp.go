@@ -236,6 +236,7 @@ var jp = LangSet{
 	"config.language." + PTBR:                "ブラジルポルトガル語",
 	"config.language." + strings.ToLower(TC): "繁体字中国語",
 	"config.language." + RU:                  "ロシア語",
+	"config.language." + UA:                  "Українська",
 
 	"config.modify site config":         "サイト設定の変更",
 	"config.modify site config success": "変更成功",

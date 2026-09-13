@@ -224,6 +224,7 @@ var en = LangSet{
 	"config.language." + strings.ToLower(TC): "Traditional Chinese",
 	"config.language." + PTBR:                "Brazilian Portuguese",
 	"config.language." + RU:                  "Русский",
+	"config.language." + UA:                  "Українська",
 
 	"config.modify site config":         "Site Configuration Modification",
 	"config.modify site config success": "modified success",
