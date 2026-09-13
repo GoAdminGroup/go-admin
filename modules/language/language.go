@@ -19,6 +19,7 @@ var (
 	TC   = language.TraditionalChinese.String()
 	PTBR = language.BrazilianPortuguese.String()
 	RU   = language.Russian.String()
+	UA   = language.Ukrainian.String()
 )
 
 func FixedLanguageKey(key string) string {
