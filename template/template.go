@@ -498,7 +498,7 @@ func WarningPanelWithDescAndTitle(ctx *context.Context, msg, desc, title string,
 	if len(pts) > 0 {
 		pt = pts[0]
 	}
-	pageTitle, description, content := GetPageContentFromPageType(ctx, msg, desc, title, pt)
+	pageTitle, description, content := GetPageContentFromPageType(ctx, title, desc, msg, pt)
 	return types.Panel{
 		Content:     content,
 		Description: description,
